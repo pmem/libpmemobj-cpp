@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
  * arrays
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/p.hpp>
@@ -207,8 +207,6 @@ test_delete_null(nvobj::pool<struct root> &pop)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_make_persistent_array_atomic");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -229,6 +227,4 @@ main(int argc, char *argv[])
 	test_delete_null(pop);
 
 	pop.close();
-
-	DONE(nullptr);
 }

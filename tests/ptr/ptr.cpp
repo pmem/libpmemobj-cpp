@@ -35,7 +35,7 @@
  *
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
@@ -350,8 +350,6 @@ test_offset(nvobj::pool<root> &pop)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_ptr");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -373,6 +371,4 @@ main(int argc, char *argv[])
 	test_offset(pop);
 
 	pop.close();
-
-	DONE(nullptr);
 }

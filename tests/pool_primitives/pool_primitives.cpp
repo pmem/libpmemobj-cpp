@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
  * - memset_persist
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -267,8 +267,6 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_pool_primitives");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s path", argv[0]);
 
@@ -289,6 +287,4 @@ main(int argc, char *argv[])
 	pool_test_memset(pop);
 
 	pop.close();
-
-	DONE(nullptr);
 }

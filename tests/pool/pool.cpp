@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
  * obj_cpp_pool.c -- cpp pool implementation test
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -69,7 +69,8 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 	}
 
 	os_stat_t stbuf;
-	STAT(path, &stbuf);
+	auto ret = os_stat(path, &stbuf);
+	UT_ASSERTne(ret, -1);
 
 	UT_OUT("%s: file size %zu mode 0%o", path, stbuf.st_size,
 	       stbuf.st_mode & 0777);
@@ -157,8 +158,6 @@ get_root_closed()
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_pool");
-
 	if (argc < 4)
 		UT_FATAL("usage: %s op path layout [poolsize mode]", argv[0]);
 
@@ -195,6 +194,4 @@ main(int argc, char *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
-
-	DONE(nullptr);
 }

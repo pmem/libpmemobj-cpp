@@ -35,7 +35,7 @@
  *
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/p.hpp>
@@ -210,8 +210,6 @@ test_relational(nvobj::pool_base &pop)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_ptr_arith");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -230,6 +228,4 @@ main(int argc, char *argv[])
 	test_relational(pop);
 
 	pop.close();
-
-	DONE(nullptr);
 }

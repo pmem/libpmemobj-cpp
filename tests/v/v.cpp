@@ -35,7 +35,7 @@
  *
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <atomic>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -73,8 +73,6 @@ test_init(nvobj::pool<root> &pop)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_v");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -101,6 +99,4 @@ main(int argc, char *argv[])
 	test_init(pop);
 
 	pop.close();
-
-	DONE(nullptr);
 }

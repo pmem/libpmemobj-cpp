@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
  *
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/make_persistent.hpp>
@@ -44,7 +44,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-#include "obj_cpp_containers/cont_test_common.hpp"
+#include "cont_test_common.hpp"
 
 #include <unordered_map>
 
@@ -123,8 +123,6 @@ test_map(nvobj::pool<root> &pop, bool open)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_unordered_map");
-
 	if (argc != 3 || strchr("co", argv[1][0]) == nullptr)
 		UT_FATAL("usage: %s <c,o> file-name", argv[0]);
 
@@ -153,6 +151,4 @@ main(int argc, char *argv[])
 	test_map(pop, open);
 
 	pop.close();
-
-	DONE(nullptr);
 }

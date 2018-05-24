@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
  * obj_cpp_mutex.cpp -- cpp mutex test
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -144,8 +144,6 @@ mutex_test(nvobj::pool<struct root> &pop, const Worker &function)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_mutex");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -176,6 +174,4 @@ main(int argc, char *argv[])
 			sizeof(pop.get_root()->counter));
 
 	pop.close();
-
-	DONE(nullptr);
 }

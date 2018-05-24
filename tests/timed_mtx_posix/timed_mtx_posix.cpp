@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,8 @@
  * obj_cpp_mutex_posix.cpp -- cpp mutex test
  */
 
-#include "unittest.h"
+#include "pthread_common.hpp"
+#include "unittest.hpp"
 
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -193,23 +194,21 @@ template <typename Worker>
 void
 timed_mtx_test(nvobj::pool<struct root> &pop, Worker function)
 {
-	os_thread_t threads[num_threads];
+	pthread_t threads[num_threads];
 
 	auto proot = pop.get_root();
 
 	for (int i = 0; i < num_threads; ++i)
-		PTHREAD_CREATE(&threads[i], nullptr, function, &proot);
+		ut_pthread_create(&threads[i], nullptr, function, &proot);
 
 	for (int i = 0; i < num_threads; ++i)
-		PTHREAD_JOIN(&threads[i], nullptr);
+		ut_pthread_join(&threads[i], nullptr);
 }
 }
 
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_mutex_posix");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -261,6 +260,4 @@ main(int argc, char *argv[])
 			sizeof(pop.get_root()->counter));
 
 	pop.close();
-
-	DONE(nullptr);
 }

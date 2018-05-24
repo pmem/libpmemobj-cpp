@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
  * obj_cpp_pool_win.c -- cpp pool implementation test
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -164,8 +164,6 @@ get_root_closed()
 int
 wmain(int argc, wchar_t *argv[])
 {
-	STARTW(argc, argv, "obj_cpp_pool_win");
-
 	if (argc < 4)
 		UT_FATAL("usage: %s op path layout [poolsize mode]", ut_toUTF8(argv[0]));
 
@@ -202,6 +200,4 @@ wmain(int argc, wchar_t *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
-
-	DONEW(nullptr);
 }

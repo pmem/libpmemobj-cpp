@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
  * obj_cpp_transaction.cpp -- cpp transaction test
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include "libpmemobj++/make_persistent.hpp"
 #include "libpmemobj++/mutex.hpp"
@@ -726,8 +726,6 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_transaction");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -756,6 +754,4 @@ main(int argc, char *argv[])
 	test_tx_no_throw_abort_scope<nvobj::transaction::automatic>(pop);
 	test_tx_automatic_destructor_throw(pop);
 	pop.close();
-
-	DONE(nullptr);
 }

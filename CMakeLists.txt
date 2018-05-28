@@ -42,6 +42,8 @@ option(BUILD_EXAMPLES "build examples" ON)
 
 option(BUILD_TESTS "build tests" ON)
 
+option(BUILD_DOC "build documentation" ON)
+
 option(TRACE_TESTS
 	"more verbose test outputs" OFF)
 
@@ -326,4 +328,8 @@ if(BUILD_TESTS)
 	add_subdirectory(tests)
 endif()
 
-# XXX : doc and examples
+if(BUILD_DOC)
+	add_subdirectory(doc)
+endif()
+
+#XXX: examples

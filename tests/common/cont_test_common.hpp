@@ -39,7 +39,8 @@
 
 namespace nvobj = pmem::obj;
 
-namespace {
+namespace
+{
 
 const int Test_arr_size = 10;
 const int Last_val = 0xFF;
@@ -129,7 +130,6 @@ loop_insert(pool &pop, T &cont, const Y &val, int count)
 		}
 	}
 }
-
 }
 
 #endif /* CONT_TEST_COMMON_HPP */

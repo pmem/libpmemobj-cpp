@@ -45,47 +45,52 @@ typedef struct _stat64 os_stat_t;
 #define os_stat _stat64
 #endif
 
-template<typename ...Args>
-static inline void
-UT_OUT(Args ...args)
+template <typename... Args>
+static inline void UT_OUT(Args... args)
 {
-    fprintf(stdout, args...);
-    fprintf(stdout, "\n");
+	fprintf(stdout, args...);
+	fprintf(stdout, "\n");
 }
 
-template<typename ...Args>
-static inline void
-UT_FATAL(Args ...args)
+template <typename... Args>
+static inline void UT_FATAL(Args... args)
 {
-    fprintf(stderr, args...);
-    fprintf(stderr, "\n");
-    abort();
+	fprintf(stderr, args...);
+	fprintf(stderr, "\n");
+	abort();
 }
 
 /* assert a condition is true at runtime */
-#define UT_ASSERT(cnd)\
-	((void)((cnd) || (UT_FATAL(\
-	"%s:%d %s - assertion failure: %s",\
-	__FILE__, __LINE__, __func__, #cnd), 0)))
+#define UT_ASSERT(cnd)                                                         \
+	((void)((cnd) || (UT_FATAL("%s:%d %s - assertion failure: %s",         \
+				   __FILE__, __LINE__, __func__, #cnd),        \
+			  0)))
 
 /* assertion with extra info printed if assertion fails at runtime */
-#define UT_ASSERTinfo(cnd, info) \
-	((void)((cnd) || (UT_FATAL(\
-	"%s:%d %s - assertion failure: %s (%s = %s)",\
-	__FILE__, __LINE__, __func__, #cnd, #info, info), 0)))
+#define UT_ASSERTinfo(cnd, info)                                               \
+	((void)((cnd) ||                                                       \
+		(UT_FATAL("%s:%d %s - assertion failure: %s (%s = %s)",        \
+			  __FILE__, __LINE__, __func__, #cnd, #info, info),    \
+		 0)))
 
 /* assert two integer values are equal at runtime */
-#define UT_ASSERTeq(lhs, rhs)\
-	((void)(((lhs) == (rhs)) || (UT_FATAL(\
-	"%s:%d %s - assertion failure: %s (0x%llx) == %s (0x%llx)",\
-	__FILE__, __LINE__, __func__, #lhs,\
-	(unsigned long long)(lhs), #rhs, (unsigned long long)(rhs)), 0)))
+#define UT_ASSERTeq(lhs, rhs)                                                  \
+	((void)(((lhs) == (rhs)) ||                                            \
+		(UT_FATAL("%s:%d %s - assertion failure: %s (0x%llx) == %s "   \
+			  "(0x%llx)",                                          \
+			  __FILE__, __LINE__, __func__, #lhs,                  \
+			  (unsigned long long)(lhs), #rhs,                     \
+			  (unsigned long long)(rhs)),                          \
+		 0)))
 
 /* assert two integer values are not equal at runtime */
-#define UT_ASSERTne(lhs, rhs)\
-	((void)(((lhs) != (rhs)) || (UT_FATAL(\
-	"%s:%d %s - assertion failure: %s (0x%llx) != %s (0x%llx)",\
-	__FILE__, __LINE__, __func__, #lhs,\
-	(unsigned long long)(lhs), #rhs, (unsigned long long)(rhs)), 0)))
+#define UT_ASSERTne(lhs, rhs)                                                  \
+	((void)(((lhs) != (rhs)) ||                                            \
+		(UT_FATAL("%s:%d %s - assertion failure: %s (0x%llx) != %s "   \
+			  "(0x%llx)",                                          \
+			  __FILE__, __LINE__, __func__, #lhs,                  \
+			  (unsigned long long)(lhs), #rhs,                     \
+			  (unsigned long long)(rhs)),                          \
+		 0)))
 
 #endif /* LIBPMEMOBJ_CPP_UNITTEST_HPP */

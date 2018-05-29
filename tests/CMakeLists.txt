@@ -82,8 +82,8 @@ CHECK_CXX_SOURCE_COMPILES(
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 
-add_cppstyle("tests")
-add_check_whitespace("tests" ${CMAKE_CURRENT_SOURCE_DIR}/*.*pp)
+add_cppstyle("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_check_whitespace("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 
 function(build_test name srcs)
 	# skip posix tests

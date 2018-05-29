@@ -35,7 +35,7 @@
  *
  */
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -372,8 +372,6 @@ swap_test(nvobj::pool_base &pop)
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_p_ext");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -394,6 +392,4 @@ main(int argc, char *argv[])
 	swap_test(pop);
 
 	pop.close();
-
-	DONE(nullptr);
 }

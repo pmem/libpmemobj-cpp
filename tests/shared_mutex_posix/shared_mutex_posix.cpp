@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,8 @@
  *
  */
 
-#include "unittest.h"
+#include "pthread_common.hpp"
+#include "unittest.hpp"
 
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -157,25 +158,23 @@ void
 mutex_test(nvobj::pool<root> &pop, Worker writer, Worker reader)
 {
 	const int total_threads = num_threads * 2;
-	os_thread_t threads[total_threads];
+	pthread_t threads[total_threads];
 
 	auto proot = pop.get_root();
 
 	for (int i = 0; i < total_threads; i += 2) {
-		PTHREAD_CREATE(&threads[i], nullptr, writer, &proot);
-		PTHREAD_CREATE(&threads[i + 1], nullptr, reader, &proot);
+		ut_pthread_create(&threads[i], nullptr, writer, &proot);
+		ut_pthread_create(&threads[i + 1], nullptr, reader, &proot);
 	}
 
 	for (int i = 0; i < total_threads; ++i)
-		PTHREAD_JOIN(&threads[i], nullptr);
+		ut_pthread_join(&threads[i], nullptr);
 }
 }
 
 int
 main(int argc, char *argv[])
 {
-	START(argc, argv, "obj_cpp_shared_mutex_posix");
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -206,6 +205,4 @@ main(int argc, char *argv[])
 			sizeof(pop.get_root()->counter));
 
 	pop.close();
-
-	DONE(nullptr);
 }

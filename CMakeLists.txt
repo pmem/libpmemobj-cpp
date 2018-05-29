@@ -261,6 +261,17 @@ if(DEVELOPER_MODE)
 	add_dependencies(checkers check-license)
 endif(DEVELOPER_MODE)
 
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+	FILES_MATCHING PATTERN "*.hpp")
+
+configure_file(
+	"${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+	IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(PMEMOBJ REQUIRED libpmemobj>=1.4)
 else()

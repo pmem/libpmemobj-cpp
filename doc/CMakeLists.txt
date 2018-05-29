@@ -36,6 +36,8 @@ if(DOXYGEN_FOUND)
 
 	add_custom_target(doc ALL ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.Doxyfile"
 			  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cpp_html/ DESTINATION ${CMAKE_INSTALL_DOCDIR})
 else()
 	message(WARNING "Doxygen not found - doucumentation will not be generated")
 endif()

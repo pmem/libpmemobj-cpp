@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2016-2017, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,41 +31,84 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# push-image.sh <OS-VER> - pushes the Docker image tagged with OS-VER
-#                          to the Docker Hub.
-#
-# The script utilizes $DOCKERHUB_USER and $DOCKERHUB_PASSWORD variables to log in to
-# Docker Hub. The variables can be set in the Travis project's configuration
-# for automated builds.
+# run-build.sh - is called inside a Docker container; prepares the environment
+#                and starts a build of libpmemobj-cpp.
 #
 
 set -e
 
-function usage {
-	echo "Usage:"
-	echo "    push-image.sh <OS-VER>"
-	echo "where <OS-VER>, for example, can be 'ubuntu-16.04', provided " \
-		"a Docker image tagged with ${DOCKERHUB_REPO}:ubuntu-16.04 exists " \
-		"locally."
-}
+cd $WORKDIR
+INSTALL_DIR=/tmp/libpmemobj-cpp
 
-# Check if the first argument is nonempty
-if [[ -z "$1" ]]; then
-	usage
-	exit 1
-fi
+mkdir $INSTALL_DIR
 
-# Check if the image tagged with ${DOCKERHUB_REPO}:OS-VER exists locally
-if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:$1\$" \
-	'$1":"$2 ~ pattern') ]]
-then
-	echo "ERROR: wrong argument."
-	usage
-	exit 1
-fi
+mkdir build
+cd build
 
-# Log in to the Docker Hub
-docker login -u="$DOCKERHUB_USER" -p="$DOCKERHUB_PASSWORD"
+CC=clang CXX=clang++ \
+cmake .. -DDEVELOPER_MODE=1 \
+			-DCMAKE_BUILD_TYPE=Debug \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DUSE_LLVM_LIBCPP=1 \
+			-DLIBCPP_LIBDIR=$LIBCPP_LIBDIR \
+			-DLIBCPP_INCDIR=$LIBCPP_INCDIR
 
-# Push the image to the repository
-docker push ${DOCKERHUB_REPO}:$1
+make -j2
+ctest --output-on-failure
+make install
+
+cd ..
+rm -r build
+
+mkdir build
+cd build
+
+CC=clang CXX=clang++ \
+cmake .. -DDEVELOPER_MODE=1 \
+			-DCMAKE_BUILD_TYPE=Debug \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DUSE_LLVM_LIBCPP=0
+
+make -j2
+ctest --output-on-failure
+make install
+
+cd ..
+rm -r build
+
+mkdir build
+cd build
+
+CC=gcc CXX=g++ \
+cmake .. -DDEVELOPER_MODE=1 \
+			-DCMAKE_BUILD_TYPE=Debug \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DUSE_LLVM_LIBCPP=0
+
+make -j2
+ctest --output-on-failure
+make install
+
+cd ..
+rm -r build
+
+mkdir build
+cd build
+
+CC=gcc CXX=g++ \
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DUSE_LLVM_LIBCPP=0
+
+make -j2
+ctest --output-on-failure
+make install
+
+cd ..
+rm -r build
+
+rm -r $INSTALL_DIR

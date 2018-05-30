@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,41 +31,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# push-image.sh <OS-VER> - pushes the Docker image tagged with OS-VER
-#                          to the Docker Hub.
-#
-# The script utilizes $DOCKERHUB_USER and $DOCKERHUB_PASSWORD variables to log in to
-# Docker Hub. The variables can be set in the Travis project's configuration
-# for automated builds.
+# install-pmdk.sh - installs libpmem & libpmemobj
 #
 
 set -e
 
-function usage {
-	echo "Usage:"
-	echo "    push-image.sh <OS-VER>"
-	echo "where <OS-VER>, for example, can be 'ubuntu-16.04', provided " \
-		"a Docker image tagged with ${DOCKERHUB_REPO}:ubuntu-16.04 exists " \
-		"locally."
-}
-
-# Check if the first argument is nonempty
-if [[ -z "$1" ]]; then
-	usage
-	exit 1
+git clone https://github.com/pmem/pmdk.git
+cd pmdk
+git checkout stable-1.4
+BUILD_PACKAGE_CHECK=n make $1
+if [ "$1" = "dpkg" ]; then
+      sudo dpkg -i dpkg/libpmem_*.deb dpkg/libpmem-dev_*.deb
+      sudo dpkg -i dpkg/libpmemobj_*.deb dpkg/libpmemobj-dev_*.deb
+elif [ "$1" = "rpm" ]; then
+      sudo rpm -i rpm/*/libpmem-*.rpm
+      sudo rpm -i rpm/*/libpmemobj-*.rpm
 fi
-
-# Check if the image tagged with ${DOCKERHUB_REPO}:OS-VER exists locally
-if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:$1\$" \
-	'$1":"$2 ~ pattern') ]]
-then
-	echo "ERROR: wrong argument."
-	usage
-	exit 1
-fi
-
-# Log in to the Docker Hub
-docker login -u="$DOCKERHUB_USER" -p="$DOCKERHUB_PASSWORD"
-
-# Push the image to the repository
-docker push ${DOCKERHUB_REPO}:$1
+cd ..
+rm -rf pmdk

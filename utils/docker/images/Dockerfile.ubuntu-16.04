@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2017, Intel Corporation
+# Copyright 2016-2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 #
 # Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
-#              environment for building the PMDK project.
+#              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
@@ -64,6 +64,7 @@ RUN apt-get update \
 	libudev-dev \
 	libunwind8-dev \
 	libuv1-dev \
+	libtext-diff-perl \
 	pandoc \
 	pkg-config \
 	ruby \
@@ -77,27 +78,22 @@ RUN apt-get update \
 COPY install-valgrind.sh install-valgrind.sh
 RUN ./install-valgrind.sh
 
-# Install libfabric
-COPY install-libfabric.sh install-libfabric.sh
-RUN ./install-libfabric.sh
-
 # Install libcxx
 COPY install-libcxx.sh install-libcxx.sh
 RUN ./install-libcxx.sh
 
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
+# Install pmdk
+COPY install-pmdk.sh install-pmdk.sh
+RUN ./install-pmdk.sh dpkg
 
 # Add user
-ENV USER pmdkuser
-ENV USERPASS pmdkpass
+ENV USER user
+ENV USERPASS pass
 RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
 USER $USER
 
 # Set required environment variables
 ENV OS ubuntu
 ENV OS_VER 16.04
-ENV START_SSH_COMMAND service ssh start
 ENV PACKAGE_MANAGER dpkg
 ENV NOTTY 1

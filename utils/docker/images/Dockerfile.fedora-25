@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2017, Intel Corporation
+# Copyright 2016-2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 
 #
 # Dockerfile - a 'recipe' for Docker to build an image of fedora-based
-#              environment for building the PMDK project.
+#              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
@@ -70,6 +70,7 @@ RUN dnf update -y \
 	openssh-server \
 	pandoc \
 	passwd \
+	perl-Text-Diff \
 	pkgconfig \
 	rpm-build \
 	rpm-build-libs \
@@ -81,25 +82,21 @@ RUN dnf update -y \
 	xmlto \
  && dnf clean all
 
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh fedora
-
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
 RUN ./install-valgrind.sh
-
-# Install libfabric
-COPY install-libfabric.sh install-libfabric.sh
-RUN ./install-libfabric.sh fedora
 
 # Install libcxx
 COPY install-libcxx.sh install-libcxx.sh
 RUN ./install-libcxx.sh
 
+# Install pmdk
+COPY install-pmdk.sh install-pmdk.sh
+RUN ./install-pmdk.sh rpm
+
 # Add user
-ENV USER pmdkuser
-ENV USERPASS pmdkpass
+ENV USER user
+ENV USERPASS pass
 RUN useradd -m $USER
 RUN echo $USERPASS | passwd $USER --stdin
 RUN gpasswd wheel -a $USER
@@ -108,7 +105,6 @@ USER $USER
 # Set required environment variables
 ENV OS fedora
 ENV OS_VER 25
-ENV START_SSH_COMMAND /usr/sbin/sshd
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 

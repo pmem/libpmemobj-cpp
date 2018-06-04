@@ -81,6 +81,16 @@ function(execute_with_output out cmd)
     endif()
 endfunction()
 
+# Generic command executor which handles failures but ignores output.
+function(execute_ignore_output cmd)
+	execute_process(COMMAND ${cmd} ${ARGN}
+		OUTPUT_QUIET
+		RESULT_VARIABLE res)
+	if(res)
+	    message(FATAL_ERROR "${cmd} ${ARGN} > ${out} failed: ${res}")
+	endif()
+endfunction()
+
 # Executes command expecting it to fail.
 function(execute_expect_failure cmd)
     execute_process(COMMAND ${cmd} ${ARGN}

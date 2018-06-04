@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,15 +34,14 @@
  * panaconda.hpp -- example usage of libpmemobj C++ bindings
  */
 
-#ifndef PANACONDA_HPP
-#define PANACONDA_HPP
+#ifndef OBJCPP_EXAMPLES_PANACONDA_HPP
+#define OBJCPP_EXAMPLES_PANACONDA_HPP
 
 #include <libpmemobj++/make_persistent_array.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-
-#include "list.hpp"
+#include <objcpp_examples_list.hpp>
 
 class board_element;
 
@@ -234,4 +233,4 @@ private:
 	int parse_conf_create_dynamic_layout(void);
 };
 
-#endif /* PANACONDA_HPP */
+#endif /* OBJCPP_EXAMPLES_PANACONDA_HPP */

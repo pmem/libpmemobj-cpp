@@ -34,7 +34,6 @@
  * pman.cpp -- example usage of libpmemobj C++ bindings
  */
 
-#include "list.hpp"
 #include <fstream>
 #include <iostream>
 #include <libpmemobj++/make_persistent_array.hpp>
@@ -45,6 +44,7 @@
 #else
 #include <ncurses.h>
 #endif
+#include <objcpp_examples_list.hpp>
 
 #define LAYOUT_NAME "pman"
 #define SIZE 40

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GAMECONSTANTS_H_
-#define GAMECONSTANTS_H_
+#ifndef OBJCPP_EXAMPLES_PMPONG_GAMECONSTANTS_HPP
+#define OBJCPP_EXAMPLES_PMPONG_GAMECONSTANTS_HPP
 
 #include <SFML/Graphics.hpp>
 #include <fstream>

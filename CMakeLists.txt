@@ -94,6 +94,15 @@ function(join SEP OUT VALUES)
 	set(${OUT} "${JOIN_TMP}" PARENT_SCOPE)
 endfunction()
 
+# prepends prefix to list of strings
+function(prepend var prefix)
+	set(listVar "")
+	foreach(f ${ARGN})
+		list(APPEND listVar "${prefix}/${f}")
+	endforeach(f)
+	set(${var} "${listVar}" PARENT_SCOPE)
+endfunction()
+
 # Checks whether flag is supported by current C++ compiler and appends
 # it to the relevant cmake variable.
 # 1st argument is a flag
@@ -264,6 +273,9 @@ endif(DEVELOPER_MODE)
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")
 
+install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
+	FILES_MATCHING PATTERN "*.*pp")
+
 configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
@@ -343,4 +355,8 @@ if(BUILD_DOC)
 	add_subdirectory(doc)
 endif()
 
-#XXX: examples
+if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
+	add_subdirectory(examples)
+elseif(BUILD_EXAMPLES)
+	message(WARNING "Skipping build of examples because of compiler issue")
+endif()

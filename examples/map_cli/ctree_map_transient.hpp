@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,12 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXAMPLES_CTREE_MAP_VOLATILE_HPP
-#define EXAMPLES_CTREE_MAP_VOLATILE_HPP
+#ifndef OBJCPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
+#define OBJCPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
+
 #include <cstdint>
-#include <ex_common.h>
 #include <functional>
 #include <stdlib.h>
+#include <objcpp_examples_common.hpp>
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -411,4 +412,4 @@ private:
 
 } /* namespace examples */
 
-#endif /* EXAMPLES_CTREE_MAP_VOLATILE_HPP */
+#endif /* OBJCPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP */

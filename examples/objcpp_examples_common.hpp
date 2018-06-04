@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018, Intel Corporation
+ * Copyright 2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +30,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OBJCPP_EXAMPLES_PMPONG_VIEW_HPP
-#define OBJCPP_EXAMPLES_PMPONG_VIEW_HPP
+#ifndef OBJCPP_EXAMPLES_COMMON_HPP
+#define OBJCPP_EXAMPLES_COMMON_HPP
 
-#include "GameConstants.hpp"
-#include "PongGameStatus.hpp"
-#include <SFML/Graphics.hpp>
+#include <stdint.h>
 
-class View {
-public:
-	virtual ~View(){};
-	virtual void prepareView(PongGameStatus &gameStatus) = 0;
-	virtual void displayView(sf::RenderWindow *gameWindow) = 0;
-};
+#ifndef _WIN32
 
-#endif /* OBJCPP_EXAMPLES_PMPONG_VIEW_HPP */
+#include <unistd.h>
+
+#define CREATE_MODE_RW (S_IWUSR | S_IRUSR)
+
+/*
+ * file_exists -- checks if file exists
+ */
+static inline int
+file_exists(char const *file)
+{
+	return access(file, F_OK);
+}
+
+/*
+ * find_last_set_64 -- returns last set bit position or -1 if set bit not found
+ */
+static inline int
+find_last_set_64(uint64_t val)
+{
+	return 64 - __builtin_clzll(val) - 1;
+}
+
+#else
+
+#include <windows.h>
+
+#define CREATE_MODE_RW (S_IWRITE | S_IREAD)
+
+/*
+ * file_exists -- checks if file exists
+ */
+static inline int
+file_exists(char const *file)
+{
+	return _access(file, 0);
+}
+
+/*
+ * find_last_set_64 -- returns last set bit position or -1 if set bit not found
+ */
+static inline int
+find_last_set_64(uint64_t val)
+{
+	DWORD lz = 0;
+
+	if (BitScanReverse64(&lz, val))
+		return (int)lz;
+	else
+		return -1;
+}
+
+#endif
+
+#endif /* OBJCPP_EXAMPLES_COMMON_HPP */

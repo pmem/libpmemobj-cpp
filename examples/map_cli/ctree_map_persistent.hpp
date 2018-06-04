@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EXAMPLES_CTREE_MAP_PERSISTENT_HPP
-#define EXAMPLES_CTREE_MAP_PERSISTENT_HPP
+#ifndef OBJCPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
+#define OBJCPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
+
 #include <cstdint>
-#include <ex_common.h>
 #include <functional>
 #include <stdlib.h>
 
@@ -44,6 +44,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj++/utils.hpp>
+#include <objcpp_examples_common.hpp>
 
 #define BIT_IS_SET(n, i) (!!((n) & (1ULL << (i))))
 
@@ -442,4 +443,4 @@ private:
 
 } /* namespace examples */
 
-#endif /* EXAMPLES_CTREE_MAP_PERSISTENT_HPP */
+#endif /* OBJCPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP */

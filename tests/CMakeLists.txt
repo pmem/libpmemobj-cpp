@@ -126,7 +126,24 @@ else()
 endif()
 
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
-	# XXX: Ex libpmemobj cpp
+	if(PKG_CONFIG_FOUND)
+		pkg_check_modules(CURSES QUIET ncurses)
+	else()
+		set(CURSES_NEED_NCURSES TRUE)
+		find_package(Curses QUIET)
+	endif()
+
+	add_executable(ex-queue ../examples/queue/queue.cpp)
+	target_include_directories(ex-queue PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../examples)
+	target_link_libraries(ex-queue ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+	if(CURSES_FOUND AND NOT WIN32)
+		add_executable(ex-pman ../examples/pman/pman.cpp)
+		target_include_directories(ex-pman PUBLIC ${CURSES_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../examples)
+		target_link_libraries(ex-pman ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})
+	else()
+		message(WARNING "ncurses not found - pman test won't be build")
+	endif()
 else()
 	message(WARNING "Skipping examples tests because of compiler issue")
 endif()
@@ -248,6 +265,9 @@ add_test_generic(cond_var_posix pmemcheck)
 
 add_test_generic(deque none)
 add_test_generic(deque pmemcheck)
+
+add_test_generic(ex-queue none)
+add_test_generic(ex-pman none)
 
 add_test_generic(list none)
 add_test_generic(list pmemcheck)

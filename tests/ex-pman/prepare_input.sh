@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2017, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,32 +29,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+set -e
 
-#
-# examples/libpmemobj/panaconda/Makefile -- build panaconda
-#
-TOP := $(dir $(lastword $(MAKEFILE_LIST)))../../../../
-include $(TOP)/src/common.inc
+# prepares input for ex-pman test
+# usage: ./prepare_input.sh input_file
 
-NCURSES := $(call check_package, ncurses)
-ifeq ($(NCURSES),y)
-PROGS = panaconda
-else
-$(info NOTE: Skipping panaconda because ncurses is missing \
--- see src/examples/libpmemobj/panaconda/README for details.)
-endif
-
-LIBS = -lpmemobj -lpmem -pthread
-ifeq ($(shell uname -s),FreeBSD)
-LIBS += -lc
-endif
-
-ifeq ($(NCURSES),y)
-LIBS += $(shell $(PKG_CONFIG) --libs ncurses)
-endif
-
-COMPILE_LANG = cpp
-include ../../Makefile.inc
-INCS += -I../
-
-panaconda: panaconda.o
+dd if=/dev/zero bs=64 count=1 2>>/dev/null >> $1
+echo -n slkiiijjbjjii >> $1
+dd if=/dev/zero bs=128 count=1 2>>/dev/null >> $1
+echo -n q >> $1

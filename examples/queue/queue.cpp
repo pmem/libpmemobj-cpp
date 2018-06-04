@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
  * Please see pmem.io blog posts for more details.
  */
 
-#include <ex_common.h>
 #include <iostream>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
@@ -44,6 +43,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <math.h>
+#include <objcpp_examples_common.hpp>
 #include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>

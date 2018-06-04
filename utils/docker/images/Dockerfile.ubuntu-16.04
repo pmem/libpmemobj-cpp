@@ -48,6 +48,7 @@ RUN apt-get update \
 	debhelper \
 	devscripts \
 	doxygen \
+	libncurses5-dev \
 	gcc \
 	gdb \
 	git \
@@ -55,6 +56,7 @@ RUN apt-get update \
 	libunwind8-dev \
 	libtext-diff-perl \
 	pkg-config \
+	# SFML-2.4 (not available in ubuntu 16.04)
 	sudo \
 	whois \
  && rm -rf /var/lib/apt/lists/*

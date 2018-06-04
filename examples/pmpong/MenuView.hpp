@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MENUVIEW_H_
-#define MENUVIEW_H_
+#ifndef OBJCPP_EXAMPLES_PMPONG_MENUVIEW_HPP
+#define OBJCPP_EXAMPLES_PMPONG_MENUVIEW_HPP
 #include "GameConstants.hpp"
 #include "PongGameStatus.hpp"
 #include "View.hpp"
@@ -51,4 +51,4 @@ private:
 	sf::Text menuItems[MENU_ITEMS];
 };
 
-#endif /* MENUVIEW_H_ */
+#endif /* OBJCPP_EXAMPLES_PMPONG_MENUVIEW_HPP */

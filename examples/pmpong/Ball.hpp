@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BALL_H_
-#define BALL_H_
+#ifndef OBJCPP_EXAMPLES_PMPONG_BALL_HPP
+#define OBJCPP_EXAMPLES_PMPONG_BALL_HPP
 
 #include "GameConstants.hpp"
 #include <SFML/Graphics.hpp>
@@ -64,4 +64,4 @@ private:
 	pmem::obj::persistent_ptr<sf::Vector2f> velocity;
 };
 
-#endif /* BALL_H_ */
+#endif /* OBJCPP_EXAMPLES_PMPONG_BALL_HPP */

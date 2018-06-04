@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PADDLE_H_
-#define PADDLE_H_
+#ifndef OBJCPP_EXAMPLES_PMPONG_PADDLE_HPP
+#define OBJCPP_EXAMPLES_PMPONG_PADDLE_HPP
 #include "Ball.hpp"
 #include "GameConstants.hpp"
 #include <SFML/Graphics.hpp>
@@ -69,4 +69,4 @@ private:
 	void setX(int xArg);
 };
 
-#endif /* PADDLE_H_ */
+#endif /* OBJCPP_EXAMPLES_PMPONG_PADDLE_HPP */

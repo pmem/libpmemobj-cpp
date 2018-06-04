@@ -52,9 +52,11 @@ RUN dnf update -y \
 	libunwind-devel \
 	make \
 	man \
+	ncurses-devel \
 	passwd \
 	perl-Text-Diff \
 	rpm-build \
+	SFML-devel \
 	sudo \
 	tar \
 	which \

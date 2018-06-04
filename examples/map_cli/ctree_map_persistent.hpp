@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,8 @@
 
 #ifndef EXAMPLES_CTREE_MAP_PERSISTENT_HPP
 #define EXAMPLES_CTREE_MAP_PERSISTENT_HPP
+#include <common.hpp>
 #include <cstdint>
-#include <ex_common.h>
 #include <functional>
 #include <stdlib.h>
 

@@ -48,6 +48,7 @@ RUN apt-get update \
 	debhelper \
 	devscripts \
 	doxygen \
+	libncurses5-dev \
 	gcc \
 	gdb \
 	git \

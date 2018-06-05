@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+version=@VERSION@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: libpmobj-cpp
+Description: libpmobj-cpp - c++ bindings for libpmemobj library
+Version: @VERSION@
+URL: http://github.com/pmem/libpmemobj-cpp
+Requires.private: libpmemobj
+Cflags: -I${includedir}

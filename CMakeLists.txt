@@ -32,6 +32,11 @@
 cmake_minimum_required(VERSION 3.3)
 project(libpmemobj-cpp C CXX)
 
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 4)
+set(VERSION_PATCH 0)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 include(FindThreads)
@@ -263,6 +268,13 @@ endif(DEVELOPER_MODE)
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libpmemobj-cpp.pc.in
+		${CMAKE_CURRENT_BINARY_DIR}/libpmemobj-cpp.pc @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj-cpp.pc
+	CONFIGURATIONS Relase Debug
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"

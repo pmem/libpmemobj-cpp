@@ -64,10 +64,31 @@ fi
 
 chmod -R a+w $HOST_WORKDIR
 
+if [[ "$TRAVIS_EVENT_TYPE" == "cron" || "$TRAVIS_BRANCH" == "coverity_scan" ]]; then
+	if [[ $TYPE != coverity ]]; then
+		echo "Skipping non-Coverity job for cron/Coverity build"
+		exit 0
+	fi
+else
+	if [[ $TYPE = "coverity" ]]; then
+		echo "Skipping Coverity job for non cron/Coverity build"
+		exit 0
+	fi
+fi
+
 imageName=${DOCKERHUB_REPO}:${OS}-${OS_VER}
 containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
-command="./run-build.sh"
+if [[ "$command" == "" ]]; then
+	case $TYPE in
+		normal)
+			command="./run-build.sh";
+			;;
+		coverity)
+			command="./run-coverity.sh";
+			;;
+	esac
+fi
 
 if [ -n "$DNS_SERVER" ]; then DNS_SETTING=" --dns=$DNS_SERVER "; fi
 
@@ -89,6 +110,11 @@ docker run --privileged=true --name=$containerName -ti \
 	--env LIBCPP_INCDIR=$LIBCPP_INCDIR \
 	--env WORKDIR=$WORKDIR \
 	--env SCRIPTSDIR=$SCRIPTSDIR \
+	--env TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG \
+	--env TRAVIS_BRANCH=$TRAVIS_BRANCH \
+	--env TRAVIS_EVENT_TYPE=$TRAVIS_EVENT_TYPE \
+	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
+	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
 	--env CLANG_FORMAT=clang-format-3.8 \
 	-v $HOST_WORKDIR:$WORKDIR \
 	-v /etc/localtime:/etc/localtime \

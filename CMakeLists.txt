@@ -261,6 +261,11 @@ if(DEVELOPER_MODE)
 	add_dependencies(checkers check-license)
 endif(DEVELOPER_MODE)
 
+add_cppstyle("include" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/*.hpp)
+add_cppstyle("include-detail" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/detail/*.hpp)
+add_check_whitespace("include" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/*.hpp)
+add_check_whitespace("include-detail" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/detail/*.hpp)
+
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")
 

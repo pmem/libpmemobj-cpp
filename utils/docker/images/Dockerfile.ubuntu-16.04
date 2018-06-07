@@ -56,6 +56,7 @@ RUN apt-get update \
 	libtext-diff-perl \
 	pkg-config \
 	sudo \
+	wget \
 	whois \
  && rm -rf /var/lib/apt/lists/*
 
@@ -80,5 +81,5 @@ USER $USER
 # Set required environment variables
 ENV OS ubuntu
 ENV OS_VER 16.04
-ENV PACKAGE_MANAGER dpkg
+ENV PACKAGE_MANAGER deb
 ENV NOTTY 1

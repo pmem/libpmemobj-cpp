@@ -57,6 +57,7 @@ RUN dnf update -y \
 	rpm-build \
 	sudo \
 	tar \
+	wget \
 	which \
  && dnf clean all
 

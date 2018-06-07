@@ -12,8 +12,9 @@ env:
     - LIBCPP_LIBDIR=/usr/local/libcxx/lib
     - LIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1
   matrix:
-    - OS=ubuntu OS_VER=16.04 PUSH_IMAGE=1
-    - OS=fedora OS_VER=25 PUSH_IMAGE=1
+    - TYPE=normal OS=ubuntu OS_VER=16.04 PUSH_IMAGE=1
+    - TYPE=normal OS=fedora OS_VER=25 PUSH_IMAGE=1
+    - TYPE=coverity OS=ubuntu OS_VER=16.04
 
 before_install:
   - echo $TRAVIS_COMMIT_RANGE

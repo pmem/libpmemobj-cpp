@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2016-2017, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,25 +31,28 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# install-pmdk.sh - installs libpmem & libpmemobj
+# run-build-package.sh - is called inside a Docker container; builds package.
 #
 
 set -e
 
-mkdir pkgs
-cd pkgs
+cd $WORKDIR
 
-if [ "$1" = "dpkg" ]; then
-	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-dpkgs.tar.gz
-	tar -xzf pmdk-1.4-dpkgs.tar.gz
-	sudo dpkg -i libpmem_*.deb libpmem-dev_*.deb
-	sudo dpkg -i libpmemobj_*.deb libpmemobj-dev_*.deb
-elif [ "$1" = "rpm" ]; then
-	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-rpms.tar.gz
-	tar -xzf pmdk-1.4-rpms.tar.gz
-	sudo rpm -i x86_64/libpmem-*.rpm
-	sudo rpm -i x86_64/libpmemobj-*.rpm
+mkdir build
+cd build
+
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+		-DCPACK_GENERATOR=$PACKAGE_MANAGER
+
+make -j2 package
+
+if [ $PACKAGE_MANAGER = "deb" ]; then
+      echo $USERPASS | sudo -S dpkg -i libpmemobj-cpp*.deb
+elif [ $PACKAGE_MANAGER = "rpm" ]; then
+      echo $USERPASS | sudo -S rpm -i libpmemobj-cpp*.rpm
 fi
 
+#XXX: verify installed package - try to compile some program/example
+
 cd ..
-rm -r pkgs
+rm -rf build

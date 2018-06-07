@@ -87,6 +87,9 @@ if [[ "$command" == "" ]]; then
 		coverity)
 			command="./run-coverity.sh";
 			;;
+		package)
+			command="./run-build-package.sh";
+			;;
 	esac
 fi
 

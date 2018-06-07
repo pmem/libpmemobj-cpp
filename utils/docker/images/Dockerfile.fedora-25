@@ -59,6 +59,7 @@ RUN dnf update -y \
 	SFML-devel \
 	sudo \
 	tar \
+	wget \
 	which \
  && dnf clean all
 

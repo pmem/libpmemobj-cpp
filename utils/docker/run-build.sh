@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2017, Intel Corporation
+# Copyright 2016-2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -110,5 +110,24 @@ make install
 
 cd ..
 rm -r build
+
+mkdir build
+cd build
+
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+		-DCPACK_GENERATOR=$PACKAGE_MANAGER
+
+make -j2 package
+
+if [ $PACKAGE_MANAGER = "deb" ]; then
+      echo $USERPASS | sudo -S dpkg -i libpmemobj++*.deb
+elif [ $PACKAGE_MANAGER = "rpm" ]; then
+      echo $USERPASS | sudo -S rpm -i libpmemobj++*.rpm
+fi
+
+#XXX: verify installed package - try to compile some program/example
+
+cd ..
+rm -rf build
 
 rm -r $INSTALL_DIR

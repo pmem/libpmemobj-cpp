@@ -36,21 +36,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #ifndef _WIN32
-typedef struct stat os_stat_t;
+#define os_stat_t struct stat
 #define os_stat stat
 #else
-typedef struct _stat64 os_stat_t;
+#define os_stat_t struct _stat64
 #define os_stat _stat64
-#endif
-
-#ifdef _WIN32
-#include <windows.h>
-#define S_IRUSR S_IREAD
-#define S_IWUSR S_IWRITE
-#define S_IRGRP S_IRUSR
-#define S_IWGRP S_IWUSR
 #endif
 
 template <typename... Args>
@@ -67,6 +61,32 @@ static inline void UT_FATAL(Args... args)
 	fprintf(stderr, "\n");
 	abort();
 }
+
+#ifdef _WIN32
+#include "unittest_windows.hpp"
+#endif
+
+/*
+ * ut_stat -- stat that never returns -1
+ */
+int
+ut_stat(const char *file, int line, const char *func, const char *path,
+	os_stat_t *st)
+{
+	int ret = os_stat(path, st);
+
+	if (ret < 0)
+		UT_FATAL("%s:%d %s - !stat: %s", file, line, func, path);
+
+#ifdef _WIN32
+	/* clear unused bits to avoid confusion */
+	st->st_mode &= 0600;
+#endif
+
+	return ret;
+}
+
+#define STAT(path, st) ut_stat(__FILE__, __LINE__, __func__, path, st)
 
 /* assert a condition is true at runtime */
 #define UT_ASSERT(cnd)                                                         \

@@ -116,7 +116,9 @@ build_test(shared_mutex_posix shared_mutex_posix/shared_mutex_posix.cpp)
 build_test(transaction transaction/transaction.cpp)
 build_test(ptr_arith ptr_arith/ptr_arith.cpp)
 
-#build_test(pool_win pool_win/pool_win.cpp) XXX: add toUTF8
+if(WIN32)
+	build_test(pool_win pool_win/pool_win.cpp)
+endif()
 #build_test(v v/v.cpp) XXX: fix compile error
 
 if(NO_CHRONO_BUG)
@@ -288,6 +290,11 @@ add_test_generic(pool none 0)
 add_test_generic(pool none 1)
 add_test_generic(pool none 2)
 add_test_generic(pool none 3)
+
+add_test_generic(pool_win none 0)
+add_test_generic(pool_win none 1)
+add_test_generic(pool_win none 2)
+add_test_generic(pool_win none 3)
 
 add_test_generic(pool_primitives none)
 add_test_generic(pool_primitives pmemcheck)

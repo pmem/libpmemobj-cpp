@@ -91,8 +91,10 @@ function(build_test name srcs)
 		return()
 	endif()
 
-	add_cppstyle(tests-${name} ${CMAKE_CURRENT_SOURCE_DIR}/${srcs})
-	add_check_whitespace(tests-${name} ${CMAKE_CURRENT_SOURCE_DIR}/${srcs})
+	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
+
+	add_cppstyle(tests-${name} ${srcs})
+	add_check_whitespace(tests-${name} ${srcs})
 
 	add_executable(${name} ${srcs})
 	target_link_libraries(${name} ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

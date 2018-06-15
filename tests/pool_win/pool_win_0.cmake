@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,26 +28,15 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# src/test/obj_cpp_pool_win/TEST1 -- unit test for pmem::obj::pool
-#
 
-# standard unit test setup
-. ..\unittest\unittest.ps1
+include(${SRC_DIR}/../helpers.cmake)
 
-require_test_type medium
+setup()
 
-setup
+execute_with_output("out0.log" ${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
 
-#
-# TEST1
-#
-expect_normal_exit $Env:EXE_DIR\obj_cpp_pool_win$Env:EXESUFFIX `
-    c $DIR\testfile "test" 20 0600
+check_file_exists(${DIR}/testfile)
 
-expect_normal_exit $Env:EXE_DIR\obj_cpp_pool_win$Env:EXESUFFIX `
-    o $DIR\testfile "test"
+match(out0.log ${SRC_DIR}/out0.log.match)
 
-check
-
-pass
+cleanup()

@@ -69,8 +69,7 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 	}
 
 	os_stat_t stbuf;
-	auto ret = os_stat(path, &stbuf);
-	UT_ASSERTne(ret, -1);
+	STAT(path, &stbuf);
 
 	UT_OUT("%s: file size %zu mode 0%o", path, stbuf.st_size,
 	       stbuf.st_mode & 0777);

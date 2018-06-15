@@ -30,12 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "ctree_map_persistent.hpp"
 #include "ctree_map_transient.hpp"
-#include <ctree_map_persistent.hpp>
-#include <ex_common.h>
 #include <iostream>
 #include <libpmemobj++/pool.hpp>
 #include <memory>
+#include <objcpp_examples_common.hpp>
 #include <string.h>
 
 namespace

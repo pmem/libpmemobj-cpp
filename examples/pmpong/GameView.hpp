@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GAMEVIEW_H_
-#define GAMEVIEW_H_
+#ifndef OBJCPP_EXAMPLES_PMPONG_GAMEVIEW_HPP
+#define OBJCPP_EXAMPLES_PMPONG_GAMEVIEW_HPP
+
 #include "GameConstants.hpp"
 #include "PongGameStatus.hpp"
 #include "View.hpp"
@@ -61,4 +62,4 @@ private:
 	sf::RectangleShape rightPaddleShape;
 };
 
-#endif /* GAMEVIEW_H_ */
+#endif /* OBJCPP_EXAMPLES_PMPONG_GAMEVIEW_HPP */

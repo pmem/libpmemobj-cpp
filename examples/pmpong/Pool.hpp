@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POOL_H_
-#define POOL_H_
+#ifndef OBJCPP_EXAMPLES_PMPONG_POOL_HPP
+#define OBJCPP_EXAMPLES_PMPONG_POOL_HPP
+
 #include "GameController.hpp"
 #include <SFML/Graphics.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -62,4 +63,4 @@ private:
 	Pool &operator=(const Pool &);
 };
 
-#endif /* POOL_H_ */
+#endif /* OBJCPP_EXAMPLES_PMPONG_POOL_HPP */

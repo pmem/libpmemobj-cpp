@@ -34,6 +34,9 @@
  * list.hpp -- Implementation of list
  */
 
+#ifndef OBJCPP_EXAMPLES_LIST_HPP
+#define OBJCPP_EXAMPLES_LIST_HPP
+
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -181,3 +184,5 @@ private:
 	pmem::obj::persistent_ptr<list_entry> tail;
 };
 };
+
+#endif /* OBJCPP_EXAMPLES_LIST_HPP */

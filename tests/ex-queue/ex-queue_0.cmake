@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,24 +28,19 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
 
-#
-# src/test/ex_libpmemobj_cpp/Makefile -- build ex_libpmemobj_cpp unittest
-#
+include(${SRC_DIR}/../helpers.cmake)
 
-all: $(EXAMPLES)
-	$(MAKE) -C $(EX_LIBPMEMOBJCPP)
+setup()
 
-include ../Makefile.inc
+execute(${TEST_EXECUTABLE} ${DIR}/testfile push 1)
+execute(${TEST_EXECUTABLE} ${DIR}/testfile push 2)
+execute(${TEST_EXECUTABLE} ${DIR}/testfile push 3)
+execute_ignore_output(${TEST_EXECUTABLE} ${DIR}/testfile pop)
+execute_with_output("out0.log" ${TEST_EXECUTABLE} ${DIR}/testfile show)
 
-EXAMPLES=$(EX_LIBPMEMOBJCPP)/queue/queue
+check_file_exists(${DIR}/testfile)
 
-NCURSES := $(call check_package, ncurses)
+match(out0.log ${SRC_DIR}/out0.log.match)
 
-ifeq ($(NCURSES),y)
-EXAMPLES += $(EX_LIBPMEMOBJCPP)/pman/pman
-else
-$(info NOTE: Skipping pman test because ncurses is missing \
--- see src/examples/libpmemobj++/pman/README for details.)
-endif
+cleanup()

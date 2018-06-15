@@ -61,6 +61,8 @@ find_last_set_64(uint64_t val)
 
 #else
 
+#include <corecrt_io.h>
+#include <process.h>
 #include <windows.h>
 
 #define CREATE_MODE_RW (S_IWRITE | S_IREAD)

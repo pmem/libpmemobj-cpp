@@ -45,6 +45,14 @@ typedef struct _stat64 os_stat_t;
 #define os_stat _stat64
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#define S_IRUSR S_IREAD
+#define S_IWUSR S_IWRITE
+#define S_IRGRP S_IRUSR
+#define S_IWGRP S_IWUSR
+#endif
+
 template <typename... Args>
 static inline void UT_OUT(Args... args)
 {

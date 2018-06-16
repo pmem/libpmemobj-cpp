@@ -85,12 +85,13 @@ set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 add_cppstyle("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 add_check_whitespace("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 
-function(build_test name srcs)
+function(build_test name)
 	# skip posix tests
 	if(${name} MATCHES "posix$" AND WIN32)
 		return()
 	endif()
 
+	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 
 	add_cppstyle(tests-${name} ${srcs})

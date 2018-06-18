@@ -57,40 +57,46 @@ endif()
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
 
-set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+if(NOT WIN32)
+	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+	set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 
-# Check for issues with older clang compilers which assert on delete persistent<[][]>.
-set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${PMEMOBJ_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
-CHECK_CXX_SOURCE_COMPILES(
-	"#include <libpmemobj++/make_persistent_array.hpp>
-	using namespace pmem::obj;
-	int main() {
-		delete_persistent<int[][3]>(make_persistent<int[][3]>(2), 2);
-		return 0;
-	}"
-	NO_CLANG_TEMPLATE_BUG)
+	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
+	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${PMEMOBJ_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
+	CHECK_CXX_SOURCE_COMPILES(
+		"#include <libpmemobj++/make_persistent_array.hpp>
+		using namespace pmem::obj;
+		int main() {
+			delete_persistent<int[][3]>(make_persistent<int[][3]>(2), 2);
+			return 0;
+		}"
+		NO_CLANG_TEMPLATE_BUG)
 
-# This is a workaround for older incompatible versions of libstdc++ and clang.
-# Please see https://llvm.org/bugs/show_bug.cgi?id=15517 for more info.
-set(CMAKE_REQUIRED_FLAGS "--std=c++11 -include future")
-CHECK_CXX_SOURCE_COMPILES(
-	"int main() { return 0; }"
-	NO_CHRONO_BUG)
+	# This is a workaround for older incompatible versions of libstdc++ and clang.
+	# Please see https://llvm.org/bugs/show_bug.cgi?id=15517 for more info.
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -include future")
+	CHECK_CXX_SOURCE_COMPILES(
+		"int main() { return 0; }"
+		NO_CHRONO_BUG)
 
-set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
-set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
+	set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+	set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
+else()
+	set(NO_CLANG_TEMPLATE_BUG TRUE)
+	set(NO_CHRONO_BUG TRUE)
+endif()
 
 add_cppstyle("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 add_check_whitespace("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 
-function(build_test name srcs)
+function(build_test name)
 	# skip posix tests
 	if(${name} MATCHES "posix$" AND WIN32)
 		return()
 	endif()
 
+	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 
 	add_cppstyle(tests-${name} ${srcs})
@@ -113,7 +119,9 @@ build_test(shared_mutex_posix shared_mutex_posix/shared_mutex_posix.cpp)
 build_test(transaction transaction/transaction.cpp)
 build_test(ptr_arith ptr_arith/ptr_arith.cpp)
 
-#build_test(pool_win pool_win/pool_win.cpp) XXX: add toUTF8
+if(WIN32)
+	build_test(pool_win pool_win/pool_win.cpp)
+endif()
 #build_test(v v/v.cpp) XXX: fix compile error
 
 if(NO_CHRONO_BUG)
@@ -189,21 +197,21 @@ function(add_testcase name tracer testcase)
 
 	if ((NOT VALGRIND_FOUND) AND ${tracer} IN_LIST vg_tracers)
 		add_test(NAME ${name}_${testcase}_${tracer}_SKIPPED_BECAUSE_OF_MISSING_VALGRIND
-				COMMAND true)
+				COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/true.cmake)
 		return()
 	endif()
 
 	if(${tracer} STREQUAL pmemcheck)
 		if (VALGRIND_PMEMCHECK_NOT_FOUND)
 			add_test(NAME ${name}_${testcase}_${tracer}_SKIPPED_BECAUSE_OF_MISSING_PMEMCHECK
-				COMMAND true)
+				COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/true.cmake)
 			return()
 		endif()
 	endif()
 
 	if (NOT TARGET ${name}) # if test was not build (because of compiler issue)
 		add_test(NAME ${name}_${testcase}_${tracer}_SKIPPED_BECAUSE_OF_COMPILER_ISSUE
-				COMMAND true)
+				COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/true.cmake)
 		return()
 	endif()
 
@@ -307,6 +315,11 @@ add_test_generic(pool none 0)
 add_test_generic(pool none 1)
 add_test_generic(pool none 2)
 add_test_generic(pool none 3)
+
+add_test_generic(pool_win none 0)
+add_test_generic(pool_win none 1)
+add_test_generic(pool_win none 2)
+add_test_generic(pool_win none 3)
 
 add_test_generic(pool_primitives none)
 add_test_generic(pool_primitives pmemcheck)

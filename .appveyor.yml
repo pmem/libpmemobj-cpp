@@ -1,0 +1,33 @@
+version: 1.4.{build}
+os: Visual Studio 2015
+platform: x64
+
+environment:
+  VCPKG_DEFAULT_TRIPLET: x64-windows
+  GENERATOR: "Visual Studio 14 2015 Win64"
+
+install:
+- vcpkg install pmdk:x64-windows
+- vcpkg install sfml:x64-windows
+- vcpkg integrate install
+
+cache: c:\tools\vcpkg\installed
+
+configuration:
+- Debug
+- Release
+
+matrix:
+  fast_finish: true
+
+before_build:
+- cmake . -Bbuild -G "%GENERATOR%"
+        -DCMAKE_MODULE_PATH=c:/projects/libpmemobj-cpp
+        -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+build_script:
+- msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%
+
+test_script:
+- cd build
+- ctest -C %CONFIGURATION% --output-on-failure

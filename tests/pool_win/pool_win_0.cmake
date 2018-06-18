@@ -1,4 +1,5 @@
-# Copyright 2017, Intel Corporation
+#
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,22 +28,15 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# buildScript.ps1 -- script for downloading and copying SFML files
-#
-$url = "https://www.sfml-dev.org/files/SFML-2.4.2-windows-vc14-64-bit.zip"
-$Filename = [System.IO.Path]::GetFileName($url)
-$path = "$env:TEMP\$Filename"
-$webClient = new-object System.Net.WebClient
-$webClient.DownloadFile($url,$path)
-$SFMLFileExists = Test-Path $env:TEMP\SFML-2.4.2
-if ($SFMLFileExists -eq $False) {
-  $shell = New-Object -ComObject shell.application
-  $zip = $shell.NameSpace($path)
-  foreach ($item in $zip.items()) {
-    $shell.Namespace($env:TEMP).CopyHere($item)
-  }
-}
-Copy-Item $env:TEMP\SFML-2.4.2\bin\* -Destination $env:TargetDir
-Copy-Item $env:TEMP\SFML-2.4.2\include -Destination $env:TargetDir -recurse
-Copy-Item $env:TEMP\SFML-2.4.2\lib -Destination $env:TargetDir -recurse
+
+include(${SRC_DIR}/../helpers.cmake)
+
+setup()
+
+execute_with_output("out0.log" ${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
+
+check_file_exists(${DIR}/testfile)
+
+match(out0.log ${SRC_DIR}/out0.log.match)
+
+cleanup()

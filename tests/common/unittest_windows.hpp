@@ -30,66 +30,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OBJCPP_EXAMPLES_COMMON_HPP
-#define OBJCPP_EXAMPLES_COMMON_HPP
+#ifndef UNITTEST_WINDOWS_HPP
+#define UNITTEST_WINDOWS_HPP
 
-#include <stdint.h>
-
-#ifndef _WIN32
-
-#include <unistd.h>
-
-#define CREATE_MODE_RW (S_IWUSR | S_IRUSR)
-
-/*
- * file_exists -- checks if file exists
- */
-static inline int
-file_exists(char const *file)
-{
-	return access(file, F_OK);
-}
-
-/*
- * find_last_set_64 -- returns last set bit position or -1 if set bit not found
- */
-static inline int
-find_last_set_64(uint64_t val)
-{
-	return 64 - __builtin_clzll(val) - 1;
-}
-
-#else
-
-#include <corecrt_io.h>
-#include <process.h>
 #include <windows.h>
 
-#define CREATE_MODE_RW (S_IWRITE | S_IREAD)
+#define S_IRUSR S_IREAD
+#define S_IWUSR S_IWRITE
+#define S_IRGRP S_IRUSR
+#define S_IWGRP S_IWUSR
 
 /*
- * file_exists -- checks if file exists
+ * ut_toUTF8 -- convert WCS to UTF-8 string
  */
-static inline int
-file_exists(char const *file)
+char *
+ut_toUTF8(const wchar_t *wstr)
 {
-	return _access(file, 0);
+	int size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wstr, -1,
+				       nullptr, 0, nullptr, nullptr);
+	if (size == 0) {
+		UT_FATAL("!ut_toUTF8");
+	}
+
+	char *str = new char[size];
+
+	if (WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wstr, -1, str,
+				size, nullptr, nullptr) == 0) {
+		UT_FATAL("!ut_toUTF8");
+	}
+
+	return str;
 }
 
 /*
- * find_last_set_64 -- returns last set bit position or -1 if set bit not found
+ * ut_statw -- statw that never returns -1
  */
-static inline int
-find_last_set_64(uint64_t val)
+int
+ut_statw(const char *file, int line, const char *func, const wchar_t *path,
+	 os_stat_t *st)
 {
-	DWORD lz = 0;
+	int ret = _wstat64(path, st);
 
-	if (BitScanReverse64(&lz, val))
-		return (int)lz;
-	else
-		return -1;
+	if (ret < 0)
+		UT_FATAL("%s:%d %s - !stat: %S", file, line, func, path);
+
+	/* clear unused bits to avoid confusion */
+	st->st_mode &= 0600;
+
+	return ret;
 }
 
-#endif
+#define STATW(path, st) ut_statw(__FILE__, __LINE__, __func__, path, st)
 
-#endif /* OBJCPP_EXAMPLES_COMMON_HPP */
+#endif /* UNITTEST_WINDOWS_HPP */

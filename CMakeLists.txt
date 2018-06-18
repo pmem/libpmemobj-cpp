@@ -91,6 +91,8 @@ find_package(PkgConfig QUIET)
 
 include_directories(include)
 
+# Treat CMAKE_CXX_STANDARD as a requirement
+set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 11)
 
 function(join SEP OUT VALUES)
@@ -303,7 +305,7 @@ add_custom_target(uninstall
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(PMEMOBJ REQUIRED libpmemobj>=1.4)
 else()
-	find_package(PMEMOBJ REQUIRED)
+	find_package(PMEMOBJ REQUIRED 1.4)
 endif()
 
 if(PKG_CONFIG_FOUND)
@@ -336,24 +338,28 @@ if(NOT LIBUNWIND_FOUND)
 	message(WARNING "libunwind not found. Stack traces from tests will not be reliable")
 endif()
 
-set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+if(NOT WIN32)
+	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 
-# Check for issues with older gcc compilers which do not expand variadic template
-# variables in lambda expressions.
-set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
-CHECK_CXX_SOURCE_COMPILES(
-	"void print() {}
-	template<typename...Args, typename T>
-	void print(const T&, const Args &...arg) {
-		auto f = [&]{ print(arg...);};
-	}
-	int main() {
-		print(1, 2, 3);
-		return 0;
-	}"
-	NO_GCC_VARIADIC_TEMPLATE_BUG)
+	# Check for issues with older gcc compilers which do not expand variadic template
+	# variables in lambda expressions.
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
+	CHECK_CXX_SOURCE_COMPILES(
+		"void print() {}
+		template<typename...Args, typename T>
+		void print(const T&, const Args &...arg) {
+			auto f = [&]{ print(arg...);};
+		}
+		int main() {
+			print(1, 2, 3);
+			return 0;
+		}"
+		NO_GCC_VARIADIC_TEMPLATE_BUG)
 
-set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+	set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+else()
+	set(NO_GCC_VARIADIC_TEMPLATE_BUG TRUE)
+endif()
 
 if(BUILD_TESTS)
 	if(TEST_DIR)

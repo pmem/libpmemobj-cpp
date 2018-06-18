@@ -35,7 +35,8 @@ link_directories(${PMEMOBJ_LIBRARY_DIRS})
 add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
-function(add_example name srcs)
+function(add_example name)
+	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 	add_executable(example-${name} ${srcs})
 	add_cppstyle(examples-${name} ${srcs})
@@ -54,7 +55,9 @@ endif()
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(SFML QUIET sfml-all>=2.4)
 else()
-	find_package(SFML 2.4 QUIET all)
+	# SFML 2.5 has different cmake interface than <= 2.4 so previous versions are not supported
+	find_package(SFML 2.5 QUIET COMPONENTS graphics window system)
+	set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system)
 endif()
 
 add_example(queue queue/queue.cpp)
@@ -69,9 +72,10 @@ else()
 endif()
 
 if(SFML_FOUND)
+	# XXX: this can only be run in Release mode - in Debug SFML doesn't add all dependencies automatically
 	add_example(pmpong pmpong/Ball.cpp pmpong/GameController.cpp pmpong/GameOverView.cpp
-			    pmpong/GameView.cpp pmpong/MainGame.cpp pmpong/MenuView.cpp pmpong/Paddle.cpp
-			    pmpong/PongGameStatus.cpp pmpong/Pool.cpp)
+			pmpong/GameView.cpp pmpong/MainGame.cpp pmpong/MenuView.cpp pmpong/Paddle.cpp
+			pmpong/PongGameStatus.cpp pmpong/Pool.cpp)
 	target_include_directories(example-pmpong PUBLIC ${SFML_INCLUDE_DIR})
 	target_link_libraries(example-pmpong ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})
 

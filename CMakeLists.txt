@@ -32,6 +32,10 @@
 cmake_minimum_required(VERSION 3.3)
 project(libpmemobj-cpp C CXX)
 
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 4)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 include(FindThreads)
@@ -281,6 +285,13 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 	FILES_MATCHING PATTERN "*.*pp")
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/libpmemobj++.pc.in
+		${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.pc @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.pc
+	CONFIGURATIONS Release Debug
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
 configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
@@ -364,4 +375,60 @@ if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
 	add_subdirectory(examples)
 elseif(BUILD_EXAMPLES)
 	message(WARNING "Skipping build of examples because of compiler issue")
+endif()
+
+if(NOT "${CPACK_GENERATOR}" STREQUAL "")
+	string(TOUPPER "${CPACK_GENERATOR}" CPACK_GENERATOR)
+
+	if(NOT ("${CPACK_GENERATOR}" STREQUAL "DEB" OR
+		"${CPACK_GENERATOR}" STREQUAL "RPM"))
+		message(FATAL_ERROR "Wrong CPACK_GENERATOR value, valid generators are: DEB, RPM")
+	endif()
+
+	set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+	set(CMAKE_INSTALL_TMPDIR /tmp CACHE PATH "Output dir for tmp")
+	set(CPACK_COMPONENTS_ALL_IN_ONE)
+
+	# Filter out some of directories from %dir section, which are expected
+	# to exist in filesystem. Leaving them might lead to conflicts with other
+	# packages (for example with 'filesystem' package on fedora which specify
+	# /usr, /usr/local, etc.)
+	set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION
+		${CPACK_PACKAGING_INSTALL_PREFIX}
+		${CPACK_PACKAGING_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+		${CPACK_PACKAGING_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig
+		${CPACK_PACKAGING_INSTALL_PREFIX}/${CMAKE_INSTALL_INCDIR}
+		${CPACK_PACKAGING_INSTALL_PREFIX}/share
+		${CPACK_PACKAGING_INSTALL_PREFIX}/share/doc)
+
+	set(CPACK_PACKAGE_NAME "libpmemobj++")
+	set(CPACK_PACKAGE_VERSION ${VERSION})
+	set(CPACK_PACKAGE_VERSION_MAJOR ${VERSION_MAJOR})
+	set(CPACK_PACKAGE_VERSION_MINOR ${VERSION_MINOR})
+	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "c++ bindings to libpmemobj")
+	set(CPACK_PACKAGE_VENDOR "Intel")
+
+	set(CPACK_RPM_PACKAGE_NAME "libpmemobj++-devel")
+	set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
+	set(CPACK_RPM_PACKAGE_LICENSE "BSD")
+	set(CPACK_RPM_PACKAGE_ARCHITECTURE x86_64)
+	set(CPACK_RPM_PACKAGE_REQUIRES "libpmemobj-devel >= 1.4")
+	set(CPACK_RPM_CHANGELOG_FILE ${CMAKE_SOURCE_DIR}/ChangeLog)
+
+	set(CPACK_DEBIAN_PACKAGE_NAME "libpmemobj++-dev")
+	set(CPACK_DEBIAN_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION}-${CPACK_PACKAGE_RELEASE})
+	set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64)
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpmemobj-dev (>= 1.4)")
+	set(CPACK_DEBIAN_PACKAGE_MAINTAINER "marcin.slusarz@intel.com")
+
+	if("${CPACK_GENERATOR}" STREQUAL "RPM")
+		set(CPACK_PACKAGE_FILE_NAME
+			${CPACK_RPM_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}.${CPACK_RPM_PACKAGE_ARCHITECTURE})
+	elseif("${CPACK_GENERATOR}" STREQUAL "DEB")
+		set(CPACK_PACKAGE_FILE_NAME
+			${CPACK_DEBIAN_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE})
+	endif()
+
+	set(targetDestDir ${CMAKE_INSTALL_TMPDIR})
+	include(CPack)
 endif()

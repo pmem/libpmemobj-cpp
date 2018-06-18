@@ -58,6 +58,7 @@ RUN apt-get update \
 	pkg-config \
 	# SFML-2.4 (not available in ubuntu 16.04)
 	sudo \
+	wget \
 	whois \
  && rm -rf /var/lib/apt/lists/*
 
@@ -82,5 +83,5 @@ USER $USER
 # Set required environment variables
 ENV OS ubuntu
 ENV OS_VER 16.04
-ENV PACKAGE_MANAGER dpkg
+ENV PACKAGE_MANAGER deb
 ENV NOTTY 1

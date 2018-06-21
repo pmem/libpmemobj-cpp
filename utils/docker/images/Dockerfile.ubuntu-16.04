@@ -45,6 +45,7 @@ RUN apt-get update \
 	clang \
 	clang-format-3.8 \
 	cmake \
+	curl \
 	debhelper \
 	devscripts \
 	doxygen \

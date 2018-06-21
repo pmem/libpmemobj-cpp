@@ -51,6 +51,8 @@ option(BUILD_DOC "build documentation" ON)
 option(TRACE_TESTS
 	"more verbose test outputs" OFF)
 
+option(COVERAGE "run coverage test" OFF)
+
 set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test
 	CACHE STRING "working directory for tests")
 
@@ -168,6 +170,10 @@ if(USE_ASAN)
 endif()
 if(USE_UBSAN)
 	add_sanitizer_flag(undefined)
+endif()
+
+if(COVERAGE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
 add_executable(check_license EXCLUDE_FROM_ALL utils/check_license/check-license.c)

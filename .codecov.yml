@@ -1,0 +1,6 @@
+coverage:
+  ignore:
+    - utils/
+    - tests/
+    - doc/
+    - examples/

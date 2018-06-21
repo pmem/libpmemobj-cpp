@@ -90,6 +90,10 @@ if [[ "$command" == "" ]]; then
 	esac
 fi
 
+if [ "$COVERAGE" = "1" ]; then
+	docker_opts="${docker_opts} `bash <(curl -s https://codecov.io/env)`";
+fi
+
 if [ -n "$DNS_SERVER" ]; then DNS_SETTING=" --dns=$DNS_SERVER "; fi
 
 WORKDIR=/libpmemobj-cpp
@@ -103,6 +107,7 @@ echo Building ${OS}-${OS_VER}
 #  - working directory set (-w)
 docker run --privileged=true --name=$containerName -ti \
 	$DNS_SETTING \
+	${docker_opts} \
 	--env http_proxy=$http_proxy \
 	--env https_proxy=$https_proxy \
 	--env USE_LLVM_LIBCPP=$USE_LLVM_LIBCPP \
@@ -115,6 +120,7 @@ docker run --privileged=true --name=$containerName -ti \
 	--env TRAVIS_EVENT_TYPE=$TRAVIS_EVENT_TYPE \
 	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
+	--env COVERAGE=$COVERAGE \
 	--env CLANG_FORMAT=clang-format-3.8 \
 	-v $HOST_WORKDIR:$WORKDIR \
 	-v /etc/localtime:/etc/localtime \

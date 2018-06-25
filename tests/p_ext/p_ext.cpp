@@ -142,7 +142,8 @@ arithmetic_test(nvobj::pool_base &pop)
 		nvobj::transaction::exec_tx(pop, [&] {
 			/* addition */
 			r->foo_ptr->puchar += r->foo_ptr->puchar;
-			r->foo_ptr->puchar += r->foo_ptr->pint;
+			r->foo_ptr->puchar +=
+				static_cast<unsigned char>(r->foo_ptr->pint);
 			r->foo_ptr->puchar += 2;
 			UT_ASSERTeq(r->foo_ptr->puchar, 3);
 
@@ -171,7 +172,8 @@ arithmetic_test(nvobj::pool_base &pop)
 
 			/* multiplication */
 			r->foo_ptr->puchar *= r->foo_ptr->puchar;
-			r->foo_ptr->puchar *= r->foo_ptr->pint;
+			r->foo_ptr->puchar *=
+				static_cast<int>(r->foo_ptr->pint);
 			r->foo_ptr->puchar *=
 				static_cast<unsigned char>(r->foo_ptr->pllong);
 			UT_ASSERTeq(r->foo_ptr->puchar, 180);
@@ -272,7 +274,8 @@ bitwise_test(nvobj::pool_base &pop)
 			/* RSHIFT */
 			r->foo_ptr->puchar = 255;
 			r->foo_ptr->puchar >>= 1;
-			r->foo_ptr->puchar >>= r->foo_ptr->pllong;
+			r->foo_ptr->puchar >>=
+				static_cast<unsigned char>(r->foo_ptr->pllong);
 			r->foo_ptr->puchar = static_cast<unsigned char>(
 				r->foo_ptr->pllong >> 2);
 			r->foo_ptr->puchar = static_cast<unsigned char>(

@@ -33,8 +33,10 @@
 #ifndef LIBPMEMOBJ_CPP_UNITTEST_HPP
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
+#include <cstdarg>
 #include <cstdio>
-#include <cstdlib>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -47,18 +49,24 @@
 #define os_stat _stat64
 #endif
 
-template <typename... Args>
-static inline void UT_OUT(Args... args)
+static inline void
+UT_OUT(const char *format, ...)
 {
-	fprintf(stdout, args...);
-	fprintf(stdout, "\n");
+	va_list args_list;
+	va_start(args_list, format);
+	std::vprintf(format, args_list);
+	va_end(args_list);
+
+	printf("\n");
 }
 
-template <typename... Args>
-static inline void UT_FATAL(Args... args)
+static inline void
+UT_FATAL(const char *format, ...)
 {
-	fprintf(stderr, args...);
-	fprintf(stderr, "\n");
+	va_list args_list;
+	va_start(args_list, format);
+	UT_OUT(format, args_list);
+	va_end(args_list);
 	abort();
 }
 

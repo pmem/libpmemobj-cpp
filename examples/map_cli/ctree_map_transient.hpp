@@ -81,7 +81,7 @@ public:
 	 * @return 0 on success, negative values on error.
 	 */
 	int
-	insert(uint64_t key, value_type value)
+	insert(key_type key, value_type value)
 	{
 		auto dest_entry = root;
 		while (dest_entry->inode != nullptr) {

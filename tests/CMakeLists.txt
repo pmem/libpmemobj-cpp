@@ -122,7 +122,10 @@ build_test(ptr_arith ptr_arith/ptr_arith.cpp)
 if(WIN32)
 	build_test(pool_win pool_win/pool_win.cpp)
 endif()
-#build_test(v v/v.cpp) XXX: fix compile error
+
+if(PMEMVLT_PRESENT)
+	build_test(v v/v.cpp)
+endif()
 
 if(NO_CHRONO_BUG)
 	build_test(cond_var cond_var/cond_var.cpp)

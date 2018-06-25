@@ -36,20 +36,24 @@
 
 set -e
 
-mkdir pkgs
-cd pkgs
+git clone https://github.com/pmem/pmdk
+cd pmdk
+git checkout da5de60ae251fc0a51d1df9b3f6276ec5e257e1a
 
+sudo make -j2 install prefix=/opt/pmdk
+
+sudo mkdir /opt/pmdk-pkg
+
+# Download and save pmdk-1.4 packages
 if [ "$1" = "dpkg" ]; then
 	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-dpkgs.tar.gz
 	tar -xzf pmdk-1.4-dpkgs.tar.gz
-	sudo dpkg -i libpmem_*.deb libpmem-dev_*.deb
-	sudo dpkg -i libpmemobj_*.deb libpmemobj-dev_*.deb
+	sudo mv *.deb /opt/pmdk-pkg/
 elif [ "$1" = "rpm" ]; then
 	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-rpms.tar.gz
 	tar -xzf pmdk-1.4-rpms.tar.gz
-	sudo rpm -i x86_64/libpmem-*.rpm
-	sudo rpm -i x86_64/libpmemobj-*.rpm
+	sudo mv x86_64/*.rpm /opt/pmdk-pkg/
 fi
 
 cd ..
-rm -r pkgs
+rm -rf pmdk

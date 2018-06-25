@@ -40,7 +40,7 @@ cd $WORKDIR
 
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug
 
 export COVERITY_SCAN_PROJECT_NAME="$TRAVIS_REPO_SLUG"
 [[ "$TRAVIS_EVENT_TYPE" == "cron" ]] \

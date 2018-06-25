@@ -37,6 +37,23 @@
 
 set -e
 
+function cleanup() {
+	find . -name ".coverage" -exec rm {} \;
+	find . -name "coverage.xml" -exec rm {} \;
+	find . -name "*.gcov" -exec rm {} \;
+	find . -name "*.gcda" -exec rm {} \;
+}
+
+function test_command() {
+	if [ "$COVERAGE" = "1" ]; then
+		ctest --output-on-failure -E "_memcheck|_drd|_helgrind|_pmemcheck"
+		bash <(curl -s https://codecov.io/bash)
+		cleanup
+	else
+		ctest --output-on-failure
+	fi
+}
+
 cd $WORKDIR
 INSTALL_DIR=/tmp/libpmemobj-cpp
 
@@ -50,12 +67,13 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=1 \
 			-DLIBCPP_LIBDIR=$LIBCPP_LIBDIR \
 			-DLIBCPP_INCDIR=$LIBCPP_INCDIR
 
 make -j2
-ctest --output-on-failure
+test_command
 make install
 
 cd ..
@@ -69,10 +87,11 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0
 
 make -j2
-ctest --output-on-failure
+test_command
 make install
 
 cd ..
@@ -86,10 +105,11 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0
 
 make -j2
-ctest --output-on-failure
+test_command
 make install
 
 cd ..
@@ -102,10 +122,11 @@ CC=gcc CXX=g++ \
 cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0
 
 make -j2
-ctest --output-on-failure
+test_command
 make install
 
 cd ..

@@ -36,7 +36,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <memory>
 #include <objcpp_examples_common.hpp>
-#include <string.h>
+#include <string>
 
 namespace
 {
@@ -110,7 +110,8 @@ template <typename T>
 void
 insert(pool_base pop, T &map, char *argv[], int &argn)
 {
-	map->insert(atoll(argv[argn]), new value_t(atoll(argv[argn + 1])));
+	map->insert(std::stoull(argv[argn]),
+		    new value_t(std::stoll(argv[argn + 1])));
 	argn += 2;
 }
 
@@ -121,7 +122,7 @@ template <typename T>
 void
 remove(pool_base pop, T &map, char *argv[], int &argn)
 {
-	auto val = map->remove(atoll(argv[argn++]));
+	auto val = map->remove(std::stoull(argv[argn++]));
 	if (val) {
 		std::cout << *val << std::endl;
 		delete val;
@@ -138,7 +139,7 @@ void
 remove<persistent_ptr<pmap>>(pool_base pop, persistent_ptr<pmap> &map,
 			     char *argv[], int &argn)
 {
-	auto val = map->remove(atoll(argv[argn++]));
+	auto val = map->remove(std::stoul(argv[argn++]));
 	if (val) {
 		std::cout << *val << std::endl;
 		transaction::exec_tx(pop,
@@ -157,8 +158,9 @@ insert<persistent_ptr<pmap>>(pool_base pop, persistent_ptr<pmap> &map,
 			     char *argv[], int &argn)
 {
 	transaction::exec_tx(pop, [&] {
-		map->insert(atoll(argv[argn]),
-			    make_persistent<value_t>(atoll(argv[argn + 1])));
+		map->insert(
+			std::stoul(argv[argn]),
+			make_persistent<value_t>(std::stoll(argv[argn + 1])));
 	});
 	argn += 2;
 }
@@ -172,15 +174,15 @@ exec_op(pool_base pop, T &map, queue_op op, char *argv[], int &argn)
 {
 	switch (op) {
 		case MAP_INSERT_NEW:
-			map->insert_new(atoll(argv[argn]),
-					atoll(argv[argn + 1]));
+			map->insert_new(std::stoull(argv[argn]),
+					std::stoll(argv[argn + 1]));
 			argn += 2;
 			break;
 		case MAP_INSERT:
 			insert(pop, map, argv, argn);
 			break;
 		case MAP_GET: {
-			auto val = map->get(atoll(argv[argn]));
+			auto val = map->get(std::stoull(argv[argn]));
 			if (val)
 				std::cout << *val << std::endl;
 			else
@@ -191,7 +193,7 @@ exec_op(pool_base pop, T &map, queue_op op, char *argv[], int &argn)
 			remove(pop, map, argv, argn);
 			break;
 		case MAP_REMOVE_FREE:
-			map->remove_free(atoll(argv[4]));
+			map->remove_free(std::stoull(argv[4]));
 			break;
 		case MAP_CLEAR:
 			map->clear();

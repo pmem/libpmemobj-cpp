@@ -36,18 +36,17 @@
  * Please see pmem.io blog posts for more details.
  */
 
+#include <cmath>
+#include <cstdlib>
 #include <iostream>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-#include <math.h>
 #include <objcpp_examples_common.hpp>
 #include <stdexcept>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/stat.h>
 
 #define LAYOUT "queue"
@@ -196,7 +195,7 @@ main(int argc, char *argv[])
 	auto q = pop.get_root();
 	switch (op) {
 		case QUEUE_PUSH:
-			q->push(pop, atoll(argv[3]));
+			q->push(pop, std::stoull(argv[3]));
 			break;
 		case QUEUE_POP:
 			std::cout << q->pop(pop) << std::endl;

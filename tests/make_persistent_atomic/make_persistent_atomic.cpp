@@ -59,10 +59,10 @@ public:
 			this->arr[i] = 1;
 	}
 
-	foo(const int &val) : bar(val)
+	foo(const char &val) : bar(val)
 	{
 		for (int i = 0; i < TEST_ARR_SIZE; ++i)
-			this->arr[i] = val;
+			this->arr[i] = static_cast<char>(val);
 	}
 
 	foo(int &val, char arr_val) : bar(val)

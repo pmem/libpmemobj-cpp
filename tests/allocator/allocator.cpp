@@ -59,7 +59,7 @@ struct foo {
 	foo()
 	{
 		bar = 1;
-		for (int i = 0; i < TEST_ARR_SIZE; ++i)
+		for (signed char i = 0; i < TEST_ARR_SIZE; ++i)
 			arr[i] = i;
 	}
 
@@ -75,7 +75,7 @@ struct foo {
 	test_foo()
 	{
 		UT_ASSERTeq(bar, 1);
-		for (int i = 0; i < TEST_ARR_SIZE; ++i)
+		for (signed char i = 0; i < TEST_ARR_SIZE; ++i)
 			UT_ASSERTeq(arr[i], i);
 	}
 

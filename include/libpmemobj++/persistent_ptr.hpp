@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -213,7 +213,7 @@ public:
 	operator+=(std::ptrdiff_t s)
 	{
 		detail::conditional_add_to_tx(this);
-		this->oid.off += s * sizeof(T);
+		this->oid.off += static_cast<std::uint64_t>(s) * sizeof(T);
 
 		return *this;
 	}
@@ -225,7 +225,7 @@ public:
 	operator-=(std::ptrdiff_t s)
 	{
 		detail::conditional_add_to_tx(this);
-		this->oid.off -= s * sizeof(T);
+		this->oid.off -= static_cast<std::uint64_t>(s) * sizeof(T);
 
 		return *this;
 	}
@@ -573,7 +573,8 @@ operator+(persistent_ptr<T> const &lhs, std::ptrdiff_t s)
 {
 	PMEMoid noid;
 	noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;
-	noid.off = lhs.raw().off + (s * sizeof(T));
+	noid.off = lhs.raw().off + static_cast<std::uint64_t>(s) * sizeof(T);
+
 	return persistent_ptr<T>(noid);
 }
 
@@ -586,7 +587,8 @@ operator-(persistent_ptr<T> const &lhs, std::ptrdiff_t s)
 {
 	PMEMoid noid;
 	noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;
-	noid.off = lhs.raw().off - (s * sizeof(T));
+	noid.off = lhs.raw().off - static_cast<std::uint64_t>(s) * sizeof(T);
+
 	return persistent_ptr<T>(noid);
 }
 
@@ -605,9 +607,9 @@ inline ptrdiff_t
 operator-(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs)
 {
 	assert(lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo);
-	ptrdiff_t d = lhs.raw().off - rhs.raw().off;
+	auto d = static_cast<std::ptrdiff_t>(lhs.raw().off - rhs.raw().off);
 
-	return d / sizeof(T);
+	return d / static_cast<std::ptrdiff_t>(sizeof(T));
 }
 
 /**

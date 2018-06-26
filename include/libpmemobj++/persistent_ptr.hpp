@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include <ostream>
 
 #include "libpmemobj++/detail/common.hpp"
+#include "libpmemobj++/detail/conversions.hpp"
 #include "libpmemobj++/detail/persistent_ptr_base.hpp"
 #include "libpmemobj++/detail/specialization.hpp"
 #include "libpmemobj++/pool.hpp"
@@ -212,8 +213,12 @@ public:
 	inline persistent_ptr<T> &
 	operator+=(std::ptrdiff_t s)
 	{
+		using detail::to_ptrdiff;
+		using detail::to_uint64;
+
 		detail::conditional_add_to_tx(this);
-		this->oid.off += s * sizeof(T);
+		this->oid.off = to_uint64(to_ptrdiff(this->oid.off) +
+					  s * to_ptrdiff(sizeof(T)));
 
 		return *this;
 	}
@@ -224,8 +229,12 @@ public:
 	inline persistent_ptr<T> &
 	operator-=(std::ptrdiff_t s)
 	{
+		using detail::to_ptrdiff;
+		using detail::to_uint64;
+
 		detail::conditional_add_to_tx(this);
-		this->oid.off -= s * sizeof(T);
+		this->oid.off = to_uint64(to_ptrdiff(this->oid.off) -
+					  s * to_ptrdiff(sizeof(T)));
 
 		return *this;
 	}
@@ -571,9 +580,13 @@ template <typename T>
 inline persistent_ptr<T>
 operator+(persistent_ptr<T> const &lhs, std::ptrdiff_t s)
 {
+	using detail::to_ptrdiff;
+	using detail::to_uint64;
+
 	PMEMoid noid;
 	noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;
-	noid.off = lhs.raw().off + (s * sizeof(T));
+	noid.off = to_uint64(to_ptrdiff(lhs.raw().off) +
+			     s * to_ptrdiff(sizeof(T)));
 	return persistent_ptr<T>(noid);
 }
 
@@ -584,9 +597,13 @@ template <typename T>
 inline persistent_ptr<T>
 operator-(persistent_ptr<T> const &lhs, std::ptrdiff_t s)
 {
+	using detail::to_ptrdiff;
+	using detail::to_uint64;
+
 	PMEMoid noid;
 	noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;
-	noid.off = lhs.raw().off - (s * sizeof(T));
+	noid.off = to_uint64(to_ptrdiff(lhs.raw().off) -
+			     s * to_ptrdiff(sizeof(T)));
 	return persistent_ptr<T>(noid);
 }
 
@@ -604,10 +621,12 @@ template <typename T, typename Y,
 inline ptrdiff_t
 operator-(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs)
 {
-	assert(lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo);
-	ptrdiff_t d = lhs.raw().off - rhs.raw().off;
+	using detail::to_ptrdiff;
 
-	return d / sizeof(T);
+	assert(lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo);
+	ptrdiff_t d = to_ptrdiff(lhs.raw().off - rhs.raw().off);
+
+	return d / to_ptrdiff(sizeof(T));
 }
 
 /**

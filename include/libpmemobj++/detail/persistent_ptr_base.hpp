@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,7 +124,11 @@ public:
 	persistent_ptr_base(persistent_ptr_base<U> const &r) noexcept
 		: oid(r.oid)
 	{
-		this->oid.off += calculate_offset<U>();
+		auto offset = calculate_offset<U>();
+		if (offset > 0)
+			this->oid.off += to_uint64(offset);
+		else
+			this->oid.off -= to_uint64(-offset);
 		verify_type();
 	}
 
@@ -144,7 +148,11 @@ public:
 	persistent_ptr_base(persistent_ptr_base<U> const &r) noexcept
 		: oid(r.oid)
 	{
-		this->oid.off += calculate_offset<U>();
+		auto offset = calculate_offset<U>();
+		if (offset > 0)
+			this->oid.off += to_uint64(offset);
+		else
+			this->oid.off -= to_uint64(-offset);
 		verify_type();
 	}
 

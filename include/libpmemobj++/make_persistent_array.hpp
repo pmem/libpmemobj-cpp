@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,9 +43,13 @@
 #include "libpmemobj++/detail/array_traits.hpp"
 #include "libpmemobj++/detail/check_persistent_ptr_array.hpp"
 #include "libpmemobj++/detail/common.hpp"
+#include "libpmemobj++/detail/conversions.hpp"
 #include "libpmemobj++/detail/life.hpp"
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj/tx_base.h"
+
+#include <cassert>
+#include <limits>
 
 namespace pmem
 {
@@ -72,6 +76,14 @@ typename detail::pp_if_array<T>::type
 make_persistent(std::size_t N)
 {
 	typedef typename detail::pp_array_type<T>::type I;
+	using detail::to_ptrdiff;
+
+	/*
+	 * Allowing N greater than ptrdiff_t max value would cause problems
+	 * with accessing array and calculating address difference between two
+	 * elements placed further apart than ptrdiff_t max value
+	 */
+	assert(N <= std::numeric_limits<ptrdiff_t>::max());
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_scope_error(
@@ -91,7 +103,7 @@ make_persistent(std::size_t N)
 			detail::create<I>(ptr.get() + i);
 	} catch (...) {
 		for (std::size_t j = 1; j <= i; ++j)
-			detail::destroy<I>(ptr[i - j]);
+			detail::destroy<I>(ptr[to_ptrdiff(i - j)]);
 		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
 	}
@@ -116,6 +128,7 @@ typename detail::pp_if_size_array<T>::type
 make_persistent()
 {
 	typedef typename detail::pp_array_type<T>::type I;
+	using detail::to_ptrdiff;
 	enum { N = detail::pp_array_elems<T>::elems };
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -136,7 +149,7 @@ make_persistent()
 			detail::create<I>(ptr.get() + i);
 	} catch (...) {
 		for (std::size_t j = 1; j <= i; ++j)
-			detail::destroy<I>(ptr[i - j]);
+			detail::destroy<I>(ptr[to_ptrdiff(i - j)]);
 		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
 	}
@@ -164,6 +177,7 @@ void
 delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 {
 	typedef typename detail::pp_array_type<T>::type I;
+	using detail::to_ptrdiff;
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_scope_error(
@@ -174,7 +188,7 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 		return;
 
 	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+		detail::destroy<I>(ptr[to_ptrdiff(N - 1 - i)]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "
@@ -200,6 +214,7 @@ void
 delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 {
 	typedef typename detail::pp_array_type<T>::type I;
+	using detail::to_ptrdiff;
 	enum { N = detail::pp_array_elems<T>::elems };
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -211,7 +226,7 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 		return;
 
 	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+		detail::destroy<I>(ptr[to_ptrdiff(N - 1 - i)]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "

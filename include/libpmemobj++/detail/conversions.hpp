@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #define PMEMOBJ_CONVERSIONS_HPP
 
 #include <chrono>
+#include <cstdint>
 #include <time.h>
 
 namespace pmem
@@ -70,6 +71,18 @@ timepoint_to_timespec(const std::chrono::time_point<Clock, Duration> &timepoint)
 			.count());
 
 	return ts;
+}
+
+static inline std::uint64_t
+to_uint64(std::ptrdiff_t other)
+{
+	return static_cast<std::uint64_t>(other);
+}
+
+static inline std::ptrdiff_t
+to_ptrdiff(std::uint64_t other)
+{
+	return static_cast<std::ptrdiff_t>(other);
 }
 
 } /* namespace detail */

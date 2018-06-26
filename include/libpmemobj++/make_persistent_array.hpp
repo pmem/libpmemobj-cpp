@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,9 @@
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj/tx_base.h"
 
+#include <cassert>
+#include <limits>
+
 namespace pmem
 {
 
@@ -73,6 +76,13 @@ make_persistent(std::size_t N)
 {
 	typedef typename detail::pp_array_type<T>::type I;
 
+	/*
+	 * Allowing N greater than ptrdiff_t max value would cause problems
+	 * with accessing array and calculating address difference between two
+	 * elements placed further apart than ptrdiff_t max value
+	 */
+	assert(N <= std::numeric_limits<ptrdiff_t>::max());
+
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_scope_error(
 			"refusing to allocate "
@@ -85,12 +95,12 @@ make_persistent(std::size_t N)
 		throw transaction_alloc_error("failed to allocate "
 					      "persistent memory array");
 
-	std::size_t i;
+	std::ptrdiff_t i;
 	try {
-		for (i = 0; i < N; ++i)
+		for (i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
 			detail::create<I>(ptr.get() + i);
 	} catch (...) {
-		for (std::size_t j = 1; j <= i; ++j)
+		for (std::ptrdiff_t j = 1; j <= i; ++j)
 			detail::destroy<I>(ptr[i - j]);
 		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
@@ -130,12 +140,12 @@ make_persistent()
 		throw transaction_alloc_error("failed to allocate "
 					      "persistent memory array");
 
-	std::size_t i;
+	std::ptrdiff_t i;
 	try {
-		for (i = 0; i < N; ++i)
+		for (i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
 			detail::create<I>(ptr.get() + i);
 	} catch (...) {
-		for (std::size_t j = 1; j <= i; ++j)
+		for (std::ptrdiff_t j = 1; j <= i; ++j)
 			detail::destroy<I>(ptr[i - j]);
 		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
@@ -173,8 +183,8 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 	if (ptr == nullptr)
 		return;
 
-	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::destroy<I>(ptr[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "
@@ -210,8 +220,8 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 	if (ptr == nullptr)
 		return;
 
-	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::destroy<I>(ptr[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "

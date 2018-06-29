@@ -1,4 +1,11 @@
-# libpmemobj-cpp
+libpmemobj-cpp
+===============
+
+[![Build Status](https://travis-ci.org/pmem/libpmemobj-cpp.svg?branch=master)](https://travis-ci.org/pmem/libpmemobj-cpp)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/pmem/libpmemobj-cpp?branch/master?svg=true&pr=false)](https://ci.appveyor.com/project/pmem/libpmemobj-cpp/branch/master)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/15911/badge.svg)](https://scan.coverity.com/projects/pmem-libpmemobj-cpp)
+[![Coverage Status](https://codecov.io/github/pmem/libpmemobj-cpp/coverage.svg?branch=master)](https://codecov.io/gh/pmem/libpmemobj-cpp/branch/master)
+
 C++ bindings for libpmemobj (https://github.com/pmem/pmdk)
 More informations in include/libpmemobj++/README.md
 

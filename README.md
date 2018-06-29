@@ -15,6 +15,8 @@ Requirements:
 - cmake >= 3.3
 - libpmemobj-dev(el) >= 1.4 (http://pmem.io/pmdk/)
 
+### On Linux ###
+
 ```sh
 $ mkdir build
 $ cd build
@@ -46,7 +48,7 @@ $ cmake .. -DUSE_CUSTOM_LLVM=1 -DLIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1 
 ...
 ```
 
-# Packaging
+To build packages
 ```sh
 ...
 cmake .. -DCPACK_GENERATOR="$GEN" -DCMAKE_INSTALL_PREFIX=/usr
@@ -56,3 +58,20 @@ make package
 $GEN is type of package generator and can be RPM or DEB
 
 CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installed
+
+### On Windows ###
+
+Install libpmemobj via vcpkg
+```sh
+vcpkg install pmdk:x64-windows
+vcpkg integrate install
+```
+
+```sh
+...
+cmake . -Bbuild -G "Visual Studio 14 2015 Win64"
+        -DCMAKE_MODULE_PATH=c:/projects/libpmemobj-cpp
+        -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+msbuild build/ALL_BUILD.vcxproj
+```

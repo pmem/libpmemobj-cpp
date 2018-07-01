@@ -79,6 +79,30 @@ conditional_add_to_tx(const T *that)
 }
 
 /*
+ * Conditionally add range to a transaction
+ *
+ * Adds memory from offset to offset + count to the transaction
+ * if it is within a pmemobj pool and there is an active transaction.
+ * Does nothing otherwise.
+ *
+ * @param[in] offset pointer to memory range being added to the transaction.
+ * @param[in] count length of range being added to the transaction
+ */
+inline void
+conditional_add_range_to_tx(const void *offset, std::size_t count)
+{
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		return;
+
+	if (!pmemobj_pool_by_ptr(offset))
+		return;
+
+	if (pmemobj_tx_add_range_direct(offset, count))
+		throw transaction_error("Could not add range to the"
+					" transaction.");
+}
+
+/*
  * Return type number for given type.
  */
 template <typename T>

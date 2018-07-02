@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,22 +46,21 @@
 #else
 #include <ncurses.h>
 #endif
-#include <stdlib.h>
+#include <limits>
 
 #include "panaconda.hpp"
 
-#define LAYOUT_NAME "panaconda"
-#define DEFAULT_DELAY 120000
+constexpr char const *LAYOUT_NAME = "panaconda";
+constexpr int DEFAULT_DELAY = 120000;
 
-#define SNAKE_START_POS_X 5
-#define SNAKE_START_POS_Y 5
-#define SNAKE_START_DIR (direction::RIGHT)
-#define SNAKE_STAR_SEG_NO 5
+constexpr int SNAKE_START_POS_X = 5;
+constexpr int SNAKE_START_POS_Y = 5;
+constexpr direction SNAKE_START_DIR = (direction::RIGHT);
+constexpr int SNAKE_STAR_SEG_NO = 5;
 
-#define BOARD_STATIC_SIZE_ROW 40
-#define BOARD_STATIC_SIZE_COL 30
-
-#define PLAYER_POINTS_PER_HIT 10
+constexpr int BOARD_STATIC_SIZE_ROW = 40;
+constexpr int BOARD_STATIC_SIZE_COL = 30;
+constexpr int PLAYER_POINTS_PER_HIT = 10;
 
 using pmem::transaction_error;
 using pmem::transaction_scope_error;
@@ -79,7 +78,7 @@ using examples::list;
 color_pair::color_pair() : color_bg(COLOR_BLACK), color_fg(COLOR_BLACK)
 {
 }
-color_pair::color_pair(const int col_fg, const int col_bg)
+color_pair::color_pair(const short col_fg, const short col_bg)
     : color_bg(col_bg), color_fg(col_fg)
 {
 }
@@ -170,20 +169,20 @@ operator==(point &point1, point &point2)
  */
 element_shape::element_shape(int shape)
 {
-	int n_curves_symbol = get_symbol(shape);
+	chtype n_curves_symbol = get_symbol(shape);
 	val = COLOR_PAIR(shape) | n_curves_symbol;
 }
 
-int
+chtype
 element_shape::get_val()
 {
 	return val;
 }
 
-int
+chtype
 element_shape::get_symbol(int shape)
 {
-	int symbol = 0;
+	chtype symbol = 0;
 	switch (shape) {
 		case SNAKE_SEGMENT:
 			symbol = ACS_DIAMOND;
@@ -316,7 +315,7 @@ board_element::set_direction(const direction dir)
 snake::snake()
 {
 	snake_segments = make_persistent<list<board_element>>();
-	for (unsigned i = 0; i < SNAKE_STAR_SEG_NO; ++i) {
+	for (auto i = 0; i < SNAKE_STAR_SEG_NO; ++i) {
 		persistent_ptr<element_shape> shape =
 			make_persistent<element_shape>(SNAKE_SEGMENT);
 		persistent_ptr<board_element> element =
@@ -339,14 +338,14 @@ snake::~snake()
 void
 snake::move(const direction dir)
 {
-	int snake_size = snake_segments->size();
+	auto snake_size = snake_segments->size();
 	persistent_ptr<point> new_position_point;
 
 	last_seg_position =
 		*(snake_segments->get(snake_size - 1)->get_position().get());
 	last_seg_dir = snake_segments->get(snake_size - 1)->get_direction();
 
-	for (int i = (snake_size - 1); i >= 0; --i) {
+	for (auto i = (snake_size - 1); i >= 0; --i) {
 		if (i == 0) {
 			new_position_point =
 				snake_segments->get(i)->calc_new_position(dir);
@@ -366,7 +365,7 @@ snake::move(const direction dir)
 void
 snake::print(void)
 {
-	int i = 0;
+	unsigned i = 0;
 	persistent_ptr<board_element> segp;
 
 	while ((segp = snake_segments->get(i++)) != nullptr)
@@ -386,7 +385,7 @@ snake::add_segment(void)
 bool
 snake::check_point_against_segments(point point)
 {
-	int i = 0;
+	unsigned i = 0;
 	bool result = false;
 	persistent_ptr<board_element> segp;
 
@@ -444,10 +443,10 @@ game_board::~game_board()
 void
 game_board::print(const int score)
 {
-	const int offset_y = 2 * size_col + 5;
-	const int offset_x = 2;
+	const auto offset_y = static_cast<int>(2 * size_col + 5);
+	const auto offset_x = 2;
 
-	int i = 0;
+	unsigned i = 0;
 	persistent_ptr<board_element> elmp;
 
 	while ((elmp = layout->get(i++)) != nullptr)
@@ -469,8 +468,8 @@ game_board::print(const int score)
 void
 game_board::print_game_over(const int score)
 {
-	int x = size_col / 3;
-	int y = size_row / 6;
+	auto x = static_cast<int>(size_col / 3);
+	auto y = static_cast<int>(size_row / 6);
 	mvprintw(y + 0, x, "#######   #######   #     #   #######");
 	mvprintw(y + 1, x, "#         #     #   ##   ##   #      ");
 	mvprintw(y + 2, x, "#   ###   #######   # # # #   ####   ");
@@ -489,12 +488,12 @@ game_board::print_game_over(const int score)
 }
 
 int
-game_board::creat_dynamic_layout(const unsigned row_no, char *const buffer)
+game_board::creat_dynamic_layout(const int row_no, char *const buffer)
 {
 	persistent_ptr<board_element> element;
 	persistent_ptr<element_shape> shape;
 
-	for (unsigned i = 0; i < size_col; ++i) {
+	for (auto i = 0; i < size_col; ++i) {
 		if (buffer[i] == config_file_symbol::SYM_WALL) {
 			shape = make_persistent<element_shape>(WALL);
 			element = element = make_persistent<board_element>(
@@ -515,7 +514,7 @@ game_board::creat_static_layout(void)
 	size_col = BOARD_STATIC_SIZE_COL;
 
 	// first and last row
-	for (unsigned i = 0; i < size_col; ++i) {
+	for (auto i = 0; i < size_col; ++i) {
 		shape = make_persistent<element_shape>(WALL);
 		element = make_persistent<board_element>(i, 0, shape,
 							 direction::UNDEFINED);
@@ -527,7 +526,7 @@ game_board::creat_static_layout(void)
 	}
 
 	// middle rows
-	for (unsigned i = 1; i < size_row; ++i) {
+	for (auto i = 1; i < size_row; ++i) {
 		shape = make_persistent<element_shape>(WALL);
 		element = make_persistent<board_element>(0, i, shape,
 							 direction::UNDEFINED);
@@ -549,7 +548,7 @@ game_board::is_snake_collision(point point)
 bool
 game_board::is_wall_collision(point point)
 {
-	int i = 0;
+	unsigned i = 0;
 	bool result = false;
 	persistent_ptr<board_element> wallp;
 
@@ -599,8 +598,8 @@ game_board::create_new_food(void)
 	int rand_col = 0;
 
 	while (count < max_repeat) {
-		rand_row = 1 + rand() % (get_size_row() - 2);
-		rand_col = 1 + rand() % (get_size_col() - 2);
+		rand_row = 1 + rand() % static_cast<int>(get_size_row() - 2);
+		rand_col = 1 + rand() % static_cast<int>(get_size_col() - 2);
 
 		point food_point(rand_col, rand_row);
 		if (!is_collision(food_point)) {
@@ -632,26 +631,26 @@ game_board::add_snake_segment(void)
 	anaconda->add_segment();
 }
 
-unsigned
+int
 game_board::get_size_row(void)
 {
 	return size_row;
 }
 
 void
-game_board::set_size_row(const unsigned size_r)
+game_board::set_size_row(const int size_r)
 {
 	size_row = size_r;
 }
 
-unsigned
+int
 game_board::get_size_col(void)
 {
 	return size_col;
 }
 
 void
-game_board::set_size_col(const unsigned size_c)
+game_board::set_size_col(const int size_c)
 {
 	size_col = size_c;
 }
@@ -762,7 +761,7 @@ game::game(struct parameters *par)
 
 	init_colors();
 
-	srand(time(nullptr));
+	srand(static_cast<unsigned>(time(nullptr)));
 }
 
 game::~game()
@@ -920,7 +919,7 @@ game::parse_conf_create_dynamic_layout(void)
 	FILE *cfg_file;
 	char *line = nullptr;
 	size_t len = 0;
-	unsigned i = 0;
+	int i = 0;
 	ssize_t col_no = 0;
 
 	cfg_file = fopen(params->maze_path.c_str(), "r");
@@ -929,8 +928,14 @@ game::parse_conf_create_dynamic_layout(void)
 
 	persistent_ptr<game_state> r = state.get_root();
 	while ((col_no = getline(&line, &len, cfg_file)) != -1) {
+		if (col_no > std::numeric_limits<unsigned>::max()) {
+			std::cout << "To many lines in config file!";
+			free(line);
+			fclose(cfg_file);
+			abort();
+		}
 		if (i == 0)
-			r->get_board()->set_size_col(col_no - 1);
+			r->get_board()->set_size_col((int)col_no - 1);
 
 		try {
 			transaction::exec_tx(state, [&]() {

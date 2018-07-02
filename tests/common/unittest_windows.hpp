@@ -33,6 +33,8 @@
 #ifndef UNITTEST_WINDOWS_HPP
 #define UNITTEST_WINDOWS_HPP
 
+#define _CRT_NO_VA_START_VALIDATION
+
 #include <windows.h>
 
 #define S_IRUSR S_IREAD

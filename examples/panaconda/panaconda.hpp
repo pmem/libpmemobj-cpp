@@ -45,7 +45,7 @@
 
 class board_element;
 
-enum direction { UNDEFINED, DOWN, RIGHT, UP, LEFT };
+enum direction : int { UNDEFINED, DOWN, RIGHT, UP, LEFT };
 enum object_type { SNAKE_SEGMENT, WALL, FOOD };
 enum config_file_symbol { SYM_NOTHING = '0', SYM_WALL = '1' };
 enum play_state { STATE_NEW, STATE_PLAY, STATE_GAMEOVER };
@@ -58,9 +58,9 @@ typedef pmem::obj::persistent_ptr<examples::list<board_element>> element_list;
 
 struct color_pair {
 	color_pair();
-	color_pair(const int col_fg, const int col_bg);
-	int color_bg;
-	int color_fg;
+	color_pair(const short col_fg, const short col_bg);
+	short color_bg;
+	short color_fg;
 };
 
 struct parameters {
@@ -94,11 +94,11 @@ class element_shape {
 public:
 	element_shape() = default;
 	element_shape(int shape);
-	int get_val();
+	chtype get_val();
 
 private:
-	pmem::obj::p<int> val;
-	int get_symbol(int shape);
+	pmem::obj::p<chtype> val;
+	chtype get_symbol(int shape);
 };
 
 class board_element {
@@ -152,11 +152,11 @@ public:
 	~game_board();
 	void print(const int score);
 	void print_game_over(const int score);
-	unsigned get_size_row(void);
-	void set_size_row(const unsigned size_r);
-	unsigned get_size_col(void);
-	void set_size_col(const unsigned size_c);
-	int creat_dynamic_layout(const unsigned row_no, char *const buffer);
+	int get_size_row(void);
+	void set_size_row(const int size_r);
+	int get_size_col(void);
+	void set_size_col(const int size_c);
+	int creat_dynamic_layout(const int row_no, char *const buffer);
 	int creat_static_layout(void);
 	bool is_snake_head_food_hit(void);
 	void create_new_food(void);
@@ -170,8 +170,8 @@ private:
 	pmem::obj::persistent_ptr<board_element> food;
 	element_list layout;
 
-	pmem::obj::p<unsigned> size_row;
-	pmem::obj::p<unsigned> size_col;
+	pmem::obj::p<int> size_row;
+	pmem::obj::p<int> size_col;
 
 	void set_new_food(const point point);
 	bool is_snake_collision(point point);

@@ -39,6 +39,7 @@
 #include <libpmemobj++/make_persistent_array.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <string>
 #ifdef __FreeBSD__
 #include <ncurses/ncurses.h> /* Need pkg, not system, version */
 #else
@@ -46,22 +47,31 @@
 #endif
 #include <objcpp_examples_list.hpp>
 
-#define LAYOUT_NAME "pman"
-#define SIZE 40
-#define MAX_SIZE 38
-#define MAX_BOMBS 5
-#define KEY_SPACE 32
-#define RAND_FIELD() (rand() % (SIZE - 2) + 1)
-#define EXPLOSION_TIME 20
-#define EXPLOSION_COUNTER 80
-#define SLEEP_TIME (2 * CLOCKS_PER_SEC)
-#define GAME_DELAY 40000
-#define SLEEP(t)                                                               \
-	do {                                                                   \
-		struct timespec req = {0, (t)*1000};                           \
-		while (nanosleep(&req, &req) == -1 && errno == EINTR)          \
-			;                                                      \
-	} while (0)
+constexpr char const *LAYOUT_NAME = "pman";
+constexpr int SIZE = 40;
+constexpr int MAX_SIZE = 38;
+constexpr int MAX_BOMBS = 5;
+constexpr int KEY_SPACE = 32;
+constexpr int EXPLOSION_TIME = 20;
+constexpr int EXPLOSION_COUNTER = 80;
+constexpr int SLEEP_TIME = (2 * CLOCKS_PER_SEC);
+constexpr int GAME_DELAY = 40000;
+
+int
+RAND_FIELD()
+{
+	return rand() % (SIZE - 2) + 1;
+}
+
+void
+SLEEP(long long t)
+{
+	do {
+		struct timespec req = {0, (t)*1000};
+		while (nanosleep(&req, &req) == -1 && errno == EINTR)
+			;
+	} while (0);
+}
 
 using pmem::obj::p;
 using pmem::obj::persistent_ptr;
@@ -224,11 +234,11 @@ public:
 	p<unsigned> score;     /* current score */
 	p<bool> game_over;     /* set true if game is over */
 private:
-	int shape(field f);
+	long unsigned shape(field f);
 	void set_bonus(field f);
 	void set_board(const std::string &map_file);
 	int find_wall(int x, int y, direction dir);
-	p<unsigned> life;	      /* number of lives left for player */
+	p<int> life;		       /* number of lives left for player */
 	persistent_ptr<field[]> board; /* current state of board */
 	persistent_ptr<field[]> board_tmpl; /* board template loaded from file*/
 };
@@ -523,7 +533,7 @@ board_state::board_state(const std::string &map_file) : highscore(0)
 	reset_params();
 	board = make_persistent<field[]>(SIZE * SIZE);
 	board_tmpl = make_persistent<field[]>(SIZE * SIZE);
-	for (int i = 0; i < SIZE * SIZE; ++i)
+	for (auto i = 0; i < SIZE * SIZE; ++i)
 		set_board_elm(i, 0, FREE);
 	set_board(map_file);
 }
@@ -563,18 +573,17 @@ board_state::reset_board()
 void
 board_state::print(unsigned hs)
 {
-	for (int i = 0; i < SIZE; i++) {
-		for (int j = 0; j < SIZE; j++) {
+	for (auto i = 0; i < SIZE; i++) {
+		for (auto j = 0; j < SIZE; j++) {
 			if (get_board_elm(j, i) != FREE)
 				mvaddch(i, j * 2, shape(get_board_elm(j, i)));
 		}
 	}
 	if (score > hs)
 		highscore = score;
-	mvprintw(SIZE + 1, 0, "Score: %d\t\tHighscore: %u\t\tLevel: %u\t"
+	mvprintw(SIZE + 1, 0, "Score: %u\t\tHighscore: %u\t\tLevel: %u\t"
 			      "   Timer: %u",
-		 (unsigned)score, (unsigned)highscore, (unsigned)level,
-		 (unsigned)timer);
+		 score, highscore, level, timer);
 	mvaddch(8, SIZE * 2 + 5, shape(FOOD));
 	mvprintw(8, SIZE * 2 + 10, " +1 point");
 	mvaddch(16, SIZE * 2 + 5, shape(BONUS));
@@ -584,7 +593,7 @@ board_state::print(unsigned hs)
 	mvaddch(32, SIZE * 2 + 5, shape(LIFE));
 	mvprintw(32, SIZE * 2 + 10, " +1 life");
 
-	for (unsigned i = 0; i < life; i++)
+	for (auto i = 0; i < life; i++)
 		mvaddch(SIZE + 3, SIZE + life - i * 2, shape(PLAYER));
 }
 
@@ -691,20 +700,20 @@ board_state::set_explosion(int x, int y, field f)
 void
 board_state::explosion(int x, int y, field f)
 {
-	for (int i = find_wall(x, y, UP); i < find_wall(x, y, DOWN); i++)
+	for (auto i = find_wall(x, y, UP); i < find_wall(x, y, DOWN); i++)
 		set_explosion(x, i, f);
 
-	for (int i = find_wall(x, y, LEFT); i < find_wall(x, y, RIGHT); i++)
+	for (auto i = find_wall(x, y, LEFT); i < find_wall(x, y, RIGHT); i++)
 		set_explosion(i, y, f);
 }
 
 /*
  * board_state::shape -- assign proper shape to different types of fields
  */
-int
+long unsigned
 board_state::shape(field f)
 {
-	int color = COLOR_PAIR(f);
+	long unsigned color = COLOR_PAIR(f);
 	if (f == FOOD)
 		return color | ACS_BULLET;
 	else if (f == WALL || f == EXPLOSION)
@@ -741,8 +750,8 @@ board_state::set_board(const std::string &map_file)
 	if (board_file.fail())
 		assert(0);
 	char num;
-	for (unsigned i = 0; i < SIZE; i++) {
-		for (unsigned j = 0; j < SIZE; j++) {
+	for (auto i = 0; i < SIZE; i++) {
+		for (auto j = 0; j < SIZE; j++) {
 			board_file.get(num);
 			if (num == '#')
 				set_board_elm(j, i, WALL);
@@ -770,28 +779,28 @@ board_state::find_wall(int x, int y, direction dir)
 {
 	switch (dir) {
 		case LEFT: {
-			for (int i = x; i >= 0; i--) {
+			for (auto i = x; i >= 0; i--) {
 				if (get_board_elm(i, y) == WALL)
 					return i + 1;
 			}
 			break;
 		}
 		case RIGHT: {
-			for (int i = x; i <= SIZE; i++) {
+			for (auto i = x; i <= SIZE; i++) {
 				if (get_board_elm(i, y) == WALL)
 					return i;
 			}
 			break;
 		}
 		case UP: {
-			for (int i = y; i >= 0; i--) {
+			for (auto i = y; i >= 0; i--) {
 				if (get_board_elm(x, i) == WALL)
 					return i + 1;
 			}
 			break;
 		}
 		case DOWN: {
-			for (int i = y; i <= SIZE; i++) {
+			for (auto i = y; i <= SIZE; i++) {
 				if (get_board_elm(x, i) == WALL)
 					return i;
 			}
@@ -829,7 +838,7 @@ state::init(const std::string &map_file)
 	{
 		transaction::manual tx(pop);
 		if (intro_p->size() == 0) {
-			for (int i = 0; i < SIZE / 4; i++) {
+			for (auto i = 0; i < SIZE / 4; i++) {
 				intro_p->push_back(
 					make_persistent<intro>(i, i, DOWN));
 				intro_p->push_back(make_persistent<intro>(
@@ -906,8 +915,8 @@ void
 state::print_start()
 {
 	erase();
-	int x = SIZE / 1.8;
-	int y = SIZE / 2.5;
+	auto x = static_cast<int>(SIZE / 1.8);
+	auto y = static_cast<int>(SIZE / 2.5);
 	mvprintw(y + 0, x, "#######   #     #   #######   #    #");
 	mvprintw(y + 1, x, "#     #   ##   ##   #     #   ##   #");
 	mvprintw(y + 2, x, "#######   # # # #   #######   # #  #");
@@ -924,8 +933,8 @@ void
 state::print_game_over()
 {
 	erase();
-	int x = SIZE / 3;
-	int y = SIZE / 6;
+	auto x = SIZE / 3;
+	auto y = SIZE / 6;
 	mvprintw(y + 0, x, "#######   #######   #     #   #######");
 	mvprintw(y + 1, x, "#         #     #   ##   ##   #      ");
 	mvprintw(y + 2, x, "#   ###   #######   # # # #   ####   ");
@@ -939,7 +948,7 @@ state::print_game_over()
 	mvprintw(y + 10, x, "#######      #       #######   #     #");
 
 	mvprintw(y + 13, x, "       Your final score is %u         ",
-		 (unsigned)board->score);
+		 board->score);
 	if (board->score == highscore)
 		mvprintw(y + 14, x, "       YOU BET YOUR BEST SCORE!       ");
 	mvprintw(y + 16, x, "          Press 'q' to quit           ");

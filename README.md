@@ -70,7 +70,6 @@ vcpkg integrate install
 ```sh
 ...
 cmake . -Bbuild -G "Visual Studio 14 2015 Win64"
-        -DCMAKE_MODULE_PATH=c:/projects/libpmemobj-cpp
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 msbuild build/ALL_BUILD.vcxproj

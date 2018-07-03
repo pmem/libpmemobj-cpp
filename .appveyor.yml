@@ -22,7 +22,6 @@ matrix:
 
 before_build:
 - cmake . -Bbuild -G "%GENERATOR%"
-        -DCMAKE_MODULE_PATH=c:/projects/libpmemobj-cpp
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 build_script:

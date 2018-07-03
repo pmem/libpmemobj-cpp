@@ -87,8 +87,9 @@ else()
 	set(NO_CHRONO_BUG TRUE)
 endif()
 
-add_cppstyle("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
-add_check_whitespace("tests-common" ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 function(build_test name)
 	# skip posix tests

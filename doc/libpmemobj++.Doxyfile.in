@@ -85,8 +85,8 @@ QUIET = YES
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT = @CMAKE_CURRENT_SOURCE_DIR@/../include/libpmemobj++
-INPUT += @CMAKE_CURRENT_SOURCE_DIR@/../include/libpmemobj++/README.md
+INPUT = @CMAKE_SOURCE_DIR@/include/libpmemobj++
+INPUT += @CMAKE_SOURCE_DIR@/include/libpmemobj++/README.md
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -127,7 +127,7 @@ EXCLUDE =
 # that contain example code fragments that are included (see the \include
 # command).
 
-EXAMPLE_PATH = @CMAKE_CURRENT_SOURCE_DIR@/../examples/doc_snippets
+EXAMPLE_PATH = @CMAKE_SOURCE_DIR@/examples/doc_snippets
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
@@ -157,7 +157,8 @@ IMAGE_PATH =
 #  be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH = ../..
+FULL_PATH_NAMES = YES
+STRIP_FROM_PATH = @CMAKE_SOURCE_DIR@/include/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -166,7 +167,7 @@ STRIP_FROM_PATH = ../..
 # should specify the list of include paths that are normally passed to the
 # compiler using the -I flag.
 
-STRIP_FROM_INC_PATH = @CMAKE_CURRENT_SOURCE_DIR@/../include/
+STRIP_FROM_INC_PATH = @CMAKE_SOURCE_DIR@/include/
 
 #---------------------------------------------------------------------------
 # Configuration options related to the LATEX output

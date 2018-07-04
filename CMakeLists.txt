@@ -287,6 +287,26 @@ add_cppstyle("include-detail" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/d
 add_check_whitespace("include" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/*.hpp)
 add_check_whitespace("include-detail" ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/detail/*.hpp)
 
+if(PKG_CONFIG_FOUND)
+	pkg_check_modules(PMEMOBJ REQUIRED libpmemobj>=1.4)
+else()
+	find_package(PMEMOBJ REQUIRED 1.4)
+endif()
+
+# Check for existence of pmemvlt (introduced after 1.4 release)
+set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_INCLUDES ${PMEMOBJ_INCLUDE_DIRS})
+CHECK_CXX_SOURCE_COMPILES(
+	"#include <libpmemobj.h>
+	struct pmemvlt vlt;
+	int main() {}"
+	PMEMVLT_PRESENT)
+set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
+
+if(NOT PMEMVLT_PRESENT)
+	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
+endif()
+
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")
 
@@ -307,12 +327,6 @@ configure_file(
 
 add_custom_target(uninstall
 	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-
-if(PKG_CONFIG_FOUND)
-	pkg_check_modules(PMEMOBJ REQUIRED libpmemobj>=1.4)
-else()
-	find_package(PMEMOBJ REQUIRED 1.4)
-endif()
 
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(VALGRIND QUIET valgrind)

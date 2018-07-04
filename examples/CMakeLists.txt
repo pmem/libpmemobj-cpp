@@ -105,8 +105,10 @@ endif()
 add_example(map_cli map_cli/map_cli.cpp)
 target_link_libraries(example-map_cli ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-#XXX : fix compile error on clang
-#add_library(doc_snippets_persistent OBJECT doc_snippets/persistent.cpp)
+if(PMEMVLT_PRESENT)
+	add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)
+endif()
+add_library(doc_snippets_persistent OBJECT doc_snippets/persistent.cpp)
 add_library(doc_snippets_make_persistent OBJECT doc_snippets/make_persistent.cpp)
 add_library(doc_snippets_mutex OBJECT doc_snippets/mutex.cpp)
 add_library(doc_snippets_pool OBJECT doc_snippets/pool.cpp)

@@ -62,6 +62,7 @@ mkdir $INSTALL_DIR
 mkdir build
 cd build
 
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 CC=clang CXX=clang++ \
 cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
@@ -82,6 +83,7 @@ rm -r build
 mkdir build
 cd build
 
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 CC=clang CXX=clang++ \
 cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
@@ -100,6 +102,7 @@ rm -r build
 mkdir build
 cd build
 
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 CC=gcc CXX=g++ \
 cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
@@ -118,6 +121,7 @@ rm -r build
 mkdir build
 cd build
 
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 CC=gcc CXX=g++ \
 cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
@@ -135,15 +139,26 @@ rm -r build
 mkdir build
 cd build
 
+if [ $PACKAGE_MANAGER = "deb" ]; then
+	echo $USERPASS | sudo -S dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
+	sudo dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
+elif [ $PACKAGE_MANAGER = "rpm" ]; then
+	echo $USERPASS | sudo -S rpm -i /opt/pmdk-pkg/libpmem-*.rpm
+	sudo rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
+fi
+
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 		-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
-make -j2 package
+make -j2
+ctest --output-on-failure
+
+make package
 
 if [ $PACKAGE_MANAGER = "deb" ]; then
-      echo $USERPASS | sudo -S dpkg -i libpmemobj++*.deb
+	sudo dpkg -i libpmemobj++*.deb
 elif [ $PACKAGE_MANAGER = "rpm" ]; then
-      echo $USERPASS | sudo -S rpm -i libpmemobj++*.rpm
+	sudo rpm -i libpmemobj++*.rpm
 fi
 
 #XXX: verify installed package - try to compile some program/example

@@ -34,6 +34,7 @@ link_directories(${PMEMOBJ_LIBRARY_DIRS})
 
 add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
+add_check_whitespace(examples-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 function(add_example name)
 	set(srcs ${ARGN})

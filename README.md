@@ -1,7 +1,7 @@
 libpmemobj-cpp
 ==============
 
-### pmem.io/pmdk web site
+### pmem.io/libpmemobj-cpp web site
 
 This repo contains doxygen generated documentation for PMDK C++ bindings.
 

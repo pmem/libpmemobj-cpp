@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #ifndef PMEMOBJ_PERSISTENT_PTR_BASE_HPP
 #define PMEMOBJ_PERSISTENT_PTR_BASE_HPP
 
+#include <cstdint>
 #include <type_traits>
 
 #include "libpmemobj++/detail/common.hpp"
@@ -124,7 +125,8 @@ public:
 	persistent_ptr_base(persistent_ptr_base<U> const &r) noexcept
 		: oid(r.oid)
 	{
-		this->oid.off += calculate_offset<U>();
+		this->oid.off +=
+			static_cast<std::uint64_t>(calculate_offset<U>());
 		verify_type();
 	}
 
@@ -144,7 +146,8 @@ public:
 	persistent_ptr_base(persistent_ptr_base<U> const &r) noexcept
 		: oid(r.oid)
 	{
-		this->oid.off += calculate_offset<U>();
+		this->oid.off +=
+			static_cast<std::uint64_t>(calculate_offset<U>());
 		verify_type();
 	}
 

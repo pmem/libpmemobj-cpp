@@ -167,3 +167,15 @@ cd ..
 rm -rf build
 
 rm -r $INSTALL_DIR
+
+mkdir doc_update
+cd doc_update
+
+# Trigger auto doc update on master
+if [[ "$AUTO_DOC_UPDATE" == "1" && "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+	echo "Running auto doc update"
+	$SCRIPTSDIR/run-doc-update.sh
+fi
+
+cd ..
+rm -rf doc_update

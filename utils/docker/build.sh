@@ -96,6 +96,11 @@ fi
 
 if [ -n "$DNS_SERVER" ]; then DNS_SETTING=" --dns=$DNS_SERVER "; fi
 
+# Trigger auto doc update on master
+if [[ "$AUTO_DOC_UPDATE" == "1" && "$TRAVIS_BRANCH" == "master" ]]; then
+	command="$command && ./run-doc-update.sh"
+fi
+
 WORKDIR=/libpmemobj-cpp
 SCRIPTSDIR=$WORKDIR/utils/docker
 

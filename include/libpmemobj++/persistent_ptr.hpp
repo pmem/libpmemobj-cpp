@@ -233,7 +233,7 @@ public:
 	/**
 	 * Persists the content of the underlying object.
 	 *
-	 * @param[in] pop Pmemobj pool
+	 * @param[in] pop Pmemobj pool....
 	 */
 	void
 	persist(pool_base &pop)

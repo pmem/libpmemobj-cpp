@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,64 +30,46 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
-#              environment prepared for running libpmemobj-cpp tests.
-#
+set -e
 
-# Pull base image
-FROM fedora:25
-MAINTAINER marcin.slusarz@intel.com
+# clone repo
+git clone https://github.com/doc-update/libpmemobj-cpp.git
+cd libpmemobj-cpp
+git remote add upstream https://github.com/igchor/libpmemobj-cpp
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	autoconf \
-	automake \
-	clang \
-	cmake \
-	doxygen \
-	gcc \
-	gdb \
-	git \
-	hub \
-	libunwind-devel \
-	make \
-	man \
-	ncurses-devel \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	SFML-devel \
-	sudo \
-	tar \
-	wget \
-	which \
- && dnf clean all
+git config --local user.email "test"
 
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
+git checkout master
+git remote update
+git rebase upstream/master
 
-# Install libcxx
-COPY install-libcxx.sh install-libcxx.sh
-RUN ./install-libcxx.sh
+# build docs
+mkdir build
+cd build
 
-# Install pmdk
-COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
+cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ..
+make doc
+cp -R doc/cpp_html ../..
 
-# Add user
-ENV USER user
-ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
-USER $USER
+cd ..
 
-# Set required environment variables
-ENV OS fedora
-ENV OS_VER 25
-ENV PACKAGE_MANAGER rpm
-ENV NOTTY 1
+# checkout gh-pages and copy docs
+git checkout -fb gh-pages upstream/gh-pages
+git clean -df
+cp -r ../cpp_html/* master/doxygen/
 
+# add and push changes
+git add -A
+
+# This command may fail if there is nothing to commit.
+# In that case we want to force push anyway (there might be open pull request with
+# changes which were reverted)
+git commit -m "doc: automatic gh-pages docs update" && true
+
+git push -f https://${GITHUB_TOKEN}@github.com/doc-update/libpmemobj-cpp.git gh-pages
+
+# Makes pull request. When there is already an open pr an error is thrown, which we ignore.
+hub pull-request -f -b igchor:gh-pages -h doc-update:gh-pages -m "doc: automatic gh-pages docs update" && true
+
+cd ..
+rm -rf cpp_html libpmemobj-cpp;

@@ -196,12 +196,6 @@ add_check_whitespace(include-detail ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemo
 add_check_whitespace(cmake-main ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
-if(PKG_CONFIG_FOUND)
-	pkg_check_modules(PMEMOBJ REQUIRED libpmemobj>=1.4)
-else()
-	find_package(PMEMOBJ REQUIRED 1.4)
-endif()
-
 # Check for existence of pmemvlt (introduced after 1.4 release)
 set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_INCLUDES ${PMEMOBJ_INCLUDE_DIRS})

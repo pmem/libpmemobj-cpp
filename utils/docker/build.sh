@@ -96,6 +96,11 @@ fi
 
 if [ -n "$DNS_SERVER" ]; then DNS_SETTING=" --dns=$DNS_SERVER "; fi
 
+# Only run doc update on pmem/libpmemobj-cpp master branch
+if [[ "$TRAVIS_BRANCH" != "master" || "$TRAVIS_PULL_REQUEST" != "false" || "$TRAVIS_REPO_SLUG" != "${GITHUB_REPO}" ]]; then
+	AUTO_DOC_UPDATE=0
+fi
+
 WORKDIR=/libpmemobj-cpp
 SCRIPTSDIR=$WORKDIR/utils/docker
 
@@ -110,6 +115,8 @@ docker run --privileged=true --name=$containerName -ti \
 	${docker_opts} \
 	--env http_proxy=$http_proxy \
 	--env https_proxy=$https_proxy \
+	--env AUTO_DOC_UPDATE=$AUTO_DOC_UPDATE \
+	--env GITHUB_TOKEN=$GITHUB_TOKEN \
 	--env USE_LLVM_LIBCPP=$USE_LLVM_LIBCPP \
 	--env LIBCPP_LIBDIR=$LIBCPP_LIBDIR \
 	--env LIBCPP_INCDIR=$LIBCPP_INCDIR \

@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,64 +30,47 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
-#              environment prepared for running libpmemobj-cpp tests.
-#
+set -e
 
-# Pull base image
-FROM fedora:25
-MAINTAINER marcin.slusarz@intel.com
+ORIGIN="https://${GITHUB_TOKEN}@github.com/pmem-bot/libpmemobj-cpp"
+UPSTREAM="https://github.com/pmem/libpmemobj-cpp"
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	autoconf \
-	automake \
-	clang \
-	cmake \
-	doxygen \
-	gcc \
-	gdb \
-	git \
-	hub \
-	libunwind-devel \
-	make \
-	man \
-	ncurses-devel \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	SFML-devel \
-	sudo \
-	tar \
-	wget \
-	which \
- && dnf clean all
+# Clone repo
+git clone ${ORIGIN}
+cd libpmemobj-cpp
+git remote add upstream ${UPSTREAM}
 
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
+git config --local user.name "pmem-bot"
+git config --local user.email "pmem-bot@intel.com"
 
-# Install libcxx
-COPY install-libcxx.sh install-libcxx.sh
-RUN ./install-libcxx.sh
+git checkout master
+git remote update
+git rebase upstream/master
 
-# Install pmdk
-COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
+# Build docs
+mkdir build
+cd build
 
-# Add user
-ENV USER user
-ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
-USER $USER
+cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ..
+make doc
+cp -R doc/cpp_html ../..
 
-# Set required environment variables
-ENV OS fedora
-ENV OS_VER 25
-ENV PACKAGE_MANAGER rpm
-ENV NOTTY 1
+cd ..
 
+# Checkout gh-pages and copy docs
+git checkout -fb gh-pages upstream/gh-pages
+git clean -df
+cp -r ../cpp_html/* master/doxygen/
+
+# Add and push changes.
+# git commit command may fail if there is nothing to commit.
+# In that case we want to force push anyway (there might be open pull request with
+# changes which were reverted).
+git commit -m "doc: automatic gh-pages docs update" -a && true
+git push -f ${ORIGIN} gh-pages
+
+# Makes pull request.
+# When there is already an open PR or there are no changes an error is thrown, which we ignore.
+hub pull-request -f -b pmem:gh-pages -h pmem-bot:gh-pages -m "doc: automatic gh-pages docs update" && true
+
+exit 0

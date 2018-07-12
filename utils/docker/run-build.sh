@@ -167,3 +167,16 @@ cd ..
 rm -rf build
 
 rm -r $INSTALL_DIR
+
+# Trigger auto doc update on master
+if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
+	echo "Running auto doc update"
+
+	mkdir doc_update
+	cd doc_update
+
+	$SCRIPTSDIR/run-doc-update.sh
+
+	cd ..
+	rm -rf doc_update
+fi

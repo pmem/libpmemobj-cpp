@@ -7,4 +7,5 @@ Name: libpmemobj++
 Description: libpmemobj++ - c++ bindings for libpmemobj library
 Version: @VERSION@
 URL: http://github.com/pmem/libpmemobj-cpp
+Requires: libpmemobj >= @VERSION@
 Cflags: -I${includedir}

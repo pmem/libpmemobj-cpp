@@ -1,1 +1,13 @@
+.*
+!.appveyor.yml
+!.gitignore
+!.gitattributes
+!.clang-format
+!.travis.yml
+!.mailmap
+!.codecov.yml
 build/
+*~
+*.swp
+~*
+tags

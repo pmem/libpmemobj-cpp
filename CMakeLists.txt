@@ -45,6 +45,7 @@ set(CMAKE_CXX_STANDARD 11)
 include(FindPerl)
 include(FindThreads)
 include(CMakeDependentOption)
+include(CMakePackageConfigHelpers)
 include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
@@ -230,6 +231,18 @@ configure_file(
 
 add_custom_target(uninstall
 	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/PMEMOBJ++Config.cmake.in
+		${CMAKE_CURRENT_BINARY_DIR}/PMEMOBJ++Config.cmake
+		INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/PMEMOBJ++/cmake
+		PATH_VARS CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_INCLUDEDIR)
+
+write_basic_package_version_file(PMEMOBJ++ConfigVersion.cmake
+				VERSION ${VERSION}
+				COMPATIBILITY AnyNewerVersion)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/PMEMOBJ++Config.cmake ${CMAKE_CURRENT_BINARY_DIR}/PMEMOBJ++ConfigVersion.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/PMEMOBJ++/cmake)
 
 if(NOT WIN32)
     if(VALGRIND_FOUND)

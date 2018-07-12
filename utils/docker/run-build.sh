@@ -54,6 +54,18 @@ function test_command() {
 	fi
 }
 
+function compile_example_standalone() {
+	rm -rf /tmp/build_example
+	mkdir /tmp/build_example
+	cd /tmp/build_example
+
+	cmake $WORKDIR/examples/$1
+	if [[ $? != 0 ]]; then cd -; return 1; fi # exit on error
+
+	make
+	cd -
+}
+
 cd $WORKDIR
 INSTALL_DIR=/tmp/libpmemobj-cpp
 
@@ -75,7 +87,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 
 make -j2
 test_command
+
 make install
+make uninstall
 
 cd ..
 rm -r build
@@ -94,7 +108,6 @@ cmake .. -DDEVELOPER_MODE=1 \
 
 make -j2
 test_command
-make install
 
 cd ..
 rm -r build
@@ -113,7 +126,6 @@ cmake .. -DDEVELOPER_MODE=1 \
 
 make -j2
 test_command
-make install
 
 cd ..
 rm -r build
@@ -131,7 +143,6 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 
 make -j2
 test_command
-make install
 
 cd ..
 rm -r build
@@ -151,9 +162,14 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 		-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
 make -j2
-ctest --output-on-failure
+test_command
 
 make package
+
+# Make sure there is no libpmemobj++ currently installed
+echo "---------------------------- Error expected! ------------------------------"
+compile_example_standalone map_cli && exit 1
+echo "---------------------------------------------------------------------------"
 
 if [ $PACKAGE_MANAGER = "deb" ]; then
 	sudo dpkg -i libpmemobj++*.deb
@@ -161,10 +177,11 @@ elif [ $PACKAGE_MANAGER = "rpm" ]; then
 	sudo rpm -i libpmemobj++*.rpm
 fi
 
-#XXX: verify installed package - try to compile some program/example
-
 cd ..
 rm -rf build
+
+# Verify installed package
+compile_example_standalone map_cli
 
 rm -r $INSTALL_DIR
 

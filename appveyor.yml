@@ -23,6 +23,7 @@ matrix:
 before_build:
 - cmake . -Bbuild -G "%GENERATOR%"
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_INSTALL_PREFIX=c:/install/libpmemobj-cpp
 
 build_script:
 - msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%
@@ -30,3 +31,11 @@ build_script:
 test_script:
 - cd build
 - ctest -C %CONFIGURATION% --output-on-failure
+- msbuild INSTALL.vcxproj
+- cd ..
+# build standalone example
+- cd examples/map_cli
+- cmake . -G "%GENERATOR%"
+        -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DCMAKE_PREFIX_PATH=c:/install/libpmemobj-cpp
+- msbuild ALL_BUILD.vcxproj

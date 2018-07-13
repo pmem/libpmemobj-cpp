@@ -87,3 +87,4 @@ bindings.
  * Persistent memory resident mutex - [mutex](@ref pmem::obj::mutex)
  * Persistent memory pool - [pool](@ref pmem::obj::pool)
  * Persistent memory allocator - [allocator](@ref pmem::obj::allocator)
+ * Volatile resides on pmem property - [v](@ref pmem::obj::v)

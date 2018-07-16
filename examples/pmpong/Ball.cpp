@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,6 @@
 #include "Ball.hpp"
 #include "Pool.hpp"
 
-Pool *gamePoolB;
-
 Ball::Ball(int x, int y)
 {
 	this->x = x;
@@ -47,7 +45,7 @@ Ball::Ball(int x, int y)
 Ball::~Ball()
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolB->getGamePool()->getPoolToTransaction(),
+		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { pmem::obj::delete_persistent<sf::Vector2f>(velocity); });
 }
 
@@ -88,23 +86,21 @@ void
 Ball::setX(int xArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolB->getGamePool()->getPoolToTransaction(),
-		[&] { x = xArg; });
+		Pool::getGamePool()->getPoolToTransaction(), [&] { x = xArg; });
 }
 
 void
 Ball::setY(int yArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolB->getGamePool()->getPoolToTransaction(),
-		[&] { y = yArg; });
+		Pool::getGamePool()->getPoolToTransaction(), [&] { y = yArg; });
 }
 
 void
 Ball::setVelocityX(float xArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolB->getGamePool()->getPoolToTransaction(),
+		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { velocity->x = xArg; });
 }
 
@@ -112,7 +108,7 @@ void
 Ball::setVelocityY(float yArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolB->getGamePool()->getPoolToTransaction(),
+		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { velocity->y = yArg; });
 }
 
@@ -120,7 +116,7 @@ void
 Ball::setXY(int xArg, int yArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolB->getGamePool()->getPoolToTransaction(), [&] {
+		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			x = xArg;
 			y = yArg;
 		});

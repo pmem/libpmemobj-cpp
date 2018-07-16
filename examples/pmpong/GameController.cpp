@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +33,6 @@
 #include "GameController.hpp"
 #include "Pool.hpp"
 
-Pool *gamePoolG;
-
 GameController::GameController()
 {
 	gameStatus = pmem::obj::make_persistent<PongGameStatus>();
@@ -43,7 +41,7 @@ GameController::GameController()
 GameController::~GameController()
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolG->getGamePool()->getPoolToTransaction(), [&] {
+		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			pmem::obj::delete_persistent<PongGameStatus>(
 				gameStatus);
 		});
@@ -226,7 +224,7 @@ void
 GameController::resetGameStatus()
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolG->getGamePool()->getPoolToTransaction(), [&] {
+		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			pmem::obj::delete_persistent<PongGameStatus>(
 				gameStatus);
 			gameStatus =

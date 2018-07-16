@@ -39,6 +39,7 @@
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <string>
 
 namespace nvobj = pmem::obj;
 
@@ -171,9 +172,10 @@ main(int argc, char *argv[])
 
 	switch (argv[1][0]) {
 		case 'c':
-			poolsize = strtoul(argv[4], nullptr, 0) *
+			poolsize = std::stoul(argv[4], nullptr, 0) *
 				MB; /* in megabytes */
-			mode = strtoul(argv[5], nullptr, 8);
+			mode = static_cast<unsigned>(
+				std::stoul(argv[5], nullptr, 8));
 
 			pool_create(argv[2], layout, poolsize, mode);
 			break;
@@ -181,9 +183,10 @@ main(int argc, char *argv[])
 			pool_open(argv[2], layout);
 			break;
 		case 'd':
-			poolsize = strtoul(argv[4], nullptr, 0) *
+			poolsize = std::stoul(argv[4], nullptr, 0) *
 				MB; /* in megabytes */
-			mode = strtoul(argv[5], nullptr, 8);
+			mode = static_cast<unsigned>(
+				std::stoul(argv[5], nullptr, 8));
 
 			double_close(argv[2], layout, poolsize, mode);
 			break;

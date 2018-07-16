@@ -29,6 +29,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+add_flag(-Wall)
+add_flag(-Wpointer-arith)
+add_flag(-Wsign-compare)
+add_flag(-Wunreachable-code-return)
+add_flag(-Wmissing-variable-declarations)
+add_flag(-fno-common)
+
+add_flag(-ggdb DEBUG)
+add_flag(-DDEBUG DEBUG)
+
+if(USE_ASAN)
+	add_sanitizer_flag(address)
+endif()
+if(USE_UBSAN)
+	add_sanitizer_flag(undefined)
+endif()
+
 include_directories(${PMEMOBJ_INCLUDE_DIRS} .)
 link_directories(${PMEMOBJ_LIBRARY_DIRS})
 

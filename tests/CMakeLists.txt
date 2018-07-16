@@ -39,6 +39,31 @@ if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
 endif()
 
+add_flag(-Wall)
+add_flag(-Wpointer-arith)
+add_flag(-Wunused-macros)
+add_flag(-Wsign-conversion)
+add_flag(-Wsign-compare)
+add_flag(-Wunreachable-code-return)
+add_flag(-Wmissing-variable-declarations)
+add_flag(-fno-common)
+
+add_flag(-ggdb DEBUG)
+add_flag(-DDEBUG DEBUG)
+
+add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
+
+if(USE_ASAN)
+	add_sanitizer_flag(address)
+endif()
+if(USE_UBSAN)
+	add_sanitizer_flag(undefined)
+endif()
+
+if(COVERAGE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
+endif()
+
 set(INCLUDE_DIRS ${PMEMOBJ_INCLUDE_DIRS} common/ .. .)
 set(LIBS_DIRS ${PMEMOBJ_LIBRARY_DIRS})
 

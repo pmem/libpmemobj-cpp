@@ -81,7 +81,8 @@ make_persistent(std::size_t N)
 	 * with accessing array and calculating address difference between two
 	 * elements placed further apart than ptrdiff_t max value
 	 */
-	assert(N <= std::numeric_limits<ptrdiff_t>::max());
+	assert(N <=
+	       static_cast<std::size_t>(std::numeric_limits<ptrdiff_t>::max()));
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_scope_error(

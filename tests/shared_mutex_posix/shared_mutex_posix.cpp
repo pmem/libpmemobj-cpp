@@ -54,14 +54,14 @@ namespace
 /* pool root structure */
 struct root {
 	nvobj::shared_mutex pmutex;
-	int counter;
+	unsigned counter;
 };
 
 /* number of ops per thread */
-const int num_ops = 200;
+const unsigned num_ops = 200;
 
 /* the number of threads */
-const int num_threads = 30;
+const unsigned num_threads = 30;
 
 /*
  * writer -- (internal) bump up the counter by 2
@@ -71,7 +71,7 @@ writer(void *arg)
 {
 	auto proot = static_cast<nvobj::persistent_ptr<root> *>(arg);
 
-	for (int i = 0; i < num_ops; ++i) {
+	for (unsigned i = 0; i < num_ops; ++i) {
 		std::lock_guard<nvobj::shared_mutex> lock((*proot)->pmutex);
 		++((*proot)->counter);
 		++((*proot)->counter);
@@ -86,7 +86,7 @@ void *
 reader(void *arg)
 {
 	auto proot = static_cast<nvobj::persistent_ptr<root> *>(arg);
-	for (int i = 0; i < num_ops; ++i) {
+	for (unsigned i = 0; i < num_ops; ++i) {
 		(*proot)->pmutex.lock_shared();
 		UT_ASSERTeq((*proot)->counter % 2, 0);
 		(*proot)->pmutex.unlock_shared();
@@ -157,17 +157,17 @@ template <typename Worker>
 void
 mutex_test(nvobj::pool<root> &pop, Worker writer, Worker reader)
 {
-	const int total_threads = num_threads * 2;
+	const auto total_threads = num_threads * 2u;
 	pthread_t threads[total_threads];
 
 	auto proot = pop.get_root();
 
-	for (int i = 0; i < total_threads; i += 2) {
+	for (unsigned i = 0; i < total_threads; i += 2) {
 		ut_pthread_create(&threads[i], nullptr, writer, &proot);
 		ut_pthread_create(&threads[i + 1], nullptr, reader, &proot);
 	}
 
-	for (int i = 0; i < total_threads; ++i)
+	for (unsigned i = 0; i < total_threads; ++i)
 		ut_pthread_join(&threads[i], nullptr);
 }
 }
@@ -191,7 +191,7 @@ main(int argc, char *argv[])
 
 	mutex_zero_test(pop);
 
-	int expected = num_threads * num_ops * 2;
+	auto expected = num_threads * num_ops * 2;
 	mutex_test(pop, writer, reader);
 	UT_ASSERTeq(pop.get_root()->counter, expected);
 

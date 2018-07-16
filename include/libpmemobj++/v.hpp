@@ -58,7 +58,7 @@ namespace obj
  * always calling the class default constructor exactly once per instance of the
  * application.
  * This class has 8 bytes of storage overhead.
- * @snippet doc_snippets/persistent.cpp v_property_example
+ * @snippet doc_snippets/v.cpp v_property_example
  */
 template <typename T>
 class v {

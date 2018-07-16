@@ -144,9 +144,8 @@ add_dependencies(check-whitespace check-whitespace-main)
 add_custom_target(tests)
 
 if(DEVELOPER_MODE)
-	# add_flag(-Werror) XXX : fix warnings
+	add_flag(-Werror) # XXX: WX for windows
 	find_program(CLANG_FORMAT NAMES clang-format-3.9 clang-format-3.8)
-	# XXX : clang-format (no postfix in newer versions)
 	if (NOT CLANG_FORMAT)
 		message(WARNING "clang-format not found - C++ sources will not be checked (needed version: 3.8 or 3.9)")
 	endif()

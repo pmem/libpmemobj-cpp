@@ -54,7 +54,6 @@
 #define RAND_FIELD() (rand() % (SIZE - 2) + 1)
 #define EXPLOSION_TIME 20
 #define EXPLOSION_COUNTER 80
-#define SLEEP_TIME (2 * CLOCKS_PER_SEC)
 #define GAME_DELAY 40000
 #define SLEEP(t)                                                               \
 	do {                                                                   \
@@ -224,7 +223,7 @@ public:
 	p<unsigned> score;     /* current score */
 	p<bool> game_over;     /* set true if game is over */
 private:
-	int shape(field f);
+	unsigned long shape(field f);
 	void set_bonus(field f);
 	void set_board(const std::string &map_file);
 	int find_wall(int x, int y, direction dir);
@@ -585,7 +584,8 @@ board_state::print(unsigned hs)
 	mvprintw(32, SIZE * 2 + 10, " +1 life");
 
 	for (unsigned i = 0; i < life; i++)
-		mvaddch(SIZE + 3, SIZE + life - i * 2, shape(PLAYER));
+		mvaddch(SIZE + 3, static_cast<int>(SIZE + life - i * 2),
+			shape(PLAYER));
 }
 
 /*
@@ -701,10 +701,10 @@ board_state::explosion(int x, int y, field f)
 /*
  * board_state::shape -- assign proper shape to different types of fields
  */
-int
+unsigned long
 board_state::shape(field f)
 {
-	int color = COLOR_PAIR(f);
+	auto color = COLOR_PAIR(f);
 	if (f == FOOD)
 		return color | ACS_BULLET;
 	else if (f == WALL || f == EXPLOSION)
@@ -741,8 +741,8 @@ board_state::set_board(const std::string &map_file)
 	if (board_file.fail())
 		assert(0);
 	char num;
-	for (unsigned i = 0; i < SIZE; i++) {
-		for (unsigned j = 0; j < SIZE; j++) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 			board_file.get(num);
 			if (num == '#')
 				set_board_elm(j, i, WALL);
@@ -906,8 +906,8 @@ void
 state::print_start()
 {
 	erase();
-	int x = SIZE / 1.8;
-	int y = SIZE / 2.5;
+	int x = static_cast<int>(SIZE / 1.8);
+	int y = static_cast<int>(SIZE / 2.5);
 	mvprintw(y + 0, x, "#######   #     #   #######   #    #");
 	mvprintw(y + 1, x, "#     #   ##   ##   #     #   ##   #");
 	mvprintw(y + 2, x, "#######   # # # #   #######   # #  #");

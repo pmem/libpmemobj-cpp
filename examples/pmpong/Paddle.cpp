@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +32,6 @@
 
 #include "Paddle.hpp"
 #include "Pool.hpp"
-
-Pool *gamePoolP;
 
 Paddle::Paddle(int x, int y)
 {
@@ -137,7 +135,7 @@ void
 Paddle::setPoints(int pointsArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolP->getGamePool()->getPoolToTransaction(),
+		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { points = pointsArg; });
 }
 
@@ -145,14 +143,12 @@ void
 Paddle::setY(int yArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolP->getGamePool()->getPoolToTransaction(),
-		[&] { y = yArg; });
+		Pool::getGamePool()->getPoolToTransaction(), [&] { y = yArg; });
 }
 
 void
 Paddle::setX(int xArg)
 {
 	pmem::obj::transaction::exec_tx(
-		gamePoolP->getGamePool()->getPoolToTransaction(),
-		[&] { x = xArg; });
+		Pool::getGamePool()->getPoolToTransaction(), [&] { x = xArg; });
 }

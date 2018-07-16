@@ -53,7 +53,7 @@ struct foo {
 	explicit foo(int tobar = 1) : bar(tobar)
 	{
 		for (int i = 0; i < Test_arr_size; ++i)
-			arr[i] = i;
+			arr[i] = static_cast<char>(i);
 	}
 
 	/*
@@ -87,7 +87,7 @@ struct hash : public std::unary_function<nvobj::p<size_t>, const foo &> {
 	nvobj::p<size_t>
 	operator()(const foo &key) const
 	{
-		return (nvobj::p<size_t>)key.bar;
+		return static_cast<size_t>(key.bar);
 	}
 };
 

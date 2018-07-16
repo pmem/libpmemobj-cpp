@@ -74,7 +74,7 @@ if(NOT WIN32)
 
 	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
 	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${PMEMOBJ_INCLUDE_DIRS})
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
 		"#include <libpmemobj++/make_persistent_array.hpp>
 		using namespace pmem::obj;
@@ -86,7 +86,7 @@ if(NOT WIN32)
 
 	# This is a workaround for older incompatible versions of libstdc++ and clang.
 	# Please see https://llvm.org/bugs/show_bug.cgi?id=15517 for more info.
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -include future")
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -include future")
 	CHECK_CXX_SOURCE_COMPILES(
 		"int main() { return 0; }"
 		NO_CHRONO_BUG)

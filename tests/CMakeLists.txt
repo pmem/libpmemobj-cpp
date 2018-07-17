@@ -31,7 +31,11 @@
 
 include(ctest_helpers.cmake)
 
-add_flag(-Wall)
+if(MSVC_VERSION)
+	add_flag(-W4)
+else()
+	add_flag(-Wall)
+endif()
 add_flag(-Wpointer-arith)
 add_flag(-Wunused-macros)
 add_flag(-Wsign-conversion)

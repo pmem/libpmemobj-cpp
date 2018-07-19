@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,11 @@
 #define LIBPMEMOBJ_DESTROYER_HPP
 
 #include <stddef.h>
+#include <type_traits>
 #include <utility>
 
 #include "libpmemobj++/detail/array_traits.hpp"
+#include "libpmemobj++/detail/std_config.hpp"
 
 namespace pmem
 {
@@ -91,12 +93,24 @@ struct if_size_array<T[N]> {
 
 /*
  * Calls object's constructor.
+ *
+ * Supports aggregate initialization since C++17
  */
 template <typename T, typename... Args>
 void
 create(typename if_not_array<T>::type *ptr, Args &&... args)
 {
+/* clang-format off */
+/* XXX: clang-format does not support if constexpr */
+#if CXX_STANDARD >= 17
+	if constexpr(std::is_aggregate_v<T>)
+		new (static_cast<void *>(ptr)) T{std::forward<Args>(args)...};
+	else
+		new (static_cast<void *>(ptr)) T(std::forward<Args>(args)...);
+/* clang-format on */
+#else
 	new (static_cast<void *>(ptr)) T(std::forward<Args>(args)...);
+#endif
 }
 
 /*

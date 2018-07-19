@@ -44,7 +44,7 @@ $ cmake .. -DUSE_CUSTOM_GCC=1 -DGCC_INCDIR=/path/to/includes -DGCC_LIBDIR=/path/
 If you want to use a custom version of libc++ run:
 ```sh
 ...
-$ cmake .. -DUSE_CUSTOM_LLVM=1 -DLIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1 -DLIBCPP_LIBDIR=/usr/local/libcxx/lib
+$ cmake .. -DUSE_LLVM_LIBCPP=1 -DLIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1 -DLIBCPP_LIBDIR=/usr/local/libcxx/lib
 ...
 ```
 

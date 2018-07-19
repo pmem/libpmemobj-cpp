@@ -42,7 +42,9 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 # Treat CMAKE_CXX_STANDARD as a requirement
 set(CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 11)
+
+set(CXX_STANDARD 11 CACHE STRING "C++ language standard")
+set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
 
 include(FindPerl)
 include(FindThreads)
@@ -61,6 +63,9 @@ option(DEVELOPER_MODE "enable developer checks" OFF)
 option(TRACE_TESTS "more verbose test outputs" OFF)
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
+
+# Required for MSVC to correctly define __cplusplus
+add_flag("/Zc:__cplusplus")
 
 set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test
 	CACHE STRING "working directory for tests")

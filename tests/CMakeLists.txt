@@ -265,3 +265,15 @@ elseif(NOT WIN32)
 	message(WARNING "Skipping container tests because custom standard library was not provided")
 	skip_test("containers" "SKIPPED_BECAUSE_OF_NO_CUSTOM_STL")
 endif()
+
+build_test(array_algorithms array_algorithms/array_algorithms.cpp)
+add_test_generic(array_algorithms none)
+add_test_generic(array_algorithms pmemcheck)
+
+build_test(array_slice array_slice/array_slice.cpp)
+add_test_generic(array_slice none)
+add_test_generic(array_slice pmemcheck)
+
+build_test(array_iterator array_iterator/array_iterator.cpp)
+add_test_generic(array_iterator none)
+add_test_generic(array_iterator pmemcheck)

@@ -61,10 +61,10 @@ endif()
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
 
-if(NOT WIN32)
-	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-	set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 
+if(NOT WIN32)
 	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
 	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${PMEMOBJ_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
@@ -84,12 +84,24 @@ if(NOT WIN32)
 		"int main() { return 0; }"
 		NO_CHRONO_BUG)
 
-	set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
-	set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
+	set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+	CHECK_CXX_SOURCE_COMPILES(
+		"#include <libpmemobj++/detail/std_config.hpp>
+		int main() {
+		#if !__cpp_lib_is_aggregate
+			static_assert(false, \"\");
+		#endif
+		}"
+		AGGREGATE_INITIALIZATION_AVAILABLE
+	)
 else()
+	set(AGGREGATE_INITIALIZATION_AVAILABLE TRUE)
 	set(NO_CLANG_TEMPLATE_BUG TRUE)
 	set(NO_CHRONO_BUG TRUE)
 endif()
+
+set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)

@@ -45,6 +45,7 @@
 #include "libpmemobj++/detail/common.hpp"
 #include "libpmemobj++/persistent_ptr.hpp"
 #include "libpmemobj++/pext.hpp"
+#include "libpmemobj++/slice.hpp"
 #include "libpmemobj.h"
 
 namespace pmem
@@ -390,6 +391,56 @@ struct array {
 	back() const
 	{
 		return _data[size() - 1];
+	}
+
+	/**
+	 * Adds requested range to a transaction and returns slice.
+	 *
+	 * @param[in] start start index of requested range
+	 * @param[in] n number of elements in range
+	 * @return slice from start to start + n
+	 */
+	slice<pointer, reference>
+	range(size_type start, size_type n)
+	{
+		if (start + n >= N)
+			throw std::out_of_range("array::slice");
+
+		detail::conditional_add_range_to_tx(_data + start, n);
+
+		return {_data + start, _data + start + n};
+	}
+
+	/**
+	 * Returns const slice.
+	 *
+	 * @param[in] start start index of requested range
+	 * @param[in] n number of elements in range
+	 * @return slice from start to start + n
+	 */
+	slice<const_iterator, const_reference>
+	range(size_type start, size_type n) const
+	{
+		if (start + n >= N)
+			throw std::out_of_range("array::slice");
+
+		return {_data + start, _data + start + n};
+	}
+
+	/**
+	 * Returns const slice.
+	 *
+	 * @param[in] start start index of requested range
+	 * @param[in] n number of elements in range
+	 * @return slice from start to start + n
+	 */
+	slice<const_iterator, const_reference>
+	crange(size_type start, size_type n) const
+	{
+		if (start + n >= N)
+			throw std::out_of_range("array::slice");
+
+		return {_data + start, _data + start + n};
 	}
 
 	/**

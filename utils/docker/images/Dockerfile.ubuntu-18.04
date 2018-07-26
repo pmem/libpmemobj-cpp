@@ -35,7 +35,7 @@
 #
 
 # Pull base image
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER marcin.slusarz@intel.com
 
 # Update the Apt cache and install basic tools
@@ -43,7 +43,7 @@ RUN apt-get update \
  && apt-get install -y software-properties-common \
 	autoconf \
 	clang \
-	clang-format-3.8 \
+	clang-format \
 	cmake \
 	curl \
 	debhelper \
@@ -58,7 +58,7 @@ RUN apt-get update \
 	libtext-diff-perl \
 	pkg-config \
 	ruby \
-	# SFML-2.4 (not available in ubuntu 16.04)
+	libsfml-dev \
 	sudo \
 	wget \
 	whois \
@@ -84,6 +84,6 @@ USER $USER
 
 # Set required environment variables
 ENV OS ubuntu
-ENV OS_VER 16.04
+ENV OS_VER 18.04
 ENV PACKAGE_MANAGER deb
 ENV NOTTY 1

@@ -100,7 +100,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE
+			-DCOVERAGE=$COVERAGE \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_clang_release llvm
@@ -123,7 +125,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DCXX_STANDARD=17
+			-DCXX_STANDARD=17 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_clang_debug_cpp17 llvm
@@ -145,7 +149,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE
+			-DCOVERAGE=$COVERAGE \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_gcc_debug
@@ -167,7 +173,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DCXX_STANDARD=17
+			-DCXX_STANDARD=17 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_gcc_release_cpp17

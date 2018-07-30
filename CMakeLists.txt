@@ -110,6 +110,8 @@ if(BUILD_TESTS OR BUILD_EXAMPLES)
 	else()
 		find_package(PMEMOBJ REQUIRED 1.4)
 	endif()
+
+	find_package(TBB QUIET COMPONENTS tbb)
 endif()
 
 if(PKG_CONFIG_FOUND)

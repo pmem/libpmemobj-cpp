@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,68 +31,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
-#              environment prepared for running libpmemobj-cpp tests.
+# install-tbb.sh - installs tbb library
 #
 
-# Pull base image
-FROM fedora:28
-MAINTAINER marcin.slusarz@intel.com
-
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	autoconf \
-	automake \
-	clang \
-	cmake \
-	doxygen \
-	gcc \
-	gdb \
-	git \
-	hub \
-	libunwind-devel \
-	make \
-	man \
-	ncurses-devel \
-	open-sans-fonts \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	SFML-devel \
-	sudo \
-	tar \
-	wget \
-	which \
- && dnf clean all
-
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
-
-# Install libcxx
-COPY install-libcxx.sh install-libcxx.sh
-RUN ./install-libcxx.sh
-
-# Install pmdk
-COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
-
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
-
-# Add user
-ENV USER user
-ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
-USER $USER
-
-# Set required environment variables
-ENV OS fedora
-ENV OS_VER 28
-ENV PACKAGE_MANAGER rpm
-ENV NOTTY 1
-
+mkdir tbb
+cd tbb
+# Download and save tbb packages
+wget https://github.com/01org/tbb/releases/download/2018_U5/tbb2018_20180618oss_lin.tgz
+tar -xzf tbb2018_20180618oss_lin.tgz
+sudo rm -rf /opt/tbb
+sudo mkdir /opt/tbb
+sudo mv tbb2018_20180618oss/* /opt/tbb/.
+cd ..
+rm -rf tbb

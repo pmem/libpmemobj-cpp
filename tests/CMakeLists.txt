@@ -283,3 +283,11 @@ add_test_generic(array_iterator none)
 add_test_generic(array_iterator pmemcheck)
 
 add_subdirectory(external)
+
+if(USE_TBB AND TBB_FOUND)
+	build_test_tbb(persistent_concurrent_hash_map persistent_concurrent_hash_map/persistent_concurrent_hash_map.cpp)
+	add_test_generic(persistent_concurrent_hash_map none)
+	add_test_generic(persistent_concurrent_hash_map pmemcheck)
+else()
+	message(WARNING "Skipping persistent_concurrent_hash_map test because Intel TBB library not found")
+endif()

@@ -309,4 +309,30 @@ add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck p
 build_test(vector_std_arg vector_std_arg/vector_std_arg.cpp)
 add_test_generic(NAME vector_std_arg TRACERS none memcheck pmemcheck)
 
+if(PMEMVLT_PRESENT)
+	build_test(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
+	add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
+	add_test_generic(NAME concurrent_hash_map_rehash TRACERS none memcheck pmemcheck helgrind)
+
+	if(NOT USE_TBB)
+		message(WARNING "Skipping concurrent_hash_map_tbb test because it was not enabled.")
+	elseif(NOT TBB_FOUND)
+		message(WARNING "Skipping concurrent_hash_map_tbb test because Intel TBB library was not found")
+	else()
+		build_test_tbb(concurrent_hash_map_tbb concurrent_hash_map/concurrent_hash_map_tbb.cpp)
+		add_test_generic(NAME concurrent_hash_map_tbb TRACERS none pmemcheck)
+	endif()
+
+	if(PMREORDER_SUPPORTED)
+		build_test_tbb(concurrent_hash_map_pmreorder_simple concurrent_hash_map_pmreorder_simple/concurrent_hash_map_pmreorder_simple.cpp)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_simple CASE 0 TRACERS none)
+	else()
+		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
+	endif()
+else()
+	message(WARNING "Skipping concurrent_hash_map tests because no pmemvlt support found.")
+endif()
+
 add_subdirectory(external)

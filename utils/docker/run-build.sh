@@ -79,6 +79,10 @@ function sudo_password() {
 	echo $USERPASS | sudo -Sk $*
 }
 
+sudo_password mkdir /mnt/pmem
+sudo_password chmod 777 /mnt/pmem
+sudo_password mount -o size=500M -t tmpfs none /mnt/pmem
+
 cd $WORKDIR
 INSTALL_DIR=/tmp/libpmemobj-cpp
 
@@ -99,7 +103,10 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTEST_DIR=/mnt/pmem \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 ctest --output-on-failure --timeout 540
@@ -127,7 +134,10 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTEST_DIR=/mnt/pmem \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 ctest --output-on-failure --timeout 540
@@ -154,7 +164,10 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=1 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTEST_DIR=/mnt/pmem \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 if [ "$COVERAGE" = "1" ]; then
@@ -162,7 +175,7 @@ if [ "$COVERAGE" = "1" ]; then
 	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
 	upload_codecov tests_gcc_debug
 else
-	ctest --output-on-failure --timeout 540
+	PMREORDER_STACKTRACE_DEPTH=20 ctest --output-on-failure --timeout 540
 fi
 
 cd ..
@@ -184,7 +197,10 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTEST_DIR=/mnt/pmem \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 ctest --output-on-failure --timeout 540

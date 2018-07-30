@@ -34,6 +34,7 @@ $ ctest --output-on-failure
 ```
 
 #### To build packages ####
+
 ```sh
 ...
 cmake .. -DCPACK_GENERATOR="$GEN" -DCMAKE_INSTALL_PREFIX=/usr
@@ -43,6 +44,20 @@ make package
 $GEN is type of package generator and can be RPM or DEB
 
 CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installed
+
+#### To use Intel(R) Threading Building Blocks library ####
+
+By default concurrent_hash_map uses pmem::obj::shared_mutex internally. But read-write mutex from Intel(R) Threading Building Blocks library can be used instead to achive better performance. To enable it in your application set the following compilation flag:
+- -DLIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX=1
+
+If you want to build tests for concurrent_hash_map with read-write mutex from Intel(R) Threading Building Blocks library, run cmake with ```-DUSE_TBB=1 -DTBB_DIR=<Path to Intel TBB>/cmake``` option:
+```sh
+$ ...
+$ cmake .. -DTBB_DIR=<Path to Intel TBB>/cmake
+$ ...
+```
+
+Intel(R) Threading Building Blocks library can be downloaded from the official [release page](https://github.com/01org/tbb/releases).
 
 #### To use with Valgrind ####
 

@@ -144,6 +144,8 @@ if(BUILD_TESTS OR BUILD_EXAMPLES)
 	endif()
 
 	math(EXPR LIBPMEMOBJ_VERSION_NUM "${LIBPMEMOBJ_VERSION_PATCH} + ${LIBPMEMOBJ_VERSION_MINOR} * 100 + ${LIBPMEMOBJ_VERSION_MAJOR} * 10000")
+
+	find_package(TBB COMPONENTS tbb)
 endif()
 
 add_executable(check_license EXCLUDE_FROM_ALL utils/check_license/check-license.c)

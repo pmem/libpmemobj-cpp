@@ -122,6 +122,8 @@ if(BUILD_TESTS OR BUILD_EXAMPLES)
 	else()
 		find_package(LIBPMEMOBJ REQUIRED 1.4)
 	endif()
+
+	find_package(TBB COMPONENTS tbb)
 endif()
 
 add_executable(check_license EXCLUDE_FROM_ALL utils/check_license/check-license.c)

@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,77 +31,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
-#              environment prepared for running libpmemobj-cpp tests.
+# install-tbb.sh - installs tbb library
 #
 
-# Pull base image
-FROM ubuntu:18.04
-MAINTAINER marcin.slusarz@intel.com
-
-ENV DEBIAN_FRONTEND noninteractive
-
-# Update the Apt cache and install basic tools
-RUN apt-get update \
- && apt-get install -y software-properties-common \
-	tzdata \
-	autoconf \
-	clang \
-	clang-format \
-	cmake \
-	curl \
-	debhelper \
-	devscripts \
-	doxygen \
-	libncurses5-dev \
-	gcc \
-	gdb \
-	git \
-	graphviz \
-	libunwind8-dev \
-	libtext-diff-perl \
-	pkg-config \
-	ruby \
-	libsfml-dev \
-	llvm \
-	sudo \
-	wget \
-	whois \
-	libjson-c-dev \
-	asciidoc \
-	uuid-dev \
-	libkmod-dev \
-	libudev-dev \
- && rm -rf /var/lib/apt/lists/*
-
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
-
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
-
-# Install libcxx
-COPY install-libcxx.sh install-libcxx.sh
-RUN ./install-libcxx.sh
-
-# Install pmdk
-COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh dpkg
-
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
-
-# Add user
-ENV USER user
-ENV USERPASS pass
-RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
-USER $USER
-
-# Set required environment variables
-ENV OS ubuntu
-ENV OS_VER 18.04
-ENV PACKAGE_MANAGER deb
-ENV NOTTY 1
+mkdir tbb
+cd tbb
+# Download and save tbb packages
+wget https://github.com/01org/tbb/releases/download/2018_U5/tbb2018_20180618oss_lin.tgz
+tar -xzf tbb2018_20180618oss_lin.tgz
+sudo rm -rf /opt/tbb
+sudo mkdir /opt/tbb
+sudo mv tbb2018_20180618oss/* /opt/tbb/.
+cd ..
+rm -rf tbb

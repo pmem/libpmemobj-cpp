@@ -109,7 +109,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DUSE_LLVM_LIBCPP=0 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command
@@ -128,7 +130,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0 \
-			-DCXX_STANDARD=17
+			-DCXX_STANDARD=17 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command
@@ -146,7 +150,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DUSE_LLVM_LIBCPP=0 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command
@@ -164,7 +170,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0 \
-			-DCXX_STANDARD=17
+			-DCXX_STANDARD=17 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command

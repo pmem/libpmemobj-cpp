@@ -140,6 +140,11 @@ function(build_test name)
 	add_dependencies(tests ${name})
 endfunction()
 
+function(build_test_tbb name)
+	build_test(${name} ${ARGN})
+	target_link_libraries(${name} ${TBB_IMPORTED_TARGETS})
+endfunction()
+
 set(vg_tracers memcheck helgrind drd pmemcheck)
 
 # Configures testcase ${name} ${testcase} using tracer ${tracer}

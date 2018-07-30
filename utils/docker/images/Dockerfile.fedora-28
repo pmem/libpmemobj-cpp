@@ -77,6 +77,10 @@ RUN ./install-libcxx.sh
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh rpm
 
+#Install Intel TBB
+COPY install-tbb.sh install-tbb.sh
+RUN ./install-tbb.sh
+
 # Add user
 ENV USER user
 ENV USERPASS pass

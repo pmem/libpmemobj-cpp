@@ -310,3 +310,12 @@ build_test(vector_modifiers_type_requirements vector_modifiers_type_requirements
 add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
 
 add_subdirectory(external)
+
+if(NOT USE_TBB)
+	message(WARNING "Skipping persistent_concurrent_hash_map test because it was not enabled.")
+elseif(NOT TBB_FOUND)
+	message(WARNING "Skipping persistent_concurrent_hash_map test because Intel TBB library not found")
+else()
+	build_test_tbb(persistent_concurrent_hash_map persistent_concurrent_hash_map/persistent_concurrent_hash_map.cpp)
+	add_test_generic(NAME persistent_concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
+endif()

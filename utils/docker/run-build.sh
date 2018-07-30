@@ -101,7 +101,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_clang_release llvm
@@ -125,7 +127,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_clang_debug_cpp17 llvm
@@ -148,7 +152,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_gcc_debug
@@ -171,7 +177,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command tests_gcc_release_cpp17
@@ -196,7 +204,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
 
 make -j2
 test_command tests_gcc_release_cpp17_no_pmemcheck

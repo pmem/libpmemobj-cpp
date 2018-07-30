@@ -99,7 +99,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 ctest --output-on-failure --timeout 540
@@ -127,7 +129,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 ctest --output-on-failure --timeout 540
@@ -154,7 +158,9 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=1 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 if [ "$COVERAGE" = "1" ]; then
@@ -184,7 +190,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+			-DTESTS_USE_FORCED_PMEM=1 \
+			-DUSE_TBB=1 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 ctest --output-on-failure --timeout 540

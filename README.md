@@ -34,6 +34,16 @@ $ ctest --output-on-failure
 ```
 
 #### To build packages ####
+
+If you want to run tests for concurrent data structures, Intel(R) Threading Building Blocks library should be installed. Intel(R) Threading Building Blocks library can be downloaded from the official [release page](https://github.com/01org/tbb/releases). Run cmake with ```-DUSE_TBB=1 -DTBB_DIR=<Path to Intel TBB>/cmake``` option:
+```sh
+$ ...
+$ cmake .. -DTBB_DIR=<Path to Intel TBB>/cmake
+$ ...
+```
+
+#### To build packages ####
+
 ```sh
 ...
 cmake .. -DCPACK_GENERATOR="$GEN" -DCMAKE_INSTALL_PREFIX=/usr

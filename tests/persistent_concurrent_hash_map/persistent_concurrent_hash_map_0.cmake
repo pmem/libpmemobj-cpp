@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,74 +29,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#
-# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
-#              environment prepared for running libpmemobj-cpp tests.
-#
+include(${SRC_DIR}/../helpers.cmake)
 
-# Pull base image
-FROM ubuntu:18.04
-MAINTAINER marcin.slusarz@intel.com
+setup()
 
-ENV DEBIAN_FRONTEND noninteractive
+execute(${TEST_EXECUTABLE} c ${DIR}/testfile)
+execute(${TEST_EXECUTABLE} o ${DIR}/testfile)
 
-# Update the Apt cache and install basic tools
-RUN apt-get update \
- && apt-get install -y software-properties-common \
-	tzdata \
-	autoconf \
-	clang \
-	clang-format \
-	cmake \
-	curl \
-	debhelper \
-	devscripts \
-	doxygen \
-	libncurses5-dev \
-	gcc \
-	gdb \
-	git \
-	graphviz \
-	libunwind8-dev \
-	libtext-diff-perl \
-	pkg-config \
-	ruby \
-	libsfml-dev \
-	llvm \
-	sudo \
-	wget \
-	whois \
-	libjson-c-dev \
-	asciidoc \
-	uuid-dev \
-	libkmod-dev \
-	libudev-dev \
- && rm -rf /var/lib/apt/lists/*
-
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
-
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
-
-# Install pmdk
-COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh dpkg
-
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
-
-# Add user
-ENV USER user
-ENV USERPASS pass
-RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
-USER $USER
-
-# Set required environment variables
-ENV OS ubuntu
-ENV OS_VER 18.04
-ENV PACKAGE_MANAGER deb
-ENV NOTTY 1
+finish()

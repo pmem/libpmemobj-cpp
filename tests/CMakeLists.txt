@@ -312,4 +312,16 @@ add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck p
 build_test(vector_std_arg vector_std_arg/vector_std_arg.cpp)
 add_test_generic(NAME vector_std_arg TRACERS none memcheck pmemcheck)
 
+build_test(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
+add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
+
 add_subdirectory(external)
+
+if(NOT USE_TBB)
+	message(WARNING "Skipping concurrent_hash_map_tbb test because it was not enabled.")
+elseif(NOT TBB_FOUND)
+	message(WARNING "Skipping concurrent_hash_map_tbb test because Intel TBB library was not found")
+else()
+	build_test_tbb(concurrent_hash_map_tbb concurrent_hash_map/concurrent_hash_map_tbb.cpp)
+	add_test_generic(NAME concurrent_hash_map_tbb TRACERS none pmemcheck)
+endif()

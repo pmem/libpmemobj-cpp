@@ -48,6 +48,13 @@ $ cmake .. -DUSE_LLVM_LIBCPP=1 -DLIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1 
 ...
 ```
 
+If you want to run tests for thread-safe concurrent data structures Intel(R) Threading Building Blocks library should be installed. Intel(R) Threading Building Blocks library can be downloaded from the official [release page](https://github.com/01org/tbb/releases). Run cmake with ```-DTBB_DIR=<Path to Intel TBB>/cmake``` option:
+```sh
+$ ...
+$ cmake .. -DTBB_DIR=<Path to Intel TBB>/cmake
+$ ...
+```
+
 To build packages
 ```sh
 ...

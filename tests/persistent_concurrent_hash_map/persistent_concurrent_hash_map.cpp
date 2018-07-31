@@ -134,6 +134,8 @@ main(int argc, char *argv[])
 
     test_map(pop, open);
 
+    // Test that persistent_concurrent_hash_map could co-exist with
+    // volatile tbb::concurrent_hash_map
     tbb::concurrent_hash_map<int, int> my_map;
 
     my_map.insert(std::pair<int, int>(1, 1));

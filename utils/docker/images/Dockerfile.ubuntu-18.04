@@ -30,39 +30,39 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
+# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
-FROM fedora:25
+FROM ubuntu:18.04
 MAINTAINER marcin.slusarz@intel.com
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
+# Update the Apt cache and install basic tools
+RUN apt-get update \
+ && apt-get install -y software-properties-common \
 	autoconf \
-	automake \
 	clang \
+	clang-format \
 	cmake \
+	curl \
+	debhelper \
+	devscripts \
 	doxygen \
+	libncurses5-dev \
 	gcc \
 	gdb \
 	git \
-	hub \
-	libunwind-devel \
-	make \
-	man \
-	ncurses-devel \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	SFML-devel \
+	graphviz \
+	libunwind8-dev \
+	libtext-diff-perl \
+	pkg-config \
+	ruby \
+	libsfml-dev \
 	sudo \
-	tar \
 	wget \
-	which \
- && dnf clean all
+	whois \
+ && rm -rf /var/lib/apt/lists/*
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
@@ -74,19 +74,16 @@ RUN ./install-libcxx.sh
 
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
+RUN ./install-pmdk.sh dpkg
 
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
 USER $USER
 
 # Set required environment variables
-ENV OS fedora
-ENV OS_VER 25
-ENV PACKAGE_MANAGER rpm
+ENV OS ubuntu
+ENV OS_VER 18.04
+ENV PACKAGE_MANAGER deb
 ENV NOTTY 1
-

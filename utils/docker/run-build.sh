@@ -105,11 +105,30 @@ cd build
 PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 CC=clang CXX=clang++ \
 cmake .. -DDEVELOPER_MODE=1 \
-			-DCMAKE_BUILD_TYPE=Debug \
+			-DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0
+
+make -j2
+test_command
+
+cd ..
+rm -r build
+
+mkdir build
+cd build
+
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+CC=clang CXX=clang++ \
+cmake .. -DDEVELOPER_MODE=1 \
+			-DCMAKE_BUILD_TYPE=Debug \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
+			-DUSE_LLVM_LIBCPP=0 \
+			-DCXX_STANDARD=17
 
 make -j2
 test_command
@@ -144,7 +163,8 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DUSE_LLVM_LIBCPP=0 \
+			-DCXX_STANDARD=17
 
 make -j2
 test_command

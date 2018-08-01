@@ -82,12 +82,12 @@ parse_queue_op(const char *str)
 }
 }
 
+using pmem::obj::delete_persistent;
+using pmem::obj::make_persistent;
 using pmem::obj::p;
 using pmem::obj::persistent_ptr;
 using pmem::obj::pool;
 using pmem::obj::pool_base;
-using pmem::obj::make_persistent;
-using pmem::obj::delete_persistent;
 using pmem::obj::transaction;
 
 namespace examples

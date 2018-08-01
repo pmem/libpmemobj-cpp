@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,8 @@ operator>>(std::istream &is, p<T> &pp)
  * Prefix increment operator overload.
  */
 template <typename T>
-p<T> &operator++(p<T> &pp)
+p<T> &
+operator++(p<T> &pp)
 {
 	++(pp.get_rw());
 	return pp;
@@ -83,7 +84,8 @@ p<T> &operator++(p<T> &pp)
  * Prefix decrement operator overload.
  */
 template <typename T>
-p<T> &operator--(p<T> &pp)
+p<T> &
+operator--(p<T> &pp)
 {
 	--(pp.get_rw());
 	return pp;
@@ -93,7 +95,8 @@ p<T> &operator--(p<T> &pp)
  * Postfix increment operator overload.
  */
 template <typename T>
-p<T> operator++(p<T> &pp, int)
+p<T>
+operator++(p<T> &pp, int)
 {
 	p<T> temp = pp;
 	++pp;
@@ -104,7 +107,8 @@ p<T> operator++(p<T> &pp, int)
  * Postfix decrement operator overload.
  */
 template <typename T>
-p<T> operator--(p<T> &pp, int)
+p<T>
+operator--(p<T> &pp, int)
 {
 	p<T> temp = pp;
 	--pp;

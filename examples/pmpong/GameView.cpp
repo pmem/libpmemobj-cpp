@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,21 +64,24 @@ GameView::GameView(sf::Font &font)
 	leftLine.setPosition(VERTICAL_LINE_OFFSET,
 			     scoreP1.getPosition().y + HORIZONAL_LINE_OFFSET);
 	leftLine.setSize(sf::Vector2f(
-		LINE_THICKNESS, WINDOW_HEIGHT -
+		LINE_THICKNESS,
+		WINDOW_HEIGHT -
 			(scoreP1.getPosition().y + 2 * HORIZONAL_LINE_OFFSET)));
 	leftLine.setFillColor(elementsColor);
 
 	rightLine.setPosition(WINDOW_WIDTH - VERTICAL_LINE_OFFSET,
 			      scoreP1.getPosition().y + HORIZONAL_LINE_OFFSET);
 	rightLine.setSize(sf::Vector2f(
-		LINE_THICKNESS, WINDOW_HEIGHT -
+		LINE_THICKNESS,
+		WINDOW_HEIGHT -
 			(scoreP1.getPosition().y + 2 * HORIZONAL_LINE_OFFSET)));
 	rightLine.setFillColor(elementsColor);
 
 	court.setPosition(VERTICAL_LINE_OFFSET + LINE_THICKNESS,
 			  scoreP1.getPosition().y + HORIZONAL_LINE_OFFSET);
 	court.setSize(sf::Vector2f(
-		WINDOW_WIDTH - 2 * VERTICAL_LINE_OFFSET, WINDOW_HEIGHT -
+		WINDOW_WIDTH - 2 * VERTICAL_LINE_OFFSET,
+		WINDOW_HEIGHT -
 			(scoreP1.getPosition().y + 2 * HORIZONAL_LINE_OFFSET)));
 	court.setFillColor(sf::Color(60, 132, 48));
 

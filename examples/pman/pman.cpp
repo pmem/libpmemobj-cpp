@@ -62,12 +62,12 @@
 			;                                                      \
 	} while (0)
 
+using pmem::obj::delete_persistent;
+using pmem::obj::make_persistent;
 using pmem::obj::p;
 using pmem::obj::persistent_ptr;
 using pmem::obj::pool;
 using pmem::obj::pool_base;
-using pmem::obj::make_persistent;
-using pmem::obj::delete_persistent;
 using pmem::obj::transaction;
 
 namespace examples
@@ -570,8 +570,9 @@ board_state::print(unsigned hs)
 	}
 	if (score > hs)
 		highscore = score;
-	mvprintw(SIZE + 1, 0, "Score: %d\t\tHighscore: %u\t\tLevel: %u\t"
-			      "   Timer: %u",
+	mvprintw(SIZE + 1, 0,
+		 "Score: %d\t\tHighscore: %u\t\tLevel: %u\t"
+		 "   Timer: %u",
 		 (unsigned)score, (unsigned)highscore, (unsigned)level,
 		 (unsigned)timer);
 	mvaddch(8, SIZE * 2 + 5, shape(FOOD));

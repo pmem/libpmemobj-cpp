@@ -155,7 +155,6 @@ test_additional_delete(nvobj::pool<struct root> &pop)
 
 	try {
 		nvobj::transaction::exec_tx(pop, [&] {
-
 			UT_ASSERT(r->pfoo == nullptr);
 
 			r->pfoo = nvobj::make_persistent<foo>();

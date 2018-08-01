@@ -122,32 +122,6 @@ if(NOT LIBUNWIND_FOUND)
 	message(WARNING "libunwind not found. Stack traces from tests will not be reliable")
 endif()
 
-add_flag(-Wall)
-add_flag(-Wpointer-arith)
-add_flag(-Wunused-macros)
-add_flag(-Wsign-conversion)
-add_flag(-Wsign-compare)
-add_flag(-Wconversion)
-add_flag(-Wunreachable-code-return)
-add_flag(-Wmissing-variable-declarations)
-add_flag(-fno-common)
-
-add_flag(-ggdb DEBUG)
-add_flag(-DDEBUG DEBUG)
-
-add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
-
-if(USE_ASAN)
-	add_sanitizer_flag(address)
-endif()
-if(USE_UBSAN)
-	add_sanitizer_flag(undefined)
-endif()
-
-if(COVERAGE)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
-endif()
-
 add_executable(check_license EXCLUDE_FROM_ALL utils/check_license/check-license.c)
 
 add_custom_target(checkers ALL)
@@ -173,9 +147,8 @@ add_dependencies(check-whitespace check-whitespace-main)
 add_custom_target(tests)
 
 if(DEVELOPER_MODE)
-	# add_flag(-Werror) XXX : fix warnings
+	add_flag(-Werror) # XXX: WX for windows
 	find_program(CLANG_FORMAT NAMES clang-format-3.9 clang-format-3.8)
-	# XXX : clang-format (no postfix in newer versions)
 	if (NOT CLANG_FORMAT)
 		message(WARNING "clang-format not found - C++ sources will not be checked (needed version: 3.8 or 3.9)")
 	endif()
@@ -262,12 +235,12 @@ if(NOT WIN32)
 endif()
 
 
-if(NOT WIN32)
+if(NOT MSVC_VERSION)
 	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 
 	# Check for issues with older gcc compilers which do not expand variadic template
 	# variables in lambda expressions.
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -c")
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
 		"void print() {}
 		template<typename...Args, typename T>

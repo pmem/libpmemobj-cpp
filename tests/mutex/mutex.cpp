@@ -53,14 +53,14 @@ namespace
 /* pool root structure */
 struct root {
 	nvobj::mutex pmutex;
-	int counter;
+	unsigned counter;
 };
 
 /* number of ops per thread */
-const int num_ops = 200;
+const unsigned num_ops = 200;
 
 /* the number of threads */
-const int num_threads = 30;
+const unsigned num_threads = 30;
 
 /*
  * increment_pint -- (internal) test the mutex with an std::lock_guard
@@ -68,7 +68,7 @@ const int num_threads = 30;
 void
 increment_pint(nvobj::persistent_ptr<struct root> proot)
 {
-	for (int i = 0; i < num_ops; ++i) {
+	for (unsigned i = 0; i < num_ops; ++i) {
 		std::lock_guard<nvobj::mutex> lock(proot->pmutex);
 		(proot->counter)++;
 	}
@@ -81,7 +81,7 @@ void
 decrement_pint(nvobj::persistent_ptr<struct root> proot)
 {
 	std::unique_lock<nvobj::mutex> lock(proot->pmutex);
-	for (int i = 0; i < num_ops; ++i)
+	for (unsigned i = 0; i < num_ops; ++i)
 		--(proot->counter);
 
 	lock.unlock();
@@ -133,10 +133,10 @@ mutex_test(nvobj::pool<struct root> &pop, const Worker &function)
 
 	nvobj::persistent_ptr<struct root> proot = pop.get_root();
 
-	for (int i = 0; i < num_threads; ++i)
+	for (unsigned i = 0; i < num_threads; ++i)
 		threads[i] = std::thread(function, proot);
 
-	for (int i = 0; i < num_threads; ++i)
+	for (unsigned i = 0; i < num_threads; ++i)
 		threads[i].join();
 }
 }

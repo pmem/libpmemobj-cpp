@@ -60,7 +60,7 @@ struct foo {
 	{
 		bar = 1;
 		for (int i = 0; i < TEST_ARR_SIZE; ++i)
-			arr[i] = i;
+			arr[i] = static_cast<char>(i);
 	}
 
 	/*

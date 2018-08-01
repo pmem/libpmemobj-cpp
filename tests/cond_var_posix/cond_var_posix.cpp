@@ -58,14 +58,14 @@ typedef void *(*reader_type)(void *);
 struct root {
 	nvobj::mutex pmutex;
 	nvobj::condition_variable cond;
-	int counter;
+	unsigned counter;
 };
 
 /* the number of threads */
-const int num_threads = 30;
+const unsigned num_threads = 30;
 
 /* notification limit */
-const int limit = 7000;
+const unsigned limit = 7000;
 
 /* cond wait time in milliseconds */
 const std::chrono::milliseconds wait_time(150);
@@ -439,18 +439,18 @@ void
 mutex_test(nvobj::pool<struct root> &pop, bool notify, bool notify_all,
 	   Reader writer, Writer reader)
 {
-	const int total_threads = num_threads * 2;
+	const auto total_threads = num_threads * 2u;
 	pthread_t threads[total_threads];
 
 	nvobj::persistent_ptr<struct root> proot = pop.get_root();
 	struct writer_args wargs = {proot, notify, notify_all};
 
-	for (int i = 0; i < total_threads; i += 2) {
+	for (unsigned i = 0; i < total_threads; i += 2) {
 		ut_pthread_create(&threads[i], nullptr, reader, &proot);
 		ut_pthread_create(&threads[i + 1], nullptr, writer, &wargs);
 	}
 
-	for (int i = 0; i < total_threads; ++i)
+	for (unsigned i = 0; i < total_threads; ++i)
 		ut_pthread_join(&threads[i], nullptr);
 }
 }
@@ -481,7 +481,7 @@ main(int argc, char *argv[])
 		 reader_mutex_for_pred, reader_lock_for, reader_lock_for_pred});
 
 	for (auto func : notify_functions) {
-		int reset_value = 42;
+		unsigned reset_value = 42;
 
 		mutex_test(pop, true, false, write_notify, func);
 		pop.get_root()->counter = reset_value;
@@ -496,7 +496,7 @@ main(int argc, char *argv[])
 		 reader_mutex_for_pred, reader_lock_for, reader_lock_for_pred});
 
 	for (auto func : not_notify_functions) {
-		int reset_value = 42;
+		unsigned reset_value = 42;
 
 		mutex_test(pop, false, false, write_notify, func);
 		pop.get_root()->counter = reset_value;

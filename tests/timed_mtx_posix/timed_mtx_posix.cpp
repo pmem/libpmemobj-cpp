@@ -53,14 +53,14 @@ namespace
 /* pool root structure */
 struct root {
 	nvobj::timed_mutex pmutex;
-	int counter;
+	unsigned counter;
 };
 
 /* number of ops per thread */
-const int num_ops = 200;
+const unsigned num_ops = 200;
 
 /* the number of threads */
-const int num_threads = 30;
+const unsigned num_threads = 30;
 
 /* timeout for try_lock_for and try_lock_until methods */
 const auto timeout = std::chrono::milliseconds(100);
@@ -76,7 +76,7 @@ increment_pint(void *arg)
 {
 	auto proot = static_cast<nvobj::persistent_ptr<struct root> *>(arg);
 
-	for (int i = 0; i < num_ops; ++i) {
+	for (unsigned i = 0; i < num_ops; ++i) {
 		std::lock_guard<nvobj::timed_mutex> lock((*proot)->pmutex);
 		((*proot)->counter)++;
 	}
@@ -92,7 +92,7 @@ decrement_pint(void *arg)
 	auto proot = static_cast<nvobj::persistent_ptr<struct root> *>(arg);
 
 	std::unique_lock<nvobj::timed_mutex> lock((*proot)->pmutex);
-	for (int i = 0; i < num_ops; ++i)
+	for (unsigned i = 0; i < num_ops; ++i)
 		--((*proot)->counter);
 
 	lock.unlock();
@@ -198,10 +198,10 @@ timed_mtx_test(nvobj::pool<struct root> &pop, Worker function)
 
 	auto proot = pop.get_root();
 
-	for (int i = 0; i < num_threads; ++i)
+	for (unsigned i = 0; i < num_threads; ++i)
 		ut_pthread_create(&threads[i], nullptr, function, &proot);
 
-	for (int i = 0; i < num_threads; ++i)
+	for (unsigned i = 0; i < num_threads; ++i)
 		ut_pthread_join(&threads[i], nullptr);
 }
 }

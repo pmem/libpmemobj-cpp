@@ -30,41 +30,71 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * v.cpp -- C++ documentation snippets.
- */
+#include "unittest.hpp"
 
-//! [v_property_example]
-#include <fcntl.h>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/v.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-using namespace pmem::obj;
+#include <iostream>
+
+#define LAYOUT "cpp"
+
+namespace nvobj = pmem::obj;
+
+struct foo {
+	nvobj::p<int> a;
+	nvobj::p<int> b;
+};
+
+struct root {
+	nvobj::persistent_ptr<foo> pfoo;
+};
 
 void
-v_property_example()
+test_aggregate(nvobj::pool<root> &pop)
 {
-	struct foo {
-		foo() : counter(10)
-		{
-		}
-		int counter;
-	};
+	nvobj::persistent_ptr<root> r = pop.get_root();
 
-	// pool root structure
-	struct root {
-		v<foo> f;
-	};
+#if !__cpp_lib_is_aggregate
+	/* make sure aggregate initialization is available */
+	UT_ASSERT(0);
+#endif
 
-	// create a pmemobj pool
-	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			r->pfoo = nvobj::make_persistent<foo>(2, 3);
 
-	assert(proot->f.get().counter == 10);
+			UT_ASSERTeq(r->pfoo->a, 2);
+			UT_ASSERTeq(r->pfoo->b, 3);
 
-	proot->f.get().counter++;
-
-	assert(proot->f.get().counter == 11);
+			nvobj::delete_persistent<foo>(r->pfoo);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
 }
-//! [v_property_example]
+
+int
+main(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	nvobj::pool<root> pop;
+
+	try {
+		pop = nvobj::pool<root>::create(path, LAYOUT, PMEMOBJ_MIN_POOL,
+						S_IWUSR | S_IRUSR);
+	} catch (pmem::pool_error &pe) {
+		UT_FATAL("!pool::create: %s %s", pe.what(), path);
+	}
+
+	test_aggregate(pop);
+
+	pop.close();
+}

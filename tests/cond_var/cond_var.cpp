@@ -365,7 +365,7 @@ cond_zero_test(nvobj::pool<struct root> &pop)
 	PMEMoid raw_cnd;
 
 	pmemobj_alloc(pop.get_handle(), &raw_cnd, sizeof(PMEMcond), 1,
-		      [](PMEMobjpool *pop, void *ptr, void *arg) -> int {
+		      [](PMEMobjpool *pop, void *ptr, void *) -> int {
 			      PMEMcond *mtx = static_cast<PMEMcond *>(ptr);
 			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
 			      return 0;

@@ -140,7 +140,7 @@ destroy(typename if_not_array<T>::type &arg)
 template <typename T, typename dummy = void,
 	  typename = typename std::enable_if<std::is_pod<T>::value>::type>
 void
-destroy(typename if_not_array<T>::type &arg)
+destroy(typename if_not_array<T>::type &)
 {
 }
 

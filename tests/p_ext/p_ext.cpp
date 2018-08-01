@@ -142,7 +142,8 @@ arithmetic_test(nvobj::pool_base &pop)
 		nvobj::transaction::exec_tx(pop, [&] {
 			/* addition */
 			r->foo_ptr->puchar += r->foo_ptr->puchar;
-			r->foo_ptr->puchar += r->foo_ptr->pint;
+			r->foo_ptr->puchar +=
+				static_cast<char>(r->foo_ptr->pint);
 			r->foo_ptr->puchar += 2;
 			UT_ASSERTeq(r->foo_ptr->puchar, 3);
 

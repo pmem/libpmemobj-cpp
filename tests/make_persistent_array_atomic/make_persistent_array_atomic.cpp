@@ -187,7 +187,7 @@ test_constructor_exception(nvobj::pool_base &pop)
  * test_delete_null -- (internal) test atomic delete nullptr
  */
 void
-test_delete_null(nvobj::pool<struct root> &pop)
+test_delete_null()
 {
 	nvobj::persistent_ptr<foo[]> pfoo;
 	nvobj::persistent_ptr<bar[3]> pbar;
@@ -224,7 +224,7 @@ main(int argc, char *argv[])
 	test_make_one_d(pop);
 	test_make_N_d(pop);
 	test_constructor_exception(pop);
-	test_delete_null(pop);
+	test_delete_null();
 
 	pop.close();
 }

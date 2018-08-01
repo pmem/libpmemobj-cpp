@@ -59,8 +59,7 @@ private:
 	void handleEventKeypress(sf::Event &event,
 				 sf::RenderWindow *gameWindow);
 	void gameMatch(sf::RenderWindow *gameWindow, View *view);
-	void gameMatchSimulation(sf::RenderWindow *gameWindow, View *view,
-				 bool isOnlySimulation);
+	void gameMatchSimulation(sf::RenderWindow *gameWindow, View *view);
 
 	void resetGameStatus();
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,7 +93,7 @@ general_tx_example()
 
 				     },
 				     proot->pmutex, proot->shared_pmutex);
-	} catch (pmem::transaction_error &te) {
+	} catch (pmem::transaction_error &) {
 		// a transaction error occurred, transaction got aborted
 		// reacquire locks if necessary
 	} catch (...) {
@@ -143,7 +143,7 @@ manual_tx_example()
 		// It's necessary to commit the transaction manually and
 		// it has to be the last operation in the transaction.
 		transaction::commit();
-	} catch (pmem::transaction_error &te) {
+	} catch (pmem::transaction_error &) {
 		// an internal transaction error occurred, tx aborted
 		// reacquire locks if necessary
 	} catch (...) {

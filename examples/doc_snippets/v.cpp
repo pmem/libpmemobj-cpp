@@ -62,5 +62,9 @@ v_property_example()
 	auto proot = pop.get_root();
 
 	assert(proot->f.get().counter == 10);
+
+	proot->f.get().counter++;
+
+	assert(proot->f.get().counter == 11);
 }
 //! [v_property_example]

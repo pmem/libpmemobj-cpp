@@ -30,3 +30,4 @@ AlwaysBreakTemplateDeclarations: true
 AccessModifierOffset: -8
 AllowShortBlocksOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
+FixNamespaceComments: false

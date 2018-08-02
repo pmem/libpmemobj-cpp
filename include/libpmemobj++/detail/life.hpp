@@ -99,14 +99,11 @@ template <typename T, typename... Args>
 void
 create(typename if_not_array<T>::type *ptr, Args &&... args)
 {
-/* clang-format off */
-/* XXX: clang-format does not support if constexpr */
 #if __cpp_lib_is_aggregate
-	if constexpr(std::is_aggregate_v<T>)
+	if constexpr (std::is_aggregate_v<T>)
 		new (static_cast<void *>(ptr)) T{std::forward<Args>(args)...};
 	else
 		new (static_cast<void *>(ptr)) T(std::forward<Args>(args)...);
-/* clang-format on */
 #else
 	new (static_cast<void *>(ptr)) T(std::forward<Args>(args)...);
 #endif

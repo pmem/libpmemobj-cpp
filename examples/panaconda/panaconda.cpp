@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,15 +63,15 @@
 
 #define PLAYER_POINTS_PER_HIT 10
 
+using examples::list;
+using pmem::pool_error;
 using pmem::transaction_error;
 using pmem::transaction_scope_error;
-using pmem::pool_error;
-using pmem::obj::transaction;
+using pmem::obj::delete_persistent;
+using pmem::obj::make_persistent;
 using pmem::obj::persistent_ptr;
 using pmem::obj::pool;
-using pmem::obj::make_persistent;
-using pmem::obj::delete_persistent;
-using examples::list;
+using pmem::obj::transaction;
 
 /*
  * Color_pair

@@ -176,7 +176,6 @@ test_ptr_transactional(nvobj::pool<root> &pop)
 
 			/* allocate for future swap test */
 			to_swap = nvobj::make_persistent<foo>();
-
 		});
 	} catch (...) {
 		UT_ASSERT(0);

@@ -41,12 +41,12 @@
 namespace
 {
 
-using pmem::obj::persistent_ptr;
-using pmem::obj::make_persistent;
-using pmem::obj::transaction;
 using pmem::obj::delete_persistent;
+using pmem::obj::make_persistent;
+using pmem::obj::persistent_ptr;
 using pmem::obj::pool;
 using pmem::obj::pool_base;
+using pmem::obj::transaction;
 
 /* convenience typedefs */
 typedef long long value_t;

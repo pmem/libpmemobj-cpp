@@ -77,7 +77,7 @@ public:
  */
 template <>
 class persistent_ptr<const void>
-	: public detail::persistent_ptr_base<const void> {
+    : public detail::persistent_ptr_base<const void> {
 public:
 	persistent_ptr() = default;
 	using detail::persistent_ptr_base<const void>::persistent_ptr_base;
@@ -108,7 +108,7 @@ public:
 	 * Explicit void specialization of the converting constructor.
 	 */
 	explicit persistent_ptr(persistent_ptr<void> const &rhs) noexcept
-		: detail::persistent_ptr_base<T>(rhs.raw())
+	    : detail::persistent_ptr_base<T>(rhs.raw())
 	{
 	}
 
@@ -116,7 +116,7 @@ public:
 	 * Explicit const void specialization of the converting constructor.
 	 */
 	explicit persistent_ptr(persistent_ptr<const void> const &rhs) noexcept
-		: detail::persistent_ptr_base<T>(rhs.raw())
+	    : detail::persistent_ptr_base<T>(rhs.raw())
 	{
 	}
 
@@ -155,8 +155,9 @@ public:
 	typename pmem::detail::sp_array_access<T>::type
 	operator[](std::ptrdiff_t i) const noexcept
 	{
-		assert(i >= 0 && (i < pmem::detail::sp_extent<T>::value ||
-				  pmem::detail::sp_extent<T>::value == 0) &&
+		assert(i >= 0 &&
+		       (i < pmem::detail::sp_extent<T>::value ||
+			pmem::detail::sp_extent<T>::value == 0) &&
 		       "persistent array index out of bounds");
 
 		return this->get()[i];
@@ -165,7 +166,8 @@ public:
 	/**
 	 * Prefix increment operator.
 	 */
-	inline persistent_ptr<T> &operator++()
+	inline persistent_ptr<T> &
+	operator++()
 	{
 		detail::conditional_add_to_tx(this);
 		this->oid.off += sizeof(T);
@@ -176,7 +178,8 @@ public:
 	/**
 	 * Postfix increment operator.
 	 */
-	inline persistent_ptr<T> operator++(int)
+	inline persistent_ptr<T>
+	operator++(int)
 	{
 		PMEMoid noid = this->oid;
 		++(*this);
@@ -187,7 +190,8 @@ public:
 	/**
 	 * Prefix decrement operator.
 	 */
-	inline persistent_ptr<T> &operator--()
+	inline persistent_ptr<T> &
+	operator--()
 	{
 		detail::conditional_add_to_tx(this);
 		this->oid.off -= sizeof(T);
@@ -198,7 +202,8 @@ public:
 	/**
 	 * Postfix decrement operator.
 	 */
-	inline persistent_ptr<T> operator--(int)
+	inline persistent_ptr<T>
+	operator--(int)
 	{
 		PMEMoid noid = this->oid;
 		--(*this);

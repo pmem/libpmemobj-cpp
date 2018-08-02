@@ -96,8 +96,9 @@ public:
 	 *
 	 * Available only for convertible types.
 	 */
-	template <typename Y, typename = typename std::enable_if<
-				      std::is_convertible<Y, T>::value>::type>
+	template <typename Y,
+		  typename = typename std::enable_if<
+			  std::is_convertible<Y, T>::value>::type>
 	v &
 	operator=(const v<Y> &rhs)
 	{

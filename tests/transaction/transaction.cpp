@@ -49,9 +49,9 @@ int counter = 0;
 }
 
 /*
-* XXX The Microsoft compiler does not follow the ISO SD-6: SG10 Feature
-* Test Recommendations. "_MSC_VER" is a workaround.
-*/
+ * XXX The Microsoft compiler does not follow the ISO SD-6: SG10 Feature
+ * Test Recommendations. "_MSC_VER" is a workaround.
+ */
 #if _MSC_VER < 1900
 #ifndef __cpp_lib_uncaught_exceptions
 #define __cpp_lib_uncaught_exceptions 201411

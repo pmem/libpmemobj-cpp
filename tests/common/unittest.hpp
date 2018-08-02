@@ -100,9 +100,10 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 
 /* assert a condition is true at runtime */
 #define UT_ASSERT(cnd)                                                         \
-	((void)((cnd) || (UT_FATAL("%s:%d %s - assertion failure: %s",         \
-				   __FILE__, __LINE__, __func__, #cnd),        \
-			  0)))
+	((void)((cnd) ||                                                       \
+		(UT_FATAL("%s:%d %s - assertion failure: %s", __FILE__,        \
+			  __LINE__, __func__, #cnd),                           \
+		 0)))
 
 /* assertion with extra info printed if assertion fails at runtime */
 #define UT_ASSERTinfo(cnd, info)                                               \

@@ -6,31 +6,31 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to use with libpmemobj-cpp
+//
 
-// <array>
+#include "unittest.hpp"
 
-// class array
+#include <libpmemobj++/experimental/array.hpp>
 
-// bool empty() const noexcept;
+namespace pmem_exp = pmem::obj::experimental;
 
-#include <array>
-#include <cassert>
-
-#include "test_macros.h"
-#include "min_allocator.h"
-
-int main()
+int
+main()
 {
-    {
-    typedef std::array<int, 2> C;
-    C c;
-    ASSERT_NOEXCEPT(c.empty());
-    assert(!c.empty());
-    }
-    {
-    typedef std::array<int, 0> C;
-    C c;
-    ASSERT_NOEXCEPT(c.empty());
-    assert( c.empty());
-    }
+	{
+		typedef pmem_exp::array<int, 2> C;
+		C c;
+		UT_ASSERT_NOEXCEPT(c.empty());
+		UT_ASSERT(!c.empty());
+	}
+	{
+		typedef pmem_exp::array<int, 0> C;
+		C c;
+		UT_ASSERT_NOEXCEPT(c.empty());
+		UT_ASSERT(c.empty());
+	}
 }

@@ -18,17 +18,19 @@
 
 namespace pmem_exp = pmem::obj::experimental;
 
-using pmem_exp::get;
+template <int Dummy> struct NoCompare {};
 
-int
-main()
+int main()
 {
+  int result = 0;
+  {
+    typedef NoCompare<2> T;
+    typedef pmem_exp::array<T, 0> C;
+    C c1 = {{}};
+    // expected-error@algorithm:* 2 {{invalid operands to binary expression}}
+    result = (c1 == c1);
+    result = (c1 < c1);
+  }
 
-	{
-		typedef std::unique_ptr<double> T;
-		typedef pmem_exp::array<T, 1> C;
-		C c = {std::unique_ptr<double>(new double(3.5))};
-		T t = get<0>(std::move(c));
-		UT_ASSERT(*t == 3.5);
-	}
+  return result;
 }

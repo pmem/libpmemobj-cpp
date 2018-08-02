@@ -6,13 +6,25 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to use with libpmemobj-cpp
+//
 
-// <array>
+#include "unittest.hpp"
 
-// support for zero-sized array
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
+namespace pmem_exp = pmem::obj::experimental;
 
-int main()
+int
+main()
 {
+	{
+		typedef double T;
+		typedef pmem_exp::array<const T, 3> C;
+		C c = {{1.1, 2.2, 3.3}}, c2 = {{1, 2, 3}};
+		c2 = c;
+	}
 }

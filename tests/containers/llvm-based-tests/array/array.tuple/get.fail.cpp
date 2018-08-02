@@ -6,31 +6,27 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to use with libpmemobj-cpp
+//
 
-// <array>
+#include "unittest.hpp"
 
-// template <size_t I, class T, size_t N> T& get(array<T, N>& a);
+#include <libpmemobj++/experimental/array.hpp>
 
-// Prevent -Warray-bounds from issuing a diagnostic when testing with clang verify.
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Warray-bounds"
-#endif
+namespace pmem_exp = pmem::obj::experimental;
 
-#include <array>
-#include <cassert>
-
-
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
+using pmem_exp::get;
 
 int main()
 {
     {
         typedef double T;
-        typedef std::array<T, 3> C;
+        typedef pmem_exp::array<T, 3> C;
         C c = {1, 2, 3.5};
-        std::get<3>(c) = 5.5; // expected-note {{requested here}}
+        get<3>(c) = 5.5; // expected-note {{requested here}}
         // expected-error@array:* {{static_assert failed "Index out of bounds in std::get<> (std::array)"}}
     }
 }

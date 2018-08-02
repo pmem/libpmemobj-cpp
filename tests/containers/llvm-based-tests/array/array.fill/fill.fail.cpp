@@ -6,22 +6,22 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to use with libpmemobj-cpp
+//
 
-// <array>
+#include "unittest.hpp"
 
-// void fill(const T& u);
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <cassert>
-
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
+namespace pmem_exp = pmem::obj::experimental;
 
 int main() {
   {
     typedef double T;
-    typedef std::array<const T, 0> C;
+    typedef pmem_exp::array<const T, 0> C;
     C c = {};
     // expected-error-re@array:* {{static_assert failed {{.*}}"cannot fill zero-sized array of type 'const T'"}}
     c.fill(5.5); // expected-note {{requested here}}

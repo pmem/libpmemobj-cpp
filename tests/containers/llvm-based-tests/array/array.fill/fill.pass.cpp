@@ -6,35 +6,36 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to use with libpmemobj-cpp
+//
 
-// <array>
+#include "unittest.hpp"
 
-// void fill(const T& u);
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
 
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
-
-int main()
+int
+main()
 {
-    {
-        typedef double T;
-        typedef std::array<T, 3> C;
-        C c = {1, 2, 3.5};
-        c.fill(5.5);
-        assert(c.size() == 3);
-        assert(c[0] == 5.5);
-        assert(c[1] == 5.5);
-        assert(c[2] == 5.5);
-    }
-    {
-        typedef double T;
-        typedef std::array<T, 0> C;
-        C c = {};
-        c.fill(5.5);
-        assert(c.size() == 0);
-    }
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 3> C;
+		C c = {1, 2, 3.5};
+		c.fill(5.5);
+		UT_ASSERT(c.size() == 3);
+		UT_ASSERT(c[0] == 5.5);
+		UT_ASSERT(c[1] == 5.5);
+		UT_ASSERT(c[2] == 5.5);
+	}
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 0> C;
+		C c = {};
+		c.fill(5.5);
+		UT_ASSERT(c.size() == 0);
+	}
 }

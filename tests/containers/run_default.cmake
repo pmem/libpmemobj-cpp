@@ -1,6 +1,5 @@
-#!/bin/sh -e
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2018, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,8 +28,11 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
 
-# file-exceptions.sh - filter out files not checked for copyright and license
+include(${SRC_DIR}/../../helpers.cmake)
 
-grep -v -E -e 'tests/containers/llvm-based-tests/'
+setup()
+
+execute(${TEST_EXECUTABLE} ${DIR}/testfile)
+
+cleanup()

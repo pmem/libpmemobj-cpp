@@ -6,39 +6,41 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <array>
+#include "unittest.hpp"
 
-// iterator begin();
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
 
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
-
-
-int main()
+int
+main()
 {
-    {
-        typedef double T;
-        typedef std::array<T, 3> C;
-        C c = {1, 2, 3.5};
-        C::iterator i;
-        i = c.begin();
-        assert(*i == 1);
-        assert(&*i == c.data());
-        *i = 5.5;
-        assert(c[0] == 5.5);
-    }
-    {
-      struct NoDefault {
-        NoDefault(int) {}
-      };
-      typedef NoDefault T;
-      typedef std::array<T, 0> C;
-      C c = {};
-      assert(c.begin() == c.end());
-    }
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 3> C;
+		C c = {1, 2, 3.5};
+		C::iterator i;
+		i = c.begin();
+		UT_ASSERT(*i == 1);
+		UT_ASSERT(&*i == c.data());
+		*i = 5.5;
+		UT_ASSERT(c[0] == 5.5);
+	}
+	{
+		struct NoDefault {
+			NoDefault(int)
+			{
+			}
+		};
+		typedef NoDefault T;
+		typedef pmem_exp::array<T, 0> C;
+		C c = {};
+		UT_ASSERT(c.begin() == c.end());
+	}
 }

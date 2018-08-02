@@ -6,140 +6,133 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <array>
+#include "unittest.hpp"
 
-// iterator, const_iterator
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <iterator>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
 
-#include "test_macros.h"
-
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
-
-int main()
+int
+main()
 {
-    {
-    typedef std::array<int, 5> C;
-    C c;
-    C::iterator i;
-    i = c.begin();
-    C::const_iterator j;
-    j = c.cbegin();
-    assert(i == j);
-    }
-    {
-    typedef std::array<int, 0> C;
-    C c;
-    C::iterator i;
-    i = c.begin();
-    C::const_iterator j;
-    j = c.cbegin();
-    assert(i == j);
-    }
+	{
+		typedef pmem_exp::array<int, 5> C;
+		C c;
+		C::iterator i;
+		i = c.begin();
+		C::const_iterator j;
+		j = c.cbegin();
+		UT_ASSERT(i == j);
+	}
+	{
+		typedef pmem_exp::array<int, 0> C;
+		C c;
+		C::iterator i;
+		i = c.begin();
+		C::const_iterator j;
+		j = c.cbegin();
+		UT_ASSERT(i == j);
+	}
 
-#if TEST_STD_VER > 11
-    { // N3644 testing
-        {
-        typedef std::array<int, 5> C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
-        assert ( ii1 == cii );
+	{
+		typedef pmem_exp::array<int, 5> C;
+		C::iterator ii1{}, ii2{};
+		C::iterator ii4 = ii1;
+		C::const_iterator cii{};
+		UT_ASSERT(ii1 == ii2);
+		UT_ASSERT(ii1 == ii4);
+		UT_ASSERT(ii1 == cii);
 
-        assert ( !(ii1 != ii2 ));
-        assert ( !(ii1 != cii ));
+		UT_ASSERT(!(ii1 != ii2));
+		UT_ASSERT(!(ii1 != cii));
 
-        C c;
-        assert ( c.begin()   == std::begin(c));
-        assert ( c.cbegin()  == std::cbegin(c));
-        assert ( c.rbegin()  == std::rbegin(c));
-        assert ( c.crbegin() == std::crbegin(c));
-        assert ( c.end()     == std::end(c));
-        assert ( c.cend()    == std::cend(c));
-        assert ( c.rend()    == std::rend(c));
-        assert ( c.crend()   == std::crend(c));
+		C c;
+		UT_ASSERT(c.begin() == pmem_exp::begin(c));
+		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
+		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
+		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
+		UT_ASSERT(c.end() == pmem_exp::end(c));
+		UT_ASSERT(c.cend() == pmem_exp::cend(c));
+		UT_ASSERT(c.rend() == pmem_exp::rend(c));
+		UT_ASSERT(c.crend() == pmem_exp::crend(c));
 
-        assert ( std::begin(c)   != std::end(c));
-        assert ( std::rbegin(c)  != std::rend(c));
-        assert ( std::cbegin(c)  != std::cend(c));
-        assert ( std::crbegin(c) != std::crend(c));
-        }
-        {
-        typedef std::array<int, 0> C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
+		UT_ASSERT(pmem_exp::begin(c) != pmem_exp::end(c));
+		UT_ASSERT(pmem_exp::rbegin(c) != pmem_exp::rend(c));
+		UT_ASSERT(pmem_exp::cbegin(c) != pmem_exp::cend(c));
+		UT_ASSERT(pmem_exp::crbegin(c) != pmem_exp::crend(c));
+	}
+	{
+		typedef pmem_exp::array<int, 0> C;
+		C::iterator ii1{}, ii2{};
+		C::iterator ii4 = ii1;
+		C::const_iterator cii{};
+		UT_ASSERT(ii1 == ii2);
+		UT_ASSERT(ii1 == ii4);
 
-        assert (!(ii1 != ii2 ));
+		UT_ASSERT(!(ii1 != ii2));
 
-        assert ( (ii1 == cii ));
-        assert ( (cii == ii1 ));
-        assert (!(ii1 != cii ));
-        assert (!(cii != ii1 ));
-        assert (!(ii1 <  cii ));
-        assert (!(cii <  ii1 ));
-        assert ( (ii1 <= cii ));
-        assert ( (cii <= ii1 ));
-        assert (!(ii1 >  cii ));
-        assert (!(cii >  ii1 ));
-        assert ( (ii1 >= cii ));
-        assert ( (cii >= ii1 ));
-        assert (cii - ii1 == 0);
-        assert (ii1 - cii == 0);
+		UT_ASSERT((ii1 == cii));
+		UT_ASSERT((cii == ii1));
+		UT_ASSERT(!(ii1 != cii));
+		UT_ASSERT(!(cii != ii1));
+		UT_ASSERT(!(ii1 < cii));
+		UT_ASSERT(!(cii < ii1));
+		UT_ASSERT((ii1 <= cii));
+		UT_ASSERT((cii <= ii1));
+		UT_ASSERT(!(ii1 > cii));
+		UT_ASSERT(!(cii > ii1));
+		UT_ASSERT((ii1 >= cii));
+		UT_ASSERT((cii >= ii1));
+		UT_ASSERT(cii - ii1 == 0);
+		UT_ASSERT(ii1 - cii == 0);
 
-        C c;
-        assert ( c.begin()   == std::begin(c));
-        assert ( c.cbegin()  == std::cbegin(c));
-        assert ( c.rbegin()  == std::rbegin(c));
-        assert ( c.crbegin() == std::crbegin(c));
-        assert ( c.end()     == std::end(c));
-        assert ( c.cend()    == std::cend(c));
-        assert ( c.rend()    == std::rend(c));
-        assert ( c.crend()   == std::crend(c));
+		C c;
+		UT_ASSERT(c.begin() == pmem_exp::begin(c));
+		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
+		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
+		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
+		UT_ASSERT(c.end() == pmem_exp::end(c));
+		UT_ASSERT(c.cend() == pmem_exp::cend(c));
+		UT_ASSERT(c.rend() == pmem_exp::rend(c));
+		UT_ASSERT(c.crend() == pmem_exp::crend(c));
 
-        assert ( std::begin(c)   == std::end(c));
-        assert ( std::rbegin(c)  == std::rend(c));
-        assert ( std::cbegin(c)  == std::cend(c));
-        assert ( std::crbegin(c) == std::crend(c));
-        }
-    }
-#endif
-#if TEST_STD_VER > 14
-    {
-        typedef std::array<int, 5> C;
-        constexpr C c{0,1,2,3,4};
+		UT_ASSERT(pmem_exp::begin(c) == pmem_exp::end(c));
+		UT_ASSERT(pmem_exp::rbegin(c) == pmem_exp::rend(c));
+		UT_ASSERT(pmem_exp::cbegin(c) == pmem_exp::cend(c));
+		UT_ASSERT(pmem_exp::crbegin(c) == pmem_exp::crend(c));
+	}
 
-        static_assert ( c.begin()   == std::begin(c), "");
-        static_assert ( c.cbegin()  == std::cbegin(c), "");
-        static_assert ( c.end()     == std::end(c), "");
-        static_assert ( c.cend()    == std::cend(c), "");
+	{
+		typedef pmem_exp::array<int, 5> C;
+		C c{{0, 1, 2, 3, 4}};
 
-        static_assert ( c.rbegin()  == std::rbegin(c), "");
-        static_assert ( c.crbegin() == std::crbegin(c), "");
-        static_assert ( c.rend()    == std::rend(c), "");
-        static_assert ( c.crend()   == std::crend(c), "");
+		UT_ASSERT(c.begin() == pmem_exp::begin(c));
+		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
+		UT_ASSERT(c.end() == pmem_exp::end(c));
+		UT_ASSERT(c.cend() == pmem_exp::cend(c));
 
-        static_assert ( std::begin(c)   != std::end(c), "");
-        static_assert ( std::rbegin(c)  != std::rend(c), "");
-        static_assert ( std::cbegin(c)  != std::cend(c), "");
-        static_assert ( std::crbegin(c) != std::crend(c), "");
+		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
+		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
+		UT_ASSERT(c.rend() == pmem_exp::rend(c));
+		UT_ASSERT(c.crend() == pmem_exp::crend(c));
 
-        static_assert ( *c.begin()  == 0, "");
-        static_assert ( *c.rbegin()  == 4, "");
+		UT_ASSERT(pmem_exp::begin(c) != pmem_exp::end(c));
+		UT_ASSERT(pmem_exp::rbegin(c) != pmem_exp::rend(c));
+		UT_ASSERT(pmem_exp::cbegin(c) != pmem_exp::cend(c));
+		UT_ASSERT(pmem_exp::crbegin(c) != pmem_exp::crend(c));
 
-        static_assert ( *std::begin(c)   == 0, "" );
-        static_assert ( *std::cbegin(c)  == 0, "" );
-        static_assert ( *std::rbegin(c)  == 4, "" );
-        static_assert ( *std::crbegin(c) == 4, "" );
-    }
-#endif
+		UT_ASSERT(*c.begin() == 0);
+		UT_ASSERT(*c.rbegin() == 4);
+
+		UT_ASSERT(*pmem_exp::begin(c) == 0);
+		UT_ASSERT(*pmem_exp::cbegin(c) == 0);
+		UT_ASSERT(*pmem_exp::rbegin(c) == 4);
+		UT_ASSERT(*pmem_exp::crbegin(c) == 4);
+	}
 }

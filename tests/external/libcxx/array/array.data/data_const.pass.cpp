@@ -6,67 +6,37 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <array>
+#include "unittest.hpp"
+#include <cstddef>
 
-// const T* data() const;
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
 
-#include "test_macros.h"
-
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
-
-int main()
+int
+main()
 {
-    {
-        typedef double T;
-        typedef std::array<T, 3> C;
-        const C c = {1, 2, 3.5};
-        const T* p = c.data();
-        assert(p[0] == 1);
-        assert(p[1] == 2);
-        assert(p[2] == 3.5);
-    }
-    {
-        typedef double T;
-        typedef std::array<T, 0> C;
-        const C c = {};
-        const T* p = c.data();
-        (void)p; // to placate scan-build
-    }
-    {
-      struct NoDefault {
-        NoDefault(int) {}
-      };
-      typedef NoDefault T;
-      typedef std::array<T, 0> C;
-      const C c = {};
-      const T* p = c.data();
-      assert(p != nullptr);
-    }
-    {
-      typedef std::max_align_t T;
-      typedef std::array<T, 0> C;
-      const C c = {};
-      const T* p = c.data();
-      assert(p != nullptr);
-      std::uintptr_t pint = reinterpret_cast<std::uintptr_t>(p);
-      assert(pint % TEST_ALIGNOF(std::max_align_t) == 0);
-    }
-#if TEST_STD_VER > 14
-    {
-        typedef std::array<int, 5> C;
-        constexpr C c1{0,1,2,3,4};
-        constexpr const C c2{0,1,2,3,4};
-
-        static_assert (  c1.data()  == &c1[0], "");
-        static_assert ( *c1.data()  ==  c1[0], "");
-        static_assert (  c2.data()  == &c2[0], "");
-        static_assert ( *c2.data()  ==  c2[0], "");
-    }
-#endif
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 3> C;
+		const C c = {1, 2, 3.5};
+		const T *p = c.data();
+		UT_ASSERT(p[0] == 1);
+		UT_ASSERT(p[1] == 2);
+		UT_ASSERT(p[2] == 3.5);
+	}
+	{
+		typedef std::max_align_t T;
+		typedef pmem_exp::array<T, 0> C;
+		const C c = {};
+		const T *p = c.data();
+		std::uintptr_t pint = reinterpret_cast<std::uintptr_t>(p);
+		UT_ASSERT(pint % alignof(std::max_align_t) == 0);
+	}
 }

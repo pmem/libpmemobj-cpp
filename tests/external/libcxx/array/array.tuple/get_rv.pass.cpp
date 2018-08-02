@@ -6,30 +6,29 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <array>
+#include "unittest.hpp"
 
-// template <size_t I, class T, size_t N> T&& get(array<T, N>&& a);
+#include <libpmemobj++/experimental/array.hpp>
 
-// UNSUPPORTED: c++98, c++03
+namespace pmem_exp = pmem::obj::experimental;
 
-#include <array>
-#include <memory>
-#include <utility>
-#include <cassert>
+using pmem_exp::get;
 
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
-
-int main()
+int
+main()
 {
 
-    {
-        typedef std::unique_ptr<double> T;
-        typedef std::array<T, 1> C;
-        C c = {std::unique_ptr<double>(new double(3.5))};
-        T t = std::get<0>(std::move(c));
-        assert(*t == 3.5);
-    }
+	{
+		typedef std::unique_ptr<double> T;
+		typedef pmem_exp::array<T, 1> C;
+		C c = {std::unique_ptr<double>(new double(3.5))};
+		T t = get<0>(std::move(c));
+		UT_ASSERT(*t == 3.5);
+	}
 }

@@ -6,80 +6,73 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <array>
+#include "unittest.hpp"
 
-// template <class T, size_t N> void swap(array<T,N>& x, array<T,N>& y);
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <cassert>
-
-#include "test_macros.h"
-// std::array is explicitly allowed to be initialized with A a = { init-list };.
-// Disable the missing braces warning for this reason.
-#include "disable_missing_braces_warning.h"
+namespace pmem_exp = pmem::obj::experimental;
 
 struct NonSwappable {
-  NonSwappable() {}
+	NonSwappable()
+	{
+	}
+
 private:
-  NonSwappable(NonSwappable const&);
-  NonSwappable& operator=(NonSwappable const&);
+	NonSwappable(NonSwappable const &);
+	NonSwappable &operator=(NonSwappable const &);
 };
 
+using pmem_exp::swap;
+
 template <class Tp>
-decltype(swap(std::declval<Tp>(), std::declval<Tp>()))
-can_swap_imp(int);
+decltype(swap(std::declval<Tp>(), std::declval<Tp>())) can_swap_imp(int);
 
 template <class Tp>
 std::false_type can_swap_imp(...);
 
 template <class Tp>
-struct can_swap : std::is_same<decltype(can_swap_imp<Tp>(0)), void> {};
+struct can_swap : std::is_same<decltype(can_swap_imp<Tp>(0)), void> {
+};
 
-int main()
+int
+main()
 {
-    {
-        typedef double T;
-        typedef std::array<T, 3> C;
-        C c1 = {1, 2, 3.5};
-        C c2 = {4, 5, 6.5};
-        swap(c1, c2);
-        assert(c1.size() == 3);
-        assert(c1[0] == 4);
-        assert(c1[1] == 5);
-        assert(c1[2] == 6.5);
-        assert(c2.size() == 3);
-        assert(c2[0] == 1);
-        assert(c2[1] == 2);
-        assert(c2[2] == 3.5);
-    }
-    {
-        typedef double T;
-        typedef std::array<T, 0> C;
-        C c1 = {};
-        C c2 = {};
-        swap(c1, c2);
-        assert(c1.size() == 0);
-        assert(c2.size() == 0);
-    }
-    {
-        typedef NonSwappable T;
-        typedef std::array<T, 0> C0;
-        static_assert(can_swap<C0&>::value, "");
-        C0 l = {};
-        C0 r = {};
-        swap(l, r);
-#if TEST_STD_VER >= 11
-        static_assert(noexcept(swap(l, r)), "");
-#endif
-    }
-#if TEST_STD_VER >= 11
-    {
-        // NonSwappable is still considered swappable in C++03 because there
-        // is no access control SFINAE.
-        typedef NonSwappable T;
-        typedef std::array<T, 42> C1;
-        static_assert(!can_swap<C1&>::value, "");
-    }
-#endif
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 3> C;
+		C c1 = {1, 2, 3.5};
+		C c2 = {4, 5, 6.5};
+		swap(c1, c2);
+		UT_ASSERT(c1.size() == 3);
+		UT_ASSERT(c1[0] == 4);
+		UT_ASSERT(c1[1] == 5);
+		UT_ASSERT(c1[2] == 6.5);
+		UT_ASSERT(c2.size() == 3);
+		UT_ASSERT(c2[0] == 1);
+		UT_ASSERT(c2[1] == 2);
+		UT_ASSERT(c2[2] == 3.5);
+	}
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 0> C;
+		C c1 = {};
+		C c2 = {};
+		swap(c1, c2);
+		UT_ASSERT(c1.size() == 0);
+		UT_ASSERT(c2.size() == 0);
+	}
+	{
+		typedef NonSwappable T;
+		typedef pmem_exp::array<T, 0> C0;
+		static_assert(can_swap<C0 &>::value, "");
+		C0 l = {};
+		C0 r = {};
+		swap(l, r);
+	}
 }

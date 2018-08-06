@@ -88,7 +88,8 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=1 \
 			-DLIBCPP_LIBDIR=$LIBCPP_LIBDIR \
-			-DLIBCPP_INCDIR=$LIBCPP_INCDIR
+			-DLIBCPP_INCDIR=$LIBCPP_INCDIR \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command
@@ -127,7 +128,8 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DUSE_LLVM_LIBCPP=0 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command
@@ -144,7 +146,8 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DUSE_LLVM_LIBCPP=0 \
+			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
 test_command

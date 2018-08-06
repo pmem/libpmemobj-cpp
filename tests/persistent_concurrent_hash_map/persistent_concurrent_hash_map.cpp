@@ -57,7 +57,7 @@ namespace
 
 const int NUMBER_ITEMS_INSERT = 1000;
 
-typedef pmem::experimental::persistent_concurrent_hash_map<nvobj::p<int>, nvobj::p<int> > persistent_map_type;
+typedef nvobj::experimental::persistent_concurrent_hash_map<nvobj::p<int>, nvobj::p<int> > persistent_map_type;
 
 struct root {
 	nvobj::persistent_ptr<persistent_map_type> cons;

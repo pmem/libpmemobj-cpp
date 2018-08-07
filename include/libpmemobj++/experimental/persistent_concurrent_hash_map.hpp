@@ -54,7 +54,7 @@
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj++/v.hpp>
 
-#include "persistent_pool_ptr.h"
+#include "persistent_pool_ptr.hpp"
 
 #include <memory>
 #include <mutex>

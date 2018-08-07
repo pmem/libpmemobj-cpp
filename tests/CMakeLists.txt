@@ -100,6 +100,11 @@ else()
 	skip_test("aggregate_initialization" "SKIPPED_BECAUSE_OF_NO_COMPILER_SUPPORT")
 endif()
 
+build_test(action action/action.cpp)
+add_test_generic(action memcheck)
+add_test_generic(action none)
+add_test_generic(action pmemcheck)
+
 build_test(allocator allocator/allocator.cpp)
 add_test_generic(allocator memcheck)
 add_test_generic(allocator none)

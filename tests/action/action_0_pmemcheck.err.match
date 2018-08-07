@@ -1,0 +1,19 @@
+==$(N)== pmemcheck-$(*), a simple persistent store checker
+==$(N)== Copyright $(*)
+==$(N)== Using $(*)
+==$(N)== Command: $(*)
+==$(N)== 
+==$(N)== 
+==$(N)== Number of stores not made persistent: 3
+==$(N)== Stores not made persistent properly:
+==$(N)== [0]    at $(*)
+$(OPT)==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)== 	Address: 0x$(X)	size: 8	state: DIRTY
+==$(N)== [1]    at $(*)
+$(OPT)==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)== 	Address: 0x$(X)	size: 8	state: DIRTY
+==$(N)== [2]    at $(*)
+$(OPT)==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)== 	Address: 0x$(X)	size: 8	state: DIRTY
+==$(N)== Total memory not made persistent: 24
+==$(N)== ERROR SUMMARY: 3 errors

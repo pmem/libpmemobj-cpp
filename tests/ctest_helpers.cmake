@@ -70,8 +70,11 @@ link_directories(${LIBS_DIRS})
 
 set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+set(SAVED_CMAKE_REQUIRED_LIBRARIES ${PMEMOBJ_LIBRARIES})
 
 if(NOT MSVC_VERSION)
+	set(NO_MSVC_VOID_RETURN_PUBLISH TRUE)
+
 	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
 	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${PMEMOBJ_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
@@ -105,10 +108,22 @@ else()
 	set(AGGREGATE_INITIALIZATION_AVAILABLE FALSE)
 	set(NO_CLANG_TEMPLATE_BUG TRUE)
 	set(NO_CHRONO_BUG TRUE)
+
+	# Return type of pmemobj_publish() varies in different PMDK versions.
+	# MSVC does not compile void return version of pmemobj_publish().
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
+	CHECK_CXX_SOURCE_COMPILES(
+	        "#include \"libpmemobj/action.h\"
+	        int main() {
+	                int a = pmemobj_publish(NULL, NULL, 0);
+	                return 0;
+	        }"
+	        NO_MSVC_VOID_RETURN_PUBLISH)
 endif()
 
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_LIBRARIES ${SAVED_CMAKE_REQUIRED_LIBRARIES})
 
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(CURSES QUIET ncurses)

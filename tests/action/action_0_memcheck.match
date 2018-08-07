@@ -1,0 +1,40 @@
+==$(N)== Memcheck, a memory error detector
+==$(N)== Copyright $(*)
+==$(N)== Using $(*)
+==$(N)== Command: $(*)
+==$(N)== 
+==$(N)== Invalid write of size 8
+==$(N)==    at 0x$(X): (anonymous namespace)::test_action_reserve(pmem::obj::pool<(anonymous namespace)::root>&, char const*) (action.cpp:$(N))
+==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)==  Address 0x$(X) is $(*)
+==$(N)== 
+==$(N)== Invalid write of size 8
+==$(N)==    at 0x$(X): (anonymous namespace)::test_action_defer_free(pmem::obj::pool<(anonymous namespace)::root>&) (action.cpp:$(N))
+==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)==  Address 0x$(X) is 0 bytes inside a block of size 112 free'd
+==$(N)==    at 0x$(X): palloc_heap_action_on_process (in $(*))
+==$(N)==    by 0x$(X): palloc_exec_actions (in $(*))
+==$(N)==    by 0x$(X): pmemobj_publish (in $(*))
+==$(N)==    by 0x$(X): pmem::detail::action::publish(pmem::obj::pool_base&, __gnu_cxx::__normal_iterator<pobj_action*, std::vector<pobj_action, std::allocator<pobj_action> > >, __gnu_cxx::__normal_iterator<pobj_action*, std::vector<pobj_action, std::allocator<pobj_action> > >) (action.hpp:$(N))
+==$(N)==    by 0x$(X): pmem::detail::action::publish(pmem::obj::pool_base&) (action.hpp:$(N))
+==$(N)==    by 0x$(X): (anonymous namespace)::test_action_defer_free(pmem::obj::pool<(anonymous namespace)::root>&) (action.cpp:$(N))
+==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)==  Block was alloc'd at
+==$(N)==    at 0x$(X): alloc_prep_block (in $(*))
+==$(N)==    by 0x$(X): palloc_reservation_create (in $(*))
+==$(N)==    by 0x$(X): palloc_operation (in $(*))
+==$(N)==    by 0x$(X): obj_alloc_construct (in $(*))
+==$(N)==    by 0x$(X): pmemobj_alloc (in $(*))
+==$(N)==    by 0x$(X): void pmem::obj::make_persistent_atomic<(anonymous namespace)::test_val>(pmem::obj::pool_base&, pmem::detail::pp_if_not_array<(anonymous namespace)::test_val>::type&) (make_persistent_atomic.hpp:$(N))
+==$(N)==    by 0x$(X): (anonymous namespace)::test_action_defer_free(pmem::obj::pool<(anonymous namespace)::root>&) (action.cpp:$(N))
+==$(N)==    by 0x$(X): main (action.cpp:$(N))
+==$(N)== 
+==$(N)== 
+==$(N)== HEAP SUMMARY:
+==$(N)==     in use at exit: 0 bytes in 0 blocks
+==$(N)==   total heap usage: $(NC) allocs, $(NC) frees, $(NC) bytes allocated
+==$(N)== 
+==$(N)== All heap blocks were freed -- no leaks are possible
+==$(N)== 
+==$(N)== For counts of detected and suppressed errors, rerun with: -v
+==$(N)== ERROR SUMMARY: 2 errors from 2 contexts (suppressed: $(N) from $(N))

@@ -136,8 +136,13 @@ function(build_test name)
 	add_check_whitespace(tests-${name} ${srcs})
 
 	add_executable(${name} ${srcs})
-	target_link_libraries(${name} ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${TBB_IMPORTED_TARGETS})
+	target_link_libraries(${name} ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 	add_dependencies(tests ${name})
+endfunction()
+
+function(build_test_tbb name)
+	build_test(${name} ${ARGN})
+	target_link_libraries(${name} ${TBB_IMPORTED_TARGETS})
 endfunction()
 
 set(vg_tracers memcheck helgrind drd pmemcheck)

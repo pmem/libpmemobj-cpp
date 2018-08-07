@@ -214,7 +214,7 @@ public:
 	}
 
 	//! @return true if @arg ptr is valid pointer
-	constexpr static bool
+	static bool
 	is_valid(void *ptr)
 	{
 		return reinterpret_cast<uintptr_t>(ptr) > uintptr_t(63);
@@ -818,7 +818,7 @@ class persistent_hash_map_iterator
 		my_index = k; // the end
 	}
 #if !defined(_MSC_VER) || defined(__INTEL_COMPILER)
-	template <typename Key, typename T, typename HashCompare, typename A>
+	template <typename Key, typename T, typename HashCompare>
 	friend class interface5::persistent_concurrent_hash_map;
 #else
 public: // workaround

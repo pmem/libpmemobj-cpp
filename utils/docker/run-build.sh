@@ -166,7 +166,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DUSE_LLVM_LIBCPP=0 \
-			-DCXX_STANDARD=17
+			-DCXX_STANDARD=17 \
 			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2

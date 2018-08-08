@@ -111,7 +111,7 @@ mutex_zero_test(nvobj::pool<struct root> &pop)
 	PMEMoid raw_mutex;
 
 	pmemobj_alloc(pop.get_handle(), &raw_mutex, sizeof(PMEMmutex), 1,
-		      [](PMEMobjpool *pop, void *ptr, void *arg) -> int {
+		      [](PMEMobjpool *pop, void *ptr, void *) -> int {
 			      PMEMmutex *mtx = static_cast<PMEMmutex *>(ptr);
 			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
 			      return 0;

@@ -77,7 +77,7 @@ GameController::gameLoop(bool isSimulation)
 				gameStatus->setIsGameToResume(false);
 				gameStatus->setGameState(game_state::SIMULATE);
 			}
-			gameMatchSimulation(gameWindow, gameView, isSimulation);
+			gameMatchSimulation(gameWindow, gameView);
 		} else {
 			if (gameStatus->getGameState() == game_state::MATCH) {
 				gameMatch(gameWindow, gameView);
@@ -86,8 +86,7 @@ GameController::gameLoop(bool isSimulation)
 				menu(gameWindow, menuView);
 			} else if (gameStatus->getGameState() ==
 				   game_state::SIMULATE) {
-				gameMatchSimulation(gameWindow, gameView,
-						    isSimulation);
+				gameMatchSimulation(gameWindow, gameView);
 			} else if (gameStatus->getGameState() ==
 				   game_state::GAME_OVER) {
 				gameOver(gameWindow, gameOverView);
@@ -200,8 +199,7 @@ GameController::gameMatch(sf::RenderWindow *gameWindow, View *view)
 }
 
 void
-GameController::gameMatchSimulation(sf::RenderWindow *gameWindow, View *view,
-				    bool isSimulation)
+GameController::gameMatchSimulation(sf::RenderWindow *gameWindow, View *view)
 {
 	gameStatus->startBall(BALL_COMPUTER_SPEED);
 	gameStatus->simulate();

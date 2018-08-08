@@ -207,6 +207,11 @@ function(add_test_generic name tracer)
 		return()
 	endif()
 
+	if (NOT WIN32 AND VALGRIND_PMEMCHECK_NOT_FOUND AND ${tracer} STREQUAL "pmemcheck")
+		skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_OF_MISSING_PMEMCHECK")
+		return()
+	endif()
+
 	if (NOT WIN32 AND (USE_ASAN OR USE_UBSAN) AND ${tracer} IN_LIST vg_tracers)
 		skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_SANITIZER_USED")
 		return()

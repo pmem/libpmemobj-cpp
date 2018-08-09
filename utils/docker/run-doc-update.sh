@@ -66,7 +66,8 @@ cp -r ../cpp_html/* master/doxygen/
 # git commit command may fail if there is nothing to commit.
 # In that case we want to force push anyway (there might be open pull request with
 # changes which were reverted).
-git commit -m "doc: automatic gh-pages docs update" -a && true
+git add -A
+git commit -m "doc: automatic gh-pages docs update" && true
 git push -f ${ORIGIN} gh-pages
 
 # Makes pull request.

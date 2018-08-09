@@ -38,7 +38,34 @@ function(setup)
     execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BIN_DIR})
 endfunction()
 
-function(cleanup)
+# Performs cleanup and log matching.
+function(finish)
+    message(STATUS "Test ${name}:")
+    if(EXISTS ${BIN_DIR}/${TRACER}_${TESTCASE}.out)
+        file(READ ${BIN_DIR}/${TRACER}_${TESTCASE}.out OUT)
+        message(STATUS "Stdout:\n${OUT}")
+    endif()
+    if(EXISTS ${BIN_DIR}/${TRACER}_${TESTCASE}.err)
+        file(READ ${BIN_DIR}/${TRACER}_${TESTCASE}.err ERR)
+        message(STATUS "Stderr:\n${ERR}")
+    endif()
+
+    if(EXISTS ${SRC_DIR}/${TRACER}_${TESTCASE}.err.match)
+        match(${BIN_DIR}/${TRACER}_${TESTCASE}.err ${SRC_DIR}/${TRACER}_${TESTCASE}.err.match)
+    endif()
+    if(EXISTS ${SRC_DIR}/${TRACER}_${TESTCASE}.out.match)
+        match(${BIN_DIR}/${TRACER}_${TESTCASE}.out ${SRC_DIR}/${TRACER}_${TESTCASE}.out.match)
+    endif()
+
+    if ($ENV{DUMP_STDOUT})
+        file(READ ${BIN_DIR}/${TRACER}_${TESTCASE}.out OUT)
+        message(STATUS "Stdout:\n${OUT}")
+    endif()
+    if ($ENV{DUMP_STDERR})
+        file(READ ${BIN_DIR}/${TRACER}_${TESTCASE}.err ERR)
+        message(STATUS "Stderr:\n${ERR}")
+    endif()
+
     execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${PARENT_DIR}/${TEST_NAME})
 endfunction()
 
@@ -60,51 +87,11 @@ function(check_file_exists file)
     endif()
 endfunction()
 
-# Generic command executor which stops the test if the executed process
-# returns a non-zero value. Useful, as cmake ignores such failures
-# by default.
-function(execute cmd)
-	execute_process(COMMAND ${cmd} ${ARGN}
-			RESULT_VARIABLE res)
-	if(res)
-		message(FATAL_ERROR "${cmd} ${ARGN} failed: ${res}")
-	endif()
-endfunction()
-
-# Generic command executor which handles failures and returns command output.
-function(execute_with_output out cmd)
-    execute_process(COMMAND ${cmd} ${ARGN}
-            OUTPUT_FILE ${out}
-            RESULT_VARIABLE res)
-    if(res)
-        message(FATAL_ERROR "${cmd} ${ARGN} > ${out} failed: ${res}")
+function(execute_common output_file name)
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not build! Run make first.")
     endif()
-endfunction()
 
-# Generic command executor which handles failures but ignores output.
-function(execute_ignore_output cmd)
-	execute_process(COMMAND ${cmd} ${ARGN}
-		OUTPUT_QUIET
-		RESULT_VARIABLE res)
-	if(res)
-	    message(FATAL_ERROR "${cmd} ${ARGN} > ${out} failed: ${res}")
-	endif()
-endfunction()
-
-# Executes command expecting it to fail.
-function(execute_expect_failure cmd)
-    execute_process(COMMAND ${cmd} ${ARGN}
-            RESULT_VARIABLE res)
-    if(NOT res)
-        message(FATAL_ERROR "${cmd} ${ARGN} unexpectedly succeeded")
-    endif()
-endfunction()
-
-# Executes test command ${name} and verifies its status.
-# First argument of the command is test directory name.
-# Optional function arguments are passed as consecutive arguments to
-# the command.
-function(execute name)
     if(TESTS_USE_FORCED_PMEM)
         set(ENV{PMEM_IS_PMEM_FORCE} 1)
     endif()
@@ -117,7 +104,7 @@ function(execute name)
         set(TRACE valgrind --error-exitcode=99 --tool=pmemcheck)
     elseif(${TRACER} STREQUAL memcheck)
         set(TRACE valgrind --error-exitcode=99 --tool=memcheck --leak-check=full
-	    --suppressions=${SRC_DIR}/../ld.supp --suppressions=${SRC_DIR}/../memcheck-stdcpp.supp)
+           --suppressions=${SRC_DIR}/../ld.supp --suppressions=${SRC_DIR}/../memcheck-stdcpp.supp)
     elseif(${TRACER} STREQUAL helgrind)
         set(TRACE valgrind --error-exitcode=99 --tool=helgrind)
     elseif(${TRACER} STREQUAL drd)
@@ -133,34 +120,41 @@ function(execute name)
     string(REPLACE ";" " " TRACE_STR "${TRACE}")
     message(STATUS "Executing: ${TRACE_STR} ${name} ${ARGN}")
 
-    execute_process(COMMAND ${TRACE} ${name} ${ARGN}
-            RESULT_VARIABLE HAD_ERROR
-            OUTPUT_FILE ${BIN_DIR}/${TRACER}.out
-            ERROR_FILE ${BIN_DIR}/${TRACER}.err)
+    if(${output_file} STREQUAL none)
+        execute_process(COMMAND ${TRACE} ${name} ${ARGN}
+            OUTPUT_QUIET
+            RESULT_VARIABLE res)
+    else()
+        execute_process(COMMAND ${TRACE} ${name} ${ARGN}
+            RESULT_VARIABLE res
+            OUTPUT_FILE ${BIN_DIR}/${output_file}.out
+            ERROR_FILE ${BIN_DIR}/${output_file}.err)
+    endif()
+
+    if(res)
+	    message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
+    endif()
+
     if(TESTS_USE_FORCED_PMEM)
         unset(ENV{PMEM_IS_PMEM_FORCE})
     endif()
+endfunction()
 
-    message(STATUS "Test ${name}:")
-    file(READ ${BIN_DIR}/${TRACER}.out OUT)
-    message(STATUS "Stdout:\n${OUT}")
-    file(READ ${BIN_DIR}/${TRACER}.err ERR)
-    message(STATUS "Stderr:\n${ERR}")
+# Generic command executor which handles failures and prints command output
+# to specified file.
+function(execute_with_output out name)
+    execute_common(${out} ${name} ${ARGN})
+endfunction()
 
-    if(HAD_ERROR)
-        message(FATAL_ERROR "Test ${name} failed: ${HAD_ERROR}")
-    endif()
+# Generic command executor which handles failures but ignores output.
+function(execute_ignore_output name)
+    execute_common(none ${name} ${ARGN})
+endfunction()
 
-    if(EXISTS ${SRC_DIR}/${TRACER}.err.match)
-        match(${BIN_DIR}/${TRACER}.err ${SRC_DIR}/${TRACER}.err.match)
-    endif()
-
-    if ($ENV{DUMP_STDOUT})
-        file(READ ${BIN_DIR}/${TRACER}.out OUT)
-        message(STATUS "Stdout:\n${OUT}")
-    endif()
-    if ($ENV{DUMP_STDERR})
-        file(READ ${BIN_DIR}/${TRACER}.err ERR)
-        message(STATUS "Stderr:\n${ERR}")
-    endif()
+# Executes test command ${name} and verifies its status.
+# First argument of the command is test directory name.
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(execute name)
+    execute_common(${TRACER}_${TESTCASE} ${name} ${ARGN})
 endfunction()

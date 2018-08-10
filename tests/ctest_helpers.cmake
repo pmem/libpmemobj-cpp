@@ -110,10 +110,6 @@ endif()
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 
-add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
-add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
-add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
-
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(CURSES QUIET ncurses)
 else()
@@ -142,8 +138,8 @@ endfunction()
 
 set(vg_tracers memcheck helgrind drd pmemcheck)
 
-# Configures testcase ${name} ${testcase} using tracer ${tracer}
-function(add_testcase name tracer testcase)
+# Configures testcase ${name} ${testcase} using tracer ${tracer}, cmake_script is used to run test
+function(add_testcase name tracer testcase cmake_script)
 	set(executable ${name})
 
 	add_test(NAME ${executable}_${testcase}_${tracer}
@@ -155,7 +151,7 @@ function(add_testcase name tracer testcase)
 			-DTEST_EXECUTABLE=$<TARGET_FILE:${executable}>
 			-DTRACER=${tracer}
 			-DLONG_TESTS=${LONG_TESTS}
-			-P ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}_${testcase}.cmake)
+			-P ${cmake_script})
 
 	set_tests_properties(${name}_${testcase}_${tracer} PROPERTIES
 			ENVIRONMENT "LC_ALL=C;PATH=$ENV{PATH};"
@@ -190,16 +186,10 @@ function(skip_test name message)
 	set_tests_properties(${name}_${message} PROPERTIES COST 0)
 endfunction()
 
-# adds test with name, tracer and optional testcase number
-function(add_test_generic name tracer)
+# adds testcase with name, tracer, and cmake_script responsible for running it
+function(add_test_common name tracer testcase cmake_script)
 	if(${tracer} STREQUAL "")
 	    set(tracer none)
-	endif()
-
-	if ("${ARGN}" STREQUAL "")
-		set(testcase "0")
-	else()
-		set(testcase "${ARGN}")
 	endif()
 
 	if (NOT WIN32 AND (NOT VALGRIND_FOUND) AND ${tracer} IN_LIST vg_tracers)
@@ -227,5 +217,17 @@ function(add_test_generic name tracer)
 		return()
 	endif()
 
-	add_testcase(${name} ${tracer} ${testcase})
+	add_testcase(${name} ${tracer} ${testcase} ${cmake_script})
+endfunction()
+
+function(add_test_generic name tracer)
+	if ("${ARGN}" STREQUAL "")
+		set(testcase "0")
+	else()
+		set(testcase "${ARGN}")
+	endif()
+
+	set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/${name}/${name}_${testcase}.cmake)
+
+	add_test_common(${name} ${tracer} ${testcase} ${cmake_script})
 endfunction()

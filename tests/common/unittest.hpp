@@ -39,6 +39,7 @@
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <type_traits>
 
 #ifndef _WIN32
 #define os_stat_t struct stat
@@ -131,5 +132,8 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 			  (unsigned long long)(lhs), #rhs,                     \
 			  (unsigned long long)(rhs)),                          \
 		 0)))
+
+#define UT_ASSERT_NOEXCEPT(...)                                                \
+	static_assert(noexcept(__VA_ARGS__), "Operation must be noexcept")
 
 #endif /* LIBPMEMOBJ_CPP_UNITTEST_HPP */

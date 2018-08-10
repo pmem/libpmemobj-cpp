@@ -31,6 +31,10 @@
 
 include(ctest_helpers.cmake)
 
+add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
+
 if(MSVC_VERSION)
 	add_flag(-W4)
 else()
@@ -277,3 +281,5 @@ add_test_generic(array_slice pmemcheck)
 build_test(array_iterator array_iterator/array_iterator.cpp)
 add_test_generic(array_iterator none)
 add_test_generic(array_iterator pmemcheck)
+
+add_subdirectory(external)

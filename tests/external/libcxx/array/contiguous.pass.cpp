@@ -6,26 +6,33 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <array>
+#include "unittest.hpp"
 
-// An array is a contiguous container
+#include <libpmemobj++/experimental/array.hpp>
 
-#include <array>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
 
 template <class C>
-void test_contiguous ( const C &c )
+void
+test_contiguous(const C &c)
 {
-    for ( size_t i = 0; i < c.size(); ++i )
-        assert ( *(c.begin() + i) == *(std::addressof(*c.begin()) + i));
+	for (size_t i = 0; i < c.size(); ++i)
+		UT_ASSERT(*(c.begin() + (ptrdiff_t)i) ==
+			  *(std::addressof(*c.begin()) + (ptrdiff_t)i));
 }
 
-int main()
+int
+main()
 {
-    {
-        typedef double T;
-        typedef std::array<T, 3> C;
-        test_contiguous (C());
-    }
+	{
+		typedef double T;
+		typedef pmem_exp::array<T, 3> C;
+		test_contiguous(C());
+	}
 }

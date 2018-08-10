@@ -18,34 +18,19 @@
 
 namespace pmem_exp = pmem::obj::experimental;
 
-struct NoDefault {
-	NoDefault(int)
-	{
-	}
-};
+template <int Dummy> struct NoCompare {};
 
-int
-main()
+int main()
 {
-	{
-		typedef double T;
-		typedef pmem_exp::array<T, 3> C;
-		C c;
-		UT_ASSERT(c.size() == 3);
-	}
-	{
-		typedef double T;
-		typedef pmem_exp::array<T, 0> C;
-		C c;
-		UT_ASSERT(c.size() == 0);
-	}
-	{
-		typedef pmem_exp::array<NoDefault, 0> C;
-		C c;
-		UT_ASSERT(c.size() == 0);
-		C c1 = {};
-		UT_ASSERT(c1.size() == 0);
-		C c2 = {{}};
-		UT_ASSERT(c2.size() == 0);
-	}
+  int result = 0;
+  {
+    typedef NoCompare<1> T;
+    typedef pmem_exp::array<T, 3> C;
+    C c1 = {{}};
+    // expected-error@algorithm:* 2 {{invalid operands to binary expression}}
+    result = (c1 != c1);
+    result = (c1 > c1);
+  }
+
+  return result;
 }

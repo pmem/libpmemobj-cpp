@@ -37,4 +37,4 @@ execute(${TEST_EXECUTABLE} ${DIR}/testfile)
 
 check_file_exists(${DIR}/testfile)
 
-cleanup()
+finish()

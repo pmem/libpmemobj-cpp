@@ -36,4 +36,4 @@ setup()
 execute(${TEST_EXECUTABLE} c ${DIR}/testfile)
 execute(${TEST_EXECUTABLE} o ${DIR}/testfile)
 
-cleanup()
+finish()

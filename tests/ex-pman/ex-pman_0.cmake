@@ -42,4 +42,4 @@ else()
 	message(WARNING "Skip: stdout is not terminal")
 endif()
 
-cleanup()
+finish()

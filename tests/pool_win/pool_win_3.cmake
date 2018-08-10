@@ -33,8 +33,6 @@ include(${SRC_DIR}/../helpers.cmake)
 
 setup()
 
-execute_with_output("out3.log" ${TEST_EXECUTABLE} i ${DIR}/testfile "test" 20 0600)
+execute(${TEST_EXECUTABLE} i ${DIR}/testfile "test" 20 0600)
 
-match(out3.log ${SRC_DIR}/out3.log.match)
-
-cleanup()
+finish()

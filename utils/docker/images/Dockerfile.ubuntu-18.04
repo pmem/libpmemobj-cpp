@@ -59,6 +59,7 @@ RUN apt-get update \
 	pkg-config \
 	ruby \
 	libsfml-dev \
+	llvm \
 	sudo \
 	wget \
 	whois \

@@ -36,8 +36,6 @@ setup()
 # test existing file, file size >= min required size
 #        layout matches the value from pool header
 execute(${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
-execute_with_output(out1.log ${TEST_EXECUTABLE} o ${DIR}/testfile "test")
+execute(${TEST_EXECUTABLE} o ${DIR}/testfile "test")
 
-match(out1.log ${SRC_DIR}/out1.log.match)
-
-cleanup()
+finish()

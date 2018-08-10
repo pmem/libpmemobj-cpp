@@ -36,11 +36,9 @@ setup()
 execute(${TEST_EXECUTABLE} ${DIR}/testfile push 1)
 execute(${TEST_EXECUTABLE} ${DIR}/testfile push 2)
 execute(${TEST_EXECUTABLE} ${DIR}/testfile push 3)
-execute_ignore_output(${TEST_EXECUTABLE} ${DIR}/testfile pop)
-execute_with_output("out0.log" ${TEST_EXECUTABLE} ${DIR}/testfile show)
+execute(${TEST_EXECUTABLE} ${DIR}/testfile pop)
+execute(${TEST_EXECUTABLE} ${DIR}/testfile show)
 
 check_file_exists(${DIR}/testfile)
 
-match(out0.log ${SRC_DIR}/out0.log.match)
-
-cleanup()
+finish()

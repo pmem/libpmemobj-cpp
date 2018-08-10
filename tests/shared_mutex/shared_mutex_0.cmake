@@ -35,5 +35,4 @@ setup()
 
 execute(${TEST_EXECUTABLE} ${DIR}/testfile)
 
-
-cleanup()
+finish()

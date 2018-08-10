@@ -34,10 +34,8 @@ include(${SRC_DIR}/../helpers.cmake)
 setup()
 
 # test non-existing file, poolsize > 0
-execute_with_output(out2.log ${TEST_EXECUTABLE} d ${DIR}/testfile "test" 20 0600)
+execute(${TEST_EXECUTABLE} d ${DIR}/testfile "test" 20 0600)
 
 check_file_exists(${DIR}/testfile)
 
-match(out2.log ${SRC_DIR}/out2.log.match)
-
-cleanup()
+finish()

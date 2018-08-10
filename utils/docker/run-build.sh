@@ -46,8 +46,14 @@ function cleanup() {
 
 function test_command() {
 	if [ "$COVERAGE" = "1" ]; then
+		if [[ "$2" == "llvm" ]]; then
+			gcovexe="llvm-cov gcov"
+		else
+			gcovexe="gcov"
+		fi
+
 		ctest --output-on-failure -E "_memcheck|_drd|_helgrind|_pmemcheck"
-		bash <(curl -s https://codecov.io/bash)
+		bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe"
 		cleanup
 	else
 		ctest --output-on-failure
@@ -91,7 +97,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DLIBCPP_INCDIR=$LIBCPP_INCDIR
 
 make -j2
-test_command
+test_command tests_custom_libcxx llvm
 
 make install
 make uninstall
@@ -112,7 +118,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DUSE_LLVM_LIBCPP=0
 
 make -j2
-test_command
+test_command tests_clang_release llvm
 
 cd ..
 rm -r build
@@ -131,7 +137,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCXX_STANDARD=17
 
 make -j2
-test_command
+test_command tests_clang_debug_cpp17 llvm
 
 cd ..
 rm -r build
@@ -149,7 +155,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DUSE_LLVM_LIBCPP=0
 
 make -j2
-test_command
+test_command tests_gcc_debug
 
 cd ..
 rm -r build
@@ -167,7 +173,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCXX_STANDARD=17
 
 make -j2
-test_command
+test_command tests_gcc_release_cpp17
 
 cd ..
 rm -r build
@@ -187,7 +193,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 		-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
 make -j2
-test_command
+test_command tests_package
 
 make package
 

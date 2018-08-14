@@ -41,4 +41,4 @@ endif()
 
 execute(${TEST_EXECUTABLE} ${DIR}/testfile "${IS_PMEMCHECK}")
 
-cleanup()
+finish()

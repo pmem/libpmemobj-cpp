@@ -33,12 +33,9 @@ include(${SRC_DIR}/../helpers.cmake)
 
 setup()
 
-execute_ignore_output(${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
-
-execute_with_output("out1.log" ${TEST_EXECUTABLE} o ${DIR}/testfile "test" 20 0600)
+execute(${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
+execute(${TEST_EXECUTABLE} o ${DIR}/testfile "test" 20 0600)
 
 check_file_exists(${DIR}/testfile)
 
-match(out1.log ${SRC_DIR}/out1.log.match)
-
-cleanup()
+finish()

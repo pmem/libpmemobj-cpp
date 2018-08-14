@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['flush',['flush',['../classpmem_1_1obj_1_1persistent__ptr.html#a3576b7c9381e281518a077ee76e9188e',1,'pmem::obj::persistent_ptr::flush(pool_base &amp;pop)'],['../classpmem_1_1obj_1_1persistent__ptr.html#a52fe3d39a95e1281ba102a3fc51fa1a3',1,'pmem::obj::persistent_ptr::flush(void)'],['../classpmem_1_1obj_1_1pool__base.html#a1e93abc89e36875a923cbeef1c29575c',1,'pmem::obj::pool_base::flush(const void *addr, size_t len) noexcept'],['../classpmem_1_1obj_1_1pool__base.html#a3488d41902121546ce2b3b824e54edf5',1,'pmem::obj::pool_base::flush(const p&lt; Y &gt; &amp;prop) noexcept'],['../classpmem_1_1obj_1_1pool__base.html#a6a036b1032c163ee1403e477cdd1527b',1,'pmem::obj::pool_base::flush(const persistent_ptr&lt; Y &gt; &amp;ptr) noexcept']]]
+  ['empty',['empty',['../structpmem_1_1obj_1_1experimental_1_1array.html#aa6719e69d2ecad0403bd5bb13fe24831',1,'pmem::obj::experimental::array']]],
+  ['end',['end',['../structpmem_1_1obj_1_1experimental_1_1array.html#a3eb6a262da1b351f24188901194c2a5d',1,'pmem::obj::experimental::array::end()'],['../structpmem_1_1obj_1_1experimental_1_1array.html#a037283eb5486a1a4f12e3aedd830bea0',1,'pmem::obj::experimental::array::end() const noexcept'],['../classpmem_1_1obj_1_1experimental_1_1slice.html#a04fab6bc9144f73aa19b9a01bce8b9f0',1,'pmem::obj::experimental::slice::end()'],['../array_8hpp.html#a51fbfe71ad89d817a95b324aac1d4a1b',1,'pmem::obj::experimental::end()']]],
+  ['exec_5ftx',['exec_tx',['../classpmem_1_1obj_1_1transaction.html#aee53ebfb68147106f2d69f437f59146c',1,'pmem::obj::transaction']]]
 ];

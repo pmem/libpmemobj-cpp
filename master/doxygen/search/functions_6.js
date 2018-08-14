@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['lock',['lock',['../classpmem_1_1obj_1_1mutex.html#a9ab48609b752c0b963f3ad2bacd50c86',1,'pmem::obj::mutex::lock()'],['../classpmem_1_1obj_1_1shared__mutex.html#aef1d143b637eec7e679d420e98a2f458',1,'pmem::obj::shared_mutex::lock()'],['../classpmem_1_1obj_1_1timed__mutex.html#a17f544211bcf905cd600295e4e47b757',1,'pmem::obj::timed_mutex::lock()']]],
-  ['lock_5fshared',['lock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#a016982730a6f61cd2acf53af986cdf03',1,'pmem::obj::shared_mutex']]],
-  ['lock_5ftype',['lock_type',['../classpmem_1_1obj_1_1mutex.html#a4357943ecf5ce2745d517c1fe6f79136',1,'pmem::obj::mutex::lock_type()'],['../classpmem_1_1obj_1_1shared__mutex.html#a8e6044b942aa5f80070d26b699ef37cb',1,'pmem::obj::shared_mutex::lock_type()']]]
+  ['get',['get',['../classpmem_1_1detail_1_1persistent__ptr__base.html#a75304406ee361aa4ad8c5a5f5720f584',1,'pmem::detail::persistent_ptr_base::get()'],['../classpmem_1_1obj_1_1v.html#ad4e3c9f5c805fb9c6c93bf39bb5e9e70',1,'pmem::obj::v::get()'],['../array_8hpp.html#ae404c63195e95a828c9e9e4f7abdcc1a',1,'pmem::obj::experimental::get(pmem::obj::experimental::array&lt; T, N &gt; &amp;a)'],['../array_8hpp.html#a711b660e0692a4b87668c5aec99260e2',1,'pmem::obj::experimental::get(pmem::obj::experimental::array&lt; T, N &gt; &amp;&amp;a)'],['../array_8hpp.html#a8e2270d5c35c98948c976df77cc5c629',1,'pmem::obj::experimental::get(const pmem::obj::experimental::array&lt; T, N &gt; &amp;a) noexcept'],['../array_8hpp.html#a8787bc6da0d8e0dc77bbc2c33795277e',1,'pmem::obj::experimental::get(const pmem::obj::experimental::array&lt; T, N &gt; &amp;&amp;a) noexcept']]],
+  ['get_5fro',['get_ro',['../classpmem_1_1obj_1_1p.html#ac590f0a6bff79053b0550491ad0910d1',1,'pmem::obj::p']]],
+  ['get_5froot',['get_root',['../classpmem_1_1obj_1_1pool.html#a01703e0eecc10199df866fdbca3ab645',1,'pmem::obj::pool']]],
+  ['get_5frw',['get_rw',['../classpmem_1_1obj_1_1p.html#a5c00f5a7f4f3fc5cff7ab51cc8ef749e',1,'pmem::obj::p']]]
 ];

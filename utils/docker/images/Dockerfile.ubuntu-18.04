@@ -38,9 +38,12 @@
 FROM ubuntu:18.04
 MAINTAINER marcin.slusarz@intel.com
 
+ENV DEBIAN_FRONTEND noninteractive
+
 # Update the Apt cache and install basic tools
 RUN apt-get update \
  && apt-get install -y software-properties-common \
+	tzdata \
 	autoconf \
 	clang \
 	clang-format \
@@ -63,7 +66,16 @@ RUN apt-get update \
 	sudo \
 	wget \
 	whois \
+	libjson-c-dev \
+	asciidoc \
+	uuid-dev \
+	libkmod-dev \
+	libudev-dev \
  && rm -rf /var/lib/apt/lists/*
+
+# Install libndctl
+COPY install-libndctl.sh install-libndctl.sh
+RUN ./install-libndctl.sh
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh

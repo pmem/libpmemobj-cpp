@@ -121,7 +121,7 @@ public:
 			return this->val;
 
 		T *value = static_cast<T *>(pmemobj_volatile(
-			pop, &this->vlt, &this->val,
+			pop, &this->vlt, &this->val, sizeof(T),
 			pmem::detail::instantiate_volatile_object<T>, NULL));
 
 		return *value;

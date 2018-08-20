@@ -40,21 +40,21 @@ endfunction()
 
 # Performs cleanup and log matching.
 function(finish)
-    message(STATUS "Test ${name}:")
-    if(EXISTS ${BIN_DIR}/${TRACER}_${TESTCASE}.out)
-        file(READ ${BIN_DIR}/${TRACER}_${TESTCASE}.out OUT)
+    message(STATUS "Test ${TEST_NAME}:")
+    if(EXISTS ${BIN_DIR}/${TEST_NAME}.out)
+        file(READ ${BIN_DIR}/${TEST_NAME}.out OUT)
         message(STATUS "Stdout:\n${OUT}")
     endif()
-    if(EXISTS ${BIN_DIR}/${TRACER}_${TESTCASE}.err)
-        file(READ ${BIN_DIR}/${TRACER}_${TESTCASE}.err ERR)
+    if(EXISTS ${BIN_DIR}/${TEST_NAME}.err)
+        file(READ ${BIN_DIR}/${TEST_NAME}.err ERR)
         message(STATUS "Stderr:\n${ERR}")
     endif()
 
-    if(EXISTS ${SRC_DIR}/${TRACER}_${TESTCASE}.err.match)
-        match(${BIN_DIR}/${TRACER}_${TESTCASE}.err ${SRC_DIR}/${TRACER}_${TESTCASE}.err.match)
+    if(EXISTS ${SRC_DIR}/${TEST_NAME}.err.match)
+        match(${BIN_DIR}/${TEST_NAME}.err ${SRC_DIR}/${TEST_NAME}.err.match)
     endif()
-    if(EXISTS ${SRC_DIR}/${TRACER}_${TESTCASE}.out.match)
-        match(${BIN_DIR}/${TRACER}_${TESTCASE}.out ${SRC_DIR}/${TRACER}_${TESTCASE}.out.match)
+    if(EXISTS ${SRC_DIR}/${TEST_NAME}.out.match)
+        match(${BIN_DIR}/${TEST_NAME}.out ${SRC_DIR}/${TEST_NAME}.out.match)
     endif()
 
     execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${PARENT_DIR}/${TEST_NAME})
@@ -78,9 +78,34 @@ function(check_file_exists file)
     endif()
 endfunction()
 
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=810295
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=780173
+# https://bugs.kde.org/show_bug.cgi?id=303877
+#
+# valgrind issues an unsuppressable warning when exceeding
+# the brk segment, causing matching failures. We can safely
+# ignore it because malloc() will fallback to mmap() anyway.
+#
+# list of ingored warnings should match with the list provided by PMDK:
+# https://github.com/pmem/pmdk/blob/master/src/test/unittest/unittest.sh
+function(valgrind_ignore_warnings valgrind_log)
+    execute_process(COMMAND bash "-c" "cat ${valgrind_log} | grep -v \
+    -e \"WARNING: Serious error when reading debug info\" \
+    -e \"When reading debug info from \" \
+    -e \"Ignoring non-Dwarf2/3/4 block in .debug_info\" \
+    -e \"Last block truncated in .debug_info; ignoring\" \
+    -e \"parse_CU_Header: is neither DWARF2 nor DWARF3 nor DWARF4\" \
+    -e \"brk segment overflow\" \
+    -e \"see section Limitations in user manual\" \
+    -e \"Warning: set address range perms: large range\"\
+    -e \"further instances of this message will not be shown\"\
+    >  ${valgrind_log}.tmp
+mv ${valgrind_log}.tmp ${valgrind_log}")
+endfunction()
+
 function(execute_common output_file name)
     if(NOT EXISTS ${name})
-        message(FATAL_ERROR "Tests were not build! Run make first.")
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
     endif()
 
     if(TESTS_USE_FORCED_PMEM)
@@ -118,11 +143,30 @@ function(execute_common output_file name)
     else()
         execute_process(COMMAND ${TRACE} ${name} ${ARGN}
             RESULT_VARIABLE res
-            OUTPUT_FILE ${BIN_DIR}/${output_file}.out
-            ERROR_FILE ${BIN_DIR}/${output_file}.err)
+            OUTPUT_FILE ${BIN_DIR}/${TEST_NAME}.out
+            ERROR_FILE ${BIN_DIR}/${TEST_NAME}.err)
     endif()
 
-    if(res)
+    # memcheck and pmemcheck match files should follow name pattern:
+    # testname_testcasenr_memcheck/pmemcheck.err.match
+    # If they do exist, ignore test result - it will be verified during
+    # log matching in finish() function.
+    if(EXISTS ${SRC_DIR}/${TEST_NAME}.err.match)
+        valgrind_ignore_warnings(${BIN_DIR}/${TEST_NAME}.err)
+    # pmemcheck is a special snowflake and it doesn't set exit code when
+    # it detects an error, so we have to look at its output if match file
+    # was not found.
+    elseif(${TRACER} STREQUAL pmemcheck)
+        if(NOT EXISTS ${BIN_DIR}/${TEST_NAME}.err)
+            message(FATAL_ERROR "${TEST_NAME}.err not found.")
+        endif()
+
+        file(READ ${BIN_DIR}/${TEST_NAME}.err PMEMCHECK_ERR)
+        message(STATUS "Stderr:\n${PMEMCHECK_ERR}")
+        if(NOT PMEMCHECK_ERR MATCHES "ERROR SUMMARY: 0")
+            message(FATAL_ERROR "Test executed with error(s).")
+        endif()
+    elseif(res)
 	    message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
     endif()
 

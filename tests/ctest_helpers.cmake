@@ -158,11 +158,7 @@ function(add_testcase name tracer testcase cmake_script)
 			ENVIRONMENT "LC_ALL=C;PATH=$ENV{PATH};"
 			FAIL_REGULAR_EXPRESSION Sanitizer)
 
-	# pmemcheck is a special snowflake and it doesn't set exit code when it
-	# detects an error, so we have to look at its output
 	if (${tracer} STREQUAL pmemcheck)
-		set_tests_properties(${name}_${testcase}_${tracer} PROPERTIES
-				PASS_REGULAR_EXPRESSION "ERROR SUMMARY: 0")
 		# XXX: if we use FATAL_ERROR in test.cmake - pmemcheck passes anyway
 		set_tests_properties(${name}_${testcase}_${tracer} PROPERTIES
 				FAIL_REGULAR_EXPRESSION "CMake Error")

@@ -32,7 +32,7 @@
 
 #
 # install-pmdk.sh - installs libpmem & libpmemobj
-#
+##
 
 set -e
 

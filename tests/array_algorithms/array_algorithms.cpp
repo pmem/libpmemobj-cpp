@@ -43,8 +43,11 @@
 namespace pmemobj_exp = pmem::obj::experimental;
 
 struct TestSort {
+#ifdef NO_GCC_AGGREGATE_INITIALIZATION_BUG
 	pmemobj_exp::array<double, 10> c = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-
+#else
+	pmemobj_exp::array<double, 10> c = {{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}};
+#endif
 	void
 	sort_single_element_snapshot()
 	{

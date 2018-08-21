@@ -260,9 +260,23 @@ if(NOT MSVC_VERSION)
 		}"
 		NO_GCC_VARIADIC_TEMPLATE_BUG)
 
+	# Check for issues with older gcc compilers if "inline" aggregate initialization
+	# works for array class members https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65815
+	CHECK_CXX_SOURCE_COMPILES(
+		"struct array {
+			int data[2];
+		};
+		struct X {
+			array a = { 1, 2 };
+		};
+		int main() {
+			return 0;
+		}"
+		NO_GCC_AGGREGATE_INITIALIZATION_BUG)
 	set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 else()
 	set(NO_GCC_VARIADIC_TEMPLATE_BUG TRUE)
+	set(NO_GCC_AGGREGATE_INITIALIZATION_BUG TRUE)
 endif()
 
 include_directories(include)

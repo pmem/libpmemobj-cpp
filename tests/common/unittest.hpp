@@ -41,6 +41,10 @@
 #include <sys/types.h>
 #include <type_traits>
 
+#define START()                                                                \
+	do {                                                                   \
+	} while (0)
+
 #ifndef _WIN32
 #define os_stat_t struct stat
 #define os_stat stat

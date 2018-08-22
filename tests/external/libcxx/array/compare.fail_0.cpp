@@ -22,6 +22,8 @@ template <int Dummy> struct NoCompare {};
 
 int main()
 {
+  START();
+
   int result = 0;
   {
     typedef NoCompare<0> T;

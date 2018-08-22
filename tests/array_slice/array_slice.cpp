@@ -356,6 +356,8 @@ run_test_at(pmem::obj::pool<struct root> &pop)
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc < 3) {
 		std::cerr << "usage: " << argv[0] << " file-name "
 			  << "is-pmemcheck-enabled " << std::endl;

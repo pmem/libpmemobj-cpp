@@ -22,6 +22,8 @@ using pmem_exp::get;
 
 int main()
 {
+    START();
+
     {
         typedef double T;
         typedef pmem_exp::array<T, 3> C;

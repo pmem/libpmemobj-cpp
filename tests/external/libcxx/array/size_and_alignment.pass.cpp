@@ -58,6 +58,8 @@ test_type()
 int
 main()
 {
+	START();
+
 	test_type<char>();
 	test_type<int>();
 	test_type<double>();

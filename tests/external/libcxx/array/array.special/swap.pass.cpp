@@ -43,6 +43,8 @@ struct can_swap : std::is_same<decltype(can_swap_imp<Tp>(0)), void> {
 int
 main()
 {
+	START();
+
 	{
 		typedef double T;
 		typedef pmem_exp::array<T, 3> C;

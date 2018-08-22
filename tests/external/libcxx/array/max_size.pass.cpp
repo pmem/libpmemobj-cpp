@@ -21,6 +21,8 @@ namespace pmem_exp = pmem::obj::experimental;
 int
 main()
 {
+	START();
+
 	{
 		typedef pmem_exp::array<int, 2> C;
 		C c;

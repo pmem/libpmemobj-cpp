@@ -65,6 +65,8 @@ struct xxxx;
 int
 main()
 {
+	START();
+
 	{
 		typedef double T;
 		typedef pmem_exp::array<T, 10> C;

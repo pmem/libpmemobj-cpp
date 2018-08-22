@@ -94,6 +94,8 @@ test_list(nvobj::pool<root> &pop, bool open)
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc != 3 || strchr("co", argv[1][0]) == nullptr)
 		UT_FATAL("usage: %s <c,o> file-name", argv[0]);
 

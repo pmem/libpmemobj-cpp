@@ -40,9 +40,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <type_traits>
+#include "../test_backtrace.h"
 
 #define START()                                                                \
 	do {                                                                   \
+		test_register_sighandlers();                                   \
 	} while (0)
 
 #ifndef _WIN32

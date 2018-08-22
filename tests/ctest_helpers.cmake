@@ -132,7 +132,10 @@ function(build_test name)
 	add_check_whitespace(tests-${name} ${srcs})
 
 	add_executable(${name} ${srcs})
-	target_link_libraries(${name} ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+	target_link_libraries(${name} ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} test_backtrace)
+	if(LIBUNWIND_FOUND)
+		target_link_libraries(${name} ${LIBUNWIND_LIBRARIES} ${CMAKE_DL_LIBS})
+	endif()
 	add_dependencies(tests ${name})
 endfunction()
 

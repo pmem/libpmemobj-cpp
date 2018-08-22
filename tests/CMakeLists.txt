@@ -64,6 +64,8 @@ if(COVERAGE)
        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
+add_library(test_backtrace STATIC test_backtrace.c)
+
 function(build_example_queue)
 	add_executable(ex-queue ../examples/queue/queue.cpp)
 	target_include_directories(ex-queue PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../examples)

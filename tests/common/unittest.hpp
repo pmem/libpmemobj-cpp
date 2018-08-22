@@ -33,6 +33,7 @@
 #ifndef LIBPMEMOBJ_CPP_UNITTEST_HPP
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
+#include "../test_backtrace.h"
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -43,6 +44,7 @@
 
 #define START()                                                                \
 	do {                                                                   \
+		test_register_sighandlers();                                   \
 	} while (0)
 
 #ifndef _WIN32

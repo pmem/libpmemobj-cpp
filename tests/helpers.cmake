@@ -133,6 +133,12 @@ function(execute_common output_file name)
         message(FATAL_ERROR "Unknown tracer '${TRACER}'")
     endif()
 
+    if (NOT (${TRACER} STREQUAL kgdb))
+        if (NOT WIN32)
+            set(TRACE timeout -s SIGALRM -k 200s 180s ${TRACE})
+        endif()
+    endif()
+
     string(REPLACE ";" " " TRACE_STR "${TRACE}")
     message(STATUS "Executing: ${TRACE_STR} ${name} ${ARGN}")
 

@@ -169,9 +169,9 @@ function(execute_common output_file name)
             endif()
 
             file(READ ${BIN_DIR}/${TEST_NAME}.err PMEMCHECK_ERR)
-            message(STATUS "Stderr:\n${PMEMCHECK_ERR}")
+            message(STATUS "Stderr:\n${PMEMCHECK_ERR}\nEnd of stderr")
             if(NOT PMEMCHECK_ERR MATCHES "ERROR SUMMARY: 0")
-                message(FATAL_ERROR "Test executed with error(s).")
+                message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
             endif()
         endif()
 

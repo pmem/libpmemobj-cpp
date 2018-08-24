@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2015-2017, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,75 +30,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * obj_cpp_v.c -- cpp bindings test
- *
- */
+#ifndef TEST_BACKTRACE_H
+#define TEST_BACKTRACE_H
 
-#include "unittest.hpp"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <atomic>
-#include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/v.hpp>
+void test_dump_backtrace(void);
+void test_sighandler(int sig);
+void test_register_sighandlers(void);
 
-#define LAYOUT "cpp"
-
-namespace nvobj = pmem::obj;
-
-namespace
-{
-
-static const int TEST_VALUE = 10;
-
-struct foo {
-	foo() : counter(TEST_VALUE){};
-	int counter;
-};
-
-struct root {
-	nvobj::v<foo> f;
-};
-
-/*
- * test_init -- test volatile value initialization
- */
-void
-test_init(nvobj::pool<root> &pop)
-{
-	UT_ASSERTeq(pop.get_root()->f.get().counter, TEST_VALUE);
+#ifdef __cplusplus
 }
-}
-
-int
-main(int argc, char *argv[])
-{
-	START();
-
-	if (argc != 2)
-		UT_FATAL("usage: %s file-name", argv[0]);
-
-	const char *path = argv[1];
-
-	nvobj::pool<root> pop;
-
-	try {
-		pop = nvobj::pool<struct root>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
-	} catch (pmem::pool_error &pe) {
-		UT_FATAL("!pool::create: %s %s", pe.what(), path);
-	}
-
-	test_init(pop);
-
-	pop.get_root()->f.get().counter = 20;
-	UT_ASSERTeq(pop.get_root()->f.get().counter, 20);
-
-	pop.close();
-
-	pop = nvobj::pool<struct root>::open(path, LAYOUT);
-
-	test_init(pop);
-
-	pop.close();
-}
+#endif
+#endif

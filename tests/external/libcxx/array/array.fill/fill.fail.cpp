@@ -20,6 +20,8 @@ namespace pmem_exp = pmem::obj::experimental;
 
 int main() {
   {
+    START();
+
     typedef double T;
     typedef pmem_exp::array<const T, 0> C;
     C c = {};

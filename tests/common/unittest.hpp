@@ -33,6 +33,7 @@
 #ifndef LIBPMEMOBJ_CPP_UNITTEST_HPP
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
+#include "../test_backtrace.h"
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -40,6 +41,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <type_traits>
+
+#define START()                                                                \
+	do {                                                                   \
+		test_register_sighandlers();                                   \
+	} while (0)
 
 #ifndef _WIN32
 #define os_stat_t struct stat

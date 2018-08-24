@@ -52,11 +52,11 @@ function test_command() {
 			gcovexe="gcov"
 		fi
 
-		ctest --output-on-failure -E "_memcheck|_drd|_helgrind|_pmemcheck"
+		ctest --output-on-failure -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
 		bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe"
 		cleanup
 	else
-		ctest --output-on-failure
+		ctest --output-on-failure --timeout 540
 	fi
 }
 

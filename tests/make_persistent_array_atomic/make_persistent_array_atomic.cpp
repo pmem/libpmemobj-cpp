@@ -207,6 +207,8 @@ test_delete_null()
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 

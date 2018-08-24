@@ -175,6 +175,8 @@ mutex_test(nvobj::pool<root> &pop, Worker writer, Worker reader)
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 

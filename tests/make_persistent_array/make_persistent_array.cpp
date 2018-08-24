@@ -222,6 +222,8 @@ test_abort_revert(nvobj::pool_base &pop)
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 

@@ -267,6 +267,8 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc != 2)
 		UT_FATAL("usage: %s path", argv[0]);
 

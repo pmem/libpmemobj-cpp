@@ -158,6 +158,8 @@ get_root_closed()
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc < 4)
 		UT_FATAL("usage: %s op path layout [poolsize mode]", argv[0]);
 

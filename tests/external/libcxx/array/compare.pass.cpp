@@ -37,6 +37,8 @@ test_compare(const Array &LHS, const Array &RHS)
 int
 main()
 {
+	START();
+
 	{
 		typedef int T;
 		typedef pmem_exp::array<T, 3> C;

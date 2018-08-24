@@ -23,6 +23,7 @@ using pmem_exp::get;
 int
 main()
 {
+	START();
 
 	{
 		typedef std::unique_ptr<double> T;

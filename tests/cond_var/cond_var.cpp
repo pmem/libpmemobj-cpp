@@ -404,6 +404,8 @@ mutex_test(nvobj::pool<struct root> &pop, bool notify, bool notify_all,
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 

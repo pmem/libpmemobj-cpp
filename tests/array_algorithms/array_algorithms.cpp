@@ -154,6 +154,8 @@ test_sort_range(pmem::obj::pool<struct root> &pop)
 int
 main(int argc, char *argv[])
 {
+	START();
+
 	if (argc < 2) {
 		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
 		return 1;

@@ -41,7 +41,7 @@ void
 test_zero_sized()
 {
 	typedef pmem_exp::array<T, 0> ArrayT;
-	static_assert(sizeof(ArrayT) == sizeof(T *), "");
+	static_assert(sizeof(ArrayT) == sizeof(T), "");
 }
 
 template <class T>

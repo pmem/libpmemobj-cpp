@@ -125,8 +125,6 @@ function(execute_common output_file name)
         set(TRACE valgrind --error-exitcode=99 --tool=helgrind)
     elseif(${TRACER} STREQUAL drd)
         set(TRACE valgrind --error-exitcode=99 --tool=drd)
-    elseif(${TRACER} STREQUAL kgdb)
-        set(TRACE konsole -e cgdb --args)
     elseif(${TRACER} MATCHES "none.*")
         # nothing
     else()
@@ -142,12 +140,29 @@ function(execute_common output_file name)
     string(REPLACE ";" " " TRACE_STR "${TRACE}")
     message(STATUS "Executing: ${TRACE_STR} ${name} ${ARGN}")
 
+    set(cmd ${TRACE} ${name} ${ARGN})
+
+    if($ENV{CGDB})
+        find_program(KONSOLE NAMES konsole)
+        find_program(CGDB NAMES cgdb)
+
+        if (NOT KONSOLE)
+            message(FATAL_ERROR "konsole not found.")
+        elseif (NOT CGDB)
+            message(FATAL_ERROR "cdgb not found.")
+        elseif(NOT (${TRACER} STREQUAL none))
+            message(FATAL_ERROR "Cannot use cgdb with ${TRACER}")
+        else()
+            set(cmd konsole -e cgdb --args ${cmd})
+        endif()
+    endif()
+
     if(${output_file} STREQUAL none)
-        execute_process(COMMAND ${TRACE} ${name} ${ARGN}
+        execute_process(COMMAND ${cmd}
             OUTPUT_QUIET
             RESULT_VARIABLE res)
     else()
-        execute_process(COMMAND ${TRACE} ${name} ${ARGN}
+        execute_process(COMMAND ${cmd}
             RESULT_VARIABLE res
             OUTPUT_FILE ${BIN_DIR}/${TEST_NAME}.out
             ERROR_FILE ${BIN_DIR}/${TEST_NAME}.err)

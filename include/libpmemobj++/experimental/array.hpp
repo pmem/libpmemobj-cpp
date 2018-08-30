@@ -81,7 +81,13 @@ struct array {
 	/* zero-sized array support */
 	template <typename Y>
 	struct standard_array_traits<Y, 0> {
-		using type = Y *;
+		struct _alignment_struct {
+			Y _data[1];
+		};
+
+		struct alignas(_alignment_struct) type {
+			char _data[sizeof(_alignment_struct)];
+		};
 	};
 
 	/* Member types */
@@ -126,7 +132,7 @@ struct array {
 	{
 		detail::conditional_add_to_tx(this);
 
-		std::copy(other.cbegin(), other.cend(), _data);
+		std::copy(other.cbegin(), other.cend(), _get_data());
 		return *this;
 	}
 
@@ -141,7 +147,7 @@ struct array {
 	{
 		detail::conditional_add_to_tx(this);
 
-		std::copy(other.cbegin(), other.cend(), _data);
+		std::copy(other.cbegin(), other.cend(), _get_data());
 		return *this;
 	}
 
@@ -158,9 +164,9 @@ struct array {
 		if (n >= N)
 			throw std::out_of_range("array::at");
 
-		detail::conditional_add_to_tx(_data + n);
+		detail::conditional_add_to_tx(_get_data() + n);
 
-		return _data[n];
+		return _get_data()[n];
 	}
 
 	/**
@@ -174,7 +180,7 @@ struct array {
 		if (n >= N)
 			throw std::out_of_range("array::at");
 
-		return _data[n];
+		return _get_data()[n];
 	}
 
 	/**
@@ -186,9 +192,9 @@ struct array {
 	 */
 	reference operator[](size_type n)
 	{
-		detail::conditional_add_to_tx(_data + n);
+		detail::conditional_add_to_tx(_get_data() + n);
 
-		return _data[n];
+		return _get_data()[n];
 	}
 
 	/**
@@ -197,7 +203,7 @@ struct array {
 	 */
 	const_reference operator[](size_type n) const
 	{
-		return _data[n];
+		return _get_data()[n];
 	}
 
 	/**
@@ -211,7 +217,7 @@ struct array {
 	data()
 	{
 		detail::conditional_add_to_tx(this);
-		return _data;
+		return _get_data();
 	}
 
 	/**
@@ -220,7 +226,7 @@ struct array {
 	const T *
 	data() const noexcept
 	{
-		return _data;
+		return _get_data();
 	}
 
 	/**
@@ -232,7 +238,7 @@ struct array {
 	iterator
 	begin()
 	{
-		return iterator(_data);
+		return iterator(_get_data());
 	}
 
 	/**
@@ -244,7 +250,7 @@ struct array {
 	iterator
 	end()
 	{
-		return iterator(_data + size());
+		return iterator(_get_data() + size());
 	}
 
 	/**
@@ -253,7 +259,7 @@ struct array {
 	const_iterator
 	begin() const noexcept
 	{
-		return const_iterator(_data);
+		return const_iterator(_get_data());
 	}
 
 	/**
@@ -262,7 +268,7 @@ struct array {
 	const_iterator
 	cbegin() const noexcept
 	{
-		return const_iterator(_data);
+		return const_iterator(_get_data());
 	}
 
 	/**
@@ -271,7 +277,7 @@ struct array {
 	const_iterator
 	end() const noexcept
 	{
-		return const_iterator(_data + size());
+		return const_iterator(_get_data() + size());
 	}
 
 	/**
@@ -280,7 +286,7 @@ struct array {
 	const_iterator
 	cend() const noexcept
 	{
-		return const_iterator(_data + size());
+		return const_iterator(_get_data() + size());
 	}
 
 	/**
@@ -292,7 +298,7 @@ struct array {
 	reverse_iterator
 	rbegin()
 	{
-		return reverse_iterator(iterator(_data + size()));
+		return reverse_iterator(iterator(_get_data() + size()));
 	}
 
 	/**
@@ -304,7 +310,7 @@ struct array {
 	reverse_iterator
 	rend()
 	{
-		return reverse_iterator(iterator(_data));
+		return reverse_iterator(iterator(_get_data()));
 	}
 
 	/**
@@ -352,8 +358,8 @@ struct array {
 	reference
 	front()
 	{
-		detail::conditional_add_to_tx(&_data[0]);
-		return _data[0];
+		detail::conditional_add_to_tx(_get_data());
+		return _get_data()[0];
 	}
 
 	/**
@@ -365,8 +371,8 @@ struct array {
 	reference
 	back()
 	{
-		detail::conditional_add_to_tx(&_data[size() - 1]);
-		return _data[size() - 1];
+		detail::conditional_add_to_tx(&_get_data()[size() - 1]);
+		return _get_data()[size() - 1];
 	}
 
 	/**
@@ -375,7 +381,7 @@ struct array {
 	const_reference
 	front() const
 	{
-		return _data[0];
+		return _get_data()[0];
 	}
 
 	/**
@@ -384,7 +390,7 @@ struct array {
 	const_reference
 	back() const
 	{
-		return _data[size() - 1];
+		return _get_data()[size() - 1];
 	}
 
 	/**
@@ -413,10 +419,12 @@ struct array {
 		if (snapshot_size > n)
 			snapshot_size = n;
 
-		return {range_snapshotting_iterator<T>(_data + start, _data, N,
+		return {range_snapshotting_iterator<T>(_get_data() + start,
+						       _get_data(), N,
 						       snapshot_size),
-			range_snapshotting_iterator<T>(_data + start + n, _data,
-						       N, snapshot_size)};
+			range_snapshotting_iterator<T>(_get_data() + start + n,
+						       _get_data(), N,
+						       snapshot_size)};
 	}
 
 	/**
@@ -436,8 +444,8 @@ struct array {
 		if (start + n > N)
 			throw std::out_of_range("array::range");
 
-		return {const_iterator(_data + start),
-			const_iterator(_data + start + n)};
+		return {const_iterator(_get_data() + start),
+			const_iterator(_get_data() + start + n)};
 	}
 
 	/**
@@ -457,8 +465,8 @@ struct array {
 		if (start + n > N)
 			throw std::out_of_range("array::crange");
 
-		return {const_iterator(_data + start),
-			const_iterator(_data + start + n)};
+		return {const_iterator(_get_data() + start),
+			const_iterator(_get_data() + start + n)};
 	}
 
 	/**
@@ -499,7 +507,7 @@ struct array {
 	fill(const_reference value)
 	{
 		detail::conditional_add_to_tx(this);
-		std::fill(_data, _data + size(), value);
+		std::fill(_get_data(), _get_data() + size(), value);
 	}
 
 	/**
@@ -516,7 +524,8 @@ struct array {
 		detail::conditional_add_to_tx(this);
 		detail::conditional_add_to_tx(&other);
 
-		std::swap_ranges(_data, _data + size(), other._data);
+		std::swap_ranges(_get_data(), _get_data() + size(),
+				 other._get_data());
 	}
 
 	/**
@@ -528,6 +537,48 @@ struct array {
 	{
 		static_assert(!std::is_const<T>::value,
 			      "cannot swap zero-sized array of type 'const T'");
+	}
+
+private:
+	/**
+	 * Support for non-zero sized array.
+	 */
+	template <std::size_t Size = N>
+	typename std::enable_if<Size != 0, T *>::type
+	_get_data()
+	{
+		return this->_data;
+	}
+
+	/**
+	 * Support for non-zero sized array.
+	 */
+	template <std::size_t Size = N>
+	typename std::enable_if<Size != 0, const T *>::type
+	_get_data() const
+	{
+		return this->_data;
+	}
+
+	/**
+	 * Support for zero sized array.
+	 * Return value is a unique address (address of the array itself);
+	 */
+	template <std::size_t Size = N>
+	typename std::enable_if<Size == 0, T *>::type
+	_get_data()
+	{
+		return reinterpret_cast<T *>(&this->_data);
+	}
+
+	/**
+	 * Support for zero sized array.
+	 */
+	template <std::size_t Size = N>
+	typename std::enable_if<Size == 0, const T *>::type
+	_get_data() const
+	{
+		return reinterpret_cast<const T *>(&this->_data);
 	}
 };
 

@@ -78,7 +78,9 @@ public:
 	/**
 	 * Defaulted constructor.
 	 */
-	v() = default;
+	v() noexcept : vlt{0}, val()
+	{
+	}
 
 	/**
 	 * Assignment operator.

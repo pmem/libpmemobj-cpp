@@ -38,6 +38,7 @@
 #include "unittest.hpp"
 
 #include <atomic>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/v.hpp>
@@ -56,8 +57,17 @@ struct foo {
 	int counter;
 };
 
+struct bar {
+	nvobj::v<foo> vfoo;
+
+	bar()
+	{
+	}
+};
+
 struct root {
 	nvobj::v<foo> f;
+	nvobj::persistent_ptr<bar> bar_ptr;
 };
 
 /*
@@ -67,6 +77,7 @@ void
 test_init(nvobj::pool<root> &pop)
 {
 	UT_ASSERTeq(pop.get_root()->f.get().counter, TEST_VALUE);
+	UT_ASSERTeq(pop.get_root()->bar_ptr->vfoo.get().counter, TEST_VALUE);
 }
 }
 
@@ -88,6 +99,8 @@ main(int argc, char *argv[])
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
+
+	nvobj::make_persistent_atomic<bar>(pop, pop.get_root()->bar_ptr);
 
 	test_init(pop);
 

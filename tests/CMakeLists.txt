@@ -107,6 +107,9 @@ add_test_generic(allocator memcheck)
 add_test_generic(allocator none)
 add_test_generic(allocator pmemcheck)
 
+build_test(detail_common detail_common/detail_common.cpp)
+add_test_generic(detail_common none)
+
 build_test(make_persistent make_persistent/make_persistent.cpp)
 add_test_generic(make_persistent none)
 add_test_generic(make_persistent pmemcheck)

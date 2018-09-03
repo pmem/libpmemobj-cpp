@@ -282,4 +282,9 @@ add_test_generic(NAME vector_modifiers_exceptions_oom TRACERS none memcheck pmem
 build_test(vector_modifiers_txabort vector_modifiers_txabort/vector_modifiers_txabort.cpp)
 add_test_generic(NAME vector_modifiers_txabort TRACERS none memcheck pmemcheck)
 
+build_test(string_exceptions string_exceptions/string_exceptions.cpp)
+add_test_generic(string_exceptions none)
+add_test_generic(string_exceptions memcheck)
+add_test_generic(string_exceptions pmemcheck)
+
 add_subdirectory(external)

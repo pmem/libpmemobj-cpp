@@ -6,119 +6,94 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// basic_string(size_type n, charT c, const Allocator& a = Allocator());
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-#include <string>
-#include <stdexcept>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
+namespace pmem_exp = pmem::obj::experimental;
+namespace nvobj = pmem::obj;
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<pmem_exp::string> s1;
+};
 
 template <class charT>
 void
-test(unsigned n, charT c)
+test(unsigned n, charT c, pmem::obj::pool<root> &pop)
 {
-    typedef std::basic_string<charT, std::char_traits<charT>, test_allocator<charT> > S;
-    typedef typename S::allocator_type A;
-    S s2(n, c);
-    LIBCPP_ASSERT(s2.__invariants());
-    assert(s2.size() == n);
-    for (unsigned i = 0; i < n; ++i)
-        assert(s2[i] == c);
-    assert(s2.get_allocator() == A());
-    assert(s2.capacity() >= s2.size());
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->s1 = nvobj::make_persistent<pmem_exp::string>(n, c);
+	});
+
+	auto &s2 = *r->s1;
+
+	UT_ASSERT(s2.size() == n);
+	// XXX: remove tx
+	nvobj::transaction::run(pop, [&] {
+		for (unsigned i = 0; i < n; ++i)
+			UT_ASSERT(s2[i] == c);
+	});
+	UT_ASSERT(s2.capacity() >= s2.size());
+
+	nvobj::transaction::run(pop, [&] {
+		UT_ASSERT(s2.c_str() == s2.data());
+		UT_ASSERT(s2.c_str() == s2.cdata());
+		UT_ASSERT(s2.c_str() ==
+			  static_cast<const pmem_exp::string &>(s2).data());
+	});
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<pmem_exp::string>(r->s1);
+	});
 }
 
-template <class charT, class A>
 void
-test(unsigned n, charT c, const A& a)
+run(pmem::obj::pool<root> &pop)
 {
-    typedef std::basic_string<charT, std::char_traits<charT>, A> S;
-    S s2(n, c, a);
-    LIBCPP_ASSERT(s2.__invariants());
-    assert(s2.size() == n);
-    for (unsigned i = 0; i < n; ++i)
-        assert(s2[i] == c);
-    assert(s2.get_allocator() == a);
-    assert(s2.capacity() >= s2.size());
+	try {
+		test(0, 'a', pop);
+		test(1, 'a', pop);
+		test(10, 'a', pop);
+		test(100, 'a', pop);
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 }
 
-template <class Tp>
-void
-test(Tp n, Tp c)
+int
+main(int argc, char *argv[])
 {
-    typedef char charT;
-    typedef std::basic_string<charT, std::char_traits<charT>, test_allocator<charT> > S;
-    typedef typename S::allocator_type A;
-    S s2(n, c);
-    LIBCPP_ASSERT(s2.__invariants());
-    assert(s2.size() == static_cast<std::size_t>(n));
-    for (int i = 0; i < n; ++i)
-        assert(s2[i] == c);
-    assert(s2.get_allocator() == A());
-    assert(s2.capacity() >= s2.size());
-}
+	START();
 
-template <class Tp, class A>
-void
-test(Tp n, Tp c, const A& a)
-{
-    typedef char charT;
-    typedef std::basic_string<charT, std::char_traits<charT>, A> S;
-    S s2(n, c, a);
-    LIBCPP_ASSERT(s2.__invariants());
-    assert(s2.size() == static_cast<std::size_t>(n));
-    for (int i = 0; i < n; ++i)
-        assert(s2[i] == c);
-    assert(s2.get_allocator() == a);
-    assert(s2.capacity() >= s2.size());
-}
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
 
-int main()
-{
-    {
-    typedef test_allocator<char> A;
+	const char *path = argv[1];
 
-    test(0, 'a');
-    test(0, 'a', A(2));
+	pmem::obj::pool<root> pop;
 
-    test(1, 'a');
-    test(1, 'a', A(2));
+	try {
+		pop = pmem::obj::pool<root>::create(
+			path, "move.pass", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
 
-    test(10, 'a');
-    test(10, 'a', A(2));
+	run(pop);
 
-    test(100, 'a');
-    test(100, 'a', A(2));
+	pop.close();
 
-    test(static_cast<char>(100), static_cast<char>(65));
-    test(static_cast<char>(100), static_cast<char>(65), A(3));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef min_allocator<char> A;
-
-    test(0, 'a');
-    test(0, 'a', A());
-
-    test(1, 'a');
-    test(1, 'a', A());
-
-    test(10, 'a');
-    test(10, 'a', A());
-
-    test(100, 'a');
-    test(100, 'a', A());
-
-    test(static_cast<char>(100), static_cast<char>(65));
-    test(static_cast<char>(100), static_cast<char>(65), A());
-    }
-#endif
+	return 0;
 }

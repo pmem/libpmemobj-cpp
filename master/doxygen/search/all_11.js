@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['v',['v',['../classpmem_1_1obj_1_1v.html',1,'pmem::obj::v&lt; T &gt;'],['../classpmem_1_1obj_1_1v.html#a04804475eda3faaa1a3a873cc51efe58',1,'pmem::obj::v::v(const T &amp;_val) noexcept'],['../classpmem_1_1obj_1_1v.html#a32063b4bce8ed73292a3a4a2ef744110',1,'pmem::obj::v::v()=default']]],
-  ['v_2ehpp',['v.hpp',['../v_8hpp.html',1,'']]],
-  ['value_5ftype',['value_type',['../classpmem_1_1obj_1_1persistent__ptr.html#aa9ba9ff5c043395ac9cebcb33dae7f21',1,'pmem::obj::persistent_ptr']]],
-  ['volatile_2ehpp',['volatile.hpp',['../volatile_8hpp.html',1,'']]]
+  ['uncaught_5fexception_5fcounter',['uncaught_exception_counter',['../classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html',1,'pmem::obj::transaction::automatic::uncaught_exception_counter'],['../classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html#a428794f47019507d935505acfc560057',1,'pmem::obj::transaction::automatic::uncaught_exception_counter::uncaught_exception_counter()']]],
+  ['unlock',['unlock',['../classpmem_1_1obj_1_1mutex.html#a90f3344fcfc15236a6762fe35cad1522',1,'pmem::obj::mutex::unlock()'],['../classpmem_1_1obj_1_1shared__mutex.html#a6e7235073e03684262572fa3873706a8',1,'pmem::obj::shared_mutex::unlock()'],['../classpmem_1_1obj_1_1timed__mutex.html#a2f0776c6adbc4b2650216a62fe4a6caf',1,'pmem::obj::timed_mutex::unlock()']]],
+  ['unlock_5fshared',['unlock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#a103d7133acda9ad85e8298a3ca5c4fb0',1,'pmem::obj::shared_mutex']]],
+  ['utils_2ehpp',['utils.hpp',['../utils_8hpp.html',1,'']]]
 ];

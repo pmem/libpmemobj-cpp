@@ -6,223 +6,216 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
-
-// <string>
-
-// basic_string(const basic_string<charT,traits,Allocator>& str,
-//              size_type pos, size_type n,
-//              const Allocator& a = Allocator());
 //
-// basic_string(const basic_string<charT,traits,Allocator>& str,
-//              size_type pos,
-//              const Allocator& a = Allocator());
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-#include <string>
-#include <stdexcept>
-#include <algorithm>
-#include <vector>
-#include <scoped_allocator>
-#include <cassert>
+#include "unittest.hpp"
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-template <class S>
-void
-test(S str, unsigned pos)
-{
-    typedef typename S::traits_type T;
-    typedef typename S::allocator_type A;
+namespace pmem_exp = pmem::obj::experimental;
+namespace nvobj = pmem::obj;
 
-    if (pos <= str.size())
-    {
-        S s2(str, pos);
-        LIBCPP_ASSERT(s2.__invariants());
-        typename S::size_type rlen = str.size() - pos;
-        assert(s2.size() == rlen);
-        assert(T::compare(s2.data(), str.data() + pos, rlen) == 0);
-        assert(s2.get_allocator() == A());
-        assert(s2.capacity() >= s2.size());
-    }
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    else
-    {
-        try
-        {
-            S s2(str, pos);
-            assert(false);
-        }
-        catch (std::out_of_range&)
-        {
-            assert(pos > str.size());
-        }
-    }
-#endif
-}
+using string_type = pmem_exp::string;
+
+struct root {
+	nvobj::persistent_ptr<string_type> s1;
+};
 
 template <class S>
 void
-test(S str, unsigned pos, unsigned n)
+test(S &str, unsigned pos, pmem::obj::pool<root> &pop)
 {
-    typedef typename S::traits_type T;
-    typedef typename S::allocator_type A;
-    if (pos <= str.size())
-    {
-        S s2(str, pos, n);
-        LIBCPP_ASSERT(s2.__invariants());
-        typename S::size_type rlen = std::min<typename S::size_type>(str.size() - pos, n);
-        assert(s2.size() == rlen);
-        assert(T::compare(s2.data(), str.data() + pos, rlen) == 0);
-        assert(s2.get_allocator() == A());
-        assert(s2.capacity() >= s2.size());
-    }
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    else
-    {
-        try
-        {
-            S s2(str, pos, n);
-            assert(false);
-        }
-        catch (std::out_of_range&)
-        {
-            assert(pos > str.size());
-        }
-    }
-#endif
+	typedef typename S::traits_type T;
+
+	auto r = pop.root();
+
+	if (pos <= str.size()) {
+		nvobj::transaction::run(pop, [&] {
+			r->s1 = nvobj::make_persistent<string_type>(str, pos);
+		});
+		auto &s2 = *r->s1;
+
+		typename S::size_type rlen = str.size() - pos;
+		UT_ASSERT(s2.size() == rlen);
+		UT_ASSERT(T::compare(s2.cdata(), str.cdata() + pos, rlen) == 0);
+		UT_ASSERT(s2.capacity() >= s2.size());
+
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(s2.c_str() == s2.data());
+			UT_ASSERT(s2.c_str() == s2.cdata());
+			UT_ASSERT(s2.c_str() ==
+				  static_cast<const string_type &>(s2).data());
+		});
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<string_type>(r->s1);
+		});
+	} else {
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->s1 = nvobj::make_persistent<string_type>(
+					str, pos);
+			});
+			UT_ASSERT(0);
+		} catch (std::out_of_range &) {
+			UT_ASSERT(pos > str.size());
+		}
+	}
 }
 
 template <class S>
 void
-test(S str, unsigned pos, unsigned n, const typename S::allocator_type& a)
+test(S &str, unsigned pos, unsigned n, pmem::obj::pool<root> &pop)
 {
-    typedef typename S::traits_type T;
+	typedef typename S::traits_type T;
 
-    if (pos <= str.size())
-    {
-        S s2(str, pos, n, a);
-        LIBCPP_ASSERT(s2.__invariants());
-        typename S::size_type rlen = std::min<typename S::size_type>(str.size() - pos, n);
-        assert(s2.size() == rlen);
-        assert(T::compare(s2.data(), str.data() + pos, rlen) == 0);
-        assert(s2.get_allocator() == a);
-        assert(s2.capacity() >= s2.size());
-    }
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    else
-    {
-        try
-        {
-            S s2(str, pos, n, a);
-            assert(false);
-        }
-        catch (std::out_of_range&)
-        {
-            assert(pos > str.size());
-        }
-    }
-#endif
+	auto r = pop.root();
+
+	if (pos <= str.size()) {
+		nvobj::transaction::run(pop, [&] {
+			r->s1 = nvobj::make_persistent<string_type>(str, pos,
+								    n);
+		});
+
+		auto &s2 = *r->s1;
+
+		typename S::size_type rlen =
+			std::min<typename S::size_type>(str.size() - pos, n);
+		UT_ASSERT(s2.size() == rlen);
+		UT_ASSERT(T::compare(s2.cdata(), str.cdata() + pos, rlen) == 0);
+		UT_ASSERT(s2.capacity() >= s2.size());
+
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(s2.c_str() == s2.data());
+			UT_ASSERT(s2.c_str() == s2.cdata());
+			UT_ASSERT(s2.c_str() ==
+				  static_cast<const string_type &>(s2).data());
+		});
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<string_type>(r->s1);
+		});
+	} else {
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->s1 = nvobj::make_persistent<string_type>(
+					str, pos, n);
+			});
+			UT_ASSERT(0);
+		} catch (std::out_of_range &) {
+			UT_ASSERT(pos > str.size());
+		}
+	}
 }
 
-#if TEST_STD_VER >= 11
-#ifndef TEST_HAS_NO_EXCEPTIONS
-void test2583()
-{   // LWG #2583
-    typedef std::basic_string<char, std::char_traits<char>, test_allocator<char> > StringA;
-    std::vector<StringA, std::scoped_allocator_adaptor<test_allocator<StringA>>> vs;
-    StringA s{"1234"};
-    vs.emplace_back(s, 2);
-
-    try { vs.emplace_back(s, 5); }
-    catch (const std::out_of_range&) { return; }
-    assert(false);
-}
-#endif
-#endif
-
-int main()
+void
+run(pmem::obj::pool<root> &pop)
 {
-    {
-    typedef test_allocator<char> A;
-    typedef std::basic_string<char, std::char_traits<char>, A> S;
+	try {
+		nvobj::persistent_ptr<string_type> s_default, s1, s2, s3;
 
-    test(S(A(3)), 0);
-    test(S(A(3)), 1);
-    test(S("1", A(5)), 0);
-    test(S("1", A(5)), 1);
-    test(S("1", A(5)), 2);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 0);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 5);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 500);
+		nvobj::transaction::run(pop, [&] {
+			s_default = nvobj::make_persistent<string_type>();
+		});
 
-    test(S(A(3)), 0, 0);
-    test(S(A(3)), 0, 1);
-    test(S(A(3)), 1, 0);
-    test(S(A(3)), 1, 1);
-    test(S(A(3)), 1, 2);
-    test(S("1", A(5)), 0, 0);
-    test(S("1", A(5)), 0, 1);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 0);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 1);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 10);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 100);
+		nvobj::transaction::run(pop, [&] {
+			s1 = nvobj::make_persistent<string_type>("1");
+		});
 
-    test(S(A(3)), 0, 0, A(4));
-    test(S(A(3)), 0, 1, A(4));
-    test(S(A(3)), 1, 0, A(4));
-    test(S(A(3)), 1, 1, A(4));
-    test(S(A(3)), 1, 2, A(4));
-    test(S("1", A(5)), 0, 0, A(6));
-    test(S("1", A(5)), 0, 1, A(6));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 0, A(8));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 1, A(8));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 10, A(8));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A(7)), 50, 100, A(8));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef min_allocator<char> A;
-    typedef std::basic_string<char, std::char_traits<char>, A> S;
+		nvobj::transaction::run(pop, [&] {
+			s2 = nvobj::make_persistent<string_type>(
+				"1234567890123456789012345678901234567890"
+				"123456789012345678901234567890");
+		});
 
-    test(S(A()), 0);
-    test(S(A()), 1);
-    test(S("1", A()), 0);
-    test(S("1", A()), 1);
-    test(S("1", A()), 2);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 0);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 5);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 500);
+		nvobj::transaction::run(pop, [&] {
+			s3 = nvobj::make_persistent<string_type>(
+				"1234567890123456789012345678901234567890"
+				"1234567890123456789012345678901234567890"
+				"1234567890123456789012345678901234567890"
+				"1234567890");
+		});
 
-    test(S(A()), 0, 0);
-    test(S(A()), 0, 1);
-    test(S(A()), 1, 0);
-    test(S(A()), 1, 1);
-    test(S(A()), 1, 2);
-    test(S("1", A()), 0, 0);
-    test(S("1", A()), 0, 1);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 0);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 1);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 10);
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 100);
+		test(*s_default, 0, pop);
+		test(*s_default, 1, pop);
 
-    test(S(A()), 0, 0, A());
-    test(S(A()), 0, 1, A());
-    test(S(A()), 1, 0, A());
-    test(S(A()), 1, 1, A());
-    test(S(A()), 1, 2, A());
-    test(S("1", A()), 0, 0, A());
-    test(S("1", A()), 0, 1, A());
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 0, A());
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 1, A());
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 10, A());
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890", A()), 50, 100, A());
-    }
+		test(*s1, 0, pop);
+		test(*s1, 1, pop);
+		test(*s1, 2, pop);
 
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    test2583();
-#endif
-#endif
+		test(*s2, 0, pop);
+		test(*s2, 5, pop);
+		test(*s2, 50, pop);
+		test(*s2, 500, pop);
+
+		test(*s3, 0, pop);
+		test(*s3, 5, pop);
+		test(*s3, 50, pop);
+		test(*s3, 500, pop);
+
+		test(*s_default, 0, 0, pop);
+		test(*s_default, 0, 1, pop);
+		test(*s_default, 1, 0, pop);
+		test(*s_default, 1, 1, pop);
+		test(*s_default, 1, 2, pop);
+
+		test(*s1, 0, 0, pop);
+		test(*s1, 0, 1, pop);
+		test(*s1, 1, 1, pop);
+
+		test(*s2, 0, 5, pop);
+		test(*s2, 50, 0, pop);
+		test(*s2, 50, 1, pop);
+		test(*s2, 50, 10, pop);
+		test(*s2, 50, 100, pop);
+
+		test(*s3, 0, 5, pop);
+		test(*s3, 50, 0, pop);
+		test(*s3, 50, 1, pop);
+		test(*s3, 50, 10, pop);
+		test(*s3, 50, 100, pop);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<string_type>(s1);
+			nvobj::delete_persistent<string_type>(s2);
+			nvobj::delete_persistent<string_type>(s3);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	START();
+
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+
+	try {
+		pop = pmem::obj::pool<root>::create(path, "string_test",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+
+	run(pop);
+
+	pop.close();
+
+	return 0;
 }

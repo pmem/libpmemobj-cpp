@@ -542,6 +542,86 @@ public:
 	}
 
 	/**
+	 * Access first element and snapshot it if there is an
+	 * active transaction.
+	 *
+	 * @return reference to first element in string.
+	 *
+	 * @throw pmem::transaction_error when adding the object to the
+	 * transaction failed.
+	 */
+	CharT &
+	front()
+	{
+		return (*this)[0];
+	}
+
+	/**
+	 * Access first element.
+	 *
+	 * @return const reference to first element in string.
+	 */
+	const CharT &
+	front() const
+	{
+		return cfront();
+	}
+
+	/**
+	 * Access first element. In contradiction to front(), cfront() will
+	 * return const_reference not depending on the const-qualification of
+	 * the object it is called on. std::basic_string doesn't provide
+	 * cfront() method.
+	 *
+	 * @return const reference to first element in string.
+	 */
+	const CharT &
+	cfront() const
+	{
+		return static_cast<const basic_string &>(*this)[0];
+	}
+
+	/**
+	 * Access last element and snapshot it if there is an
+	 * active transaction.
+	 *
+	 * @return reference to last element in string.
+	 *
+	 * @throw pmem::transaction_error when adding the object to the
+	 * transaction failed.
+	 */
+	CharT &
+	back()
+	{
+		return (*this)[size() - 1];
+	}
+
+	/**
+	 * Access last element.
+	 *
+	 * @return const reference to last element in string.
+	 */
+	const CharT &
+	back() const
+	{
+		return cback();
+	}
+
+	/**
+	 * Access last element. In contradiction to back(), cback() will return
+	 * const_reference not depending on the const-qualification of the
+	 * object it is called on. std::basic_string doesn't provide
+	 * cback() method.
+	 *
+	 * @return const reference to last element in string.
+	 */
+	const CharT &
+	cback() const
+	{
+		return static_cast<const basic_string &>(*this)[size() - 1];
+	}
+
+	/**
 	 * @return number of CharT elements in the string.
 	 */
 	size_type

@@ -101,6 +101,22 @@ type_num()
 	return typeid(T).hash_code();
 }
 
+/**
+ * Round up to the next lowest power of 2.
+ */
+inline uint64_t
+next_pow_2(uint64_t v)
+{
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	v |= v >> 32;
+	return ++v;
+}
+
 } /* namespace detail */
 
 } /* namespace pmem */

@@ -107,6 +107,17 @@ else()
 	set(NO_CHRONO_BUG TRUE)
 endif()
 
+# Return type of pmemobj_publish() varies in different PMDK versions.
+# Action API supports only int return type of pmemobj_publish().
+set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
+CHECK_CXX_SOURCE_COMPILES(
+        "#include \"libpmemobj/action.h\"
+        int main() {
+                int a = pmemobj_publish(NULL, NULL, 0);
+                return 0;
+        }"
+        NO_VOID_RETURN_PUBLISH)
+
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 

@@ -101,7 +101,7 @@ if(NOT PERL_FOUND)
 	message(FATAL_ERROR "Perl not found")
 endif()
 if (PERL_VERSION_STRING VERSION_LESS 5.16)
-	message(FATAL_ERROR "Too old Perl (<5.16)")
+	message(FATAL_ERROR "Perl version too old (<5.16)")
 endif()
 
 if(BUILD_TESTS OR BUILD_EXAMPLES)

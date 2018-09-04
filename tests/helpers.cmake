@@ -120,7 +120,7 @@ function(execute_common output_file name)
         set(TRACE valgrind --error-exitcode=99 --tool=pmemcheck)
     elseif(${TRACER} STREQUAL memcheck)
         set(TRACE valgrind --error-exitcode=99 --tool=memcheck --leak-check=full
-           --suppressions=${SRC_DIR}/../ld.supp --suppressions=${SRC_DIR}/../memcheck-stdcpp.supp --suppressions=${SRC_DIR}/../memcheck-libunwind.supp)
+           --suppressions=${SUPP_DIR}/ld.supp --suppressions=${SUPP_DIR}/memcheck-stdcpp.supp --suppressions=${SUPP_DIR}/memcheck-libunwind.supp)
     elseif(${TRACER} STREQUAL helgrind)
         set(TRACE valgrind --error-exitcode=99 --tool=helgrind)
     elseif(${TRACER} STREQUAL drd)

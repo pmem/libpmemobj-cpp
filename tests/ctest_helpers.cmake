@@ -37,7 +37,8 @@ set(GLOBAL_TEST_ARGS
 	-DPERL_EXECUTABLE=${PERL_EXECUTABLE}
 	-DMATCH_SCRIPT=${PROJECT_SOURCE_DIR}/tests/match
 	-DPARENT_DIR=${TEST_DIR}
-	-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM})
+	-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM}
+	-DSUPP_DIR=${PROJECT_SOURCE_DIR}/tests)
 
 if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
@@ -128,7 +129,6 @@ set(vg_tracers memcheck helgrind drd pmemcheck)
 # Configures testcase ${name} ${testcase} using tracer ${tracer}, cmake_script is used to run test
 function(add_testcase name tracer testcase cmake_script)
 	set(executable ${name})
-
 	add_test(NAME ${executable}_${testcase}_${tracer}
 			COMMAND ${CMAKE_COMMAND}
 			${GLOBAL_TEST_ARGS}

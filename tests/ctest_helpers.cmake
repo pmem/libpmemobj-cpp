@@ -43,7 +43,7 @@ if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
 endif()
 
-set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. .)
+set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ external/libcxx/support .. .)
 set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS})
 
 include_directories(${INCLUDE_DIRS})

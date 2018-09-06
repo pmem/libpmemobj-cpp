@@ -135,6 +135,9 @@ endif()
 add_example(map_cli map_cli/map_cli.cpp)
 target_link_libraries(example-map_cli ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
+add_example(array array/array.cpp)
+target_link_libraries(example-array ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
 if(PMEMVLT_PRESENT)
 	add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)
 endif()

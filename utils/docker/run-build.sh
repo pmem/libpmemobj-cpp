@@ -82,6 +82,10 @@ INSTALL_DIR=/tmp/libpmemobj-cpp
 
 mkdir $INSTALL_DIR
 
+###############################################################################
+# BUILD tests_custom_libcxx llvm
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_custom_libcxx llvm START$(tput sgr 0)\n"
 mkdir build
 cd build
 
@@ -104,7 +108,12 @@ make uninstall
 
 cd ..
 rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_custom_libcxx llvm END$(tput sgr 0)\n\n"
 
+###############################################################################
+# BUILD tests_clang_release llvm
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_release llvm START$(tput sgr 0)\n"
 mkdir build
 cd build
 
@@ -122,7 +131,12 @@ test_command tests_clang_release llvm
 
 cd ..
 rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_clang_release llvm END$(tput sgr 0)\n\n"
 
+###############################################################################
+# BUILD tests_clang_debug_cpp17 llvm
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 START$(tput sgr 0)\n"
 mkdir build
 cd build
 
@@ -141,7 +155,12 @@ test_command tests_clang_debug_cpp17 llvm
 
 cd ..
 rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 END$(tput sgr 0)\n\n"
 
+###############################################################################
+# BUILD tests_gcc_debug
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug START$(tput sgr 0)\n"
 mkdir build
 cd build
 
@@ -159,7 +178,12 @@ test_command tests_gcc_debug
 
 cd ..
 rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug END$(tput sgr 0)\n\n"
 
+###############################################################################
+# BUILD tests_gcc_release_cpp17
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 START$(tput sgr 0)\n"
 mkdir build
 cd build
 
@@ -177,7 +201,12 @@ test_command tests_gcc_release_cpp17
 
 cd ..
 rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sgr 0)\n\n"
 
+###############################################################################
+# BUILD tests_package
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_package START$(tput sgr 0)\n"
 mkdir build
 cd build
 
@@ -196,6 +225,7 @@ make -j2
 test_command tests_package
 
 make package
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_package END$(tput sgr 0)\n\n"
 
 # Make sure there is no libpmemobj++ currently installed
 echo "---------------------------- Error expected! ------------------------------"

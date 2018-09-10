@@ -93,7 +93,9 @@ else()
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
-find_package(PkgConfig QUIET)
+if(NOT WIN32)
+	find_package(PkgConfig QUIET)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 

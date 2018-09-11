@@ -81,8 +81,29 @@ public:
 	nvobj::p<char> arr[TEST_ARR_SIZE];
 };
 
+int ctor_number = 0;
+
+struct struct_throwing {
+	struct_throwing()
+	{
+		if (ctor_number == throw_after)
+			throw magic_number;
+
+		ctor_number++;
+	}
+
+	char data[8];
+	static constexpr int magic_number = 42;
+	static constexpr int throw_after = 5;
+};
+
 struct root {
 	nvobj::persistent_ptr<foo[]> pfoo;
+	nvobj::persistent_ptr<struct_throwing[]> throwing;
+
+	nvobj::persistent_ptr<foo[10]> pfoo_sized;
+	nvobj::persistent_ptr<foo[PMEMOBJ_MIN_POOL]> pfoo_sized_big;
+	nvobj::persistent_ptr<struct_throwing[10]> throwing_sized;
 };
 
 /*
@@ -217,6 +238,136 @@ test_abort_revert(nvobj::pool_base &pop)
 
 	UT_ASSERT(r->pfoo == nullptr);
 }
+
+/*
+ * test_exceptions_handling -- (internal) test proper handling of exceptions
+ * inside make_persistent
+ */
+void
+test_exceptions_handling(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<root> r = pop.get_root();
+
+	bool scope_error_thrown = false;
+	try {
+		r->pfoo = nvobj::make_persistent<foo[]>(5);
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+		scope_error_thrown = true;
+	}
+	UT_ASSERT(scope_error_thrown);
+
+	bool alloc_error_thrown = false;
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+
+			r->pfoo =
+				nvobj::make_persistent<foo[]>(PMEMOBJ_MIN_POOL);
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_alloc_error &) {
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	bool scope_error_delete_thrown = false;
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+
+			r->pfoo = nvobj::make_persistent<foo[]>(5);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	try {
+		nvobj::delete_persistent<foo[]>(r->pfoo, 5);
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+		scope_error_delete_thrown = true;
+	}
+	UT_ASSERT(scope_error_delete_thrown);
+
+	ctor_number = 0;
+
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->throwing == nullptr);
+
+			r->throwing =
+				nvobj::make_persistent<struct_throwing[]>(10);
+			UT_ASSERT(0);
+		});
+	} catch (int &e) {
+		UT_ASSERT(e == struct_throwing::magic_number);
+	}
+}
+
+/*
+ * test_exceptions_handling -- (internal) test proper handling of exceptions
+ * inside make_persistent, version for sized array
+ */
+void
+test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<root> r = pop.get_root();
+
+	bool scope_error_thrown = false;
+	try {
+		r->pfoo_sized = nvobj::make_persistent<foo[10]>();
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+		scope_error_thrown = true;
+	}
+	UT_ASSERT(scope_error_thrown);
+
+	bool alloc_error_thrown = false;
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->pfoo_sized == nullptr);
+
+			r->pfoo_sized_big =
+				nvobj::make_persistent<foo[PMEMOBJ_MIN_POOL]>();
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_alloc_error &) {
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	bool scope_error_delete_thrown = false;
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->pfoo_sized == nullptr);
+
+			r->pfoo_sized = nvobj::make_persistent<foo[10]>();
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	try {
+		nvobj::delete_persistent<foo[10]>(r->pfoo_sized);
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+		scope_error_delete_thrown = true;
+	}
+	UT_ASSERT(scope_error_delete_thrown);
+
+	ctor_number = 0;
+
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->throwing_sized == nullptr);
+
+			r->throwing_sized =
+				nvobj::make_persistent<struct_throwing[10]>();
+			UT_ASSERT(0);
+		});
+	} catch (int &e) {
+		UT_ASSERT(e == struct_throwing::magic_number);
+	}
+}
 }
 
 int
@@ -241,6 +392,8 @@ main(int argc, char *argv[])
 	test_make_one_d(pop);
 	test_make_N_d(pop);
 	test_abort_revert(pop);
+	test_exceptions_handling(pop);
+	test_exceptions_handling_sized(pop);
 
 	pop.close();
 }

@@ -103,7 +103,6 @@ make_persistent(std::size_t N)
 	} catch (...) {
 		for (std::ptrdiff_t j = 1; j <= i; ++j)
 			detail::destroy<I>(ptr[i - j]);
-		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
 	}
 
@@ -148,7 +147,6 @@ make_persistent()
 	} catch (...) {
 		for (std::ptrdiff_t j = 1; j <= i; ++j)
 			detail::destroy<I>(ptr[i - j]);
-		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
 	}
 

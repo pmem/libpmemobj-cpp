@@ -69,6 +69,7 @@ namespace obj
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
  */
 template <typename T>
 typename detail::pp_if_array<T>::type
@@ -102,8 +103,12 @@ make_persistent(std::size_t N)
 			detail::create<I>(ptr.get() + i);
 	} catch (...) {
 		for (std::ptrdiff_t j = 1; j <= i; ++j)
+			/*
+			 * Destructors are called to maintain standard lifecycle
+			 * of an object. This is consistent with the way
+			 * operator new[] works.
+			 */
 			detail::destroy<I>(ptr[i - j]);
-		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
 	}
 
@@ -121,6 +126,7 @@ make_persistent(std::size_t N)
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
  */
 template <typename T>
 typename detail::pp_if_size_array<T>::type
@@ -147,8 +153,12 @@ make_persistent()
 			detail::create<I>(ptr.get() + i);
 	} catch (...) {
 		for (std::ptrdiff_t j = 1; j <= i; ++j)
+			/*
+			 * Destructors are called to maintain standard lifecycle
+			 * of an object. This is consistent with the way
+			 * operator new[] works.
+			 */
 			detail::destroy<I>(ptr[i - j]);
-		pmemobj_tx_free(*ptr.raw_ptr());
 		throw;
 	}
 

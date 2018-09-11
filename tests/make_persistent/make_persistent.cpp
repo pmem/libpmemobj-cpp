@@ -86,8 +86,24 @@ public:
 	nvobj::p<char> arr[TEST_ARR_SIZE];
 };
 
+struct big_struct {
+	char data[PMEMOBJ_MIN_POOL];
+};
+
+struct struct_throwing {
+	struct_throwing()
+	{
+		throw magic_number;
+	}
+
+	char data[8];
+	static constexpr int magic_number = 42;
+};
+
 struct root {
 	nvobj::persistent_ptr<foo> pfoo;
+	nvobj::persistent_ptr<big_struct> bstruct;
+	nvobj::persistent_ptr<struct_throwing> throwing;
 };
 
 /*
@@ -196,6 +212,68 @@ test_additional_delete(nvobj::pool<struct root> &pop)
 
 	UT_ASSERT(r->pfoo == nullptr);
 }
+
+/*
+ * test_exceptions_handling -- (internal) test proper handling of exceptions
+ * inside make_persistent
+ */
+void
+test_exceptions_handling(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<root> r = pop.get_root();
+
+	bool scope_error_thrown = false;
+	try {
+		r->pfoo = nvobj::make_persistent<foo>();
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+		scope_error_thrown = true;
+	}
+	UT_ASSERT(scope_error_thrown);
+
+	bool alloc_error_thrown = false;
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->bstruct == nullptr);
+
+			r->bstruct = nvobj::make_persistent<big_struct>();
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_alloc_error &) {
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	bool scope_error_delete_thrown = false;
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+
+			r->pfoo = nvobj::make_persistent<foo>();
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	try {
+		nvobj::delete_persistent<foo>(r->pfoo);
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+		scope_error_delete_thrown = true;
+	}
+	UT_ASSERT(scope_error_delete_thrown);
+
+	try {
+		nvobj::transaction::exec_tx(pop, [&] {
+			UT_ASSERT(r->throwing == nullptr);
+
+			r->throwing = nvobj::make_persistent<struct_throwing>();
+			UT_ASSERT(0);
+		});
+	} catch (int &e) {
+		UT_ASSERT(e == struct_throwing::magic_number);
+	}
+	UT_ASSERT(r->throwing == nullptr);
+}
 }
 
 int
@@ -220,6 +298,7 @@ main(int argc, char *argv[])
 	test_make_no_args(pop);
 	test_make_args(pop);
 	test_additional_delete(pop);
+	test_exceptions_handling(pop);
 
 	pop.close();
 }

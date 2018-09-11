@@ -83,10 +83,6 @@ RUN ./install-libndctl.sh fedora
 COPY install-valgrind.sh install-valgrind.sh
 RUN ./install-valgrind.sh
 
-# Install libcxx
-COPY install-libcxx.sh install-libcxx.sh
-RUN ./install-libcxx.sh
-
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh rpm

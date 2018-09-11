@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018, Intel Corporation
+ * Copyright 2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
  * array.cpp -- array example implemented using libpmemobj C++ bindings
  */
 
+#include "objcpp_examples_common.hpp"
 #include <iostream>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array.hpp>
@@ -41,29 +42,27 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-#include <objcpp_examples_common.hpp>
 #include <string.h>
 
 using namespace pmem;
 using namespace pmem::obj;
-using namespace std;
 
-#define MAX_BUFFLEN 30
 #define POOLSIZE 1024 * 1024 * 64
 
 namespace
 {
 // array_op: available array operations
-enum array_op {
-	UNKNOWN_ARRAY_OP,
-	ARRAY_PRINT,
-	ARRAY_FREE,
-	ARRAY_REALLOC,
-	ARRAY_ALLOC,
+enum class array_op {
+	UNKNOWN,
+	PRINT,
+	FREE,
+	REALLOC,
+	ALLOC,
 
 	MAX_ARRAY_OP
 };
 
+const int MAX_BUFFLEN = 30;
 const std::string LAYOUT = "";
 
 // parse_array_op: parses the operation string and returns the matching array_op
@@ -71,15 +70,15 @@ array_op
 parse_array_op(char *str)
 {
 	if (strcmp(str, "print") == 0)
-		return ARRAY_PRINT;
+		return array_op::PRINT;
 	else if (strcmp(str, "free") == 0)
-		return ARRAY_FREE;
+		return array_op::FREE;
 	else if (strcmp(str, "realloc") == 0)
-		return ARRAY_REALLOC;
+		return array_op::REALLOC;
 	else if (strcmp(str, "alloc") == 0)
-		return ARRAY_ALLOC;
+		return array_op::ALLOC;
 	else
-		return UNKNOWN_ARRAY_OP;
+		return array_op::UNKNOWN;
 }
 }
 
@@ -87,7 +86,6 @@ namespace examples
 {
 
 class pmem_array {
-
 	// array_list: struct to hold name, size, array and pointer to next
 	struct array_list {
 		char name[MAX_BUFFLEN];
@@ -96,46 +94,40 @@ class pmem_array {
 		persistent_ptr<array_list> next;
 	};
 
-	persistent_ptr<array_list> head = NULL;
+	persistent_ptr<array_list> head = nullptr;
 
 public:
 	// add_array: allocate space on heap for new array and add it to head
 	void
-	add_array(pool_base &pop, const char *name, size_t size)
+	add_array(pool_base &pop, const char *name, int size)
 	{
-		if (find_array(name) != NULL) {
-			cout << "Array with name: " << name
-			     << " already exists. ";
-			cout << "If you prefer, you can reallocate this array "
-			     << endl;
-			printUsage(ARRAY_REALLOC, (char *)"./example-array");
+		if (find_array(name) != nullptr) {
+			std::cout << "Array with name: " << name
+				  << " already exists. ";
+			std::cout << "If you prefer, you can reallocate this "
+				     "array "
+				  << std::endl;
+			print_usage(array_op::REALLOC, "./example-array");
 		} else if (size < 1) {
-			cout << "size must be a non-negative integer" << endl;
-			printUsage(ARRAY_ALLOC, (char *)"./example-array");
+			std::cout << "size must be a non-negative integer"
+				  << std::endl;
+			print_usage(array_op::ALLOC, "./example-array");
 		} else {
 			transaction::exec_tx(pop, [&] {
 				auto newArray = make_persistent<array_list>();
-				strncpy(newArray->name, (const char *)name,
-					MAX_BUFFLEN);
-				newArray->name[MAX_BUFFLEN - 1] = '\0';
-				newArray->size = size;
+				// strncpy(newArray->name, name,MAX_BUFFLEN);
+				// newArray->name[MAX_BUFFLEN - 1] = '\0';
+				strcpy(newArray->name, name);
+				newArray->size = (size_t)size;
 				newArray->array = make_persistent<int[]>(size);
-				newArray->next = NULL;
+				newArray->next = nullptr;
 
 				// assign values to newArray->array
-				for (size_t i = 0; i < newArray->size; i++) {
+				for (size_t i = 0; i < newArray->size; i++)
 					newArray->array[i] = i;
-				}
 
-				if (head == NULL) {
-					head = newArray;
-					return;
-				}
-				persistent_ptr<array_list> cur = head;
-				while (cur->next) {
-					cur = cur->next;
-				}
-				cur->next = newArray;
+				newArray->next = head;
+				head = newArray;
 			});
 		}
 	}
@@ -145,32 +137,31 @@ public:
 	void
 	delete_array(pool_base &pop, const char *name)
 	{
-		persistent_ptr<array_list> arr = find_array(name);
+		// prevArr will equal head if array wanted is either first OR
+		// second element
+		persistent_ptr<array_list> prevArr = find_array(name, true);
 
-		if (arr == NULL) {
-			cout << "No array found with name: " << name << endl;
+		// if array_list length = 0 OR array not found in list
+		if (prevArr == nullptr) {
+			std::cout << "No array found with name: " << name
+				  << std::endl;
 			return;
 		}
 
-		persistent_ptr<array_list> cur = head;
-		persistent_ptr<array_list> prev = head;
-
-		while (cur) {
-			if (list_equal(cur, arr)) {
-				break;
-			}
-			prev = cur;
-			cur = cur->next;
-		}
+		persistent_ptr<array_list> curArr;
+		if (strcmp(prevArr->name, name) == 0) {
+			// cur = prev= head, maybe only one element in list
+			curArr = head;
+		} else
+			curArr = prevArr->next;
 
 		transaction::exec_tx(pop, [&] {
-			if (list_equal(head, cur)) {
-				head = cur->next;
-			} else {
-				prev->next = arr->next;
-			}
-			delete_persistent<int[]>(cur->array, cur->size);
-			delete_persistent<array_list>(cur);
+			if (list_equal(head, curArr))
+				head = curArr->next;
+			else
+				prevArr->next = curArr->next;
+			delete_persistent<int[]>(curArr->array, curArr->size);
+			delete_persistent<array_list>(curArr);
 		});
 	}
 
@@ -179,75 +170,80 @@ public:
 	print_array(const char *name)
 	{
 		persistent_ptr<array_list> arr = find_array(name);
-		if (arr == NULL)
-			cout << "No array found with name: " << name << endl;
+		if (arr == nullptr)
+			std::cout << "No array found with name: " << name
+				  << std::endl;
 		else {
-			cout << arr->name << " = [";
-			for (size_t i = 0; i < arr->size - 1; i++) {
-				cout << arr->array[i] << ", ";
-			}
-			cout << arr->array[arr->size - 1] << "]" << endl;
+			std::cout << arr->name << " = [";
+			for (size_t i = 0; i < arr->size - 1; i++)
+				std::cout << arr->array[i] << ", ";
+			std::cout << arr->array[arr->size - 1] << "]"
+				  << std::endl;
 		}
 	}
 
-	// resize: reallocate space on heap to change the size of the array.
+	// resize: reallocate space on heap to change the size of the array
 	void
-	resize(pool_base &pop, const char *name, size_t size)
+	resize(pool_base &pop, const char *name, int size)
 	{
 		persistent_ptr<array_list> arr = find_array(name);
-		if (arr == NULL) {
-			cout << "No array found with name: " << name << endl;
-		} else if (size < 1) {
-			cout << "size must be a non-negative integer" << endl;
-			printUsage(ARRAY_REALLOC, (char *)"./example-array");
+		if (arr == nullptr)
+			std::cout << "No array found with name: " << name
+				  << std::endl;
+		else if (size < 1) {
+			std::cout << "size must be a non-negative integer"
+				  << std::endl;
+			print_usage(array_op::REALLOC, "./example-array");
 		} else {
 			transaction::exec_tx(pop, [&] {
 				persistent_ptr<int[]> newArray =
 					make_persistent<int[]>(size);
 				size_t copySize = arr->size;
-				if (size < arr->size)
-					copySize = size;
-				for (size_t i = 0; i < copySize; i++) {
+				if ((size_t)size < arr->size)
+					copySize = (size_t)size;
+				for (size_t i = 0; i < copySize; i++)
 					newArray[i] = arr->array[i];
-				}
 				delete_persistent<int[]>(arr->array, arr->size);
-				arr->size = size;
+				arr->size = (size_t)size;
 				arr->array = newArray;
 			});
 		}
 	}
 
-	// printUsage: prints usage for each type of array opperation
+	// print_usage: prints usage for each type of array operation
 	void
-	printUsage(array_op op, char *arg_zero)
+	print_usage(array_op op, const char *arg_zero)
 	{
 		switch (op) {
-			case ARRAY_PRINT:
+			case array_op::PRINT:
 				std::cerr << "print array usage: " << arg_zero
-					  << " <file_name> print <array_name>"
+					  << " <file_name> print "
+					     "<array_name>"
 					  << std::endl;
 				break;
-			case ARRAY_FREE:
+			case array_op::FREE:
 				std::cerr << "free array usage: " << arg_zero
-					  << " <file_name> free <array_name>"
+					  << " <file_name> free "
+					     "<array_name>"
 					  << std::endl;
 				break;
-			case ARRAY_REALLOC:
+			case array_op::REALLOC:
 				std::cerr << "realloc array usage: " << arg_zero
 					  << " <file_name> realloc "
 					     "<array_name> <size>"
 					  << std::endl;
 				break;
-			case ARRAY_ALLOC:
+			case array_op::ALLOC:
 				std::cerr << "alloc array usage: " << arg_zero
-					  << " <file_name> alloc <array_name> "
+					  << " <file_name> alloc "
+					     "<array_name> "
 					     "<size>"
 					  << std::endl;
 				break;
 			default:
 				std::cerr << "usage: " << arg_zero
 					  << " <file_name> "
-					     "[print|alloc|free|realloc] "
+					     "<print|alloc|free|realloc> "
 					     "<array_name>"
 					  << std::endl;
 		};
@@ -255,33 +251,35 @@ public:
 	}
 
 private:
-	// list_equal: returns true of array_lists have the same name, size, and
+	// list_equal: returns true if array_lists have the same name, size, and
 	// array values
 	bool
 	list_equal(persistent_ptr<array_list> a, persistent_ptr<array_list> b)
 	{
-		if (strcmp(a->name, b->name) == 0)
-			if (a->size == b->size)
-				if (a->array == b->array)
-					return true;
-		return false;
+		if (strcmp(a->name, b->name) == 0 && (a->size == b->size) &&
+		    (a->array == b->array))
+			return true;
+		else
+			return false;
 	}
 
 	// find_array: loops through head to find array with specified name
 	persistent_ptr<array_list>
-	find_array(const char *name)
+	find_array(const char *name, bool findPrev = false)
 	{
-		char trimmedName[MAX_BUFFLEN];
-		strncpy(trimmedName, (const char *)name, MAX_BUFFLEN);
-		trimmedName[MAX_BUFFLEN - 1] = '\0';
-
-		if (head == NULL)
+		if (head == nullptr)
 			return head;
 		persistent_ptr<array_list> cur = head;
+		persistent_ptr<array_list> prev = head;
+
 		while (cur) {
-			if (strcmp(cur->name, trimmedName) == 0) {
-				return cur;
+			if (strcmp(cur->name, name) == 0) {
+				if (findPrev)
+					return prev;
+				else
+					return cur;
 			}
+			prev = cur;
 			cur = cur->next;
 		}
 		return (nullptr);
@@ -293,17 +291,27 @@ int
 main(int argc, char *argv[])
 {
 	/* Inputs should be one of:
-	 *   ./example-array.cpp <file_name> print <array_name>
-	 *   ./example-array.cpp <file_name> free <array_name>
-	 *   ./example-array.cpp <file_name> realloc <array_name> <size>
-	 *   ./example-array.cpp <file_name> alloc <array_name> <size>
+	 *   ./example-array <file_name> print <array_name>
+	 *   ./example-array <file_name> free <array_name>
+	 *   ./example-array <file_name> realloc <array_name> <size>
+	 *   ./example-array <file_name> alloc <array_name> <size>
 	 *           // currently only enabled for arrays of int
 	 */
 
 	if (argc < 4) {
 		std::cerr << "usage: " << argv[0]
-			  << " <file_name> [print|alloc|free|realloc] "
+			  << " <file_name> <print|alloc|free|realloc> "
 			     "<array_name>"
+			  << std::endl;
+		return 1;
+	}
+
+	// check length of array name to ensure doesn't exceed buffer.
+	const char *name = argv[3];
+	if (strlen(name) > MAX_BUFFLEN) {
+		std::cout << "Name exceeds buffer length of 30 characters. "
+			     "Please "
+			     "shorten and try again."
 			  << std::endl;
 		return 1;
 	}
@@ -311,48 +319,46 @@ main(int argc, char *argv[])
 	const char *file = argv[1];
 	pool<examples::pmem_array> pop;
 
-	if (file_exists(file) != 0) {
+	if (file_exists(file) != 0)
 		pop = pool<examples::pmem_array>::create(file, LAYOUT, POOLSIZE,
 							 CREATE_MODE_RW);
-	} else {
+	else
 		pop = pool<examples::pmem_array>::open(file, LAYOUT);
-	}
 
 	persistent_ptr<examples::pmem_array> arr = pop.get_root();
 
 	array_op op = parse_array_op(argv[2]);
 
 	switch (op) {
-		case ARRAY_PRINT:
+		case array_op::PRINT:
 			if (argc == 4)
-				arr->print_array(argv[3]);
+				arr->print_array(name);
 			else
-				arr->printUsage(op, argv[0]);
+				arr->print_usage(op, argv[0]);
 			break;
-		case ARRAY_FREE:
+		case array_op::FREE:
 			if (argc == 4)
-				arr->delete_array(pop, argv[3]);
+				arr->delete_array(pop, name);
 			else
-				arr->printUsage(op, argv[0]);
+				arr->print_usage(op, argv[0]);
 			break;
-		case ARRAY_REALLOC:
+		case array_op::REALLOC:
 			if (argc == 5)
-				arr->resize(pop, argv[3],
-					    (size_t)atoi(argv[4]));
+				arr->resize(pop, name, atoi(argv[4]));
 			else
-				arr->printUsage(op, argv[0]);
+				arr->print_usage(op, argv[0]);
 			break;
-		case ARRAY_ALLOC:
+		case array_op::ALLOC:
 			if (argc == 5)
-				arr->add_array(pop, argv[3],
-					       (size_t)atoi(argv[4]));
+				arr->add_array(pop, name, atoi(argv[4]));
 			else
-				arr->printUsage(op, argv[0]);
+				arr->print_usage(op, argv[0]);
 			break;
 		default:
-			cout << "Ruh roh! You passed an invalid operation!!"
-			     << endl;
-			arr->printUsage(op, argv[0]);
+			std::cout
+				<< "Ruh roh! You passed an invalid operation!!"
+				<< std::endl;
+			arr->print_usage(op, argv[0]);
 			break;
 	}
 

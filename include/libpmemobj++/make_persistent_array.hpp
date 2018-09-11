@@ -69,6 +69,7 @@ namespace obj
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
  */
 template <typename T>
 typename detail::pp_if_array<T>::type
@@ -96,16 +97,16 @@ make_persistent(std::size_t N)
 		throw transaction_alloc_error("failed to allocate "
 					      "persistent memory array");
 
-	std::ptrdiff_t i;
-	try {
-		for (i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
-			detail::create<I>(ptr.get() + i);
-	} catch (...) {
-		for (std::ptrdiff_t j = 1; j <= i; ++j)
-			detail::destroy<I>(ptr[i - j]);
-		pmemobj_tx_free(*ptr.raw_ptr());
-		throw;
-	}
+	/*
+	 * When an exception is thrown from one of the constructors
+	 * we don't perform any cleanup - i.e. we don't call destructors
+	 * (unlike new[] operator), we only rely on transaction abort.
+	 * This approach was taken to ensure consistent behaviour for
+	 * case when transaction is aborted after make_persistent completes and
+	 * we have no way to call destructors.
+	 */
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::create<I>(ptr.get() + i);
 
 	return ptr;
 }
@@ -121,6 +122,7 @@ make_persistent(std::size_t N)
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
  */
 template <typename T>
 typename detail::pp_if_size_array<T>::type
@@ -141,16 +143,16 @@ make_persistent()
 		throw transaction_alloc_error("failed to allocate "
 					      "persistent memory array");
 
-	std::ptrdiff_t i;
-	try {
-		for (i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
-			detail::create<I>(ptr.get() + i);
-	} catch (...) {
-		for (std::ptrdiff_t j = 1; j <= i; ++j)
-			detail::destroy<I>(ptr[i - j]);
-		pmemobj_tx_free(*ptr.raw_ptr());
-		throw;
-	}
+	/*
+	 * When an exception is thrown from one of the constructors
+	 * we don't perform any cleanup - i.e. we don't call destructors
+	 * (unlike new[] operator), we only rely on transaction abort.
+	 * This approach was taken to ensure consistent behaviour for
+	 * case when transaction is aborted after make_persistent completes and
+	 * we have no way to call destructors.
+	 */
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::create<I>(ptr.get() + i);
 
 	return ptr;
 }

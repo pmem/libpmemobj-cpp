@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,7 @@ namespace obj
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
  */
 template <typename T, typename... Args>
 typename detail::pp_if_not_array<T>::type
@@ -84,13 +85,8 @@ make_persistent(Args &&... args)
 	if (ptr == nullptr)
 		throw transaction_alloc_error("failed to allocate "
 					      "persistent memory object");
-	try {
-		detail::create<T, Args...>(ptr.get(),
-					   std::forward<Args>(args)...);
-	} catch (...) {
-		pmemobj_tx_free(*ptr.raw_ptr());
-		throw;
-	}
+
+	detail::create<T, Args...>(ptr.get(), std::forward<Args>(args)...);
 
 	return ptr;
 }

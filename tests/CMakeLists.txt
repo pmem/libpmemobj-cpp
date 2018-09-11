@@ -212,67 +212,6 @@ else()
 	skip_test("make_persistent_array" "SKIPPED_BECAUSE_OF_CLANG_TEMPLATE_BUG")
 endif()
 
-if(USE_LLVM_LIBCPP OR USE_CUSTOM_GCC)
-	build_test(deque deque/deque.cpp)
-	add_test_generic(deque none)
-	add_test_generic(deque pmemcheck)
-
-	build_test(list list/list.cpp)
-	add_test_generic(list none)
-	add_test_generic(list pmemcheck)
-
-	build_test(priority_queue priority_queue/priority_queue.cpp)
-	add_test_generic(priority_queue none)
-	add_test_generic(priority_queue pmemcheck)
-
-	build_test(map map/map.cpp)
-	add_test_generic(map none)
-	add_test_generic(map pmemcheck)
-
-	build_test(multimap multimap/multimap.cpp)
-	add_test_generic(multimap none)
-	add_test_generic(multimap pmemcheck)
-
-	build_test(multiset multiset/multiset.cpp)
-	add_test_generic(multiset none)
-	add_test_generic(multiset pmemcheck)
-
-	build_test(queue queue/queue.cpp)
-	add_test_generic(queue none)
-	add_test_generic(queue pmemcheck)
-
-	build_test(set set/set.cpp)
-	add_test_generic(set none)
-	add_test_generic(set pmemcheck)
-
-	build_test(stack stack/stack.cpp)
-	add_test_generic(stack none)
-	add_test_generic(stack pmemcheck)
-
-	build_test(unordered_map unordered_map/unordered_map.cpp)
-	add_test_generic(unordered_map none)
-	add_test_generic(unordered_map pmemcheck)
-
-	build_test(unordered_multimap unordered_multimap/unordered_multimap.cpp)
-	add_test_generic(unordered_multimap none)
-	add_test_generic(unordered_multimap pmemcheck)
-
-	build_test(unordered_multiset unordered_multiset/unordered_multiset.cpp)
-	add_test_generic(unordered_multiset none)
-	add_test_generic(unordered_multiset pmemcheck)
-
-	build_test(unordered_set unordered_set/unordered_set.cpp)
-	add_test_generic(unordered_set none)
-	add_test_generic(unordered_set pmemcheck)
-
-	build_test(vector vector/vector.cpp)
-	add_test_generic(vector none)
-	add_test_generic(vector pmemcheck)
-elseif(NOT WIN32)
-	message(WARNING "Skipping container tests because custom standard library was not provided")
-	skip_test("containers" "SKIPPED_BECAUSE_OF_NO_CUSTOM_STL")
-endif()
-
 build_test(array_algorithms array_algorithms/array_algorithms.cpp)
 add_test_generic(array_algorithms none)
 add_test_generic(array_algorithms pmemcheck)

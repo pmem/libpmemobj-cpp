@@ -51,6 +51,8 @@ struct TestSuccess {
 		UT_ASSERT(slice.size() == 2);
 		UT_ASSERT(slice[0] == 3);
 		UT_ASSERT(slice[1] == 4);
+		UT_ASSERT(slice[0] == slice.at(0));
+		UT_ASSERT(slice[1] == slice.at(1));
 
 		UT_ASSERT(slice.begin() == c.begin() + 2);
 		UT_ASSERT(slice.end() == c.begin() + 4);
@@ -72,6 +74,45 @@ struct TestSuccess {
 		try {
 			/* Out of range */
 			c.range(100, 2);
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
+			/* Out of range */
+			c.range(5, 2);
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
+			/* Out of range */
+			c.crange(5, 2);
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
+			c.range(4, 2);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			c.crange(4, 2);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		char data[10];
+		try {
+			pmemobj_exp::slice<char *> good_slice(data, data);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			pmemobj_exp::slice<char *> bad_slice(data, data - 1);
 			UT_ASSERT(0);
 		} catch (...) {
 		}

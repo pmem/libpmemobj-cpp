@@ -127,7 +127,7 @@ build_test(array_get_const_rv libcxx/array/array.tuple/get_const_rv.pass.cpp)
 add_test_default(array_get_const_rv none)
 
 build_test(array_get_const libcxx/array/array.tuple/get_const.pass.cpp)
-add_test_default(array_get_cons none)
+add_test_default(array_get_const none)
 
 build_test(array_get_rv libcxx/array/array.tuple/get_rv.pass.cpp)
 add_test_default(array_get_rv none)

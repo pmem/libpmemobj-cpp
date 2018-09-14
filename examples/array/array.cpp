@@ -47,8 +47,6 @@
 using namespace pmem;
 using namespace pmem::obj;
 
-#define POOLSIZE 1024 * 1024 * 64
-
 namespace
 {
 // array_op: available array operations
@@ -62,12 +60,14 @@ enum class array_op {
 	MAX_ARRAY_OP
 };
 
+const int POOLSIZE = 1024 * 1024 * 64;
 const int MAX_BUFFLEN = 30;
 const std::string LAYOUT = "";
+std::string prog_name;
 
 // parse_array_op: parses the operation string and returns the matching array_op
 array_op
-parse_array_op(char *str)
+parse_array_op(const char *str)
 {
 	if (strcmp(str, "print") == 0)
 		return array_op::PRINT;
@@ -115,8 +115,6 @@ public:
 		} else {
 			transaction::exec_tx(pop, [&] {
 				auto newArray = make_persistent<array_list>();
-				// strncpy(newArray->name, name,MAX_BUFFLEN);
-				// newArray->name[MAX_BUFFLEN - 1] = '\0';
 				strcpy(newArray->name, name);
 				newArray->size = (size_t)size;
 				newArray->array = make_persistent<int[]>(size);
@@ -156,7 +154,7 @@ public:
 			curArr = prevArr->next;
 
 		transaction::exec_tx(pop, [&] {
-			if (list_equal(head, curArr))
+			if (head == curArr)
 				head = curArr->next;
 			else
 				prevArr->next = curArr->next;
@@ -193,7 +191,7 @@ public:
 		else if (size < 1) {
 			std::cout << "size must be a non-negative integer"
 				  << std::endl;
-			print_usage(array_op::REALLOC, "./example-array");
+			print_usage(array_op::REALLOC, prog_name);
 		} else {
 			transaction::exec_tx(pop, [&] {
 				persistent_ptr<int[]> newArray =
@@ -212,7 +210,7 @@ public:
 
 	// print_usage: prints usage for each type of array operation
 	void
-	print_usage(array_op op, const char *arg_zero)
+	print_usage(array_op op, std::string arg_zero)
 	{
 		switch (op) {
 			case array_op::PRINT:
@@ -251,18 +249,6 @@ public:
 	}
 
 private:
-	// list_equal: returns true if array_lists have the same name, size, and
-	// array values
-	bool
-	list_equal(persistent_ptr<array_list> a, persistent_ptr<array_list> b)
-	{
-		if (strcmp(a->name, b->name) == 0 && (a->size == b->size) &&
-		    (a->array == b->array))
-			return true;
-		else
-			return false;
-	}
-
 	// find_array: loops through head to find array with specified name
 	persistent_ptr<array_list>
 	find_array(const char *name, bool findPrev = false)
@@ -298,8 +284,9 @@ main(int argc, char *argv[])
 	 *           // currently only enabled for arrays of int
 	 */
 
+	prog_name = argv[0];
 	if (argc < 4) {
-		std::cerr << "usage: " << argv[0]
+		std::cerr << "usage: " << prog_name
 			  << " <file_name> <print|alloc|free|realloc> "
 			     "<array_name>"
 			  << std::endl;
@@ -334,31 +321,31 @@ main(int argc, char *argv[])
 			if (argc == 4)
 				arr->print_array(name);
 			else
-				arr->print_usage(op, argv[0]);
+				arr->print_usage(op, prog_name);
 			break;
 		case array_op::FREE:
 			if (argc == 4)
 				arr->delete_array(pop, name);
 			else
-				arr->print_usage(op, argv[0]);
+				arr->print_usage(op, prog_name);
 			break;
 		case array_op::REALLOC:
 			if (argc == 5)
 				arr->resize(pop, name, atoi(argv[4]));
 			else
-				arr->print_usage(op, argv[0]);
+				arr->print_usage(op, prog_name);
 			break;
 		case array_op::ALLOC:
 			if (argc == 5)
 				arr->add_array(pop, name, atoi(argv[4]));
 			else
-				arr->print_usage(op, argv[0]);
+				arr->print_usage(op, prog_name);
 			break;
 		default:
 			std::cout
 				<< "Ruh roh! You passed an invalid operation!!"
 				<< std::endl;
-			arr->print_usage(op, argv[0]);
+			arr->print_usage(op, prog_name);
 			break;
 	}
 

@@ -114,18 +114,18 @@ public:
 			print_usage(array_op::ALLOC, "./example-array");
 		} else {
 			transaction::exec_tx(pop, [&] {
-				auto newArray = make_persistent<array_list>();
-				strcpy(newArray->name, name);
-				newArray->size = (size_t)size;
-				newArray->array = make_persistent<int[]>(size);
-				newArray->next = nullptr;
+				auto new_array = make_persistent<array_list>();
+				strcpy(new_array->name, name);
+				new_array->size = (size_t)size;
+				new_array->array = make_persistent<int[]>(size);
+				new_array->next = nullptr;
 
 				// assign values to newArray->array
-				for (size_t i = 0; i < newArray->size; i++)
-					newArray->array[i] = i;
+				for (size_t i = 0; i < new_array->size; i++)
+					new_array->array[i] = i;
 
-				newArray->next = head;
-				head = newArray;
+				new_array->next = head;
+				head = new_array;
 			});
 		}
 	}
@@ -137,29 +137,30 @@ public:
 	{
 		// prevArr will equal head if array wanted is either first OR
 		// second element
-		persistent_ptr<array_list> prevArr = find_array(name, true);
+		persistent_ptr<array_list> prev_arr = find_array(name, true);
 
 		// if array_list length = 0 OR array not found in list
-		if (prevArr == nullptr) {
+		if (prev_arr == nullptr) {
 			std::cout << "No array found with name: " << name
 				  << std::endl;
 			return;
 		}
 
-		persistent_ptr<array_list> curArr;
-		if (strcmp(prevArr->name, name) == 0) {
-			// cur = prev= head, maybe only one element in list
-			curArr = head;
+		persistent_ptr<array_list> cur_arr;
+		if (strcmp(prev_arr->name, name) == 0) {
+			// cur = prev= head, either only one element in list or
+			// array is first element
+			cur_arr = head;
 		} else
-			curArr = prevArr->next;
+			cur_arr = prev_arr->next;
 
 		transaction::exec_tx(pop, [&] {
-			if (head == curArr)
-				head = curArr->next;
+			if (head == cur_arr)
+				head = cur_arr->next;
 			else
-				prevArr->next = curArr->next;
-			delete_persistent<int[]>(curArr->array, curArr->size);
-			delete_persistent<array_list>(curArr);
+				prev_arr->next = cur_arr->next;
+			delete_persistent<int[]>(cur_arr->array, cur_arr->size);
+			delete_persistent<array_list>(cur_arr);
 		});
 	}
 
@@ -194,16 +195,16 @@ public:
 			print_usage(array_op::REALLOC, prog_name);
 		} else {
 			transaction::exec_tx(pop, [&] {
-				persistent_ptr<int[]> newArray =
+				persistent_ptr<int[]> new_array =
 					make_persistent<int[]>(size);
-				size_t copySize = arr->size;
+				size_t copy_size = arr->size;
 				if ((size_t)size < arr->size)
-					copySize = (size_t)size;
-				for (size_t i = 0; i < copySize; i++)
-					newArray[i] = arr->array[i];
+					copy_size = (size_t)size;
+				for (size_t i = 0; i < copy_size; i++)
+					new_array[i] = arr->array[i];
 				delete_persistent<int[]>(arr->array, arr->size);
 				arr->size = (size_t)size;
-				arr->array = newArray;
+				arr->array = new_array;
 			});
 		}
 	}
@@ -251,7 +252,7 @@ public:
 private:
 	// find_array: loops through head to find array with specified name
 	persistent_ptr<array_list>
-	find_array(const char *name, bool findPrev = false)
+	find_array(const char *name, bool find_prev = false)
 	{
 		if (head == nullptr)
 			return head;
@@ -260,7 +261,7 @@ private:
 
 		while (cur) {
 			if (strcmp(cur->name, name) == 0) {
-				if (findPrev)
+				if (find_prev)
 					return prev;
 				else
 					return cur;
@@ -268,7 +269,7 @@ private:
 			prev = cur;
 			cur = cur->next;
 		}
-		return (nullptr);
+		return nullptr;
 	}
 };
 }

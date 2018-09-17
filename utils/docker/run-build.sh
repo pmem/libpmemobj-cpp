@@ -83,34 +83,6 @@ INSTALL_DIR=/tmp/libpmemobj-cpp
 mkdir $INSTALL_DIR
 
 ###############################################################################
-# BUILD tests_custom_libcxx llvm
-###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_custom_libcxx llvm START$(tput sgr 0)\n"
-mkdir build
-cd build
-
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-CC=clang CXX=clang++ \
-cmake .. -DDEVELOPER_MODE=1 \
-			-DCMAKE_BUILD_TYPE=Debug \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=1 \
-			-DLIBCPP_LIBDIR=$LIBCPP_LIBDIR \
-			-DLIBCPP_INCDIR=$LIBCPP_INCDIR
-
-make -j2
-test_command tests_custom_libcxx llvm
-
-make install
-make uninstall
-
-cd ..
-rm -r build
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_custom_libcxx llvm END$(tput sgr 0)\n\n"
-
-###############################################################################
 # BUILD tests_clang_release llvm
 ###############################################################################
 printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_release llvm START$(tput sgr 0)\n"
@@ -123,8 +95,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DCOVERAGE=$COVERAGE
 
 make -j2
 test_command tests_clang_release llvm
@@ -147,7 +118,6 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0 \
 			-DCXX_STANDARD=17
 
 make -j2
@@ -170,8 +140,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Debug \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0
+			-DCOVERAGE=$COVERAGE
 
 make -j2
 test_command tests_gcc_debug
@@ -193,7 +162,6 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
-			-DUSE_LLVM_LIBCPP=0 \
 			-DCXX_STANDARD=17
 
 make -j2

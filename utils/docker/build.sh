@@ -47,9 +47,6 @@ set -e
 
 # Environment variables that can be customized (default values are after dash):
 export KEEP_CONTAINER=${KEEP_CONTAINER:-0}
-export USE_LLVM_LIBCPP=${USE_LLVM_LIBCPP:-}
-export LIBCPP_LIBDIR=${LIBCPP_LIBDIR:-}
-export LIBCPP_INCDIR=${LIBCPP_INCDIR:-}
 
 
 if [[ -z "$OS" || -z "$OS_VER" ]]; then
@@ -117,9 +114,6 @@ docker run --privileged=true --name=$containerName -ti \
 	--env https_proxy=$https_proxy \
 	--env AUTO_DOC_UPDATE=$AUTO_DOC_UPDATE \
 	--env GITHUB_TOKEN=$GITHUB_TOKEN \
-	--env USE_LLVM_LIBCPP=$USE_LLVM_LIBCPP \
-	--env LIBCPP_LIBDIR=$LIBCPP_LIBDIR \
-	--env LIBCPP_INCDIR=$LIBCPP_INCDIR \
 	--env WORKDIR=$WORKDIR \
 	--env SCRIPTSDIR=$SCRIPTSDIR \
 	--env TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG \

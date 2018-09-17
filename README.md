@@ -33,21 +33,6 @@ $ ...
 $ ctest --output-on-failure
 ```
 
-If you wish to run C++ standard library containers tests, you need to set the path to your custom versions of either gcc or
-libc++. For gcc run cmake like this:
-```sh
-...
-$ cmake .. -DUSE_CUSTOM_GCC=1 -DGCC_INCDIR=/path/to/includes -DGCC_LIBDIR=/path/to/lib
-...
-```
-
-If you want to use a custom version of libc++ run:
-```sh
-...
-$ cmake .. -DUSE_LLVM_LIBCPP=1 -DLIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1 -DLIBCPP_LIBDIR=/usr/local/libcxx/lib
-...
-```
-
 To build packages
 ```sh
 ...

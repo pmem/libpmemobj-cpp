@@ -8,9 +8,6 @@ services:
   - docker
 
 env:
-  global:
-    - LIBCPP_LIBDIR=/usr/local/libcxx/lib
-    - LIBCPP_INCDIR=/usr/local/libcxx/include/c++/v1
   matrix:
     - TYPE=normal OS=ubuntu OS_VER=18.04 PUSH_IMAGE=1
     - TYPE=normal OS=fedora OS_VER=28 PUSH_IMAGE=1 AUTO_DOC_UPDATE=1

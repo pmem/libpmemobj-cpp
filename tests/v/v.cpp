@@ -38,14 +38,15 @@
 #include "unittest.hpp"
 
 #include <atomic>
+#include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/v.hpp>
 
 #define LAYOUT "cpp"
 
 namespace nvobj = pmem::obj;
+namespace nvobj_exp = pmem::obj::experimental;
 
 namespace
 {
@@ -58,7 +59,7 @@ struct foo {
 };
 
 struct bar {
-	nvobj::v<foo> vfoo;
+	nvobj_exp::v<foo> vfoo;
 
 	bar()
 	{
@@ -66,7 +67,7 @@ struct bar {
 };
 
 struct root {
-	nvobj::v<foo> f;
+	nvobj_exp::v<foo> f;
 	nvobj::persistent_ptr<bar> bar_ptr;
 };
 

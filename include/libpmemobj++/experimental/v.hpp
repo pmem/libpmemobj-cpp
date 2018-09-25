@@ -49,8 +49,11 @@ namespace pmem
 namespace obj
 {
 
+namespace experimental
+{
+
 /**
- * Volatile resides on pmem class.
+ * pmem::obj::experimental::v - volatile resides on pmem class.
  *
  * v class is a property-like template class that has to be used for all
  * volatile variables that reside on persistent memory.
@@ -163,6 +166,8 @@ swap(v<T> &a, v<T> &b)
 {
 	a.swap(b);
 }
+
+} /* namespace experimental */
 
 } /* namespace obj */
 

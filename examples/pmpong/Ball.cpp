@@ -44,7 +44,7 @@ Ball::Ball(int x, int y)
 
 Ball::~Ball()
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { pmem::obj::delete_persistent<sf::Vector2f>(velocity); });
 }
@@ -85,21 +85,21 @@ Ball::increaseVelocity()
 void
 Ball::setX(int xArg)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(), [&] { x = xArg; });
 }
 
 void
 Ball::setY(int yArg)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(), [&] { y = yArg; });
 }
 
 void
 Ball::setVelocityX(float xArg)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { velocity->x = xArg; });
 }
@@ -107,7 +107,7 @@ Ball::setVelocityX(float xArg)
 void
 Ball::setVelocityY(float yArg)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { velocity->y = yArg; });
 }
@@ -115,7 +115,7 @@ Ball::setVelocityY(float yArg)
 void
 Ball::setXY(int xArg, int yArg)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			x = xArg;
 			y = yArg;

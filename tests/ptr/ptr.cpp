@@ -166,10 +166,10 @@ test_ptr_atomic(nvobj::pool<root> &pop)
 void
 test_ptr_transactional(nvobj::pool<root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 	nvobj::persistent_ptr<foo> to_swap;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->pfoo == nullptr);
 
 			r->pfoo = nvobj::make_persistent<foo>();
@@ -184,7 +184,7 @@ test_ptr_transactional(nvobj::pool<root> &pop)
 	auto pfoo = r->pfoo;
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			pfoo->bar = TEST_INT;
 			/* raw memory access requires extra care */
 			pmem::detail::conditional_add_to_tx(&pfoo->arr);
@@ -214,7 +214,7 @@ test_ptr_transactional(nvobj::pool<root> &pop)
 
 	bool exception_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			pfoo->bar = 0;
 			nvobj::transaction::abort(-1);
 		});
@@ -228,7 +228,7 @@ test_ptr_transactional(nvobj::pool<root> &pop)
 	UT_ASSERTeq(pfoo->bar, TEST_INT);
 
 	try {
-		nvobj::transaction::exec_tx(
+		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<foo>(r->pfoo); });
 		r->pfoo = nullptr;
 	} catch (...) {
@@ -265,10 +265,10 @@ test_ptr_array(nvobj::pool<root> &pop)
 	for (int i = 0; i < TEST_ARR_SIZE; ++i)
 		UT_ASSERTeq(parr_vsize[i], i);
 
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			r->parr = pmemobj_tx_zalloc(sizeof(int) * TEST_ARR_SIZE,
 						    0);
 		});
@@ -280,7 +280,7 @@ test_ptr_array(nvobj::pool<root> &pop)
 
 	bool exception_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			for (int i = 0; i < TEST_ARR_SIZE; ++i)
 				r->parr[i] = TEST_INT;
 
@@ -296,7 +296,7 @@ test_ptr_array(nvobj::pool<root> &pop)
 
 	exception_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			for (int i = 0; i < TEST_ARR_SIZE; ++i)
 				r->parr[i] = TEST_INT;
 
@@ -333,7 +333,7 @@ test_offset(nvobj::pool<root> &pop)
 	};
 
 	try {
-		nvobj::transaction::exec_tx(pop, [] {
+		nvobj::transaction::run(pop, [] {
 			auto cptr = nvobj::make_persistent<C>();
 			nvobj::persistent_ptr<B> bptr = cptr;
 			UT_ASSERT((bptr.raw().off - cptr.raw().off) ==

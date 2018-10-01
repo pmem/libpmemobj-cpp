@@ -60,7 +60,7 @@ v_property_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	assert(proot->f.get().counter == 10);
 

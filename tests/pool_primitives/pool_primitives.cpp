@@ -64,7 +64,7 @@ struct root {
 void
 pool_test_memset(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	void *ret = pop.memset_persist(&root->val, TEST_VAL, sizeof(root->val));
@@ -81,7 +81,7 @@ pool_test_memset(nvobj::pool<root> &pop)
 void
 pool_test_memcpy(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	int v = TEST_VAL;
@@ -105,7 +105,7 @@ pool_test_drain(nvobj::pool<root> &pop)
 void
 pool_test_flush(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->val = TEST_VAL;
@@ -119,7 +119,7 @@ pool_test_flush(nvobj::pool<root> &pop)
 void
 pool_test_flush_p(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->val = TEST_VAL;
@@ -133,7 +133,7 @@ pool_test_flush_p(nvobj::pool<root> &pop)
 void
 pool_test_flush_ptr(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->me = root;
@@ -148,7 +148,7 @@ pool_test_flush_ptr(nvobj::pool<root> &pop)
 void
 pool_test_flush_ptr_obj(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->me = root;
@@ -164,7 +164,7 @@ pool_test_flush_ptr_obj(nvobj::pool<root> &pop)
 void
 pool_test_flush_ptr_obj_no_pop(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->me = root;
@@ -179,7 +179,7 @@ pool_test_flush_ptr_obj_no_pop(nvobj::pool<root> &pop)
 void
 pool_test_persist(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->val = TEST_VAL;
@@ -193,7 +193,7 @@ pool_test_persist(nvobj::pool<root> &pop)
 void
 pool_test_persist_p(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->val = TEST_VAL;
@@ -207,7 +207,7 @@ pool_test_persist_p(nvobj::pool<root> &pop)
 void
 pool_test_persist_ptr(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->me = root;
@@ -222,7 +222,7 @@ pool_test_persist_ptr(nvobj::pool<root> &pop)
 void
 pool_test_persist_ptr_obj(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->me = root;
@@ -238,7 +238,7 @@ pool_test_persist_ptr_obj(nvobj::pool<root> &pop)
 void
 pool_test_persist_ptr_obj_no_pop(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	root->me = root;
@@ -256,7 +256,7 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 {
 	nvobj::pool<root> pop =
 		nvobj::pool<root>::create(path, layout, poolsize, mode);
-	nvobj::persistent_ptr<root> root = pop.get_root();
+	nvobj::persistent_ptr<root> root = pop.root();
 	UT_ASSERT(root != nullptr);
 
 	return pop;

@@ -117,7 +117,7 @@ public:
 	void
 	operator()()
 	{
-		auto rootp = this->pop.get_root();
+		auto rootp = this->pop.root();
 
 		if (rootp->pfoo == nullptr)
 			rootp->pfoo = nvobj::make_persistent<foo>();
@@ -135,7 +135,7 @@ private:
 void
 do_transaction(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	rootp->parr = nvobj::make_persistent<nvobj::p<int>>();
 
@@ -152,13 +152,13 @@ do_transaction(nvobj::pool<root> &pop)
 void
 test_tx_no_throw_no_abort(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
 		});
 	} catch (...) {
@@ -169,7 +169,7 @@ test_tx_no_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->parr == nullptr);
 
 	try {
-		nvobj::transaction::exec_tx(
+		nvobj::transaction::run(
 			pop, std::bind(do_transaction, std::ref(pop)),
 			rootp->mtx);
 	} catch (...) {
@@ -181,7 +181,7 @@ test_tx_no_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERTeq(*rootp->parr.get(), 5);
 
 	try {
-		nvobj::transaction::exec_tx(pop, transaction_test(pop),
+		nvobj::transaction::run(pop, transaction_test(pop),
 					    rootp->mtx, rootp->pfoo->smtx);
 	} catch (...) {
 		UT_ASSERT(0);
@@ -193,7 +193,7 @@ test_tx_no_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERTeq(rootp->pfoo->bar, 42);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			nvobj::delete_persistent<foo>(rootp->pfoo);
 			nvobj::delete_persistent<nvobj::p<int>>(rootp->parr);
 			rootp->pfoo = nullptr;
@@ -213,14 +213,14 @@ test_tx_no_throw_no_abort(nvobj::pool<root> &pop)
 void
 test_tx_throw_no_abort(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
 	bool exception_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
 			throw std::runtime_error("error");
 		});
@@ -236,9 +236,9 @@ test_tx_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->parr == nullptr);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
-			nvobj::transaction::exec_tx(pop, [&]() {
+			nvobj::transaction::run(pop, [&]() {
 				throw std::runtime_error("error");
 			});
 		});
@@ -254,10 +254,10 @@ test_tx_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->parr == nullptr);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
 			try {
-				nvobj::transaction::exec_tx(pop, [&]() {
+				nvobj::transaction::run(pop, [&]() {
 					throw std::runtime_error("error");
 				});
 			} catch (std::runtime_error &) {
@@ -285,14 +285,14 @@ test_tx_throw_no_abort(nvobj::pool<root> &pop)
 void
 test_tx_no_throw_abort(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
 	bool exception_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
 			nvobj::transaction::abort(-1);
 		});
@@ -308,9 +308,9 @@ test_tx_no_throw_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->parr == nullptr);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
-			nvobj::transaction::exec_tx(
+			nvobj::transaction::run(
 				pop, [&]() { nvobj::transaction::abort(-1); });
 		});
 	} catch (pmem::manual_tx_abort &) {
@@ -325,10 +325,10 @@ test_tx_no_throw_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->parr == nullptr);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&]() {
+		nvobj::transaction::run(pop, [&]() {
 			rootp->pfoo = nvobj::make_persistent<foo>();
 			try {
-				nvobj::transaction::exec_tx(pop, [&]() {
+				nvobj::transaction::run(pop, [&]() {
 					nvobj::transaction::abort(-1);
 				});
 			} catch (pmem::manual_tx_abort &) {
@@ -361,7 +361,7 @@ void
 test_tx_no_throw_no_abort_scope(nvobj::pool<root> &pop,
 				std::function<void()> commit)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -374,7 +374,7 @@ test_tx_no_throw_no_abort_scope(nvobj::pool<root> &pop,
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), 0);
+	UT_ASSERTeq(nvobj::transaction::error(), 0);
 	UT_ASSERT(rootp->pfoo != nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
@@ -386,7 +386,7 @@ test_tx_no_throw_no_abort_scope(nvobj::pool<root> &pop,
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), 0);
+	UT_ASSERTeq(nvobj::transaction::error(), 0);
 	UT_ASSERT(rootp->pfoo != nullptr);
 	UT_ASSERT(rootp->parr != nullptr);
 	UT_ASSERTeq(*rootp->parr.get(), 5);
@@ -400,7 +400,7 @@ test_tx_no_throw_no_abort_scope(nvobj::pool<root> &pop,
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), 0);
+	UT_ASSERTeq(nvobj::transaction::error(), 0);
 	UT_ASSERT(rootp->pfoo != nullptr);
 	UT_ASSERT(rootp->parr != nullptr);
 	UT_ASSERTeq(*rootp->parr.get(), 5);
@@ -417,7 +417,7 @@ test_tx_no_throw_no_abort_scope(nvobj::pool<root> &pop,
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), 0);
+	UT_ASSERTeq(nvobj::transaction::error(), 0);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 }
@@ -430,7 +430,7 @@ template <typename T>
 void
 test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -448,7 +448,7 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
 	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
@@ -469,7 +469,7 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
 	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
@@ -498,7 +498,7 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 	}
 
 	/* the transaction will be aborted silently */
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	if (std::is_same<T, nvobj::transaction::automatic>::value)
 		UT_ASSERT(exception_thrown);
 	else
@@ -515,7 +515,7 @@ template <typename T>
 void
 test_tx_no_throw_abort_scope(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -533,7 +533,7 @@ test_tx_no_throw_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
 	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
@@ -554,7 +554,7 @@ test_tx_no_throw_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), EINVAL);
+	UT_ASSERTeq(nvobj::transaction::error(), EINVAL);
 	UT_ASSERT(exception_thrown);
 	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
@@ -579,7 +579,7 @@ test_tx_no_throw_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), -1);
+	UT_ASSERTeq(nvobj::transaction::error(), -1);
 	UT_ASSERT(exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -592,7 +592,7 @@ test_tx_no_throw_abort_scope(nvobj::pool<root> &pop)
 void
 test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 {
-	auto rootp = pop.get_root();
+	auto rootp = pop.root();
 
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -608,7 +608,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
 	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
@@ -626,7 +626,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
 	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
@@ -643,7 +643,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), 0);
+	UT_ASSERTeq(nvobj::transaction::error(), 0);
 	UT_ASSERT(!exception_thrown);
 
 	counter = 0;
@@ -666,7 +666,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), -1);
+	UT_ASSERTeq(nvobj::transaction::error(), -1);
 	UT_ASSERT(exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -688,7 +688,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), -1);
+	UT_ASSERTeq(nvobj::transaction::error(), -1);
 	UT_ASSERT(exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
@@ -716,7 +716,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 	}
 
 	/* the transaction will be aborted silently */
-	UT_ASSERTeq(nvobj::transaction::get_last_tx_error(), ECANCELED);
+	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);

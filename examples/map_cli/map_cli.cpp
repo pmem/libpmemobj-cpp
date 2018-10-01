@@ -141,7 +141,7 @@ remove<persistent_ptr<pmap>>(pool_base pop, persistent_ptr<pmap> &map,
 	auto val = map->remove(atoll(argv[argn++]));
 	if (val) {
 		std::cout << *val << std::endl;
-		transaction::exec_tx(pop,
+		transaction::run(pop,
 				     [&] { delete_persistent<value_t>(val); });
 	} else {
 		std::cout << "Entry not found\n";
@@ -156,7 +156,7 @@ void
 insert<persistent_ptr<pmap>>(pool_base pop, persistent_ptr<pmap> &map,
 			     char *argv[], int &argn)
 {
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		map->insert(atoll(argv[argn]),
 			    make_persistent<value_t>(atoll(argv[argn + 1])));
 	});
@@ -237,7 +237,7 @@ main(int argc, char *argv[])
 
 	persistent_ptr<root> q;
 	try {
-		q = pop.get_root();
+		q = pop.root();
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
 		pop.close();
@@ -246,7 +246,7 @@ main(int argc, char *argv[])
 
 	if (!q->ptree) {
 		try {
-			transaction::exec_tx(pop, [&] {
+			transaction::run(pop, [&] {
 				q->ptree = make_persistent<pmap>();
 			});
 		} catch (pmem::transaction_error &e) {

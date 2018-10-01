@@ -786,11 +786,11 @@ void
 game::init(void)
 {
 	int ret = 0;
-	persistent_ptr<game_state> r = state.get_root();
+	persistent_ptr<game_state> r = state.root();
 
 	if (r->get_board() == nullptr) {
 
-		transaction::exec_tx(state, [&r, &ret, this]() {
+		transaction::run(state, [&r, &ret, this]() {
 			r->init();
 			if (params->use_maze)
 				ret = parse_conf_create_dynamic_layout();
@@ -813,8 +813,8 @@ void
 game::process_step(void)
 {
 	snake_event ret_event = EV_OK;
-	persistent_ptr<game_state> r = state.get_root();
-	transaction::exec_tx(state, [&]() {
+	persistent_ptr<game_state> r = state.root();
+	transaction::run(state, [&]() {
 		ret_event = r->get_board()->move_snake(direction_key);
 		if (EV_COLLISION == ret_event) {
 			r->get_player()->set_state(play_state::STATE_GAMEOVER);
@@ -877,8 +877,8 @@ game::process_key(const int lastkey)
 void
 game::clean_pool(void)
 {
-	persistent_ptr<game_state> r = state.get_root();
-	transaction::exec_tx(state, [&]() { r->clean_pool(); });
+	persistent_ptr<game_state> r = state.root();
+	transaction::run(state, [&]() { r->clean_pool(); });
 }
 
 void
@@ -896,14 +896,14 @@ game::clear_screen(void)
 void
 game::game_over(void)
 {
-	persistent_ptr<game_state> r = state.get_root();
+	persistent_ptr<game_state> r = state.root();
 	r->get_board()->print_game_over(r->get_player()->get_score());
 }
 
 bool
 game::is_game_over(void)
 {
-	persistent_ptr<game_state> r = state.get_root();
+	persistent_ptr<game_state> r = state.root();
 	return (r->get_player()->get_state() == play_state::STATE_GAMEOVER);
 }
 
@@ -927,13 +927,13 @@ game::parse_conf_create_dynamic_layout(void)
 	if (cfg_file == nullptr)
 		return -1;
 
-	persistent_ptr<game_state> r = state.get_root();
+	persistent_ptr<game_state> r = state.root();
 	while ((col_no = getline(&line, &len, cfg_file)) != -1) {
 		if (i == 0)
 			r->get_board()->set_size_col(col_no - 1);
 
 		try {
-			transaction::exec_tx(state, [&]() {
+			transaction::run(state, [&]() {
 				r->get_board()->creat_dynamic_layout(i, line);
 			});
 		} catch (transaction_error &err) {

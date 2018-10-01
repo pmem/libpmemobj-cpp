@@ -110,7 +110,7 @@ mutex_zero_test(nvobj::pool<struct root> &pop)
 {
 	PMEMoid raw_mutex;
 
-	pmemobj_alloc(pop.get_handle(), &raw_mutex, sizeof(PMEMmutex), 1,
+	pmemobj_alloc(pop.handle(), &raw_mutex, sizeof(PMEMmutex), 1,
 		      [](PMEMobjpool *pop, void *ptr, void *) -> int {
 			      PMEMmutex *mtx = static_cast<PMEMmutex *>(ptr);
 			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
@@ -131,7 +131,7 @@ mutex_test(nvobj::pool<struct root> &pop, const Worker &function)
 {
 	std::thread threads[num_threads];
 
-	nvobj::persistent_ptr<struct root> proot = pop.get_root();
+	nvobj::persistent_ptr<struct root> proot = pop.root();
 
 	for (unsigned i = 0; i < num_threads; ++i)
 		threads[i] = std::thread(function, proot);
@@ -163,17 +163,17 @@ main(int argc, char *argv[])
 	mutex_zero_test(pop);
 
 	mutex_test(pop, increment_pint);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads * num_ops);
+	UT_ASSERTeq(pop.root()->counter, num_threads * num_ops);
 
 	mutex_test(pop, decrement_pint);
-	UT_ASSERTeq(pop.get_root()->counter, 0);
+	UT_ASSERTeq(pop.root()->counter, 0);
 
 	mutex_test(pop, trylock_test);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads);
+	UT_ASSERTeq(pop.root()->counter, num_threads);
 
 	/* pmemcheck related persist */
-	pmemobj_persist(pop.get_handle(), &(pop.get_root()->counter),
-			sizeof(pop.get_root()->counter));
+	pmemobj_persist(pop.handle(), &(pop.root()->counter),
+			sizeof(pop.root()->counter));
 
 	pop.close();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include <sys/stat.h>
 
 #include "libpmemobj++/detail/pexceptions.hpp"
+#include "libpmemobj++/detail/common.hpp"
 #include "libpmemobj++/p.hpp"
 #include "libpmemobj/pool_base.h"
 
@@ -393,9 +394,15 @@ public:
 	 * @return pool opaque handle.
 	 */
 	PMEMobjpool *
-	get_handle() noexcept
+	handle() noexcept
 	{
 		return this->pop;
+	}
+
+	DEPRECATED PMEMobjpool *
+	get_handle() noexcept
+	{
+		return pool_base::handle();
 	}
 
 protected:
@@ -472,13 +479,19 @@ public:
 	 * @return persistent pointer to the root object.
 	 */
 	persistent_ptr<T>
-	get_root()
+	root()
 	{
 		if (pop == nullptr)
 			throw pool_error("Invalid pool handle");
 
 		persistent_ptr<T> root = pmemobj_root(this->pop, sizeof(T));
 		return root;
+	}
+
+	DEPRECATED persistent_ptr<T>
+	get_root()
+	{
+		return pool::root();
 	}
 
 	/**

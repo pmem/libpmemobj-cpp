@@ -49,7 +49,7 @@ PongGameStatus::PongGameStatus()
 
 PongGameStatus::~PongGameStatus()
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			pmem::obj::delete_persistent<Paddle>(player1);
 			pmem::obj::delete_persistent<Paddle>(player2);
@@ -119,7 +119,7 @@ PongGameStatus::simulate()
 void
 PongGameStatus::setMenuItem(int numb)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { this->menuItem = numb; });
 }
@@ -127,7 +127,7 @@ PongGameStatus::setMenuItem(int numb)
 void
 PongGameStatus::setIsGameToResume(bool isGameToRes)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { isGameToResume = isGameToRes; });
 }
@@ -135,7 +135,7 @@ PongGameStatus::setIsGameToResume(bool isGameToRes)
 void
 PongGameStatus::setGameState(game_state state)
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(),
 		[&] { this->actualGameState = state; });
 }

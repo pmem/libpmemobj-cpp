@@ -113,7 +113,7 @@ void
 test_make_one_d(nvobj::pool_base &pop)
 {
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			auto pfoo = nvobj::make_persistent<foo[]>(5);
 			for (int i = 0; i < 5; ++i)
 				pfoo[i].check_foo();
@@ -144,7 +144,7 @@ void
 test_make_N_d(nvobj::pool_base &pop)
 {
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			auto pfoo = nvobj::make_persistent<foo[][2]>(5);
 			for (int i = 0; i < 5; ++i)
 				for (int j = 0; j < 2; j++)
@@ -195,10 +195,10 @@ test_abort_revert(nvobj::pool_base &pop)
 {
 	nvobj::pool<struct root> &root_pop =
 		dynamic_cast<nvobj::pool<struct root> &>(pop);
-	nvobj::persistent_ptr<root> r = root_pop.get_root();
+	nvobj::persistent_ptr<root> r = root_pop.root();
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			r->pfoo = nvobj::make_persistent<foo[]>(5);
 			for (int i = 0; i < 5; ++i)
 				r->pfoo[i].check_foo();
@@ -209,7 +209,7 @@ test_abort_revert(nvobj::pool_base &pop)
 
 	bool exception_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->pfoo != nullptr);
 			nvobj::delete_persistent<foo[]>(r->pfoo, 5);
 			r->pfoo = nullptr;
@@ -228,7 +228,7 @@ test_abort_revert(nvobj::pool_base &pop)
 		r->pfoo[i].check_foo();
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<foo[]>(r->pfoo, 5);
 			r->pfoo = nullptr;
 		});
@@ -246,7 +246,7 @@ test_abort_revert(nvobj::pool_base &pop)
 void
 test_exceptions_handling(nvobj::pool<struct root> &pop)
 {
-	nvobj::persistent_ptr<root> r = pop.get_root();
+	nvobj::persistent_ptr<root> r = pop.root();
 
 	bool scope_error_thrown = false;
 	try {
@@ -260,7 +260,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 
 	bool alloc_error_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->pfoo == nullptr);
 
 			r->pfoo =
@@ -274,7 +274,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 
 	bool scope_error_delete_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->pfoo == nullptr);
 
 			r->pfoo = nvobj::make_persistent<foo[]>(5);
@@ -294,7 +294,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 	ctor_number = 0;
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->throwing == nullptr);
 
 			r->throwing =
@@ -313,7 +313,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 void
 test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
 {
-	nvobj::persistent_ptr<root> r = pop.get_root();
+	nvobj::persistent_ptr<root> r = pop.root();
 
 	bool scope_error_thrown = false;
 	try {
@@ -327,7 +327,7 @@ test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
 
 	bool alloc_error_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->pfoo_sized == nullptr);
 
 			r->pfoo_sized_big =
@@ -341,7 +341,7 @@ test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
 
 	bool scope_error_delete_thrown = false;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->pfoo_sized == nullptr);
 
 			r->pfoo_sized = nvobj::make_persistent<foo[10]>();
@@ -361,7 +361,7 @@ test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
 	ctor_number = 0;
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->throwing_sized == nullptr);
 
 			r->throwing_sized =

@@ -134,21 +134,20 @@ Paddle::getPaddleShape()
 void
 Paddle::setPoints(int pointsArg)
 {
-	pmem::obj::transaction::exec_tx(
-		Pool::getGamePool()->getPoolToTransaction(),
-		[&] { points = pointsArg; });
+	pmem::obj::transaction::run(Pool::getGamePool()->getPoolToTransaction(),
+				    [&] { points = pointsArg; });
 }
 
 void
 Paddle::setY(int yArg)
 {
-	pmem::obj::transaction::exec_tx(
-		Pool::getGamePool()->getPoolToTransaction(), [&] { y = yArg; });
+	pmem::obj::transaction::run(Pool::getGamePool()->getPoolToTransaction(),
+				    [&] { y = yArg; });
 }
 
 void
 Paddle::setX(int xArg)
 {
-	pmem::obj::transaction::exec_tx(
-		Pool::getGamePool()->getPoolToTransaction(), [&] { x = xArg; });
+	pmem::obj::transaction::run(Pool::getGamePool()->getPoolToTransaction(),
+				    [&] { x = xArg; });
 }

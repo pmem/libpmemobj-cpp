@@ -92,7 +92,7 @@ test_alloc_valid(nvobj::pool_base &pop)
 	nvobj::allocator<foo> al;
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			auto fooptr = al.allocate(1);
 			UT_ASSERT(pmemobj_alloc_usable_size(fooptr.raw()) >=
 				  sizeof(foo));

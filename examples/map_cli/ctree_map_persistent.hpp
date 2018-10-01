@@ -79,7 +79,7 @@ public:
 	{
 		auto pop = nvobj::pool_by_vptr(this);
 
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			this->root = nvobj::make_persistent<entry>();
 		});
 	}
@@ -105,7 +105,7 @@ public:
 
 		entry e(key, value);
 		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			if (dest_entry->key == 0 || dest_entry->key == key) {
 				nvobj::delete_persistent<T>(dest_entry->value);
 				*dest_entry = e;
@@ -134,7 +134,7 @@ public:
 	insert_new(key_type key, const Args &... args)
 	{
 		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			return insert(key, nvobj::make_persistent<T>(args...));
 		});
 
@@ -162,7 +162,7 @@ public:
 		auto ret = leaf->value;
 
 		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			if (parent == nullptr) {
 				leaf->key = 0;
 				leaf->value = nullptr;
@@ -193,7 +193,7 @@ public:
 	remove_free(key_type key)
 	{
 		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::exec_tx(
+		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<T>(remove(key)); });
 		return 0;
 	}
@@ -205,7 +205,7 @@ public:
 	clear()
 	{
 		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			if (this->root->inode) {
 				this->root->inode->clear();
 				nvobj::delete_persistent<node>(

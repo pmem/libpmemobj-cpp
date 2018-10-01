@@ -364,7 +364,7 @@ cond_zero_test(nvobj::pool<struct root> &pop)
 {
 	PMEMoid raw_cnd;
 
-	pmemobj_alloc(pop.get_handle(), &raw_cnd, sizeof(PMEMcond), 1,
+	pmemobj_alloc(pop.handle(), &raw_cnd, sizeof(PMEMcond), 1,
 		      [](PMEMobjpool *pop, void *ptr, void *) -> int {
 			      PMEMcond *mtx = static_cast<PMEMcond *>(ptr);
 			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
@@ -374,7 +374,7 @@ cond_zero_test(nvobj::pool<struct root> &pop)
 
 	nvobj::condition_variable *placed_mtx =
 		new (pmemobj_direct(raw_cnd)) nvobj::condition_variable;
-	std::unique_lock<nvobj::mutex> lock(pop.get_root()->pmutex);
+	std::unique_lock<nvobj::mutex> lock(pop.root()->pmutex);
 	placed_mtx->wait_for(lock, wait_time, []() { return false; });
 }
 
@@ -389,7 +389,7 @@ mutex_test(nvobj::pool<struct root> &pop, bool notify, bool notify_all,
 	const auto total_threads = num_threads * 2u;
 	std::thread threads[total_threads];
 
-	nvobj::persistent_ptr<struct root> proot = pop.get_root();
+	nvobj::persistent_ptr<struct root> proot = pop.root();
 
 	for (unsigned i = 0; i < total_threads; i += 2) {
 		threads[i] = std::thread(reader, proot);
@@ -432,10 +432,10 @@ main(int argc, char *argv[])
 		unsigned reset_value = 42;
 
 		mutex_test(pop, true, false, write_notify, func);
-		pop.get_root()->counter = reset_value;
+		pop.root()->counter = reset_value;
 
 		mutex_test(pop, true, true, write_notify, func);
-		pop.get_root()->counter = reset_value;
+		pop.root()->counter = reset_value;
 	}
 
 	std::vector<reader_type> not_notify_functions(
@@ -447,15 +447,15 @@ main(int argc, char *argv[])
 		unsigned reset_value = 42;
 
 		mutex_test(pop, false, false, write_notify, func);
-		pop.get_root()->counter = reset_value;
+		pop.root()->counter = reset_value;
 
 		mutex_test(pop, false, true, write_notify, func);
-		pop.get_root()->counter = reset_value;
+		pop.root()->counter = reset_value;
 	}
 
 	/* pmemcheck related persist */
-	pmemobj_persist(pop.get_handle(), &(pop.get_root()->counter),
-			sizeof(pop.get_root()->counter));
+	pmemobj_persist(pop.handle(), &(pop.root()->counter),
+			sizeof(pop.root()->counter));
 
 	pop.close();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include <functional>
 #include <string>
 
+#include "libpmemobj++/detail/common.hpp"
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj++/pool.hpp"
 #include "libpmemobj/tx_base.h"
@@ -106,7 +107,7 @@ public:
 		template <typename... L>
 		manual(obj::pool_base &pop, L &... locks)
 		{
-			if (pmemobj_tx_begin(pop.get_handle(), nullptr,
+			if (pmemobj_tx_begin(pop.handle(), nullptr,
 					     TX_PARAM_NONE) != 0)
 				throw transaction_error(
 					"failed to start transaction");
@@ -352,9 +353,15 @@ public:
 	}
 
 	static int
-	get_last_tx_error() noexcept
+	error() noexcept
 	{
 		return pmemobj_tx_errno();
+	}
+
+	POBJ_CPP_DEPRECATED static int
+	get_last_tx_error() noexcept
+	{
+		return transaction::error();
 	}
 
 	/**
@@ -390,10 +397,10 @@ public:
 	 */
 	template <typename... Locks>
 	static void
-	exec_tx(pool_base &pool, std::function<void()> tx, Locks &... locks)
+	run(pool_base &pool, std::function<void()> tx, Locks &... locks)
 	{
-		if (pmemobj_tx_begin(pool.get_handle(), nullptr,
-				     TX_PARAM_NONE) != 0)
+		if (pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE) !=
+		    0)
 			throw transaction_error("failed to start transaction");
 
 		auto err = add_lock(locks...);
@@ -433,6 +440,13 @@ public:
 		}
 
 		(void)pmemobj_tx_end();
+	}
+
+	template <typename... Locks>
+	POBJ_CPP_DEPRECATED static void
+	exec_tx(pool_base &pool, std::function<void()> tx, Locks &... locks)
+	{
+		transaction::run(pool, tx, locks...);
 	}
 
 private:

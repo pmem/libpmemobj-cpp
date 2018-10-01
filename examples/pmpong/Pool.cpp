@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, Intel Corporation
+ * Copyright 2017-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,10 +69,10 @@ Pool::getGamePool()
 pmem::obj::persistent_ptr<GameController>
 Pool::getGameController()
 {
-	pmem::obj::persistent_ptr<GameStruct> root = pool.get_root();
+	pmem::obj::persistent_ptr<GameStruct> root = pool.root();
 	if (root != nullptr) {
 		if (root->gam == nullptr)
-			pmem::obj::transaction::exec_tx(pool, [&] {
+			pmem::obj::transaction::run(pool, [&] {
 				root->gam = pmem::obj::make_persistent<
 					GameController>();
 			});

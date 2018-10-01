@@ -42,6 +42,14 @@
 #include "libpmemobj/tx_base.h"
 #include <typeinfo>
 
+#if defined(__GNUC__) || defined(__clang__)
+#define POBJ_CPP_DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#define POBJ_CPP_DEPRECATED __declspec(deprecated)
+#else
+#define POBJ_CPP_DEPRECATED
+#endif
+
 namespace pmem
 {
 

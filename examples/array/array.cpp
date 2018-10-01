@@ -113,7 +113,7 @@ public:
 				  << std::endl;
 			print_usage(array_op::ALLOC, "./example-array");
 		} else {
-			transaction::exec_tx(pop, [&] {
+			transaction::run(pop, [&] {
 				auto new_array = make_persistent<array_list>();
 
 				strcpy(new_array->name, name);
@@ -157,7 +157,7 @@ public:
 			cur_arr = prev_arr->next;
 		}
 
-		transaction::exec_tx(pop, [&] {
+		transaction::run(pop, [&] {
 			if (head == cur_arr)
 				head = cur_arr->next;
 			else
@@ -200,7 +200,7 @@ public:
 				  << std::endl;
 			print_usage(array_op::REALLOC, prog_name);
 		} else {
-			transaction::exec_tx(pop, [&] {
+			transaction::run(pop, [&] {
 				persistent_ptr<int[]> new_array =
 					make_persistent<int[]>(size);
 
@@ -328,7 +328,7 @@ main(int argc, char *argv[])
 	else
 		pop = pool<examples::pmem_array>::open(file, LAYOUT);
 
-	persistent_ptr<examples::pmem_array> arr = pop.get_root();
+	persistent_ptr<examples::pmem_array> arr = pop.root();
 
 	array_op op = parse_array_op(argv[2]);
 

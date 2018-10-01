@@ -253,10 +253,10 @@ struct root {
 void
 run_test_success(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_s = pmem::obj::make_persistent<TestSuccess>();
 		});
 	} catch (...) {
@@ -264,7 +264,7 @@ run_test_success(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_s->run();
 			r->ptr_s->run_reverse();
 
@@ -278,10 +278,10 @@ run_test_success(pmem::obj::pool<struct root> &pop)
 void
 run_test_abort(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_a = pmem::obj::make_persistent<TestAbort>();
 		});
 	} catch (...) {
@@ -290,7 +290,7 @@ run_test_abort(pmem::obj::pool<struct root> &pop)
 
 	/* Run TestAbort expecting success */
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_a->run();
 
 			pmem::obj::delete_persistent<TestAbort>(r->ptr_a);
@@ -303,10 +303,10 @@ run_test_abort(pmem::obj::pool<struct root> &pop)
 void
 run_test_abort_with_revert(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_a = pmem::obj::make_persistent<TestAbort>();
 		});
 	} catch (...) {
@@ -315,7 +315,7 @@ run_test_abort_with_revert(pmem::obj::pool<struct root> &pop)
 
 	/* Run TestAbort expecting transaction abort */
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_a->run();
 
 			pmem::obj::transaction::abort(0);
@@ -338,7 +338,7 @@ run_test_abort_with_revert(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			pmem::obj::delete_persistent<TestAbort>(r->ptr_a);
 		});
 	} catch (...) {
@@ -349,10 +349,10 @@ run_test_abort_with_revert(pmem::obj::pool<struct root> &pop)
 void
 run_test_ranges(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_r = pmem::obj::make_persistent<TestRanges>();
 		});
 	} catch (...) {
@@ -360,7 +360,7 @@ run_test_ranges(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_r->run();
 
 			pmem::obj::delete_persistent<TestRanges>(r->ptr_r);
@@ -373,10 +373,10 @@ run_test_ranges(pmem::obj::pool<struct root> &pop)
 void
 run_test_at(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_at = pmem::obj::make_persistent<TestAt>();
 		});
 	} catch (...) {
@@ -384,7 +384,7 @@ run_test_at(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_at->run();
 
 			pmem::obj::delete_persistent<TestAt>(r->ptr_at);

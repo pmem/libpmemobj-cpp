@@ -155,10 +155,10 @@ struct root {
 void
 run_test1(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test1 = pmem::obj::make_persistent<Test1>();
 		});
 	} catch (...) {
@@ -166,7 +166,7 @@ run_test1(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test1->iterator_pass();
 			r->test1->check_pass();
 		});
@@ -175,7 +175,7 @@ run_test1(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test1->iterator_access();
 
 			pmem::obj::delete_persistent<Test1>(r->test1);
@@ -188,10 +188,10 @@ run_test1(pmem::obj::pool<struct root> &pop)
 void
 run_test2(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test2 = pmem::obj::make_persistent<Test2>();
 		});
 	} catch (...) {
@@ -199,7 +199,7 @@ run_test2(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test2->reverse_iterator_pass();
 			r->test2->check_pass();
 
@@ -213,10 +213,10 @@ run_test2(pmem::obj::pool<struct root> &pop)
 void
 run_test3(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test3 = pmem::obj::make_persistent<Test3>();
 		});
 	} catch (...) {
@@ -224,7 +224,7 @@ run_test3(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test3->iterator_operators();
 
 			pmem::obj::delete_persistent<Test3>(r->test3);

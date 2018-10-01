@@ -96,7 +96,7 @@ struct root {
 void
 test_make_no_args(nvobj::pool<struct root> &pop)
 {
-	nvobj::persistent_ptr<root> r = pop.get_root();
+	nvobj::persistent_ptr<root> r = pop.root();
 
 	UT_ASSERT(r->pfoo == nullptr);
 
@@ -112,7 +112,7 @@ test_make_no_args(nvobj::pool<struct root> &pop)
 void
 test_make_args(nvobj::pool<struct root> &pop)
 {
-	nvobj::persistent_ptr<root> r = pop.get_root();
+	nvobj::persistent_ptr<root> r = pop.root();
 	UT_ASSERT(r->pfoo == nullptr);
 
 	nvobj::make_persistent_atomic<foo>(pop, r->pfoo, 2);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,10 +72,10 @@ make_persistent_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		// allocation with constructor argument passing
 		proot->comp = make_persistent<compound_type>(1, 2.0);
 
@@ -126,10 +126,10 @@ make_persistent_array_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		// allocate an array of 20 objects - compound_type must be
 		// default constructible
 		proot->comp = make_persistent<compound_type[]>(20);
@@ -185,7 +185,7 @@ make_persistent_atomic_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
 
@@ -196,7 +196,7 @@ make_persistent_atomic_example()
 	delete_persistent<compound_type>(proot->comp);
 
 	// error prone cases
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		// possible invalid state in case of transaction abort
 		make_persistent_atomic<compound_type>(pop, proot->comp, 1, 1.3);
 		delete_persistent_atomic<compound_type>(proot->comp);
@@ -241,7 +241,7 @@ make_persistent_array_atomic_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
 
@@ -257,7 +257,7 @@ make_persistent_array_atomic_example()
 	delete_persistent_atomic<compound_type[42]>(arr);
 
 	// error prone cases
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		// possible invalid state in case of transaction abort
 		make_persistent_atomic<compound_type[]>(pop, proot->comp, 30);
 		delete_persistent_atomic<compound_type[]>(proot->comp, 30);

@@ -1220,7 +1220,7 @@ main(int argc, char *argv[])
 		nodelay(stdscr, true);
 		curs_set(0);
 		keypad(stdscr, true);
-		persistent_ptr<examples::state> r = pop.get_root();
+		persistent_ptr<examples::state> r = pop.root();
 
 		if ((r != nullptr) && (r->init(map_path) != false))
 			r->game();

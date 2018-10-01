@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ make_persistent_atomic(pool_base &pool,
 		       Args &&... args)
 {
 	std::tuple<Args &...> arg_pack{args...};
-	auto ret = pmemobj_alloc(pool.get_handle(), ptr.raw_ptr(), sizeof(T),
+	auto ret = pmemobj_alloc(pool.handle(), ptr.raw_ptr(), sizeof(T),
 				 detail::type_num<T>(),
 				 &detail::obj_constructor<T, Args...>,
 				 static_cast<void *>(&arg_pack));

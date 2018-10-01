@@ -174,7 +174,7 @@ mutex_zero_test(nvobj::pool<struct root> &pop)
 {
 	PMEMoid raw_mutex;
 
-	pmemobj_alloc(pop.get_handle(), &raw_mutex, sizeof(PMEMmutex), 1,
+	pmemobj_alloc(pop.handle(), &raw_mutex, sizeof(PMEMmutex), 1,
 		      [](PMEMobjpool *pop, void *ptr, void *arg) -> int {
 			      PMEMmutex *mtx = static_cast<PMEMmutex *>(ptr);
 			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
@@ -196,7 +196,7 @@ timed_mtx_test(nvobj::pool<struct root> &pop, Worker function)
 {
 	pthread_t threads[num_threads];
 
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	for (unsigned i = 0; i < num_threads; ++i)
 		ut_pthread_create(&threads[i], nullptr, function, &proot);
@@ -228,38 +228,38 @@ main(int argc, char *argv[])
 	mutex_zero_test(pop);
 
 	timed_mtx_test(pop, increment_pint);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads * num_ops);
+	UT_ASSERTeq(pop.root()->counter, num_threads * num_ops);
 
 	timed_mtx_test(pop, decrement_pint);
-	UT_ASSERTeq(pop.get_root()->counter, 0);
+	UT_ASSERTeq(pop.root()->counter, 0);
 
 	timed_mtx_test(pop, trylock_test);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads);
+	UT_ASSERTeq(pop.root()->counter, num_threads);
 
 	/* loop the next two tests */
 	loop = true;
 
 	timed_mtx_test(pop, trylock_until_test);
-	UT_ASSERTeq(pop.get_root()->counter, 0);
+	UT_ASSERTeq(pop.root()->counter, 0);
 
 	timed_mtx_test(pop, trylock_for_test);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads);
+	UT_ASSERTeq(pop.root()->counter, num_threads);
 
 	loop = false;
 
-	pop.get_root()->pmutex.lock();
+	pop.root()->pmutex.lock();
 
 	timed_mtx_test(pop, trylock_until_test);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads);
+	UT_ASSERTeq(pop.root()->counter, num_threads);
 
 	timed_mtx_test(pop, trylock_for_test);
-	UT_ASSERTeq(pop.get_root()->counter, num_threads);
+	UT_ASSERTeq(pop.root()->counter, num_threads);
 
-	pop.get_root()->pmutex.unlock();
+	pop.root()->pmutex.unlock();
 
 	/* pmemcheck related persist */
-	pmemobj_persist(pop.get_handle(), &(pop.get_root()->counter),
-			sizeof(pop.get_root()->counter));
+	pmemobj_persist(pop.handle(), &(pop.root()->counter),
+			sizeof(pop.root()->counter));
 
 	pop.close();
 }

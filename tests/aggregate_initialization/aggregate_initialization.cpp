@@ -56,7 +56,7 @@ struct root {
 void
 test_aggregate(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<root> r = pop.get_root();
+	nvobj::persistent_ptr<root> r = pop.root();
 
 #if !__cpp_lib_is_aggregate
 	/* make sure aggregate initialization is available */
@@ -64,7 +64,7 @@ test_aggregate(nvobj::pool<root> &pop)
 #endif
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			r->pfoo = nvobj::make_persistent<foo>(2, 3);
 
 			UT_ASSERTeq(r->pfoo->a, 2);

@@ -122,7 +122,7 @@ loop_insert(pool &pop, T &cont, const Y &val, int count)
 {
 	for (int i = 0; i < count; ++i) {
 		try {
-			nvobj::transaction::exec_tx(pop, [&] {
+			nvobj::transaction::run(pop, [&] {
 				cont.insert(cont.cbegin(), Y(val));
 			});
 		} catch (...) {

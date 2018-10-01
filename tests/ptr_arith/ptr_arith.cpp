@@ -63,7 +63,7 @@ prepare_array(nvobj::pool_base &pop)
 	int ret;
 
 	nvobj::persistent_ptr<T> parr_vsize;
-	ret = pmemobj_zalloc(pop.get_handle(), parr_vsize.raw_ptr(),
+	ret = pmemobj_zalloc(pop.handle(), parr_vsize.raw_ptr(),
 			     sizeof(T) * TEST_ARR_SIZE, 0);
 
 	UT_ASSERTeq(ret, 0);
@@ -71,7 +71,7 @@ prepare_array(nvobj::pool_base &pop)
 	T *parray = parr_vsize.get();
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			for (int i = 0; i < TEST_ARR_SIZE; ++i) {
 				parray[i] = i;
 			}

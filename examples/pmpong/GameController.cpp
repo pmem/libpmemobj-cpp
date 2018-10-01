@@ -40,7 +40,7 @@ GameController::GameController()
 
 GameController::~GameController()
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			pmem::obj::delete_persistent<PongGameStatus>(
 				gameStatus);
@@ -221,7 +221,7 @@ GameController::gameMatchSimulation(sf::RenderWindow *gameWindow, View *view)
 void
 GameController::resetGameStatus()
 {
-	pmem::obj::transaction::exec_tx(
+	pmem::obj::transaction::run(
 		Pool::getGamePool()->getPoolToTransaction(), [&] {
 			pmem::obj::delete_persistent<PongGameStatus>(
 				gameStatus);

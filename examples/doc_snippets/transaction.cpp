@@ -77,12 +77,12 @@ general_tx_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
 	try {
 		// take locks and start a transaction
-		transaction::exec_tx(pop,
+		transaction::run(pop,
 				     [&]() {
 					     // atomically allocate objects
 					     proot->another_root =
@@ -128,7 +128,7 @@ manual_tx_example()
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
 
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	try {
 		transaction::manual tx(pop, proot->pmutex,
@@ -153,7 +153,7 @@ manual_tx_example()
 
 	// In complex cases with library calls, remember to check the status of
 	// the previous transaction.
-	return transaction::get_last_tx_error();
+	return transaction::error();
 }
 //! [manual_tx_example]
 
@@ -181,7 +181,7 @@ automatic_tx_example()
 
 	// create a pmemobj pool
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	try {
 		transaction::automatic tx(pop, proot->pmutex,
@@ -204,6 +204,6 @@ automatic_tx_example()
 
 	// In complex cases with library calls, remember to check the status of
 	// the previous transaction.
-	return transaction::get_last_tx_error();
+	return transaction::error();
 }
 //! [automatic_tx_example]

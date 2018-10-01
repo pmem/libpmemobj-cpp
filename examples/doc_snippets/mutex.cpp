@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ unique_guard_example()
 	// create a pmemobj pool
 	auto pop = nvobj::pool<root>::create("poolfile", "layout",
 					     PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
 	std::lock_guard<nvobj::mutex> guard(proot->pmutex);
@@ -81,7 +81,7 @@ shared_mutex_example()
 	// create a pmemobj pool
 	auto pop = nvobj::pool<root>::create("poolfile", "layout",
 					     PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// typical usage schemes
 	proot->pmutex.lock_shared();
@@ -109,7 +109,7 @@ timed_mutex_example()
 	// create a pmemobj pool
 	auto pop = nvobj::pool<root>::create("poolfile", "layout",
 					     PMEMOBJ_MIN_POOL);
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	const auto timeout = std::chrono::milliseconds(100);
 
@@ -145,7 +145,7 @@ cond_var_example()
 	auto pop = nvobj::pool<root>::create("poolfile", "layout",
 					     PMEMOBJ_MIN_POOL);
 
-	auto proot = pop.get_root();
+	auto proot = pop.root();
 
 	// run worker to bump up the counter
 	std::thread worker([&] {

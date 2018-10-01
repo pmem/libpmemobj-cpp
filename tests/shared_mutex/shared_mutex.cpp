@@ -127,7 +127,7 @@ mutex_zero_test(nvobj::pool<struct root> &pop)
 {
 	PMEMoid raw_mutex;
 
-	pmemobj_alloc(pop.get_handle(), &raw_mutex, sizeof(PMEMrwlock), 1,
+	pmemobj_alloc(pop.handle(), &raw_mutex, sizeof(PMEMrwlock), 1,
 		      [](PMEMobjpool *pop, void *ptr, void *arg) -> int {
 			      PMEMrwlock *mtx = static_cast<PMEMrwlock *>(ptr);
 			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
@@ -150,7 +150,7 @@ mutex_test(nvobj::pool<root> &pop, const Worker &writer, const Worker &reader)
 	const auto total_threads = num_threads * 2u;
 	std::thread threads[total_threads];
 
-	nvobj::persistent_ptr<root> proot = pop.get_root();
+	nvobj::persistent_ptr<root> proot = pop.root();
 
 	for (unsigned i = 0; i < total_threads; i += 2) {
 		threads[i] = std::thread(writer, proot);
@@ -185,16 +185,16 @@ main(int argc, char *argv[])
 
 	auto expected = num_threads * num_ops * 2;
 	mutex_test(pop, writer, reader);
-	UT_ASSERTeq(pop.get_root()->counter, expected);
+	UT_ASSERTeq(pop.root()->counter, expected);
 
 	/* trylocks are not tested as exhaustively */
 	expected -= num_threads * 2;
 	mutex_test(pop, writer_trylock, reader_trylock);
-	UT_ASSERTeq(pop.get_root()->counter, expected);
+	UT_ASSERTeq(pop.root()->counter, expected);
 
 	/* pmemcheck related persist */
-	pmemobj_persist(pop.get_handle(), &(pop.get_root()->counter),
-			sizeof(pop.get_root()->counter));
+	pmemobj_persist(pop.handle(), &(pop.root()->counter),
+			sizeof(pop.root()->counter));
 
 	pop.close();
 }

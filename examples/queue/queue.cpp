@@ -115,7 +115,7 @@ public:
 	void
 	push(pool_base &pop, uint64_t value)
 	{
-		transaction::exec_tx(pop, [&] {
+		transaction::run(pop, [&] {
 			auto n = make_persistent<pmem_entry>();
 
 			n->value = value;
@@ -137,7 +137,7 @@ public:
 	pop(pool_base &pop)
 	{
 		uint64_t ret = 0;
-		transaction::exec_tx(pop, [&] {
+		transaction::run(pop, [&] {
 			if (head == nullptr)
 				transaction::abort(EINVAL);
 
@@ -193,7 +193,7 @@ main(int argc, char *argv[])
 		pop = pool<examples::pmem_queue>::open(path, LAYOUT);
 	}
 
-	auto q = pop.get_root();
+	auto q = pop.root();
 	switch (op) {
 		case QUEUE_PUSH:
 			q->push(pop, std::stoull(argv[3]));

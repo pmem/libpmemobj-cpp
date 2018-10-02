@@ -77,8 +77,8 @@ struct root {
 void
 test_init(nvobj::pool<root> &pop)
 {
-	UT_ASSERTeq(pop.get_root()->f.get().counter, TEST_VALUE);
-	UT_ASSERTeq(pop.get_root()->bar_ptr->vfoo.get().counter, TEST_VALUE);
+	UT_ASSERTeq(pop.root()->f.get().counter, TEST_VALUE);
+	UT_ASSERTeq(pop.root()->bar_ptr->vfoo.get().counter, TEST_VALUE);
 }
 }
 
@@ -101,12 +101,12 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	nvobj::make_persistent_atomic<bar>(pop, pop.get_root()->bar_ptr);
+	nvobj::make_persistent_atomic<bar>(pop, pop.root()->bar_ptr);
 
 	test_init(pop);
 
-	pop.get_root()->f.get().counter = 20;
-	UT_ASSERTeq(pop.get_root()->f.get().counter, 20);
+	pop.root()->f.get().counter = 20;
+	UT_ASSERTeq(pop.root()->f.get().counter, 20);
 
 	pop.close();
 

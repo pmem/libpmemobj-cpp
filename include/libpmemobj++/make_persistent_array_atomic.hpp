@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,8 +75,8 @@ make_persistent_atomic(pool_base &pool,
 {
 	typedef typename detail::pp_array_type<T>::type I;
 
-	auto ret = pmemobj_alloc(pool.get_handle(), ptr.raw_ptr(),
-				 sizeof(I) * N, detail::type_num<I>(),
+	auto ret = pmemobj_alloc(pool.handle(), ptr.raw_ptr(), sizeof(I) * N,
+				 detail::type_num<I>(),
 				 &detail::array_constructor<I>,
 				 static_cast<void *>(&N));
 
@@ -105,8 +105,8 @@ make_persistent_atomic(pool_base &pool,
 	typedef typename detail::pp_array_type<T>::type I;
 	std::size_t N = detail::pp_array_elems<T>::elems;
 
-	auto ret = pmemobj_alloc(pool.get_handle(), ptr.raw_ptr(),
-				 sizeof(I) * N, detail::type_num<I>(),
+	auto ret = pmemobj_alloc(pool.handle(), ptr.raw_ptr(), sizeof(I) * N,
+				 detail::type_num<I>(),
 				 &detail::array_constructor<I>,
 				 static_cast<void *>(&N));
 

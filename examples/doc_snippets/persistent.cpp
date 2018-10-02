@@ -68,7 +68,7 @@ p_property_example()
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
 
 	// typical usage schemes
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		proot.counter = 12; // atomic
 		// one way to change `whoops`
 		proot.whoops.get_rw().set_some_variable(2);
@@ -115,7 +115,7 @@ persistent_ptr_example()
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
 
 	// typical usage schemes
-	transaction::exec_tx(pop, [&] {
+	transaction::run(pop, [&] {
 		proot.comp = make_persistent<compound_type>(); // allocation
 		proot.comp->set_some_variable(12);	     // call function
 		proot.comp->some_other_variable = 2.3;	 // set variable

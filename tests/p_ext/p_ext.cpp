@@ -77,10 +77,10 @@ init_foobar(nvobj::pool_base &pop)
 {
 	nvobj::pool<struct root> &root_pop =
 		dynamic_cast<nvobj::pool<struct root> &>(pop);
-	nvobj::persistent_ptr<root> r = root_pop.get_root();
+	nvobj::persistent_ptr<root> r = root_pop.root();
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->bar_ptr == nullptr);
 			UT_ASSERT(r->foo_ptr == nullptr);
 
@@ -109,10 +109,10 @@ cleanup_foobar(nvobj::pool_base &pop)
 {
 	nvobj::pool<struct root> &root_pop =
 		dynamic_cast<nvobj::pool<struct root> &>(pop);
-	nvobj::persistent_ptr<root> r = root_pop.get_root();
+	nvobj::persistent_ptr<root> r = root_pop.root();
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->bar_ptr != nullptr);
 			UT_ASSERT(r->foo_ptr != nullptr);
 
@@ -139,7 +139,7 @@ arithmetic_test(nvobj::pool_base &pop)
 
 	/* operations test */
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			/* addition */
 			r->foo_ptr->puchar += r->foo_ptr->puchar;
 			r->foo_ptr->puchar +=
@@ -232,7 +232,7 @@ bitwise_test(nvobj::pool_base &pop)
 	nvobj::persistent_ptr<root> r = init_foobar(pop);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			/* OR */
 			r->foo_ptr->puchar |= r->foo_ptr->pllong;
 			r->foo_ptr->puchar |= r->foo_ptr->pint;
@@ -311,7 +311,7 @@ stream_test(nvobj::pool_base &pop)
 	nvobj::persistent_ptr<root> r = init_foobar(pop);
 
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			std::stringstream stream("12.4");
 			stream >> r->bar_ptr->pdouble;
 			/*
@@ -345,12 +345,12 @@ swap_test(nvobj::pool_base &pop)
 	nvobj::persistent_ptr<_bar> swap_one;
 	nvobj::persistent_ptr<_bar> swap_two;
 	try {
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			swap_one = pmemobj_tx_zalloc(sizeof(_bar), 0);
 			swap_two = pmemobj_tx_zalloc(sizeof(_bar), 0);
 		});
 
-		nvobj::transaction::exec_tx(pop, [&] {
+		nvobj::transaction::run(pop, [&] {
 			swap_one->value = 1;
 			swap_two->value = 2;
 

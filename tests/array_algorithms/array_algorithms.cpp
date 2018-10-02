@@ -80,10 +80,10 @@ struct root {
 void
 test_sort_single_element(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test_sort = pmem::obj::make_persistent<TestSort>();
 		});
 	} catch (...) {
@@ -91,7 +91,7 @@ test_sort_single_element(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test_sort->sort_single_element_snapshot();
 
 			pmem::obj::transaction::abort(0);
@@ -106,7 +106,7 @@ test_sort_single_element(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			pmem::obj::delete_persistent<TestSort>(r->test_sort);
 		});
 	} catch (...) {
@@ -117,10 +117,10 @@ test_sort_single_element(pmem::obj::pool<struct root> &pop)
 void
 test_sort_range(pmem::obj::pool<struct root> &pop)
 {
-	auto r = pop.get_root();
+	auto r = pop.root();
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test_sort = pmem::obj::make_persistent<TestSort>();
 		});
 	} catch (...) {
@@ -128,7 +128,7 @@ test_sort_range(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			r->test_sort->sort_range_snapshot();
 
 			pmem::obj::transaction::abort(0);
@@ -143,7 +143,7 @@ test_sort_range(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		pmem::obj::transaction::exec_tx(pop, [&] {
+		pmem::obj::transaction::run(pop, [&] {
 			pmem::obj::delete_persistent<TestSort>(r->test_sort);
 		});
 	} catch (...) {

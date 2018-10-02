@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,7 +63,7 @@ pool_example()
 	pop = pool<root>::open("poolfile", "layout");
 
 	// typical usage schemes
-	auto root_obj = pop.get_root();
+	auto root_obj = pop.root();
 
 	// low-level memory manipulation
 	root_obj->some_variable = 3.2;

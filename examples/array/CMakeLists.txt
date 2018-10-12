@@ -39,14 +39,14 @@ include(FindThreads)
 
 find_package(PkgConfig QUIET)
 if(PKG_CONFIG_FOUND)
-	pkg_check_modules(PMEMOBJ++ REQUIRED libpmemobj++)
+	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
 else()
-	find_package(PMEMOBJ++ REQUIRED)
+	find_package(LIBPMEMOBJ++ REQUIRED)
 endif()
 
-link_directories(${PMEMOBJ++_LIBRARY_DIRS})
+link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS})
 
 add_executable(array array.cpp)
-target_include_directories(array PUBLIC ${PMEMOBJ++_INCLUDE_DIRS} . ..)
-target_link_libraries(array ${PMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_include_directories(array PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(array ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 

@@ -43,8 +43,8 @@ if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
 endif()
 
-set(INCLUDE_DIRS ${PMEMOBJ_INCLUDE_DIRS} common/ .. .)
-set(LIBS_DIRS ${PMEMOBJ_LIBRARY_DIRS})
+set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. .)
+set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS})
 
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
@@ -54,7 +54,7 @@ set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 
 if(NOT MSVC_VERSION)
 	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
-	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${PMEMOBJ_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${LIBPMEMOBJ_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
 		"#include <libpmemobj++/make_persistent_array.hpp>
@@ -113,7 +113,7 @@ function(build_test name)
 	add_check_whitespace(tests-${name} ${srcs})
 
 	add_executable(${name} ${srcs})
-	target_link_libraries(${name} ${PMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} test_backtrace)
+	target_link_libraries(${name} ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} test_backtrace)
 	if(LIBUNWIND_FOUND)
 		target_link_libraries(${name} ${LIBUNWIND_LIBRARIES} ${CMAKE_DL_LIBS})
 	endif()

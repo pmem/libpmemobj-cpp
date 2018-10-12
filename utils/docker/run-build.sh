@@ -193,7 +193,6 @@ make -j2
 test_command tests_package
 
 make package
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_package END$(tput sgr 0)\n\n"
 
 # Make sure there is no libpmemobj++ currently installed
 echo "---------------------------- Error expected! ------------------------------"
@@ -211,6 +210,18 @@ rm -rf build
 
 # Verify installed package
 compile_example_standalone map_cli
+
+# Remove pkg-config and force cmake to use find_package while compiling example
+if [ $PACKAGE_MANAGER = "deb" ]; then
+	sudo dpkg -r --force-all pkg-config
+elif [ $PACKAGE_MANAGER = "rpm" ]; then
+	sudo rpm -e --nodeps pkgconf
+fi
+
+# Verify installed package using find_package
+compile_example_standalone map_cli
+
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_package END$(tput sgr 0)\n\n"
 
 rm -r $INSTALL_DIR
 

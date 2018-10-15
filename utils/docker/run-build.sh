@@ -223,6 +223,26 @@ compile_example_standalone map_cli
 
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_package END$(tput sgr 0)\n\n"
 
+###############################################################################
+# BUILD test findLIBPMEMOBJ.cmake
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_findLIBPMEMOBJ.cmake START$(tput sgr 0)\n"
+mkdir build
+cd build
+
+CC=gcc CXX=g++ \
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
+			-DCXX_STANDARD=17
+
+make -j2
+
+cd ..
+rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_findLIBPMEMOBJ.cmake END$(tput sgr 0)\n\n"
+
 rm -r $INSTALL_DIR
 
 # Trigger auto doc update on master

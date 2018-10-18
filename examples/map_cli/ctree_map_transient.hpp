@@ -30,13 +30,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OBJCPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
-#define OBJCPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
+#ifndef LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
+#define LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
 
 #include <cstdint>
 #include <functional>
 #include <stdlib.h>
-#include <objcpp_examples_common.hpp>
+#include <libpmemobj_cpp_examples_common.hpp>
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -412,4 +412,4 @@ private:
 
 } /* namespace examples */
 
-#endif /* OBJCPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP */
+#endif /* LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP */

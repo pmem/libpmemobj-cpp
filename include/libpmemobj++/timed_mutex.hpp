@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Pmem-resident timed_mutex.
  */
 
-#ifndef PMEMOBJ_TIMED_MUTEX_HPP
-#define PMEMOBJ_TIMED_MUTEX_HPP
+#ifndef LIBPMEMOBJ_CPP_TIMED_MUTEX_HPP
+#define LIBPMEMOBJ_CPP_TIMED_MUTEX_HPP
 
 #include <chrono>
 
@@ -256,4 +256,4 @@ private:
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_TIMED_MUTEX_HPP */
+#endif /* LIBPMEMOBJ_CPP_TIMED_MUTEX_HPP */

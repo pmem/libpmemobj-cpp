@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Pmem-resident condition variable.
  */
 
-#ifndef PMEMOBJ_CONDVARIABLE_HPP
-#define PMEMOBJ_CONDVARIABLE_HPP
+#ifndef LIBPMEMOBJ_CPP_CONDVARIABLE_HPP
+#define LIBPMEMOBJ_CPP_CONDVARIABLE_HPP
 
 #include <chrono>
 #include <condition_variable>
@@ -579,4 +579,4 @@ private:
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_CONDVARIABLE_HPP */
+#endif /* LIBPMEMOBJ_CPP_CONDVARIABLE_HPP */

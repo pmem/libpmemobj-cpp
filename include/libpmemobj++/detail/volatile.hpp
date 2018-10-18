@@ -35,8 +35,8 @@
  * Implementation details of volatile variables implementation
  */
 
-#ifndef LIBPMEMOBJ_VOLATILE_HPP
-#define LIBPMEMOBJ_VOLATILE_HPP
+#ifndef LIBPMEMOBJ_CPP_VOLATILE_HPP
+#define LIBPMEMOBJ_CPP_VOLATILE_HPP
 
 #include <new>
 #include <stddef.h>
@@ -59,4 +59,4 @@ instantiate_volatile_object(void *ptr, void *args)
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_VOLATILE_HPP */
+#endif /* LIBPMEMOBJ_CPP_VOLATILE_HPP */

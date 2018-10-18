@@ -34,8 +34,8 @@
 #include "ctree_map_transient.hpp"
 #include <iostream>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj_cpp_examples_common.hpp>
 #include <memory>
-#include <objcpp_examples_common.hpp>
 #include <string.h>
 
 namespace

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Persistent memory aware allocator. (EXPERIMENTAL)
  */
 
-#ifndef PMEMOBJ_ALLOCATOR_HPP
-#define PMEMOBJ_ALLOCATOR_HPP
+#ifndef LIBPMEMOBJ_CPP_ALLOCATOR_HPP
+#define LIBPMEMOBJ_CPP_ALLOCATOR_HPP
 
 #include "libpmemobj++/detail/common.hpp"
 #include "libpmemobj++/detail/life.hpp"
@@ -528,4 +528,4 @@ operator!=(const allocator<T, P, Tr> &lhs, const OtherAllocator &rhs)
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_ALLOCATOR_HPP */
+#endif /* LIBPMEMOBJ_CPP_ALLOCATOR_HPP */

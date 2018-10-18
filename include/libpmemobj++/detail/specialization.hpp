@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,8 @@
  * Based on Boost library smart_ptr implementation.
  */
 
-#ifndef PMEMOBJ_SPECIALIZATION_HPP
-#define PMEMOBJ_SPECIALIZATION_HPP
+#ifndef LIBPMEMOBJ_CPP_SPECIALIZATION_HPP
+#define LIBPMEMOBJ_CPP_SPECIALIZATION_HPP
 
 #include <memory>
 
@@ -157,4 +157,4 @@ struct sp_extent<T[N]> {
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_SPECIALIZATION_HPP */
+#endif /* LIBPMEMOBJ_CPP_SPECIALIZATION_HPP */

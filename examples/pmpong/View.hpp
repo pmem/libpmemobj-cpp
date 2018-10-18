@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OBJCPP_EXAMPLES_PMPONG_VIEW_HPP
-#define OBJCPP_EXAMPLES_PMPONG_VIEW_HPP
+#ifndef LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_VIEW_HPP
+#define LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_VIEW_HPP
 
 #include "GameConstants.hpp"
 #include "PongGameStatus.hpp"
@@ -44,4 +44,4 @@ public:
 	virtual void displayView(sf::RenderWindow *gameWindow) = 0;
 };
 
-#endif /* OBJCPP_EXAMPLES_PMPONG_VIEW_HPP */
+#endif /* LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_VIEW_HPP */

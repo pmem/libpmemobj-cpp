@@ -35,8 +35,8 @@
  * Functions for destroying arrays.
  */
 
-#ifndef LIBPMEMOBJ_DESTROYER_HPP
-#define LIBPMEMOBJ_DESTROYER_HPP
+#ifndef LIBPMEMOBJ_CPP_DESTROYER_HPP
+#define LIBPMEMOBJ_CPP_DESTROYER_HPP
 
 #include <stddef.h>
 #include <type_traits>
@@ -162,4 +162,4 @@ destroy(typename if_size_array<T>::type &arg)
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_DESTROYER_HPP */
+#endif /* LIBPMEMOBJ_CPP_DESTROYER_HPP */

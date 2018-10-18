@@ -35,8 +35,8 @@
  * Resides on pmem property template.
  */
 
-#ifndef PMEMOBJ_P_HPP
-#define PMEMOBJ_P_HPP
+#ifndef LIBPMEMOBJ_CPP_P_HPP
+#define LIBPMEMOBJ_CPP_P_HPP
 
 #include <memory>
 
@@ -194,4 +194,4 @@ swap(p<T> &a, p<T> &b)
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_P_HPP */
+#endif /* LIBPMEMOBJ_CPP_P_HPP */

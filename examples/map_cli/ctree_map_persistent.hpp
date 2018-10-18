@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OBJCPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
-#define OBJCPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
+#ifndef LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
+#define LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
 
 #include <cstdint>
 #include <functional>
@@ -44,7 +44,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj++/utils.hpp>
-#include <objcpp_examples_common.hpp>
+#include <libpmemobj_cpp_examples_common.hpp>
 
 #define BIT_IS_SET(n, i) (!!((n) & (1ULL << (i))))
 
@@ -443,4 +443,4 @@ private:
 
 } /* namespace examples */
 
-#endif /* OBJCPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP */
+#endif /* LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP */

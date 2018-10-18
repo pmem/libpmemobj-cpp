@@ -51,7 +51,7 @@ git rebase upstream/master
 mkdir build
 cd build
 
-cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ..
+cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_VERSION_FILE=OFF ..
 make doc
 cp -R doc/cpp_html ../..
 

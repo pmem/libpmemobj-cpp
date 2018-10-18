@@ -67,6 +67,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
 option(BUILD_EXAMPLES "build examples" ON)
 option(BUILD_TESTS "build tests" ON)
 option(BUILD_DOC "build documentation" ON)
+option(BUILD_VERSION_FILE "create version.hpp containg source version" ON)
 option(COVERAGE "run coverage test" OFF)
 option(DEVELOPER_MODE "enable developer checks" OFF)
 option(TRACE_TESTS "more verbose test outputs" OFF)
@@ -204,8 +205,10 @@ if(NOT PMEMVLT_PRESENT)
 	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
 endif()
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
-		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
+if (BUILD_VERSION_FILE)
+	configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
+			${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
+endif()
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")

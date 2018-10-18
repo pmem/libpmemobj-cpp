@@ -39,21 +39,21 @@ include(FindThreads)
 
 find_package(PkgConfig QUIET)
 if(PKG_CONFIG_FOUND)
-	pkg_check_modules(PMEMOBJ++ REQUIRED libpmemobj++)
+	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
 
 	pkg_check_modules(SFML REQUIRED sfml-all>=2.4)
 else()
-	find_package(PMEMOBJ++ REQUIRED)
+	find_package(LIBPMEMOBJ++ REQUIRED)
 
 	# SFML 2.5 has different cmake interface than <= 2.4 so previous versions are not supported
 	find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
 	set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system)
 endif()
 
-link_directories(${PMEMOBJ++_LIBRARY_DIRS})
+link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS})
 
 add_executable(pmpong Ball.cpp GameController.cpp GameOverView.cpp
 		GameView.cpp MainGame.cpp MenuView.cpp Paddle.cpp
 		PongGameStatus.cpp Pool.cpp)
-target_include_directories(pmpong PUBLIC ${SFML_INCLUDE_DIR} ${PMEMOBJ++_INCLUDE_DIRS} .)
-target_link_libraries(pmpong ${PMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})
+target_include_directories(pmpong PUBLIC ${SFML_INCLUDE_DIR} ${LIBPMEMOBJ++_INCLUDE_DIRS} .)
+target_link_libraries(pmpong ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})

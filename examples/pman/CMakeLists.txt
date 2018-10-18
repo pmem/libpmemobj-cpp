@@ -39,11 +39,11 @@ include(FindThreads)
 
 find_package(PkgConfig QUIET)
 if(PKG_CONFIG_FOUND)
-	pkg_check_modules(PMEMOBJ++ REQUIRED libpmemobj++)
+	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
 
 	pkg_check_modules(CURSES REQUIRED ncurses)
 else()
-	find_package(PMEMOBJ++ REQUIRED)
+	find_package(LIBPMEMOBJ++ REQUIRED)
 
 	# Specifies that we want FindCurses to find ncurses and not just any
 	# curses library
@@ -51,8 +51,8 @@ else()
 	find_package(Curses REQUIRED)
 endif()
 
-link_directories(${PMEMOBJ++_LIBRARY_DIRS})
+link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS})
 
 add_executable(pman pman.cpp)
-target_include_directories(pman PUBLIC ${CURSES_INCLUDE_DIR} ${PMEMOBJ++_INCLUDE_DIRS} . ..)
-target_link_libraries(pman ${PMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})
+target_include_directories(pman PUBLIC ${CURSES_INCLUDE_DIR} ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(pman ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})

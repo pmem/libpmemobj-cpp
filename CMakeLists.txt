@@ -108,9 +108,9 @@ endif()
 
 if(BUILD_TESTS OR BUILD_EXAMPLES)
 	if(PKG_CONFIG_FOUND)
-		pkg_check_modules(PMEMOBJ REQUIRED libpmemobj>=1.4)
+		pkg_check_modules(LIBPMEMOBJ REQUIRED libpmemobj>=1.4)
 	else()
-		find_package(PMEMOBJ REQUIRED 1.4)
+		find_package(LIBPMEMOBJ REQUIRED 1.4)
 	endif()
 endif()
 
@@ -183,7 +183,7 @@ add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
 # Check for existence of pmemvlt (introduced after 1.4 release)
 set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
-set(CMAKE_REQUIRED_INCLUDES ${PMEMOBJ_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJ_INCLUDE_DIRS})
 CHECK_CXX_SOURCE_COMPILES(
 	"#include <libpmemobj.h>
 	struct pmemvlt vlt;
@@ -216,17 +216,17 @@ configure_file(
 add_custom_target(uninstall
 	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
-configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/PMEMOBJ++Config.cmake.in
-		${CMAKE_CURRENT_BINARY_DIR}/PMEMOBJ++Config.cmake
-		INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/PMEMOBJ++/cmake
+configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/libpmemobj++-config.cmake.in
+		${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake
+		INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/libpmemobj++/cmake
 		PATH_VARS CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_INCLUDEDIR)
 
-write_basic_package_version_file(PMEMOBJ++ConfigVersion.cmake
+write_basic_package_version_file(libpmemobj++-config-version.cmake
 				VERSION ${VERSION}
 				COMPATIBILITY AnyNewerVersion)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/PMEMOBJ++Config.cmake ${CMAKE_CURRENT_BINARY_DIR}/PMEMOBJ++ConfigVersion.cmake
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/PMEMOBJ++/cmake)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config-version.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/libpmemobj++/cmake)
 
 if(NOT WIN32)
     if(VALGRIND_FOUND)

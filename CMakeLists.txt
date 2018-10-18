@@ -34,7 +34,16 @@ project(libpmemobj-cpp C CXX)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 5)
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}-rc1)
+set(VERSION_PATCH 0)
+set(VERSION_PRERELEASE rc1)
+
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+if (VERSION_PATCH GREATER 0)
+	set(VERSION ${VERSION}.${VERSION_PATCH})
+endif()
+if (VERSION_PRERELEASE)
+	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
+endif()
 
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.4)
 
@@ -194,6 +203,9 @@ set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 if(NOT PMEMVLT_PRESENT)
 	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
 endif()
+
+configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
+		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")

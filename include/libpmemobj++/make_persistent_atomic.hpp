@@ -37,8 +37,8 @@
  * @snippet doc_snippets/make_persistent.cpp make_atomic_example
  */
 
-#ifndef PMEMOBJ_MAKE_PERSISTENT_ATOMIC_HPP
-#define PMEMOBJ_MAKE_PERSISTENT_ATOMIC_HPP
+#ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ATOMIC_HPP
+#define LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ATOMIC_HPP
 
 #include "libpmemobj++/detail/check_persistent_ptr_array.hpp"
 #include "libpmemobj++/detail/common.hpp"
@@ -112,4 +112,4 @@ delete_persistent_atomic(
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_MAKE_PERSISTENT_ATOMIC_HPP */
+#endif /* LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ATOMIC_HPP */

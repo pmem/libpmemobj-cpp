@@ -35,8 +35,8 @@
  * Volatile resides on pmem property template.
  */
 
-#ifndef PMEMOBJ_V_HPP
-#define PMEMOBJ_V_HPP
+#ifndef LIBPMEMOBJ_CPP_V_HPP
+#define LIBPMEMOBJ_CPP_V_HPP
 
 #include <memory>
 
@@ -173,4 +173,4 @@ swap(v<T> &a, v<T> &b)
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_V_HPP */
+#endif /* LIBPMEMOBJ_CPP_V_HPP */

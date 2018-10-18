@@ -44,7 +44,7 @@
 #else
 #include <ncurses.h>
 #endif
-#include <objcpp_examples_list.hpp>
+#include <libpmemobj_cpp_examples_list.hpp>
 
 #define LAYOUT_NAME "pman"
 #define SIZE 40

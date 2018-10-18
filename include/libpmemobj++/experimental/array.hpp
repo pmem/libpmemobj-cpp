@@ -35,8 +35,8 @@
  * Array container with std::array compatible interface.
  */
 
-#ifndef PMEMOBJ_ARRAY_HPP
-#define PMEMOBJ_ARRAY_HPP
+#ifndef LIBPMEMOBJ_CPP_ARRAY_HPP
+#define LIBPMEMOBJ_CPP_ARRAY_HPP
 
 #include <algorithm>
 #include <functional>
@@ -788,4 +788,4 @@ get(const pmem::obj::experimental::array<T, N> &&a) noexcept
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_ARRAY_HPP */
+#endif /* LIBPMEMOBJ_CPP_ARRAY_HPP */

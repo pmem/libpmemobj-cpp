@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Custom exceptions.
  */
 
-#ifndef PMEMOBJ_PEXCEPTIONS_HPP
-#define PMEMOBJ_PEXCEPTIONS_HPP
+#ifndef LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP
+#define LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP
 
 #include <stdexcept>
 #include <system_error>
@@ -118,4 +118,4 @@ public:
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_PEXCEPTIONS_HPP */
+#endif /* LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP */

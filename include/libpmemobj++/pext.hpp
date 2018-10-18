@@ -35,8 +35,8 @@
  * Convenience extensions for the resides on pmem property template.
  */
 
-#ifndef PMEMOBJ_PEXT_HPP
-#define PMEMOBJ_PEXT_HPP
+#ifndef LIBPMEMOBJ_CPP_PEXT_HPP
+#define LIBPMEMOBJ_CPP_PEXT_HPP
 
 #include "libpmemobj++/p.hpp"
 #include <iostream>
@@ -350,4 +350,4 @@ struct numeric_limits<pmem::obj::p<T>> : public numeric_limits<T> {
 
 } /* namespace std */
 
-#endif /* PMEMOBJ_PEXT_HPP */
+#endif /* LIBPMEMOBJ_CPP_PEXT_HPP */

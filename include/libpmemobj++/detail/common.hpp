@@ -35,8 +35,8 @@
  * Commonly used functionality.
  */
 
-#ifndef PMEMOBJ_COMMON_HPP
-#define PMEMOBJ_COMMON_HPP
+#ifndef LIBPMEMOBJ_CPP_COMMON_HPP
+#define LIBPMEMOBJ_CPP_COMMON_HPP
 
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj/tx_base.h"
@@ -105,4 +105,4 @@ type_num()
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_COMMON_HPP */
+#endif /* LIBPMEMOBJ_CPP_COMMON_HPP */

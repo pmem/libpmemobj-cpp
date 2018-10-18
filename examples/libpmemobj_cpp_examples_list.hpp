@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
  * list.hpp -- Implementation of list
  */
 
-#ifndef OBJCPP_EXAMPLES_LIST_HPP
-#define OBJCPP_EXAMPLES_LIST_HPP
+#ifndef LIBPMEMOBJ_CPP_EXAMPLES_LIST_HPP
+#define LIBPMEMOBJ_CPP_EXAMPLES_LIST_HPP
 
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
@@ -185,4 +185,4 @@ private:
 };
 };
 
-#endif /* OBJCPP_EXAMPLES_LIST_HPP */
+#endif /* LIBPMEMOBJ_CPP_EXAMPLES_LIST_HPP */

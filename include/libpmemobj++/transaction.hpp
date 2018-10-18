@@ -35,8 +35,8 @@
  * C++ pmemobj transactions.
  */
 
-#ifndef LIBPMEMOBJ_TRANSACTION_HPP
-#define LIBPMEMOBJ_TRANSACTION_HPP
+#ifndef LIBPMEMOBJ_CPP_TRANSACTION_HPP
+#define LIBPMEMOBJ_CPP_TRANSACTION_HPP
 
 #include <functional>
 #include <string>
@@ -489,4 +489,4 @@ private:
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_TRANSACTION_HPP */
+#endif /* LIBPMEMOBJ_CPP_TRANSACTION_HPP */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Implementation details of atomic allocation and construction.
  */
 
-#ifndef LIBPMEMOBJ_MAKE_ATOMIC_IMPL_HPP
-#define LIBPMEMOBJ_MAKE_ATOMIC_IMPL_HPP
+#ifndef LIBPMEMOBJ_CPP_MAKE_ATOMIC_IMPL_HPP
+#define LIBPMEMOBJ_CPP_MAKE_ATOMIC_IMPL_HPP
 
 #include <new>
 #include <stddef.h>
@@ -115,4 +115,4 @@ array_constructor(PMEMobjpool *pop, void *ptr, void *arg)
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_MAKE_ATOMIC_IMPL_HPP */
+#endif /* LIBPMEMOBJ_CPP_MAKE_ATOMIC_IMPL_HPP */

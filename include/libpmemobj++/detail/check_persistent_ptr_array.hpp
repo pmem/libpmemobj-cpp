@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Compile time type check for make_persistent.
  */
 
-#ifndef LIBPMEMOBJ_CHECK_PERSISTENT_PTR_ARRAY_HPP
-#define LIBPMEMOBJ_CHECK_PERSISTENT_PTR_ARRAY_HPP
+#ifndef LIBPMEMOBJ_CPP_CHECK_PERSISTENT_PTR_ARRAY_HPP
+#define LIBPMEMOBJ_CPP_CHECK_PERSISTENT_PTR_ARRAY_HPP
 
 #include <stddef.h>
 
@@ -102,4 +102,4 @@ struct pp_if_size_array<T[N]> {
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_CHECK_PERSISTENT_PTR_ARRAY_HPP */
+#endif /* LIBPMEMOBJ_CPP_CHECK_PERSISTENT_PTR_ARRAY_HPP */

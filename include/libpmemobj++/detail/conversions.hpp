@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Commonly used conversions.
  */
 
-#ifndef PMEMOBJ_CONVERSIONS_HPP
-#define PMEMOBJ_CONVERSIONS_HPP
+#ifndef LIBPMEMOBJ_CPP_CONVERSIONS_HPP
+#define LIBPMEMOBJ_CPP_CONVERSIONS_HPP
 
 #include <chrono>
 #include <time.h>
@@ -76,4 +76,4 @@ timepoint_to_timespec(const std::chrono::time_point<Clock, Duration> &timepoint)
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_CONVERSIONS_HPP */
+#endif /* LIBPMEMOBJ_CPP_CONVERSIONS_HPP */

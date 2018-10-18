@@ -37,8 +37,8 @@
  * @snippet doc_snippets/make_persistent.cpp make_array_example
  */
 
-#ifndef PMEMOBJ_MAKE_PERSISTENT_ARRAY_HPP
-#define PMEMOBJ_MAKE_PERSISTENT_ARRAY_HPP
+#ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_HPP
+#define LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_HPP
 
 #include "libpmemobj++/detail/array_traits.hpp"
 #include "libpmemobj++/detail/check_persistent_ptr_array.hpp"
@@ -235,4 +235,4 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_MAKE_PERSISTENT_ARRAY_HPP */
+#endif /* LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_HPP */

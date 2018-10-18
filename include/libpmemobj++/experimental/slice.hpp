@@ -35,8 +35,8 @@
  * Iterface to access sequence of objects.
  */
 
-#ifndef PMEMOBJ_SLICE_HPP
-#define PMEMOBJ_SLICE_HPP
+#ifndef LIBPMEMOBJ_CPP_SLICE_HPP
+#define LIBPMEMOBJ_CPP_SLICE_HPP
 
 #include <iterator>
 #include <type_traits>
@@ -164,4 +164,4 @@ private:
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_SLICE_HPP */
+#endif /* LIBPMEMOBJ_CPP_SLICE_HPP */

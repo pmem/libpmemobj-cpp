@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OBJCPP_EXAMPLES_PMPONG_BALL_HPP
-#define OBJCPP_EXAMPLES_PMPONG_BALL_HPP
+#ifndef LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_BALL_HPP
+#define LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_BALL_HPP
 
 #include "GameConstants.hpp"
 #include <SFML/Graphics.hpp>
@@ -64,4 +64,4 @@ private:
 	pmem::obj::persistent_ptr<sf::Vector2f> velocity;
 };
 
-#endif /* OBJCPP_EXAMPLES_PMPONG_BALL_HPP */
+#endif /* LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_BALL_HPP */

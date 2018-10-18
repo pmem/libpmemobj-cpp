@@ -34,7 +34,7 @@
  * array.cpp -- array example implemented using libpmemobj C++ bindings
  */
 
-#include "objcpp_examples_common.hpp"
+#include "libpmemobj_cpp_examples_common.hpp"
 #include <iostream>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array.hpp>

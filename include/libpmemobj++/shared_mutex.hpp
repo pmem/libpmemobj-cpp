@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,8 @@
  * Pmem-resident shared mutex.
  */
 
-#ifndef PMEMOBJ_SHARED_MUTEX_HPP
-#define PMEMOBJ_SHARED_MUTEX_HPP
+#ifndef LIBPMEMOBJ_CPP_SHARED_MUTEX_HPP
+#define LIBPMEMOBJ_CPP_SHARED_MUTEX_HPP
 
 #include "libpmemobj/thread.h"
 #include "libpmemobj/tx_base.h"
@@ -258,4 +258,4 @@ private:
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_SHARED_MUTEX_HPP */
+#endif /* LIBPMEMOBJ_CPP_SHARED_MUTEX_HPP */

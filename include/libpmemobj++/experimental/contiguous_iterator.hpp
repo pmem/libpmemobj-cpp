@@ -35,8 +35,8 @@
  * Iterators for pmem::obj::array
  */
 
-#ifndef PMEMOBJ_ARRAY_ITERATOR_HPP
-#define PMEMOBJ_ARRAY_ITERATOR_HPP
+#ifndef LIBPMEMOBJ_CPP_ARRAY_ITERATOR_HPP
+#define LIBPMEMOBJ_CPP_ARRAY_ITERATOR_HPP
 
 #include <algorithm>
 #include <cassert>
@@ -532,4 +532,4 @@ struct const_contiguous_iterator
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_ARRAY_ITERATOR_HPP */
+#endif /* LIBPMEMOBJ_CPP_ARRAY_ITERATOR_HPP */

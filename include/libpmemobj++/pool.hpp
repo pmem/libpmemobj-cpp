@@ -35,8 +35,8 @@
  * C++ pmemobj pool.
  */
 
-#ifndef PMEMOBJ_POOL_HPP
-#define PMEMOBJ_POOL_HPP
+#ifndef LIBPMEMOBJ_CPP_POOL_HPP
+#define LIBPMEMOBJ_CPP_POOL_HPP
 
 #include <stddef.h>
 #include <string>
@@ -618,4 +618,4 @@ public:
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_POOL_HPP */
+#endif /* LIBPMEMOBJ_CPP_POOL_HPP */

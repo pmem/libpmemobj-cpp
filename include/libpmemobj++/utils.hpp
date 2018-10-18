@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,8 @@
  * @file
  * Libpmemobj C++ utils.
  */
-#ifndef LIBPMEMOBJ_UTILS_HPP
-#define LIBPMEMOBJ_UTILS_HPP
+#ifndef LIBPMEMOBJ_CPP_UTILS_HPP
+#define LIBPMEMOBJ_CPP_UTILS_HPP
 
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj++/persistent_ptr.hpp"
@@ -91,4 +91,4 @@ pool_by_pptr(const persistent_ptr<T> ptr)
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_UTILS_HPP */
+#endif /* LIBPMEMOBJ_CPP_UTILS_HPP */

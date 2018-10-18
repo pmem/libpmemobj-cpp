@@ -34,14 +34,14 @@
  * panaconda.hpp -- example usage of libpmemobj C++ bindings
  */
 
-#ifndef OBJCPP_EXAMPLES_PANACONDA_HPP
-#define OBJCPP_EXAMPLES_PANACONDA_HPP
+#ifndef LIBPMEMOBJ_CPP_EXAMPLES_PANACONDA_HPP
+#define LIBPMEMOBJ_CPP_EXAMPLES_PANACONDA_HPP
 
 #include <libpmemobj++/make_persistent_array.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-#include <objcpp_examples_list.hpp>
+#include <libpmemobj_cpp_examples_list.hpp>
 
 class board_element;
 
@@ -233,4 +233,4 @@ private:
 	int parse_conf_create_dynamic_layout(void);
 };
 
-#endif /* OBJCPP_EXAMPLES_PANACONDA_HPP */
+#endif /* LIBPMEMOBJ_CPP_EXAMPLES_PANACONDA_HPP */

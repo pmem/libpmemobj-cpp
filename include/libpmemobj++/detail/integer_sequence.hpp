@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2018, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LIBPMEMOBJ_INTEGER_SEQUENCE_HPP
-#define LIBPMEMOBJ_INTEGER_SEQUENCE_HPP
+#ifndef LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
+#define LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
 
 #include <stddef.h>
 
@@ -97,4 +97,4 @@ using make_index_sequence =
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_INTEGER_SEQUENCE_HPP */
+#endif /* LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP */

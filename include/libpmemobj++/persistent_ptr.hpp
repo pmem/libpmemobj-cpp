@@ -35,8 +35,8 @@
  * Persistent smart pointer.
  */
 
-#ifndef PMEMOBJ_PERSISTENT_PTR_HPP
-#define PMEMOBJ_PERSISTENT_PTR_HPP
+#ifndef LIBPMEMOBJ_CPP_PERSISTENT_PTR_HPP
+#define LIBPMEMOBJ_CPP_PERSISTENT_PTR_HPP
 
 #include <cassert>
 #include <limits>
@@ -634,4 +634,4 @@ operator<<(std::ostream &os, persistent_ptr<T> const &pptr)
 
 } /* namespace pmem */
 
-#endif /* PMEMOBJ_PERSISTENT_PTR_HPP */
+#endif /* LIBPMEMOBJ_CPP_PERSISTENT_PTR_HPP */

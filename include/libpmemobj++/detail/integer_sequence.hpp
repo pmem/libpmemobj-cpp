@@ -30,15 +30,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
-#define LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
-
-#include <stddef.h>
-
 /**
  * @file
  * Create c++14 style index sequence.
  */
+
+#ifndef LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
+#define LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
+
+#include <stddef.h>
 
 namespace pmem
 {

@@ -34,4 +34,6 @@ main()
 		UT_ASSERT(c[1] == 5.5);
 		UT_ASSERT(c[2] == 3.5);
 	}
+
+	return 0;
 }

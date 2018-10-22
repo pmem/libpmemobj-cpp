@@ -181,4 +181,6 @@ main(int argc, char *argv[])
 	test_alloc_equal();
 
 	pop.close();
+
+	return 0;
 }

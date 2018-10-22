@@ -458,4 +458,6 @@ main(int argc, char *argv[])
 			sizeof(pop.root()->counter));
 
 	pop.close();
+
+	return 0;
 }

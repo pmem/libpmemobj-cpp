@@ -40,4 +40,6 @@ main()
 		c.fill(5.5);
 		UT_ASSERT(c.size() == 0);
 	}
+
+	return 0;
 }

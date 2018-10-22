@@ -418,4 +418,6 @@ main(int argc, char *argv[])
 	run_test_at(pop);
 
 	pop.close();
+
+	return 0;
 }

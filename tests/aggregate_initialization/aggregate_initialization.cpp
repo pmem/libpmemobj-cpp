@@ -99,4 +99,6 @@ main(int argc, char *argv[])
 	test_aggregate(pop);
 
 	pop.close();
+
+	return 0;
 }

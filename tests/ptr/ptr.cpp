@@ -372,4 +372,6 @@ main(int argc, char *argv[])
 	test_offset(pop);
 
 	pop.close();
+
+	return 0;
 }

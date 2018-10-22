@@ -756,4 +756,6 @@ main(int argc, char *argv[])
 	test_tx_no_throw_abort_scope<nvobj::transaction::automatic>(pop);
 	test_tx_automatic_destructor_throw(pop);
 	pop.close();
+
+	return 0;
 }

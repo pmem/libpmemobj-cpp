@@ -366,4 +366,6 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
+
+	return 0;
 }

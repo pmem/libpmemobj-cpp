@@ -170,4 +170,6 @@ main(int argc, char *argv[])
 	test_sort_range(pop);
 
 	pop.close();
+
+	return 0;
 }

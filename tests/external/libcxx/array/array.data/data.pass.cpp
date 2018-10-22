@@ -49,4 +49,6 @@ main()
 		std::uintptr_t pint = reinterpret_cast<std::uintptr_t>(p);
 		UT_ASSERT(pint % alignof(std::max_align_t) == 0);
 	}
+
+	return 0;
 }

@@ -65,4 +65,6 @@ main()
 	test_type<double>();
 	test_type<long double>();
 	test_type<std::max_align_t>();
+
+	return 0;
 }

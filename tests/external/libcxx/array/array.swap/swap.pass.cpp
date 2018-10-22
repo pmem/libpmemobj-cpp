@@ -91,4 +91,6 @@ main()
 		C0 r = {};
 		l.swap(r);
 	}
+
+	return 0;
 }

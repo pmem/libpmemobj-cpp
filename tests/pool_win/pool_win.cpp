@@ -202,4 +202,6 @@ wmain(int argc, wchar_t *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
+
+	return 0;
 }

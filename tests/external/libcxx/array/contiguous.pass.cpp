@@ -37,4 +37,6 @@ main()
 		typedef pmem_exp::array<T, 3> C;
 		test_contiguous(C());
 	}
+
+	return 0;
 }

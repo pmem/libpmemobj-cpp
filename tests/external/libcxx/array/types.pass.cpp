@@ -173,4 +173,6 @@ main()
 					      difference_type>::value),
 			"");
 	}
+
+	return 0;
 }

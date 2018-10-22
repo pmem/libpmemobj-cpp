@@ -198,4 +198,6 @@ main(int argc, char *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
+
+	return 0;
 }

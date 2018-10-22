@@ -77,4 +77,6 @@ main()
 		C0 r = {};
 		swap(l, r);
 	}
+
+	return 0;
 }

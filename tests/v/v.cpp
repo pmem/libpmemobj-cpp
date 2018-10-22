@@ -115,4 +115,6 @@ main(int argc, char *argv[])
 	test_init(pop);
 
 	pop.close();
+
+	return 0;
 }

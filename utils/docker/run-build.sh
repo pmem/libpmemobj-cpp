@@ -44,7 +44,11 @@ function cleanup() {
 	find . -name "*.gcda" -exec rm {} \;
 }
 
-function test_command() {
+function run_tests() {
+	ctest --output-on-failure --timeout 540
+}
+
+function run_tests_coverage() {
 	if [ "$COVERAGE" = "1" ]; then
 		if [[ "$2" == "llvm" ]]; then
 			gcovexe="llvm-cov gcov"
@@ -56,7 +60,7 @@ function test_command() {
 		bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe"
 		cleanup
 	else
-		ctest --output-on-failure --timeout 540
+		run_tests
 	fi
 }
 
@@ -94,11 +98,10 @@ CC=clang CXX=clang++ \
 cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE
+			-DTRACE_TESTS=1
 
 make -j2
-test_command tests_clang_release llvm
+run_tests
 
 cd ..
 rm -r build
@@ -121,7 +124,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCXX_STANDARD=17
 
 make -j2
-test_command tests_clang_debug_cpp17 llvm
+run_tests_coverage tests_clang_debug_cpp17 llvm
 
 cd ..
 rm -r build
@@ -143,7 +146,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCOVERAGE=$COVERAGE
 
 make -j2
-test_command tests_gcc_debug
+run_tests_coverage tests_gcc_debug
 
 cd ..
 rm -r build
@@ -161,15 +164,37 @@ CC=gcc CXX=g++ \
 cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17
 
 make -j2
-test_command tests_gcc_release_cpp17
+run_tests
 
 cd ..
 rm -r build
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sgr 0)\n\n"
+
+###############################################################################
+# BUILD tests_gcc_debug_cpp17
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug_cpp17 START$(tput sgr 0)\n"
+mkdir build
+cd build
+
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+CC=gcc CXX=g++ \
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+			-DCMAKE_BUILD_TYPE=Debug \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DCXX_STANDARD=17 \
+			-DCOVERAGE=$COVERAGE
+
+make -j2
+run_tests_coverage tests_gcc_debug_cpp17
+
+cd ..
+rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug_cpp17 END$(tput sgr 0)\n\n"
 
 ###############################################################################
 # BUILD tests_package
@@ -190,7 +215,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 		-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
 make -j2
-test_command tests_package
+run_tests
 
 make package
 

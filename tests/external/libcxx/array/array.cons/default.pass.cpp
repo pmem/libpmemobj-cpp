@@ -50,4 +50,6 @@ main()
 		C c2 = {{}};
 		UT_ASSERT(c2.size() == 0);
 	}
+
+	return 0;
 }

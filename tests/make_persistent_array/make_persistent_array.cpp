@@ -400,4 +400,6 @@ main(int argc, char *argv[])
 	test_exceptions_handling_sized(pop);
 
 	pop.close();
+
+	return 0;
 }

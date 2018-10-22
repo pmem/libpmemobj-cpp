@@ -289,4 +289,6 @@ main(int argc, char *argv[])
 	pool_test_memset(pop);
 
 	pop.close();
+
+	return 0;
 }

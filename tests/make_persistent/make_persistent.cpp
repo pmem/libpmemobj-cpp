@@ -303,4 +303,6 @@ main(int argc, char *argv[])
 	test_exceptions_handling(pop);
 
 	pop.close();
+
+	return 0;
 }

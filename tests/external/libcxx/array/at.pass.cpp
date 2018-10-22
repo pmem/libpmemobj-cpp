@@ -77,4 +77,6 @@ main()
 		} catch (const std::out_of_range &) {
 		}
 	}
+
+	return 0;
 }

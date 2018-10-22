@@ -396,4 +396,6 @@ main(int argc, char *argv[])
 	swap_test(pop);
 
 	pop.close();
+
+	return 0;
 }

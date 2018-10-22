@@ -45,4 +45,6 @@ main()
 		C c = {};
 		UT_ASSERT(c.begin() == c.end());
 	}
+
+	return 0;
 }

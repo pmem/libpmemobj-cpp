@@ -57,4 +57,6 @@ main()
 		C c2 = {};
 		test_compare(c1, c2);
 	}
+
+	return 0;
 }

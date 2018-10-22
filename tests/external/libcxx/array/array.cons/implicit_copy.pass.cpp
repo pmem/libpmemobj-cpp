@@ -82,4 +82,6 @@ main()
 		((void)c2);
 		static_assert(std::is_copy_constructible<C>::value, "");
 	}
+
+	return 0;
 }

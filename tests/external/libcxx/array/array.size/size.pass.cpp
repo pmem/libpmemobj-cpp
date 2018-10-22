@@ -39,4 +39,6 @@ main()
 		UT_ASSERT(c.max_size() == 0);
 		UT_ASSERT(c.empty());
 	}
+
+	return 0;
 }

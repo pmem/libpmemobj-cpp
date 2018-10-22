@@ -52,4 +52,6 @@ main()
 		C c = {};
 		UT_ASSERT(c.size() == 1);
 	}
+
+	return 0;
 }

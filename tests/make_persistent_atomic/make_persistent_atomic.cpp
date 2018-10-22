@@ -168,4 +168,6 @@ main(int argc, char *argv[])
 	test_delete_null(pop);
 
 	pop.close();
+
+	return 0;
 }

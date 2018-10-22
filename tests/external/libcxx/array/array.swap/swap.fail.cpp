@@ -32,4 +32,6 @@ int main() {
     // expected-error-re@array:* {{static_assert failed {{.*}}"cannot swap zero-sized array of type 'const T'"}}
     c.swap(c2); // expected-note {{requested here}}
   }
+
+  return 0;
 }

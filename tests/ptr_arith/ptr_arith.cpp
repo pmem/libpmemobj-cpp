@@ -230,4 +230,6 @@ main(int argc, char *argv[])
 	test_relational(pop);
 
 	pop.close();
+
+	return 0;
 }

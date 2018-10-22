@@ -28,4 +28,6 @@ int main() {
     // expected-error-re@array:* {{static_assert failed {{.*}}"cannot fill zero-sized array of type 'const T'"}}
     c.fill(5.5); // expected-note {{requested here}}
   }
+
+  return 0;
 }

@@ -35,4 +35,6 @@ main()
 		UT_ASSERT_NOEXCEPT(c.max_size());
 		UT_ASSERT(c.max_size() == 0);
 	}
+
+	return 0;
 }

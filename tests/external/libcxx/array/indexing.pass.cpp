@@ -77,4 +77,6 @@ main()
 			((void)r2);
 		}
 	}
+
+	return 0;
 }

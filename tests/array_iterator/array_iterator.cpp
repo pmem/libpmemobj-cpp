@@ -254,4 +254,6 @@ main(int argc, char *argv[])
 	run_test3(pop);
 
 	pop.close();
+
+	return 0;
 }

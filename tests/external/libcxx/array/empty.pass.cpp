@@ -35,4 +35,6 @@ main()
 		UT_ASSERT_NOEXCEPT(c.empty());
 		UT_ASSERT(c.empty());
 	}
+
+	return 0;
 }

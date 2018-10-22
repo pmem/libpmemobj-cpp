@@ -31,4 +31,6 @@ int main()
         get<3>(c) = 5.5; // expected-note {{requested here}}
         // expected-error@array:* {{static_assert failed "Index out of bounds in std::get<> (std::array)"}}
     }
+
+    return 0;
 }

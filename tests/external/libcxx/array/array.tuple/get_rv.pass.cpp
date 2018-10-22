@@ -32,4 +32,6 @@ main()
 		T t = get<0>(std::move(c));
 		UT_ASSERT(*t == 3.5);
 	}
+
+	return 0;
 }

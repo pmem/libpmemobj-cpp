@@ -137,4 +137,6 @@ main()
 		UT_ASSERT(*pmem_exp::rbegin(c) == 4);
 		UT_ASSERT(*pmem_exp::crbegin(c) == 4);
 	}
+
+	return 0;
 }

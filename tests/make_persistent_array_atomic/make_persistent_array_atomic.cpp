@@ -229,4 +229,6 @@ main(int argc, char *argv[])
 	test_delete_null();
 
 	pop.close();
+
+	return 0;
 }

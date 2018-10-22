@@ -44,7 +44,13 @@ function(add_test_default name tracer)
 endfunction()
 
 function(add_test_expect_failure name)
-	add_executable(${name}_fail_expected ${ARGN})
+	set(srcs ${ARGN})
+	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
+
+	add_cppstyle(tests-external-${name} ${srcs})
+	add_check_whitespace(tests-external-${name} ${srcs})
+
+	add_executable(${name}_fail_expected ${srcs})
 	set_target_properties(${name}_fail_expected PROPERTIES
 				EXCLUDE_FROM_ALL TRUE
 				EXCLUDE_FROM_DEFAULT_BUILD TRUE)

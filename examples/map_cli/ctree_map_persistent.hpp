@@ -84,6 +84,10 @@ public:
 		});
 	}
 
+	ctree_map_p(const ctree_map_p &other) = delete;
+
+	ctree_map_p &operator=(const ctree_map_p &other) = delete;
+
 	/**
 	 * Insert or update the given value under the given key.
 	 *
@@ -110,8 +114,9 @@ public:
 				nvobj::delete_persistent<T>(dest_entry->value);
 				*dest_entry = e;
 			} else {
-				insert_leaf(&e, find_crit_bit(dest_entry->key,
-							      key));
+				insert_leaf(
+					&e,
+					find_crit_bit(dest_entry->key, key));
 			}
 		});
 

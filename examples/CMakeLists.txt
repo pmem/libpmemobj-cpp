@@ -65,12 +65,31 @@ add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(examples-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
+add_cppstyle(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*pp)
+add_check_whitespace(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*pp)
+
+add_cppstyle(examples-doc_snippets ${CMAKE_CURRENT_SOURCE_DIR}/doc_snippets/*.*pp)
+add_check_whitespace(examples-doc_snippets ${CMAKE_CURRENT_SOURCE_DIR}/doc_snippets/*.*pp)
+
+add_cppstyle(examples-map_cli ${CMAKE_CURRENT_SOURCE_DIR}/map_cli/*.*pp)
+add_check_whitespace(examples-map_cli ${CMAKE_CURRENT_SOURCE_DIR}/map_cli/*.*pp)
+
+add_cppstyle(examples-panaconda ${CMAKE_CURRENT_SOURCE_DIR}/panaconda/*.*pp)
+add_check_whitespace(examples-panaconda ${CMAKE_CURRENT_SOURCE_DIR}/panaconda/*.*pp)
+
+add_cppstyle(examples-pman ${CMAKE_CURRENT_SOURCE_DIR}/pman/*.*pp)
+add_check_whitespace(examples-pman ${CMAKE_CURRENT_SOURCE_DIR}/pman/*.*pp)
+
+add_cppstyle(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*pp)
+add_check_whitespace(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*pp)
+
+add_cppstyle(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
+add_check_whitespace(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 	add_executable(example-${name} ${srcs})
-	add_cppstyle(examples-${name} ${srcs})
-	add_check_whitespace(examples-${name} ${srcs})
 endfunction()
 
 if(PKG_CONFIG_FOUND)

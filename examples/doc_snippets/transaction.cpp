@@ -83,16 +83,15 @@ general_tx_example()
 	try {
 		// take locks and start a transaction
 		transaction::run(pop,
-				     [&]() {
-					     // atomically allocate objects
-					     proot->another_root =
-						     make_persistent<root>();
+				 [&]() {
+					 // atomically allocate objects
+					 proot->another_root =
+						 make_persistent<root>();
 
-					     // atomically modify objects
-					     proot->count++;
-
-				     },
-				     proot->pmutex, proot->shared_pmutex);
+					 // atomically modify objects
+					 proot->count++;
+				 },
+				 proot->pmutex, proot->shared_pmutex);
 	} catch (pmem::transaction_error &) {
 		// a transaction error occurred, transaction got aborted
 		// reacquire locks if necessary

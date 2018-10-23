@@ -36,9 +36,9 @@
 
 //! [v_property_example]
 #include <fcntl.h>
+#include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/experimental/v.hpp>
 
 using namespace pmem::obj;
 using namespace pmem::obj::experimental;

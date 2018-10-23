@@ -110,8 +110,9 @@ public:
 				nvobj::delete_persistent<T>(dest_entry->value);
 				*dest_entry = e;
 			} else {
-				insert_leaf(&e, find_crit_bit(dest_entry->key,
-							      key));
+				insert_leaf(
+					&e,
+					find_crit_bit(dest_entry->key, key));
 			}
 		});
 

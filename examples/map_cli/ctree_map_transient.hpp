@@ -35,8 +35,8 @@
 
 #include <cstdint>
 #include <functional>
-#include <stdlib.h>
 #include <libpmemobj_cpp_examples_common.hpp>
+#include <stdlib.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -94,8 +94,9 @@ public:
 			delete dest_entry->value;
 			*dest_entry = e;
 		} else {
-			insert_leaf(&e, ctree_map_transient::find_crit_bit(
-						dest_entry->key, key));
+			insert_leaf(&e,
+				    ctree_map_transient::find_crit_bit(
+					    dest_entry->key, key));
 		}
 
 		return 0;

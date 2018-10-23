@@ -84,6 +84,10 @@ public:
 		});
 	}
 
+	ctree_map_p(const ctree_map_p &other) = delete;
+
+	ctree_map_p &operator=(const ctree_map_p &other) = delete;
+
 	/**
 	 * Insert or update the given value under the given key.
 	 *

@@ -70,6 +70,11 @@ public:
 	{
 	}
 
+	ctree_map_transient(const ctree_map_transient &other) = delete;
+
+	ctree_map_transient &
+	operator=(const ctree_map_transient &other) = delete;
+
 	/**
 	 * Insert or update the given value under the given key.
 	 *

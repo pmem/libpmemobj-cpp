@@ -1,17 +1,17 @@
-Wed Oct 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
+Fri Oct 26 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 
-        * Version 1.5-rc2
+	* Version 1.5
 
-        This is the first release of libpmemobj-cpp as a separate project.
+	This is the first release of libpmemobj-cpp as a separate project.
 
-        It introduces one persistent container - array, which has std::array
-        like interface. Currently it is considered experimental and lives
-        in experimental namespace.
+	It introduces one persistent container - array, which has std::array
+	like interface. Currently it is considered experimental and lives
+	in experimental namespace.
 
-        We have also cleaned up some function names that, in retrospect, were
-        chosen poorly. Functions with old names are still there but are
-        deprecated.
+	We have also cleaned up some function names that, in retrospect, were
+	chosen poorly. Functions with old names are still there but are
+	deprecated.
 
-        Experimental features:
-        - volatile resides on pmem class
-        - persistent array container
+	Experimental features:
+	- volatile resides on pmem class
+	- persistent array container

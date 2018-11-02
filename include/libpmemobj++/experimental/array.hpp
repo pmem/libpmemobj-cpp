@@ -394,12 +394,12 @@ struct array {
 	}
 
 	/**
-	 * Adds requested range to a transaction and returns slice.
+	 * Returns slice.
 	 *
 	 * @param[in] start start index of requested range.
 	 * @param[in] n number of elements in range.
 	 * @param[in] snapshot_size number of elements which should be
-	 *	snapshotted in a bulk while traversing this slice
+	 *	snapshotted in a bulk while traversing this slice.
 	 *	If provided value is larger or equal to n, entire range is
 	 *	added to a transaction. If value is equal to 0 no snapshotting
 	 *	happens.

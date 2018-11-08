@@ -32,7 +32,7 @@
 #ifndef PTHREAD_COMMON_HPP
 #define PTHREAD_COMMON_HPP
 
-#include "unittest.hpp"
+#include "unittest_common.hpp"
 #include <pthread.h>
 
 void

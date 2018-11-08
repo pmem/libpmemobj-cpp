@@ -34,7 +34,6 @@
  * obj_cpp_mutex_posix.cpp -- cpp mutex test
  */
 
-#include "pthread_common.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/persistent_ptr.hpp>

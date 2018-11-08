@@ -35,7 +35,6 @@
  *
  */
 
-#include "pthread_common.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/persistent_ptr.hpp>

@@ -34,7 +34,6 @@
  * obj_cpp_cond_var_posix.c -- cpp condition variable test
  */
 
-#include "pthread_common.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/condition_variable.hpp>

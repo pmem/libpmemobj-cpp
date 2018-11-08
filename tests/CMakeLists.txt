@@ -53,7 +53,7 @@ add_flag(-DDEBUG DEBUG)
 
 add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
 
-if(USE_UBSAN)
+if(USE_ASAN)
        add_sanitizer_flag(address)
 endif()
 if(USE_UBSAN)

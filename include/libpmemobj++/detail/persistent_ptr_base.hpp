@@ -331,12 +331,6 @@ protected:
 	/* The underlying PMEMoid of the held object. */
 	PMEMoid oid;
 
-	/*
-	 * C++ persistent memory support has following type limitations:
-	 * en.cppreference.com/w/cpp/types/is_polymorphic
-	 * en.cppreference.com/w/cpp/types/is_default_constructible
-	 * en.cppreference.com/w/cpp/types/is_destructible
-	 */
 	void
 	verify_type()
 	{

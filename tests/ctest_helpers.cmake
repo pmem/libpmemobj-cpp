@@ -92,6 +92,37 @@ endif()
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 
+function(find_pmemcheck)
+	set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})
+	execute_process(COMMAND valgrind --tool=pmemcheck --help
+			RESULT_VARIABLE VALGRIND_PMEMCHECK_RET
+			OUTPUT_QUIET
+			ERROR_QUIET)
+	set(VALGRIND_PMEMCHECK_NOT_FOUND ${VALGRIND_PMEMCHECK_RET} CACHE INTERNAL "valgrind not found")
+	if(VALGRIND_PMEMCHECK_RET)
+		message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
+	else()
+		execute_process(COMMAND valgrind --tool=pmemcheck true
+				ERROR_VARIABLE PMEMCHECK_OUT
+				OUTPUT_QUIET)
+
+		string(REGEX MATCH ".*pmemcheck-([0-9.]*),.*" PMEMCHECK_OUT "${PMEMCHECK_OUT}")
+		set(PMEMCHECK_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "pmemcheck version")
+	endif()
+endfunction()
+
+function(find_pmreorder)
+	set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
+	execute_process(COMMAND pmreorder --help
+			RESULT_VARIABLE PMREORDER_RET
+			OUTPUT_QUIET
+			ERROR_QUIET)
+	set(PMREORDER_NOT_FOUND ${PMREORDER_RET} CACHE INTERNAL "pmrerder found")
+	if(PMREORDER_NOT_FOUND)
+		message(WARNING "pmreorder NOT found. pmreorder tests will not be performed.")
+	endif()
+endfunction()
+
 function(find_packages)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(CURSES QUIET ncurses)
@@ -119,13 +150,15 @@ function(find_packages)
 
 	if(NOT WIN32)
 		if(VALGRIND_FOUND)
-			set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})
-			execute_process(COMMAND valgrind --tool=pmemcheck --help
-					RESULT_VARIABLE VALGRIND_PMEMCHECK_NOT_FOUND
-					OUTPUT_QUIET
-					ERROR_QUIET)
-			if(VALGRIND_PMEMCHECK_NOT_FOUND)
-				message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
+			find_pmemcheck()
+
+			if (PMEMCHECK_VERSION GREATER_EQUAL 1.0 AND PMEMCHECK_VERSION LESS 2.0)
+				find_pmreorder()
+				if(NOT PMREORDER_NOT_FOUND)
+					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
+				endif()
+			else()
+				message(STATUS "pmreorder will not be used. Pmemcheck must be installed in version >= 1.0")
 			endif()
 		else()
 			message(WARNING "Valgrind not found. Valgrind tests will not be performed.")

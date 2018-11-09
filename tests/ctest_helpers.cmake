@@ -146,6 +146,7 @@ function(find_packages)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
 
 				if(PMREORDER)
+					set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
 					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
 				endif()
 			else()

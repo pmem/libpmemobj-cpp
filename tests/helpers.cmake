@@ -103,11 +103,7 @@ function(valgrind_ignore_warnings valgrind_log)
 mv ${valgrind_log}.tmp ${valgrind_log}")
 endfunction()
 
-function(execute_common output_file name)
-    if(NOT EXISTS ${name})
-        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
-    endif()
-
+function(execute_common expect_success output_file name)
     if(TESTS_USE_FORCED_PMEM)
         set(ENV{PMEM_IS_PMEM_FORCE} 1)
     endif()
@@ -190,7 +186,7 @@ function(execute_common output_file name)
             endif()
         endif()
 
-        if(res)
+        if(res AND expect_success)
             if(EXISTS ${BIN_DIR}/${TEST_NAME}.out)
                 file(READ ${BIN_DIR}/${TEST_NAME}.out OUT)
                 message(STATUS "Stdout:\n${OUT}\nEnd of stdout")
@@ -202,6 +198,19 @@ function(execute_common output_file name)
 
             message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
         endif()
+
+        if(NOT res AND NOT expect_success)
+            if(EXISTS ${BIN_DIR}/${TEST_NAME}.out)
+                file(READ ${BIN_DIR}/${TEST_NAME}.out OUT)
+                message(STATUS "Stdout:\n${OUT}\nEnd of stdout")
+            endif()
+            if(EXISTS ${BIN_DIR}/${TEST_NAME}.err)
+                file(READ ${BIN_DIR}/${TEST_NAME}.err ERR)
+                message(STATUS "Stderr:\n${ERR}\nEnd of stderr")
+            endif()
+
+            message(FATAL_ERROR "${TRACE} ${name} ${ARGN} unexpectedly succeeded: ${res}")
+        endif()
     endif()
 
     if(TESTS_USE_FORCED_PMEM)
@@ -212,12 +221,20 @@ endfunction()
 # Generic command executor which handles failures and prints command output
 # to specified file.
 function(execute_with_output out name)
-    execute_common(${out} ${name} ${ARGN})
+    if(NOT EXISTS ${name})
+       message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+
+    execute_common(true ${out} ${name} ${ARGN})
 endfunction()
 
 # Generic command executor which handles failures but ignores output.
 function(execute_ignore_output name)
-    execute_common(none ${name} ${ARGN})
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+
+    execute_common(true none ${name} ${ARGN})
 endfunction()
 
 # Executes test command ${name} and verifies its status.
@@ -225,5 +242,100 @@ endfunction()
 # Optional function arguments are passed as consecutive arguments to
 # the command.
 function(execute name)
-    execute_common(${TRACER}_${TESTCASE} ${name} ${ARGN})
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+
+    execute_common(true ${TRACER}_${TESTCASE} ${name} ${ARGN})
+endfunction()
+
+# Executes command ${name} and creates a storelog
+# First argument is pool file.
+# Second argument is test executable.
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(pmreorder_create_store_log pool name)
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+
+    if(NOT (${TRACER} STREQUAL none))
+        message(FATAL_ERROR "pmreorder test must be run without any tracer.")
+    endif()
+
+    configure_file(${pool} ${pool}.copy COPYONLY)
+
+    set(ENV{PMREORDER_EMIT_LOG} 1)
+
+    set(cmd valgrind --tool=pmemcheck -q
+        --log-stores=yes
+        --print-summary=no
+        --log-file=${BIN_DIR}/${TEST_NAME}.storelog
+        --log-stores-stacktraces=yes
+        --log-stores-stacktraces-depth=2
+        --expect-fence-after-clflush=yes
+        ${name} ${ARGN})
+
+    execute_common(true ${TRACER}_${TESTCASE} ${cmd})
+
+    unset(ENV{PMREORDER_EMIT_LOG})
+
+    file(REMOVE ${pool})
+    configure_file(${pool}.copy ${pool} COPYONLY)
+endfunction()
+
+# Executes pmreorder.
+# First argument is engine type
+# Second argument is path to configure file.
+# Third argument is path to the checker program
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(pmreorder_execute engine conf_file name)
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+
+    if(NOT (${TRACER} STREQUAL none))
+        message(FATAL_ERROR "pmreorder test must be run without any tracer.")
+    endif()
+
+    set(ENV{PMEMOBJ_COW} 1)
+
+    set(cmd pmreorder -l ${BIN_DIR}/${TEST_NAME}.storelog
+                    -o ${BIN_DIR}/${TEST_NAME}.pmreorder
+                    -r ${engine}
+                    -p "${name} ${ARGN}"
+                    -x ${conf_file})
+
+    execute_common(true ${TRACER}_${TESTCASE} ${cmd})
+
+    unset(ENV{PMEMOBJ_COW})
+endfunction()
+
+# Executes pmreorder, expects failure
+# First argument is engine type
+# Second argument is path to configure file.
+# Third argument is path to the checker program
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(pmreorder_execute_expect_failure engine conf_file name)
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+
+    if(NOT (${TRACER} STREQUAL none))
+        message(FATAL_ERROR "pmreorder test must be run without any tracer.")
+    endif()
+
+    set(ENV{PMEMOBJ_COW} 1)
+
+    set(cmd pmreorder -l ${BIN_DIR}/${TEST_NAME}.storelog
+                    -o ${BIN_DIR}/${TEST_NAME}.pmreorder
+                    -r ${engine}
+                    -p "${name} ${ARGN}"
+                    -x ${conf_file})
+
+    execute_common(false ${TRACER}_${TESTCASE} ${cmd})
+
+    unset(ENV{PMEMOBJ_COW})
 endfunction()

@@ -39,7 +39,7 @@
 #define LIBPMEMOBJ_CPP_VOLATILE_HPP
 
 #include <new>
-#include <stddef.h>
+#include <cstddef>
 
 namespace pmem
 {

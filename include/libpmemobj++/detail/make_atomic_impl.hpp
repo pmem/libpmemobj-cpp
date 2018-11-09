@@ -39,7 +39,7 @@
 #define LIBPMEMOBJ_CPP_MAKE_ATOMIC_IMPL_HPP
 
 #include <new>
-#include <stddef.h>
+#include <cstddef>
 
 #include "libpmemobj++/detail/array_traits.hpp"
 #include "libpmemobj++/detail/integer_sequence.hpp"

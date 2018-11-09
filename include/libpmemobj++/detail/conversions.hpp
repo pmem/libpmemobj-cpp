@@ -39,7 +39,7 @@
 #define LIBPMEMOBJ_CPP_CONVERSIONS_HPP
 
 #include <chrono>
-#include <time.h>
+#include <ctime>
 
 namespace pmem
 {

@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_DESTROYER_HPP
 #define LIBPMEMOBJ_CPP_DESTROYER_HPP
 
-#include <stddef.h>
+#include <cstddef>
 #include <type_traits>
 #include <utility>
 

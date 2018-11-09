@@ -36,7 +36,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj_cpp_examples_common.hpp>
 #include <memory>
-#include <string.h>
+#include <cstring>
 
 namespace
 {

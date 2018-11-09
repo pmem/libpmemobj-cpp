@@ -40,13 +40,12 @@
 #include <ctime>
 #include <getopt.h>
 #include <iostream>
-#include <stdio.h>
+#include <cstdio>
 #ifdef __FreeBSD__
 #include <ncurses/ncurses.h> /* Need pkg, not system, version */
 #else
 #include <ncurses.h>
 #endif
-#include <stdlib.h>
 
 #include "panaconda.hpp"
 

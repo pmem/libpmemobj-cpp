@@ -42,7 +42,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-#include <string.h>
+#include <cstring>
 
 using namespace pmem;
 using namespace pmem::obj;

@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
 #define LIBPMEMOBJ_CPP_INTEGER_SEQUENCE_HPP
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace pmem
 {

@@ -34,9 +34,9 @@
 #define LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_VOLATILE_HPP
 
 #include <cstdint>
+#include <cstdlib>
 #include <functional>
 #include <libpmemobj_cpp_examples_common.hpp>
-#include <stdlib.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif

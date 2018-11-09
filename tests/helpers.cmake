@@ -38,8 +38,7 @@ function(setup)
     execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${BIN_DIR})
 endfunction()
 
-# Performs cleanup and log matching.
-function(finish)
+function(print_logs)
     message(STATUS "Test ${TEST_NAME}:")
     if(EXISTS ${BIN_DIR}/${TEST_NAME}.out)
         file(READ ${BIN_DIR}/${TEST_NAME}.out OUT)
@@ -49,6 +48,11 @@ function(finish)
         file(READ ${BIN_DIR}/${TEST_NAME}.err ERR)
         message(STATUS "Stderr:\n${ERR}")
     endif()
+endfunction()
+
+# Performs cleanup and log matching.
+function(finish)
+    print_logs()
 
     if(EXISTS ${SRC_DIR}/${TEST_NAME}.err.match)
         match(${BIN_DIR}/${TEST_NAME}.err ${SRC_DIR}/${TEST_NAME}.err.match)
@@ -103,11 +107,7 @@ function(valgrind_ignore_warnings valgrind_log)
 mv ${valgrind_log}.tmp ${valgrind_log}")
 endfunction()
 
-function(execute_common output_file name)
-    if(NOT EXISTS ${name})
-        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
-    endif()
-
+function(execute_common expect_success output_file name)
     if(TESTS_USE_FORCED_PMEM)
         set(ENV{PMEM_IS_PMEM_FORCE} 1)
     endif()
@@ -190,17 +190,14 @@ function(execute_common output_file name)
             endif()
         endif()
 
-        if(res)
-            if(EXISTS ${BIN_DIR}/${TEST_NAME}.out)
-                file(READ ${BIN_DIR}/${TEST_NAME}.out OUT)
-                message(STATUS "Stdout:\n${OUT}\nEnd of stdout")
-            endif()
-            if(EXISTS ${BIN_DIR}/${TEST_NAME}.err)
-                file(READ ${BIN_DIR}/${TEST_NAME}.err ERR)
-                message(STATUS "Stderr:\n${ERR}\nEnd of stderr")
-            endif()
-
+        if(res AND expect_success)
+            print_logs()
             message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
+        endif()
+
+        if(NOT res AND NOT expect_success)
+            print_logs()
+            message(FATAL_ERROR "${TRACE} ${name} ${ARGN} unexpectedly succeeded: ${res}")
         endif()
     endif()
 
@@ -209,15 +206,25 @@ function(execute_common output_file name)
     endif()
 endfunction()
 
+function(check_target name)
+    if(NOT EXISTS ${name})
+        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+    endif()
+endfunction()
+
 # Generic command executor which handles failures and prints command output
 # to specified file.
 function(execute_with_output out name)
-    execute_common(${out} ${name} ${ARGN})
+    check_target(${name})
+
+    execute_common(true ${out} ${name} ${ARGN})
 endfunction()
 
 # Generic command executor which handles failures but ignores output.
 function(execute_ignore_output name)
-    execute_common(none ${name} ${ARGN})
+    check_target(${name})
+
+    execute_common(true none ${name} ${ARGN})
 endfunction()
 
 # Executes test command ${name} and verifies its status.
@@ -225,5 +232,67 @@ endfunction()
 # Optional function arguments are passed as consecutive arguments to
 # the command.
 function(execute name)
-    execute_common(${TRACER}_${TESTCASE} ${name} ${ARGN})
+    check_target(${name})
+
+    execute_common(true ${TRACER}_${TESTCASE} ${name} ${ARGN})
+endfunction()
+
+# Executes command ${name} and creates a storelog.
+# First argument is pool file.
+# Second argument is test executable.
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(pmreorder_create_store_log pool name)
+    check_target(${name})
+
+    if(NOT (${TRACER} STREQUAL none))
+        message(FATAL_ERROR "Pmreorder test must be run without any tracer.")
+    endif()
+
+    configure_file(${pool} ${pool}.copy COPYONLY)
+
+    set(ENV{PMREORDER_EMIT_LOG} 1)
+
+    set(cmd valgrind --tool=pmemcheck -q
+        --log-stores=yes
+        --print-summary=no
+        --log-file=${BIN_DIR}/${TEST_NAME}.storelog
+        --log-stores-stacktraces=yes
+        --log-stores-stacktraces-depth=2
+        --expect-fence-after-clflush=yes
+        ${name} ${ARGN})
+
+    execute_common(true ${TRACER}_${TESTCASE} ${cmd})
+
+    unset(ENV{PMREORDER_EMIT_LOG})
+
+    file(REMOVE ${pool})
+    configure_file(${pool}.copy ${pool} COPYONLY)
+endfunction()
+
+# Executes pmreorder.
+# First argument is expected result.
+# Second argument is engine type.
+# Third argument is path to configure file.
+# Fourth argument is path to the checker program.
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(pmreorder_execute expect_success engine conf_file name)
+    check_target(${name})
+
+    if(NOT (${TRACER} STREQUAL none))
+        message(FATAL_ERROR "Pmreorder test must be run without any tracer.")
+    endif()
+
+    set(ENV{PMEMOBJ_COW} 1)
+
+    set(cmd pmreorder -l ${BIN_DIR}/${TEST_NAME}.storelog
+                    -o ${BIN_DIR}/${TEST_NAME}.pmreorder
+                    -r ${engine}
+                    -p "${name} ${ARGN}"
+                    -x ${conf_file})
+
+    execute_common(${expect_success} ${TRACER}_${TESTCASE} ${cmd})
+
+    unset(ENV{PMEMOBJ_COW})
 endfunction()

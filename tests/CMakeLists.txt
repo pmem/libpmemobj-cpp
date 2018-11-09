@@ -224,4 +224,7 @@ build_test(array_iterator array_iterator/array_iterator.cpp)
 add_test_generic(array_iterator none)
 add_test_generic(array_iterator pmemcheck)
 
+build_test(iterator_traits iterator_traits/iterator_traits.cpp)
+add_test_generic(iterator_traits none)
+
 add_subdirectory(external)

@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_CHECK_PERSISTENT_PTR_ARRAY_HPP
 #define LIBPMEMOBJ_CPP_CHECK_PERSISTENT_PTR_ARRAY_HPP
 
-#include <stddef.h>
+#include <cstddef>
 
 #include "libpmemobj++/persistent_ptr.hpp"
 

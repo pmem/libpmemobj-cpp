@@ -38,8 +38,8 @@
 #ifndef LIBPMEMOBJ_CPP_VOLATILE_HPP
 #define LIBPMEMOBJ_CPP_VOLATILE_HPP
 
+#include <cstddef>
 #include <new>
-#include <stddef.h>
 
 namespace pmem
 {

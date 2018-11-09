@@ -32,11 +32,11 @@
 
 #include "ctree_map_persistent.hpp"
 #include "ctree_map_transient.hpp"
+#include <cstring>
 #include <iostream>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj_cpp_examples_common.hpp>
 #include <memory>
-#include <string.h>
 
 namespace
 {

@@ -33,7 +33,7 @@
 #ifndef LIBPMEMOBJ_CPP_EXAMPLES_COMMON_HPP
 #define LIBPMEMOBJ_CPP_EXAMPLES_COMMON_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 #ifndef _WIN32
 

@@ -82,6 +82,8 @@ function(build_example_pman)
 	endif()
 endfunction()
 
+find_packages()
+
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
 	add_test_generic(ex-queue none)

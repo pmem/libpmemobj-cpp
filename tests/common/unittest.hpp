@@ -33,6 +33,7 @@
 #ifndef LIBPMEMOBJ_CPP_UNITTEST_HPP
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
+#include "iterators_common.hpp"
 #include "unittest_common.hpp"
 
 #ifndef _WIN32

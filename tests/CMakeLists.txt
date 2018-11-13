@@ -227,4 +227,9 @@ add_test_generic(array_iterator pmemcheck)
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(iterator_traits none)
 
+build_test(vector_private vector_private/vector_private.cpp)
+add_test_generic(vector_private none)
+add_test_generic(vector_private memcheck)
+add_test_generic(vector_private pmemcheck)
+
 add_subdirectory(external)

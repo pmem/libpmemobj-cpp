@@ -37,123 +37,98 @@
 #include "unittest.hpp"
 
 #include "libpmemobj++/detail/iterator_traits.hpp"
-#include <iterator>
-
-struct test_iterator_base {
-	using value_type = void;
-	using difference_type = void;
-	using pointer = void;
-	using reference = void;
-};
-
-struct test_output_iterator : public test_iterator_base {
-	using iterator_category = std::output_iterator_tag;
-};
-
-struct test_input_iterator : public test_iterator_base {
-	using iterator_category = std::input_iterator_tag;
-};
-
-struct test_forward_iterator : public test_iterator_base {
-	using iterator_category = std::forward_iterator_tag;
-};
-
-struct test_bidirectional_iterator : public test_iterator_base {
-	using iterator_category = std::bidirectional_iterator_tag;
-};
-
-struct test_random_access_iterator : public test_iterator_base {
-	using iterator_category = std::random_access_iterator_tag;
-};
 
 void
 test_is_type_of_iterator()
 {
 	/* test is_output_iterator */
-	UT_ASSERT(
-		true ==
-		pmem::detail::is_output_iterator<test_output_iterator>::value);
-	UT_ASSERT(false ==
-		  pmem::detail::is_output_iterator<test_input_iterator>::value);
-	UT_ASSERT(
-		false ==
-		pmem::detail::is_output_iterator<test_forward_iterator>::value);
+	UT_ASSERT(true ==
+		  pmem::detail::is_output_iterator<
+			  test_common::output_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_output_iterator<
-			  test_bidirectional_iterator>::value);
+			  test_common::input_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_output_iterator<
-			  test_random_access_iterator>::value);
+			  test_common::forward_it<int>>::value);
+	UT_ASSERT(false ==
+		  pmem::detail::is_output_iterator<
+			  test_common::bidirectional_it<int>>::value);
+	UT_ASSERT(false ==
+		  pmem::detail::is_output_iterator<
+			  test_common::random_access_it<int>>::value);
 	UT_ASSERT(false == pmem::detail::is_output_iterator<int>::value);
 
 	/* test is_input_iterator */
 	UT_ASSERT(false ==
-		  pmem::detail::is_input_iterator<test_output_iterator>::value);
-	UT_ASSERT(true ==
-		  pmem::detail::is_input_iterator<test_input_iterator>::value);
-	UT_ASSERT(
-		true ==
-		pmem::detail::is_input_iterator<test_forward_iterator>::value);
+		  pmem::detail::is_input_iterator<
+			  test_common::output_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_input_iterator<
-			  test_bidirectional_iterator>::value);
+			  test_common::input_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_input_iterator<
-			  test_random_access_iterator>::value);
+			  test_common::forward_it<int>>::value);
+	UT_ASSERT(true ==
+		  pmem::detail::is_input_iterator<
+			  test_common::bidirectional_it<int>>::value);
+	UT_ASSERT(true ==
+		  pmem::detail::is_input_iterator<
+			  test_common::random_access_it<int>>::value);
 	UT_ASSERT(false == pmem::detail::is_input_iterator<int>::value);
 
 	/* test forward_iterator */
-	UT_ASSERT(
-		false ==
-		pmem::detail::is_forward_iterator<test_output_iterator>::value);
-	UT_ASSERT(
-		false ==
-		pmem::detail::is_forward_iterator<test_input_iterator>::value);
+	UT_ASSERT(false ==
+		  pmem::detail::is_forward_iterator<
+			  test_common::output_it<int>>::value);
+	UT_ASSERT(false ==
+		  pmem::detail::is_forward_iterator<
+			  test_common::input_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_forward_iterator<
-			  test_forward_iterator>::value);
+			  test_common::forward_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_forward_iterator<
-			  test_bidirectional_iterator>::value);
+			  test_common::bidirectional_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_forward_iterator<
-			  test_random_access_iterator>::value);
+			  test_common::random_access_it<int>>::value);
 	UT_ASSERT(false == pmem::detail::is_forward_iterator<int>::value);
 
 	/* test bidirectional_iterator */
 	UT_ASSERT(false ==
 		  pmem::detail::is_bidirectional_iterator<
-			  test_output_iterator>::value);
+			  test_common::output_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_bidirectional_iterator<
-			  test_input_iterator>::value);
+			  test_common::input_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_bidirectional_iterator<
-			  test_forward_iterator>::value);
+			  test_common::forward_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_bidirectional_iterator<
-			  test_bidirectional_iterator>::value);
+			  test_common::bidirectional_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_bidirectional_iterator<
-			  test_random_access_iterator>::value);
+			  test_common::random_access_it<int>>::value);
 	UT_ASSERT(false == pmem::detail::is_bidirectional_iterator<int>::value);
 
 	/* test random_access_iterator */
 	UT_ASSERT(false ==
 		  pmem::detail::is_random_access_iterator<
-			  test_output_iterator>::value);
+			  test_common::output_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_random_access_iterator<
-			  test_input_iterator>::value);
+			  test_common::input_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_random_access_iterator<
-			  test_forward_iterator>::value);
+			  test_common::forward_it<int>>::value);
 	UT_ASSERT(false ==
 		  pmem::detail::is_random_access_iterator<
-			  test_bidirectional_iterator>::value);
+			  test_common::bidirectional_it<int>>::value);
 	UT_ASSERT(true ==
 		  pmem::detail::is_random_access_iterator<
-			  test_random_access_iterator>::value);
+			  test_common::random_access_it<int>>::value);
 	UT_ASSERT(false == pmem::detail::is_random_access_iterator<int>::value);
 }
 

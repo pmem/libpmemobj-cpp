@@ -142,3 +142,8 @@ build_test(array_get libcxx/array/array.tuple/get.pass.cpp)
 add_test_default(array_get none)
 
 add_test_expect_failure(array_get libcxx/array/array.tuple/get.fail.cpp)
+
+build_test(vector_libcxx_ctor_default libcxx/vector/vector.cons/construct_default.pass.cpp)
+add_test_default(vector_libcxx_ctor_default none)
+add_test_default(vector_libcxx_ctor_default pmemcheck)
+add_test_default(vector_libcxx_ctor_default memcheck)

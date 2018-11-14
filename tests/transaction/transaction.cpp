@@ -610,7 +610,6 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 
 	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
-	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
@@ -628,7 +627,6 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 
 	UT_ASSERTeq(nvobj::transaction::error(), ECANCELED);
 	UT_ASSERT(exception_thrown);
-	exception_thrown = false;
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 

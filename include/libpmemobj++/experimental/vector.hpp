@@ -83,14 +83,20 @@ public:
 
 	/* Constructors */
 	vector();
-	// vector(size_type count, const value_type &value = T());
-	// template <typename InputIt>
-	// vector(InputIt first, typename
-	// std::enable_if<detail::is_input_iterator<InputIt>::value &&
-	// std::is_constructible<value_type, typename
-	// std::iterator_traits<InputIt>::reference>::value, InputIt>::type
-	// last); vector(const vector &other); vector(vector &&other);
-	// vector(std::initializer_list<T> init);
+	vector(size_type count, const value_type &value);
+	explicit vector(size_type count);
+	template <typename InputIt,
+		  typename std::enable_if<
+			  detail::is_input_iterator<InputIt>::value &&
+				  std::is_constructible<
+					  value_type,
+					  typename std::iterator_traits<
+						  InputIt>::reference>::value,
+			  InputIt>::type * = nullptr>
+	vector(InputIt first, InputIt last);
+	vector(const vector &other);
+	vector(vector &&other);
+	vector(std::initializer_list<T> init);
 
 	/* Assign operators */
 	// vector &operator=(const vector &other);
@@ -107,13 +113,13 @@ public:
 	// last); void assign(std::initializer_list<T> ilist);
 
 	/* Destructor */
-	// ~vector();
+	~vector();
 
 	/* Element access */
 	// reference at(size_type n);
 	// const_reference at(size_type n) const;
-	// reference operator[](size_type n);
-	// const_reference operator[](size_type n) const;
+	reference operator[](size_type n);
+	const_reference operator[](size_type n) const;
 	// reference front();
 	// const_reference front() const;
 	// reference back();
@@ -122,11 +128,11 @@ public:
 	// const_pointer data() const noexcept;
 
 	/* Iterators */
-	// iterator begin();
-	// const_iterator begin() const noexcept;
+	iterator begin();
+	const_iterator begin() const noexcept;
 	// const_iterator cbegin() const noexcept;
-	// iterator end();
-	// const_iterator end() const noexcept;
+	iterator end();
+	const_iterator end() const noexcept;
 	// const_iterator cend() const noexcept;
 	// reverse_iterator rbegin();
 	// const_reverse_iterator rbegin() const noexcept;
@@ -137,15 +143,15 @@ public:
 
 	/* Capacity */
 	constexpr bool empty() const noexcept;
-	// size_type size() const noexcept;
+	size_type size() const noexcept;
 	constexpr size_type max_size() const noexcept;
 	// void reserve(size_type capacity_new);
-	// size_type capacity() const noexcept;
+	size_type capacity() const noexcept;
 	// void shrink_to_fit();
 
 	/* Modifiers */
 	// void clear() noexcept;
-	// void free_data();
+	void free_data();
 	// iterator insert(const_iterator pos, const T &value);
 	// iterator insert(const_iterator pos, T &&value);
 	// iterator insert(const_iterator pos, size_type count, const T &value);
@@ -193,10 +199,10 @@ private:
 /**
  * Default constructor. Constructs an empty container.
  *
- * @pre pmemobj_tx_stage() == TX_STAGE_WORK
+ * @pre must be called in transaction scope.
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
- * @throw pmem::transaction_error if function wasn't called in transaction.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
  */
 template <typename T>
 vector<T>::vector()
@@ -215,6 +221,323 @@ vector<T>::vector()
 }
 
 /**
+ * Constructs the container with count copies of elements with value value.
+ *
+ * @param[in] count number of elements to construct.
+ * @param[in] value value of all constructed elements.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == count
+ * @post capacity() == detail::next_pow_2(size())
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for underlying
+ * array in transaction failed.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw rethrows element constructor exception.
+ */
+template <typename T>
+vector<T>::vector(size_type count, const value_type &value)
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+	if (pop == nullptr)
+		throw pool_error("Invalid pool handle.");
+
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		throw transaction_error(
+			"Default constructor called out of transaction scope.");
+
+	_data = nullptr;
+	_size = 0;
+	_alloc(detail::next_pow_2(count));
+	_grow(count, value);
+}
+
+/**
+ * Constructs the container with count copies of T default constructed values.
+ *
+ * @param[in] count number of elements to construct.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == count
+ * @post capacity() == detail::next_pow_2(_size)
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for underlying
+ * array in transaction failed.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw rethrows element constructor exception.
+ */
+template <typename T>
+vector<T>::vector(size_type count)
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+	if (pop == nullptr)
+		throw pool_error("Invalid pool handle.");
+
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		throw transaction_error(
+			"Default constructor called out of transaction scope.");
+
+	_data = nullptr;
+	_size = 0;
+	_alloc(detail::next_pow_2(count));
+	// XXX: after "capacity" methods will be merged, _grow() overload
+	// without parameters will be available. After that, following lines
+	// should be replaced with _grow()
+	pointer dest = _data.get();
+	const_pointer end = dest + count;
+	for (; dest != end; ++dest)
+		detail::create<value_type>(dest);
+	_size = count;
+}
+
+/**
+ * Constructs the container with the contents of the range [first, last). The
+ * first and last arguments must satisfy InputIterator requirements. This
+ * overload only participates in overload resolution if InputIt satisfies
+ * InputIterator, to avoid ambiguity with the overload of count-value
+ * constructor.
+ *
+ * @param[in] first first iterator.
+ * @param[in] last last iterator.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == std::distance(first, last)
+ * @post capacity() == detail::next_pow_2(size())
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for underlying
+ * array in transaction failed.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw rethrows element constructor exception.
+ */
+template <typename T>
+template <typename InputIt,
+	  typename std::enable_if<
+		  detail::is_input_iterator<InputIt>::value &&
+			  std::is_constructible<
+				  T,
+				  typename std::iterator_traits<
+					  InputIt>::reference>::value,
+		  InputIt>::type *>
+vector<T>::vector(InputIt first, InputIt last)
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+	if (pop == nullptr)
+		throw pool_error("Invalid pool handle.");
+
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		throw transaction_error(
+			"Default constructor called out of transaction scope.");
+
+	_data = nullptr;
+	_size = 0;
+	_alloc(detail::next_pow_2(
+		static_cast<size_type>(std::distance(first, last))));
+	_grow(first, last);
+}
+
+/**
+ * Copy constructor. Constructs the container with the copy of the
+ * contents of other.
+ *
+ * @param[in] other reference to the vector to be copied.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == other.size()
+ * @post capacity() == other.capacity()
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for underlying
+ * array in transaction failed.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw rethrows element constructor exception.
+ */
+template <typename T>
+vector<T>::vector(const vector &other)
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+	if (pop == nullptr)
+		throw pool_error("Invalid pool handle.");
+
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		throw transaction_error(
+			"Default constructor called out of transaction scope.");
+
+	_data = nullptr;
+	_size = 0;
+	_alloc(other._capacity);
+	_grow(other.begin(), other.end());
+}
+
+/**
+ * Move constructor. Constructs the container with the contents of other using
+ * move semantics. After the move, other is guaranteed to be empty().
+ *
+ * @param[in] other rvalue reference to the vector to be moved from.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == other.size()
+ * @post capacity() == other.capacity()
+ * @post data() == other.data()
+ * @post other.data() == nullptr
+ * @post other.capacity() == 0
+ * @post other.size() == 0
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ */
+template <typename T>
+vector<T>::vector(vector &&other)
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+	if (pop == nullptr)
+		throw pool_error("Invalid pool handle.");
+
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		throw transaction_error(
+			"Default constructor called out of transaction scope.");
+
+	_data = other._data;
+	_capacity = other._capacity;
+	_size = other._size;
+	other._data = nullptr;
+	other._capacity = other._size = 0;
+}
+
+/**
+ * Constructs the container with the contents of the initializer list init.
+ *
+ * @param[in] init initializer list with content to be constructed.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == init.size()
+ * @post capacity() == detail::next_pow_2(size())
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for underlying
+ * array in transaction failed.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw rethrows element constructor exception.
+ */
+template <typename T>
+vector<T>::vector(std::initializer_list<T> init)
+    : vector(init.begin(), init.end())
+{
+}
+
+/**
+ * Destructor.
+ * Note that free_data may throw an transaction_free_error when freeing
+ * underlying array failed. It is recommended to call free_data manually before
+ * object destruction.
+ */
+template <typename T>
+vector<T>::~vector()
+{
+	free_data();
+}
+
+/**
+ * Access element at specific index and add it to a transaction.
+ * No bounds checking is performed.
+ *
+ * @param[in] n index number.
+ *
+ * @return reference to nth element in underlying array.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::transaction_error when adding the object to the transaction
+ * failed.
+ */
+template <typename T>
+typename vector<T>::reference vector<T>::operator[](size_type n)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	detail::conditional_add_to_tx(&_data[n]);
+	return _data[n];
+}
+
+/**
+ * Access element at specific index. No bounds checking is performed.
+ *
+ * @param[in] n index number.
+ *
+ * @return const_reference to nth element in underlying array.
+ */
+template <typename T>
+typename vector<T>::const_reference vector<T>::operator[](size_type n) const
+{
+	return _data[n];
+}
+
+/**
+ * Returns an iterator to the beginning.
+ *
+ * @return an iterator pointing to the first element in the vector.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::transaction_error when adding the object to the transaction
+ * failed.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::begin()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	return iterator(_data.get());
+}
+
+/**
+ * Returns const iterator to the beginning.
+ */
+template <typename T>
+typename vector<T>::const_iterator
+vector<T>::begin() const noexcept
+{
+	return const_iterator(_data.get());
+}
+
+/**
+ * Returns an iterator to the end.
+ *
+ * @return iterator referring to the past-the-end element in the vector.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::transaction_error when adding the object to the transaction
+ * failed.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::end()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	return iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
+}
+
+/**
+ * Returns a const iterator to the end.
+ *
+ * @return const_iterator referring to the past-the-end element in the vector.
+ */
+template <typename T>
+typename vector<T>::const_iterator
+vector<T>::end() const noexcept
+{
+	return const_iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
+}
+
+/**
  * Checks whether the container is empty.
  *
  * @return true if container is empty, 0 otherwise.
@@ -224,6 +547,16 @@ constexpr bool
 vector<T>::empty() const noexcept
 {
 	return _size == 0;
+}
+
+/**
+ * @return number of elements.
+ */
+template <typename T>
+typename vector<T>::size_type
+vector<T>::size() const noexcept
+{
+	return _size;
 }
 
 /**
@@ -238,21 +571,58 @@ vector<T>::max_size() const noexcept
 }
 
 /**
+ * @return number of elements that can be held in currently allocated storage
+ */
+template <typename T>
+typename vector<T>::size_type
+vector<T>::capacity() const noexcept
+{
+	return _capacity;
+}
+
+/**
+ * Clears the content of a vector and frees all allocated persitent memory for
+ * data in transaction.
+ *
+ * @post size() == 0
+ * @post capacity() == 0
+ * @post data() == nullptr
+ *
+ * @throw pmem::transaction_free_error when freeing underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::free_data()
+{
+	if (_data == nullptr)
+		return;
+
+	auto pop = pmemobj_pool_by_ptr(this);
+	assert(pop != nullptr);
+
+	pool_base pb = pool_base(pop);
+	transaction::run(pb, [&] {
+		detail::conditional_add_to_tx(&*begin(), _size);
+		_dealloc();
+	});
+}
+
+/**
  * Private helper function. Must be called during transaction. Allocates memory
  * for given number of elements.
  *
  * @param[in] capacity_new capacity of new underlying array
  *
+ * @pre must be called in transaction scope.
+ * @pre data() == nullptr
+ * @pre size() == 0
+ *
+ * @post capacity() == capacity_new
+ *
  * @throw std::length_error if new size exceeds biggest possible pmem
  * allocation.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- *
- * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre _data == nullptr;
- * @pre _size == 0
- *
- * @post _capacity = capacity_new
  */
 template <typename T>
 void
@@ -282,13 +652,14 @@ vector<T>::_alloc(size_type capacity_new)
  * Private helper function. Must be called during transaction. Deallocates
  * underlying array.
  *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == 0
+ * @post capacity() == 0
+ * @post data() == nullptr
+ *
  * @throw pmem::transaction_free_error when freeing old underlying array
  * failed.
- *
- * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- *
- * @post _size = _capacity = 0
- * @post _data = nullptr
  */
 template <typename T>
 void
@@ -314,15 +685,15 @@ vector<T>::_dealloc()
  * @param[in] count number of elements to construct.
  * @param[in] value value of all constructed elements.
  *
- * @throw rethrows constructor exception.
- *
- * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre if range [end(), end() + count) wasn't allocated in current transaction,
- * it must be snapshotted
- * @pre _capacity >= count + _size
+ * @pre must be called in transaction scope.
+ * @pre if initialized, range [end(), end() + count) must be snapshotted in
+ * current transaction
+ * @pre capacity() >= count + size()
  * @pre value is valid argument for value_type copy constructor
  *
- * @post _size = _size + count
+ * @post size() == size() + count
+ *
+ * @throw rethrows constructor exception.
  */
 template <typename T>
 void
@@ -349,16 +720,16 @@ vector<T>::_grow(size_type count, const_reference value)
  * @param[in] first first iterator.
  * @param[in] last last iterator.
  *
- * @throw rethrows constructor exception.
- *
- * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre if range [end(), end() + std::distance(first, last)) wasn't allocated
- * in current transaction, it must be snapshotted
- * @pre _capacity >= std::distance(first, last) + _size
+ * @pre must be called in transaction scope.
+ * @pre if initialized, range [end(), end() + std::distance(first, last)) must
+ * be snapshotted in current transaction
+ * @pre capacity() >= std::distance(first, last) + size()
  * @pre InputIt is InputIterator
  * @pre InputIt::reference is valid argument for value_type copy constructor
  *
- * @post _size = _size + std::distance(first, last)
+ * @post size() == size() + std::distance(first, last)
+ *
+ * @throw rethrows constructor exception.
  */
 template <typename T>
 template <typename InputIt,
@@ -389,13 +760,12 @@ vector<T>::_grow(InputIt first, InputIt last)
  *
  * @param[in] size_new new size
  *
- * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre if range [begin(), end()) wasn't allocated in current transaction, it
- * must be snapshotted
+ * @pre must be called in transaction scope.
+ * @pre if initialized, range [begin(), end()) must be snapshotted in current
  * transaction
- * @pre size_new <= _size
+ * @pre size_new <= size()
  *
- * @post _size = size_new
+ * @post size() == size_new
  */
 template <typename T>
 void

@@ -496,7 +496,7 @@ game_board::creat_dynamic_layout(const unsigned row_no, char *const buffer)
 	for (unsigned i = 0; i < size_col; ++i) {
 		if (buffer[i] == config_file_symbol::SYM_WALL) {
 			shape = make_persistent<element_shape>(WALL);
-			element = element = make_persistent<board_element>(
+			element = make_persistent<board_element>(
 				i, row_no, shape, direction::UNDEFINED);
 			layout->push_back(element);
 		}

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #
 # Copyright 2018, Intel Corporation
 #

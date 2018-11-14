@@ -38,6 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_COMMON_HPP
 #define LIBPMEMOBJ_CPP_COMMON_HPP
 
+#include "libpmemobj++/detail/iterator_traits.hpp"
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj/tx_base.h"
 #include <typeinfo>
@@ -89,6 +90,27 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count))
 		throw transaction_error("Could not add object(s) to the"
 					" transaction.");
+}
+
+/*
+ * Conditionally add objects to a transaction.
+ *
+ * This overload only participates in overload resolution if InputIt satisfies
+ * InputIterator requirements. Adds [first, last) range of objects to the
+ * transaction if '*first' is within a pmemobj pool and there is an active
+ * transaction. Does nothing otherwise.
+ *
+ * @param[in] first first iterator.
+ * @param[in] last last iterator.
+ */
+template <typename InputIt,
+	  typename std::enable_if<is_input_iterator<InputIt>::value,
+				  InputIt>::type * = nullptr>
+inline void
+conditional_add_to_tx(InputIt first, InputIt last)
+{
+	conditional_add_to_tx(
+		&*first, static_cast<std::size_t>(std::distance(first, last)));
 }
 
 /*

@@ -143,3 +143,12 @@ function(add_check_whitespace name)
 
 	add_dependencies(check-whitespace check-whitespace-${name})
 endfunction()
+
+# Sets ${ret} to version of program specified by ${name} in major.minor.patch format
+function(get_program_version name ret)
+	execute_process(COMMAND ${name} --version
+		OUTPUT_VARIABLE cmd_ret
+		ERROR_QUIET)
+	STRING(REGEX MATCH "([0-9]+.)([0-9]+.)([0-9]+)" VERSION ${cmd_ret})
+	SET(${ret} ${VERSION} PARENT_SCOPE)
+endfunction()

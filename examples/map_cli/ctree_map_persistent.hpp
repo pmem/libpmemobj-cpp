@@ -34,8 +34,8 @@
 #define LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
 
 #include <cstdint>
+#include <cstdlib>
 #include <functional>
-#include <stdlib.h>
 
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>

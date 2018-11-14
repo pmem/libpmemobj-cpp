@@ -36,17 +36,16 @@
 #ifdef __FreeBSD__
 #define _WITH_GETLINE
 #endif
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <getopt.h>
 #include <iostream>
-#include <stdio.h>
 #ifdef __FreeBSD__
 #include <ncurses/ncurses.h> /* Need pkg, not system, version */
 #else
 #include <ncurses.h>
 #endif
-#include <stdlib.h>
 
 #include "panaconda.hpp"
 

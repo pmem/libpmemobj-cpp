@@ -38,8 +38,8 @@
 #ifndef LIBPMEMOBJ_CPP_MAKE_ATOMIC_IMPL_HPP
 #define LIBPMEMOBJ_CPP_MAKE_ATOMIC_IMPL_HPP
 
+#include <cstddef>
 #include <new>
-#include <stddef.h>
 
 #include "libpmemobj++/detail/array_traits.hpp"
 #include "libpmemobj++/detail/integer_sequence.hpp"

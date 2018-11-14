@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_ARRAY_TRAITS_HPP
 #define LIBPMEMOBJ_CPP_ARRAY_TRAITS_HPP
 
-#include <stddef.h>
+#include <cstddef>
 
 namespace pmem
 {

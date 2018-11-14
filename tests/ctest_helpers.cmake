@@ -123,6 +123,43 @@ function(find_pmreorder)
 	endif()
 endfunction()
 
+function(build_pmemobj_cow_check)
+	execute_process(COMMAND ${CMAKE_COMMAND}
+			${PROJECT_SOURCE_DIR}/tests/pmemobj_check_cow/CMakeLists.txt
+			-DLIBPMEMOBJ_INCLUDE_DIRS=${LIBPMEMOBJ_INCLUDE_DIRS}
+			-DLIBPMEMOBJ++_INCLUDE_DIRS=${PROJECT_SOURCE_DIR}/include
+			-DLIBPMEMOBJ_LIBRARIES=${LIBPMEMOBJ_LIBRARIES}
+			-DLIBPMEMOBJ_LIBRARY_DIRS=${LIBPMEMOBJ_LIBRARY_DIRS}
+			-Bpmemobj_check_cow
+			OUTPUT_QUIET)
+
+	execute_process(COMMAND ${CMAKE_COMMAND}
+			--build pmemobj_check_cow
+			OUTPUT_QUIET)
+endfunction()
+
+# pmreorder tests require COW support in libpmemobj because if checker program
+# does any recovery (for example in pool::open) this is not logged and will not
+# be reverted by pmreorder. This results in unexpected state in proceding
+# pmreorder steps (expected state is initial pool, modified only by pmreorder)
+function(check_pmemobj_cow_support pool)
+	build_pmemobj_cow_check()
+	set(ENV{PMEMOBJ_COW} 1)
+
+	execute_process(COMMAND pmemobj_check_cow/pmemobj_check_cow
+			${pool} RESULT_VARIABLE ret)
+	if (ret EQUAL 0)
+		set(PMEMOBJ_COW_SUPPORTED true CACHE INTERNAL "pmemobj cow support")
+	elseif(ret EQUAL 2)
+		set(PMEMOBJ_COW_SUPPORTED false CACHE INTERNAL "pmemobj cow support")
+		message(WARNING "pmemobj does not support PMEMOBJ_COW. pmreorder tests will not be performed.")
+	else()
+		message(FATAL_ERROR "pmemobj_check_cow unexpectedly failed")
+	endif()
+
+	unset(ENV{PMEMOBJ_COW})
+endfunction()
+
 function(find_packages)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(CURSES QUIET ncurses)
@@ -154,7 +191,9 @@ function(find_packages)
 
 			if (PMEMCHECK_VERSION GREATER_EQUAL 1.0 AND PMEMCHECK_VERSION LESS 2.0)
 				find_pmreorder()
-				if(NOT PMREORDER_NOT_FOUND)
+				check_pmemobj_cow_support("cow.pool")
+
+				if(NOT PMREORDER_NOT_FOUND AND PMEMOBJ_COW_SUPPORTED)
 					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
 				endif()
 			else()

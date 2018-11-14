@@ -32,6 +32,8 @@
 include(ctest_helpers.cmake)
 
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_cppstyle(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
+add_check_whitespace(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
 add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
@@ -231,5 +233,13 @@ add_test_generic(array_iterator pmemcheck)
 
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(iterator_traits none)
+
+if(PMREORDER_SUPPORTED)
+	build_test(array_slice_pmreorder array_slice_pmreorder/array_slice_pmreorder.cpp)
+	add_test_generic(array_slice_pmreorder none 0)
+	add_test_generic(array_slice_pmreorder none 1)
+else()
+	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
+endif()
 
 add_subdirectory(external)

@@ -96,8 +96,8 @@ add_test_expect_failure(array_compare_0 libcxx/array/compare.fail_0.cpp)
 add_test_expect_failure(array_compare_1 libcxx/array/compare.fail_1.cpp)
 add_test_expect_failure(array_compare_2 libcxx/array/compare.fail_2.cpp)
 
-build_test(array_cons_defualt libcxx/array/array.cons/default.pass.cpp)
-add_test_default(array_cons_defualt none)
+build_test(array_cons_default libcxx/array/array.cons/default.pass.cpp)
+add_test_default(array_cons_default none)
 
 add_test_expect_failure(array_copy_assignment libcxx/array/array.cons/copy_assignment.fail.cpp)
 

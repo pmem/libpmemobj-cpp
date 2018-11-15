@@ -33,12 +33,14 @@
 # ctest_helpers.cmake - helper functions for tests/CMakeLists.txt
 #
 
+set(TEST_ROOT_DIR ${PROJECT_SOURCE_DIR}/tests)
+
 set(GLOBAL_TEST_ARGS
 	-DPERL_EXECUTABLE=${PERL_EXECUTABLE}
 	-DMATCH_SCRIPT=${PROJECT_SOURCE_DIR}/tests/match
 	-DPARENT_DIR=${TEST_DIR}
 	-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM}
-	-DSUPP_DIR=${PROJECT_SOURCE_DIR}/tests)
+	-TEST_ROOT_DIR=${ROOT_DIR})
 
 if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
@@ -165,7 +167,7 @@ endfunction()
 
 function(skip_test name message)
 	add_test(NAME ${name}_${message}
-		COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/true.cmake)
+		COMMAND ${CMAKE_COMMAND} -P ${TEST_ROOT_DIR}/true.cmake)
 
 	set_tests_properties(${name}_${message} PROPERTIES COST 0)
 endfunction()

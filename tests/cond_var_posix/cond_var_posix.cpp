@@ -37,9 +37,9 @@
 #include "pthread_common.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/condition_variable.hpp>
-#include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/pool.hpp>
+#include "libpmemobj++/condition_variable.hpp"
+#include "libpmemobj++/persistent_ptr.hpp"
+#include "libpmemobj++/pool.hpp"
 
 #include <mutex>
 #include <vector>

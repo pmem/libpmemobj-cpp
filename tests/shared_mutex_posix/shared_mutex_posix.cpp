@@ -38,9 +38,9 @@
 #include "pthread_common.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/shared_mutex.hpp>
+#include "libpmemobj++/persistent_ptr.hpp"
+#include "libpmemobj++/pool.hpp"
+#include "libpmemobj++/shared_mutex.hpp"
 
 #include <mutex>
 

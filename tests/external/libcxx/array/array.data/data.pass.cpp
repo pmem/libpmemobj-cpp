@@ -15,7 +15,7 @@
 #include "unittest.hpp"
 #include <cstddef>
 
-#include <libpmemobj++/experimental/array.hpp>
+#include "libpmemobj++/experimental/array.hpp"
 
 namespace pmem_exp = pmem::obj::experimental;
 

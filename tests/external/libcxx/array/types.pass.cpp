@@ -15,8 +15,8 @@
 #include "unittest.hpp"
 #include <iterator>
 
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
+#include "libpmemobj++/experimental/array.hpp"
+#include "libpmemobj++/experimental/contiguous_iterator.hpp"
 
 namespace pmem_exp = pmem::obj::experimental;
 

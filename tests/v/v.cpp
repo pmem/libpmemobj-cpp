@@ -37,11 +37,12 @@
 
 #include "unittest.hpp"
 
+#include "libpmemobj++/experimental/v.hpp"
+#include "libpmemobj++/make_persistent_atomic.hpp"
+#include "libpmemobj++/persistent_ptr.hpp"
+#include "libpmemobj++/pool.hpp"
+
 #include <atomic>
-#include <libpmemobj++/experimental/v.hpp>
-#include <libpmemobj++/make_persistent_atomic.hpp>
-#include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/pool.hpp>
 
 #define LAYOUT "cpp"
 

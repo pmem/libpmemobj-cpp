@@ -58,7 +58,7 @@ if(NOT MSVC_VERSION)
 	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${LIBPMEMOBJ_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
-		"#include <libpmemobj++/make_persistent_array.hpp>
+		"#include \"libpmemobj++/make_persistent_array.hpp\"
 		using namespace pmem::obj;
 		int main() {
 			delete_persistent<int[][3]>(make_persistent<int[][3]>(2), 2);

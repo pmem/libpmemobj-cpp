@@ -43,6 +43,7 @@
 #include <sys/stat.h>
 
 #include "libpmemobj++/detail/common.hpp"
+#include "libpmemobj++/detail/ctl.hpp"
 #include "libpmemobj++/detail/pexceptions.hpp"
 #include "libpmemobj++/p.hpp"
 #include "libpmemobj/pool_base.h"
@@ -386,7 +387,7 @@ public:
 		return pmemobj_memset_persist(this->pop, dest, c, len);
 	}
 
-	/*
+	/**
 	 * Gets the C style handle to the pool.
 	 *
 	 * Necessary to be able to use the pool with the C API.
@@ -471,6 +472,59 @@ public:
 	 */
 	explicit pool(pool_base &&pb) noexcept : pool_base(pb)
 	{
+	}
+
+	/**
+	 * Query libpmemobj state at pool scope.
+	 *
+	 * @param[in] name name of entry point
+	 *
+	 * @returns variable representing internal state
+	 *
+	 * For more details, see:
+	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 */
+	template <typename M>
+	M
+	ctl_get(const std::string &name)
+	{
+		return ctl_get_detail<M>(name, pop);
+	}
+
+	/**
+	 * Modify libpmemobj state at pool scope.
+	 *
+	 * @param[in] name name of entry point
+	 * @param[in] arg extra argument
+	 *
+	 * @returns copy of arg, possibly modified by query
+	 *
+	 * For more details, see:
+	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 */
+	template <typename M>
+	M
+	ctl_set(const std::string &name, M arg)
+	{
+		return ctl_set_detail(name, arg, pop);
+	}
+
+	/**
+	 * Execute function at pool scope.
+	 *
+	 * @param[in] name name of entry point
+	 * @param[in] arg extra argument
+	 *
+	 * @returns copy of arg, possibly modified by query
+	 *
+	 * For more details, see:
+	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 */
+	template <typename M>
+	M
+	ctl_exec(const std::string &name, M arg)
+	{
+		return ctl_exec_detail(name, arg, pop);
 	}
 
 	/**
@@ -613,6 +667,59 @@ public:
 	}
 #endif
 };
+
+/**
+ * Query libpmemobj state at pool scope.
+ *
+ * @param[in] name name of entry point
+ *
+ * @returns variable representing internal state
+ *
+ * For more details, see:
+ * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ */
+template <typename T>
+T
+ctl_get(const std::string &name)
+{
+	return ctl_get_detail<T>(name, nullptr);
+}
+
+/**
+ * Modify libpmemobj state at pool scope.
+ *
+ * @param[in] name name of entry point
+ * @param[in] arg extra argument
+ *
+ * @returns copy of arg, possibly modified by query
+ *
+ * For more details, see:
+ * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ */
+template <typename T>
+T
+ctl_set(const std::string &name, T arg)
+{
+	return ctl_set_detail(name, arg, nullptr);
+}
+
+/**
+ * Execute function at global scope.
+ *
+ * @param[in] name name of entry point
+ * @param[in] arg extra argument
+ *
+ * @returns copy of arg, possibly modified by query
+ *
+ * For more details, see:
+ * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ */
+template <typename T>
+T
+ctl_exec(const std::string &name, T arg)
+{
+	return ctl_exec_detail(name, arg, nullptr);
+}
 
 } /* namespace obj */
 

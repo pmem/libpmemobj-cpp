@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['manual',['manual',['../classpmem_1_1obj_1_1transaction_1_1manual.html',1,'pmem::obj::transaction']]],
-  ['manual_5ftx_5fabort',['manual_tx_abort',['../classpmem_1_1manual__tx__abort.html',1,'pmem']]],
-  ['mutex',['mutex',['../classpmem_1_1obj_1_1mutex.html',1,'pmem::obj']]]
+  ['lock_5ferror',['lock_error',['../classpmem_1_1lock__error.html',1,'pmem']]]
 ];

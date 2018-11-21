@@ -488,7 +488,7 @@ struct array {
 	}
 
 	/**
-	 * Checks wheter array is empty.
+	 * Checks whether array is empty.
 	 */
 	constexpr bool
 	empty() const noexcept

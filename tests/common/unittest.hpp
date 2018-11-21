@@ -34,6 +34,7 @@
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
 #include "../test_backtrace.h"
+#include "iterators_support.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>

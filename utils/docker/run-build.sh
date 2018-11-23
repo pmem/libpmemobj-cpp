@@ -172,6 +172,29 @@ rm -r build
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sgr 0)\n\n"
 
 ###############################################################################
+# BUILD tests_gcc_release_cpp17_no_Valgrind_instrumentation
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_Valgrind_instrumentation START$(tput sgr 0)\n"
+mkdir build
+cd build
+
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+CC=gcc CXX=g++ \
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
+			-DCXX_STANDARD=17 \
+			-DVALGRIND_INSTRUMENTATION=0
+
+make -j2
+test_command tests_gcc_release_cpp17_no_Valgrind_instrumentation
+
+cd ..
+rm -r build
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_Valgrind_instrumentation END$(tput sgr 0)\n\n"
+
+###############################################################################
 # BUILD tests_package
 ###############################################################################
 printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_package START$(tput sgr 0)\n"

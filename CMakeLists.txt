@@ -69,6 +69,7 @@ option(BUILD_TESTS "build tests" ON)
 option(BUILD_DOC "build documentation" ON)
 option(COVERAGE "run coverage test" OFF)
 option(DEVELOPER_MODE "enable developer checks" OFF)
+option(VALGRIND_INSTRUMENTATION "enable Valgrind instrumentation" ON)
 option(TRACE_TESTS "more verbose test outputs" OFF)
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
@@ -82,6 +83,10 @@ set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif (NOT CMAKE_BUILD_TYPE)
+
+if(NOT VALGRIND_INSTRUMENTATION MATCHES "0")
+	add_flag(-DLIBPMEMOBJ_CPP_VALGRIND_INSTRUMENTATION=1)
+endif(NOT VALGRIND_INSTRUMENTATION MATCHES "0")
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
 	execute_process(COMMAND git describe
@@ -301,6 +306,7 @@ else()
 endif()
 
 include_directories(include)
+include_directories(valgrind)
 
 if(BUILD_TESTS)
 	if(TEST_DIR)

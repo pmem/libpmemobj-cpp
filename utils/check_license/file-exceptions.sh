@@ -33,4 +33,4 @@
 
 # file-exceptions.sh - filter out files not checked for copyright and license
 
-grep -v -E -e 'tests/external/libcxx/'
+grep -v -E -e 'tests/external/libcxx/' -e 'valgrind/'

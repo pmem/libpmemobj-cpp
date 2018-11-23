@@ -172,6 +172,31 @@ rm -r build
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sgr 0)\n\n"
 
 ###############################################################################
+# BUILD tests_gcc_release_cpp17_no_pmemcheck
+###############################################################################
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_pmemcheck START$(tput sgr 0)\n"
+VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc")
+echo $USERPASS | sudo -S mv $VALGRIND_PC_PATH tmp_valgrind_pc
+mkdir build
+cd build
+
+PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+CC=gcc CXX=g++ \
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+			-DTRACE_TESTS=1 \
+			-DCOVERAGE=$COVERAGE \
+			-DCXX_STANDARD=17
+
+make -j2
+test_command tests_gcc_release_cpp17_no_pmemcheck
+
+cd ..
+rm -r build
+echo $USERPASS | sudo -S mv tmp_valgrind_pc $VALGRIND_PC_PATH
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_pmemcheck END$(tput sgr 0)\n\n"
+
+###############################################################################
 # BUILD tests_package
 ###############################################################################
 printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_package START$(tput sgr 0)\n"

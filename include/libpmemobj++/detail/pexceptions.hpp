@@ -116,6 +116,16 @@ public:
 	using std::runtime_error::runtime_error;
 };
 
+/**
+ * Custom ctl error class.
+ *
+ * Thrown on ctl_[get|set|exec] failure.
+ */
+class ctl_error : public std::runtime_error {
+public:
+	using std::runtime_error::runtime_error;
+};
+
 } /* namespace pmem */
 
 #endif /* LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP */

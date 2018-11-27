@@ -168,3 +168,11 @@ add_test_default(vector_libcxx_ctor_size_value memcheck)
 
 build_test(vector_libcxx_dtor_noexcept libcxx/vector/vector.cons/dtor_noexcept.pass.cpp)
 add_test_default(vector_libcxx_dtor_noexcept none)
+
+build_test(vector_libcxx_types_pass libcxx/vector/types.pass.cpp)
+add_test_default(vector_libcxx_types_pass none)
+
+build_test(vector_libcxx_iterators_pass libcxx/vector/iterators.pass.cpp)
+add_test_default(vector_libcxx_iterators_pass none)
+add_test_default(vector_libcxx_iterators_pass pmemcheck)
+add_test_default(vector_libcxx_iterators_pass memcheck)

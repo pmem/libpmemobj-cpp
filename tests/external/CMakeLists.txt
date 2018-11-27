@@ -147,3 +147,8 @@ build_test(vector_libcxx_ctor_default libcxx/vector/vector.cons/construct_defaul
 add_test_default(vector_libcxx_ctor_default none)
 add_test_default(vector_libcxx_ctor_default pmemcheck)
 add_test_default(vector_libcxx_ctor_default memcheck)
+
+build_test(vector_contiguous_pass libcxx/vector/contiguous.pass.cpp)
+add_test_default(vector_contiguous_pass none)
+add_test_default(vector_contiguous_pass pmemcheck)
+add_test_default(vector_contiguous_pass memcheck)

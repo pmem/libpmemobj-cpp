@@ -6,165 +6,122 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// iterator       begin();
-// iterator       end();
-// const_iterator begin()  const;
-// const_iterator end()    const;
-// const_iterator cbegin() const;
-// const_iterator cend()   const;
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
-#include <iterator>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using vector_type = pmem_exp::vector<int>;
 
-#include "test_macros.h"
-#include "min_allocator.h"
-
-struct A
-{
-    int first;
-    int second;
+struct root {
+	nvobj::persistent_ptr<vector_type> v_pptr;
 };
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-        typedef int T;
-        typedef std::vector<T> C;
-        C c;
-        C::iterator i = c.begin();
-        C::iterator j = c.end();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-    }
-    {
-        typedef int T;
-        typedef std::vector<T> C;
-        const C c;
-        C::const_iterator i = c.begin();
-        C::const_iterator j = c.end();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-    }
-    {
-        typedef int T;
-        typedef std::vector<T> C;
-        C c;
-        C::const_iterator i = c.cbegin();
-        C::const_iterator j = c.cend();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-        assert(i == c.end());
-    }
-    {
-        typedef int T;
-        typedef std::vector<T> C;
-        const T t[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        C c(std::begin(t), std::end(t));
-        C::iterator i = c.begin();
-        assert(*i == 0);
-        ++i;
-        assert(*i == 1);
-        *i = 10;
-        assert(*i == 10);
-        assert(std::distance(c.begin(), c.end()) == 10);
-    }
-    {
-        typedef int T;
-        typedef std::vector<T> C;
-        C::iterator i;
-        C::const_iterator j;
-        (void) i;
-        (void) j;
-    }
-#if TEST_STD_VER >= 11
-    {
-        typedef int T;
-        typedef std::vector<T, min_allocator<T>> C;
-        C c;
-        C::iterator i = c.begin();
-        C::iterator j = c.end();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-    }
-    {
-        typedef int T;
-        typedef std::vector<T, min_allocator<T>> C;
-        const C c;
-        C::const_iterator i = c.begin();
-        C::const_iterator j = c.end();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-    }
-    {
-        typedef int T;
-        typedef std::vector<T, min_allocator<T>> C;
-        C c;
-        C::const_iterator i = c.cbegin();
-        C::const_iterator j = c.cend();
-        assert(std::distance(i, j) == 0);
-        assert(i == j);
-        assert(i == c.end());
-    }
-    {
-        typedef int T;
-        typedef std::vector<T, min_allocator<T>> C;
-        const T t[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-        C c(std::begin(t), std::end(t));
-        C::iterator i = c.begin();
-        assert(*i == 0);
-        ++i;
-        assert(*i == 1);
-        *i = 10;
-        assert(*i == 10);
-        assert(std::distance(c.begin(), c.end()) == 10);
-    }
-    {
-        typedef int T;
-        typedef std::vector<T, min_allocator<T>> C;
-        C::iterator i;
-        C::const_iterator j;
-        (void) i;
-        (void) j;
-    }
-    {
-        typedef A T;
-        typedef std::vector<T, min_allocator<T>> C;
-        C c = {A{1, 2}};
-        C::iterator i = c.begin();
-        i->first = 3;
-        C::const_iterator j = i;
-        assert(j->first == 3);
-    }
-#endif
-#if TEST_STD_VER > 11
-    { // N3644 testing
-        typedef std::vector<int> C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
+	START();
 
-        assert (!(ii1 != ii2 ));
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
 
-        assert ( (ii1 == cii ));
-        assert ( (cii == ii1 ));
-        assert (!(ii1 != cii ));
-        assert (!(cii != ii1 ));
-        assert (!(ii1 <  cii ));
-        assert (!(cii <  ii1 ));
-        assert ( (ii1 <= cii ));
-        assert ( (cii <= ii1 ));
-        assert (!(ii1 >  cii ));
-        assert (!(cii >  ii1 ));
-        assert ( (ii1 >= cii ));
-        assert ( (cii >= ii1 ));
-        assert (cii - ii1 == 0);
-        assert (ii1 - cii == 0);
-    }
-#endif
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: iterators.pass",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v_pptr = nvobj::make_persistent<vector_type>();
+			{
+				vector_type::iterator i = r->v_pptr->begin();
+				vector_type::iterator j = r->v_pptr->end();
+				UT_ASSERT(std::distance(i, j) == 0);
+				UT_ASSERT(i == j);
+			}
+			{
+				vector_type::const_iterator i =
+					r->v_pptr->begin();
+				vector_type::const_iterator j =
+					r->v_pptr->end();
+				UT_ASSERT(std::distance(i, j) == 0);
+				UT_ASSERT(i == j);
+			}
+			{
+				vector_type::const_iterator i =
+					r->v_pptr->cbegin();
+				vector_type::const_iterator j =
+					r->v_pptr->cend();
+				UT_ASSERT(std::distance(i, j) == 0);
+				UT_ASSERT(i == j);
+				UT_ASSERT(i == r->v_pptr->end());
+			}
+			{
+				vector_type::iterator i;
+				vector_type::const_iterator j;
+				(void)i;
+				(void)j;
+			}
+			nvobj::delete_persistent<vector_type>(r->v_pptr);
+
+			const int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			r->v_pptr = nvobj::make_persistent<vector_type>(
+				std::begin(a), std::end(a));
+
+			{
+				vector_type::iterator i = r->v_pptr->begin();
+				UT_ASSERT(*i == 0);
+				++i;
+				UT_ASSERT(*i == 1);
+				*i = 10;
+				UT_ASSERT(*i == 10);
+				UT_ASSERT(std::distance(r->v_pptr->begin(),
+							r->v_pptr->end()) ==
+					  10);
+			}
+			{
+				vector_type::iterator ii1{}, ii2{};
+				vector_type::iterator ii4 = ii1;
+				vector_type::const_iterator cii{};
+				UT_ASSERT(ii1 == ii2);
+				UT_ASSERT(ii1 == ii4);
+				UT_ASSERT(!(ii1 != ii2));
+				UT_ASSERT((ii1 == cii));
+				UT_ASSERT((cii == ii1));
+				UT_ASSERT(!(ii1 != cii));
+				UT_ASSERT(!(cii != ii1));
+				UT_ASSERT(!(ii1 < cii));
+				UT_ASSERT(!(cii < ii1));
+				UT_ASSERT((ii1 <= cii));
+				UT_ASSERT((cii <= ii1));
+				UT_ASSERT(!(ii1 > cii));
+				UT_ASSERT(!(cii > ii1));
+				UT_ASSERT((ii1 >= cii));
+				UT_ASSERT((cii >= ii1));
+				UT_ASSERT(cii - ii1 == 0);
+				UT_ASSERT(ii1 - cii == 0);
+			}
+		});
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl
+			  << std::strerror(nvobj::transaction::error())
+			  << std::endl;
+		UT_ASSERT(0);
+	}
+
+	pop.close();
+
+	return 0;
 }

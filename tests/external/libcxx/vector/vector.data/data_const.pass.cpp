@@ -6,58 +6,72 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "helper_classes.hpp"
+#include "unittest.hpp"
 
-// const_pointer data() const;
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 
-#include <vector>
-#include <cassert>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using v_type_1 = pmem_exp::vector<int>;
+using v_type_2 = pmem_exp::vector<failing_reference_operator>;
 
-#include "min_allocator.h"
-#include "asan_testing.h"
+struct root {
+	nvobj::persistent_ptr<const v_type_1> v1;
+	nvobj::persistent_ptr<const v_type_1> v2;
+	nvobj::persistent_ptr<const v_type_2> v3;
+};
 
-struct Nasty {
-    Nasty() : i_(0) {}
-    Nasty(int i) : i_(i) {}
-    ~Nasty() {}
-
-    Nasty * operator&() const { assert(false); return nullptr; }
-    int i_;
-    };
-
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-        const std::vector<int> v;
-        assert(v.data() == 0);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        const std::vector<int> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<Nasty> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#if TEST_STD_VER >= 11
-    {
-        const std::vector<int, min_allocator<int>> v;
-        assert(v.data() == 0);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        const std::vector<int, min_allocator<int>> v(100);
-        assert(v.data() == &v.front());
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<Nasty, min_allocator<Nasty>> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: data_const.pass",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1 = nvobj::make_persistent<v_type_1>();
+			r->v2 = nvobj::make_persistent<v_type_1>(100U);
+			r->v3 = nvobj::make_persistent<v_type_2>(100U);
+		});
+		UT_ASSERT(r->v1->data() == 0);
+		UT_ASSERT(r->v2->data() == std::addressof(r->v2->front()));
+		UT_ASSERT(r->v3->data() == std::addressof(r->v3->front()));
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<const v_type_1>(r->v1);
+			nvobj::delete_persistent<const v_type_1>(r->v2);
+		});
+		/*
+		 * We cannot delete failing_reference_operator type, since
+		 * deleting within a transaction will require snapshot (and
+		 * usage of reference operator) of data. Hence
+		 * delete_persistent_atomic.
+		 */
+		nvobj::delete_persistent_atomic<const v_type_2>(r->v3);
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

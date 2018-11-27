@@ -152,3 +152,11 @@ build_test(vector_contiguous_pass libcxx/vector/contiguous.pass.cpp)
 add_test_default(vector_contiguous_pass none)
 add_test_default(vector_contiguous_pass pmemcheck)
 add_test_default(vector_contiguous_pass memcheck)
+
+build_test(vector_types_pass libcxx/vector/types.pass.cpp)
+add_test_default(vector_types_pass none)
+
+build_test(vector_iterators_pass libcxx/vector/iterators.pass.cpp)
+add_test_default(vector_iterators_pass none)
+add_test_default(vector_iterators_pass pmemcheck)
+add_test_default(vector_iterators_pass memcheck)

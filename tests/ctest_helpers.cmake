@@ -46,7 +46,7 @@ if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
 endif()
 
-set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. .)
+set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. . ${VALGRIND_INCLUDE_DIRS})
 set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS})
 
 include_directories(${INCLUDE_DIRS})
@@ -110,6 +110,7 @@ function(find_pmemcheck)
 
 		string(REGEX MATCH ".*pmemcheck-([0-9.]*),.*" PMEMCHECK_OUT "${PMEMCHECK_OUT}")
 		set(PMEMCHECK_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "")
+		add_flag(-DLIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION=1)
 	endif()
 endfunction()
 

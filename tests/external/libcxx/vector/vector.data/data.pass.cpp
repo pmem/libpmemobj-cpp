@@ -6,58 +6,60 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// pointer data();
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
+#include <cstring>
 
-#include "min_allocator.h"
-#include "asan_testing.h"
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using vector_type = pmem_exp::vector<int>;
 
-struct Nasty {
-    Nasty() : i_(0) {}
-    Nasty(int i) : i_(i) {}
-    ~Nasty() {}
+struct root {
+	nvobj::persistent_ptr<vector_type> v1;
+	nvobj::persistent_ptr<vector_type> v2;
+};
 
-    Nasty * operator&() const { assert(false); return nullptr; }
-    int i_;
-    };
-
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<int> v;
-        assert(v.data() == 0);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<int> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<Nasty> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#if TEST_STD_VER >= 11
-    {
-        std::vector<int, min_allocator<int>> v;
-        assert(v.data() == 0);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<int, min_allocator<int>> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<Nasty, min_allocator<Nasty>> v(100);
-        assert(v.data() == std::addressof(v.front()));
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: data.pass",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1 = nvobj::make_persistent<vector_type>();
+			r->v2 = nvobj::make_persistent<vector_type>(100U);
+			UT_ASSERT(r->v1->data() == 0);
+			UT_ASSERT(r->v2->data() ==
+				  std::addressof(r->v2->front()));
+			nvobj::delete_persistent<vector_type>(r->v1);
+			nvobj::delete_persistent<vector_type>(r->v2);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

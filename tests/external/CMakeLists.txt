@@ -169,6 +169,29 @@ add_test_default(vector_libcxx_ctor_size_value memcheck)
 build_test(vector_libcxx_dtor_noexcept libcxx/vector/vector.cons/dtor_noexcept.pass.cpp)
 add_test_default(vector_libcxx_dtor_noexcept none)
 
+build_test(vector_libcxx_contiguous libcxx/vector/contiguous.pass.cpp)
+add_test_default(vector_libcxx_contiguous none)
+add_test_default(vector_libcxx_contiguous pmemcheck)
+add_test_default(vector_libcxx_contiguous memcheck)
+
+build_test(vector_libcxx_types libcxx/vector/types.pass.cpp)
+add_test_default(vector_libcxx_types none)
+
+build_test(vector_libcxx_iterators libcxx/vector/iterators.pass.cpp)
+add_test_default(vector_libcxx_iterators none)
+add_test_default(vector_libcxx_iterators pmemcheck)
+add_test_default(vector_libcxx_iterators memcheck)
+
+build_test(vector_libcxx_data_const libcxx/vector/vector.data/data_const.pass.cpp)
+add_test_default(vector_libcxx_data_const none)
+add_test_default(vector_libcxx_data_const pmemcheck)
+add_test_default(vector_libcxx_data_const memcheck)
+
+build_test(vector_libcxx_data libcxx/vector/vector.data/data.pass.cpp)
+add_test_default(vector_libcxx_data none)
+add_test_default(vector_libcxx_data pmemcheck)
+add_test_default(vector_libcxx_data memcheck)
+
 # XXX: port libcxx test vector.capacity/capacity.pass
 
 # XXX: port libcxx test vector.capacity/empty.fail

@@ -32,6 +32,8 @@
 include(ctest_helpers.cmake)
 
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
+add_cppstyle(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
+add_check_whitespace(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
 add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp)
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
@@ -81,6 +83,8 @@ function(build_example_pman)
 		message(WARNING "ncurses not found - pman test won't be build")
 	endif()
 endfunction()
+
+find_packages()
 
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
@@ -236,6 +240,14 @@ add_test_generic(ctl none)
 if(WIN32)
 	build_test(ctl_win ctl_win/ctl_win.cpp)
 	add_test_generic(ctl_win none)
+endif()
+
+if(PMREORDER_SUPPORTED)
+	build_test(array_slice_pmreorder array_slice_pmreorder/array_slice_pmreorder.cpp)
+	add_test_generic(array_slice_pmreorder none 0)
+	add_test_generic(array_slice_pmreorder none 1)
+else()
+	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 endif()
 
 add_subdirectory(external)

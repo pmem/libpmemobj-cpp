@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 #
 # Copyright 2018, Intel Corporation
 #
@@ -30,30 +29,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#
-# install-pmdk.sh - installs libpmem & libpmemobj
-#
+include(${SRC_DIR}/../helpers.cmake)
 
-set -e
+setup()
 
-git clone https://github.com/pmem/pmdk
-cd pmdk
-git checkout 9c85651d287c4d2ac9cc6785c8534e1b0b1c16bd
+execute(${TEST_EXECUTABLE} c ${DIR}/testfile)
+pmreorder_create_store_log(${DIR}/testfile ${TEST_EXECUTABLE} i ${DIR}/testfile)
+pmreorder_execute(false ReorderAccumulative ${SRC_DIR}/pmreorder.conf ${TEST_EXECUTABLE} o)
 
-sudo make EXTRA_CFLAGS="-DUSE_COW_ENV" -j2 install prefix=/opt/pmdk
-
-sudo mkdir /opt/pmdk-pkg
-
-# Download and save pmdk-1.4 packages
-if [ "$1" = "dpkg" ]; then
-	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-dpkgs.tar.gz
-	tar -xzf pmdk-1.4-dpkgs.tar.gz
-	sudo mv *.deb /opt/pmdk-pkg/
-elif [ "$1" = "rpm" ]; then
-	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-rpms.tar.gz
-	tar -xzf pmdk-1.4-rpms.tar.gz
-	sudo mv x86_64/*.rpm /opt/pmdk-pkg/
-fi
-
-cd ..
-rm -rf pmdk
+finish()

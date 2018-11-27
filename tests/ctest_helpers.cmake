@@ -94,14 +94,107 @@ endif()
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 
-if(PKG_CONFIG_FOUND)
-	pkg_check_modules(CURSES QUIET ncurses)
-else()
-	# Specifies that we want FindCurses to find ncurses and not just any
-	# curses library
-	set(CURSES_NEED_NCURSES TRUE)
-	find_package(Curses QUIET)
-endif()
+function(find_pmemcheck)
+	set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})
+	execute_process(COMMAND valgrind --tool=pmemcheck --help
+			RESULT_VARIABLE VALGRIND_PMEMCHECK_RET
+			OUTPUT_QUIET
+			ERROR_QUIET)
+	set(VALGRIND_PMEMCHECK_NOT_FOUND ${VALGRIND_PMEMCHECK_RET} CACHE INTERNAL "")
+	if(VALGRIND_PMEMCHECK_NOT_FOUND)
+		message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
+	else()
+		execute_process(COMMAND valgrind --tool=pmemcheck true
+				ERROR_VARIABLE PMEMCHECK_OUT
+				OUTPUT_QUIET)
+
+		string(REGEX MATCH ".*pmemcheck-([0-9.]*),.*" PMEMCHECK_OUT "${PMEMCHECK_OUT}")
+		set(PMEMCHECK_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "")
+	endif()
+endfunction()
+
+function(build_pmemobj_cow_check)
+	execute_process(COMMAND ${CMAKE_COMMAND}
+			${PROJECT_SOURCE_DIR}/tests/pmemobj_check_cow/CMakeLists.txt
+			-DLIBPMEMOBJ_INCLUDE_DIRS=${LIBPMEMOBJ_INCLUDE_DIRS}
+			-DLIBPMEMOBJ++_INCLUDE_DIRS=${PROJECT_SOURCE_DIR}/include
+			-DLIBPMEMOBJ_LIBRARIES=${LIBPMEMOBJ_LIBRARIES}
+			-DLIBPMEMOBJ_LIBRARY_DIRS=${LIBPMEMOBJ_LIBRARY_DIRS}
+			-Bpmemobj_check_cow
+			OUTPUT_QUIET)
+
+	execute_process(COMMAND ${CMAKE_COMMAND}
+			--build pmemobj_check_cow
+			OUTPUT_QUIET)
+endfunction()
+
+# pmreorder tests require COW support in libpmemobj because if checker program
+# does any recovery (for example in pool::open) this is not logged and will not
+# be reverted by pmreorder. This results in unexpected state in proceding
+# pmreorder steps (expected state is initial pool, modified only by pmreorder)
+function(check_pmemobj_cow_support pool)
+	build_pmemobj_cow_check()
+	set(ENV{PMEMOBJ_COW} 1)
+
+	execute_process(COMMAND pmemobj_check_cow/pmemobj_check_cow
+			${pool} RESULT_VARIABLE ret)
+	if (ret EQUAL 0)
+		set(PMEMOBJ_COW_SUPPORTED true CACHE INTERNAL "")
+	elseif(ret EQUAL 2)
+		set(PMEMOBJ_COW_SUPPORTED false CACHE INTERNAL "")
+		message(WARNING "Pmemobj does not support PMEMOBJ_COW. Pmreorder tests will not be performed.")
+	else()
+		message(FATAL_ERROR "pmemobj_check_cow failed")
+	endif()
+
+	unset(ENV{PMEMOBJ_COW})
+endfunction()
+
+function(find_packages)
+	if(PKG_CONFIG_FOUND)
+		pkg_check_modules(CURSES QUIET ncurses)
+	else()
+		# Specifies that we want FindCurses to find ncurses and not just any
+		# curses library
+		set(CURSES_NEED_NCURSES TRUE)
+		find_package(Curses QUIET)
+	endif()
+
+	if(PKG_CONFIG_FOUND)
+		pkg_check_modules(VALGRIND QUIET valgrind)
+	else()
+		find_package(VALGRIND QUIET)
+	endif()
+
+	if(PKG_CONFIG_FOUND)
+		pkg_check_modules(LIBUNWIND QUIET libunwind)
+	else()
+		find_package(LIBUNWIND QUIET)
+	endif()
+	if(NOT LIBUNWIND_FOUND)
+		message(WARNING "libunwind not found. Stack traces from tests will not be reliable")
+	endif()
+
+	if(NOT WIN32)
+		if(VALGRIND_FOUND)
+			find_pmemcheck()
+
+			if (PMEMCHECK_VERSION GREATER_EQUAL 1.0 AND PMEMCHECK_VERSION LESS 2.0)
+				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
+				check_pmemobj_cow_support("cow.pool")
+
+				if(PMREORDER AND PMEMOBJ_COW_SUPPORTED)
+					set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
+					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
+				endif()
+			else()
+				message(STATUS "Pmreorder will not be used. Pmemcheck must be installed in version 1.X")
+			endif()
+		else()
+			message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
+		endif()
+	endif()
+endfunction()
 
 function(build_test name)
 	# skip posix tests

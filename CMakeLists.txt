@@ -123,21 +123,6 @@ if(BUILD_TESTS OR BUILD_EXAMPLES)
 	endif()
 endif()
 
-if(PKG_CONFIG_FOUND)
-	pkg_check_modules(VALGRIND QUIET valgrind)
-else()
-	find_package(VALGRIND QUIET)
-endif()
-
-if(PKG_CONFIG_FOUND)
-	pkg_check_modules(LIBUNWIND QUIET libunwind)
-else()
-	find_package(LIBUNWIND QUIET)
-endif()
-if(NOT LIBUNWIND_FOUND)
-	message(WARNING "libunwind not found. Stack traces from tests will not be reliable")
-endif()
-
 add_executable(check_license EXCLUDE_FROM_ALL utils/check_license/check-license.c)
 
 add_custom_target(checkers ALL)
@@ -246,22 +231,6 @@ write_basic_package_version_file(libpmemobj++-config-version.cmake
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config-version.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/libpmemobj++/cmake)
-
-if(NOT WIN32)
-    if(VALGRIND_FOUND)
-	    set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})
-	    execute_process(COMMAND valgrind --tool=pmemcheck --help
-			    RESULT_VARIABLE VALGRIND_PMEMCHECK_NOT_FOUND
-			    OUTPUT_QUIET
-			    ERROR_QUIET)
-	    if(VALGRIND_PMEMCHECK_NOT_FOUND)
-		    message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
-	    endif()
-    else()
-	    message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
-    endif()
-endif()
-
 
 if(NOT MSVC_VERSION)
 	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})

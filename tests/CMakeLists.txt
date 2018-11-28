@@ -86,6 +86,10 @@ endfunction()
 
 find_packages()
 
+if(VALGRIND_PMEMCHECK_FOUND)
+	add_flag(-DLIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION=1)
+endif()
+
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
 	add_test_generic(ex-queue none)

@@ -46,7 +46,7 @@ if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
 endif()
 
-set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. . ${VALGRIND_INCLUDE_DIRS})
+set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. .)
 set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS})
 
 include_directories(${INCLUDE_DIRS})
@@ -100,17 +100,21 @@ function(find_pmemcheck)
 			RESULT_VARIABLE VALGRIND_PMEMCHECK_RET
 			OUTPUT_QUIET
 			ERROR_QUIET)
-	set(VALGRIND_PMEMCHECK_NOT_FOUND ${VALGRIND_PMEMCHECK_RET} CACHE INTERNAL "")
-	if(VALGRIND_PMEMCHECK_NOT_FOUND)
-		message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
+	if(VALGRIND_PMEMCHECK_RET)
+		set(VALGRIND_PMEMCHECK_FOUND 0 CACHE INTERNAL "")
 	else()
+		set(VALGRIND_PMEMCHECK_FOUND 1 CACHE INTERNAL "")
+	endif()
+
+	if(VALGRIND_PMEMCHECK_FOUND)
 		execute_process(COMMAND valgrind --tool=pmemcheck true
 				ERROR_VARIABLE PMEMCHECK_OUT
 				OUTPUT_QUIET)
 
 		string(REGEX MATCH ".*pmemcheck-([0-9.]*),.*" PMEMCHECK_OUT "${PMEMCHECK_OUT}")
 		set(PMEMCHECK_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "")
-		add_flag(-DLIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION=1)
+	else()
+		message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
 	endif()
 endfunction()
 
@@ -178,6 +182,7 @@ function(find_packages)
 
 	if(NOT WIN32)
 		if(VALGRIND_FOUND)
+			include_directories(${VALGRIND_INCLUDE_DIRS})
 			find_pmemcheck()
 
 			if (PMEMCHECK_VERSION GREATER_EQUAL 1.0 AND PMEMCHECK_VERSION LESS 2.0)
@@ -277,7 +282,7 @@ function(add_test_common name tracer testcase cmake_script)
 		return()
 	endif()
 
-	if (NOT WIN32 AND VALGRIND_PMEMCHECK_NOT_FOUND AND ${tracer} STREQUAL "pmemcheck")
+	if (NOT WIN32 AND (NOT VALGRIND_PMEMCHECK_FOUND) AND ${tracer} STREQUAL "pmemcheck")
 		skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_OF_MISSING_PMEMCHECK")
 		return()
 	endif()

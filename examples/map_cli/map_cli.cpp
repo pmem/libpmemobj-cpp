@@ -208,12 +208,10 @@ int
 main(int argc, char *argv[])
 {
 	if (argc < 4) {
-		std::cerr << "usage: " << argv[0]
-			  << " file-name <persistent|volatile> "
-			     "[insert|insert_new "
-			     "<key value>|get <key>|remove <key> | remove_free "
-			     "<key>]"
-			  << std::endl;
+		std::cerr
+			<< "usage: " << argv[0]
+			<< " file-name <persistent|volatile> [insert|insert_new <key value>|get <key>|remove <key> | remove_free <key>]"
+			<< std::endl;
 		return 1;
 	}
 

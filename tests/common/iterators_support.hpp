@@ -336,7 +336,8 @@ private:
  * - destructible
  * - can be incremented
  * - can be decremented
- * - supports arithmetic operators + and -
+ * - supports arithmetic operators + and - between iterator and integer value
+ * - supports subtracting between iterators
  * - supports inequality comparisons (<, >, <= and >=) between iterators
  * - supports compound assignment operations += and -=
  * - supports offset dereference operator ([])
@@ -441,6 +442,13 @@ public:
 		random_access_it tmp(*this);
 		tmp -= n;
 		return tmp;
+	}
+
+	difference_type
+	operator-(random_access_it x) const
+	{
+		difference_type n = this->_it - x._it;
+		return n;
 	}
 
 	reference operator[](difference_type n) const

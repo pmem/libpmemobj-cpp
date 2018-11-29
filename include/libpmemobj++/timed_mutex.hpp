@@ -74,9 +74,9 @@ public:
 	{
 		PMEMobjpool *pop;
 		if ((pop = pmemobj_pool_by_ptr(&plock)) == nullptr)
-			throw lock_error(1, std::generic_category(),
-					 "Persistent mutex not from persistent"
-					 "memory.");
+			throw lock_error(
+				1, std::generic_category(),
+				"Persistent mutex not from persistent memory.");
 
 		pmemobj_mutex_zero(pop, &plock);
 	}

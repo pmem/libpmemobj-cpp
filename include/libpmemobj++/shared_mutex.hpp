@@ -71,9 +71,9 @@ public:
 	{
 		PMEMobjpool *pop;
 		if ((pop = pmemobj_pool_by_ptr(&plock)) == nullptr)
-			throw lock_error(1, std::generic_category(),
-					 "Persistent shared mutex not from "
-					 "persistent memory.");
+			throw lock_error(
+				1, std::generic_category(),
+				"Persistent shared mutex not from persistent memory.");
 
 		pmemobj_rwlock_zero(pop, &plock);
 	}
@@ -101,8 +101,7 @@ public:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_rwlock_wrlock(pop, &this->plock))
 			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a "
-					 "shared mutex.");
+					 "Failed to lock a shared mutex.");
 	}
 
 	/**
@@ -125,9 +124,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_rwlock_rdlock(pop, &this->plock))
-			throw lock_error(ret, std::system_category(),
-					 "Failed to shared lock a "
-					 "shared mutex.");
+			throw lock_error(
+				ret, std::system_category(),
+				"Failed to shared lock a shared mutex.");
 	}
 
 	/**
@@ -156,8 +155,7 @@ public:
 			return false;
 		else
 			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a"
-					 " shared mutex.");
+					 "Failed to lock a shared mutex.");
 	}
 
 	/**
@@ -188,8 +186,7 @@ public:
 			return false;
 		else
 			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a"
-					 " shared mutex.");
+					 "Failed to lock a shared mutex.");
 	}
 
 	/**

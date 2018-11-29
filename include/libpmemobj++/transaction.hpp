@@ -116,8 +116,7 @@ public:
 
 			if (err) {
 				pmemobj_tx_abort(EINVAL);
-				throw transaction_error("failed to"
-							" add lock");
+				throw transaction_error("failed to add lock");
 			}
 		}
 
@@ -325,8 +324,7 @@ public:
 	abort(int err)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_error("wrong stage for"
-						" abort");
+			throw transaction_error("wrong stage for abort");
 
 		pmemobj_tx_abort(err);
 		throw manual_tx_abort("explicit abort " + std::to_string(err));
@@ -346,8 +344,7 @@ public:
 	commit()
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_error("wrong stage for"
-						" commit");
+			throw transaction_error("wrong stage for commit");
 
 		pmemobj_tx_commit();
 	}
@@ -408,8 +405,8 @@ public:
 		if (err) {
 			pmemobj_tx_abort(err);
 			(void)pmemobj_tx_end();
-			throw transaction_error("failed to add a lock to the"
-						" transaction");
+			throw transaction_error(
+				"failed to add a lock to the transaction");
 		}
 
 		try {
@@ -435,8 +432,8 @@ public:
 			(void)pmemobj_tx_end();
 			throw transaction_error("transaction aborted");
 		} else if (stage == TX_STAGE_NONE) {
-			throw transaction_error("transaction ended"
-						"prematurely");
+			throw transaction_error(
+				"transaction ended prematurely");
 		}
 
 		(void)pmemobj_tx_end();

@@ -46,8 +46,7 @@ main(int argc, char *argv[])
 		mode = argv[2];
 	}
 	if (argc < 2 || argc > 3 || (argc == 3 && mode != "-s")) {
-		std::cout << "Usage: ./pmpong <game_session_file> "
-			     "[options]"
+		std::cout << "Usage: ./pmpong <game_session_file> [options]"
 			  << std::endl
 			  << "Options: " << std::endl
 			  << "-s, simulates game between 2 AI players"

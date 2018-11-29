@@ -104,9 +104,9 @@ public:
 		if (find_array(name) != nullptr) {
 			std::cout << "Array with name: " << name
 				  << " already exists. ";
-			std::cout << "If you prefer, you can reallocate this "
-				     "array "
-				  << std::endl;
+			std::cout
+				<< "If you prefer, you can reallocate this array "
+				<< std::endl;
 			print_usage(array_op::REALLOC, "./example-array");
 		} else if (size < 1) {
 			std::cout << "size must be a non-negative integer"
@@ -227,35 +227,31 @@ public:
 		switch (op) {
 			case array_op::PRINT:
 				std::cerr << "print array usage: " << arg_zero
-					  << " <file_name> print "
-					     "<array_name>"
+					  << " <file_name> print <array_name>"
 					  << std::endl;
 				break;
 			case array_op::FREE:
 				std::cerr << "free array usage: " << arg_zero
-					  << " <file_name> free "
-					     "<array_name>"
+					  << " <file_name> free <array_name>"
 					  << std::endl;
 				break;
 			case array_op::REALLOC:
-				std::cerr << "realloc array usage: " << arg_zero
-					  << " <file_name> realloc "
-					     "<array_name> <size>"
-					  << std::endl;
+				std::cerr
+					<< "realloc array usage: " << arg_zero
+					<< " <file_name> realloc <array_name> <size>"
+					<< std::endl;
 				break;
 			case array_op::ALLOC:
-				std::cerr << "alloc array usage: " << arg_zero
-					  << " <file_name> alloc "
-					     "<array_name> "
-					     "<size>"
-					  << std::endl;
+				std::cerr
+					<< "alloc array usage: " << arg_zero
+					<< " <file_name> alloc <array_name> <size>"
+					<< std::endl;
 				break;
 			default:
-				std::cerr << "usage: " << arg_zero
-					  << " <file_name> "
-					     "<print|alloc|free|realloc> "
-					     "<array_name>"
-					  << std::endl;
+				std::cerr
+					<< "usage: " << arg_zero
+					<< " <file_name> <print|alloc|free|realloc> <array_name>"
+					<< std::endl;
 		}
 	}
 
@@ -301,10 +297,10 @@ main(int argc, char *argv[])
 
 	prog_name = argv[0];
 	if (argc < 4) {
-		std::cerr << "usage: " << prog_name
-			  << " <file_name> <print|alloc|free|realloc> "
-			     "<array_name>"
-			  << std::endl;
+		std::cerr
+			<< "usage: " << prog_name
+			<< " <file_name> <print|alloc|free|realloc> <array_name>"
+			<< std::endl;
 
 		return 1;
 	}
@@ -312,9 +308,9 @@ main(int argc, char *argv[])
 	// check length of array name to ensure doesn't exceed buffer.
 	const char *name = argv[3];
 	if (strlen(name) > MAX_BUFFLEN) {
-		std::cout << "Name exceeds buffer length of 30 characters. "
-			     "Please shorten and try again."
-			  << std::endl;
+		std::cout
+			<< "Name exceeds buffer length of 30 characters. Please shorten and try again."
+			<< std::endl;
 
 		return 1;
 	}

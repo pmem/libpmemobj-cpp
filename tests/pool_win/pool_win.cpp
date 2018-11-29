@@ -167,7 +167,8 @@ wmain(int argc, wchar_t *argv[])
 	START();
 
 	if (argc < 4)
-		UT_FATAL("usage: %s op path layout [poolsize mode]", ut_toUTF8(argv[0]));
+		UT_FATAL("usage: %s op path layout [poolsize mode]",
+			 ut_toUTF8(argv[0]));
 
 	const wchar_t *layout = nullptr;
 	size_t poolsize;

@@ -258,8 +258,8 @@ public:
 		pmemobjpool *pop = pmemobj_pool_by_oid(this->raw());
 
 		if (pop == nullptr)
-			throw pool_error("Cannot get pool from "
-					 "persistent pointer");
+			throw pool_error(
+				"Cannot get pool from persistent pointer");
 
 		pmemobj_persist(pop, this->get(), sizeof(T));
 	}
@@ -287,8 +287,8 @@ public:
 		pmemobjpool *pop = pmemobj_pool_by_oid(this->raw());
 
 		if (pop == nullptr)
-			throw pool_error("Cannot get pool from "
-					 "persistent pointer");
+			throw pool_error(
+				"Cannot get pool from persistent pointer");
 
 		pmemobj_flush(pop, this->get(), sizeof(T));
 	}

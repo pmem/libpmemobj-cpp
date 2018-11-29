@@ -154,6 +154,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ab27e91b9ee180bc52004aabf6c9a6e3e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1pool__base.html#ab27e91b9ee180bc52004aabf6c9a6e3e">memset_persist</a> (void *dest, int c, size_t len) noexcept</td></tr>
 <tr class="memdesc:ab27e91b9ee180bc52004aabf6c9a6e3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs memset and persist operation on a given chunk of memory.  <a href="#ab27e91b9ee180bc52004aabf6c9a6e3e">More...</a><br /></td></tr>
 <tr class="separator:ab27e91b9ee180bc52004aabf6c9a6e3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5f6a903bdedaba77186510ae1efbee"><td class="memItemLeft" align="right" valign="top">PMEMobjpool *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1pool__base.html#a1b5f6a903bdedaba77186510ae1efbee">handle</a> () noexcept</td></tr>
+<tr class="memdesc:a1b5f6a903bdedaba77186510ae1efbee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the C style handle to the pool.  <a href="#a1b5f6a903bdedaba77186510ae1efbee">More...</a><br /></td></tr>
+<tr class="separator:a1b5f6a903bdedaba77186510ae1efbee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -588,6 +591,35 @@ template&lt;typename Y &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a1b5f6a903bdedaba77186510ae1efbee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b5f6a903bdedaba77186510ae1efbee">&#9670;&nbsp;</a></span>handle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">PMEMobjpool* pmem::obj::pool_base::handle </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the C style handle to the pool. </p>
+<p>Necessary to be able to use the pool with the C API.</p>
+<dl class="section return"><dt>Returns</dt><dd>pool opaque handle. </dd></dl>
 
 </div>
 </div>

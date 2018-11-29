@@ -1,8 +1,11 @@
 var searchData=
 [
-  ['life_2ehpp',['life.hpp',['../life_8hpp.html',1,'']]],
-  ['lock',['lock',['../classpmem_1_1obj_1_1mutex.html#a9ab48609b752c0b963f3ad2bacd50c86',1,'pmem::obj::mutex::lock()'],['../classpmem_1_1obj_1_1shared__mutex.html#aef1d143b637eec7e679d420e98a2f458',1,'pmem::obj::shared_mutex::lock()'],['../classpmem_1_1obj_1_1timed__mutex.html#a17f544211bcf905cd600295e4e47b757',1,'pmem::obj::timed_mutex::lock()']]],
-  ['lock_5ferror',['lock_error',['../classpmem_1_1lock__error.html',1,'pmem']]],
-  ['lock_5fshared',['lock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#a016982730a6f61cd2acf53af986cdf03',1,'pmem::obj::shared_mutex']]],
-  ['lock_5ftype',['lock_type',['../classpmem_1_1obj_1_1mutex.html#a4357943ecf5ce2745d517c1fe6f79136',1,'pmem::obj::mutex::lock_type()'],['../classpmem_1_1obj_1_1shared__mutex.html#a8e6044b942aa5f80070d26b699ef37cb',1,'pmem::obj::shared_mutex::lock_type()']]]
+  ['integer_5fsequence_2ehpp',['integer_sequence.hpp',['../integer__sequence_8hpp.html',1,'']]],
+  ['is_5fbidirectional_5fiterator',['is_bidirectional_iterator',['../structpmem_1_1detail_1_1is__bidirectional__iterator.html',1,'pmem::detail']]],
+  ['is_5fforward_5fiterator',['is_forward_iterator',['../structpmem_1_1detail_1_1is__forward__iterator.html',1,'pmem::detail']]],
+  ['is_5finput_5fiterator',['is_input_iterator',['../structpmem_1_1detail_1_1is__input__iterator.html',1,'pmem::detail']]],
+  ['is_5foutput_5fiterator',['is_output_iterator',['../structpmem_1_1detail_1_1is__output__iterator.html',1,'pmem::detail']]],
+  ['is_5frandom_5faccess_5fiterator',['is_random_access_iterator',['../structpmem_1_1detail_1_1is__random__access__iterator.html',1,'pmem::detail']]],
+  ['iterator_5fcategory',['iterator_category',['../classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff',1,'pmem::obj::persistent_ptr']]],
+  ['iterator_5ftraits_2ehpp',['iterator_traits.hpp',['../iterator__traits_8hpp.html',1,'']]]
 ];

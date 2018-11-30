@@ -259,4 +259,9 @@ add_test_generic(vector_private none)
 add_test_generic(vector_private memcheck)
 add_test_generic(vector_private pmemcheck)
 
+build_test(vector_ctor_default_nopmem vector_ctor_default_nopmem/vector_ctor_default_nopmem.cpp)
+add_test_generic(vector_ctor_default_nopmem none)
+add_test_generic(vector_ctor_default_nopmem memcheck)
+add_test_generic(vector_ctor_default_nopmem pmemcheck)
+
 add_subdirectory(external)

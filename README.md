@@ -11,11 +11,11 @@ More informations in include/libpmemobj++/README.md
 
 # How to build #
 
-Requirements:
+## Requirements: ##
 - cmake >= 3.3
 - libpmemobj-dev(el) >= 1.4 (http://pmem.io/pmdk/)
 
-### On Linux ###
+## On Linux ##
 
 ```sh
 $ mkdir build
@@ -25,7 +25,7 @@ $ make
 $ make install
 ```
 
-When developing:
+#### When developing: ####
 ```sh
 $ ...
 $ cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEVELOPER_MODE=1
@@ -33,7 +33,7 @@ $ ...
 $ ctest --output-on-failure
 ```
 
-To build packages
+#### To build packages ####
 ```sh
 ...
 cmake .. -DCPACK_GENERATOR="$GEN" -DCMAKE_INSTALL_PREFIX=/usr
@@ -44,9 +44,15 @@ $GEN is type of package generator and can be RPM or DEB
 
 CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installed
 
-### On Windows ###
+#### To use with pmemcheck ####
 
-Install libpmemobj via vcpkg
+In order to build our application with libpmemobj-cpp and [pmemcheck](https://github.com/pmem/valgrind),
+enhanced Valgrind instrumentation must be enabled by setting flag
+LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION=1.
+
+## On Windows ##
+
+#### Install libpmemobj via vcpkg ####
 ```sh
 vcpkg install pmdk:x64-windows
 vcpkg integrate install

@@ -38,8 +38,8 @@
 #ifndef LIBPMEMOBJ_CPP_PEXT_HPP
 #define LIBPMEMOBJ_CPP_PEXT_HPP
 
-#include "libpmemobj++/p.hpp"
 #include <iostream>
+#include <libpmemobj++/p.hpp>
 #include <limits>
 
 namespace pmem

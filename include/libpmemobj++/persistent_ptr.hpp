@@ -43,11 +43,11 @@
 #include <memory>
 #include <ostream>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/persistent_ptr_base.hpp"
-#include "libpmemobj++/detail/specialization.hpp"
-#include "libpmemobj++/pool.hpp"
-#include "libpmemobj.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/persistent_ptr_base.hpp>
+#include <libpmemobj++/detail/specialization.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj.h>
 
 namespace pmem
 {

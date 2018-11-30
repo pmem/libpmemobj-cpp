@@ -35,7 +35,7 @@
 
 #include "unittest.hpp"
 
-#include "libpmemobj++/p.hpp"
+#include <libpmemobj++/p.hpp>
 
 namespace nvobj = pmem::obj;
 

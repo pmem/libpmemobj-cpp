@@ -40,8 +40,8 @@
 
 #include <memory>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/volatile.hpp"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/volatile.hpp>
 
 namespace pmem
 {

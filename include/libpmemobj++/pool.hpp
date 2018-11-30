@@ -42,10 +42,10 @@
 #include <string>
 #include <sys/stat.h>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/pexceptions.hpp"
-#include "libpmemobj++/p.hpp"
-#include "libpmemobj/pool_base.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/p.hpp>
+#include <libpmemobj/pool_base.h>
 
 namespace pmem
 {

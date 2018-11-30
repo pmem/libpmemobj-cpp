@@ -264,4 +264,8 @@ add_test_generic(vector_ctor_default_nopmem none)
 add_test_generic(vector_ctor_default_nopmem memcheck)
 add_test_generic(vector_ctor_default_nopmem pmemcheck)
 
+build_test(vector_ctor_default_notx vector_ctor_default_notx/vector_ctor_default_notx.cpp)
+add_test_generic(vector_ctor_default_notx none)
+add_test_generic(vector_ctor_default_notx memcheck)
+
 add_subdirectory(external)

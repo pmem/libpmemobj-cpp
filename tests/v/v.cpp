@@ -61,6 +61,10 @@ struct foo {
 struct bar {
 	nvobj_exp::v<foo> vfoo;
 
+	nvobj_exp::v<int> vi;
+	nvobj_exp::v<int> vi2;
+	nvobj_exp::v<char> vc;
+
 	bar()
 	{
 	}
@@ -79,6 +83,49 @@ test_init(nvobj::pool<root> &pop)
 {
 	UT_ASSERTeq(pop.root()->f.get().counter, TEST_VALUE);
 	UT_ASSERTeq(pop.root()->bar_ptr->vfoo.get().counter, TEST_VALUE);
+}
+
+/*
+ * test_conversion -- test v conversion operator
+ */
+void
+test_conversion(nvobj::pool<root> &pop)
+{
+	auto r = pop.root()->bar_ptr;
+
+	r->vi = 2;
+	r->vc = 2;
+
+	UT_ASSERT(r->vi == r->vc);
+	UT_ASSERT(r->vi == 2);
+	UT_ASSERT(2 == r->vi);
+	UT_ASSERT(r->vi - 2 == 0);
+}
+
+/*
+ * test_operators-- test v assignment operators
+ */
+void
+test_operators(nvobj::pool<root> &pop)
+{
+	auto r = pop.root()->bar_ptr;
+
+	r->vi = 2;
+	r->vc = 3;
+
+	UT_ASSERT(r->vi != r->vc);
+	r->vi = r->vc;
+	UT_ASSERT(r->vi == r->vc);
+
+	r->vi = 2;
+	r->vi2 = 3;
+	std::swap(r->vi, r->vi2);
+	UT_ASSERT(r->vi == 3);
+	UT_ASSERT(r->vi2 == 2);
+
+	r->vi2 = 2;
+	r->vi = r->vi2;
+	UT_ASSERT(r->vi == 2);
 }
 }
 
@@ -113,6 +160,8 @@ main(int argc, char *argv[])
 	pop = nvobj::pool<struct root>::open(path, LAYOUT);
 
 	test_init(pop);
+	test_conversion(pop);
+	test_operators(pop);
 
 	pop.close();
 

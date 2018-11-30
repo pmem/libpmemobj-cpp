@@ -35,7 +35,7 @@
  */
 #include "unittest.hpp"
 
-#include "libpmemobj++/detail/common.hpp"
+#include <libpmemobj++/detail/common.hpp>
 
 void
 test_next_pow_2()

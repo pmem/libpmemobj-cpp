@@ -38,8 +38,8 @@
 #ifndef LIBPMEMOBJ_CPP_SHARED_MUTEX_HPP
 #define LIBPMEMOBJ_CPP_SHARED_MUTEX_HPP
 
-#include "libpmemobj/thread.h"
-#include "libpmemobj/tx_base.h"
+#include <libpmemobj/thread.h>
+#include <libpmemobj/tx_base.h>
 
 namespace pmem
 {

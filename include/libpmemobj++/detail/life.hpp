@@ -42,7 +42,7 @@
 #include <type_traits>
 #include <utility>
 
-#include "libpmemobj++/detail/array_traits.hpp"
+#include <libpmemobj++/detail/array_traits.hpp>
 
 namespace pmem
 {

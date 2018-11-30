@@ -41,9 +41,9 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/specialization.hpp"
-#include "libpmemobj.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/specialization.hpp>
+#include <libpmemobj.h>
 
 /* Windows has a max macro which collides with std::numeric_limits::max */
 #if defined(max) && defined(_WIN32)

@@ -41,12 +41,12 @@
 #include <algorithm>
 #include <functional>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/experimental/contiguous_iterator.hpp"
-#include "libpmemobj++/experimental/slice.hpp"
-#include "libpmemobj++/persistent_ptr.hpp"
-#include "libpmemobj++/pext.hpp"
-#include "libpmemobj.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/experimental/contiguous_iterator.hpp>
+#include <libpmemobj++/experimental/slice.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pext.hpp>
+#include <libpmemobj.h>
 
 namespace pmem
 {

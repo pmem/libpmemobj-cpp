@@ -41,9 +41,9 @@
 #include <cstdint>
 #include <type_traits>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/specialization.hpp"
-#include "libpmemobj.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/specialization.hpp>
+#include <libpmemobj.h>
 
 /* Windows has a max macro which collides with std::numeric_limits::max */
 #if defined(max) && defined(_WIN32)
@@ -331,12 +331,6 @@ protected:
 	/* The underlying PMEMoid of the held object. */
 	PMEMoid oid;
 
-	/*
-	 * C++ persistent memory support has following type limitations:
-	 * en.cppreference.com/w/cpp/types/is_polymorphic
-	 * en.cppreference.com/w/cpp/types/is_default_constructible
-	 * en.cppreference.com/w/cpp/types/is_destructible
-	 */
 	void
 	verify_type()
 	{

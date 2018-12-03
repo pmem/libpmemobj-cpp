@@ -37,9 +37,9 @@
 #ifndef LIBPMEMOBJ_CPP_UTILS_HPP
 #define LIBPMEMOBJ_CPP_UTILS_HPP
 
-#include "libpmemobj++/detail/pexceptions.hpp"
-#include "libpmemobj++/persistent_ptr.hpp"
-#include "libpmemobj/base.h"
+#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj/base.h>
 
 namespace pmem
 {

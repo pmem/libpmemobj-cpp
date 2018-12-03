@@ -35,8 +35,8 @@
  *			which can be triggered using PMEMOBJ_COW env variable
  */
 
-#include "libpmemobj++/persistent_ptr.hpp"
-#include "libpmemobj++/pool.hpp"
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
 
 #include <iostream>
 #include <string>

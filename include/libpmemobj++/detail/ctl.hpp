@@ -44,7 +44,7 @@
 #include <cerrno>
 #include <cstring>
 
-#include "libpmemobj++/detail/pexceptions.hpp"
+#include <libpmemobj++/detail/pexceptions.hpp>
 
 namespace pmem
 {

@@ -36,7 +36,7 @@
 
 #include "unittest.hpp"
 
-#include "libpmemobj++/detail/iterator_traits.hpp"
+#include <libpmemobj++/detail/iterator_traits.hpp>
 
 void
 test_is_type_of_iterator()

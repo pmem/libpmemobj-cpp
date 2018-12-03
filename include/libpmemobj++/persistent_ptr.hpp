@@ -43,11 +43,11 @@
 #include <memory>
 #include <ostream>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/persistent_ptr_base.hpp"
-#include "libpmemobj++/detail/specialization.hpp"
-#include "libpmemobj++/pool.hpp"
-#include "libpmemobj.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/persistent_ptr_base.hpp>
+#include <libpmemobj++/detail/specialization.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj.h>
 
 namespace pmem
 {
@@ -89,11 +89,41 @@ public:
  *
  * persistent_ptr implements a smart ptr. It encapsulates the PMEMoid
  * fat pointer and provides member access, dereference and array
- * access operators. The persistent_ptr is not designed to work with polymorphic
+ * access operators.
+ *
+ * Template parameter type has following requirements:
+ * - Is not polymorphic
+ * - Has no non-static data members of reference type
+ * - Satisfies Destructible requirement:
+ *   https://en.cppreference.com/w/cpp/named_req/Destructible
+ * - All non-static data members and base classes follows the same requirements
+ *
+ * Even if all of the above requirements are met, type representation may vary
+ * depending on ABI and compiler optimizations (as stated in [class.mem]: "the
+ * order of allocation of non-static data members with different access control
+ * is unspecified"). To enforce the same layout for all ABIs and optimization
+ * levels type should satisfy StandardLayoutType requirement.
+ *
+ * If persistent_ptr is used with array type, additional requirement is:
+ * - Element type must be default constructible
+ *
+ * The persistent_ptr is not designed to work with polymorphic
  * types, as they have runtime RTTI info embedded, which is implementation
  * specific and thus not consistently rebuildable. Such constructs as
  * polymorphic members or members of a union defined within a class held in
  * a persistent_ptr will also yield undefined behavior.
+ *
+ * C++ standard states that lifetime of an object is a runtime property
+ * [basic.lifetime]. Conditions which must be fulfilled for object's lifetime
+ * to begin, imply that using any non-trivially constructible object with
+ * persistent_ptr is undefined behaviour. This is being partially addressed by
+ * the following proposal:
+ * https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/bk8esqk-Qoo
+ *
+ * Another caveat is that snapshotting elements in a transaction and performing
+ * rollback uses memcpy internally. Using memcpy on an object in C++ is allowed
+ * by the standard only if the type satisfies TriviallyCopyable requirement.
+ *
  * This type does NOT manage the life-cycle of the object. The typical usage
  * example would be:
  * @snippet doc_snippets/persistent.cpp persistent_ptr_example

@@ -41,10 +41,10 @@
 #include <functional>
 #include <string>
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/pexceptions.hpp"
-#include "libpmemobj++/pool.hpp"
-#include "libpmemobj/tx_base.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj/tx_base.h>
 
 namespace pmem
 {

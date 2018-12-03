@@ -38,12 +38,12 @@
 #ifndef LIBPMEMOBJ_CPP_ALLOCATOR_HPP
 #define LIBPMEMOBJ_CPP_ALLOCATOR_HPP
 
-#include "libpmemobj++/detail/common.hpp"
-#include "libpmemobj++/detail/life.hpp"
-#include "libpmemobj++/detail/pexceptions.hpp"
-#include "libpmemobj++/persistent_ptr.hpp"
-#include "libpmemobj++/pext.hpp"
-#include "libpmemobj.h"
+#include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/life.hpp>
+#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pext.hpp>
+#include <libpmemobj.h>
 
 namespace pmem
 {

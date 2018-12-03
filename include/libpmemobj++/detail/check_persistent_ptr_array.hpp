@@ -40,7 +40,7 @@
 
 #include <stddef.h>
 
-#include "libpmemobj++/persistent_ptr.hpp"
+#include <libpmemobj++/persistent_ptr.hpp>
 
 namespace pmem
 {

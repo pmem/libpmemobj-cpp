@@ -60,7 +60,7 @@ namespace obj
  * Transactionally allocate and construct an array of objects of type T.
  *
  * This function can be used to *transactionally* allocate an array.
- * Cannot be used for simple objects.
+ * This overload only participates in overload resolution if T is an array.
  *
  * @param[in] N the number of array elements.
  *
@@ -114,7 +114,7 @@ make_persistent(std::size_t N)
  * Transactionally allocate and construct an array of objects of type T.
  *
  * This function can be used to *transactionally* allocate an array.
- * Cannot be used for simple objects.
+ * This overload only participates in overload resolution if T is an array.
  *
  * @return persistent_ptr<T[N]> on success
  *
@@ -161,7 +161,7 @@ make_persistent()
  *
  * This function can be used to *transactionally* free an array of
  * objects. Calls the objects' destructors before freeing memory.
- * Cannot be used for single objects.
+ * This overload only participates in overload resolution if T is an array.
  *
  * @param[in,out] ptr persistent pointer to an array of objects.
  * @param[in] N the size of the array.
@@ -197,7 +197,7 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
  *
  * This function can be used to *transactionally* free an array of
  * objects. Calls the objects' destructors before freeing memory.
- * Cannot be used for single objects.
+ * This overload only participates in overload resolution if T is an array.
  *
  * @param[in,out] ptr persistent pointer to an array of objects.
  *

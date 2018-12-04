@@ -65,23 +65,16 @@ namespace experimental
  */
 template <typename T>
 class v {
+	using this_type = v<T>;
+
+	template <typename N>
+	friend class v;
 
 public:
 	/**
-	 * Value constructor.
-	 *
-	 * Directly assigns a value to the underlying storage.
-	 *
-	 * @param _val const reference to the value to be assigned.
-	 */
-	v(const T &_val) noexcept : vlt{0}, val{_val}
-	{
-	}
-
-	/**
 	 * Defaulted constructor.
 	 */
-	v() noexcept : vlt{0}, val()
+	v() noexcept : vlt{0}
 	{
 	}
 
@@ -91,7 +84,24 @@ public:
 	v &
 	operator=(const v &rhs)
 	{
-		this_type(rhs).swap(*this);
+		/* make sure object is initialized */
+		(void)get();
+
+		val = rhs.val;
+
+		return *this;
+	}
+
+	/**
+	 * Assignment operator.
+	 */
+	v &
+	operator=(const T &rhs)
+	{
+		/* make sure object is initialized */
+		(void)get();
+
+		val = rhs;
 
 		return *this;
 	}
@@ -107,7 +117,10 @@ public:
 	v &
 	operator=(const v<Y> &rhs)
 	{
-		this_type(rhs).swap(*this);
+		/* make sure object is initialized */
+		(void)get();
+
+		val = rhs.val;
 
 		return *this;
 	}
@@ -135,7 +148,7 @@ public:
 	/**
 	 * Conversion operator back to the underlying type.
 	 */
-	operator T() const noexcept
+	operator T() noexcept
 	{
 		return this->get();
 	}
@@ -146,6 +159,9 @@ public:
 	void
 	swap(v &other)
 	{
+		/* make sure object is initialized */
+		(void)get();
+
 		std::swap(this->val, other.val);
 	}
 

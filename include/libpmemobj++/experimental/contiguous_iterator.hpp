@@ -42,7 +42,7 @@
 #include <cassert>
 #include <functional>
 
-#include "libpmemobj++/detail/common.hpp"
+#include <libpmemobj++/detail/common.hpp>
 
 namespace pmem
 {

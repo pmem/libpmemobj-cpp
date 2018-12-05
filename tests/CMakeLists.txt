@@ -254,4 +254,18 @@ else()
 	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 endif()
 
+build_test(vector_private vector_private/vector_private.cpp)
+add_test_generic(vector_private none)
+add_test_generic(vector_private memcheck)
+add_test_generic(vector_private pmemcheck)
+
+build_test(vector_ctor_default_nopmem vector_ctor_default_nopmem/vector_ctor_default_nopmem.cpp)
+add_test_generic(vector_ctor_default_nopmem none)
+add_test_generic(vector_ctor_default_nopmem memcheck)
+add_test_generic(vector_ctor_default_nopmem pmemcheck)
+
+build_test(vector_ctor_default_notx vector_ctor_default_notx/vector_ctor_default_notx.cpp)
+add_test_generic(vector_ctor_default_notx none)
+add_test_generic(vector_ctor_default_notx memcheck)
+
 add_subdirectory(external)

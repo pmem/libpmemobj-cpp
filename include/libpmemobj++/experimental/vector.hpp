@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,30 +116,34 @@ public:
 	~vector();
 
 	/* Element access */
-	// reference at(size_type n);
-	// const_reference at(size_type n) const;
+	reference at(size_type n);
+	const_reference at(size_type n) const;
+	const_reference const_at(size_type n) const;
 	reference operator[](size_type n);
 	const_reference operator[](size_type n) const;
-	// reference front();
-	// const_reference front() const;
-	// reference back();
-	// const_reference back() const;
-	// pointer data();
-	// const_pointer data() const noexcept;
+	reference front();
+	const_reference front() const;
+	const_reference cfront() const;
+	reference back();
+	const_reference back() const;
+	const_reference cback() const;
+	pointer data();
+	const_pointer data() const noexcept;
+	const_pointer cdata() const noexcept;
 
 	/* Iterators */
 	iterator begin();
 	const_iterator begin() const noexcept;
-	// const_iterator cbegin() const noexcept;
+	const_iterator cbegin() const noexcept;
 	iterator end();
 	const_iterator end() const noexcept;
-	// const_iterator cend() const noexcept;
-	// reverse_iterator rbegin();
-	// const_reverse_iterator rbegin() const noexcept;
-	// const_reverse_iterator crbegin() const noexcept;
-	// reverse_iterator rend();
-	// const_reverse_iterator rend() const noexcept;
-	// const_reverse_iterator crend() const noexcept;
+	const_iterator cend() const noexcept;
+	reverse_iterator rbegin();
+	const_reverse_iterator rbegin() const noexcept;
+	const_reverse_iterator crbegin() const noexcept;
+	reverse_iterator rend();
+	const_reverse_iterator rend() const noexcept;
+	const_reverse_iterator crend() const noexcept;
 
 	/* Capacity */
 	constexpr bool empty() const noexcept;
@@ -446,6 +450,56 @@ vector<T>::~vector()
 }
 
 /**
+ * Access element at specific index with bounds checking and add it to a
+ * transaction.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw transaction_error if pos is not within the range of the container.
+ */
+template <typename T>
+typename vector<T>::reference
+vector<T>::at(size_type n)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	if (n >= _size)
+		throw std::out_of_range("vector::at");
+	detail::conditional_add_to_tx(&_data[n]);
+	return _data[n];
+}
+
+/**
+ * Access element at specific index with bounds checking.
+ *
+ * @throw std::out_of_range if pos is not within the range of the container.
+ */
+template <typename T>
+typename vector<T>::const_reference
+vector<T>::at(size_type n) const
+{
+	if (n >= _size)
+		throw std::out_of_range("vector::at");
+	return _data[n];
+}
+
+/**
+ * Access element at specific index with bounds checking. In contradiction to
+ * at(), const_at() will return const_reference not depending on the
+ * const-qualification of the object it is called on. std::vector doesn't
+ * provide const_at() method.
+ *
+ * @throw std::out_of_range if pos is not within the range of the container.
+ */
+template <typename T>
+typename vector<T>::const_reference
+vector<T>::const_at(size_type n) const
+{
+	if (n >= _size)
+		throw std::out_of_range("vector::at");
+	return _data[n];
+}
+
+/**
  * Access element at specific index and add it to a transaction.
  * No bounds checking is performed.
  *
@@ -480,14 +534,129 @@ typename vector<T>::const_reference vector<T>::operator[](size_type n) const
 }
 
 /**
- * Returns an iterator to the beginning.
- *
- * @return an iterator pointing to the first element in the vector.
+ * Access the first element and add this element to a transaction.
  *
  * @pre must be called in transaction scope.
  *
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
+ */
+template <typename T>
+typename vector<T>::reference
+vector<T>::front()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	detail::conditional_add_to_tx(&_data[0]);
+	return _data[0];
+}
+
+/**
+ * Access the first element.
+ */
+template <typename T>
+typename vector<T>::const_reference
+vector<T>::front() const
+{
+	return _data[0];
+}
+
+/**
+ * Access the first element. In contradiction to front(), cfront() will return
+ * const_reference not depending on the const-qualification of the object it is
+ * called on. std::vector doesn't provide cfront() method.
+ */
+template <typename T>
+typename vector<T>::const_reference
+vector<T>::cfront() const
+{
+	return _data[0];
+}
+
+/**
+ * Access the last element and add this element to a transaction.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::transaction_error when adding the object to the transaction
+ * failed.
+ */
+template <typename T>
+typename vector<T>::reference
+vector<T>::back()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	detail::conditional_add_to_tx(&_data[size() - 1]);
+	return _data[size() - 1];
+}
+
+/**
+ * Access the last element.
+ */
+template <typename T>
+typename vector<T>::const_reference
+vector<T>::back() const
+{
+	return _data[size() - 1];
+}
+
+/**
+ * Access the last element. In contradiction to back(), cback() will return
+ * const_reference not depending on the const-qualification of the object it is
+ * called on. std::vector doesn't provide cback() method.
+ */
+template <typename T>
+typename vector<T>::const_reference
+vector<T>::cback() const
+{
+	return _data[size() - 1];
+}
+
+/**
+ * Returns raw pointer to the underlying data and adds entire array to a
+ * transaction.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::transaction_error when adding the object to the transaction
+ * failed.
+ */
+template <typename T>
+typename vector<T>::pointer
+vector<T>::data()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	detail::conditional_add_to_tx(this);
+	return _data.get();
+}
+
+/**
+ * Returns const raw pointer to the underlying data.
+ */
+template <typename T>
+typename vector<T>::const_pointer
+vector<T>::data() const noexcept
+{
+	return _data.get();
+}
+
+/**
+ * Returns const raw pointer to the underlying data. In contradiction to data(),
+ * cdata() will return const_pointer not depending on the const-qualification of
+ * the object it is called on. std::vector doesn't provide cdata() method.
+ */
+template <typename T>
+typename vector<T>::const_pointer
+vector<T>::cdata() const noexcept
+{
+	return _data.get();
+}
+
+/**
+ * Returns an iterator to the beginning.
+ *
+ * @return an iterator pointing to the first element in the vector.
+ *
+ * @pre must be called in transaction scope.
  */
 template <typename T>
 typename vector<T>::iterator
@@ -508,14 +677,21 @@ vector<T>::begin() const noexcept
 }
 
 /**
+ * Returns const iterator to the beginning. In contradiction to begin(),
+ * cbegin() will return const_iterator not depending on the const-qualification
+ * of the object it is called on.
+ */
+template <typename T>
+typename vector<T>::const_iterator
+vector<T>::cbegin() const noexcept
+{
+	return const_iterator(_data.get());
+}
+
+/**
  * Returns an iterator to past the end.
  *
- * @return iterator referring to the past-the-end element in the vector.
- *
  * @pre must be called in transaction scope.
- *
- * @throw pmem::transaction_error when adding the object to the transaction
- * failed.
  */
 template <typename T>
 typename vector<T>::iterator
@@ -538,9 +714,91 @@ vector<T>::end() const noexcept
 }
 
 /**
+ * Returns a const iterator to the end. In contradiction to end(), cend() will
+ * return const_iterator not depending on the const-qualification of the objcet
+ * it is called on.
+ */
+template <typename T>
+typename vector<T>::const_iterator
+vector<T>::cend() const noexcept
+{
+	return const_iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
+}
+
+/**
+ * Returns a reverse iterator to the beginning.
+ *
+ * @pre must be called in transaction scope.
+ */
+template <typename T>
+typename vector<T>::reverse_iterator
+vector<T>::rbegin()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	return reverse_iterator(end());
+}
+
+/**
+ * Returns a const reverse iterator to the beginning.
+ */
+template <typename T>
+typename vector<T>::const_reverse_iterator
+vector<T>::rbegin() const noexcept
+{
+	return const_reverse_iterator(cend());
+}
+
+/**
+ * Returns a const reverse iterator to the beginning. In contradiction to
+ * rbegin(), crbegin() will return const_reverse_iterator not depending on the
+ * const-qualification of the objcet it is called on.
+ */
+template <typename T>
+typename vector<T>::const_reverse_iterator
+vector<T>::crbegin() const noexcept
+{
+	return const_reverse_iterator(cend());
+}
+
+/**
+ * Returns a reverse iterator to the end.
+ *
+ * @pre must be called in transaction scope.
+ */
+template <typename T>
+typename vector<T>::reverse_iterator
+vector<T>::rend()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	return reverse_iterator(begin());
+}
+
+/**
+ * Returns a const reverse iterator to the end.
+ */
+template <typename T>
+typename vector<T>::const_reverse_iterator
+vector<T>::rend() const noexcept
+{
+	return const_reverse_iterator(cbegin());
+}
+
+/**
+ * Returns a const reverse iterator to the beginning. In contradiction to
+ * rend(), crend() will return const_reverse_iterator not depending on the
+ * const-qualification of the objcet it is called on.
+ */
+template <typename T>
+typename vector<T>::const_reverse_iterator
+vector<T>::crend() const noexcept
+{
+	return const_reverse_iterator(cbegin());
+}
+
+/**
  * Checks whether the container is empty.
  *
- * @return true if container is empty, 0 otherwise.
+ * @return true if container is empty, false otherwise.
  */
 template <typename T>
 constexpr bool

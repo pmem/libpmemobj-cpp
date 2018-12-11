@@ -6,75 +6,95 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "default_constructible_only.hpp"
+#include "unittest.hpp"
 
-// explicit vector(size_type n);
+#include <cstring>
 
-#include <cassert>
-#include <vector>
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include "DefaultOnly.h"
-#include "asan_testing.h"
-#include "min_allocator.h"
-#include "test_allocator.h"
-#include "test_macros.h"
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
+using vector_type = pmem_exp::vector<int>;
+using vector_type2 = pmem_exp::vector<default_constructible_only>;
+
+struct root {
+	nvobj::persistent_ptr<vector_type> test1;
+	nvobj::persistent_ptr<vector_type2> test2;
+};
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor
+ *
+ * Constructs container with n default constructed elements.
+ * Validates container's size and its elements for both fundamental and user
+ * defined types. Expects no exception is thrown.
+ */
 template <class C>
 void
-test2(typename C::size_type n,
-      typename C::allocator_type const &a = typename C::allocator_type())
+test(nvobj::pool<struct root> &pop, nvobj::persistent_ptr<C> &pptr,
+     typename C::size_type n)
 {
-#if TEST_STD_VER >= 14
-	C c(n, a);
-	LIBCPP_ASSERT(c.__invariants());
-	assert(c.size() == n);
-	assert(c.get_allocator() == a);
-	LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
-	for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e;
-	     ++i)
-		assert(*i == typename C::value_type());
-#else
-	((void)n);
-	((void)a);
-#endif
-}
+	/* construct */
+	try {
+		nvobj::transaction::run(
+			pop, [&] { pptr = nvobj::make_persistent<C>(n); });
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl
+			  << std::strerror(nvobj::transaction::error())
+			  << std::endl;
+		UT_ASSERT(0);
+	}
+	/* validate */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERTeq(pptr->size(), n);
 
-template <class C>
-void
-test1(typename C::size_type n)
-{
-	C c(n);
-	LIBCPP_ASSERT(c.__invariants());
-	assert(c.size() == n);
-	assert(c.get_allocator() == typename C::allocator_type());
-	LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
-#if TEST_STD_VER >= 11
-	for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e;
-	     ++i)
-		assert(*i == typename C::value_type());
-#endif
-}
+			for (typename C::const_iterator i = pptr->begin(),
+							e = pptr->end();
+			     i != e; ++i)
+				UT_ASSERT(*i == typename C::value_type());
 
-template <class C>
-void
-test(typename C::size_type n)
-{
-	test1<C>(n);
-	test2<C>(n);
+			nvobj::delete_persistent<C>(pptr);
+		});
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl
+			  << std::strerror(nvobj::transaction::error())
+			  << std::endl;
+		UT_ASSERT(0);
+	}
 }
 
 int
-main()
+main(int argc, char *argv[])
 {
-	test<std::vector<int>>(50);
-	test<std::vector<DefaultOnly>>(500);
-	assert(DefaultOnly::count == 0);
-#if TEST_STD_VER >= 11
-	test<std::vector<int, min_allocator<int>>>(50);
-	test<std::vector<DefaultOnly, min_allocator<DefaultOnly>>>(500);
-	test2<std::vector<DefaultOnly, test_allocator<DefaultOnly>>>(
-		100, test_allocator<DefaultOnly>(23));
-	assert(DefaultOnly::count == 0);
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: construct_size",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto r = pop.root();
+
+	test<vector_type>(pop, r->test1, 50);
+
+	test<vector_type2>(pop, r->test2, 500);
+	UT_ASSERT(default_constructible_only::count == 0);
+
+	pop.close();
+
+	return 0;
 }

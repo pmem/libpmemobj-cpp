@@ -6,40 +6,82 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018-2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// vector(size_type n, const value_type& x);
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <cassert>
-#include <vector>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include "asan_testing.h"
-#include "min_allocator.h"
-#include "test_allocator.h"
-#include "test_macros.h"
+using vector_type = pmem_exp::vector<int>;
 
+struct root {
+	nvobj::persistent_ptr<vector_type> pptr;
+};
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor
+ *
+ * Constructs container with n copies of elements with custom value.
+ * Validates container's size and its elements. Expects no exception is thrown.
+ */
 template <class C>
 void
-test(typename C::size_type n, const typename C::value_type &x)
+test(nvobj::pool<struct root> &pop, typename C::size_type n)
 {
-	C c(n, x);
-	LIBCPP_ASSERT(c.__invariants());
-	assert(c.size() == n);
-	LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
-	for (typename C::const_iterator i = c.cbegin(), e = c.cend(); i != e;
-	     ++i)
-		assert(*i == x);
+	const int val = 3;
+
+	auto r = pop.root();
+	/* construct */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->pptr = nvobj::make_persistent<C>(n, val);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	/* validate */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERTeq(r->pptr->size(), n);
+
+			for (typename C::const_iterator i = r->pptr->begin(),
+							e = r->pptr->end();
+			     i != e; ++i)
+				UT_ASSERTeq(*i, val);
+
+			nvobj::delete_persistent<C>(r->pptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 }
 
 int
-main()
+main(int argc, char *argv[])
 {
-	test<std::vector<int>>(50, 3);
-	// Add 1 for implementations that dynamically allocate a container
-	// proxy.
-	test<std::vector<int, limited_allocator<int, 50 + 1>>>(50, 5);
-#if TEST_STD_VER >= 11
-	test<std::vector<int, min_allocator<int>>>(50, 3);
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: construct_size_value", PMEMOBJ_MIN_POOL,
+		S_IWUSR | S_IRUSR);
+
+	test<vector_type>(pop, 5);
+
+	pop.close();
+
+	return 0;
 }

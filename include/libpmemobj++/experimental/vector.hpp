@@ -405,10 +405,7 @@ vector<T>::_shrink(size_type size_new) noexcept
 	assert(size_new <= _size);
 
 	for (size_type i = size_new; i < _size; ++i)
-		// XXX: to remove static_cast when sign-detection in
-		// persistent_ptr will be available
-		detail::destroy<value_type>(
-			_data[static_cast<difference_type>(i)]);
+		detail::destroy<value_type>(_data[i]);
 	_size = size_new;
 }
 

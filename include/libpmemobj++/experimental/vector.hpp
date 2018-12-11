@@ -317,8 +317,8 @@ vector<T>::_dealloc()
  * @throw rethrows constructor exception.
  *
  * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre if initialized, range [end(), end() + count) must be snapshotted in
- * current transaction
+ * @pre if range [end(), end() + count) wasn't allocated in current transaction,
+ * it must be snapshotted
  * @pre _capacity >= count + _size
  * @pre value is valid argument for value_type copy constructor
  *
@@ -352,8 +352,8 @@ vector<T>::_grow(size_type count, const_reference value)
  * @throw rethrows constructor exception.
  *
  * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre if initialized, range [end(), end() + std::distance(first, last)) must
- * be snapshotted in current transaction
+ * @pre if range [end(), end() + std::distance(first, last)) wasn't allocated
+ * in current transaction, it must be snapshotted
  * @pre _capacity >= std::distance(first, last) + _size
  * @pre InputIt is InputIterator
  * @pre InputIt::reference is valid argument for value_type copy constructor
@@ -390,7 +390,8 @@ vector<T>::_grow(InputIt first, InputIt last)
  * @param[in] size_new new size
  *
  * @pre pmemobj_tx_stage() == TX_STAGE_WORK
- * @pre if initialized, range [begin(), end()) must be snapshotted in current
+ * @pre if range [begin(), end()) wasn't allocated in current transaction, it
+ * must be snapshotted
  * transaction
  * @pre size_new <= _size
  *

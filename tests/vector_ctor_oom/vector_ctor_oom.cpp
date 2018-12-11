@@ -32,14 +32,12 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
 
 #include <cstring>
+#include <vector>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
@@ -56,18 +54,90 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 {
 	bool exception_thrown = false;
 	try {
-		nvobj::persistent_ptr<vector_type> pptr_v = nullptr;
 		nvobj::transaction::run(pop, [&] {
-			pptr_v = pmemobj_tx_alloc(
-				sizeof(vector_type),
-				pmem::detail::type_num<vector_type>());
-			if (pptr_v == nullptr)
-				UT_ASSERT(0);
+			while (1) {
+				pmem::obj::make_persistent<vector_type>();
+			}
 		});
-		pmem::detail::create<vector_type>(&*pptr_v);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_alloc_error &) {
 		exception_thrown = true;
 	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector range constructor.
+ *
+ * Call range constructor out of transaction scope. Expect
+ * pmem:transaction_error exception is thrown.
+ */
+void
+test_iter_iter_ctor(nvobj::pool<struct root> &pop, size_t size)
+{
+	static std::vector<int> vec(size * 2);
+
+	bool exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pmem::obj::make_persistent<vector_type>(std::begin(vec),
+								std::end(vec));
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &) {
+		exception_thrown = true;
+	} catch (std::exception &) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * default values.
+ *
+ * Call fill constructor out of transaction scope. Expect
+ * pmem:transaction_error exception is thrown.
+ */
+void
+test_size_ctor(nvobj::pool<struct root> &pop, size_t size)
+{
+	bool exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pmem::obj::make_persistent<vector_type>(size * 2);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &) {
+		exception_thrown = true;
+	} catch (std::exception &) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * custom values.
+ *
+ * Call fill constructor out of transaction scope.
+ * Expect pmem:transaction_error exception is thrown.
+ */
+void
+test_size_value_ctor(nvobj::pool<struct root> &pop, size_t size)
+{
+	bool exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pmem::obj::make_persistent<vector_type>(size * 2, 1);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &) {
+		exception_thrown = true;
+	} catch (std::exception &) {
 		UT_ASSERT(0);
 	}
 	UT_ASSERT(exception_thrown);
@@ -77,16 +147,22 @@ int
 main(int argc, char *argv[])
 {
 	START();
+
 	if (argc < 2) {
 		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
 		return 1;
 	}
+
+	const auto pool_size = PMEMOBJ_MIN_POOL;
 	auto path = argv[1];
-	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: vector_ctor_default", PMEMOBJ_MIN_POOL,
-		S_IWUSR | S_IRUSR);
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: vector_ctor_oom",
+					  pool_size, S_IWUSR | S_IRUSR);
 
 	test_default_ctor(pop);
+	test_iter_iter_ctor(pop, pool_size);
+	test_size_ctor(pop, pool_size);
+	test_size_value_ctor(pop, pool_size);
 
 	pop.close();
 

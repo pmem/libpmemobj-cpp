@@ -52,8 +52,79 @@ test_default_ctor()
 {
 	bool exception_thrown = false;
 	try {
-		vector_type v_3 = {};
-		(void)v_3;
+		vector_type v = {};
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector range constructor.
+ *
+ * Call range constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_iter_iter_ctor()
+{
+	int a[] = {0, 1, 2, 3, 4, 5};
+
+	bool exception_thrown = false;
+	try {
+		vector_type v(std::begin(a), std::end(a));
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * default values.
+ *
+ * Call fill constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_size_ctor()
+{
+	bool exception_thrown = false;
+	try {
+		vector_type v(100);
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * custom values.
+ *
+ * Call fill constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_size_value_ctor()
+{
+	bool exception_thrown = false;
+	try {
+		vector_type v(100, 5);
+		(void)v;
+		UT_ASSERT(0);
 	} catch (pmem::pool_error &) {
 		exception_thrown = true;
 	} catch (...) {
@@ -66,12 +137,11 @@ int
 main(int argc, char *argv[])
 {
 	START();
-	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
-	}
 
 	test_default_ctor();
+	test_iter_iter_ctor();
+	test_size_ctor();
+	test_size_value_ctor();
 
 	return 0;
 }

@@ -150,12 +150,12 @@ public:
 	constexpr bool empty() const noexcept;
 	size_type size() const noexcept;
 	constexpr size_type max_size() const noexcept;
-	// void reserve(size_type capacity_new);
+	void reserve(size_type capacity_new);
 	size_type capacity() const noexcept;
-	// void shrink_to_fit();
+	void shrink_to_fit();
 
 	/* Modifiers */
-	// void clear() noexcept;
+	void clear() noexcept;
 	void free_data();
 	// iterator insert(const_iterator pos, const T &value);
 	// iterator insert(const_iterator pos, T &&value);
@@ -173,25 +173,29 @@ public:
 	// void push_back(const T& value);
 	// void push_back(T&& value);
 	// void pop_back();
-	// void resize(size_type count, T value = T());
-	// void resize(size_type count);
-	// void resize(size_type count, const value_type& value);
-	// void swap(vector &other);
+	void resize(size_type count);
+	void resize(size_type count, const value_type &value);
+	void swap(vector &other);
 
 private:
 	/* helper functions */
 	void _alloc(size_type size);
 	void _dealloc();
+	pool_base _get_pool() const noexcept;
 	void _grow(size_type count, const_reference value);
-	template <typename InputIt,
-		  typename std::enable_if<
-			  detail::is_input_iterator<InputIt>::value &&
-				  std::is_constructible<
-					  value_type,
-					  typename std::iterator_traits<
-						  InputIt>::reference>::value,
-			  InputIt>::type * = nullptr>
+	void _grow(size_type count);
+	template <
+		typename InputIt,
+		typename std::enable_if<
+			detail::is_input_iterator<InputIt>::value &&
+				(std::is_constructible<
+					 T,
+					 typename std::iterator_traits<
+						 InputIt>::reference>::value ||
+				 std::is_move_constructible<T>::value),
+			InputIt>::type * = nullptr>
 	void _grow(InputIt first, InputIt last);
+	void _realloc(size_type size);
 	void _shrink(size_type size_new) noexcept;
 
 	/* Underlying array */
@@ -226,8 +230,7 @@ bool operator>=(const vector<T> &lhs, const vector<T> &rhs);
 template <typename T>
 vector<T>::vector()
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	if (pop == nullptr)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -259,8 +262,7 @@ vector<T>::vector()
 template <typename T>
 vector<T>::vector(size_type count, const value_type &value)
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	if (pop == nullptr)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -292,8 +294,7 @@ vector<T>::vector(size_type count, const value_type &value)
 template <typename T>
 vector<T>::vector(size_type count)
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	if (pop == nullptr)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -303,14 +304,7 @@ vector<T>::vector(size_type count)
 	_data = nullptr;
 	_size = 0;
 	_alloc(detail::next_pow_2(count));
-	// XXX: after "capacity" methods will be merged, _grow() overload
-	// without parameters will be available. After that, following lines
-	// should be replaced with _grow()
-	pointer dest = _data.get();
-	const_pointer end = dest + count;
-	for (; dest != end; ++dest)
-		detail::create<value_type>(dest);
-	_size = count;
+	_grow(count);
 }
 
 /**
@@ -345,8 +339,7 @@ template <typename InputIt,
 		  InputIt>::type *>
 vector<T>::vector(InputIt first, InputIt last)
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	if (pop == nullptr)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -380,8 +373,7 @@ vector<T>::vector(InputIt first, InputIt last)
 template <typename T>
 vector<T>::vector(const vector &other)
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	if (pop == nullptr)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -415,8 +407,7 @@ vector<T>::vector(const vector &other)
 template <typename T>
 vector<T>::vector(vector &&other)
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	if (pop == nullptr)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
@@ -899,6 +890,36 @@ vector<T>::max_size() const noexcept
 }
 
 /**
+ * Increases the capacity of the vector to capacity_new. If capacity_new is
+ * greater than the current capacity(), new storage is allocated, otherwise the
+ * method does nothing. If capacity_new is greater than capacity(), all
+ * iterators, including the past-the-end iterator, and all references to the
+ * elements are invalidated. Otherwise, no iterators or references are
+ * invalidated.
+ *
+ * @param[in] capacity_new new capacity.
+ *
+ * @post capacity() == max(capacity(), capacity_new)
+ *
+ * @throw std::length_error if new_cap > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::reserve(size_type capacity_new)
+{
+	if (capacity_new <= _capacity)
+		return;
+
+	pool_base pb = _get_pool();
+	transaction::run(pb, [&] {
+		detail::conditional_add_to_tx(&_data[0], _size);
+		_realloc(capacity_new);
+	});
+}
+
+/**
  * @return number of elements that can be held in currently allocated storage
  */
 template <typename T>
@@ -906,6 +927,46 @@ typename vector<T>::size_type
 vector<T>::capacity() const noexcept
 {
 	return _capacity;
+}
+
+/**
+ * Requests transactional removal of unused capacity. New capacity will be set
+ * to current vector size. If reallocation occurs, all iterators, including the
+ * past the end iterator, and all references to the elements are invalidated.
+ * If no reallocation takes place, no iterators or references are invalidated.
+ *
+ * @post capacity() == size()
+ *
+ * @throw pmem::transaction_alloc_error when reallocating failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+void
+vector<T>::shrink_to_fit()
+{
+	size_type capacity_new = size();
+	if (capacity() == capacity_new)
+		return;
+
+	pool_base pb = _get_pool();
+	transaction::run(pb, [&] {
+		detail::conditional_add_to_tx(begin().get_ptr(), _size);
+		_realloc(capacity_new);
+	});
+}
+
+/**
+ * Clears the content of a vector in transaction.
+ *
+ * @post size() == 0
+ */
+template <typename T>
+void
+vector<T>::clear() noexcept
+{
+	pool_base pb = _get_pool();
+	transaction::run(pb, [&] { _shrink(0); });
 }
 
 /**
@@ -925,13 +986,96 @@ vector<T>::free_data()
 	if (_data == nullptr)
 		return;
 
-	auto pop = pmemobj_pool_by_ptr(this);
-	assert(pop != nullptr);
-
-	pool_base pb = pool_base(pop);
+	pool_base pb = _get_pool();
 	transaction::run(pb, [&] {
 		detail::conditional_add_to_tx(_data.get(), _size);
 		_dealloc();
+	});
+}
+
+/**
+ * Resizes the container to contain count elements. If the current size is
+ * greater than count, the container is reduced to its first count elements. If
+ * the current size is less than count, additional default-inserted elements are
+ * appended
+ *
+ * @param[in] count new size of the container
+ *
+ * @post capacity() == count
+ * @post size() == std::min(_size, count)
+ *
+ * @throw rethrows constructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::resize(size_type count)
+{
+	pool_base pb = _get_pool();
+	transaction::run(pb, [&] {
+		if (count <= _size) {
+			detail::conditional_add_to_tx(&_data[count],
+						      _size - count);
+			_shrink(count);
+		} else {
+			if (_capacity < count) {
+				detail::conditional_add_to_tx(&_data[0], _size);
+				_realloc(count);
+			}
+			_grow(count - _size);
+		}
+	});
+}
+
+/**
+ * Resizes the container to contain count elements. If the current size is
+ * greater than count, the container is reduced to its first count elements. If
+ * the current size is less than count, additional copies of value are appended.
+ *
+ * @param[in] count new size of the container.
+ * @param[in] value the value to initialize the new elements with.
+ *
+ * @post capacity() == count
+ * @post size() == std::min(_size, count)
+ *
+ * @throw rethrows constructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::resize(size_type count, const value_type &value)
+{
+	if (_capacity == count)
+		return;
+
+	pool_base pb = _get_pool();
+	transaction::run(pb, [&] {
+		if (count <= _size) {
+			detail::conditional_add_to_tx(&_data[count],
+						      _size - count);
+			_shrink(count);
+		} else {
+			if (_capacity < count) {
+				detail::conditional_add_to_tx(&_data[0], _size);
+				_realloc(count);
+			}
+			_grow(count - _size, value);
+		}
+	});
+}
+
+/**
+ * Transactionally exchanges the contents of the container with other.
+ */
+template <typename T>
+void
+vector<T>::swap(vector &other)
+{
+	pool_base pb = _get_pool();
+	transaction::run(pb, [&] {
+		std::swap(this->_data, other._data);
+		std::swap(this->_size, other._size);
+		std::swap(this->_capacity, other._capacity);
 	});
 }
 
@@ -1014,6 +1158,22 @@ vector<T>::_dealloc()
 }
 
 /**
+ * Private helper function.
+ *
+ * @return reference to pool_base object where vector resides.
+ *
+ * @pre underlying array must reside in persistent memory pool.
+ */
+template <typename T>
+pool_base
+vector<T>::_get_pool() const noexcept
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+	assert(pop != nullptr);
+	return pool_base(pop);
+}
+
+/**
  * Private helper function. Must be called during transaction. Assumes that
  * there is enough space for additional elements. Copy constructs elements at
  * the end of underlying array based on given parameters.
@@ -1047,6 +1207,37 @@ vector<T>::_grow(size_type count, const_reference value)
 
 /**
  * Private helper function. Must be called during transaction. Assumes that
+ * there is enough space for additional elements. Constructs default elements at
+ * the end of underlying array based on given parameters.
+ *
+ * @param[in] count number of elements to construct.
+ *
+ * @pre must be called in transaction scope.
+ * @pre if initialized, range [end(), end() + count) must be snapshotted in
+ * current transaction
+ * @pre capacity() >= count + size()
+ * @pre value is valid argument for value_type copy constructor
+ *
+ * @post size() == size() + count
+ *
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+void
+vector<T>::_grow(size_type count)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	assert(_capacity >= count + _size);
+
+	pointer dest = _data.get() + static_cast<size_type>(_size);
+	const_pointer end = dest + count;
+	for (; dest != end; ++dest)
+		detail::create<value_type>(dest);
+	_size += count;
+}
+
+/**
+ * Private helper function. Must be called during transaction. Assumes that
  * there is enough space for additional elements and input arguments satisfy
  * InputIterator requirements. Constructs elements in underlying array with the
  * contents of the range [first, last). The first and last arguments must
@@ -1071,10 +1262,11 @@ template <typename T>
 template <typename InputIt,
 	  typename std::enable_if<
 		  detail::is_input_iterator<InputIt>::value &&
-			  std::is_constructible<
-				  T,
-				  typename std::iterator_traits<
-					  InputIt>::reference>::value,
+			  (std::is_constructible<
+				   T,
+				   typename std::iterator_traits<
+					   InputIt>::reference>::value ||
+			   std::is_move_constructible<T>::value),
 		  InputIt>::type *>
 void
 vector<T>::_grow(InputIt first, InputIt last)
@@ -1087,7 +1279,49 @@ vector<T>::_grow(InputIt first, InputIt last)
 	pointer dest = _data.get() + static_cast<size_type>(_size);
 	_size += static_cast<size_type>(diff);
 	while (first != last)
-		detail::create<value_type>(dest++, *first++);
+		detail::create<value_type>(dest++, std::move(*first++));
+}
+
+/**
+ * Private helper function. Must be called during transaction. Allocates new
+ * memory for capacity_new number of elements and copies or moves old elements
+ * to new memory area. If the current size is greater than capacity_new, the
+ * container is reduced to its first capacity_new elements.
+ *
+ * param[in] capacity_new new capacity.
+ *
+ * @pre must be called in transaction scope.
+ * @pre if not initialized, range [begin(), end()) must be snapshotted in
+ * current transaction
+ *
+ * @post capacity() == capacity_new
+ *
+ * @throw rethrows constructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::_realloc(size_type capacity_new)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	iterator cache_begin = begin();
+	iterator cache_end = end();
+	auto _data_cache = _data;
+	_data = nullptr;
+	_size = _capacity = 0;
+	_alloc(capacity_new);
+	iterator grow_end = cache_begin;
+	std::advance(grow_end,
+		     std::min(capacity_new, static_cast<size_type>(_size)));
+	_grow(cache_begin, grow_end);
+
+	/* destruct and free cached data */
+	for (iterator it = cache_begin; it != cache_end; ++it)
+		detail::destroy<value_type>(*it);
+	if (pmemobj_tx_free(_data_cache.raw()) != 0)
+		throw transaction_free_error(
+			"failed to delete persistent memory object");
 }
 
 /**

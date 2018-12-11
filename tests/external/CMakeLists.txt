@@ -150,3 +150,21 @@ build_test(vector_libcxx_ctor_default libcxx/vector/vector.cons/construct_defaul
 add_test_default(vector_libcxx_ctor_default none)
 add_test_default(vector_libcxx_ctor_default pmemcheck)
 add_test_default(vector_libcxx_ctor_default memcheck)
+
+build_test(vector_libcxx_ctor_iter_iter libcxx/vector/vector.cons/construct_iter_iter.pass.cpp)
+add_test_default(vector_libcxx_ctor_iter_iter none)
+add_test_default(vector_libcxx_ctor_iter_iter pmemcheck)
+add_test_default(vector_libcxx_ctor_iter_iter memcheck)
+
+build_test(vector_libcxx_ctor_size libcxx/vector/vector.cons/construct_size.pass.cpp)
+add_test_default(vector_libcxx_ctor_size none)
+add_test_default(vector_libcxx_ctor_size pmemcheck)
+add_test_default(vector_libcxx_ctor_size memcheck)
+
+build_test(vector_libcxx_ctor_size_value libcxx/vector/vector.cons/construct_size_value.pass.cpp)
+add_test_default(vector_libcxx_ctor_size_value none)
+add_test_default(vector_libcxx_ctor_size_value pmemcheck)
+add_test_default(vector_libcxx_ctor_size_value memcheck)
+
+build_test(vector_libcxx_dtor_noexcept libcxx/vector/vector.cons/dtor_noexcept.pass.cpp)
+add_test_default(vector_libcxx_dtor_noexcept none)

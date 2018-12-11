@@ -100,6 +100,14 @@ test_conversion(nvobj::pool<root> &pop)
 	UT_ASSERT(r->vi == 2);
 	UT_ASSERT(2 == r->vi);
 	UT_ASSERT(r->vi - 2 == 0);
+
+	int &i1 = r->vi;
+	char &i2 = r->vc;
+
+	UT_ASSERT(i1 == i2);
+	i1 = 1;
+
+	UT_ASSERT(r->vi == i1);
 }
 
 /*

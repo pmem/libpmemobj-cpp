@@ -148,7 +148,7 @@ public:
 	/**
 	 * Conversion operator back to the underlying type.
 	 */
-	operator T() noexcept
+	operator T &() noexcept
 	{
 		return this->get();
 	}

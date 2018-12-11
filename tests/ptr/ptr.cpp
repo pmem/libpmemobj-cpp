@@ -245,6 +245,29 @@ test_ptr_transactional(nvobj::pool<root> &pop)
 void
 test_ptr_array(nvobj::pool<root> &pop)
 {
+	nvobj::persistent_ptr<int[]> parr_test_index;
+
+	try {
+		nvobj::make_persistent_atomic<int[]>(pop, parr_test_index,
+						     TEST_ARR_SIZE);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	/* check if index operator works with both signed and unsigned types */
+	for (std::ptrdiff_t i = 0; i < TEST_ARR_SIZE; ++i)
+		(void)parr_test_index[i];
+	for (std::size_t i = 0; i < TEST_ARR_SIZE; ++i)
+		(void)parr_test_index[i];
+	for (unsigned i = 0; i < TEST_ARR_SIZE; ++i)
+		(void)parr_test_index[i];
+	for (int i = 0; i < TEST_ARR_SIZE; ++i)
+		(void)parr_test_index[i];
+	for (long long i = 0; i < TEST_ARR_SIZE; ++i)
+		(void)parr_test_index[i];
+	for (unsigned long long i = 0; i < TEST_ARR_SIZE; ++i)
+		(void)parr_test_index[i];
+
 	nvobj::persistent_ptr<nvobj::p<int>[]> parr_vsize;
 
 	try {

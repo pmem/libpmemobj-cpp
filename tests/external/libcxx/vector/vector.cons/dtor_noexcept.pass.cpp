@@ -23,7 +23,7 @@ int
 main()
 {
 	/**
-	 * Test pmem::obj::experimental::vector fill destructor
+	 * Test pmem::obj::experimental::vector destructor
 	 *
 	 * Expects that destructor is not deleted and noexcept
 	 */

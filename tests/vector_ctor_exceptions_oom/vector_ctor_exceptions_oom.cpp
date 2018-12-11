@@ -32,44 +32,107 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
 
 #include <cstring>
+#include <vector>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
+
+const static size_t pool_size = PMEMOBJ_MIN_POOL;
+const static size_t test_val = pool_size * 2;
+
 using vector_type = pmem_exp::vector<int>;
 
+struct root {
+	nvobj::persistent_ptr<vector_type> pptr;
+};
+
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::experimental::vector range constructor.
  *
- * Call default constructor out of transaction scope. Expect
- * pmem:transaction_error exception is thrown.
+ * Call range constructor to exceed available memory of the pool. Expect
+ * pmem:transaction_alloc_error exception is thrown.
  */
 void
-test_default_ctor(nvobj::pool<struct root> &pop)
+test_iter_iter_ctor(nvobj::pool<struct root> &pop,
+		    nvobj::persistent_ptr<vector_type> &pptr)
+{
+	static std::vector<int> vec(test_val);
+
+	bool exception_thrown = false;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pptr = pmem::obj::make_persistent<vector_type>(
+				std::begin(vec), std::end(vec));
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(0, e);
+	}
+
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * default values.
+ *
+ * Call fill constructor to exceed available memory of the pool. Expect
+ * pmem:transaction_alloc_error exception is thrown.
+ */
+void
+test_size_ctor(nvobj::pool<struct root> &pop,
+	       nvobj::persistent_ptr<vector_type> &pptr)
 {
 	bool exception_thrown = false;
+
 	try {
-		nvobj::persistent_ptr<vector_type> pptr_v = nullptr;
 		nvobj::transaction::run(pop, [&] {
-			pptr_v = pmemobj_tx_alloc(
-				sizeof(vector_type),
-				pmem::detail::type_num<vector_type>());
-			if (pptr_v == nullptr)
-				UT_ASSERT(0);
+			pptr = pmem::obj::make_persistent<vector_type>(
+				test_val);
 		});
-		pmem::detail::create<vector_type>(&*pptr_v);
-	} catch (pmem::transaction_error &) {
-		exception_thrown = true;
-	} catch (...) {
 		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(0, e);
 	}
+
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * custom values.
+ *
+ * Call fill constructor to exceed available memory of the pool.
+ * Expect pmem:transaction_alloc_error exception is thrown.
+ */
+void
+test_size_value_ctor(nvobj::pool<struct root> &pop,
+		     nvobj::persistent_ptr<vector_type> &pptr)
+{
+	bool exception_thrown = false;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pptr = pmem::obj::make_persistent<vector_type>(test_val,
+								       1);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(0, e);
+	}
+
 	UT_ASSERT(exception_thrown);
 }
 
@@ -77,16 +140,22 @@ int
 main(int argc, char *argv[])
 {
 	START();
+
 	if (argc < 2) {
 		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
 		return 1;
 	}
+
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: vector_ctor_default", PMEMOBJ_MIN_POOL,
+		path, "VectorTest: vector_ctor_exceptions_oom", pool_size,
 		S_IWUSR | S_IRUSR);
 
-	test_default_ctor(pop);
+	auto pptr = pop.root()->pptr;
+
+	test_iter_iter_ctor(pop, pptr);
+	test_size_ctor(pop, pptr);
+	test_size_value_ctor(pop, pptr);
 
 	pop.close();
 

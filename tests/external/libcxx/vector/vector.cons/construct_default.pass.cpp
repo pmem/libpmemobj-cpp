@@ -63,10 +63,7 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 		nvobj::delete_persistent_atomic<vector_type>(r->v_pptr);
 		nvobj::delete_persistent_atomic<foo>(r->foo_pptr);
 	} catch (std::exception &e) {
-		std::cerr << e.what() << std::endl
-			  << std::strerror(nvobj::transaction::error())
-			  << std::endl;
-		UT_ASSERT(0);
+		UT_ASSERTexc(0, e);
 	}
 }
 

@@ -18,10 +18,6 @@
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-#include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
-
-#include <cstring>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
@@ -56,10 +52,7 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 		UT_ASSERT(r->foo_pptr->v_1.empty() == 1);
 		UT_ASSERT(r->foo_pptr->v_2.empty() == 1);
 	} catch (std::exception &e) {
-		std::cerr << e.what() << std::endl
-			  << std::strerror(nvobj::transaction::error())
-			  << std::endl;
-		UT_ASSERT(0);
+		UT_ASSERTexc(0, e);
 	}
 }
 

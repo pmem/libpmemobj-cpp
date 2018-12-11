@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //

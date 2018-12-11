@@ -112,7 +112,7 @@ struct TestSuccess {
 		}
 
 		try {
-			pmemobj_exp::slice<char *> bad_slice(data, data - 1);
+			pmemobj_exp::slice<char *> bad_slice(data + 1, data);
 			UT_ASSERT(0);
 		} catch (...) {
 		}

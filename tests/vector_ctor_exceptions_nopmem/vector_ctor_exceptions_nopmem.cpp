@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,12 +32,8 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/experimental/vector.hpp>
-#include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
 
 #include <cstring>
 
@@ -48,27 +44,91 @@ using vector_type = pmem_exp::vector<int>;
 /**
  * Test pmem::obj::experimental::vector default constructor.
  *
- * Call default constructor out of transaction scope. Expect
- * pmem:transaction_error exception is thrown.
+ * Call default constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
  */
 void
-test_default_ctor(nvobj::pool<struct root> &pop)
+test_default_ctor()
 {
 	bool exception_thrown = false;
 	try {
-		nvobj::persistent_ptr<vector_type> pptr_v = nullptr;
-		nvobj::transaction::run(pop, [&] {
-			pptr_v = pmemobj_tx_alloc(
-				sizeof(vector_type),
-				pmem::detail::type_num<vector_type>());
-			if (pptr_v == nullptr)
-				UT_ASSERT(0);
-		});
-		pmem::detail::create<vector_type>(&*pptr_v);
-	} catch (pmem::transaction_error &) {
-		exception_thrown = true;
-	} catch (...) {
+		vector_type v = {};
+		(void)v;
 		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector range constructor.
+ *
+ * Call range constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_iter_iter_ctor()
+{
+	int a[] = {0, 1, 2, 3, 4, 5};
+
+	bool exception_thrown = false;
+	try {
+		vector_type v(std::begin(a), std::end(a));
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * default values.
+ *
+ * Call fill constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_size_ctor()
+{
+	bool exception_thrown = false;
+	try {
+		vector_type v(100);
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector fill constructor with elements with
+ * custom values.
+ *
+ * Call fill constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_size_value_ctor()
+{
+	bool exception_thrown = false;
+	try {
+		vector_type v(100, 5);
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_ASSERTexc(e);
 	}
 	UT_ASSERT(exception_thrown);
 }
@@ -77,18 +137,11 @@ int
 main(int argc, char *argv[])
 {
 	START();
-	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
-	}
-	auto path = argv[1];
-	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: vector_ctor_default", PMEMOBJ_MIN_POOL,
-		S_IWUSR | S_IRUSR);
 
-	test_default_ctor(pop);
-
-	pop.close();
+	test_default_ctor();
+	test_iter_iter_ctor();
+	test_size_ctor();
+	test_size_value_ctor();
 
 	return 0;
 }

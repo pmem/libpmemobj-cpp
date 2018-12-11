@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,45 +33,87 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pool.hpp>
 
 #include <cstring>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
-using vector_type = pmem_exp::vector<int>;
+
+struct X {
+	static unsigned count;
+	nvobj::p<int> val;
+
+	X() : val(1)
+	{
+		++count;
+	};
+	~X()
+	{
+		--count;
+	};
+};
+
+unsigned X::count = 0;
+
+using vector_type = pmem_exp::vector<X>;
+
+struct root {
+	nvobj::persistent_ptr<vector_type> pptr;
+};
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::experimental::vector default destructor.
  *
- * Call default constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * Call default destructor out of transaction scope.
+ * Expects vector is empty and no exception is thrown.
  */
 void
-test_default_ctor()
+test_dtor(nvobj::pool<struct root> &pop)
 {
-	bool exception_thrown = false;
-	try {
-		vector_type v_3 = {};
-		(void)v_3;
-	} catch (pmem::pool_error &) {
-		exception_thrown = true;
-	} catch (...) {
-		UT_ASSERT(0);
+	auto r = pop.root();
+
+	using size_type = vector_type::size_type;
+	const size_type size = 100;
+	{
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->pptr = nvobj::make_persistent<vector_type>(
+					size);
+				UT_ASSERTeq(r->pptr->size(), X::count);
+				UT_ASSERTeq(X::count, size);
+			});
+		} catch (std::exception &e) {
+			UT_ASSERTexc(e);
+		}
+
+		r->pptr->~vector();
+
+		UT_ASSERT(r->pptr->empty());
+		UT_ASSERTeq(X::count, 0);
 	}
-	UT_ASSERT(exception_thrown);
 }
 
 int
 main(int argc, char *argv[])
 {
 	START();
+
 	if (argc < 2) {
 		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
 		return 1;
 	}
 
-	test_default_ctor();
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: vector_dtor",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	test_dtor(pop);
+
+	pop.close();
 
 	return 0;
 }

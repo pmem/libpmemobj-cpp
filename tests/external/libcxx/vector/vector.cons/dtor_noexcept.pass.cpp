@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -23,7 +23,7 @@ int
 main()
 {
 	/**
-	 * Test pmem::obj::experimental::vector fill destructor
+	 * Test pmem::obj::experimental::vector destructor
 	 *
 	 * Expects that destructor is not deleted and noexcept
 	 */

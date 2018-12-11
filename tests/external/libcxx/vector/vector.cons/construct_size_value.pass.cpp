@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -45,7 +45,7 @@ test(nvobj::pool<struct root> &pop, typename C::size_type n)
 			r->pptr = nvobj::make_persistent<C>(n, val);
 		});
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 	/* validate */
 	try {
@@ -60,7 +60,7 @@ test(nvobj::pool<struct root> &pop, typename C::size_type n)
 			nvobj::delete_persistent<C>(r->pptr);
 		});
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 }
 

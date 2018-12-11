@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,11 +122,10 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 		 0)))
 
 /* assertion with exception related string printed */
-#define UT_ASSERTexc(cnd, exception)                                           \
-	((void)((cnd) ||                                                       \
-		(UT_EXCEPTION(exception),                                      \
-		 UT_FATAL("%s:%d %s - assertion failure: %s", __FILE__,        \
-			  __LINE__, __func__, #cnd),                           \
+#define UT_ASSERTexc(exception)                                                \
+	((void)(UT_EXCEPTION(exception),                                       \
+		(UT_FATAL("%s:%d %s - assertion failure", __FILE__, __LINE__,  \
+			  __func__),                                           \
 		 0)))
 
 /* assertion with extra info printed if assertion

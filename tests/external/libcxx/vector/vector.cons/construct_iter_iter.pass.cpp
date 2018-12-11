@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -44,7 +44,7 @@ basic_test(nvobj::pool<struct root> &pop, Iterator first, Iterator last)
 			r->test1 = nvobj::make_persistent<C>(first, last);
 		});
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 	/* validate */
 	try {
@@ -61,7 +61,7 @@ basic_test(nvobj::pool<struct root> &pop, Iterator first, Iterator last)
 			nvobj::delete_persistent<C>(r->test1);
 		});
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 }
 
@@ -118,7 +118,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					It(arr1), It(std::end(arr1)));
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 		/* validate */
 		try {
@@ -129,7 +129,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					r->test2);
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 
 		/* construct */
@@ -139,7 +139,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					It(arr2), It(std::end(arr2)));
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 		/* validate */
 		try {
@@ -152,7 +152,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					r->test2);
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 	}
 	/* TEST_2 */
@@ -165,7 +165,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					It(arr1), It(std::end(arr1)));
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 		/* validate */
 		try {
@@ -177,7 +177,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					r->test3);
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 
 		/* construct */
@@ -187,7 +187,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					It(arr2), It(std::end(arr2)));
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 		/* validate */
 		try {
@@ -201,7 +201,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 					r->test3);
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 	}
 }

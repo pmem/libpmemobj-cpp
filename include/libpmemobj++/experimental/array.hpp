@@ -123,89 +123,132 @@ struct array {
 	array(array &&) = default;
 
 	/**
-	 * Copy assignment operator - adds 'this' to a transaction.
+	 * Copy assignment operator.
+	 * Starts a transaction and snapshots entire array before assignment.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	array &
 	operator=(const array &other)
 	{
-		detail::conditional_add_to_tx(this);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
 
-		std::copy(other.cbegin(), other.cend(), _get_data());
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			std::copy(other.cbegin(), other.cend(), _get_data());
+		});
+
 		return *this;
 	}
 
 	/**
-	 * Move assignment operator - adds 'this' to a transaction.
+	 * Move assignment operator.
+	 * Starts a transaction and snapshots entire array before assignment.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem
 	 */
 	array &
 	operator=(array &&other)
 	{
-		detail::conditional_add_to_tx(this);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
 
-		std::copy(other.cbegin(), other.cend(), _get_data());
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			std::copy(other.cbegin(), other.cend(), _get_data());
+		});
+
 		return *this;
 	}
 
 	/**
-	 * Copy assignment operator which takes std::array - adds 'this'
-	 * to a transaction.
+	 * Copy assignment operator which takes std::array.
+	 * Starts a transaction and snapshots entire array before assignment.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	array &
 	operator=(const std::array<T, N> &other)
 	{
-		detail::conditional_add_to_tx(this);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
 
-		std::copy(other.cbegin(), other.cend(), _get_data());
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			std::copy(other.cbegin(), other.cend(), _get_data());
+		});
+
 		return *this;
 	}
 
 	/**
-	 * Move assignment operator which takes std::array - adds 'this'
-	 * to a transaction.
+	 * Move assignment operator which takes std::array.
+	 * Starts a transaction and snapshots entire array before assignment.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	array &
 	operator=(std::array<T, N> &&other)
 	{
-		detail::conditional_add_to_tx(this);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
 
-		std::copy(other.cbegin(), other.cend(), _get_data());
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			std::copy(other.begin(), other.end(), _get_data());
+		});
+
 		return *this;
 	}
 
 	/**
-	 * Move assignment operator which takes std::initializer_list - adds
-	 * 'this' to a transaction.
+	 * Copy assignment operator which takes std::initializer_list.
+	 * Starts a transaction and snapshots entire array before assignment.
+	 *
+	 * The purpose of this operator is to allow following syntax (which
+	 * would otherwise be ambiguous): 'array<int, 3> a; a = {1,2,3};'
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	array &
 	operator=(std::initializer_list<T> other)
 	{
-		detail::conditional_add_to_tx(this);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
 
-		std::copy(other.begin(), other.end(), _get_data());
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			std::copy(other.begin(), other.end(), _get_data());
+		});
+
 		return *this;
 	}
 
 	/**
 	 * Access element at specific index and add it to a transaction.
 	 *
+	 * @pre must be called in transaction scope.
+	 *
 	 * @throw std::out_of_range if index is out of bound.
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	reference
 	at(size_type n)
@@ -213,7 +256,7 @@ struct array {
 		if (n >= N)
 			throw std::out_of_range("array::at");
 
-		detail::conditional_add_to_tx(_get_data() + n);
+		detail::snapshot(_get_data() + n);
 
 		return _get_data()[n];
 	}
@@ -233,15 +276,38 @@ struct array {
 	}
 
 	/**
+	 * Access element at specific index.
+	 */
+	const_reference
+	const_at(size_type n) const
+	{
+		return _get_data()[n];
+	}
+
+	/**
+	 * Element access operator, which does NOT snapshot data.
+	 *
+	 * It can be used to access data outside of a transaction.
+	 */
+	reference
+	unsafe_at(size_type n)
+	{
+		return _get_data()[n];
+	}
+
+	/**
 	 * Access element at specific index and add it to a transaction.
 	 * No bounds checking is performed.
 	 *
+	 * @pre must be called in transaction scope.
+	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	reference operator[](size_type n)
 	{
-		detail::conditional_add_to_tx(_get_data() + n);
+		detail::snapshot(_get_data() + n);
 
 		return _get_data()[n];
 	}
@@ -259,13 +325,16 @@ struct array {
 	 * Returns raw pointer to the underlying data
 	 * and adds entire array to a transaction.
 	 *
+	 * @pre must be called in transaction scope.
+	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	T *
 	data()
 	{
-		detail::conditional_add_to_tx(this);
+		detail::snapshot(this);
 		return _get_data();
 	}
 
@@ -401,26 +470,32 @@ struct array {
 	/**
 	 * Access the first element and add this element to a transaction.
 	 *
+	 * @pre must be called in transaction scope.
+	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	reference
 	front()
 	{
-		detail::conditional_add_to_tx(_get_data());
+		detail::snapshot(_get_data());
 		return _get_data()[0];
 	}
 
 	/**
 	 * Access the last element and add this element to a transaction.
 	 *
+	 * @pre must be called in transaction scope.
+	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	reference
 	back()
 	{
-		detail::conditional_add_to_tx(&_get_data()[size() - 1]);
+		detail::snapshot(&_get_data()[size() - 1]);
 		return _get_data()[size() - 1];
 	}
 
@@ -455,8 +530,11 @@ struct array {
 	 *
 	 * @return slice from start to start + n.
 	 *
+	 * @pre must be called in transaction scope.
+	 *
 	 * @throw std::out_of_range if any element of the range would be
 	 *	outside of the array.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	slice<range_snapshotting_iterator<T>>
 	range(size_type start, size_type n,
@@ -546,35 +624,53 @@ struct array {
 	}
 
 	/**
-	 * Adds entire array to a transaction and fills array with
-	 * specified value.
+	 * Fills array with specified value.
+	 * Starts a transaction and snapshots entire array before modification.
+	 *
+	 * @pre must be called in transaction scope.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	void
 	fill(const_reference value)
 	{
-		detail::conditional_add_to_tx(this);
-		std::fill(_get_data(), _get_data() + size(), value);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
+
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			std::fill(_get_data(), _get_data() + size(), value);
+		});
 	}
 
 	/**
 	 * Swaps content with other array's content.
-	 * Adds both arrays to a transaction.
+	 * Starts a transaction and snapshots both array before swapping.
+	 *
+	 * @pre must be called in transaction scope.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem.
 	 */
 	template <std::size_t Size = N>
 	typename std::enable_if<Size != 0>::type
 	swap(array &other)
 	{
-		detail::conditional_add_to_tx(this);
-		detail::conditional_add_to_tx(&other);
+		pool_base pop(pmemobj_pool_by_ptr(this));
+		if (pop.handle() == nullptr)
+			throw pool_error("Object is not on pmem");
 
-		std::swap_ranges(_get_data(), _get_data() + size(),
-				 other._get_data());
+		transaction::run(pop, [&] {
+			detail::snapshot(this);
+			detail::snapshot(&other);
+
+			std::swap_ranges(_get_data(), _get_data() + size(),
+					 other._get_data());
+		});
 	}
 
 	/**

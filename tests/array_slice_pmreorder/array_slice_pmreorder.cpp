@@ -53,12 +53,20 @@ namespace nvobj = pmem::obj;
 
 struct Data {
 	void
-	increase_elements()
+	increase_consistent()
 	{
 		auto slice = array.range(0, array.size());
 
 		for (auto &e : slice) {
 			e++;
+		}
+	}
+
+	void
+	increase_inconsistent()
+	{
+		for (auto it = array.begin(); it != array.end(); it++) {
+			it.unsafe_at()++;
 		}
 	}
 
@@ -89,7 +97,7 @@ run_consistent(nvobj::pool<root> &pop)
 
 	try {
 		nvobj::transaction::run(pop,
-					[&] { r->ptr->increase_elements(); });
+					[&] { r->ptr->increase_consistent(); });
 	} catch (...) {
 		UT_ASSERT(0);
 	}
@@ -100,22 +108,22 @@ run_inconsistent(nvobj::pool<root> &pop)
 {
 	auto r = pop.root();
 
-	r->ptr->increase_elements();
+	r->ptr->increase_inconsistent();
 	r->ptr.persist();
 }
 
 void
 check_consistency(nvobj::pool<root> &pop)
 {
-	auto r = pop.root();
+	const auto &array = pop.root()->ptr->array;
 
-	nvobj::experimental::array<int, 5> expected;
-	if (r->ptr->array[0] == 1)
+	std::array<int, 5> expected;
+	if (array[0] == 1)
 		expected = {{1, 2, 3, 4, 5}};
 	else
 		expected = {{2, 3, 4, 5, 6}};
 
-	UT_ASSERT(r->ptr->array == expected);
+	UT_ASSERT(array == expected);
 }
 
 int

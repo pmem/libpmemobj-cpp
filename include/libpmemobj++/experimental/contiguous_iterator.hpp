@@ -43,6 +43,7 @@
 #include <functional>
 
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/transaction.hpp>
 
 namespace pmem
 {
@@ -183,6 +184,9 @@ struct contiguous_iterator {
 		return ptr[n];
 	}
 
+	/**
+	 * Returns underlying pointer.
+	 */
 	Pointer
 	get_ptr() const
 	{
@@ -289,6 +293,9 @@ struct operator_base {
  * If iterator is moved from 1 to 3, that means it is now in another
  * range, and that range must be added to a transaction
  * (elements 2 and 3).
+ *
+ * This iterator can only be used inside of a transaction (both moving and
+ * dereferencing this iterator requires a transaction).
  */
 template <typename T>
 struct range_snapshotting_iterator
@@ -324,10 +331,16 @@ struct range_snapshotting_iterator
 	 * Element access operator.
 	 *
 	 * Adds element to a transaction.
+	 *
+	 * @pre must be called in transaction scope.
+	 *
+	 * @throw transaction_error when adding the object to the
+	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem
 	 */
 	reference operator[](std::size_t n)
 	{
-		detail::conditional_add_to_tx(&this->ptr[n]);
+		detail::snapshot(&this->ptr[n]);
 		return base_type::operator[](n);
 	}
 
@@ -391,7 +404,7 @@ private:
 		verify_range(range_begin, range_size);
 #endif
 
-		detail::conditional_add_to_tx(range_begin, range_size);
+		detail::snapshot(range_begin, range_size);
 	}
 
 #ifndef NDEBUG
@@ -439,20 +452,32 @@ struct basic_contiguous_iterator
 	/**
 	 * Dereference operator which adds dereferenced element to
 	 * a transaction.
+	 *
+	 * @pre must be called in transaction scope.
+	 *
+	 * @throw transaction_error when adding the object to the
+	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem
 	 */
 	reference operator*() const
 	{
-		detail::conditional_add_to_tx(this->ptr);
+		detail::snapshot(this->ptr);
 		return base_type::operator*();
 	}
 
 	/**
 	 * Arrow operator which adds underlying element to
 	 * a transactions.
+	 *
+	 * @pre must be called in transaction scope.
+	 *
+	 * @throw transaction_error when adding the object to the
+	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem
 	 */
 	pointer operator->() const
 	{
-		detail::conditional_add_to_tx(this->ptr);
+		detail::snapshot(this->ptr);
 		return base_type::operator->();
 	}
 
@@ -460,10 +485,27 @@ struct basic_contiguous_iterator
 	 * Element access operator.
 	 *
 	 * Adds range containing specified element to a transaction.
+	 *
+	 * @pre must be called in transaction scope.
+	 *
+	 * @throw transaction_error when adding the object to the
+	 *		transaction failed.
+	 * @throw pool_error when object is not on pmem
 	 */
 	reference operator[](std::size_t n)
 	{
-		detail::conditional_add_to_tx(&this->ptr[n]);
+		detail::snapshot(&this->ptr[n]);
+		return base_type::operator[](n);
+	}
+
+	/**
+	 * Element access operator, which does NOT snapshot data.
+	 *
+	 * It can be used to access data outside of a transaction.
+	 */
+	reference
+	unsafe_at(std::size_t n = 0)
+	{
 		return base_type::operator[](n);
 	}
 

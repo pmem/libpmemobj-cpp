@@ -277,4 +277,9 @@ add_test_generic(vector_dtor none)
 add_test_generic(vector_dtor memcheck)
 add_test_generic(vector_dtor pmemcheck)
 
+build_test(vector_iterators vector_iterators/vector_iterators.cpp)
+add_test_generic(vector_iterators none)
+add_test_generic(vector_iterators memcheck)
+add_test_generic(vector_iterators pmemcheck)
+
 add_subdirectory(external)

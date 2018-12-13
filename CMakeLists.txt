@@ -263,10 +263,30 @@ if(NOT MSVC_VERSION)
 			return 0;
 		}"
 		NO_GCC_AGGREGATE_INITIALIZATION_BUG)
+
+	# Check for issues related to agregate initialization in new expression.
+	# Following code will fail for LLVM compiler https://bugs.llvm.org/show_bug.cgi?id=39988
+	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error")
+	CHECK_CXX_SOURCE_COMPILES(
+		"template<typename T>
+		struct A {
+			 A() {};
+			~A() {};
+		};
+		struct B {
+			A<int> a;
+			A<int> b;
+		};
+		int main() {
+			new B{};
+			return 0;
+		}"
+		NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG)
 	set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 else()
 	set(NO_GCC_VARIADIC_TEMPLATE_BUG TRUE)
 	set(NO_GCC_AGGREGATE_INITIALIZATION_BUG TRUE)
+	set(NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG TRUE)
 endif()
 
 include_directories(include)

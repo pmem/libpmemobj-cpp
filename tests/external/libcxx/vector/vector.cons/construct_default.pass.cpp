@@ -29,7 +29,9 @@ using vector_type = pmem_exp::vector<int>;
 
 struct foo {
 	vector_type v_1;
+#ifdef NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG
 	vector_type v_2 = {};
+#endif
 };
 
 struct root {
@@ -54,7 +56,9 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 		});
 		UT_ASSERT(r->v_pptr->empty() == 1);
 		UT_ASSERT(r->foo_pptr->v_1.empty() == 1);
+#ifdef NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG
 		UT_ASSERT(r->foo_pptr->v_2.empty() == 1);
+#endif
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl
 			  << std::strerror(nvobj::transaction::error())

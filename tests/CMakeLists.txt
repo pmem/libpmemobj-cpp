@@ -235,6 +235,13 @@ build_test(array_iterator array_iterator/array_iterator.cpp)
 add_test_generic(array_iterator none)
 add_test_generic(array_iterator pmemcheck)
 
+build_test(array_transactions array_transactions/array_transactions.cpp)
+add_test_generic(array_transactions none)
+add_test_generic(array_transactions pmemcheck)
+
+build_test(array_comparison array_comparison/array_comparison.cpp)
+add_test_generic(array_comparison none)
+
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(iterator_traits none)
 

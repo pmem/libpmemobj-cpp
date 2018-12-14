@@ -37,6 +37,8 @@
 #ifndef HELPER_CLASSES_HPP
 #define HELPER_CLASSES_HPP
 
+#include "unittest.hpp"
+
 /**
  * default_constructible_only - helper class
  * Instance of that type can be only default constructed
@@ -105,6 +107,29 @@ struct emplace_constructible_and_move_insertable {
 	}
 	/* Since move constructor is declared explicitly, copy connstructor
 	won't be generated. */
+};
+
+/**
+ * failing_reference_operator - helper structure
+ * Instance of that type cannot use reference operator
+ */
+struct failing_reference_operator {
+	failing_reference_operator() : val(0)
+	{
+	}
+	failing_reference_operator(int i) : val(i)
+	{
+	}
+	~failing_reference_operator()
+	{
+	}
+
+	failing_reference_operator *operator&() const
+	{
+		UT_ASSERT(0);
+		return nullptr;
+	}
+	int val;
 };
 
 #endif /* HELPER_CLASSES_HPP */

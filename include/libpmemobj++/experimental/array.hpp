@@ -152,6 +152,38 @@ struct array {
 	}
 
 	/**
+	 * Copy assignment operator which takes std::array - adds 'this'
+	 * to a transaction.
+	 *
+	 * @throw transaction_error when adding the object to the
+	 *		transaction failed.
+	 */
+	array &
+	operator=(const std::array<T, N> &other)
+	{
+		detail::conditional_add_to_tx(this);
+
+		std::copy(other.cbegin(), other.cend(), _get_data());
+		return *this;
+	}
+
+	/**
+	 * Copy assignment operator which takes initializer list - adds 'this'
+	 * to a transaction.
+	 *
+	 * @throw transaction_error when adding the object to the
+	 *		transaction failed.
+	 */
+	array &
+	operator=(const std::initializer_list<T> &other)
+	{
+		detail::conditional_add_to_tx(this);
+
+		std::copy(other.cbegin(), other.cend(), _get_data());
+		return *this;
+	}
+
+	/**
 	 * Access element at specific index and add it to a transaction.
 	 *
 	 * @throw std::out_of_range if index is out of bound.
@@ -639,6 +671,128 @@ operator>=(const array<T, N> &lhs, const array<T, N> &rhs)
 template <typename T, std::size_t N>
 inline bool
 operator<=(const array<T, N> &lhs, const array<T, N> &rhs)
+{
+	return !(lhs > rhs);
+}
+
+/**
+ * Non-member equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator==(const array<T, N> &lhs, const std::array<T, N> &rhs)
+{
+	return std::equal(lhs.cbegin(), lhs.cend(), rhs.cbegin());
+}
+
+/**
+ * Non-member not-equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator!=(const array<T, N> &lhs, const std::array<T, N> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+/**
+ * Non-member less than operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator<(const array<T, N> &lhs, const std::array<T, N> &rhs)
+{
+	return std::lexicographical_compare(lhs.cbegin(), lhs.cend(),
+					    rhs.cbegin(), rhs.cend());
+}
+
+/**
+ * Non-member greater than operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator>(const array<T, N> &lhs, const std::array<T, N> &rhs)
+{
+	return rhs < lhs;
+}
+
+/**
+ * Non-member greater or equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator>=(const array<T, N> &lhs, const std::array<T, N> &rhs)
+{
+	return !(lhs < rhs);
+}
+
+/**
+ * Non-member less or equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator<=(const array<T, N> &lhs, const std::array<T, N> &rhs)
+{
+	return !(lhs > rhs);
+}
+
+/**
+ * Non-member equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator==(const std::array<T, N> &lhs, const array<T, N> &rhs)
+{
+	return std::equal(lhs.cbegin(), lhs.cend(), rhs.cbegin());
+}
+
+/**
+ * Non-member not-equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator!=(const std::array<T, N> &lhs, const array<T, N> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+/**
+ * Non-member less than operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator<(const std::array<T, N> &lhs, const array<T, N> &rhs)
+{
+	return std::lexicographical_compare(lhs.cbegin(), lhs.cend(),
+					    rhs.cbegin(), rhs.cend());
+}
+
+/**
+ * Non-member greater than operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator>(const std::array<T, N> &lhs, const array<T, N> &rhs)
+{
+	return rhs < lhs;
+}
+
+/**
+ * Non-member greater or equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator>=(const std::array<T, N> &lhs, const array<T, N> &rhs)
+{
+	return !(lhs < rhs);
+}
+
+/**
+ * Non-member less or equal operator.
+ */
+template <typename T, std::size_t N>
+inline bool
+operator<=(const std::array<T, N> &lhs, const array<T, N> &rhs)
 {
 	return !(lhs > rhs);
 }

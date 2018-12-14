@@ -91,6 +91,30 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 			"Could not add object(s) to the transaction.");
 }
 
+/**
+ * Takes snapshot of `count` objects.
+ *
+ * Snapshots count objects starting from `that` to the transaction.
+ * `that` must point to pmem and there must be an active transaction.
+ *
+ * @param[in] that pointer to the first object being snapshotted.
+ * @param[in] count number of elements to be snapshotted.
+ */
+template <typename T>
+static void
+snapshot(const T *that, std::size_t count = 1)
+{
+	if (pmemobj_pool_by_ptr(that) == nullptr)
+		throw pool_error("Object is not on pmem");
+
+	if (pmemobj_tx_stage() != TX_STAGE_WORK)
+		throw transaction_error("Transaction is not active");
+
+	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count))
+		throw transaction_error(
+			"Could not add object(s) to the transaction.");
+}
+
 /*
  * Return type number for given type.
  */

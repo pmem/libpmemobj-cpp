@@ -181,3 +181,13 @@ build_test(vector_libcxx_iterators_pass libcxx/vector/iterators.pass.cpp)
 add_test_default(vector_libcxx_iterators_pass none)
 add_test_default(vector_libcxx_iterators_pass pmemcheck)
 add_test_default(vector_libcxx_iterators_pass memcheck)
+
+build_test(vector_libcxx_data_const_pass libcxx/vector/vector.data/data_const.pass.cpp)
+add_test_default(vector_libcxx_data_const_pass none)
+add_test_default(vector_libcxx_data_const_pass pmemcheck)
+add_test_default(vector_libcxx_data_const_pass memcheck)
+
+build_test(vector_libcxx_data_pass libcxx/vector/vector.data/data.pass.cpp)
+add_test_default(vector_libcxx_data_pass none)
+add_test_default(vector_libcxx_data_pass pmemcheck)
+add_test_default(vector_libcxx_data_pass memcheck)

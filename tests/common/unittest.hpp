@@ -38,6 +38,8 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <iostream>
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -65,6 +67,12 @@ UT_OUT(const char *format, ...)
 	va_end(args_list);
 
 	fprintf(stdout, "\n");
+}
+
+static inline void
+UT_EXCEPTION(std::exception &e)
+{
+	std::cerr << e.what() << std::endl;
 }
 
 static inline void
@@ -113,7 +121,16 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 			  __LINE__, __func__, #cnd),                           \
 		 0)))
 
-/* assertion with extra info printed if assertion fails at runtime */
+/* assertion with exception related string printed */
+#define UT_ASSERTexc(cnd, exception)                                           \
+	((void)((cnd) ||                                                       \
+		(UT_EXCEPTION(exception),                                      \
+		 UT_FATAL("%s:%d %s - assertion failure: %s", __FILE__,        \
+			  __LINE__, __func__, #cnd),                           \
+		 0)))
+
+/* assertion with extra info printed if assertion
+ * fails at runtime */
 #define UT_ASSERTinfo(cnd, info)                                               \
 	((void)((cnd) ||                                                       \
 		(UT_FATAL("%s:%d %s - assertion failure: %s (%s = %s)",        \
@@ -130,7 +147,8 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 			  (unsigned long long)(rhs)),                          \
 		 0)))
 
-/* assert two integer values are not equal at runtime */
+/* assert two integer values are not equal at runtime
+ */
 #define UT_ASSERTne(lhs, rhs)                                                  \
 	((void)(((lhs) != (rhs)) ||                                            \
 		(UT_FATAL("%s:%d %s - assertion failure: %s (0x%llx) != %s "   \

@@ -30,48 +30,79 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "unittest.hpp"
+/**
+ * Helper classes that represent C++ concepts
+ */
 
-#include <libpmemobj++/experimental/vector.hpp>
-#include <libpmemobj++/pool.hpp>
-
-#include <cstring>
-
-namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using vector_type = pmem_exp::vector<int>;
+#ifndef HELPER_CLASSES_HPP
+#define HELPER_CLASSES_HPP
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
- *
- * Call default constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * default_constructible_only - helper class
+ * Instance of that type can be only default constructed
  */
-void
-test_default_ctor()
-{
-	bool exception_thrown = false;
-	try {
-		vector_type v_3 = {};
-		(void)v_3;
-	} catch (pmem::pool_error &) {
-		exception_thrown = true;
-	} catch (...) {
-		UT_ASSERT(0);
+
+class default_constructible_only {
+public:
+	static int count;
+
+	default_constructible_only() : _val(1)
+	{
+		++count;
 	}
-	UT_ASSERT(exception_thrown);
-}
+	~default_constructible_only()
+	{
+		--count;
+	};
+	default_constructible_only(const default_constructible_only &) = delete;
+	default_constructible_only &
+	operator=(default_constructible_only &) = delete;
 
-int
-main(int argc, char *argv[])
-{
-	START();
-	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
+	bool
+	operator==(const default_constructible_only &other) const
+	{
+		return _val == other._val;
 	}
 
-	test_default_ctor();
+private:
+	int _val;
+};
 
-	return 0;
-}
+int default_constructible_only::count = 0;
+
+/**
+ * emplace_constructible - helper class
+ * Instance of that type can be constructed in uninitialized storage
+ */
+template <typename T>
+struct emplace_constructible {
+	T value;
+
+	emplace_constructible(T val) : value(val)
+	{
+	}
+	emplace_constructible(const emplace_constructible &) = delete;
+};
+
+/**
+ * emplace_constructible_and_move_insertable - helper class
+ * Satisfies requirements:
+ * - instance of that type can be constructed in uninitialized storage
+ * - rvalue of the type can be copied in uninitialized storage
+ */
+template <typename T>
+struct emplace_constructible_and_move_insertable {
+	T value;
+	int moved = 0;
+
+	emplace_constructible_and_move_insertable(T val) : value(val)
+	{
+	}
+	emplace_constructible_and_move_insertable(
+		emplace_constructible_and_move_insertable &&other)
+	    : value(other.value), moved(other.moved + 1)
+	{
+	}
+};
+
+#endif /* HELPER_CLASSES_HPP */

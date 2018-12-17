@@ -6,46 +6,30 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2018, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// ~vector() // implied noexcept;
+#include <libpmemobj++/experimental/vector.hpp>
 
-// UNSUPPORTED: c++98, c++03
-
-#include <cassert>
-#include <vector>
-
-#include "MoveOnly.h"
-#include "test_allocator.h"
-#include "test_macros.h"
-
-template <class T>
-struct some_alloc {
-	typedef T value_type;
-	some_alloc(const some_alloc &);
-	~some_alloc() noexcept(false);
-};
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
 int
 main()
 {
+	/**
+	 * Test pmem::obj::experimental::vector destructor
+	 *
+	 * Expects that destructor is not deleted and noexcept
+	 */
 	{
-		typedef std::vector<MoveOnly> C;
-		static_assert(std::is_nothrow_destructible<C>::value, "");
+		using vector_type = pmem_exp::vector<int>;
+		static_assert(std::is_nothrow_destructible<vector_type>::value,
+			      "");
 	}
-	{
-		typedef std::vector<MoveOnly, test_allocator<MoveOnly>> C;
-		static_assert(std::is_nothrow_destructible<C>::value, "");
-	}
-	{
-		typedef std::vector<MoveOnly, other_allocator<MoveOnly>> C;
-		static_assert(std::is_nothrow_destructible<C>::value, "");
-	}
-#if defined(_LIBCPP_VERSION)
-	{
-		typedef std::vector<MoveOnly, some_alloc<MoveOnly>> C;
-		static_assert(!std::is_nothrow_destructible<C>::value, "");
-	}
-#endif // _LIBCPP_VERSION
 }

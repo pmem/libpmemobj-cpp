@@ -254,6 +254,11 @@ else()
 	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 endif()
 
+build_test(vector_comp_operators vector_comp_operators/vector_comp_operators.cpp)
+add_test_generic(vector_comp_operators none)
+add_test_generic(vector_comp_operators memcheck)
+add_test_generic(vector_comp_operators pmemcheck)
+
 build_test(vector_private vector_private/vector_private.cpp)
 add_test_generic(vector_private none)
 add_test_generic(vector_private memcheck)

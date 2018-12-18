@@ -15,23 +15,68 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
 namespace pmem_exp = pmem::obj::experimental;
 
 using pmem_exp::get;
 
-int
-main()
-{
-	START();
+struct Testcase1 {
+	typedef std::unique_ptr<double> T;
+	typedef pmem_exp::array<T, 1> C;
+	C c = {std::unique_ptr<double>(new double(3.5))};
 
+	void
+	run()
 	{
-		typedef std::unique_ptr<double> T;
-		typedef pmem_exp::array<T, 1> C;
-		C c = {std::unique_ptr<double>(new double(3.5))};
 		T t = get<0>(std::move(c));
 		UT_ASSERT(*t == 3.5);
 	}
+};
+
+struct root {
+	pmem::obj::persistent_ptr<Testcase1> r1;
+};
+
+void
+run(pmem::obj::pool<root> &pop)
+{
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			pop.root()->r1 =
+				pmem::obj::make_persistent<Testcase1>();
+		});
+
+		pmem::obj::transaction::run(pop,
+					    [&] { pop.root()->r1->run(); });
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	START();
+
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(path, "get_rv.pass",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+
+	run(pop);
 
 	return 0;
 }

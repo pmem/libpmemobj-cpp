@@ -59,9 +59,6 @@ test_iterators()
 		      "");
 }
 
-template <class T>
-struct xxxx;
-
 int
 main()
 {

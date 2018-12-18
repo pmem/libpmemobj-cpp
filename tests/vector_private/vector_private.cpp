@@ -66,6 +66,7 @@ namespace test = test_support;
 #define TEST_VAL_1 6
 #define TEST_SIZE_2 33
 #define TEST_VAL_2 3
+#define TEST_SIZE_OOM (PMEMOBJ_MIN_POOL / sizeof(int) + 1)
 
 struct root {
 	nvobj::persistent_ptr<pmem_exp::vector<int>> v_pptr;
@@ -79,6 +80,10 @@ struct root {
  *
  * Second case: allocate memory for more than max_size() elements of given type
  * (int), expect std::length_error exception is thrown.
+ *
+ * Third case: try to allocate memory for more than PMEMOBJ_MIN_POOL/sizeof(int)
+ * and less than max_size() bytes. Expect transaction_alloc_error exception is
+ * thrown.
  */
 void
 test_vector_private_alloc(nvobj::pool<struct root> &pop)
@@ -111,6 +116,22 @@ test_vector_private_alloc(nvobj::pool<struct root> &pop)
 		});
 		UT_ASSERT(0);
 	} catch (std::length_error &) {
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+
+	/* third case */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v_pptr =
+				nvobj::make_persistent<pmem_exp::vector<int>>();
+			r->v_pptr->_alloc(TEST_SIZE_OOM);
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_alloc_error &) {
 		exception_thrown = true;
 	} catch (...) {
 		UT_ASSERT(0);

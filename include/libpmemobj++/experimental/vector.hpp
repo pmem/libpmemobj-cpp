@@ -270,12 +270,20 @@ vector<T>::_alloc(size_type capacity_new)
 	if (capacity_new == 0)
 		return;
 
-	_data = pmemobj_tx_alloc(sizeof(value_type) * capacity_new,
+	/*
+	 * We need to cache pmemobj_tx_alloc return value and only after that
+	 * assign it to _data, because when pmemobj_tx_alloc fails, it aborts
+	 * transaction.
+	 */
+	persistent_ptr<T[]> res =
+		pmemobj_tx_alloc(sizeof(value_type) * capacity_new,
 				 detail::type_num<value_type>());
 
-	if (_data == nullptr)
+	if (res == nullptr)
 		throw transaction_alloc_error(
 			"Failed to allocate persistent memory object");
+
+	_data = res;
 }
 
 /**

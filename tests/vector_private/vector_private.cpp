@@ -109,6 +109,7 @@ test_vector_private_alloc(nvobj::pool<struct root> &pop)
 				nvobj::make_persistent<pmem_exp::vector<int>>();
 			r->v_pptr->_alloc(r->v_pptr->max_size() + 1);
 		});
+		UT_ASSERT(0);
 	} catch (std::length_error &) {
 		exception_thrown = true;
 	} catch (...) {

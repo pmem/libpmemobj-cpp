@@ -18,6 +18,7 @@
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
@@ -59,6 +60,8 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 #ifdef NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG
 		UT_ASSERT(r->foo_pptr->v_2.empty() == 1);
 #endif
+		nvobj::delete_persistent_atomic<vector_type>(r->v_pptr);
+		nvobj::delete_persistent_atomic<foo>(r->foo_pptr);
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl
 			  << std::strerror(nvobj::transaction::error())

@@ -446,6 +446,42 @@ public:
 		transaction::run(pool, tx, locks...);
 	}
 
+	/**
+	 * Takes a “snapshot” of given elements of type T number (1 by default),
+	 * located at the given address ptr in the virtual memory space and
+	 * saves it to the undo log. The application is then free to directly
+	 * modify the object in that memory range. In case of a failure or
+	 * abort, all the changes within this range will be rolled back. The
+	 * supplied block of memory has to be within the pool registered in the
+	 * transaction. This function must be called during TX_STAGE_WORK. This
+	 * overload only participates in overload resolution of function
+	 * template if T satisfies requirements of std::is_trivially_copyable.
+	 *
+	 * @param[in] addr pointer to the first object to be snapshotted.
+	 * @param[in] num number of elements to be snapshotted.
+	 *
+	 * @pre current transaction stage must be equal to TX_STAGE_WORK.
+	 * @post when excpetion is thrown, transaction stage is set to
+	 * TX_STAGE_ONABORT.
+	 *
+	 * @throw transaction_error when snapshotting failed or current
+	 * transaction stage is not equal to TX_STAGE_WORK.
+	 */
+	template <typename T,
+		  typename std::enable_if<std::is_trivially_copyable<T>::value,
+					  T>::type * = nullptr>
+	static void
+	snapshot(const T *addr, size_t num = 1)
+	{
+		if (TX_STAGE_WORK != pmemobj_tx_stage())
+			throw transaction_error(
+				"wrong stage for taking a snapshot.");
+
+		if (pmemobj_tx_add_range_direct(addr, sizeof(*addr) * num))
+			throw transaction_error(
+				"Could not take a snapshot of given memory range.");
+	}
+
 private:
 	/**
 	 * Recursively add locks to the active transaction.

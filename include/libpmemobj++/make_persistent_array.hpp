@@ -94,7 +94,8 @@ make_persistent(std::size_t N)
 
 	if (ptr == nullptr)
 		throw transaction_alloc_error(
-			"failed to allocate persistent memory array");
+			"failed to allocate persistent memory array, " +
+			detail::errormsg());
 
 	/*
 	 * When an exception is thrown from one of the constructors
@@ -139,7 +140,8 @@ make_persistent()
 
 	if (ptr == nullptr)
 		throw transaction_alloc_error(
-			"failed to allocate persistent memory array");
+			"failed to allocate persistent memory array, " +
+			detail::errormsg());
 
 	/*
 	 * When an exception is thrown from one of the constructors
@@ -188,7 +190,8 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error(
-			"failed to delete persistent memory object");
+			"failed to delete persistent memory object, " +
+			detail::errormsg());
 }
 
 /**
@@ -224,7 +227,8 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error(
-			"failed to delete persistent memory object");
+			"failed to delete persistent memory object, " +
+			detail::errormsg());
 }
 
 } /* namespace obj */

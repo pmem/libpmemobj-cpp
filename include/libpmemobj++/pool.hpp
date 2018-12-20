@@ -130,7 +130,8 @@ public:
 		pmemobjpool *pop = pmemobj_open(path.c_str(), layout.c_str());
 #endif
 		if (pop == nullptr)
-			throw pool_error("Failed opening pool");
+			throw pool_error("Failed opening pool, errormsg: " +
+					 detail::errormsg());
 
 		return pool_base(pop);
 	}
@@ -163,7 +164,8 @@ public:
 						  size, mode);
 #endif
 		if (pop == nullptr)
-			throw pool_error("Failed creating pool");
+			throw pool_error("Failed opening pool, errormsg: " +
+					 detail::errormsg());
 
 		return pool_base(pop);
 	}
@@ -207,7 +209,8 @@ public:
 	{
 		pmemobjpool *pop = pmemobj_openW(path.c_str(), layout.c_str());
 		if (pop == nullptr)
-			throw pool_error("Failed opening pool");
+			throw pool_error("Failed opening pool, errormsg: " +
+					 detail::errormsg());
 
 		return pool_base(pop);
 	}
@@ -236,7 +239,8 @@ public:
 		pmemobjpool *pop = pmemobj_createW(path.c_str(), layout.c_str(),
 						   size, mode);
 		if (pop == nullptr)
-			throw pool_error("Failed creating pool");
+			throw pool_error("Failed opening pool, errormsg: " +
+					 detail::errormsg());
 
 		return pool_base(pop);
 	}

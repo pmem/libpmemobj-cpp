@@ -83,7 +83,8 @@ make_persistent(Args &&... args)
 
 	if (ptr == nullptr)
 		throw transaction_alloc_error(
-			"failed to allocate persistent memory object");
+			"failed to allocate persistent memory object, " +
+			detail::errormsg());
 
 	detail::create<T, Args...>(ptr.get(), std::forward<Args>(args)...);
 
@@ -123,7 +124,8 @@ delete_persistent(typename detail::pp_if_not_array<T>::type ptr)
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error(
-			"failed to delete persistent memory object");
+			"failed to delete persistent memory object, " +
+			detail::errormsg());
 }
 
 } /* namespace obj */

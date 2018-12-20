@@ -40,6 +40,7 @@
 
 #include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj/tx_base.h>
+#include <string>
 #include <typeinfo>
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -132,6 +133,19 @@ next_pow_2(uint32_t v)
 	v |= v >> 16;
 	++v;
 	return v + (v == 0);
+}
+
+/**
+ * Return last libpmemobj error message as a std::string.
+ */
+inline std::string
+errormsg(void)
+{
+#ifdef _WIN32
+	return std::string(pmemobj_errormsgU());
+#else
+	return std::string(pmemobj_errormsg());
+#endif
 }
 
 } /* namespace detail */

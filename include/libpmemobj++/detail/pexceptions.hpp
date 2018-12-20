@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,38 @@
 #ifndef LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP
 #define LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP
 
+#include <libpmemobj.h>
 #include <stdexcept>
+#include <string>
 #include <system_error>
 
 namespace pmem
 {
+
+/**
+ * Return last libpmemobj error message as a std::string.
+ */
+inline std::string
+errormsg(void)
+{
+#ifdef _WIN32
+	return std::string(pmemobj_errormsgU());
+#else
+	return std::string(pmemobj_errormsg());
+#endif
+}
+
+namespace detail
+{
+inline const std::string
+exception_msg_get(const std::string &s)
+{
+	const std::string msg(errormsg());
+	return msg.empty() ? s : s + "\nLast libpmemobj error message: " + msg;
+}
+}
+
+using detail::exception_msg_get;
 
 /**
  * Custom pool error class.
@@ -53,6 +80,15 @@ namespace pmem
 class pool_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	pool_error(const char *what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
+	pool_error(const std::string &what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -63,6 +99,15 @@ public:
 class transaction_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	transaction_error(const char *what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
+	transaction_error(const std::string &what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -74,6 +119,15 @@ public:
 class lock_error : public std::system_error {
 public:
 	using std::system_error::system_error;
+
+	lock_error(std::error_code ec, const char *what_arg)
+	    : system_error(ec, exception_msg_get(what_arg))
+	{
+	}
+	lock_error(std::error_code ec, const std::string &what_arg)
+	    : system_error(ec, exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -84,6 +138,15 @@ public:
 class transaction_alloc_error : public transaction_error {
 public:
 	using transaction_error::transaction_error;
+
+	transaction_alloc_error(const char *what_arg)
+	    : transaction_error(exception_msg_get(what_arg))
+	{
+	}
+	transaction_alloc_error(const std::string &what_arg)
+	    : transaction_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -94,6 +157,15 @@ public:
 class transaction_free_error : public transaction_alloc_error {
 public:
 	using transaction_alloc_error::transaction_alloc_error;
+
+	transaction_free_error(const char *what_arg)
+	    : transaction_alloc_error(exception_msg_get(what_arg))
+	{
+	}
+	transaction_free_error(const std::string &what_arg)
+	    : transaction_alloc_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -104,6 +176,15 @@ public:
 class transaction_scope_error : public std::logic_error {
 public:
 	using std::logic_error::logic_error;
+
+	transaction_scope_error(const char *what_arg)
+	    : logic_error(exception_msg_get(what_arg))
+	{
+	}
+	transaction_scope_error(const std::string &what_arg)
+	    : logic_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -114,6 +195,15 @@ public:
 class manual_tx_abort : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	manual_tx_abort(const char *what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
+	manual_tx_abort(const std::string &what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 /**
@@ -124,6 +214,15 @@ public:
 class ctl_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	ctl_error(const char *what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
+	ctl_error(const std::string &what_arg)
+	    : runtime_error(exception_msg_get(what_arg))
+	{
+	}
 };
 
 } /* namespace pmem */

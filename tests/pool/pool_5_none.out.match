@@ -1,1 +1,2 @@
 $(nW)testfile: pool::open: Failed opening pool
+Last libpmemobj error message: open "$(nW)": No such file or directory

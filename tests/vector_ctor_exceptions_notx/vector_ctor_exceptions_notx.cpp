@@ -34,10 +34,6 @@
 
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-#include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
-
-#include <cstring>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
@@ -164,6 +160,120 @@ test_size_value_ctor(nvobj::pool<struct root> &pop)
 	UT_ASSERT(exception_thrown);
 }
 
+/**
+ * Test pmem::obj::experimental::vector copy constructor.
+ *
+ * Call copy constructor out of transaction scope.
+ * Expect pmem:transaction_error exception is thrown.
+ */
+void
+test_copy_ctor(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<vector_type> pptr;
+
+	bool exception_thrown = false;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pptr = nvobj::make_persistent<vector_type>();
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	};
+
+	try {
+		nvobj::persistent_ptr<vector_type> pptr_v = nullptr;
+		nvobj::transaction::run(pop, [&] {
+			pptr_v = pmemobj_tx_alloc(
+				sizeof(vector_type),
+				pmem::detail::type_num<vector_type>());
+			if (pptr_v == nullptr)
+				UT_ASSERT(0);
+		});
+		pmem::detail::create<vector_type>(&*pptr_v, *pptr);
+	} catch (pmem::transaction_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	};
+	UT_ASSERT(exception_thrown);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<vector_type>(pptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	};
+}
+
+/**
+ * Test pmem::obj::experimental::vector initializer list constructor.
+ *
+ * Call initializer list constructor out of transaction scope.
+ * Expect pmem:transaction_error exception is thrown.
+ */
+void
+test_initializer_list_ctor(nvobj::pool<struct root> &pop)
+{
+	bool exception_thrown = false;
+	try {
+		nvobj::persistent_ptr<vector_type> pptr_v = nullptr;
+		nvobj::transaction::run(pop, [&] {
+			pptr_v = pmemobj_tx_alloc(
+				sizeof(vector_type),
+				pmem::detail::type_num<vector_type>());
+			if (pptr_v == nullptr)
+				UT_ASSERT(0);
+		});
+		pmem::detail::create<vector_type>(
+			&*pptr_v, std::initializer_list<int>{1, 2, 3, 4});
+	} catch (pmem::transaction_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	};
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector move constructor.
+ *
+ * Call move constructor out of transaction scope.
+ * Expect pmem:transaction_error exception is thrown.
+ */
+void
+test_move_ctor(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<vector_type> pptr;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pptr = nvobj::make_persistent<vector_type>();
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	};
+
+	bool exception_thrown = false;
+	try {
+		nvobj::persistent_ptr<vector_type> pptr_v = nullptr;
+		nvobj::transaction::run(pop, [&] {
+			pptr_v = pmemobj_tx_alloc(
+				sizeof(vector_type),
+				pmem::detail::type_num<vector_type>());
+			if (pptr_v == nullptr)
+				UT_ASSERT(0);
+		});
+		pmem::detail::create<vector_type>(&*pptr_v, std::move(*pptr));
+	} catch (pmem::transaction_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	};
+	UT_ASSERT(exception_thrown);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -178,8 +288,11 @@ main(int argc, char *argv[])
 		path, "VectorTest: vector_ctor_exceptions_notx",
 		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
+	test_copy_ctor(pop);
 	test_default_ctor(pop);
+	test_initializer_list_ctor(pop);
 	test_iter_iter_ctor(pop);
+	test_move_ctor(pop);
 	test_size_ctor(pop);
 	test_size_value_ctor(pop);
 

@@ -33,13 +33,15 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
-#include <libpmemobj++/pool.hpp>
-
-#include <cstring>
+#include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
 using vector_type = pmem_exp::vector<int>;
+
+struct root {
+	nvobj::persistent_ptr<vector_type> pptr;
+};
 
 /**
  * Test pmem::obj::experimental::vector default constructor.
@@ -133,15 +135,132 @@ test_size_value_ctor()
 	UT_ASSERT(exception_thrown);
 }
 
+/**
+ * Test pmem::obj::experimental::vector copy constructor
+ *
+ * Call copy constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_copy_ctor(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->pptr = nvobj::make_persistent<vector_type>();
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	bool exception_thrown = false;
+	try {
+		vector_type v(*r->pptr);
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<vector_type>(r->pptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+/**
+ * Test pmem::obj::experimental::vector initializer list constructor
+ *
+ * Call initializer list constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_initializer_list_ctor()
+{
+	bool exception_thrown = false;
+	try {
+		vector_type v(std::initializer_list<int>{1, 2, 3, 4});
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/**
+ * Test pmem::obj::experimental::vector move constructor
+ *
+ * Call move constructor for volatile instance of
+ * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ */
+void
+test_move_ctor(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->pptr = nvobj::make_persistent<vector_type>();
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	bool exception_thrown = false;
+	try {
+		vector_type v(std::move(*r->pptr));
+		(void)v;
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<vector_type>(r->pptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
 	START();
 
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: ctor_nopmem",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	test_copy_ctor(pop);
 	test_default_ctor();
+	test_initializer_list_ctor();
 	test_iter_iter_ctor();
+	test_move_ctor(pop);
 	test_size_ctor();
 	test_size_value_ctor();
+
+	pop.close();
 
 	return 0;
 }

@@ -159,7 +159,7 @@ make_persistent()
 
 /**
  * Transactionally free an array of objects of type T held
- * in a persitent_ptr.
+ * in a persistent_ptr.
  *
  * This function can be used to *transactionally* free an array of
  * objects. Calls the objects' destructors before freeing memory.
@@ -196,7 +196,7 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 
 /**
  * Transactionally free an array of objects of type T held
- * in a persitent_ptr.
+ * in a persistent_ptr.
  *
  * This function can be used to *transactionally* free an array of
  * objects. Calls the objects' destructors before freeing memory.

@@ -185,7 +185,7 @@ function(find_packages)
 			include_directories(${VALGRIND_INCLUDE_DIRS})
 			find_pmemcheck()
 
-			if (PMEMCHECK_VERSION GREATER_EQUAL 1.0 AND PMEMCHECK_VERSION LESS 2.0)
+			if ((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
 				check_pmemobj_cow_support("cow.pool")
 

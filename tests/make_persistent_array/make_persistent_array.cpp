@@ -107,7 +107,7 @@ struct root {
 };
 
 /*
- * test_make_one_d -- (internal) test make_persitent of a 1d array
+ * test_make_one_d -- (internal) test make_persistent of a 1d array
  */
 void
 test_make_one_d(nvobj::pool_base &pop)
@@ -138,7 +138,7 @@ test_make_one_d(nvobj::pool_base &pop)
 }
 
 /*
- * test_make_N_d -- (internal) test make_persitent of 2d and 3d arrays
+ * test_make_N_d -- (internal) test make_persistent of 2d and 3d arrays
  */
 void
 test_make_N_d(nvobj::pool_base &pop)

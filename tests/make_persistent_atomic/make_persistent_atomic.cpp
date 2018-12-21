@@ -91,7 +91,7 @@ struct root {
 };
 
 /*
- * test_make_no_args -- (internal) test make_persitent without arguments
+ * test_make_no_args -- (internal) test make_persistent without arguments
  */
 void
 test_make_no_args(nvobj::pool<struct root> &pop)
@@ -107,7 +107,7 @@ test_make_no_args(nvobj::pool<struct root> &pop)
 }
 
 /*
- * test_make_args -- (internal) test make_persitent with arguments
+ * test_make_args -- (internal) test make_persistent with arguments
  */
 void
 test_make_args(nvobj::pool<struct root> &pop)

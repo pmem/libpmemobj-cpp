@@ -282,4 +282,9 @@ add_test_generic(vector_dtor none)
 add_test_generic(vector_dtor memcheck)
 add_test_generic(vector_dtor pmemcheck)
 
+build_test(vector_ctor_move vector_ctor_move/vector_ctor_move.cpp)
+add_test_generic(vector_ctor_move none)
+add_test_generic(vector_ctor_move memcheck)
+add_test_generic(vector_ctor_move pmemcheck)
+
 add_subdirectory(external)

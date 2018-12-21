@@ -277,6 +277,11 @@ add_test_generic(vector_ctor_exceptions_oom none)
 add_test_generic(vector_ctor_exceptions_oom memcheck)
 add_test_generic(vector_ctor_exceptions_oom pmemcheck)
 
+build_test(vector_ctor_move vector_ctor_move/vector_ctor_move.cpp)
+add_test_generic(vector_ctor_move none)
+add_test_generic(vector_ctor_move memcheck)
+add_test_generic(vector_ctor_move pmemcheck)
+
 build_test(vector_dtor vector_dtor/vector_dtor.cpp)
 add_test_generic(vector_dtor none)
 add_test_generic(vector_dtor memcheck)

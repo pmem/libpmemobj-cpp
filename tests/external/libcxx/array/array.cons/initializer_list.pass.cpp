@@ -25,7 +25,7 @@ namespace pmem_exp = pmem::obj::experimental;
 struct Testcase1 {
 	typedef double T;
 	typedef pmem_exp::array<T, 3> C;
-	C c = {1, 2, 3.5};
+	C c = {{1, 2, 3.5}};
 
 	void
 	run()
@@ -40,7 +40,7 @@ struct Testcase1 {
 struct Testcase2 {
 	typedef double T;
 	typedef pmem_exp::array<T, 0> C;
-	C c = {};
+	C c = {{}};
 
 	void
 	run()
@@ -52,7 +52,7 @@ struct Testcase2 {
 struct Testcase3 {
 	typedef double T;
 	typedef pmem_exp::array<T, 3> C;
-	C c = {1};
+	C c = {{1}};
 
 	void
 	run()
@@ -65,7 +65,7 @@ struct Testcase3 {
 struct Testcase4 {
 	typedef int T;
 	typedef pmem_exp::array<T, 1> C;
-	C c = {};
+	C c = {{}};
 
 	void
 	run()

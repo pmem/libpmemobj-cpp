@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +74,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop,
 	} catch (pmem::transaction_alloc_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 
 	UT_ASSERT(exception_thrown);
@@ -102,7 +102,7 @@ test_size_ctor(nvobj::pool<struct root> &pop,
 	} catch (pmem::transaction_alloc_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 
 	UT_ASSERT(exception_thrown);
@@ -130,7 +130,7 @@ test_size_value_ctor(nvobj::pool<struct root> &pop,
 	} catch (pmem::transaction_alloc_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
-		UT_ASSERTexc(0, e);
+		UT_ASSERTexc(e);
 	}
 
 	UT_ASSERT(exception_thrown);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,7 +86,7 @@ test_dtor(nvobj::pool<struct root> &pop)
 				UT_ASSERTeq(X::count, size);
 			});
 		} catch (std::exception &e) {
-			UT_ASSERTexc(0, e);
+			UT_ASSERTexc(e);
 		}
 
 		r->pptr->~vector();

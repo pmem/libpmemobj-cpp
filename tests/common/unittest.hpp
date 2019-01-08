@@ -128,8 +128,7 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 			  __func__),                                           \
 		 0)))
 
-/* assertion with extra info printed if assertion
- * fails at runtime */
+/* assertion with extra info printed if assertion fails at runtime */
 #define UT_ASSERTinfo(cnd, info)                                               \
 	((void)((cnd) ||                                                       \
 		(UT_FATAL("%s:%d %s - assertion failure: %s (%s = %s)",        \
@@ -146,8 +145,7 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 			  (unsigned long long)(rhs)),                          \
 		 0)))
 
-/* assert two integer values are not equal at runtime
- */
+/* assert two integer values are not equal at runtime */
 #define UT_ASSERTne(lhs, rhs)                                                  \
 	((void)(((lhs) != (rhs)) ||                                            \
 		(UT_FATAL("%s:%d %s - assertion failure: %s (0x%llx) != %s "   \

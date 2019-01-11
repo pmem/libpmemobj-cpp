@@ -161,4 +161,30 @@ struct failing_reference_operator {
 	int val;
 };
 
+/**
+ *  move_only - helper class
+ *  Instance of that type can be constructed from an rvalue argument only
+ */
+struct move_only {
+  int value;
+
+  move_only(int val = 1) : value(val) {}
+  move_only(const move_only &) = delete;
+  move_only &operator=(const move_only &) = delete;
+  move_only &
+  operator=(move_only &&other)
+  {
+    value = other.value;
+    other.value = 0;
+    return *this;
+  }
+  move_only(move_only &&other) : value(other.value)
+  {
+    other.value = 0;
+  }
+  bool operator==(const move_only& other) const {
+    return value == other.value;
+  }
+};
+
 #endif /* HELPER_CLASSES_HPP */

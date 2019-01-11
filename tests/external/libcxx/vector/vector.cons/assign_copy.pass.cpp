@@ -6,39 +6,68 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// vector& operator=(const vector& c);
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
-#include "test_allocator.h"
-#include "min_allocator.h"
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using C = pmem_exp::vector<int>;
 
-int main()
+struct root {
+	nvobj::persistent_ptr<C> v1;
+	nvobj::persistent_ptr<C> v2;
+};
+
+template <class C>
+void
+test(nvobj::pool<struct root> &pop)
 {
-    {
-        std::vector<int, test_allocator<int> > l(3, 2, test_allocator<int>(5));
-        std::vector<int, test_allocator<int> > l2(l, test_allocator<int>(3));
-        l2 = l;
-        assert(l2 == l);
-        assert(l2.get_allocator() == test_allocator<int>(3));
-    }
-    {
-        std::vector<int, other_allocator<int> > l(3, 2, other_allocator<int>(5));
-        std::vector<int, other_allocator<int> > l2(l, other_allocator<int>(3));
-        l2 = l;
-        assert(l2 == l);
-        assert(l2.get_allocator() == other_allocator<int>(5));
-    }
-#if TEST_STD_VER >= 11
-    {
-        std::vector<int, min_allocator<int> > l(3, 2, min_allocator<int>());
-        std::vector<int, min_allocator<int> > l2(l, min_allocator<int>());
-        l2 = l;
-        assert(l2 == l);
-        assert(l2.get_allocator() == min_allocator<int>());
-    }
-#endif
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1 = nvobj::make_persistent<C>(3U, 2);
+			r->v2 = nvobj::make_persistent<C>(*r->v1);
+
+			*r->v2 = *r->v1;
+		});
+
+		UT_ASSERT(*r->v2 == *r->v1);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<C>(r->v1);
+			nvobj::delete_persistent<C>(r->v2);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: assign_copy.pass",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	test<C>(pop);
+
+	pop.close();
+
+	return 0;
 }

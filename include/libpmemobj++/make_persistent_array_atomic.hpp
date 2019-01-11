@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,13 @@
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_ATOMIC_HPP
 #define LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_ATOMIC_HPP
 
+#include <libpmemobj++/allocation_flag.hpp>
 #include <libpmemobj++/detail/array_traits.hpp>
 #include <libpmemobj++/detail/check_persistent_ptr_array.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/make_atomic_impl.hpp>
 #include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/detail/variadic.hpp>
 #include <libpmemobj/atomic_base.h>
 
 namespace pmem
@@ -64,21 +66,23 @@ namespace obj
  * @param[in,out] ptr the persistent pointer to which the allocation
  *	will take place.
  * @param[in] N the number of array elements.
+ * @param[in] flag affects behaviour of allocator
  *
  * @throw std::bad_alloc on allocation failure.
  */
 template <typename T>
 void
-make_persistent_atomic(pool_base &pool,
-		       typename detail::pp_if_array<T>::type &ptr,
-		       std::size_t N)
+make_persistent_atomic(
+	pool_base &pool, typename detail::pp_if_array<T>::type &ptr,
+	std::size_t N,
+	allocation_flag_atomic flag = allocation_flag_atomic::none())
 {
 	typedef typename detail::pp_array_type<T>::type I;
 
-	auto ret = pmemobj_alloc(pool.handle(), ptr.raw_ptr(), sizeof(I) * N,
-				 detail::type_num<I>(),
-				 &detail::array_constructor<I>,
-				 static_cast<void *>(&N));
+	auto ret = pmemobj_xalloc(pool.handle(), ptr.raw_ptr(), sizeof(I) * N,
+				  detail::type_num<I>(), flag.value,
+				  &detail::array_constructor<I>,
+				  static_cast<void *>(&N));
 
 	if (ret != 0)
 		throw std::bad_alloc();
@@ -94,21 +98,23 @@ make_persistent_atomic(pool_base &pool,
  * @param[in,out] pool the pool from which the object will be allocated.
  * @param[in,out] ptr the persistent pointer to which the allocation
  *	will take place.
+ * @param[in] flag affects behaviour of allocator
  *
  * @throw std::bad_alloc on allocation failure.
  */
 template <typename T>
 void
-make_persistent_atomic(pool_base &pool,
-		       typename detail::pp_if_size_array<T>::type &ptr)
+make_persistent_atomic(
+	pool_base &pool, typename detail::pp_if_size_array<T>::type &ptr,
+	allocation_flag_atomic flag = allocation_flag_atomic::none())
 {
 	typedef typename detail::pp_array_type<T>::type I;
 	std::size_t N = detail::pp_array_elems<T>::elems;
 
-	auto ret = pmemobj_alloc(pool.handle(), ptr.raw_ptr(), sizeof(I) * N,
-				 detail::type_num<I>(),
-				 &detail::array_constructor<I>,
-				 static_cast<void *>(&N));
+	auto ret = pmemobj_xalloc(pool.handle(), ptr.raw_ptr(), sizeof(I) * N,
+				  detail::type_num<I>(), flag.value,
+				  &detail::array_constructor<I>,
+				  static_cast<void *>(&N));
 
 	if (ret != 0)
 		throw std::bad_alloc();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,10 +40,12 @@
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_HPP
 #define LIBPMEMOBJ_CPP_MAKE_PERSISTENT_HPP
 
+#include <libpmemobj++/allocation_flag.hpp>
 #include <libpmemobj++/detail/check_persistent_ptr_array.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/detail/variadic.hpp>
 #include <libpmemobj/tx_base.h>
 
 #include <new>
@@ -61,6 +63,7 @@ namespace obj
  * This function can be used to *transactionally* allocate an object.
  * Cannot be used for array types.
  *
+ * @param[in] flag affects behaviour of allocator
  * @param[in,out] args a list of parameters passed to the constructor.
  *
  * @return persistent_ptr<T> on success
@@ -72,14 +75,14 @@ namespace obj
  */
 template <typename T, typename... Args>
 typename detail::pp_if_not_array<T>::type
-make_persistent(Args &&... args)
+make_persistent(allocation_flag flag, Args &&... args)
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_scope_error(
 			"refusing to allocate memory outside of transaction scope");
 
 	persistent_ptr<T> ptr =
-		pmemobj_tx_alloc(sizeof(T), detail::type_num<T>());
+		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(), flag.value);
 
 	if (ptr == nullptr)
 		throw transaction_alloc_error(
@@ -91,7 +94,57 @@ make_persistent(Args &&... args)
 }
 
 /**
- * Transactionally free an object of type T held in a persistent_ptr.
+ * Transactionally allocate and construct an object of type T.
+ *
+ * This function can be used to *transactionally* allocate an object.
+ * Cannot be used for array types.
+ *
+ * @param[in,out] args a list of parameters passed to the constructor.
+ *
+ * @return persistent_ptr<T> on success
+ *
+ * @throw transaction_scope_error if called outside of an active
+ * transaction
+ * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
+ */
+template <typename T, typename... Args>
+typename std::enable_if<
+	!std::is_same<typename detail::variadic_get_first<Args...>::type,
+		      allocation_flag>::value,
+	typename detail::pp_if_not_array<T>::type>::type
+make_persistent(Args &&... args)
+{
+	return make_persistent<T>(allocation_flag::none(),
+				  std::forward<Args>(args)...);
+}
+
+/**
+ * Transactionally allocate and construct an object of type T.
+ *
+ * This function can be used to *transactionally* allocate an object.
+ * Cannot be used for array types.
+ *
+ * @param[in,out] args a list of parameters passed to the constructor.
+ *
+ * @return persistent_ptr<T> on success
+ *
+ * @throw transaction_scope_error if called outside of an active
+ * transaction
+ * @throw transaction_alloc_error on transactional allocation failure.
+ * @throw rethrow exception from T constructor
+ */
+template <typename T, typename... Args>
+typename std::enable_if<(sizeof...(Args) == 0),
+			typename detail::pp_if_not_array<T>::type>::type
+make_persistent(Args &&... args)
+{
+	return make_persistent<T>(allocation_flag::none(),
+				  std::forward<Args>(args)...);
+}
+
+/**
+ * Transactionally free an object of type T held in a persitent_ptr.
  *
  * This function can be used to *transactionally* free an object. Calls the
  * object's destructor before freeing memory. Cannot be used for array

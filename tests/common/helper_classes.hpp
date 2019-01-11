@@ -39,6 +39,8 @@
 
 #include "unittest.hpp"
 
+#include <utility>
+
 /**
  * default_constructible_only - helper class
  * Instance of that type can be only default constructed
@@ -143,6 +145,45 @@ struct emplace_constructible_copy_insertable_move_insertable {
 		emplace_constructible_copy_insertable_move_insertable &&other)
 	    : value(other.value), moved(other.moved + 1)
 	{
+	}
+};
+
+/**
+ *  emplace_constructible_moveable_and_assignable - helper class
+ *  Satisfies requirements:
+ *  - instance of that type can be constructed in uninitialized storage
+ *  - instance of the type can be constructed from an rvalue argument
+ *  - instance of the type can be copy-assigned from an lvalue expression
+ */
+template <typename T>
+struct emplace_constructible_moveable_and_assignable {
+	T value;
+	int moved = 0;
+	int assigned = 0;
+
+	emplace_constructible_moveable_and_assignable(T val) : value(val)
+	{
+	}
+	emplace_constructible_moveable_and_assignable(
+		emplace_constructible_moveable_and_assignable &&other)
+	    : value(std::move(other.value)), moved(other.moved + 1)
+	{
+	}
+	emplace_constructible_moveable_and_assignable &
+	operator=(emplace_constructible_moveable_and_assignable &&other)
+	{
+		moved = other.moved;
+		assigned = other.assigned + 1;
+		value = std::move(other.value);
+		return *this;
+	}
+
+	emplace_constructible_moveable_and_assignable &
+	operator=(T val)
+	{
+		value = std::move(val);
+		++assigned;
+		return *this;
 	}
 };
 

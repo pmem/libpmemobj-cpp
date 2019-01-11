@@ -6,71 +6,131 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "helper_classes.hpp"
+#include "unittest.hpp"
 
-// void assign(size_type n, const_reference v);
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <algorithm>
-#include <cassert>
-#include <iostream>
-#include "test_macros.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
-#include "test_iterators.h"
-#if TEST_STD_VER >= 11
-#include "emplace_constructible.h"
-#include "container_test_types.h"
-#endif
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
+using C = pmem_exp::vector<emplace_constructible_moveable_and_assignable<int>>;
 
-void test_emplaceable_concept() {
-#if TEST_STD_VER >= 11
-  int arr1[] = {42};
-  int arr2[] = {1, 101, 42};
-  {
-    using T = EmplaceConstructibleMoveableAndAssignable<int>;
-    using It = forward_iterator<int*>;
-    {
-      std::vector<T> v;
-      v.assign(It(arr1), It(std::end(arr1)));
-      assert(v[0].value == 42);
-    }
-    {
-      std::vector<T> v;
-      v.assign(It(arr2), It(std::end(arr2)));
-      assert(v[0].value == 1);
-      assert(v[1].value == 101);
-      assert(v[2].value == 42);
-    }
-  }
-  {
-    using T = EmplaceConstructibleMoveableAndAssignable<int>;
-    using It = input_iterator<int*>;
-    {
-      std::vector<T> v;
-      v.assign(It(arr1), It(std::end(arr1)));
-      assert(v[0].copied == 0);
-      assert(v[0].value == 42);
-    }
-    {
-      std::vector<T> v;
-      v.assign(It(arr2), It(std::end(arr2)));
-      //assert(v[0].copied == 0);
-      assert(v[0].value == 1);
-      //assert(v[1].copied == 0);
-      assert(v[1].value == 101);
-      assert(v[2].copied == 0);
-      assert(v[2].value == 42);
-    }
-  }
-#endif
+struct root {
+	nvobj::persistent_ptr<C> v;
+};
+
+static void
+test_emplaceable_concept(nvobj::pool<struct root> &pop)
+{
+	int arr1[] = {42};
+	int arr2[] = {1, 101, 42};
+
+	auto r = pop.root();
+	/* TEST_1 */
+	{
+		using It = test_support::forward_it<int *>;
+
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->v = nvobj::make_persistent<C>();
+			});
+
+			r->v->assign(It(arr1), It(std::end(arr1)));
+
+			nvobj::transaction::run(pop, [&] {
+				UT_ASSERT((*r->v)[0].value == 42);
+				nvobj::delete_persistent<C>(r->v);
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->v = nvobj::make_persistent<C>();
+			});
+
+			r->v->assign(It(arr2), It(std::end(arr2)));
+
+			nvobj::transaction::run(pop, [&] {
+				UT_ASSERT((*r->v)[0].value == 1);
+				UT_ASSERT((*r->v)[1].value == 101);
+				UT_ASSERT((*r->v)[2].value == 42);
+
+				nvobj::delete_persistent<C>(r->v);
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+	/* TEST_2 */
+	{
+		using It = test_support::forward_it<int *>;
+
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->v = nvobj::make_persistent<C>();
+			});
+
+			r->v->assign(It(arr1), It(std::end(arr1)));
+
+			nvobj::transaction::run(pop, [&] {
+				UT_ASSERT((*r->v)[0].value == 42);
+				UT_ASSERT((*r->v)[0].moved == 0);
+
+				nvobj::delete_persistent<C>(r->v);
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->v = nvobj::make_persistent<C>();
+			});
+
+			r->v->assign(It(arr2), It(std::end(arr2)));
+
+			nvobj::transaction::run(pop, [&] {
+				UT_ASSERT((*r->v)[0].value == 1);
+				UT_ASSERT((*r->v)[1].value == 101);
+				UT_ASSERT((*r->v)[2].value == 42);
+				UT_ASSERT((*r->v)[2].moved == 0);
+
+				nvobj::delete_persistent<C>(r->v);
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
 }
 
-
-
-int main()
+int
+main(int argc, char *argv[])
 {
-    test_emplaceable_concept();
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: assign_iter_iter",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	test_emplaceable_concept(pop);
+
+	pop.close();
+
+	return 0;
 }

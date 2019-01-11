@@ -103,10 +103,8 @@ struct emplace_constructible_and_move_insertable {
 	    : value(other.value), moved(other.moved + 1)
 	{
 	}
-	/*
-	 * Since move constructor is declared explicitly, copy connstructor
-	 * won't be generated.
-	 */
+	/* Since move constructor is user-declared, copy constructor and copy
+	 * assignment operator are not implicitly declared by compiler */
 };
 
 #endif /* HELPER_CLASSES_HPP */

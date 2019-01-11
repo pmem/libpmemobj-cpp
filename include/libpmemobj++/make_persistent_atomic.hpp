@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,12 +40,14 @@
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ATOMIC_HPP
 #define LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ATOMIC_HPP
 
+#include <libpmemobj++/allocation_flag.hpp>
 #include <libpmemobj++/detail/check_persistent_ptr_array.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/make_atomic_impl.hpp>
 #include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/detail/variadic.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj/atomic_base.h>
+#include <libpmemobj.h>
 
 #include <tuple>
 
@@ -65,6 +67,7 @@ namespace obj
  * @param[in,out] pool the pool from which the object will be allocated.
  * @param[in,out] ptr the persistent pointer to which the allocation
  * will take place.
+ * @param[in] flag affects behaviour of allocator
  * @param[in] args variadic function parameter containing all parameters
  * passed to the objects constructor.
  *
@@ -74,16 +77,68 @@ template <typename T, typename... Args>
 void
 make_persistent_atomic(pool_base &pool,
 		       typename detail::pp_if_not_array<T>::type &ptr,
-		       Args &&... args)
+		       atomic_allocation_flag flag, Args &&... args)
 {
 	std::tuple<Args &...> arg_pack{args...};
-	auto ret = pmemobj_alloc(pool.handle(), ptr.raw_ptr(), sizeof(T),
-				 detail::type_num<T>(),
-				 &detail::obj_constructor<T, Args...>,
-				 static_cast<void *>(&arg_pack));
+	auto ret = pmemobj_xalloc(pool.handle(), ptr.raw_ptr(), sizeof(T),
+				  detail::type_num<T>(), flag.value,
+				  &detail::obj_constructor<T, Args...>,
+				  static_cast<void *>(&arg_pack));
 
 	if (ret != 0)
 		throw std::bad_alloc();
+}
+
+/**
+ * Atomically allocate and construct an object.
+ *
+ * Constructor parameters are passed through variadic parameters. Do *NOT* use
+ * this inside transactions, as it might lead to undefined behavior in the
+ * presence of transaction aborts.
+ *
+ * @param[in,out] pool the pool from which the object will be allocated.
+ * @param[in,out] ptr the persistent pointer to which the allocation
+ * will take place.
+ * @param[in] args variadic function parameter containing all parameters
+ * passed to the objects constructor.
+ *
+ * @throw std::bad_alloc on allocation failure.
+ */
+template <typename T, typename... Args>
+typename std::enable_if<
+	!std::is_same<typename detail::variadic_get_first<Args...>::type,
+		      atomic_allocation_flag>::value>::type
+make_persistent_atomic(pool_base &pool,
+		       typename detail::pp_if_not_array<T>::type &ptr,
+		       Args &&... args)
+{
+	make_persistent_atomic<T>(pool, ptr, atomic_allocation_flag::none(),
+				  std::forward<Args>(args)...);
+}
+
+/**
+ * Atomically allocate and construct an object.
+ *
+ * Constructor parameters are passed through variadic parameters. Do *NOT* use
+ * this inside transactions, as it might lead to undefined behavior in the
+ * presence of transaction aborts.
+ *
+ * @param[in,out] pool the pool from which the object will be allocated.
+ * @param[in,out] ptr the persistent pointer to which the allocation
+ * will take place.
+ * @param[in] args variadic function parameter containing all parameters
+ * passed to the objects constructor.
+ *
+ * @throw std::bad_alloc on allocation failure.
+ */
+template <typename T, typename... Args>
+typename std::enable_if<(sizeof...(Args) == 0)>::type
+make_persistent_atomic(pool_base &pool,
+		       typename detail::pp_if_not_array<T>::type &ptr,
+		       Args &&... args)
+{
+	make_persistent_atomic<T>(pool, ptr, atomic_allocation_flag::none(),
+				  std::forward<Args>(args)...);
 }
 
 /**

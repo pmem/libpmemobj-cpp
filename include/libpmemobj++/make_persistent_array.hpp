@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,12 +40,14 @@
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_HPP
 #define LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_HPP
 
+#include <libpmemobj++/allocation_flag.hpp>
 #include <libpmemobj++/detail/array_traits.hpp>
 #include <libpmemobj++/detail/check_persistent_ptr_array.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/detail/pexceptions.hpp>
-#include <libpmemobj/tx_base.h>
+#include <libpmemobj++/detail/variadic.hpp>
+#include <libpmemobj.h>
 
 #include <cassert>
 #include <limits>
@@ -63,6 +65,7 @@ namespace obj
  * This overload only participates in overload resolution if T is an array.
  *
  * @param[in] N the number of array elements.
+ * @param[in] flag affects behaviour of allocator
  *
  * @return persistent_ptr<T[]> on success
  *
@@ -73,7 +76,7 @@ namespace obj
  */
 template <typename T>
 typename detail::pp_if_array<T>::type
-make_persistent(std::size_t N)
+make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
 {
 	typedef typename detail::pp_array_type<T>::type I;
 
@@ -89,8 +92,8 @@ make_persistent(std::size_t N)
 		throw transaction_scope_error(
 			"refusing to allocate memory outside of transaction scope");
 
-	persistent_ptr<T> ptr =
-		pmemobj_tx_alloc(sizeof(I) * N, detail::type_num<I>());
+	persistent_ptr<T> ptr = pmemobj_tx_xalloc(
+		sizeof(I) * N, detail::type_num<I>(), flag.value);
 
 	if (ptr == nullptr)
 		throw transaction_alloc_error(
@@ -116,6 +119,8 @@ make_persistent(std::size_t N)
  * This function can be used to *transactionally* allocate an array.
  * This overload only participates in overload resolution if T is an array.
  *
+ * @param[in] flag affects behaviour of allocator
+ *
  * @return persistent_ptr<T[N]> on success
  *
  * @throw transaction_scope_error if called outside of an active
@@ -125,7 +130,7 @@ make_persistent(std::size_t N)
  */
 template <typename T>
 typename detail::pp_if_size_array<T>::type
-make_persistent()
+make_persistent(allocation_flag flag = allocation_flag::none())
 {
 	typedef typename detail::pp_array_type<T>::type I;
 	enum { N = detail::pp_array_elems<T>::elems };
@@ -134,8 +139,8 @@ make_persistent()
 		throw transaction_scope_error(
 			"refusing to allocate memory outside of transaction scope");
 
-	persistent_ptr<T> ptr =
-		pmemobj_tx_alloc(sizeof(I) * N, detail::type_num<I>());
+	persistent_ptr<T> ptr = pmemobj_tx_xalloc(
+		sizeof(I) * N, detail::type_num<I>(), flag.value);
 
 	if (ptr == nullptr)
 		throw transaction_alloc_error(

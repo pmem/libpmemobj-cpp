@@ -140,6 +140,22 @@ add_test_expect_failure(array_get libcxx/array/array.tuple/get.fail.cpp)
 build_test(array_iterators libcxx/array/iterators.pass.cpp)
 add_test_generic(NAME array_iterators TRACERS none)
 
+build_test(vector_libcxx_assign_copy libcxx/vector/vector.cons/assign_copy.pass.cpp)
+add_test_generic(NAME vector_libcxx_assign_copy TRACERS none pmemcheck memcheck)
+
+build_test(vector_libcxx_assign_initializer_list libcxx/vector/vector.cons/assign_initializer_list.pass.cpp)
+add_test_generic(NAME vector_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
+
+build_test(vector_libcxx_assign_iter_iter libcxx/vector/vector.cons/assign_iter_iter.pass.cpp)
+add_test_generic(NAME vector_libcxx_assign_iter_iter TRACERS none pmemcheck memcheck)
+
+# XXX: uncomment tests below when vector's push back method is implemented
+#build_test(vector_libcxx_assign_move_pass libcxx/vector/vector.cons/assign_move.pass.cpp)
+#add_test_generic(NAME vector_libcxx_assign_move_pass TRACERS none pmemcheck memcheck)
+
+build_test(vector_libcxx_assign_size_value libcxx/vector/vector.cons/assign_size_value.pass.cpp)
+add_test_generic(NAME vector_libcxx_assign_size_value TRACERS none pmemcheck memcheck)
+
 build_test(vector_libcxx_ctor_default libcxx/vector/vector.cons/construct_default.pass.cpp)
 add_test_generic(NAME vector_libcxx_ctor_default TRACERS none pmemcheck memcheck)
 
@@ -176,6 +192,9 @@ add_test_generic(NAME vector_libcxx_data TRACERS none pmemcheck memcheck)
 build_test(vector_libcxx_initializer_list libcxx/vector/vector.cons/initializer_list.pass.cpp)
 add_test_generic(NAME vector_libcxx_initializer_list TRACERS none pmemcheck memcheck)
 
+build_test(vector_libcxx_op_equal_initializer_list libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp)
+add_test_generic(NAME vector_libcxx_op_equal_initializer_list TRACERS none pmemcheck memcheck)
+
 # XXX: enable vector_libcxx_capacity test when vector's push_back method is implemented
 #build_test(vector_libcxx_capacity libcxx/vector/vector.capacity/capacity.pass.cpp)
 #add_test_generic(NAME vector_libcxx_capacity TRACERS none pmemcheck memcheck)
@@ -207,27 +226,15 @@ add_test_generic(NAME vector_libcxx_resize_size_value TRACERS none pmemcheck mem
 build_test(vector_libcxx_swap libcxx/vector/vector.capacity/swap.pass.cpp)
 add_test_generic(NAME vector_libcxx_swap TRACERS none pmemcheck memcheck)
 
-# XXX: port libcxx test vector.cons/assign_copy.pass
-
-# XXX: port libcxx test vector.cons/assign_initializer_list.pass
-
-# XXX: port libcxx test vector.cons/assign_iter_iter.pass
-
-# XXX: port libcxx test vector.cons/assign_move.pass
-
-# XXX: port libcxx test vector.cons/assign_size_value.pass
-
 # XXX: port libcxx test vector.cons/default_noexcept.pass
 
 # XXX: port libcxx test vector.cons/default_recursive.pass
 
-# XXX: port libcxx test vector.cons/move_assign_noexcept.pass
-
 # XXX: port libcxx test vector.cons/move_noexcept.pass
 
-# XXX: port libcxx test vector.cons/move.pass
+# XXX: port libcxx test vector.cons/move_assign_noexcept.pass
 
-# XXX: port libcxx test vector.cons/op_equal_initializer_list.pass
+# XXX: port libcxx test vector.cons/move.pass
 
 build_test(vector_libcxx_clear libcxx/vector/vector.modifiers/clear.pass.cpp)
 add_test_generic(NAME vector_libcxx_clear TRACERS none pmemcheck memcheck)

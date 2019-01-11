@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -281,5 +281,8 @@ build_test(vector_iterators vector_iterators/vector_iterators.cpp)
 add_test_generic(vector_iterators none)
 add_test_generic(vector_iterators memcheck)
 add_test_generic(vector_iterators pmemcheck)
+
+build_test(vector_data vector_data/vector_data.cpp)
+add_test_generic(vector_data pmemcheck)
 
 add_subdirectory(external)

@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -168,3 +168,85 @@ add_test_default(vector_libcxx_ctor_size_value memcheck)
 
 build_test(vector_libcxx_dtor_noexcept libcxx/vector/vector.cons/dtor_noexcept.pass.cpp)
 add_test_default(vector_libcxx_dtor_noexcept none)
+
+# XXX: port libcxx test vector.capacity/capacity.pass
+
+# XXX: port libcxx test vector.capacity/empty.fail
+
+# XXX: port libcxx test vector.capacity/empty.pass
+
+# XXX: port libcxx test vector.capacity/max_size.pass
+
+# XXX: port libcxx test vector.capacity/reserve.pass
+
+# XXX: port libcxx test vector.capacity/resize_size_value.pass
+
+# XXX: port libcxx test vector.capacity/resize_size.pass
+
+# XXX: port libcxx test vector.capacity/shrink_to_fit.pass
+
+# XXX: port libcxx test vector.capacity/size.pass
+
+# XXX: port libcxx test vector.capacity/swap.pass
+
+# XXX: port libcxx test vector.cons/assign_copy.pass
+
+# XXX: port libcxx test vector.cons/assign_initializer_list.pass
+
+# XXX: port libcxx test vector.cons/assign_iter_iter.pass
+
+# XXX: port libcxx test vector.cons/assign_move.pass
+
+# XXX: port libcxx test vector.cons/assign_size_value.pass
+
+# XXX: port libcxx test vector.cons/copy.pass
+
+# XXX: port libcxx test vector.cons/deduct.pass
+
+# XXX: port libcxx test vector.cons/default_noexcept.pass
+
+# XXX: port libcxx test vector.cons/default_recursive.pass
+
+# XXX: port libcxx test vector.cons/initializer_list.pass
+
+# XXX: port libcxx test vector.cons/move_assign_noexcept.pass
+
+# XXX: port libcxx test vector.cons/move_noexcept.pass
+
+# XXX: port libcxx test vector.cons/move.pass
+
+# XXX: port libcxx test vector.cons/op_equal_initializer_list.pass
+
+# XXX: port libcxx test vector.modifiers/clear.pass
+
+# XXX: port libcxx test vector.modifiers/emplace_back.pass
+
+# XXX: port libcxx test vector.modifiers/emplace_extra.pass
+
+# XXX: port libcxx test vector.modifiers/emplace.pass
+
+# XXX: port libcxx test vector.modifiers/erase_iter_iter.pass
+
+# XXX: port libcxx test vector.modifiers/erase_iter.pass
+
+# XXX: port libcxx test vector.modifiers/insert_iter_initializer_list.pass
+
+# XXX: port libcxx test vector.modifiers/insert_iter_iter_iter.pass
+
+# XXX: port libcxx test vector.modifiers/insert_iter_rvalue.pass
+
+# XXX: port libcxx test vector.modifiers/insert_iter_size_value.pass
+
+# XXX: port libcxx test vector.modifiers/insert_iter_value.pass
+
+# XXX: port libcxx test vector.modifiers/pop_back.pass
+
+# XXX: port libcxx test vector.modifiers/push_back_exception_safety.pass
+
+# XXX: port libcxx test vector.modifiers/push_back_rvalue.pass
+
+# XXX: port libcxx test vector.modifiers/push_back.pass
+
+# XXX: port libcxx test vector.special/swap_noexcept.pass
+
+# XXX: port libcxx test vector.special/swap.pass

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj/ctl.h>
 
 #define LAYOUT "cpp"
 
@@ -202,6 +203,45 @@ test_delete_null()
 		UT_ASSERT(0);
 	}
 }
+
+/*
+ * test_flags -- (internal) test proper handling of flags
+ */
+void
+test_flags(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<foo[]> pfoo = nullptr;
+	nvobj::persistent_ptr<foo[10]> pfoo_sized = nullptr;
+
+	auto alloc_class = pop.ctl_set<struct pobj_alloc_class_desc>(
+		"heap.alloc_class.new.desc",
+		{sizeof(foo), 0, 200, POBJ_HEADER_COMPACT, 0});
+
+	try {
+		nvobj::make_persistent_atomic<foo[10]>(
+			pop, pfoo_sized,
+			nvobj::allocation_flag_atomic::class_id(
+				alloc_class.class_id));
+
+		nvobj::make_persistent_atomic<foo[]>(
+			pop, pfoo, 10,
+			nvobj::allocation_flag_atomic::class_id(
+				alloc_class.class_id));
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(pmemobj_alloc_usable_size(pfoo.raw()), sizeof(foo) * 10);
+	UT_ASSERTeq(pmemobj_alloc_usable_size(pfoo_sized.raw()),
+		    sizeof(foo) * 10);
+
+	try {
+		nvobj::delete_persistent_atomic<foo[]>(pfoo, 10);
+		nvobj::delete_persistent_atomic<foo[10]>(pfoo_sized);
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
 }
 
 int
@@ -227,6 +267,7 @@ main(int argc, char *argv[])
 	test_make_N_d(pop);
 	test_constructor_exception(pop);
 	test_delete_null();
+	test_flags(pop);
 
 	pop.close();
 

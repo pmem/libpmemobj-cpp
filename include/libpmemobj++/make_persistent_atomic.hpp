@@ -105,8 +105,8 @@ make_persistent_atomic(pool_base &pool,
  * @throw std::bad_alloc on allocation failure.
  */
 template <typename T, typename... Args>
-typename std::enable_if<
-	!detail::is_first_arg_same<allocation_flag_atomic, Args...>>::type
+typename std::enable_if<!detail::is_first_arg_same<allocation_flag_atomic,
+						   Args...>::value>::type
 make_persistent_atomic(pool_base &pool,
 		       typename detail::pp_if_not_array<T>::type &ptr,
 		       Args &&... args)

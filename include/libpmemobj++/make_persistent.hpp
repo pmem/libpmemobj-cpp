@@ -109,8 +109,9 @@ make_persistent(allocation_flag flag, Args &&... args)
  * @throw rethrow exception from T constructor
  */
 template <typename T, typename... Args>
-typename std::enable_if<!detail::is_first_arg_same<allocation_flag, Args...>,
-			typename detail::pp_if_not_array<T>::type>::type
+typename std::enable_if<
+	!detail::is_first_arg_same<allocation_flag, Args...>::value,
+	typename detail::pp_if_not_array<T>::type>::type
 make_persistent(Args &&... args)
 {
 	return make_persistent<T>(allocation_flag::none(),

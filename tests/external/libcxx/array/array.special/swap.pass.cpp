@@ -47,8 +47,8 @@ struct can_swap : std::is_same<decltype(can_swap_imp<Tp>(0)), void> {
 struct Testcase1 {
 	typedef double T;
 	typedef pmem_exp::array<T, 3> C;
-	C c1 = {1, 2, 3.5};
-	C c2 = {4, 5, 6.5};
+	C c1 = {{1, 2, 3.5}};
+	C c2 = {{4, 5, 6.5}};
 
 	void
 	run()
@@ -68,8 +68,8 @@ struct Testcase1 {
 struct Testcase2 {
 	typedef double T;
 	typedef pmem_exp::array<T, 0> C;
-	C c1 = {};
-	C c2 = {};
+	C c1 = {{}};
+	C c2 = {{}};
 
 	void
 	run()
@@ -84,8 +84,8 @@ struct Testcase3 {
 	typedef NonSwappable T;
 	typedef pmem_exp::array<T, 0> C0;
 	static_assert(can_swap<C0 &>::value, "");
-	C0 l = {};
-	C0 r = {};
+	C0 l = {{}};
+	C0 r = {{}};
 
 	void
 	run()

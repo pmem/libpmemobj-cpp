@@ -27,7 +27,7 @@ using pmem_exp::get;
 struct Testcase1 {
 	typedef std::unique_ptr<double> T;
 	typedef pmem_exp::array<T, 1> C;
-	const C c = {std::unique_ptr<double>(new double(3.5))};
+	const C c = {{std::unique_ptr<double>(new double(3.5))}};
 
 	void
 	run()

@@ -28,7 +28,7 @@ main()
 	{
 		typedef double T;
 		typedef pmem_exp::array<T, 3> C;
-		C c = {1, 2, 3.5};
+		C c = {{1, 2, 3.5}};
 		get<3>(c) = 5.5; // expected-note {{requested here}}
 		// expected-error@array:* {{static_assert failed "Index out of
 		// bounds in std::get<> (std::array)"}}

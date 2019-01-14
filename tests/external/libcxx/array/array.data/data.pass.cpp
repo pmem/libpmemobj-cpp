@@ -26,7 +26,7 @@ namespace pmem_exp = pmem::obj::experimental;
 struct Testcase1 {
 	typedef double T;
 	typedef pmem_exp::array<T, 3> C;
-	C c = {1, 2, 3.5};
+	C c = {{1, 2, 3.5}};
 
 	void
 	run()
@@ -55,7 +55,7 @@ struct Testcase2 {
 struct Testcase3 {
 	typedef std::max_align_t T;
 	typedef pmem_exp::array<T, 0> C;
-	const C c = {};
+	const C c = {{}};
 
 	void
 	run()

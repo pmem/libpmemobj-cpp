@@ -91,7 +91,7 @@ make_persistent(Args &&... args)
 }
 
 /**
- * Transactionally free an object of type T held in a persitent_ptr.
+ * Transactionally free an object of type T held in a persistent_ptr.
  *
  * This function can be used to *transactionally* free an object. Calls the
  * object's destructor before freeing memory. Cannot be used for array

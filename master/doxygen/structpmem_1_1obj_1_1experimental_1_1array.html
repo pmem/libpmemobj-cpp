@@ -179,7 +179,7 @@ const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el"
 <tr class="memdesc:ae9a2a46e7116298f8b509fc74b1fcd82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the last element. <br /></td></tr>
 <tr class="separator:ae9a2a46e7116298f8b509fc74b1fcd82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a113016b4fb574f71dc12f72a90048471"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1slice.html">slice</a>&lt; <a class="el" href="structpmem_1_1obj_1_1experimental_1_1range__snapshotting__iterator.html">range_snapshotting_iterator</a>&lt; T &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a113016b4fb574f71dc12f72a90048471">range</a> (size_type start, size_type n, size_type snapshot_size=std::numeric_limits&lt; size_type &gt;::max())</td></tr>
-<tr class="memdesc:a113016b4fb574f71dc12f72a90048471"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds requested range to a transaction and returns slice.  <a href="#a113016b4fb574f71dc12f72a90048471">More...</a><br /></td></tr>
+<tr class="memdesc:a113016b4fb574f71dc12f72a90048471"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns slice.  <a href="#a113016b4fb574f71dc12f72a90048471">More...</a><br /></td></tr>
 <tr class="separator:a113016b4fb574f71dc12f72a90048471"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a158127f3f70b68560d2adf69ad64595f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1slice.html">slice</a>&lt; <a class="el" href="structpmem_1_1obj_1_1experimental_1_1const__contiguous__iterator.html">const_iterator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a158127f3f70b68560d2adf69ad64595f">range</a> (size_type start, size_type n) const</td></tr>
 <tr class="memdesc:a158127f3f70b68560d2adf69ad64595f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns const slice.  <a href="#a158127f3f70b68560d2adf69ad64595f">More...</a><br /></td></tr>
@@ -197,7 +197,7 @@ constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class=
 <tr class="separator:a1c5be31884491b905fa32f55972aa92d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6719e69d2ecad0403bd5bb13fe24831"><td class="memItemLeft" align="right" valign="top"><a id="aa6719e69d2ecad0403bd5bb13fe24831"></a>
 constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#aa6719e69d2ecad0403bd5bb13fe24831">empty</a> () const noexcept</td></tr>
-<tr class="memdesc:aa6719e69d2ecad0403bd5bb13fe24831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks wheter array is empty. <br /></td></tr>
+<tr class="memdesc:aa6719e69d2ecad0403bd5bb13fe24831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether array is empty. <br /></td></tr>
 <tr class="separator:aa6719e69d2ecad0403bd5bb13fe24831"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed61fb674d94cc7e2d8d01baa7529822"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#aed61fb674d94cc7e2d8d01baa7529822">fill</a> (const_reference value)</td></tr>
 <tr class="memdesc:aed61fb674d94cc7e2d8d01baa7529822"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds entire array to a transaction and fills array with specified value.  <a href="#aed61fb674d94cc7e2d8d01baa7529822">More...</a><br /></td></tr>
@@ -795,12 +795,12 @@ template&lt;typename T, std::size_t N&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Adds requested range to a transaction and returns slice. </p>
+<p>Returns slice. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>start index of requested range. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">n</td><td>number of elements in range. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">snapshot_size</td><td>number of elements which should be snapshotted in a bulk while traversing this slice If provided value is larger or equal to n, entire range is added to a transaction. If value is equal to 0 no snapshotting happens.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">snapshot_size</td><td>number of elements which should be snapshotted in a bulk while traversing this slice. If provided value is larger or equal to n, entire range is added to a transaction. If value is equal to 0 no snapshotting happens.</td></tr>
   </table>
   </dd>
 </dl>

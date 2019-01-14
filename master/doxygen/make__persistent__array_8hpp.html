@@ -76,12 +76,12 @@ $(function() {
 
 <p>Persistent_ptr allocation functions for arrays.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="array__traits_8hpp_source.html">libpmemobj++/detail/array_traits.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="life_8hpp_source.html">libpmemobj++/detail/life.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="pexceptions_8hpp_source.html">libpmemobj++/detail/pexceptions.hpp</a>&quot;</code><br />
-<code>#include &quot;libpmemobj/tx_base.h&quot;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="array__traits_8hpp_source.html">libpmemobj++/detail/array_traits.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="life_8hpp_source.html">libpmemobj++/detail/life.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="pexceptions_8hpp_source.html">libpmemobj++/detail/pexceptions.hpp</a>&gt;</code><br />
+<code>#include &lt;libpmemobj/tx_base.h&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
 </div>
@@ -99,11 +99,11 @@ Functions</h2></td></tr>
 <tr class="separator:a5e6161ab1f2a24a5774e76e5e4c0cd5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array_8hpp.html#a4222feb628a4d6f8ac2b3a5dbe42c5e6">pmem::obj::delete_persistent</a> (typename detail::pp_if_array&lt; T &gt;::type ptr, std::size_t N)</td></tr>
-<tr class="memdesc:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a persitent_ptr.  <a href="make__persistent__array_8hpp.html#a4222feb628a4d6f8ac2b3a5dbe42c5e6">More...</a><br /></td></tr>
+<tr class="memdesc:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class. ">persistent_ptr</a>.  <a href="make__persistent__array_8hpp.html#a4222feb628a4d6f8ac2b3a5dbe42c5e6">More...</a><br /></td></tr>
 <tr class="separator:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5582033bf768fea635b40b3ba766fbef"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a5582033bf768fea635b40b3ba766fbef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array_8hpp.html#a5582033bf768fea635b40b3ba766fbef">pmem::obj::delete_persistent</a> (typename detail::pp_if_size_array&lt; T &gt;::type ptr)</td></tr>
-<tr class="memdesc:a5582033bf768fea635b40b3ba766fbef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a persitent_ptr.  <a href="make__persistent__array_8hpp.html#a5582033bf768fea635b40b3ba766fbef">More...</a><br /></td></tr>
+<tr class="memdesc:a5582033bf768fea635b40b3ba766fbef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class. ">persistent_ptr</a>.  <a href="make__persistent__array_8hpp.html#a5582033bf768fea635b40b3ba766fbef">More...</a><br /></td></tr>
 <tr class="separator:a5582033bf768fea635b40b3ba766fbef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -137,8 +137,8 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Transactionally free an array of objects of type T held in a persitent_ptr. </p>
-<p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. Cannot be used for single objects.</p>
+<p>Transactionally free an array of objects of type T held in a persistent_ptr. </p>
+<p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. This overload only participates in overload resolution if T is an array.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an array of objects. </td></tr>
@@ -174,8 +174,8 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Transactionally free an array of objects of type T held in a persitent_ptr. </p>
-<p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. Cannot be used for single objects.</p>
+<p>Transactionally free an array of objects of type T held in a persistent_ptr. </p>
+<p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. This overload only participates in overload resolution if T is an array.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an array of objects.</td></tr>
@@ -211,14 +211,14 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Transactionally allocate and construct an array of objects of type T. </p>
-<p>This function can be used to <em>transactionally</em> allocate an array. Cannot be used for simple objects.</p>
+<p>This function can be used to <em>transactionally</em> allocate an array. This overload only participates in overload resolution if T is an array.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">N</td><td>the number of array elements.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>persistent_ptr&lt;T[]&gt; on success</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T[]&gt;</a> on success</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">transaction_scope_error</td><td>if called outside of an active transaction </td></tr>
@@ -248,7 +248,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Transactionally allocate and construct an array of objects of type T. </p>
-<p>This function can be used to <em>transactionally</em> allocate an array. Cannot be used for simple objects.</p>
+<p>This function can be used to <em>transactionally</em> allocate an array. This overload only participates in overload resolution if T is an array.</p>
 <dl class="section return"><dt>Returns</dt><dd>persistent_ptr&lt;T[N]&gt; on success</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">

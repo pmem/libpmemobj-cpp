@@ -96,18 +96,18 @@ public:
 	vector(std::initializer_list<T> init);
 
 	/* Assign operators */
-	// vector &operator=(const vector &other);
-	// vector &operator=(vector &&other);
-	// vector &operator=(std::initializer_list<T> ilist);
+	vector &operator=(const vector &other);
+	vector &operator=(vector &&other);
+	vector &operator=(std::initializer_list<T> ilist);
 
 	/* Assign methods */
-	// void assign(size_type count, const T &value);
-	// template <typename InputIt>
-	// void assign(InputIt first, typename
-	// std::enable_if<detail::is_input_iterator<InputIt>::value &&
-	// std::is_constructible<value_type, typename
-	// std::iterator_traits<InputIt>::reference>::value, InputIt>::type
-	// last); void assign(std::initializer_list<T> ilist);
+	void assign(size_type count, const T &value);
+	template <typename InputIt,
+		  typename std::enable_if<
+			  detail::is_input_iterator<InputIt>::value,
+			  InputIt>::type * = nullptr>
+	void assign(InputIt first, InputIt last);
+	void assign(std::initializer_list<T> ilist);
 
 	/* Destructor */
 	~vector();
@@ -196,7 +196,7 @@ private:
 	void realloc(size_type size);
 	size_type get_recommended_capacity(size_type at_least) const;
 	void shrink(size_type size_new);
-	void snapshot_data(size_type count = 0);
+	void snapshot_data(size_type idx_first, size_type idx_last);
 
 	/* Underlying array */
 	persistent_ptr<T[]> _data;
@@ -414,6 +414,258 @@ vector<T>::vector(std::initializer_list<T> init)
 }
 
 /**
+ * Copy assignment operator. Replaces the contents with a copy of the contents
+ * of other transactionally.
+ *
+ * @post size() == other.size()
+ * @post capacity() == max(size(), other.capacity())
+ *
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+vector<T> &
+vector<T>::operator=(const vector &other)
+{
+	if (this != &other)
+		assign(other.begin(), other.end());
+
+	return *this;
+}
+
+/**
+ * Move assignment operator. Replaces the contents with those of other using
+ * move semantics (i.e. the data in other is moved from other into this
+ * container) transactionally. Other is in a valid but empty state afterwards.
+ *
+ * @post size() == other.size()
+ * @post capacity() == other.capacity()
+ *
+ * @throw pmem::transaction_free_error when freeing underlying array failed.
+ */
+template <typename T>
+vector<T> &
+vector<T>::operator=(vector &&other)
+{
+	if (this != &other) {
+		pool_base pb = get_pool();
+
+		transaction::run(pb, [&] {
+			dealloc();
+
+			_data = other._data;
+			_capacity = other._capacity;
+			_size = other._size;
+
+			other._data = nullptr;
+			other._capacity = other._size = 0;
+		});
+	}
+
+	return *this;
+}
+
+/**
+ * Replaces the contents with those identified by initializer list ilist
+ * transactionally.
+ *
+ * @throw std::length_error if ilist.size() > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+vector<T> &
+vector<T>::operator=(std::initializer_list<T> ilist)
+{
+	assign(ilist.begin(), ilist.end());
+
+	return *this;
+}
+
+/**
+ * Replaces the contents with count copies of value value transactionally. All
+ * iterators, pointers and references to the elements of the container are
+ * invalidated. The past-the-end iterator is also invalidated.
+ *
+ * @param[in] count number of elements to construct.
+ * @param[in] value value of all constructed elements.
+ *
+ * @post size() == count
+ * @post capacity() == max(size(), count)
+ *
+ * @throw std::length_error if count > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+void
+vector<T>::assign(size_type count, const_reference value)
+{
+	pool_base pb = get_pool();
+
+	transaction::run(pb, [&] {
+		if (count <= capacity()) {
+			/*
+			 * Reallocation is not needed. First, replace old
+			 * elements with new ones in range [0, size()).
+			 * Depending on count, either call remaining old
+			 * elements destructors, or append more new elements.
+			 */
+			size_type size_old = _size;
+			snapshot_data(0, size_old);
+
+			std::fill_n(
+				&_data[0],
+				(std::min)(count,
+					   static_cast<size_type>(size_old)),
+				value);
+
+			if (count > size_old) {
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+				/*
+				 * Range of memory:
+				 * [&_data[size_old], &_data[count])
+				 * is undefined, there is no need to snapshot
+				 * and eventually rollback old data.
+				 */
+				VALGRIND_PMC_ADD_TO_TX(
+					&_data[size_old],
+					sizeof(T) * (count - size_old));
+#endif
+
+				construct(size_old, count - size_old, value);
+				/*
+				 * XXX: implicit persist is required here
+				 * because given range wasn't snapshotted and
+				 * won't be persisted automatically on tx
+				 * commit. This can be changed once we will have
+				 * implemented "uninitialized" flag for
+				 * pmemobj_tx_xadd in libpmemobj.
+				 */
+				pb.persist(&_data[size_old],
+					   sizeof(T) * (count - size_old));
+			} else
+				shrink(count);
+		} else {
+			dealloc();
+			alloc(count);
+			construct(0, count, value);
+		}
+	});
+}
+
+/**
+ * Replaces the contents with copies of those in the range [first, last)
+ * transactionally. This overload participates in overload resolution only if
+ * InputIt satisfies InputIterator. All iterators, pointers and references to
+ * the elements of the container are invalidated. The past-the-end iterator is
+ * also invalidated.
+ *
+ * @param[in] first first iterator.
+ * @param[in] last last iterator.
+ *
+ * @post size() == std::distance(first, last)
+ * @post capacity() == max(size(), std::distance(first, last))
+ *
+ * @throw std::length_error if std::distance(first, last) > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+template <typename InputIt,
+	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
+				  InputIt>::type *>
+void
+vector<T>::assign(InputIt first, InputIt last)
+{
+	pool_base pb = get_pool();
+
+	size_type size_new = static_cast<size_type>(std::distance(first, last));
+
+	transaction::run(pb, [&] {
+		if (size_new <= capacity()) {
+			/*
+			 * Reallocation is not needed. First, replace old
+			 * elements with new ones in range [0, size()).
+			 * Depending on size_new, either call remaining old
+			 * elements destructors, or append more new elements.
+			 */
+			size_type size_old = _size;
+			snapshot_data(0, size_old);
+
+			InputIt mid = last;
+			bool growing = false;
+
+			if (size_new > size_old) {
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+				/*
+				 * Range of memory:
+				 * [&_data[size_old], &_data[size_new])
+				 * is undefined, there is no need to snapshot
+				 * and eventually rollback old data.
+				 */
+				VALGRIND_PMC_ADD_TO_TX(
+					&_data[size_old],
+					sizeof(T) * (size_new - size_old));
+#endif
+
+				growing = true;
+				mid = first;
+				std::advance(mid, size_old);
+			}
+
+			iterator shrink_to = std::copy(first, mid, &_data[0]);
+
+			if (growing) {
+				construct_range_copy(size_old, mid, last);
+				/*
+				 * XXX: implicit persist is required here
+				 * because given range wasn't snapshotted and
+				 * won't be persisted automatically on tx
+				 * commit. This can be changed once we will have
+				 * implemented "uninitialized" flag for
+				 * pmemobj_tx_xadd in libpmemobj.
+				 */
+				pb.persist(&_data[size_old],
+					   sizeof(T) * (size_new - size_old));
+			} else
+				shrink(static_cast<size_type>(std::distance(
+					iterator(&_data[0]), shrink_to)));
+		} else {
+			dealloc();
+			alloc(size_new);
+			construct_range_copy(0, first, last);
+		}
+	});
+}
+
+/**
+ * Replaces the contents with the elements from the initializer list ilist
+ * transactionally. All iterators, pointers and references to the elements of
+ * the container are invalidated. The past-the-end iterator is also invalidated.
+ *
+ * @param[in] ilist initializer list with content to be constructed.
+ *
+ * @post size() == std::distance(ilist.begin(), ilist.end())
+ * @post capacity() == max(size(), capacity())
+ *
+ * @throw std::length_error if std::distance(first, last) > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+void
+vector<T>::assign(std::initializer_list<T> ilist)
+{
+	assign(ilist.begin(), ilist.end());
+}
+
+/**
  * Destructor.
  * Note that free_data may throw an transaction_free_error when freeing
  * underlying array failed. It is recommended to call free_data manually before
@@ -620,7 +872,7 @@ template <typename T>
 typename vector<T>::value_type *
 vector<T>::data()
 {
-	snapshot_data();
+	snapshot_data(0, _size);
 
 	return _data.get();
 }
@@ -1319,7 +1571,7 @@ vector<T>::insert_gap(size_type idx, size_type count)
 		 * XXX: future optimization: we don't have to snapshot data
 		 * which we will not overwrite
 		 */
-		snapshot_data();
+		snapshot_data(0, _size);
 
 		auto old_data = _data;
 		auto old_size = _size;
@@ -1371,7 +1623,7 @@ vector<T>::realloc(size_type capacity_new)
 	 * XXX: future optimization: we don't have to snapshot data
 	 * which we will not overwrite
 	 */
-	snapshot_data();
+	snapshot_data(0, _size);
 
 	auto old_data = _data;
 	auto old_size = _size;
@@ -1430,7 +1682,7 @@ vector<T>::shrink(size_type size_new)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
 
-	snapshot_data(size_new);
+	snapshot_data(size_new, _size);
 
 	for (size_type i = size_new; i < _size; ++i)
 		detail::destroy<value_type>(_data[i]);
@@ -1438,18 +1690,20 @@ vector<T>::shrink(size_type size_new)
 }
 
 /**
- * Private helper function. Takes a “snapshot” of all stored data in underlying
- * array, except first count elements.
+ * Private helper function. Takes a “snapshot” of data in range
+ * [&_data[idx_first], &_data[idx_last])
  *
- * @param[in] count number of first elements in underlying array, which should
- * not be snapshotted.
+ * @param[in] idx_first first index.
+ * @param[in] idx_last last index.
+ *
  * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename T>
 void
-vector<T>::snapshot_data(size_type count)
+vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
 {
-	detail::conditional_add_to_tx(_data.get() + count, _size - count);
+	detail::conditional_add_to_tx(_data.get() + idx_first,
+				      idx_last - idx_first);
 }
 
 /**

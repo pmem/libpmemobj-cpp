@@ -261,7 +261,7 @@ vector<T>::vector(size_type count, const value_type &value)
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_error(
-			"Default constructor called out of transaction scope.");
+			"Fill constructor called out of transaction scope.");
 
 	_data = nullptr;
 	_size = 0;
@@ -294,7 +294,7 @@ vector<T>::vector(size_type count)
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_error(
-			"Default constructor called out of transaction scope.");
+			"Fill constructor called out of transaction scope.");
 
 	_data = nullptr;
 	_size = 0;
@@ -347,7 +347,7 @@ vector<T>::vector(InputIt first, InputIt last)
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_error(
-			"Default constructor called out of transaction scope.");
+			"Range constructor called out of transaction scope.");
 
 	_data = nullptr;
 	_size = 0;
@@ -382,7 +382,7 @@ vector<T>::vector(const vector &other)
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_error(
-			"Default constructor called out of transaction scope.");
+			"Copy constructor called out of transaction scope.");
 
 	_data = nullptr;
 	_size = 0;
@@ -417,7 +417,7 @@ vector<T>::vector(vector &&other)
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_error(
-			"Default constructor called out of transaction scope.");
+			"Move constructor called out of transaction scope.");
 
 	_data = other._data;
 	_capacity = other._capacity;

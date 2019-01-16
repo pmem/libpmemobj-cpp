@@ -6,41 +6,65 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// class vector
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// bool empty() const noexcept;
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include <vector>
-#include <cassert>
+using C = pmem_exp::vector<int>;
 
-#include "test_macros.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<C> v;
+};
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::vector<int> C;
-    C c;
-    ASSERT_NOEXCEPT(c.empty());
-    assert(c.empty());
-    c.push_back(C::value_type(1));
-    assert(!c.empty());
-    c.clear();
-    assert(c.empty());
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::vector<int, min_allocator<int>> C;
-    C c;
-    ASSERT_NOEXCEPT(c.empty());
-    assert(c.empty());
-    c.push_back(C::value_type(1));
-    assert(!c.empty());
-    c.clear();
-    assert(c.empty());
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: empty", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(
+			pop, [&] { r->v = nvobj::make_persistent<C>(); });
+
+		UT_ASSERT(r->v->empty());
+
+		nvobj::transaction::run(
+			pop, [&] { r->v->push_back(C::value_type(1)); });
+
+		UT_ASSERT(!r->v->empty());
+
+		nvobj::transaction::run(pop, [&] { r->v->clear(); });
+
+		UT_ASSERT(r->v->empty());
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->v); });
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

@@ -6,57 +6,61 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// void shrink_to_fit();
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
-#include "test_allocator.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-int main()
+using C = pmem_exp::vector<int>;
+
+struct root {
+	nvobj::persistent_ptr<C> v;
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<int> v(100);
-        v.push_back(1);
-        assert(is_contiguous_container_asan_correct(v));
-        v.shrink_to_fit();
-        assert(v.capacity() == 101);
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<int, limited_allocator<int, 401> > v(100);
-        v.push_back(1);
-        assert(is_contiguous_container_asan_correct(v));
-        v.shrink_to_fit();
-        assert(v.capacity() == 101);
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#ifndef _LIBCPP_NO_EXCEPTIONS
-    {
-        std::vector<int, limited_allocator<int, 400> > v(100);
-        v.push_back(1);
-        assert(is_contiguous_container_asan_correct(v));
-        v.shrink_to_fit();
-        LIBCPP_ASSERT(v.capacity() == 200); // assumes libc++'s 2x growth factor
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
-#if TEST_STD_VER >= 11
-    {
-        std::vector<int, min_allocator<int>> v(100);
-        v.push_back(1);
-        assert(is_contiguous_container_asan_correct(v));
-        v.shrink_to_fit();
-        assert(v.capacity() == 101);
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: shrink_to_fit",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v = nvobj::make_persistent<C>(100U);
+			r->v->push_back(1);
+		});
+
+		r->v->shrink_to_fit();
+		UT_ASSERT(r->v->capacity() == 101);
+		UT_ASSERT(r->v->size() == 101);
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->v); });
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

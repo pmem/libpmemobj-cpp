@@ -208,25 +208,56 @@ add_test_default(vector_libcxx_initializer_list none)
 add_test_default(vector_libcxx_initializer_list pmemcheck)
 add_test_default(vector_libcxx_initializer_list memcheck)
 
-# XXX: port libcxx test vector.capacity/capacity.pass
+# XXX: enable vector_libcxx_capacity test when vector's push_back method is implemented
+#build_test(vector_libcxx_capacity libcxx/vector/vector.capacity/capacity.pass.cpp)
+#add_test_default(vector_libcxx_capacity none)
+#add_test_default(vector_libcxx_capacity pmemcheck)
+#add_test_default(vector_libcxx_capacity memcheck)
 
 # XXX: port libcxx test vector.capacity/empty.fail
 
-# XXX: port libcxx test vector.capacity/empty.pass
+# XXX: enable vector_libcxx_empty test when vector's push_back method is implemented
+#build_test(vector_libcxx_empty libcxx/vector/vector.capacity/empty.pass.cpp)
+#add_test_default(vector_libcxx_empty none)
+#add_test_default(vector_libcxx_empty pmemcheck)
+#add_test_default(vector_libcxx_empty memcheck)
 
-# XXX: port libcxx test vector.capacity/max_size.pass
+build_test(vector_libcxx_max_size libcxx/vector/vector.capacity/max_size.pass.cpp)
+add_test_default(vector_libcxx_max_size none)
+add_test_default(vector_libcxx_max_size pmemcheck)
+add_test_default(vector_libcxx_max_size memcheck)
 
-# XXX: port libcxx test vector.capacity/reserve.pass
+build_test(vector_libcxx_reserve libcxx/vector/vector.capacity/reserve.pass.cpp)
+add_test_default(vector_libcxx_reserve none)
+add_test_default(vector_libcxx_reserve pmemcheck)
+add_test_default(vector_libcxx_reserve memcheck)
 
-# XXX: port libcxx test vector.capacity/resize_size_value.pass
+build_test(vector_libcxx_resize_size libcxx/vector/vector.capacity/resize_size.pass.cpp)
+add_test_default(vector_libcxx_resize_size none)
+add_test_default(vector_libcxx_resize_size pmemcheck)
+add_test_default(vector_libcxx_resize_size memcheck)
 
-# XXX: port libcxx test vector.capacity/resize_size.pass
+build_test(vector_libcxx_resize_size_value libcxx/vector/vector.capacity/resize_size_value.pass.cpp)
+add_test_default(vector_libcxx_resize_size_value none)
+add_test_default(vector_libcxx_resize_size_value pmemcheck)
+add_test_default(vector_libcxx_resize_size_value memcheck)
 
-# XXX: port libcxx test vector.capacity/shrink_to_fit.pass
+# XXX: enable vector_libcxx_shrink_to_fit test when vector's push_back method is implemented
+#build_test(vector_libcxx_shrink_to_fit libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp)
+#add_test_default(vector_libcxx_shrink_to_fit none)
+#add_test_default(vector_libcxx_shrink_to_fit pmemcheck)
+#add_test_default(vector_libcxx_shrink_to_fit memcheck)
 
-# XXX: port libcxx test vector.capacity/size.pass
+# XXX: enable vector_libcxx_size test when vector's push_back and erase methods are implemented
+#build_test(vector_libcxx_size libcxx/vector/vector.capacity/size.pass.cpp)
+#add_test_default(vector_libcxx_size none)
+#add_test_default(vector_libcxx_size pmemcheck)
+#add_test_default(vector_libcxx_size memcheck)
 
-# XXX: port libcxx test vector.capacity/swap.pass
+build_test(vector_libcxx_swap libcxx/vector/vector.capacity/swap.pass.cpp)
+add_test_default(vector_libcxx_swap none)
+add_test_default(vector_libcxx_swap pmemcheck)
+add_test_default(vector_libcxx_swap memcheck)
 
 # XXX: port libcxx test vector.cons/assign_copy.pass
 
@@ -252,7 +283,10 @@ add_test_default(vector_libcxx_initializer_list memcheck)
 
 # XXX: port libcxx test vector.cons/op_equal_initializer_list.pass
 
-# XXX: port libcxx test vector.modifiers/clear.pass
+build_test(vector_libcxx_clear libcxx/vector/vector.modifiers/clear.pass.cpp)
+add_test_default(vector_libcxx_clear none)
+add_test_default(vector_libcxx_clear pmemcheck)
+add_test_default(vector_libcxx_clear memcheck)
 
 # XXX: port libcxx test vector.modifiers/emplace_back.pass
 

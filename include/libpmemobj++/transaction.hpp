@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -455,7 +455,7 @@ public:
 	 * supplied block of memory has to be within the pool registered in the
 	 * transaction. This function must be called during transaction. This
 	 * overload only participates in overload resolution of function
-	 * template if T satisfies requirements of std::is_trivially_copyable.
+	 * template if T satisfies requirements of IS_TRIVIALLY_COPYABLE macro.
 	 *
 	 * @param[in] addr pointer to the first object to be snapshotted.
 	 * @param[in] num number of elements to be snapshotted.
@@ -466,8 +466,8 @@ public:
 	 * wasn't called during transaction.
 	 */
 	template <typename T,
-		  typename std::enable_if<std::is_trivially_copyable<T>::value,
-					  T>::type * = nullptr>
+		  typename std::enable_if<IS_TRIVIALLY_COPYABLE(T), T>::type * =
+			  nullptr>
 	static void
 	snapshot(const T *addr, size_t num = 1)
 	{

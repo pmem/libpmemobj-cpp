@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,19 @@
 #define POBJ_CPP_DEPRECATED __declspec(deprecated)
 #else
 #define POBJ_CPP_DEPRECATED
+#endif
+
+/*
+ * Workaround for missing "is_trivially_copyable" in gcc < 5.0.
+ * Be aware of a difference between __has_trivial_copy and is_trivially_copyable
+ * e.g. for deleted copy constructors __has_trivial_copy(A) returns 1 in clang
+ * and 0 in gcc. It means that for gcc < 5 IS_TRIVIALLY_COPYABLE is more
+ * restrictive than is_trivially_copyable.
+ */
+#if !defined(__clang__) && defined(__GNUG__) && __GNUC__ < 5
+#define IS_TRIVIALLY_COPYABLE(T) __has_trivial_copy(T)
+#else
+#define IS_TRIVIALLY_COPYABLE(T) std::is_trivially_copyable<T>::value
 #endif
 
 namespace pmem

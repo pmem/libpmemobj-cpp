@@ -6,45 +6,67 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// void swap(vector& x);
-
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 #include <vector>
-#include <cassert>
 
-#include "min_allocator.h"
-#include "asan_testing.h"
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-int main()
+using C = pmem_exp::vector<int>;
+
+struct root {
+	nvobj::persistent_ptr<C> v1;
+	nvobj::persistent_ptr<C> v2;
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<int> v1(100);
-        std::vector<int> v2(200);
-        assert(is_contiguous_container_asan_correct(v1));
-        assert(is_contiguous_container_asan_correct(v2));
-        v1.swap(v2);
-        assert(v1.size() == 200);
-        assert(v1.capacity() == 200);
-        assert(is_contiguous_container_asan_correct(v1));
-        assert(v2.size() == 100);
-        assert(v2.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v2));
-    }
-#if TEST_STD_VER >= 11
-    {
-        std::vector<int, min_allocator<int>> v1(100);
-        std::vector<int, min_allocator<int>> v2(200);
-        assert(is_contiguous_container_asan_correct(v1));
-        assert(is_contiguous_container_asan_correct(v2));
-        v1.swap(v2);
-        assert(v1.size() == 200);
-        assert(v1.capacity() == 200);
-        assert(is_contiguous_container_asan_correct(v1));
-        assert(v2.size() == 100);
-        assert(v2.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v2));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: swap", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1 = nvobj::make_persistent<C>(100U);
+			r->v2 = nvobj::make_persistent<C>(200U);
+		});
+
+		r->v1->swap(*r->v2);
+
+		UT_ASSERT(r->v1->size() == 200);
+		UT_ASSERT(r->v1->capacity() == 200);
+		UT_ASSERT(r->v2->size() == 100);
+		UT_ASSERT(r->v2->capacity() == 100);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<C>(r->v1);
+			nvobj::delete_persistent<C>(r->v2);
+		});
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

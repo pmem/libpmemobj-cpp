@@ -6,57 +6,79 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// class vector
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// size_type size() const noexcept;
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include <vector>
-#include <cassert>
+using C = pmem_exp::vector<int>;
 
-#include "test_macros.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<C> v;
+};
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::vector<int> C;
-    C c;
-    ASSERT_NOEXCEPT(c.size());
-    assert(c.size() == 0);
-    c.push_back(C::value_type(2));
-    assert(c.size() == 1);
-    c.push_back(C::value_type(1));
-    assert(c.size() == 2);
-    c.push_back(C::value_type(3));
-    assert(c.size() == 3);
-    c.erase(c.begin());
-    assert(c.size() == 2);
-    c.erase(c.begin());
-    assert(c.size() == 1);
-    c.erase(c.begin());
-    assert(c.size() == 0);
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::vector<int, min_allocator<int>> C;
-    C c;
-    ASSERT_NOEXCEPT(c.size());
-    assert(c.size() == 0);
-    c.push_back(C::value_type(2));
-    assert(c.size() == 1);
-    c.push_back(C::value_type(1));
-    assert(c.size() == 2);
-    c.push_back(C::value_type(3));
-    assert(c.size() == 3);
-    c.erase(c.begin());
-    assert(c.size() == 2);
-    c.erase(c.begin());
-    assert(c.size() == 1);
-    c.erase(c.begin());
-    assert(c.size() == 0);
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: size", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(
+			pop, [&] { r->v = nvobj::make_persistent<C>(); });
+		UT_ASSERT(r->v->size() == 0);
+
+		nvobj::transaction::run(
+			pop, [&] { r->v->push_back(C::value_type(2)); });
+		UT_ASSERT(r->v->size() == 1);
+
+		nvobj::transaction::run(
+			pop, [&] { r->v->push_back(C::value_type(1)); });
+		UT_ASSERT(r->v->size() == 2);
+
+		nvobj::transaction::run(
+			pop, [&] { r->v->push_back(C::value_type(3)); });
+		UT_ASSERT(r->v->size() == 3);
+
+		nvobj::transaction::run(pop,
+					[&] { r->v->erase(r->v->begin()); });
+		UT_ASSERT(r->v->size() == 2);
+
+		nvobj::transaction::run(pop,
+					[&] { r->v->erase(r->v->begin()); });
+		UT_ASSERT(r->v->size() == 1);
+
+		nvobj::transaction::run(pop,
+					[&] { r->v->erase(r->v->begin()); });
+		UT_ASSERT(r->v->size() == 0);
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->v); });
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

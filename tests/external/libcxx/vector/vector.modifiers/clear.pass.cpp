@@ -6,38 +6,61 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// void clear() noexcept;
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include "test_macros.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
+using C = pmem_exp::vector<int>;
 
-int main()
+struct root {
+	nvobj::persistent_ptr<C> v;
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-    int a[] = {1, 2, 3};
-    std::vector<int> c(a, a+3);
-    ASSERT_NOEXCEPT(c.clear());
-    c.clear();
-    assert(c.empty());
-    LIBCPP_ASSERT(c.__invariants());
-    LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
-    }
-#if TEST_STD_VER >= 11
-    {
-    int a[] = {1, 2, 3};
-    std::vector<int, min_allocator<int>> c(a, a+3);
-    ASSERT_NOEXCEPT(c.clear());
-    c.clear();
-    assert(c.empty());
-    LIBCPP_ASSERT(c.__invariants());
-    LIBCPP_ASSERT(is_contiguous_container_asan_correct(c));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: reserve",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	int a[] = {1, 2, 3};
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v = nvobj::make_persistent<C>(a, a + 3);
+		});
+
+		r->v->clear();
+		UT_ASSERT(r->v->empty());
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->v); });
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

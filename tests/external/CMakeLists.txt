@@ -166,8 +166,18 @@ add_test_default(vector_libcxx_ctor_size_value none)
 add_test_default(vector_libcxx_ctor_size_value pmemcheck)
 add_test_default(vector_libcxx_ctor_size_value memcheck)
 
+build_test(vector_libcxx_copy libcxx/vector/vector.cons/copy.pass.cpp)
+add_test_default(vector_libcxx_copy none)
+add_test_default(vector_libcxx_copy pmemcheck)
+add_test_default(vector_libcxx_copy memcheck)
+
 build_test(vector_libcxx_dtor_noexcept libcxx/vector/vector.cons/dtor_noexcept.pass.cpp)
 add_test_default(vector_libcxx_dtor_noexcept none)
+
+build_test(vector_libcxx_initializer_list libcxx/vector/vector.cons/initializer_list.pass.cpp)
+add_test_default(vector_libcxx_initializer_list none)
+add_test_default(vector_libcxx_initializer_list pmemcheck)
+add_test_default(vector_libcxx_initializer_list memcheck)
 
 # XXX: port libcxx test vector.capacity/capacity.pass
 
@@ -199,15 +209,11 @@ add_test_default(vector_libcxx_dtor_noexcept none)
 
 # XXX: port libcxx test vector.cons/assign_size_value.pass
 
-# XXX: port libcxx test vector.cons/copy.pass
-
 # XXX: port libcxx test vector.cons/deduct.pass
 
 # XXX: port libcxx test vector.cons/default_noexcept.pass
 
 # XXX: port libcxx test vector.cons/default_recursive.pass
-
-# XXX: port libcxx test vector.cons/initializer_list.pass
 
 # XXX: port libcxx test vector.cons/move_assign_noexcept.pass
 

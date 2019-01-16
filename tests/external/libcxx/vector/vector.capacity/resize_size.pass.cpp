@@ -6,79 +6,95 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "helper_classes.hpp"
 
-// void resize(size_type sz);
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "MoveOnly.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
+using C = pmem_exp::vector<int>;
+using C2 = pmem_exp::vector<move_only>;
 
-int main()
+struct root {
+	nvobj::persistent_ptr<C> v1;
+	nvobj::persistent_ptr<C2> v2;
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<int> v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        // Add 1 for implementations that dynamically allocate a container proxy.
-        std::vector<int, limited_allocator<int, 300 + 1> > v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#if TEST_STD_VER >= 11
-    {
-        std::vector<MoveOnly> v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        // Add 1 for implementations that dynamically allocate a container proxy.
-        std::vector<MoveOnly, limited_allocator<MoveOnly, 300 + 1> > v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-    {
-        std::vector<MoveOnly, min_allocator<MoveOnly>> v(100);
-        v.resize(50);
-        assert(v.size() == 50);
-        assert(v.capacity() == 100);
-        assert(is_contiguous_container_asan_correct(v));
-        v.resize(200);
-        assert(v.size() == 200);
-        assert(v.capacity() >= 200);
-        assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: resize_size",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	{
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->v1 = nvobj::make_persistent<C>(100U);
+			});
+
+			r->v1->resize(50);
+			UT_ASSERT(r->v1->size() == 50);
+			UT_ASSERT(r->v1->capacity() == 100);
+
+			r->v1->resize(200);
+			UT_ASSERT(r->v1->size() == 200);
+			UT_ASSERT(r->v1->capacity() >= 200);
+
+			r->v1->resize(200);
+			UT_ASSERT(r->v1->size() == 200);
+			UT_ASSERT(r->v1->capacity() >= 200);
+
+			nvobj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<C>(r->v1);
+			});
+
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+	{
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->v2 = nvobj::make_persistent<C2>(100U);
+			});
+
+			r->v2->resize(50);
+			UT_ASSERT(r->v2->size() == 50);
+			UT_ASSERT(r->v2->capacity() == 100);
+
+			r->v2->resize(200);
+			UT_ASSERT(r->v2->size() == 200);
+			UT_ASSERT(r->v2->capacity() >= 200);
+
+			nvobj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<C2>(r->v2);
+			});
+
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+
+	pop.close();
+
+	return 0;
 }

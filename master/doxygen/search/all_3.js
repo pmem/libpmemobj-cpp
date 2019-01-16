@@ -1,6 +1,7 @@
 var searchData=
 [
   ['calculate_5foffset',['calculate_offset',['../classpmem_1_1detail_1_1persistent__ptr__base.html#a12c15a4fd373be79ac6ef488fff9efd4',1,'pmem::detail::persistent_ptr_base']]],
+  ['capacity',['capacity',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536',1,'pmem::obj::experimental::vector']]],
   ['cbegin',['cbegin',['../structpmem_1_1obj_1_1experimental_1_1array.html#ace46cae7d3329adf991c7eafb84c37df',1,'pmem::obj::experimental::array::cbegin()'],['../array_8hpp.html#ab641fa1ffd7a8c7ad1610ef052349921',1,'pmem::obj::experimental::cbegin()']]],
   ['cend',['cend',['../structpmem_1_1obj_1_1experimental_1_1array.html#af5b372d2e25056536c24e3e32f840449',1,'pmem::obj::experimental::array::cend()'],['../array_8hpp.html#a7164f77c691f97fdde08604cc449129d',1,'pmem::obj::experimental::cend()']]],
   ['change_5fby',['change_by',['../structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a66303cc3e5f25790c76206a4eab4f92c',1,'pmem::obj::experimental::contiguous_iterator']]],

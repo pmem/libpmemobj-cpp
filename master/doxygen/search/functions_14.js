@@ -11,5 +11,6 @@ var searchData=
   ['_7eshared_5fmutex',['~shared_mutex',['../classpmem_1_1obj_1_1shared__mutex.html#a67fc051f71440ccb0ba99cdc38973ae3',1,'pmem::obj::shared_mutex']]],
   ['_7estandard_5falloc_5fpolicy',['~standard_alloc_policy',['../classpmem_1_1obj_1_1standard__alloc__policy.html#a86eb4170b4b6b1d666e71366c737e2ef',1,'pmem::obj::standard_alloc_policy::~standard_alloc_policy()'],['../classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#ac2c6aaf6139c6d5ba306f71be11b910f',1,'pmem::obj::standard_alloc_policy&lt; void &gt;::~standard_alloc_policy()']]],
   ['_7etimed_5fmutex',['~timed_mutex',['../classpmem_1_1obj_1_1timed__mutex.html#a9545fdce7d2ae9e109121562a6c57f26',1,'pmem::obj::timed_mutex']]],
-  ['_7etransaction',['~transaction',['../classpmem_1_1obj_1_1transaction.html#a78ab1cc9876472a0f0fcf96d6a0d16d0',1,'pmem::obj::transaction']]]
+  ['_7etransaction',['~transaction',['../classpmem_1_1obj_1_1transaction.html#a78ab1cc9876472a0f0fcf96d6a0d16d0',1,'pmem::obj::transaction']]],
+  ['_7evector',['~vector',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a395a49f38bcde6c2164405fc9bb2c35a',1,'pmem::obj::experimental::vector']]]
 ];

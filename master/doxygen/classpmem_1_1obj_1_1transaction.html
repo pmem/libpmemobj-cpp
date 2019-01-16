@@ -110,6 +110,10 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aae32a7ede01bfcf20672433263267387"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">run</a> (<a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;<a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a>, std::function&lt; void()&gt; tx, Locks &amp;... locks)</td></tr>
 <tr class="memdesc:aae32a7ede01bfcf20672433263267387"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a closure-like transaction and lock <code>locks</code>.  <a href="#aae32a7ede01bfcf20672433263267387">More...</a><br /></td></tr>
 <tr class="separator:aae32a7ede01bfcf20672433263267387"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a723ac1809dae102c7ef8a84196d94862"><td class="memTemplParams" colspan="2">template&lt;typename T , typename std::enable_if&lt; std::is_trivially_copyable&lt; T &gt;::value, T &gt;::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:a723ac1809dae102c7ef8a84196d94862"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction.html#a723ac1809dae102c7ef8a84196d94862">snapshot</a> (const T *addr, size_t num=1)</td></tr>
+<tr class="memdesc:a723ac1809dae102c7ef8a84196d94862"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes a “snapshot” of given elements of type T number (1 by default), located at the given address ptr in the virtual memory space and saves it to the undo log.  <a href="#a723ac1809dae102c7ef8a84196d94862">More...</a><br /></td></tr>
+<tr class="separator:a723ac1809dae102c7ef8a84196d94862"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
@@ -343,6 +347,61 @@ template&lt;typename... Locks&gt; </div>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">transaction_error</a></td><td>on any error pertaining the execution of the transaction. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1manual__tx__abort.html" title="Custom transaction error class. ">manual_tx_abort</a></td><td>on manual transaction abort. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a723ac1809dae102c7ef8a84196d94862"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a723ac1809dae102c7ef8a84196d94862">&#9670;&nbsp;</a></span>snapshot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename std::enable_if&lt; std::is_trivially_copyable&lt; T &gt;::value, T &gt;::type *  = nullptr&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void pmem::obj::transaction::snapshot </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>addr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>num</em> = <code>1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Takes a “snapshot” of given elements of type T number (1 by default), located at the given address ptr in the virtual memory space and saves it to the undo log. </p>
+<p>The application is then free to directly modify the object in that memory range. In case of a failure or abort, all the changes within this range will be rolled back. The supplied block of memory has to be within the pool registered in the transaction. This function must be called during transaction. This overload only participates in overload resolution of function template if T satisfies requirements of std::is_trivially_copyable.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">addr</td><td>pointer to the first object to be snapshotted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">num</td><td>number of elements to be snapshotted.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>this function must be called during transaction.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">transaction_error</a></td><td>when snapshotting failed or if function wasn't called during transaction. </td></tr>
   </table>
   </dd>
 </dl>

@@ -19,10 +19,6 @@
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
-#include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
-
-#include <cstring>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;

@@ -244,7 +244,7 @@ vector<T>::vector()
  * @pre must be called in transaction scope.
  *
  * @post size() == count
- * @post capacity() == detail::next_pow_2(size())
+ * @post capacity() == size()
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
@@ -265,7 +265,7 @@ vector<T>::vector(size_type count, const value_type &value)
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(detail::next_pow_2(count));
+	_alloc(count);
 	_grow(count, value);
 }
 
@@ -277,7 +277,7 @@ vector<T>::vector(size_type count, const value_type &value)
  * @pre must be called in transaction scope.
  *
  * @post size() == count
- * @post capacity() == detail::next_pow_2(_size)
+ * @post capacity() == size()
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
@@ -298,7 +298,7 @@ vector<T>::vector(size_type count)
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(detail::next_pow_2(count));
+	_alloc(count);
 	// XXX: after "capacity" methods will be merged, _grow() overload
 	// without parameters will be available. After that, following lines
 	// should be replaced with _grow()
@@ -322,7 +322,7 @@ vector<T>::vector(size_type count)
  * @pre must be called in transaction scope.
  *
  * @post size() == std::distance(first, last)
- * @post capacity() == detail::next_pow_2(size())
+ * @post capacity() == size()
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
@@ -351,8 +351,7 @@ vector<T>::vector(InputIt first, InputIt last)
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(detail::next_pow_2(
-		static_cast<size_type>(std::distance(first, last))));
+	_alloc(static_cast<size_type>(std::distance(first, last)));
 	_grow(first, last);
 }
 
@@ -386,7 +385,7 @@ vector<T>::vector(const vector &other)
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(other._capacity);
+	_alloc(other.capacity());
 	_grow(other.begin(), other.end());
 }
 
@@ -420,8 +419,8 @@ vector<T>::vector(vector &&other)
 			"Default constructor called out of transaction scope.");
 
 	_data = other._data;
-	_capacity = other._capacity;
-	_size = other._size;
+	_capacity = other.capacity();
+	_size = other.size();
 	other._data = nullptr;
 	other._capacity = other._size = 0;
 }
@@ -434,7 +433,7 @@ vector<T>::vector(vector &&other)
  * @pre must be called in transaction scope.
  *
  * @post size() == init.size()
- * @post capacity() == detail::next_pow_2(size())
+ * @post capacity() == size()
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying

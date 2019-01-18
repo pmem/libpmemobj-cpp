@@ -34,15 +34,14 @@
 
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-#include <libpmemobj++/pool.hpp>
 
-#include <cstring>
+#include <iterator>
 #include <vector>
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
 
-const static size_t pool_size = PMEMOBJ_MIN_POOL;
+const static size_t pool_size = 2 * PMEMOBJ_MIN_POOL;
 const static size_t test_val = pool_size * 2;
 
 using vector_type = pmem_exp::vector<int>;
@@ -67,7 +66,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop,
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			pptr = pmem::obj::make_persistent<vector_type>(
+			pptr = nvobj::make_persistent<vector_type>(
 				std::begin(vec), std::end(vec));
 		});
 		UT_ASSERT(0);
@@ -95,8 +94,7 @@ test_size_ctor(nvobj::pool<struct root> &pop,
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			pptr = pmem::obj::make_persistent<vector_type>(
-				test_val);
+			pptr = nvobj::make_persistent<vector_type>(test_val);
 		});
 		UT_ASSERT(0);
 	} catch (pmem::transaction_alloc_error &) {
@@ -123,8 +121,7 @@ test_size_value_ctor(nvobj::pool<struct root> &pop,
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			pptr = pmem::obj::make_persistent<vector_type>(test_val,
-								       1);
+			pptr = nvobj::make_persistent<vector_type>(test_val, 1);
 		});
 		UT_ASSERT(0);
 	} catch (pmem::transaction_alloc_error &) {
@@ -156,6 +153,10 @@ main(int argc, char *argv[])
 	test_iter_iter_ctor(pop, pptr);
 	test_size_ctor(pop, pptr);
 	test_size_value_ctor(pop, pptr);
+	/* XXX: implement following test cases when vector's push_back method is
+	   available */
+	// test_copy_ctor(pop);
+	// test_initializer_list_ctor(pop);
 
 	pop.close();
 

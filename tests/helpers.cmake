@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,6 +47,10 @@ function(print_logs)
     if(EXISTS ${BIN_DIR}/${TEST_NAME}.err)
         file(READ ${BIN_DIR}/${TEST_NAME}.err ERR)
         message(STATUS "Stderr:\n${ERR}")
+    endif()
+    if(EXISTS ${BIN_DIR}/${TEST_NAME}.pmreorder)
+       file(READ ${BIN_DIR}/${TEST_NAME}.pmreorder PMEMREORDER)
+       message(STATUS "Pmreorder:\n${PMEMREORDER}")
     endif()
 endfunction()
 
@@ -253,12 +257,20 @@ function(pmreorder_create_store_log pool name)
 
     set(ENV{PMREORDER_EMIT_LOG} 1)
 
+    if(DEFINED ENV{PMREORDER_STACKTRACE_DEPTH})
+        set(PMREORDER_STACKTRACE_DEPTH $ENV{PMREORDER_STACKTRACE_DEPTH})
+        set(PMREORDER_STACKTRACE "yes")
+    else()
+        set(PMREORDER_STACKTRACE_DEPTH 1)
+        set(PMREORDER_STACKTRACE "no")
+    endif()
+
     set(cmd valgrind --tool=pmemcheck -q
         --log-stores=yes
         --print-summary=no
         --log-file=${BIN_DIR}/${TEST_NAME}.storelog
-        --log-stores-stacktraces=yes
-        --log-stores-stacktraces-depth=2
+        --log-stores-stacktraces=${PMREORDER_STACKTRACE}
+        --log-stores-stacktraces-depth=${PMREORDER_STACKTRACE_DEPTH}
         --expect-fence-after-clflush=yes
         ${name} ${ARGN})
 

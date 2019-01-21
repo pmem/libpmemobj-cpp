@@ -264,6 +264,21 @@ add_test_generic(vector_private none)
 add_test_generic(vector_private memcheck)
 add_test_generic(vector_private pmemcheck)
 
+build_test(vector_capacity_exceptions_length vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp)
+add_test_generic(vector_capacity_exceptions_length none)
+add_test_generic(vector_capacity_exceptions_length memcheck)
+add_test_generic(vector_capacity_exceptions_length pmemcheck)
+
+build_test(vector_capacity_exceptions_oom vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp)
+add_test_generic(vector_capacity_exceptions_oom none)
+add_test_generic(vector_capacity_exceptions_oom memcheck)
+add_test_generic(vector_capacity_exceptions_oom pmemcheck)
+
+build_test(vector_capacity_txabort vector_capacity_txabort/vector_capacity_txabort.cpp)
+add_test_generic(vector_capacity_txabort none)
+add_test_generic(vector_capacity_txabort memcheck)
+add_test_generic(vector_capacity_txabort pmemcheck)
+
 build_test(vector_ctor_exceptions_nopmem vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp)
 add_test_generic(vector_ctor_exceptions_nopmem none)
 add_test_generic(vector_ctor_exceptions_nopmem memcheck)
@@ -301,5 +316,15 @@ build_test(vector_ctor_iter_iter vector_ctor_iter_iter/vector_ctor_iter_iter.cpp
 add_test_generic(vector_ctor_iter_iter none)
 add_test_generic(vector_ctor_iter_iter memcheck)
 add_test_generic(vector_ctor_iter_iter pmemcheck)
+
+build_test(vector_modifiers_exceptions_oom vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp)
+add_test_generic(vector_modifiers_exceptions_oom none)
+add_test_generic(vector_modifiers_exceptions_oom memcheck)
+add_test_generic(vector_modifiers_exceptions_oom pmemcheck)
+
+build_test(vector_modifiers_txabort vector_modifiers_txabort/vector_modifiers_txabort.cpp)
+add_test_generic(vector_modifiers_txabort none)
+add_test_generic(vector_modifiers_txabort memcheck)
+add_test_generic(vector_modifiers_txabort pmemcheck)
 
 add_subdirectory(external)

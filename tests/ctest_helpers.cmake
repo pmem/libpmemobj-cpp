@@ -91,6 +91,15 @@ else()
 	set(NO_CHRONO_BUG TRUE)
 endif()
 
+set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+CHECK_CXX_SOURCE_COMPILES(
+	"#include <cstddef>
+	int main() {
+	    std::max_align_t var;
+	    return 0;
+	}"
+	MAX_ALIGN_TYPE_EXISTS)
+
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 

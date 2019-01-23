@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,13 +109,15 @@ check_consistency(nvobj::pool<root> &pop)
 {
 	auto r = pop.root();
 
-	nvobj::experimental::array<int, 5> expected;
-	if (r->ptr->array[0] == 1)
-		expected = {{1, 2, 3, 4, 5}};
-	else
-		expected = {{2, 3, 4, 5, 6}};
-
-	UT_ASSERT(r->ptr->array == expected);
+	if (r->ptr->array[0] == 1) {
+		auto it = 1;
+		for (const auto &e : r->ptr->array)
+			UT_ASSERT(e == it++);
+	} else {
+		auto it = 2;
+		for (const auto &e : r->ptr->array)
+			UT_ASSERT(e == it++);
+	}
 }
 
 int

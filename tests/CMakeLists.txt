@@ -240,6 +240,15 @@ else()
 	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 endif()
 
+build_test(vector_assign_exceptions_length vector_assign_exceptions_length/vector_assign_exceptions_length.cpp)
+add_test_generic(NAME vector_assign_exceptions_length TRACERS none memcheck pmemcheck)
+
+build_test(vector_assign_exceptions_oom vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp)
+add_test_generic(NAME vector_assign_exceptions_oom TRACERS none memcheck pmemcheck)
+
+build_test(vector_assign_txabort vector_assign_txabort/vector_assign_txabort.cpp)
+add_test_generic(NAME vector_assign_txabort TRACERS none memcheck pmemcheck)
+
 build_test(vector_comp_operators vector_comp_operators/vector_comp_operators.cpp)
 add_test_generic(NAME vector_comp_operators TRACERS none memcheck pmemcheck)
 

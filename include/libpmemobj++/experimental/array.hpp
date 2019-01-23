@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,7 @@
 #include <libpmemobj++/experimental/slice.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/transaction.hpp>
 #include <libpmemobj.h>
 
 namespace pmem
@@ -60,6 +61,9 @@ namespace experimental
 /**
  * pmem::obj::experimental::array - EXPERIMENTAL persistent container
  * with std::array compatible interface.
+ *
+ * pmem::obj::experimental::array can only be stored on pmem. Creating array on
+ * stack will result with "pool_error" exception.
  *
  * All methods which allow write access to specific element will add it to an
  * active transaction.
@@ -122,32 +126,62 @@ struct array {
 	array(array &&) = default;
 
 	/**
-	 * Copy assignment operator - adds 'this' to a transaction.
+	 * Copy assignment operator - perform assignment from other
+	 * pmem::obj::experimental::array.
+	 *
+	 * This function creates a transaction internally.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pmem::pool_error if an object is not in persistent memory.
 	 */
 	array &
 	operator=(const array &other)
 	{
-		detail::conditional_add_to_tx(this);
+		/*
+		 * _get_pool should be called before self assignment check to
+		 * maintain the same behaviour for all arguments.
+		 */
+		auto pop = _get_pool();
 
-		std::copy(other.cbegin(), other.cend(), _get_data());
+		if (this == &other)
+			return *this;
+
+		transaction::run(pop, [&] {
+			detail::conditional_add_to_tx(this);
+			std::copy(other.cbegin(), other.cend(), _get_data());
+		});
+
 		return *this;
 	}
 
 	/**
-	 * Move assignment operator - adds 'this' to a transaction.
+	 * Move assignment operator - perform move assignment from other
+	 * pmem::obj::experimental::array.
+	 *
+	 * This function creates a transaction internally.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pmem::pool_error if an object is not in persistent memory.
 	 */
 	array &
 	operator=(array &&other)
 	{
-		detail::conditional_add_to_tx(this);
+		/*
+		 * _get_pool should be called before self assignment check to
+		 * maintain the same behaviour for all arguments.
+		 */
+		auto pop = _get_pool();
 
-		std::copy(other.cbegin(), other.cend(), _get_data());
+		if (this == &other)
+			return *this;
+
+		transaction::run(pop, [&] {
+			detail::conditional_add_to_tx(this);
+			std::copy(other.cbegin(), other.cend(), _get_data());
+		});
+
 		return *this;
 	}
 
@@ -497,35 +531,50 @@ struct array {
 	}
 
 	/**
-	 * Adds entire array to a transaction and fills array with
-	 * specified value.
+	 * Fills array with specified value inside internal transaction.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pmem::pool_error if an object is not in persistent memory.
 	 */
 	void
 	fill(const_reference value)
 	{
-		detail::conditional_add_to_tx(this);
-		std::fill(_get_data(), _get_data() + size(), value);
+		auto pop = _get_pool();
+
+		transaction::run(pop, [&] {
+			detail::conditional_add_to_tx(this);
+			std::fill(_get_data(), _get_data() + size(), value);
+		});
 	}
 
 	/**
-	 * Swaps content with other array's content.
-	 * Adds both arrays to a transaction.
+	 * Swaps content with other array's content inside internal transaction.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
+	 * @throw pmem::pool_error if an object is not in persistent memory.
 	 */
 	template <std::size_t Size = N>
 	typename std::enable_if<Size != 0>::type
 	swap(array &other)
 	{
-		detail::conditional_add_to_tx(this);
-		detail::conditional_add_to_tx(&other);
+		/*
+		 * _get_pool should be called before self assignment check to
+		 * maintain the same behaviour for all arguments.
+		 */
+		auto pop = _get_pool();
 
-		std::swap_ranges(_get_data(), _get_data() + size(),
-				 other._get_data());
+		if (this == &other)
+			return;
+
+		transaction::run(pop, [&] {
+			detail::conditional_add_to_tx(this);
+			detail::conditional_add_to_tx(&other);
+
+			std::swap_ranges(_get_data(), _get_data() + size(),
+					 other._get_data());
+		});
 	}
 
 	/**
@@ -579,6 +628,21 @@ private:
 	_get_data() const
 	{
 		return reinterpret_cast<const T *>(&this->_data);
+	}
+
+	/**
+	 * Check whether object is on pmem and return pool_base instance.
+	 *
+	 * @throw pmem::pool_error if an object is not in persistent memory.
+	 */
+	pool_base
+	_get_pool()
+	{
+		auto pop = pmemobj_pool_by_ptr(this);
+		if (pop == nullptr)
+			throw pool_error("Object outside of pmemobj pool.");
+
+		return pool_base(pop);
 	}
 };
 

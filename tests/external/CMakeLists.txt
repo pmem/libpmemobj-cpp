@@ -62,6 +62,10 @@ function(add_test_expect_failure name)
 	set_tests_properties(${name}_fail_expected PROPERTIES WILL_FAIL TRUE)
 endfunction()
 
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5.0.0")
+	set(NO_FULL_CXX11_SUPPORT true)
+endif()
+
 build_test(array_at libcxx/array/at.pass.cpp)
 add_test_default(array_at none)
 
@@ -86,8 +90,10 @@ add_test_default(array_indexing none)
 build_test(array_max_size libcxx/array/max_size.pass.cpp)
 add_test_default(array_max_size none)
 
-build_test(array_size_and_alignment libcxx/array/size_and_alignment.pass.cpp)
-add_test_default(array_size_and_alignment none)
+if (NOT NO_FULL_CXX11_SUPPORT)
+	build_test(array_size_and_alignment libcxx/array/size_and_alignment.pass.cpp)
+	add_test_default(array_size_and_alignment none)
+endif()
 
 build_test(array_types libcxx/array/types.pass.cpp)
 add_test_default(array_types none)
@@ -107,11 +113,15 @@ add_test_default(array_cons_implicit_copy none)
 build_test(array_initializer_list libcxx/array/array.cons/initializer_list.pass.cpp)
 add_test_default(array_initializer_list none)
 
-build_test(array_data_const libcxx/array/array.data/data_const.pass.cpp)
-add_test_default(array_data_const none)
+if (NOT NO_FULL_CXX11_SUPPORT)
+	build_test(array_data_const libcxx/array/array.data/data_const.pass.cpp)
+	add_test_default(array_data_const none)
+endif()
 
-build_test(array_data libcxx/array/array.data/data.pass.cpp)
-add_test_default(array_data none)
+if (NOT NO_FULL_CXX11_SUPPORT)
+	build_test(array_data libcxx/array/array.data/data.pass.cpp)
+	add_test_default(array_data none)
+endif()
 
 add_test_expect_failure(array_fill libcxx/array/array.fill/fill.fail.cpp)
 

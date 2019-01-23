@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -87,6 +87,15 @@ else()
 	set(NO_CLANG_TEMPLATE_BUG TRUE)
 	set(NO_CHRONO_BUG TRUE)
 endif()
+
+set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+CHECK_CXX_SOURCE_COMPILES(
+	"#include <cstddef>
+	int main() {
+	    std::max_align_t var;
+	    return 0;
+	}"
+	MAX_ALIGN_TYPE_EXISTS)
 
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})

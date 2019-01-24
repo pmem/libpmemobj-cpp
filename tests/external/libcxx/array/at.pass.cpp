@@ -30,20 +30,37 @@ struct Testcase1 {
 	void
 	run()
 	{
-		C::reference r1 = c.at(0);
-		UT_ASSERT(r1 == 1);
-		r1 = 5.5;
-		UT_ASSERT(c.front() == 5.5);
+		{
+			C::reference r1 = c.at(0);
+			UT_ASSERT(r1 == 1);
+			r1 = 5.5;
+			UT_ASSERT(c.front() == 5.5);
+			UT_ASSERT(c.cfront() == 5.5);
 
-		C::reference r2 = c.at(2);
-		UT_ASSERT(r2 == 3.5);
-		r2 = 7.5;
-		UT_ASSERT(c.back() == 7.5);
+			C::reference r2 = c.at(2);
+			UT_ASSERT(r2 == 3.5);
+			r2 = 7.5;
+			UT_ASSERT(c.back() == 7.5);
+			UT_ASSERT(c.cback() == 7.5);
 
-		try {
-			c.at(3);
-			UT_ASSERT(false);
-		} catch (const std::out_of_range &) {
+			try {
+				c.at(3);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
+		}
+		{
+			C::const_reference r1 = c.const_at(0);
+			UT_ASSERT(r1 == 5.5);
+
+			C::const_reference r2 = c.const_at(2);
+			UT_ASSERT(r2 == 7.5);
+
+			try {
+				c.const_at(3);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
 		}
 	}
 };
@@ -56,16 +73,31 @@ struct Testcase2 {
 	void
 	run()
 	{
-		C const &cc = c;
-		try {
-			c.at(0);
-			UT_ASSERT(false);
-		} catch (const std::out_of_range &) {
+		{
+			C const &cc = c;
+			try {
+				c.at(0);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
+			try {
+				cc.at(0);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
 		}
-		try {
-			cc.at(0);
-			UT_ASSERT(false);
-		} catch (const std::out_of_range &) {
+		{
+			C const &cc = c;
+			try {
+				c.const_at(0);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
+			try {
+				cc.const_at(0);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
 		}
 	}
 };
@@ -78,16 +110,31 @@ struct Testcase3 {
 	void
 	run()
 	{
-		C::const_reference r1 = c.at(0);
-		UT_ASSERT(r1 == 1);
+		{
+			C::const_reference r1 = c.at(0);
+			UT_ASSERT(r1 == 1);
 
-		C::const_reference r2 = c.at(2);
-		UT_ASSERT(r2 == 3.5);
+			C::const_reference r2 = c.at(2);
+			UT_ASSERT(r2 == 3.5);
 
-		try {
-			c.at(3);
-			UT_ASSERT(false);
-		} catch (const std::out_of_range &) {
+			try {
+				c.at(3);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
+		}
+		{
+			C::const_reference r1 = c.const_at(0);
+			UT_ASSERT(r1 == 1);
+
+			C::const_reference r2 = c.const_at(2);
+			UT_ASSERT(r2 == 3.5);
+
+			try {
+				c.const_at(3);
+				UT_ASSERT(false);
+			} catch (const std::out_of_range &) {
+			}
 		}
 	}
 };

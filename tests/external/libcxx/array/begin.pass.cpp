@@ -53,6 +53,8 @@ struct Testcase2 {
 	run()
 	{
 		UT_ASSERT(c.begin() == c.end());
+		UT_ASSERT(static_cast<const C &>(c).begin() ==
+			  static_cast<const C &>(c).end());
 	}
 };
 

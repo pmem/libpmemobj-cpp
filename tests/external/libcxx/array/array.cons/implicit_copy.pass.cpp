@@ -33,6 +33,12 @@ struct Testcase1 {
 	typedef pmem_exp::array<T, 3> C;
 	C c = {{1.1, 2.2, 3.3}};
 	C c2 = c;
+	C c3;
+	C c4;
+
+	Testcase1() : c3(c), c4(std::move(c3))
+	{
+	}
 
 	void
 	run()

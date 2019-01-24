@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,6 +93,13 @@ struct TestSuccess {
 		}
 
 		try {
+			/* Out of range */
+			static_cast<const C &>(c).range(5, 2);
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
 			c.range(4, 2);
 		} catch (...) {
 			UT_ASSERT(0);
@@ -100,6 +107,12 @@ struct TestSuccess {
 
 		try {
 			c.crange(4, 2);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			static_cast<const C &>(c).range(4, 2);
 		} catch (...) {
 			UT_ASSERT(0);
 		}
@@ -194,6 +207,10 @@ struct TestRanges {
 		int ex2[] = {2, 2, 2, 2, 2};
 
 		auto slice = c.range(0, 7, 1);
+		auto cslice = static_cast<const C &>(c).range(0, 7);
+
+		UT_ASSERT(slice.begin() == cslice.begin());
+		UT_ASSERT(slice.end() == cslice.end());
 
 		for (auto &e : slice) {
 			std::fill(e.data, e.data + 5, 1);

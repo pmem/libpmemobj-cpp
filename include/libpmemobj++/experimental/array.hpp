@@ -741,7 +741,7 @@ template <typename T, std::size_t N>
 typename pmem::obj::experimental::array<T, N>::const_iterator
 begin(const pmem::obj::experimental::array<T, N> &a)
 {
-       return a.begin();
+	return a.begin();
 }
 
 /**

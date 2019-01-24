@@ -35,6 +35,11 @@ struct Testcase1 {
 		UT_ASSERT(p[0] == 1);
 		UT_ASSERT(p[1] == 2);
 		UT_ASSERT(p[2] == 3.5);
+
+		const T *cp = c.cdata();
+		UT_ASSERT(cp[0] == 1);
+		UT_ASSERT(cp[1] == 2);
+		UT_ASSERT(cp[2] == 3.5);
 	}
 };
 
@@ -49,6 +54,10 @@ struct Testcase2 {
 		static_assert(
 			(std::is_same<decltype(c.data()), const T *>::value),
 			"");
+
+		static_assert(
+			(std::is_same<decltype(c.cdata()), const T *>::value),
+			"");
 	}
 };
 
@@ -56,6 +65,7 @@ struct Testcase3 {
 	typedef std::max_align_t T;
 	typedef pmem_exp::array<T, 0> C;
 	const C c = {{}};
+	C cc = {{}};
 
 	void
 	run()
@@ -63,6 +73,10 @@ struct Testcase3 {
 		const T *p = c.data();
 		std::uintptr_t pint = reinterpret_cast<std::uintptr_t>(p);
 		UT_ASSERT(pint % alignof(std::max_align_t) == 0);
+
+		const T *cp = cc.cdata();
+		std::uintptr_t cpint = reinterpret_cast<std::uintptr_t>(cp);
+		UT_ASSERT(cpint % alignof(std::max_align_t) == 0);
 	}
 };
 

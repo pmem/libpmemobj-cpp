@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,6 +184,20 @@ struct array {
 	}
 
 	/**
+	 * Access element at specific index.
+	 *
+	 * @throw std::out_of_range if index is out of bound.
+	 */
+	const_reference
+	const_at(size_type n) const
+	{
+		if (n >= N)
+			throw std::out_of_range("array::const_at");
+
+		return _get_data()[n];
+	}
+
+	/**
 	 * Access element at specific index and add it to a transaction.
 	 * No bounds checking is performed.
 	 *
@@ -225,6 +239,15 @@ struct array {
 	 */
 	const T *
 	data() const noexcept
+	{
+		return _get_data();
+	}
+
+	/**
+	 * Returns const raw pointer to the underlying data.
+	 */
+	const T *
+	cdata() const noexcept
 	{
 		return _get_data();
 	}
@@ -385,10 +408,28 @@ struct array {
 	}
 
 	/**
+	 * Access the first element.
+	 */
+	const_reference
+	cfront() const
+	{
+		return _get_data()[0];
+	}
+
+	/**
 	 * Access the last element.
 	 */
 	const_reference
 	back() const
+	{
+		return _get_data()[size() - 1];
+	}
+
+	/**
+	 * Access the last element.
+	 */
+	const_reference
+	cback() const
 	{
 		return _get_data()[size() - 1];
 	}
@@ -694,11 +735,31 @@ begin(pmem::obj::experimental::array<T, N> &a)
 }
 
 /**
+ * Non-member begin.
+ */
+template <typename T, std::size_t N>
+typename pmem::obj::experimental::array<T, N>::const_iterator
+begin(const pmem::obj::experimental::array<T, N> &a)
+{
+       return a.begin();
+}
+
+/**
  * Non-member end.
  */
 template <typename T, std::size_t N>
 typename pmem::obj::experimental::array<T, N>::iterator
 end(pmem::obj::experimental::array<T, N> &a)
+{
+	return a.end();
+}
+
+/**
+ * Non-member end.
+ */
+template <typename T, std::size_t N>
+typename pmem::obj::experimental::array<T, N>::const_iterator
+end(const pmem::obj::experimental::array<T, N> &a)
 {
 	return a.end();
 }
@@ -714,11 +775,31 @@ rbegin(pmem::obj::experimental::array<T, N> &a)
 }
 
 /**
+ * Non-member rbegin.
+ */
+template <typename T, std::size_t N>
+typename pmem::obj::experimental::array<T, N>::const_reverse_iterator
+rbegin(const pmem::obj::experimental::array<T, N> &a)
+{
+	return a.rbegin();
+}
+
+/**
  * Non-member rend.
  */
 template <typename T, std::size_t N>
 typename pmem::obj::experimental::array<T, N>::reverse_iterator
 rend(pmem::obj::experimental::array<T, N> &a)
+{
+	return a.rend();
+}
+
+/**
+ * Non-member rend.
+ */
+template <typename T, std::size_t N>
+typename pmem::obj::experimental::array<T, N>::const_reverse_iterator
+rend(const pmem::obj::experimental::array<T, N> &a)
 {
 	return a.rend();
 }

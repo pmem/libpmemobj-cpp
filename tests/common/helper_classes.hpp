@@ -110,6 +110,35 @@ struct emplace_constructible_and_move_insertable {
 };
 
 /**
+ * copy_insertable_and_move_insertable - helper class
+ * Satisfies requirements:
+ * - instance of that type can be copy-constructed in uninitialized storage
+ * - rvalue of the type can be copied in uninitialized storage
+ */
+template <typename T>
+struct emplace_constructible_copy_insertable_move_insertable {
+	T value;
+	int copied = 0;
+	int moved = 0;
+
+	emplace_constructible_copy_insertable_move_insertable(T val)
+	    : value(val)
+	{
+	}
+	emplace_constructible_copy_insertable_move_insertable(
+		const emplace_constructible_copy_insertable_move_insertable
+			&other)
+	    : value(other.value), copied(other.copied + 1)
+	{
+	}
+	emplace_constructible_copy_insertable_move_insertable(
+		emplace_constructible_copy_insertable_move_insertable &&other)
+	    : value(other.value), moved(other.moved + 1)
+	{
+	}
+};
+
+/**
  * failing_reference_operator - helper structure
  * Instance of that type cannot use reference operator
  */

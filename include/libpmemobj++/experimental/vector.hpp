@@ -908,7 +908,7 @@ vector<T>::capacity() const noexcept
 }
 
 /**
- * Clears the content of a vector and frees all allocated persitent memory for
+ * Clears the content of a vector and frees all allocated persistent memory for
  * data in transaction.
  *
  * @post size() == 0

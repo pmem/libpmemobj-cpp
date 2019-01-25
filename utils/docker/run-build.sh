@@ -177,7 +177,7 @@ printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sg
 ###############################################################################
 printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_pmemcheck START$(tput sgr 0)\n"
 VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc")
-echo $USERPASS | sudo -S mv $VALGRIND_PC_PATH tmp_valgrind_pc
+echo $USERPASS | sudo -Sk mv $VALGRIND_PC_PATH tmp_valgrind_pc
 mkdir build
 cd build
 
@@ -194,7 +194,7 @@ test_command tests_gcc_release_cpp17_no_pmemcheck
 
 cd ..
 rm -r build
-echo $USERPASS | sudo -S mv tmp_valgrind_pc $VALGRIND_PC_PATH
+echo $USERPASS | sudo -Sk mv tmp_valgrind_pc $VALGRIND_PC_PATH
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_pmemcheck END$(tput sgr 0)\n\n"
 
 ###############################################################################
@@ -205,11 +205,11 @@ mkdir build
 cd build
 
 if [ $PACKAGE_MANAGER = "deb" ]; then
-	echo $USERPASS | sudo -S dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
-	sudo dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
+	echo $USERPASS | sudo -Sk dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
+	echo $USERPASS | sudo -Sk dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
 elif [ $PACKAGE_MANAGER = "rpm" ]; then
-	echo $USERPASS | sudo -S rpm -i /opt/pmdk-pkg/libpmem-*.rpm
-	sudo rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
+	echo $USERPASS | sudo -Sk rpm -i /opt/pmdk-pkg/libpmem-*.rpm
+	echo $USERPASS | sudo -Sk rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
 fi
 
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
@@ -226,9 +226,9 @@ compile_example_standalone map_cli && exit 1
 echo "---------------------------------------------------------------------------"
 
 if [ $PACKAGE_MANAGER = "deb" ]; then
-	sudo dpkg -i libpmemobj++*.deb
+	echo $USERPASS | sudo -Sk dpkg -i libpmemobj++*.deb
 elif [ $PACKAGE_MANAGER = "rpm" ]; then
-	sudo rpm -i libpmemobj++*.rpm
+	echo $USERPASS | sudo -Sk rpm -i libpmemobj++*.rpm
 fi
 
 cd ..
@@ -239,9 +239,9 @@ compile_example_standalone map_cli
 
 # Remove pkg-config and force cmake to use find_package while compiling example
 if [ $PACKAGE_MANAGER = "deb" ]; then
-	sudo dpkg -r --force-all pkg-config
+	echo $USERPASS | sudo -Sk dpkg -r --force-all pkg-config
 elif [ $PACKAGE_MANAGER = "rpm" ]; then
-	sudo rpm -e --nodeps pkgconf
+	echo $USERPASS | sudo -Sk rpm -e --nodeps pkgconf
 fi
 
 # Verify installed package using find_package

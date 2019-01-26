@@ -507,6 +507,17 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(!exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
+
+	/* commiting non-existent transaction should fail with an exception */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::commit();
+	} catch (pmem::transaction_error &te) {
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
 }
 
 /*

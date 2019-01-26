@@ -86,6 +86,7 @@ struct root {
 	nvobj::persistent_ptr<foo> pfoo;
 	nvobj::persistent_ptr<nvobj::p<int>> parr;
 	nvobj::mutex mtx;
+	nvobj::shared_mutex shared_mutex;
 };
 
 void
@@ -207,6 +208,25 @@ test_tx_no_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->parr == nullptr);
 }
 
+static bool
+test_shared_mutex_self_deadlock()
+{
+	/*
+	 * Starting transaction with already taken shared_lock should fail.
+	 *
+	 * However:
+	 *  - pmemobj prior to 1.5.1 has a bug (see pmem/pmdk#3536) which
+	 *    corrupts mutex state by unlocking it when it shouldn't
+	 *  - shared_mutexes (rwlocks), as implemented by pmemobj, do not detect
+	 *    self-deadlocks on Windows
+	 */
+#if TESTS_LIBPMEMOBJ_VERSION < 0x010501 || defined(_WIN32)
+	return false;
+#else
+	return true;
+#endif
+}
+
 /*
  * test_tx_throw_no_abort -- test transaction with exceptions and no aborts
  */
@@ -277,6 +297,22 @@ test_tx_throw_no_abort(nvobj::pool<root> &pop)
 	UT_ASSERT(exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
+
+	if (test_shared_mutex_self_deadlock()) {
+		exception_thrown = false;
+		rootp->shared_mutex.lock();
+		try {
+			nvobj::transaction::run(pop, [&]() {},
+						rootp->shared_mutex);
+		} catch (pmem::transaction_error &) {
+			exception_thrown = true;
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		UT_ASSERT(exception_thrown);
+		rootp->shared_mutex.unlock();
+	}
 }
 
 /*
@@ -505,6 +541,22 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 		UT_ASSERT(!exception_thrown);
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
+
+	if (test_shared_mutex_self_deadlock()) {
+		exception_thrown = false;
+		rootp->shared_mutex.lock();
+		try {
+			T t(pop, rootp->shared_mutex);
+		} catch (pmem::transaction_error &) {
+			exception_thrown = true;
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		UT_ASSERTeq(nvobj::transaction::error(), EINVAL);
+		UT_ASSERT(exception_thrown);
+		rootp->shared_mutex.unlock();
+	}
 }
 
 /*

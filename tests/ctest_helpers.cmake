@@ -129,6 +129,8 @@ function(build_test name)
 	if(WIN32)
 		target_link_libraries(${name} dbghelp)
 	endif()
+	target_compile_definitions(${name} PRIVATE TESTS_LIBPMEMOBJ_VERSION=0x${LIBPMEMOBJ_VERSION_NUM})
+
 	add_dependencies(tests ${name})
 endfunction()
 

@@ -202,6 +202,32 @@ timed_mtx_test(nvobj::pool<root> &pop, const Worker &function)
 	for (unsigned i = 0; i < num_threads; ++i)
 		threads[i].join();
 }
+
+void
+test_stack()
+{
+	/* mutex is not allowed outside of pmem */
+	try {
+		nvobj::timed_mutex stack_mutex;
+		UT_ASSERT(0);
+	} catch (pmem::lock_error &le) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+void
+test_error_handling(nvobj::pool<root> &pop)
+{
+	nvobj::persistent_ptr<root> proot = pop.root();
+
+	proot->pmutex.lock();
+
+	/* try_locking already taken lock fails with false */
+	UT_ASSERT(proot->pmutex.try_lock() == false);
+
+	proot->pmutex.unlock();
+}
 }
 
 int
@@ -258,6 +284,9 @@ main(int argc, char *argv[])
 	/* pmemcheck related persist */
 	pmemobj_persist(pop.handle(), &(pop.root()->counter),
 			sizeof(pop.root()->counter));
+
+	test_stack();
+	test_error_handling(pop);
 
 	pop.close();
 

@@ -180,20 +180,21 @@ private:
 	void _check_tx_stage_work();
 	void _dealloc();
 	pool_base _get_pool() const noexcept;
-	void _grow(size_type count, const_reference value);
-	void _grow(size_type count);
+	template <typename... Args>
+	void _grow(size_type idx, size_type count, Args &&... args);
 	template <typename InputIt,
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
 			  InputIt>::type * = nullptr>
-	void _grow(InputIt first, InputIt last);
+	void _grow(size_type idx, InputIt first, InputIt last);
 	template <typename InputIt,
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
 			  InputIt>::type * = nullptr>
-	void _grow_copy(InputIt first, InputIt last);
-	void _realloc(size_type size);
+	void _grow_copy(size_type idx, InputIt first, InputIt last);
+	void _realloc(size_type size, size_type idx = 0, size_type count = 0);
 	void _shrink(size_type size_new);
+	void _snapshot_data(size_type count = 0);
 
 	/* Underlying array */
 	persistent_ptr<T[]> _data;
@@ -261,7 +262,7 @@ vector<T>::vector(size_type count, const value_type &value)
 	_data = nullptr;
 	_size = 0;
 	_alloc(count);
-	_grow(count, value);
+	_grow(_size, count, value);
 }
 
 /**
@@ -289,7 +290,7 @@ vector<T>::vector(size_type count)
 	_data = nullptr;
 	_size = 0;
 	_alloc(count);
-	_grow(count);
+	_grow(_size, count);
 }
 
 /**
@@ -325,7 +326,7 @@ vector<T>::vector(InputIt first, InputIt last)
 	_data = nullptr;
 	_size = 0;
 	_alloc(static_cast<size_type>(std::distance(first, last)));
-	_grow_copy(first, last);
+	_grow_copy(_size, first, last);
 }
 
 /**
@@ -354,7 +355,7 @@ vector<T>::vector(const vector &other)
 	_data = nullptr;
 	_size = 0;
 	_alloc(other.capacity());
-	_grow_copy(other.begin(), other.end());
+	_grow_copy(_size, other.begin(), other.end());
 }
 
 /**
@@ -629,7 +630,7 @@ typename vector<T>::value_type *
 vector<T>::data()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	detail::conditional_add_to_tx(_data.get(), size());
+	_snapshot_data();
 	return _data.get();
 }
 
@@ -990,7 +991,7 @@ vector<T>::resize(size_type count)
 		else {
 			if (_capacity < count)
 				_realloc(count);
-			_grow(count - _size);
+			_grow(_size, count - _size);
 		}
 	});
 }
@@ -1026,7 +1027,7 @@ vector<T>::resize(size_type count, const value_type &value)
 		else {
 			if (_capacity < count)
 				_realloc(count);
-			_grow(count - _size, value);
+			_grow(_size, count - _size, value);
 		}
 	});
 }
@@ -1174,73 +1175,47 @@ vector<T>::_get_pool() const noexcept
 
 /**
  * Private helper function. Must be called during transaction. Assumes that
- * there is enough space for additional elements. Copy constructs elements at
- * the end of underlying array based on given parameters.
+ * there is free space for additional elements. Constructs elements at given
+ * index in underlying array based on given parameters.
  *
+ * @param[in] idx underyling array index where new elements will be constructed.
  * @param[in] count number of elements to construct.
- * @param[in] value value of all constructed elements.
+ * @param[in] args variadic template arguments for value_type constructor.
  *
  * @pre must be called in transaction scope.
  * @pre if initialized, range [end(), end() + count) must be snapshotted in
  * current transaction.
  * @pre capacity() >= count + size()
- * @pre value is valid argument for value_type copy constructor.
+ * @pre args is valid argument for value_type constructor.
  *
  * @post size() == size() + count
  *
  * @throw rethrows constructor exception.
  */
 template <typename T>
+template <typename... Args>
 void
-vector<T>::_grow(size_type count, const_reference value)
+vector<T>::_grow(size_type idx, size_type count, Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(_capacity >= count + _size);
 
-	pointer dest = _data.get() + static_cast<size_type>(_size);
+	pointer dest = _data.get() + idx;
 	const_pointer end = dest + count;
 	for (; dest != end; ++dest)
-		detail::create<value_type, const_reference>(dest, value);
+		detail::create<value_type, Args...>(
+			dest, std::forward<Args>(args)...);
 	_size += count;
 }
 
 /**
  * Private helper function. Must be called during transaction. Assumes that
- * there is enough space for additional elements. Constructs default elements at
- * the end of underlying array based on given parameters.
+ * there is free space for additional elements and input arguments satisfy
+ * InputIterator requirements. Constructs elements before pos in underlying
+ * array with the contents of the range [first, last). This overload
+ * participates in overload resolution only if InputIt satisfies InputIterator.
  *
- * @param[in] count number of elements to construct.
- *
- * @pre must be called in transaction scope.
- * @pre if initialized, range [end(), end() + count) must be snapshotted in
- * current transaction
- * @pre capacity() >= count + size()
- *
- * @post size() == size() + count
- *
- * @throw rethrows constructor exception.
- */
-template <typename T>
-void
-vector<T>::_grow(size_type count)
-{
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	assert(_capacity >= count + _size);
-
-	pointer dest = _data.get() + static_cast<size_type>(_size);
-	const_pointer end = dest + count;
-	for (; dest != end; ++dest)
-		detail::create<value_type>(dest);
-	_size += count;
-}
-
-/**
- * Private helper function. Must be called during transaction. Assumes that
- * there is enough space for additional elements and input arguments satisfy
- * InputIterator requirements. Constructs elements in underlying array with the
- * contents of the range [first, last). This overload participates in overload
- * resolution only if InputIt satisfies InputIterator.
- *
+ * @param[in] idx underyling array index where new elements will be constructed.
  * @param[in] first first iterator.
  * @param[in] last last iterator.
  *
@@ -1261,25 +1236,26 @@ template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::_grow(InputIt first, InputIt last)
+vector<T>::_grow(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	difference_type diff = std::distance(first, last);
+	size_type diff = static_cast<size_type>(std::distance(first, last));
 	assert(diff >= 0);
-	assert(_capacity >= static_cast<size_type>(diff) + _size);
+	assert(_capacity >= diff + _size);
 
-	pointer dest = _data.get() + static_cast<size_type>(_size);
-	_size += static_cast<size_type>(diff);
+	pointer dest = _data.get() + idx;
+	_size += diff;
 	while (first != last)
 		detail::create<value_type>(dest++, std::move(*first++));
 }
 
 /**
  * Private helper function. Must be called during transaction. Assumes that
- * there is enough space for additional elements and input arguments satisfy
- * InputIterator requirements. Copy-constructs elements in underlying array with
- * the contents of the range [first, last).
+ * there is free space for additional elements and input arguments satisfy
+ * InputIterator requirements. Copy-constructs elements before pos in underlying
+ * array with the contents of the range [first, last).
  *
+ * @param[in] idx underyling array index where new elements will be constructed.
  * @param[in] first first iterator.
  * @param[in] last last iterator.
  *
@@ -1299,15 +1275,15 @@ template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::_grow_copy(InputIt first, InputIt last)
+vector<T>::_grow_copy(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	difference_type diff = std::distance(first, last);
+	size_type diff = static_cast<size_type>(std::distance(first, last));
 	assert(diff >= 0);
-	assert(_capacity >= static_cast<size_type>(diff) + _size);
+	assert(_capacity >= diff + _size);
 
-	pointer dest = _data.get() + static_cast<size_type>(_size);
-	_size += static_cast<size_type>(diff);
+	pointer dest = _data.get() + idx;
+	_size += diff;
 	while (first != last)
 		detail::create<value_type>(dest++, *first++);
 }
@@ -1315,14 +1291,15 @@ vector<T>::_grow_copy(InputIt first, InputIt last)
 /**
  * Private helper function. Must be called during transaction. Allocates new
  * memory for capacity_new number of elements and copies or moves old elements
- * to new memory area. If the current size is greater than capacity_new, the
- * container is reduced to its first capacity_new elements.
+ * to new memory area with a gap for count elements starting at index idx.
+ * If the current size is greater than capacity_new, the container is reduced to
+ * its first capacity_new elements (containing gap).
  *
  * param[in] capacity_new new capacity.
+ * param[in] idx index number where gap should be made.
+ * param[in] count length (expressed in number of elements) of the gap.
  *
  * @pre must be called in transaction scope.
- * @pre if not initialized, range [begin(), end()) must be snapshotted in
- * current transaction
  *
  * @post capacity() == capacity_new
  *
@@ -1333,30 +1310,36 @@ vector<T>::_grow_copy(InputIt first, InputIt last)
  */
 template <typename T>
 void
-vector<T>::_realloc(size_type capacity_new)
+vector<T>::_realloc(size_type capacity_new, size_type idx, size_type count)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	detail::conditional_add_to_tx(begin().get_ptr(), _size);
+	_snapshot_data();
 
-	iterator cache_begin = begin();
-	iterator cache_end = end();
-	auto _cache_data = _data;
-	auto _cache_size = _size;
+	auto cache_data = _data;
+	size_type cache_size = _size;
+	iterator grow_begin = begin();
+	iterator grow_mid = grow_begin;
+	std::advance(grow_mid, (std::min)(idx, capacity_new));
 
 	_data = nullptr;
 	_size = _capacity = 0;
 	_alloc(capacity_new);
-	iterator grow_end = cache_begin;
-	std::advance(
-		grow_end,
-		(std::min)(capacity_new, static_cast<size_type>(_cache_size)));
-	_grow(cache_begin, grow_end);
+
+	if (idx)
+		_grow(0, grow_begin, grow_mid);
+
+	if (idx + count < capacity_new) {
+		iterator grow_end = grow_begin;
+		std::advance(grow_end,
+			     (std::min)(cache_size, capacity_new - count));
+		_grow(idx + count, grow_mid, grow_end);
+	}
 
 	/* destroy and free cached data */
-	for (iterator it = cache_begin; it != cache_end; ++it)
-		detail::destroy<value_type>(*it);
-	if (pmemobj_tx_free(_cache_data.raw()) != 0)
+	for (size_type i = 0; i < cache_size; ++i)
+		detail::destroy<value_type>(cache_data[i]);
+	if (pmemobj_tx_free(cache_data.raw()) != 0)
 		throw transaction_free_error(
 			"failed to delete persistent memory object");
 }
@@ -1384,12 +1367,26 @@ vector<T>::_shrink(size_type size_new)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
 
-	detail::conditional_add_to_tx(begin().get_ptr() + size_new,
-				      _size - size_new);
+	_snapshot_data(size_new);
 
 	for (size_type i = size_new; i < _size; ++i)
 		detail::destroy<value_type>(_data[i]);
 	_size = size_new;
+}
+
+/**
+ * Private helper function. Takes a “snapshot” of all stored data in underlying
+ * array, except first count elements.
+ *
+ * @param[in] count number of first elements in underlying array, which should
+ * not be snapshotted.
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
+template <typename T>
+void
+vector<T>::_snapshot_data(size_type count)
+{
+	detail::conditional_add_to_tx(_data.get() + count, _size - count);
 }
 
 /**

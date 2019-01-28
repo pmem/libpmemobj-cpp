@@ -76,10 +76,12 @@ $(function() {
 
 <p>Persistent_ptr atomic allocation functions for objects.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="allocation__flag_8hpp_source.html">libpmemobj++/allocation_flag.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="make__atomic__impl_8hpp_source.html">libpmemobj++/detail/make_atomic_impl.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pexceptions_8hpp_source.html">libpmemobj++/detail/pexceptions.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="variadic_8hpp_source.html">libpmemobj++/detail/variadic.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pool_8hpp_source.html">libpmemobj++/pool.hpp</a>&gt;</code><br />
 <code>#include &lt;libpmemobj/atomic_base.h&gt;</code><br />
 <code>#include &lt;tuple&gt;</code><br />
@@ -88,10 +90,14 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4d48ca559bb3bc349222d276c2ffc021"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
-<tr class="memitem:a4d48ca559bb3bc349222d276c2ffc021"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__atomic_8hpp.html#a4d48ca559bb3bc349222d276c2ffc021">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_not_array&lt; T &gt;::type &amp;ptr, Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:a4d48ca559bb3bc349222d276c2ffc021"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate and construct an object.  <a href="make__persistent__atomic_8hpp.html#a4d48ca559bb3bc349222d276c2ffc021">More...</a><br /></td></tr>
-<tr class="separator:a4d48ca559bb3bc349222d276c2ffc021"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b463d8cf7358dda467d0f63e130d410"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a6b463d8cf7358dda467d0f63e130d410"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__atomic_8hpp.html#a6b463d8cf7358dda467d0f63e130d410">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_not_array&lt; T &gt;::type &amp;ptr, allocation_flag_atomic flag, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a6b463d8cf7358dda467d0f63e130d410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate and construct an object.  <a href="make__persistent__atomic_8hpp.html#a6b463d8cf7358dda467d0f63e130d410">More...</a><br /></td></tr>
+<tr class="separator:a6b463d8cf7358dda467d0f63e130d410"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2b6596bf5b91ebcc5fbaeb899d59599"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:aa2b6596bf5b91ebcc5fbaeb899d59599"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;!detail::is_first_arg_same&lt; allocation_flag_atomic, Args... &gt;::value &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__atomic_8hpp.html#aa2b6596bf5b91ebcc5fbaeb899d59599">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_not_array&lt; T &gt;::type &amp;ptr, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:aa2b6596bf5b91ebcc5fbaeb899d59599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate and construct an object.  <a href="make__persistent__atomic_8hpp.html#aa2b6596bf5b91ebcc5fbaeb899d59599">More...</a><br /></td></tr>
+<tr class="separator:aa2b6596bf5b91ebcc5fbaeb899d59599"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2aa55bbcf44c93a0ca9a8965cded6e40"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a2aa55bbcf44c93a0ca9a8965cded6e40"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__atomic_8hpp.html#a2aa55bbcf44c93a0ca9a8965cded6e40">pmem::obj::delete_persistent_atomic</a> (typename detail::pp_if_not_array&lt; T &gt;::type &amp;ptr) noexcept</td></tr>
 <tr class="memdesc:a2aa55bbcf44c93a0ca9a8965cded6e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically deallocate an object.  <a href="make__persistent__atomic_8hpp.html#a2aa55bbcf44c93a0ca9a8965cded6e40">More...</a><br /></td></tr>
@@ -132,8 +138,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a4d48ca559bb3bc349222d276c2ffc021"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a4d48ca559bb3bc349222d276c2ffc021">&#9670;&nbsp;</a></span>make_persistent_atomic()</h2>
+<a id="file_a6b463d8cf7358dda467d0f63e130d410"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a6b463d8cf7358dda467d0f63e130d410">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,6 +148,66 @@ template&lt;typename T , typename... Args&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void pmem::obj::make_persistent_atomic </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;&#160;</td>
+          <td class="paramname"><em>pool</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename detail::pp_if_not_array&lt; T &gt;::type &amp;&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a>&#160;</td>
+          <td class="paramname"><em>flag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Atomically allocate and construct an object. </p>
+<p>Constructor parameters are passed through variadic parameters. Do <em>NOT</em> use this inside transactions, as it might lead to undefined behavior in the presence of transaction aborts.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">pool</td><td>the pool from which the object will be allocated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>affects behaviour of allocator </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>variadic function parameter containing all parameters passed to the objects constructor.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_alloc</td><td>on allocation failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="file_aa2b6596bf5b91ebcc5fbaeb899d59599"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_aa2b6596bf5b91ebcc5fbaeb899d59599">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename... Args&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if&lt;!detail::is_first_arg_same&lt;allocation_flag_atomic, Args...&gt;::value&gt;::type pmem::obj::make_persistent_atomic </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;&#160;</td>
           <td class="paramname"><em>pool</em>, </td>

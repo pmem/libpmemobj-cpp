@@ -79,11 +79,12 @@ make_persistent_atomic(pool_base &pool,
 		       typename detail::pp_if_not_array<T>::type &ptr,
 		       allocation_flag_atomic flag, Args &&... args)
 {
-	std::tuple<Args &...> arg_pack{args...};
-	auto ret = pmemobj_xalloc(pool.handle(), ptr.raw_ptr(), sizeof(T),
-				  detail::type_num<T>(), flag.value,
-				  &detail::obj_constructor<T, Args...>,
-				  static_cast<void *>(&arg_pack));
+	auto arg_pack = std::forward_as_tuple(std::forward<Args>(args)...);
+	auto ret = pmemobj_xalloc(
+		pool.handle(), ptr.raw_ptr(), sizeof(T), detail::type_num<T>(),
+		flag.value,
+		&detail::obj_constructor<T, decltype(arg_pack), Args...>,
+		static_cast<void *>(&arg_pack));
 
 	if (ret != 0)
 		throw std::bad_alloc();

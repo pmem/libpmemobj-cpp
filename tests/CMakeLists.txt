@@ -297,9 +297,9 @@ add_test_generic(vector_iterators_access none)
 add_test_generic(vector_iterators_access memcheck)
 add_test_generic(vector_iterators_access pmemcheck)
 
-build_test(vector_ctor_iter_iter vector_ctor_iter_iter/vector_ctor_iter_iter.cpp)
-add_test_generic(vector_ctor_iter_iter none)
-add_test_generic(vector_ctor_iter_iter memcheck)
-add_test_generic(vector_ctor_iter_iter pmemcheck)
+build_test(vector_ctor_check_copy vector_ctor_check_copy/vector_ctor_check_copy.cpp)
+add_test_generic(vector_ctor_check_copy none)
+add_test_generic(vector_ctor_check_copy memcheck)
+add_test_generic(vector_ctor_check_copy pmemcheck)
 
 add_subdirectory(external)

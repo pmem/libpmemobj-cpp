@@ -46,7 +46,8 @@ using vector_type = pmem_exp::vector<test_type>;
 using It = test_support::input_it<test_type>;
 
 struct root {
-	nvobj::persistent_ptr<vector_type> pptr;
+	nvobj::persistent_ptr<vector_type> pptr1;
+	nvobj::persistent_ptr<vector_type> pptr2;
 };
 
 int
@@ -61,49 +62,79 @@ main(int argc, char *argv[])
 
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: vector_ctor_iter_iter", pool_size,
+		path, "VectorTest: vector_ctor_check_copy", pool_size,
 		S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 
 	/**
-	 * Check if iter-iter ctor will construct vector from element's type
+	 * Check if range ctor will construct vector from element's type
 	 * copy ctor.
 	 */
 	test_type arr[] = {1, 2, 3, 4};
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->pptr = nvobj::make_persistent<vector_type>(
+			r->pptr1 = nvobj::make_persistent<vector_type>(
 				It(arr), It(std::end(arr)));
 		});
+
+		UT_ASSERTeq(r->pptr1->const_at(0).value, 1);
+		UT_ASSERTeq(r->pptr1->const_at(1).value, 2);
+		UT_ASSERTeq(r->pptr1->const_at(2).value, 3);
+		UT_ASSERTeq(r->pptr1->const_at(3).value, 4);
+
+		UT_ASSERTeq(r->pptr1->const_at(0).copied, 1);
+		UT_ASSERTeq(r->pptr1->const_at(1).copied, 1);
+		UT_ASSERTeq(r->pptr1->const_at(2).copied, 1);
+		UT_ASSERTeq(r->pptr1->const_at(3).copied, 1);
+
+		UT_ASSERTeq(r->pptr1->const_at(0).moved, 0);
+		UT_ASSERTeq(r->pptr1->const_at(1).moved, 0);
+		UT_ASSERTeq(r->pptr1->const_at(2).moved, 0);
+		UT_ASSERTeq(r->pptr1->const_at(3).moved, 0);
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/**
+	 * Check if copy ctor will construct vector from element's type
+	 * copy ctor.
+	 */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->pptr2 =
+				nvobj::make_persistent<vector_type>(*r->pptr1);
+		});
+
+		UT_ASSERTeq(r->pptr2->const_at(0).value, 1);
+		UT_ASSERTeq(r->pptr2->const_at(1).value, 2);
+		UT_ASSERTeq(r->pptr2->const_at(2).value, 3);
+		UT_ASSERTeq(r->pptr2->const_at(3).value, 4);
+
+		UT_ASSERTeq(r->pptr2->const_at(0).copied, 2);
+		UT_ASSERTeq(r->pptr2->const_at(1).copied, 2);
+		UT_ASSERTeq(r->pptr2->const_at(2).copied, 2);
+		UT_ASSERTeq(r->pptr2->const_at(3).copied, 2);
+
+		UT_ASSERTeq(r->pptr2->const_at(0).moved, 0);
+		UT_ASSERTeq(r->pptr2->const_at(1).moved, 0);
+		UT_ASSERTeq(r->pptr2->const_at(2).moved, 0);
+		UT_ASSERTeq(r->pptr2->const_at(3).moved, 0);
+
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			UT_ASSERTeq((*r->pptr)[0].value, 1);
-			UT_ASSERTeq((*r->pptr)[1].value, 2);
-			UT_ASSERTeq((*r->pptr)[2].value, 3);
-			UT_ASSERTeq((*r->pptr)[3].value, 4);
-
-			UT_ASSERTeq((*r->pptr)[0].copied, 1);
-			UT_ASSERTeq((*r->pptr)[1].copied, 1);
-			UT_ASSERTeq((*r->pptr)[2].copied, 1);
-			UT_ASSERTeq((*r->pptr)[3].copied, 1);
-
-			UT_ASSERTeq((*r->pptr)[0].moved, 0);
-			UT_ASSERTeq((*r->pptr)[1].moved, 0);
-			UT_ASSERTeq((*r->pptr)[2].moved, 0);
-			UT_ASSERTeq((*r->pptr)[3].moved, 0);
-
-			nvobj::delete_persistent<vector_type>(r->pptr);
+			nvobj::delete_persistent<vector_type>(r->pptr1);
+			nvobj::delete_persistent<vector_type>(r->pptr2);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
-
 	pop.close();
 
 	return 0;

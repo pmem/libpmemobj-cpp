@@ -52,19 +52,23 @@ namespace nvobj = pmem::obj;
 namespace pmem_exp = pmem::obj::experimental;
 namespace test = test_support;
 
+using element_type = int;
+using vector_type = pmem_exp::vector<element_type>;
+
 #define TEST_CAPACITY 666
 #define TEST_SIZE_1 66
 #define TEST_VAL_1 6
 #define TEST_SIZE_2 33
 #define TEST_VAL_2 3
-#define TEST_SIZE_OOM (PMEMOBJ_MIN_POOL / sizeof(int) + 1)
+#define TEST_SIZE_3 11
+#define TEST_SIZE_OOM (PMEMOBJ_MIN_POOL / sizeof(element_type) + 1)
 
 struct root {
-	nvobj::persistent_ptr<pmem_exp::vector<int>> v_pptr;
+	nvobj::persistent_ptr<vector_type> v_pptr;
 };
 
 /**
- * Test _alloc pmem::obj::experimental::vector private function.
+ * Test alloc pmem::obj::experimental::vector private function.
  *
  * First case: allocate memory for TEST_CAPACITY elements of given type (int),
  * check if _capacity had changed. Expect no exception is thrown.
@@ -80,30 +84,28 @@ void
 test_vector_private_alloc(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
+
 	/* first case */
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->v_pptr =
-				nvobj::make_persistent<pmem_exp::vector<int>>();
-			r->v_pptr->_alloc(TEST_CAPACITY);
+			r->v_pptr = nvobj::make_persistent<vector_type>();
+			r->v_pptr->alloc(TEST_CAPACITY);
 		});
+
 		UT_ASSERT(r->v_pptr->_capacity == TEST_CAPACITY);
-		nvobj::delete_persistent_atomic<pmem_exp::vector<int>>(
-			r->v_pptr);
+
+		nvobj::delete_persistent_atomic<vector_type>(r->v_pptr);
 	} catch (std::exception &e) {
-		std::cerr << e.what() << std::endl
-			  << std::strerror(nvobj::transaction::error())
-			  << std::endl;
-		UT_ASSERT(0);
+		UT_FATALexc(e);
 	}
 
 	/* second case */
 	bool exception_thrown = false;
+
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->v_pptr =
-				nvobj::make_persistent<pmem_exp::vector<int>>();
-			r->v_pptr->_alloc(r->v_pptr->max_size() + 1);
+			r->v_pptr = nvobj::make_persistent<vector_type>();
+			r->v_pptr->alloc(r->v_pptr->max_size() + 1);
 		});
 		UT_ASSERT(0);
 	} catch (std::length_error &) {
@@ -115,11 +117,11 @@ test_vector_private_alloc(nvobj::pool<struct root> &pop)
 
 	/* third case */
 	exception_thrown = false;
+
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->v_pptr =
-				nvobj::make_persistent<pmem_exp::vector<int>>();
-			r->v_pptr->_alloc(TEST_SIZE_OOM);
+			r->v_pptr = nvobj::make_persistent<vector_type>();
+			r->v_pptr->alloc(TEST_SIZE_OOM);
 			UT_ASSERT(0);
 		});
 	} catch (pmem::transaction_alloc_error &) {
@@ -131,69 +133,76 @@ test_vector_private_alloc(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test _dealloc pmem::obj::experimental::vector private function.
+ * Test dealloc pmem::obj::experimental::vector private function.
  *
  * Allocate memory for TEST_CAPACITY elements of given type (int)
- * and call _dealloc. Expect _capacity changed to 0 and no exception is thrown.
+ * and call dealloc. Expect _capacity changed to 0 and no exception is thrown.
  */
 void
 test_vector_private_dealloc(nvobj::pool<struct root> &pop) try {
 	auto r = pop.root();
+
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr = nvobj::make_persistent<pmem_exp::vector<int>>();
-		r->v_pptr->_alloc(TEST_CAPACITY);
+		r->v_pptr = nvobj::make_persistent<vector_type>();
+
+		r->v_pptr->alloc(TEST_CAPACITY);
 		UT_ASSERT(r->v_pptr->_data != nullptr);
-		r->v_pptr->_dealloc();
+		r->v_pptr->dealloc();
 	});
+
 	UT_ASSERT(r->v_pptr->_capacity == 0);
-	nvobj::delete_persistent_atomic<pmem_exp::vector<int>>(r->v_pptr);
+
+	nvobj::delete_persistent_atomic<vector_type>(r->v_pptr);
 } catch (std::exception &e) {
-	std::cerr << e.what() << std::endl
-		  << std::strerror(nvobj::transaction::error()) << std::endl;
-	UT_ASSERT(0);
+	UT_FATALexc(e);
 }
 
 /**
- * Test _grow pmem::obj::experimental::vector private function.
+ * Test construct and construct_range pmem::obj::experimental::vector private
+ * functions.
  *
  * First case: allocate memory for TEST_CAPACITY elements of given type (int)
- * and call _grow overload for count-value arguments. Check if first
- * TEST_SIZE_1 elements in underlying array was constructed with TEST_VAL_1
- * value.
+ * and call construct overload for count-value arguments. Check if TEST_SIZE_1
+ * elements in underlying array was constructed with TEST_VAL_1 value, starting
+ * at position TEST_SIZE_2.
  *
  * Second case: using allocated memory in previous test case, construct
- * additional TEST_SIZE_2 at the end of underlying array. Note that _grow
- * function requires that memory for elements to be created must be snapshotted.
- * Since this memory area is uninitialized yet, we must use Valgrind annotations
- * and mark this area as added to transactions and flushed. Compare values in
- * underlying array with expected values.
+ * additional TEST_SIZE_2 elements at the beginning of underlying array. Note
+ * that construct function requires that memory for elements to be created must
+ * be snapshotted. Since this memory area is uninitialized yet, we must use
+ * Valgrind annotations and mark this area as added to transactions and flushed.
+ * Compare values in underlying array with expected values.
  *
- * Third case: using allocated memory in previous test case call _grow overload
- * for InputIterator-InputIterator arguments. Check if first TEST_SIZE_1
- * elements in underlying array was constructed with values pointed by
- * argument's iterators.
+ * Third case: using allocated memory in previous test case call construct_range
+ * overload for InputIterator-InputIterator arguments. Check if first
+ * TEST_SIZE_1 elements in underlying array was constructed with values pointed
+ * by argument's iterators.
  *
  * Fourth case: using allocated memory in previous test case, construct
- * additional TEST_SIZE_2 at the end of underlying array by calling _grow
- * overload for InputIterator-InputIterator arguments. Note that _grow function
- * requires that memory for elements to be created must be snapshotted. Since
- * this memory area is uninitialized yet, we must use Valgrind annotations and
- * mark this area as added to transaction and flushed. Compare values in
- * underlying array with expected values.
+ * additional TEST_SIZE_2 at the end of underlying array by calling
+ * construct_range overload for InputIterator-InputIterator arguments. Note that
+ * construct_range function requires that memory for elements to be created must
+ * be snapshotted. Since this memory area is uninitialized yet, we must use
+ * Valgrind annotations and mark this area as added to transaction and flushed.
+ * Compare values in underlying array with expected values.
  */
 void
 test_vector_grow(nvobj::pool<struct root> &pop) try {
 	auto r = pop.root();
+
 	/* first case */
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr = nvobj::make_persistent<pmem_exp::vector<int>>();
-		r->v_pptr->_alloc(TEST_CAPACITY);
+		r->v_pptr = nvobj::make_persistent<vector_type>();
+		r->v_pptr->alloc(TEST_CAPACITY);
+
 		UT_ASSERT(r->v_pptr->_data != nullptr);
 		UT_ASSERT(r->v_pptr->_capacity == TEST_CAPACITY);
-		r->v_pptr->_grow(TEST_SIZE_1, TEST_VAL_1);
+
+		r->v_pptr->construct(TEST_SIZE_2, TEST_SIZE_1, TEST_VAL_1);
 	});
 	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1);
-	auto ptr = r->v_pptr->_data.get();
+
+	auto ptr = r->v_pptr->_data.get() + TEST_SIZE_2;
 	for (unsigned i = 0; i < TEST_SIZE_1; ++i)
 		UT_ASSERT(*ptr++ == TEST_VAL_1);
 
@@ -201,49 +210,53 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 	nvobj::transaction::run(pop, [&] {
 		UT_ASSERT(r->v_pptr->_capacity >=
 			  r->v_pptr->_size + TEST_SIZE_2);
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
-		auto *addr = r->v_pptr->_data.get() +
-			static_cast<std::size_t>(r->v_pptr->_size);
+
+		auto *addr = r->v_pptr->_data.get();
 		auto sz = sizeof(*addr) * TEST_SIZE_2;
-		if (On_valgrind)
-			VALGRIND_PMC_ADD_TO_TX(addr, sz);
-#endif
-		r->v_pptr->_grow(TEST_SIZE_2, TEST_VAL_2);
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
-		if (On_valgrind) {
-			VALGRIND_PMC_SET_CLEAN(addr, sz);
-			VALGRIND_PMC_REMOVE_FROM_TX(addr, sz);
+
+		if (On_pmemcheck)
+			VALGRIND_ADD_TO_TX(addr, sz);
+
+		r->v_pptr->construct(0, TEST_SIZE_2, TEST_VAL_2);
+
+		if (On_pmemcheck) {
+			VALGRIND_SET_CLEAN(addr, sz);
+			VALGRIND_REMOVE_FROM_TX(addr, sz);
 		}
-#endif
 	});
-	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1 + TEST_SIZE_2);
+	UT_ASSERTeq(r->v_pptr->_size, TEST_SIZE_1 + TEST_SIZE_2);
 
 	ptr = r->v_pptr->_data.get();
 	unsigned j = 0;
-	for (; j < TEST_SIZE_1; ++j)
-		UT_ASSERT(*ptr++ == TEST_VAL_1);
 	for (; j < TEST_SIZE_2; ++j)
 		UT_ASSERT(*ptr++ == TEST_VAL_2);
+	for (; j < TEST_SIZE_1; ++j)
+		UT_ASSERT(*ptr++ == TEST_VAL_1);
 
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr->_dealloc();
-		nvobj::delete_persistent<pmem_exp::vector<int>>(r->v_pptr);
+		r->v_pptr->dealloc();
+		nvobj::delete_persistent<vector_type>(r->v_pptr);
 	});
 
 	/* third case */
-	std::vector<int> v(TEST_SIZE_1, TEST_VAL_1);
+	std::vector<element_type> v(TEST_SIZE_1, TEST_VAL_1);
 	v.insert(v.end(), TEST_SIZE_2, TEST_VAL_2);
-	auto first = test::input_it<int>(v.data());
-	auto middle = test::input_it<int>(v.data() + TEST_SIZE_1);
-	auto last = test::input_it<int>(v.data() + v.size());
+
+	auto first = test::input_it<element_type>(v.data());
+	auto middle = test::input_it<element_type>(v.data() + TEST_SIZE_1);
+	auto last = test::input_it<element_type>(v.data() + v.size());
+
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr = nvobj::make_persistent<pmem_exp::vector<int>>();
-		r->v_pptr->_alloc(TEST_CAPACITY);
+		r->v_pptr = nvobj::make_persistent<vector_type>();
+		r->v_pptr->alloc(TEST_CAPACITY);
+
 		UT_ASSERT(r->v_pptr->_data != nullptr);
 		UT_ASSERT(r->v_pptr->_capacity == TEST_CAPACITY);
-		r->v_pptr->_grow(first, middle);
+
+		r->v_pptr->construct_range(r->v_pptr->_size, first, middle);
 	});
 	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1);
+
 	ptr = r->v_pptr->_data.get();
 	for (unsigned i = 0; i < TEST_SIZE_1; ++i)
 		UT_ASSERT(*ptr++ == v[i]);
@@ -252,20 +265,20 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 	nvobj::transaction::run(pop, [&] {
 		UT_ASSERT(r->v_pptr->_capacity >=
 			  r->v_pptr->_size + TEST_SIZE_2);
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+
 		auto *addr = r->v_pptr->_data.get() +
 			static_cast<std::size_t>(r->v_pptr->_size);
-		auto sz = sizeof(*addr) * TEST_SIZE_2;
-		if (On_valgrind)
-			VALGRIND_PMC_ADD_TO_TX(addr, sz);
-#endif
-		r->v_pptr->_grow(middle, last);
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
-		if (On_valgrind) {
-			VALGRIND_PMC_SET_CLEAN(addr, sz);
-			VALGRIND_PMC_REMOVE_FROM_TX(addr, sz);
+		auto sz = sizeof(element_type) * TEST_SIZE_2;
+
+		if (On_pmemcheck)
+			VALGRIND_ADD_TO_TX(addr, sz);
+
+		r->v_pptr->construct_range(r->v_pptr->_size, middle, last);
+
+		if (On_pmemcheck) {
+			VALGRIND_SET_CLEAN(addr, sz);
+			VALGRIND_REMOVE_FROM_TX(addr, sz);
 		}
-#endif
 	});
 	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1 + TEST_SIZE_2);
 
@@ -277,14 +290,12 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 		UT_ASSERT(*ptr++ == v[j]);
 
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr->_dealloc();
-		nvobj::delete_persistent<pmem_exp::vector<int>>(r->v_pptr);
+		r->v_pptr->dealloc();
+		nvobj::delete_persistent<vector_type>(r->v_pptr);
 	});
 
 } catch (std::exception &e) {
-	std::cerr << e.what() << std::endl
-		  << std::strerror(nvobj::transaction::error()) << std::endl;
-	UT_ASSERT(0);
+	UT_FATALexc(e);
 }
 
 /**
@@ -297,14 +308,19 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 void
 test_vector_shrink(nvobj::pool<struct root> &pop) try {
 	auto r = pop.root();
+
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr = nvobj::make_persistent<pmem_exp::vector<int>>();
-		r->v_pptr->_alloc(TEST_CAPACITY);
+		r->v_pptr = nvobj::make_persistent<vector_type>();
+		r->v_pptr->alloc(TEST_CAPACITY);
+
 		UT_ASSERT(r->v_pptr->_data != nullptr);
-		r->v_pptr->_grow(TEST_CAPACITY, TEST_VAL_1);
-		r->v_pptr->_shrink(TEST_SIZE_1);
+
+		r->v_pptr->construct(r->v_pptr->_size, TEST_CAPACITY,
+				     TEST_VAL_1);
+		r->v_pptr->shrink(TEST_SIZE_1);
 	});
 	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1);
+
 	auto ptr = r->v_pptr->_data.get();
 	unsigned j = 0;
 	for (; j < TEST_SIZE_1; ++j)
@@ -313,20 +329,122 @@ test_vector_shrink(nvobj::pool<struct root> &pop) try {
 		UT_ASSERT(*ptr++ == 0);
 
 	nvobj::transaction::run(pop, [&] {
-		r->v_pptr->_dealloc();
-		nvobj::delete_persistent<pmem_exp::vector<int>>(r->v_pptr);
+		r->v_pptr->dealloc();
+		nvobj::delete_persistent<vector_type>(r->v_pptr);
 	});
 
 } catch (std::exception &e) {
-	std::cerr << e.what() << std::endl
-		  << std::strerror(nvobj::transaction::error()) << std::endl;
-	UT_ASSERT(0);
+	UT_FATALexc(e);
+}
+
+void
+check_memcheck_uninitialized_range(element_type *start, element_type *end)
+{
+#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+	if (On_memcheck) {
+		auto cache_start = start;
+		VALGRIND_DISABLE_ERROR_REPORTING;
+
+		while (start < end && VALGRIND_CHECK_MEM_IS_DEFINED(start, 1))
+			start++;
+
+		VALGRIND_ENABLE_ERROR_REPORTING;
+
+		UT_ASSERTeq(start, end);
+
+		VALGRIND_MAKE_MEM_DEFINED(
+			cache_start,
+			static_cast<std::size_t>(end - cache_start) *
+				sizeof(element_type));
+	}
+#endif /* #if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED */
+}
+
+void
+test_vector_insert_gap(nvobj::pool<struct root> &pop) try {
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->v_pptr = nvobj::make_persistent<vector_type>(
+			static_cast<std::size_t>(TEST_SIZE_1), TEST_VAL_1);
+		/*
+		 * insert gap from:
+		 * 11...1
+		 * ^66x 1
+		 * to:
+		 * 11...1xx...x11..1
+		 * 33x 1 + 11x uninitialized empty element slots + 33x 1
+		 */
+		r->v_pptr->insert_gap(TEST_SIZE_2, TEST_SIZE_3);
+	});
+	UT_ASSERT(r->v_pptr->_capacity ==
+		  r->v_pptr->recommended_capacity(TEST_SIZE_1 + TEST_SIZE_3));
+	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1);
+
+	unsigned j = 0;
+	for (; j < TEST_SIZE_2; ++j)
+		UT_ASSERTeq(r->v_pptr->_data[j], TEST_VAL_1);
+
+	/*
+	 * Check if elements from index 34 to 44 are uninitialized
+	 * and ignore memcheck errors.
+	 */
+	check_memcheck_uninitialized_range(
+		&r->v_pptr->_data[j],
+		&r->v_pptr->_data[TEST_SIZE_2 + TEST_SIZE_3]);
+
+	for (j = TEST_SIZE_2 + TEST_SIZE_3; j < TEST_SIZE_1 + TEST_SIZE_3; ++j)
+		UT_ASSERTeq(r->v_pptr->_data[j], TEST_VAL_1);
+
+	nvobj::transaction::run(pop, [&] {
+		r->v_pptr->dealloc();
+		nvobj::delete_persistent<vector_type>(r->v_pptr);
+	});
+
+	nvobj::transaction::run(pop, [&] {
+		r->v_pptr = nvobj::make_persistent<vector_type>(
+			static_cast<std::size_t>(TEST_SIZE_1 + TEST_SIZE_2),
+			TEST_VAL_1);
+		r->v_pptr->shrink(TEST_SIZE_1);
+		/*
+		 * insert gap from:
+		 * 11...1xx...x
+		 * ^66x 1 and 33 uninitialized empty slots
+		 * to:
+		 * xx...x11...1
+		 * 33x uninitialized empty element slots and 36x 1
+		 */
+		r->v_pptr->insert_gap(0, TEST_SIZE_2);
+	});
+
+	UT_ASSERT(r->v_pptr->_capacity == TEST_SIZE_1 + TEST_SIZE_2);
+	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1);
+
+	j = TEST_SIZE_2;
+	for (; j < TEST_SIZE_1 + TEST_SIZE_2; ++j)
+		UT_ASSERTeq(r->v_pptr->_data[j], TEST_VAL_1);
+
+	/*
+	 * Check if elements from index 0 to 33 are uninitialized
+	 * and ignore memcheck errors.
+	 */
+	check_memcheck_uninitialized_range(&r->v_pptr->_data[0],
+					   &r->v_pptr->_data[TEST_SIZE_2]);
+
+	nvobj::transaction::run(pop, [&] {
+		r->v_pptr->dealloc();
+		nvobj::delete_persistent<vector_type>(r->v_pptr);
+	});
+
+} catch (std::exception &e) {
+	UT_FATALexc(e);
 }
 
 int
 main(int argc, char *argv[])
 {
 	START();
+
 	if (argc < 2) {
 		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
 		return 1;
@@ -340,6 +458,7 @@ main(int argc, char *argv[])
 	test_vector_private_dealloc(pop);
 	test_vector_grow(pop);
 	test_vector_shrink(pop);
+	test_vector_insert_gap(pop);
 
 	pop.close();
 

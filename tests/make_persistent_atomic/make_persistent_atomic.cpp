@@ -66,7 +66,7 @@ public:
 			this->arr[i] = static_cast<char>(val);
 	}
 
-	foo(int &val, char arr_val) : bar(val)
+	foo(const int &val, char arr_val) : bar(val)
 	{
 		for (int i = 0; i < TEST_ARR_SIZE; ++i)
 			this->arr[i] = arr_val;
@@ -87,8 +87,34 @@ public:
 	nvobj::p<char> arr[TEST_ARR_SIZE];
 };
 
+static int var_bar_copy_ctors_called = 0;
+static int var_bar_move_ctors_called = 0;
+
+struct var_bar {
+
+	/* Expects 'a' to be rvalue ref and 'b' and 'c' to be lvalue ref. */
+	template <typename A, typename B, typename C>
+	var_bar(A &&a, B &&b, C &&c)
+	{
+		static_assert(std::is_rvalue_reference<decltype(a)>::value, "");
+		static_assert(std::is_lvalue_reference<decltype(b)>::value, "");
+		static_assert(std::is_lvalue_reference<decltype(c)>::value, "");
+	}
+
+	var_bar(const var_bar &a)
+	{
+		var_bar_copy_ctors_called++;
+	}
+
+	var_bar(var_bar &&a)
+	{
+		var_bar_move_ctors_called++;
+	}
+};
+
 struct root {
 	nvobj::persistent_ptr<foo> pfoo;
+	nvobj::persistent_ptr<var_bar> pvbar;
 };
 
 /*
@@ -193,6 +219,29 @@ test_flags(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 }
+
+void
+test_rlvalue_parameters(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	int a = 1, b = 2, c = 3;
+	nvobj::make_persistent_atomic<var_bar>(pop, r->pvbar, std::move(a), b,
+					       c);
+
+	nvobj::persistent_ptr<var_bar> vbar1;
+	nvobj::persistent_ptr<var_bar> vbar2;
+	nvobj::persistent_ptr<var_bar> vbar3;
+
+	nvobj::make_persistent_atomic<var_bar>(pop, vbar1, *(r->pvbar));
+	nvobj::make_persistent_atomic<var_bar>(pop, vbar2, *(r->pvbar));
+
+	nvobj::make_persistent_atomic<var_bar>(pop, vbar3,
+					       std::move(*(r->pvbar)));
+
+	UT_ASSERT(var_bar_copy_ctors_called == 2);
+	UT_ASSERT(var_bar_move_ctors_called == 1);
+}
 }
 
 int
@@ -218,6 +267,7 @@ main(int argc, char *argv[])
 	test_make_args(pop);
 	test_delete_null(pop);
 	test_flags(pop);
+	test_rlvalue_parameters(pop);
 
 	pop.close();
 

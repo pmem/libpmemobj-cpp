@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj/ctl.h>
 
 #define LAYOUT "cpp"
 
@@ -275,6 +276,75 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 		UT_ASSERT(e == struct_throwing::magic_number);
 	}
 	UT_ASSERT(r->throwing == nullptr);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<foo>(r->pfoo);
+			r->pfoo = nullptr;
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+/*
+ * test_flags -- (internal) test proper handling of flags
+ */
+void
+test_flags(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<root> r = pop.root();
+
+	auto alloc_class = pop.ctl_set<struct pobj_alloc_class_desc>(
+		"heap.alloc_class.new.desc",
+		{sizeof(foo) + 16, 0, 200, POBJ_HEADER_COMPACT, 0});
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+			r->pfoo = nvobj::make_persistent<foo>(
+				nvobj::allocation_flag::class_id(
+					alloc_class.class_id));
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(pmemobj_alloc_usable_size(r->pfoo.raw()), sizeof(foo));
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<foo>(r->pfoo);
+			r->pfoo = nullptr;
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+			r->pfoo = nvobj::make_persistent<foo>(
+				nvobj::allocation_flag::class_id(
+					alloc_class.class_id),
+				1, 2);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	r->pfoo->check_foo(1, 2);
+
+	UT_ASSERTeq(pmemobj_alloc_usable_size(r->pfoo.raw()), sizeof(foo));
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<foo>(r->pfoo);
+			r->pfoo = nullptr;
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 }
 }
 
@@ -301,6 +371,7 @@ main(int argc, char *argv[])
 	test_make_args(pop);
 	test_additional_delete(pop);
 	test_exceptions_handling(pop);
+	test_flags(pop);
 
 	pop.close();
 

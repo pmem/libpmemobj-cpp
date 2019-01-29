@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@
 #include <memory>
 
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/volatile.hpp>
+#include <libpmemobj++/detail/life.hpp>
 
 namespace pmem
 {
@@ -84,6 +84,10 @@ public:
 	v &
 	operator=(const v &rhs)
 	{
+		static_assert(
+			std::is_default_constructible<T>::value,
+			"v<T>::operator= requires T to be default constructible");
+
 		/* make sure object is initialized */
 		(void)get();
 
@@ -98,6 +102,10 @@ public:
 	v &
 	operator=(const T &rhs)
 	{
+		static_assert(
+			std::is_default_constructible<T>::value,
+			"v<T>::operator= requires T to be default constructible");
+
 		/* make sure object is initialized */
 		(void)get();
 
@@ -117,6 +125,10 @@ public:
 	v &
 	operator=(const v<Y> &rhs)
 	{
+		static_assert(
+			std::is_default_constructible<T>::value,
+			"v<T>::operator= requires T to be default constructible");
+
 		/* make sure object is initialized */
 		(void)get();
 
@@ -128,21 +140,45 @@ public:
 	/**
 	 * Retrieves reference of the object.
 	 *
+	 * @param[in] args forwarded to objects constructor. If object was
+	 * constructed earlier during application lifetime (even with different
+	 * arguments) no constructor is called.
+	 *
 	 * @return a reference to the object.
 	 *
 	 */
+	template <typename... Args>
 	T &
-	get() noexcept
+	get(Args &&... args) noexcept
 	{
+		auto arg_pack =
+			std::forward_as_tuple(std::forward<Args>(args)...);
+
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (pop == NULL)
 			return this->val;
 
 		T *value = static_cast<T *>(pmemobj_volatile(
 			pop, &this->vlt, &this->val, sizeof(T),
-			pmem::detail::instantiate_volatile_object<T>, NULL));
+			pmem::detail::c_style_construct<T, decltype(arg_pack),
+							Args...>,
+			static_cast<void *>(&arg_pack)));
 
 		return *value;
+	}
+
+	/**
+	 * Retrieves reference of the object.
+	 *
+	 * If object was not constructed (e.g using get()) return value is
+	 * unspecified.
+	 *
+	 * @return a reference to the object.
+	 */
+	T &
+	force_get()
+	{
+		return val;
 	}
 
 	/**
@@ -150,6 +186,10 @@ public:
 	 */
 	operator T &() noexcept
 	{
+		static_assert(
+			std::is_default_constructible<T>::value,
+			"v<T>::operatorT& requires T to be default constructible");
+
 		return this->get();
 	}
 
@@ -159,6 +199,10 @@ public:
 	void
 	swap(v &other)
 	{
+		static_assert(
+			std::is_default_constructible<T>::value,
+			"v<T>::swap requires T to be default constructible");
+
 		/* make sure object is initialized */
 		(void)get();
 
@@ -167,7 +211,15 @@ public:
 
 private:
 	struct pmemvlt vlt;
-	T val;
+
+	/*
+	 * Normally C++ requires all class members to be constructed during
+	 * enclosing type construction. Holding a value inside of a union allows
+	 * to bypass this requirement. val is only constructed by call to get().
+	 */
+	union {
+		T val;
+	};
 };
 
 /**

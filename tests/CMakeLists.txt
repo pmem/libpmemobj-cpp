@@ -67,6 +67,7 @@ if(COVERAGE)
 endif()
 
 add_library(test_backtrace STATIC test_backtrace.c)
+add_library(valgrind_internal STATIC valgrind_internal.cpp)
 
 function(build_example_queue)
 	add_executable(ex-queue ../examples/queue/queue.cpp)
@@ -86,8 +87,14 @@ endfunction()
 
 find_packages()
 
-if(VALGRIND_PMEMCHECK_FOUND)
-	add_flag(-DLIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION=1)
+if(VALGRIND_FOUND)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_DRD_ENABLED=1)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1)
+
+	if(VALGRIND_PMEMCHECK_FOUND)
+		add_flag(-DLIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1)
+	endif()
 endif()
 
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)

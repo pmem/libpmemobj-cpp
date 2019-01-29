@@ -76,10 +76,12 @@ $(function() {
 
 <p>Persistent_ptr transactional allocation functions for objects.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="allocation__flag_8hpp_source.html">libpmemobj++/allocation_flag.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="life_8hpp_source.html">libpmemobj++/detail/life.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pexceptions_8hpp_source.html">libpmemobj++/detail/pexceptions.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="variadic_8hpp_source.html">libpmemobj++/detail/variadic.hpp</a>&gt;</code><br />
 <code>#include &lt;libpmemobj/tx_base.h&gt;</code><br />
 <code>#include &lt;new&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
@@ -88,10 +90,14 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a48ea57ecea50e2ca526a16242c504a42"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
-<tr class="memitem:a48ea57ecea50e2ca526a16242c504a42"><td class="memTemplItemLeft" align="right" valign="top">detail::pp_if_not_array&lt; T &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent_8hpp.html#a48ea57ecea50e2ca526a16242c504a42">pmem::obj::make_persistent</a> (Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:a48ea57ecea50e2ca526a16242c504a42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally allocate and construct an object of type T.  <a href="make__persistent_8hpp.html#a48ea57ecea50e2ca526a16242c504a42">More...</a><br /></td></tr>
-<tr class="separator:a48ea57ecea50e2ca526a16242c504a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e090bf5d2b950fba759c7560c16e08e"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a9e090bf5d2b950fba759c7560c16e08e"><td class="memTemplItemLeft" align="right" valign="top">detail::pp_if_not_array&lt; T &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent_8hpp.html#a9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a> (allocation_flag flag, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a9e090bf5d2b950fba759c7560c16e08e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally allocate and construct an object of type T.  <a href="make__persistent_8hpp.html#a9e090bf5d2b950fba759c7560c16e08e">More...</a><br /></td></tr>
+<tr class="separator:a9e090bf5d2b950fba759c7560c16e08e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77252820ae5e37021b008009c2ec17ed"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
+<tr class="memitem:a77252820ae5e37021b008009c2ec17ed"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; !detail::is_first_arg_same&lt; allocation_flag, Args... &gt;::value, typename detail::pp_if_not_array&lt; T &gt;::type &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent_8hpp.html#a77252820ae5e37021b008009c2ec17ed">pmem::obj::make_persistent</a> (Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a77252820ae5e37021b008009c2ec17ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally allocate and construct an object of type T.  <a href="make__persistent_8hpp.html#a77252820ae5e37021b008009c2ec17ed">More...</a><br /></td></tr>
+<tr class="separator:a77252820ae5e37021b008009c2ec17ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a714693f9ebbc9db6cd47ee40e10ccbaf"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a714693f9ebbc9db6cd47ee40e10ccbaf"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent_8hpp.html#a714693f9ebbc9db6cd47ee40e10ccbaf">pmem::obj::delete_persistent</a> (typename detail::pp_if_not_array&lt; T &gt;::type ptr)</td></tr>
 <tr class="memdesc:a714693f9ebbc9db6cd47ee40e10ccbaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an object of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class. ">persistent_ptr</a>.  <a href="make__persistent_8hpp.html#a714693f9ebbc9db6cd47ee40e10ccbaf">More...</a><br /></td></tr>
@@ -136,8 +142,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a48ea57ecea50e2ca526a16242c504a42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a48ea57ecea50e2ca526a16242c504a42">&#9670;&nbsp;</a></span>make_persistent()</h2>
+<a id="file_a9e090bf5d2b950fba759c7560c16e08e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a9e090bf5d2b950fba759c7560c16e08e">&#9670;&nbsp;</a></span>make_persistent() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,6 +152,55 @@ template&lt;typename T , typename... Args&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">detail::pp_if_not_array&lt;T&gt;::type pmem::obj::make_persistent </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1allocation__flag.html">allocation_flag</a>&#160;</td>
+          <td class="paramname"><em>flag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transactionally allocate and construct an object of type T. </p>
+<p>This function can be used to <em>transactionally</em> allocate an object. Cannot be used for array types.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>affects behaviour of allocator </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">args</td><td>a list of parameters passed to the constructor.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>persistent_ptr&lt;T&gt; on success</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">transaction_scope_error</td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname">transaction_alloc_error</td><td>on transactional allocation failure. </td></tr>
+    <tr><td class="paramname">rethrow</td><td>exception from T constructor </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="file_a77252820ae5e37021b008009c2ec17ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a77252820ae5e37021b008009c2ec17ed">&#9670;&nbsp;</a></span>make_persistent() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename... Args&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if&lt; !detail::is_first_arg_same&lt;allocation_flag, Args...&gt;::value, typename detail::pp_if_not_array&lt;T&gt;::type&gt;::type pmem::obj::make_persistent </td>
           <td>(</td>
           <td class="paramtype">Args &amp;&amp;...&#160;</td>
           <td class="paramname"><em>args</em></td><td>)</td>

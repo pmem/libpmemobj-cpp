@@ -76,25 +76,27 @@ $(function() {
 
 <p>Atomic persistent_ptr allocation functions for arrays.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;<a class="el" href="array__traits_8hpp_source.html">libpmemobj++/detail/array_traits.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="allocation__flag_8hpp_source.html">libpmemobj++/allocation_flag.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="array__traits_8hpp_source.html">libpmemobj++/detail/array_traits.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="check__persistent__ptr__array_8hpp_source.html">libpmemobj++/detail/check_persistent_ptr_array.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="make__atomic__impl_8hpp_source.html">libpmemobj++/detail/make_atomic_impl.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pexceptions_8hpp_source.html">libpmemobj++/detail/pexceptions.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="variadic_8hpp_source.html">libpmemobj++/detail/variadic.hpp</a>&gt;</code><br />
 <code>#include &lt;libpmemobj/atomic_base.h&gt;</code><br />
 </div>
 <p><a href="make__persistent__array__atomic_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae7b119fb900f79a26b69ed6dd69dd82e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ae7b119fb900f79a26b69ed6dd69dd82e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array__atomic_8hpp.html#ae7b119fb900f79a26b69ed6dd69dd82e">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_array&lt; T &gt;::type &amp;ptr, std::size_t N)</td></tr>
-<tr class="memdesc:ae7b119fb900f79a26b69ed6dd69dd82e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate an array of objects.  <a href="make__persistent__array__atomic_8hpp.html#ae7b119fb900f79a26b69ed6dd69dd82e">More...</a><br /></td></tr>
-<tr class="separator:ae7b119fb900f79a26b69ed6dd69dd82e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ce4b21c22f8136eb62298a3575a4a3c"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a2ce4b21c22f8136eb62298a3575a4a3c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array__atomic_8hpp.html#a2ce4b21c22f8136eb62298a3575a4a3c">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_size_array&lt; T &gt;::type &amp;ptr)</td></tr>
-<tr class="memdesc:a2ce4b21c22f8136eb62298a3575a4a3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate an array of objects.  <a href="make__persistent__array__atomic_8hpp.html#a2ce4b21c22f8136eb62298a3575a4a3c">More...</a><br /></td></tr>
-<tr class="separator:a2ce4b21c22f8136eb62298a3575a4a3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b14ac5b07d58902df4c24deb7096d12"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a7b14ac5b07d58902df4c24deb7096d12"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array__atomic_8hpp.html#a7b14ac5b07d58902df4c24deb7096d12">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_array&lt; T &gt;::type &amp;ptr, std::size_t N, allocation_flag_atomic flag=allocation_flag_atomic::none())</td></tr>
+<tr class="memdesc:a7b14ac5b07d58902df4c24deb7096d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate an array of objects.  <a href="make__persistent__array__atomic_8hpp.html#a7b14ac5b07d58902df4c24deb7096d12">More...</a><br /></td></tr>
+<tr class="separator:a7b14ac5b07d58902df4c24deb7096d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d456157a9ddd13772036944fab68b01"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a1d456157a9ddd13772036944fab68b01"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array__atomic_8hpp.html#a1d456157a9ddd13772036944fab68b01">pmem::obj::make_persistent_atomic</a> (pool_base &amp;pool, typename detail::pp_if_size_array&lt; T &gt;::type &amp;ptr, allocation_flag_atomic flag=allocation_flag_atomic::none())</td></tr>
+<tr class="memdesc:a1d456157a9ddd13772036944fab68b01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate an array of objects.  <a href="make__persistent__array__atomic_8hpp.html#a1d456157a9ddd13772036944fab68b01">More...</a><br /></td></tr>
+<tr class="separator:a1d456157a9ddd13772036944fab68b01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2009e20a7365ba802a5f1acbff2f2336"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a2009e20a7365ba802a5f1acbff2f2336"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="make__persistent__array__atomic_8hpp.html#a2009e20a7365ba802a5f1acbff2f2336">pmem::obj::delete_persistent_atomic</a> (typename detail::pp_if_array&lt; T &gt;::type &amp;ptr, std::size_t)</td></tr>
 <tr class="memdesc:a2009e20a7365ba802a5f1acbff2f2336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically deallocate an array of objects.  <a href="make__persistent__array__atomic_8hpp.html#a2009e20a7365ba802a5f1acbff2f2336">More...</a><br /></td></tr>
@@ -165,8 +167,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_ae7b119fb900f79a26b69ed6dd69dd82e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_ae7b119fb900f79a26b69ed6dd69dd82e">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[1/2]</span></h2>
+<a id="file_a7b14ac5b07d58902df4c24deb7096d12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a7b14ac5b07d58902df4c24deb7096d12">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -189,7 +191,13 @@ template&lt;typename T &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::size_t&#160;</td>
-          <td class="paramname"><em>N</em>&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a>&#160;</td>
+          <td class="paramname"><em>flag</em> = <code><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350">allocation_flag_atomic::none</a>()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -205,7 +213,8 @@ template&lt;typename T &gt; </div>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">pool</td><td>the pool from which the object will be allocated. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">N</td><td>the number of array elements.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">N</td><td>the number of array elements. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>affects behaviour of allocator</td></tr>
   </table>
   </dd>
 </dl>
@@ -218,8 +227,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a2ce4b21c22f8136eb62298a3575a4a3c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a2ce4b21c22f8136eb62298a3575a4a3c">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[2/2]</span></h2>
+<a id="file_a1d456157a9ddd13772036944fab68b01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a1d456157a9ddd13772036944fab68b01">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -236,7 +245,13 @@ template&lt;typename T &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">typename detail::pp_if_size_array&lt; T &gt;::type &amp;&#160;</td>
-          <td class="paramname"><em>ptr</em>&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a>&#160;</td>
+          <td class="paramname"><em>flag</em> = <code><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350">allocation_flag_atomic::none</a>()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -251,7 +266,8 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">pool</td><td>the pool from which the object will be allocated. </td></tr>
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place.</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>affects behaviour of allocator</td></tr>
   </table>
   </dd>
 </dl>

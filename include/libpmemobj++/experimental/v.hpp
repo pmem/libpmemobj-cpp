@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@
 #include <memory>
 
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/volatile.hpp>
+#include <libpmemobj++/detail/life.hpp>
 
 namespace pmem
 {
@@ -65,12 +65,10 @@ namespace experimental
  */
 template <typename T>
 class v {
-	using this_type = v<T>;
-
-	template <typename N>
-	friend class v;
-
 public:
+	static_assert(std::is_default_constructible<T>::value,
+		      "Type T must be default constructible");
+
 	/**
 	 * Defaulted constructor.
 	 */
@@ -79,17 +77,11 @@ public:
 	}
 
 	/**
-	 * Assignment operator.
+	 * Destructor.
 	 */
-	v &
-	operator=(const v &rhs)
+	~v()
 	{
-		/* make sure object is initialized */
-		(void)get();
-
-		val = rhs.val;
-
-		return *this;
+		/* Destructor of val should NOT be called */
 	}
 
 	/**
@@ -107,6 +99,15 @@ public:
 	}
 
 	/**
+	 * Assignment operator.
+	 */
+	v &
+	operator=(v &rhs)
+	{
+		return *this = rhs.get();
+	}
+
+	/**
 	 * Converting assignment operator from a different v<>.
 	 *
 	 * Available only for convertible types.
@@ -115,34 +116,52 @@ public:
 		  typename = typename std::enable_if<
 			  std::is_convertible<Y, T>::value>::type>
 	v &
-	operator=(const v<Y> &rhs)
+	operator=(v<Y> &rhs)
 	{
-		/* make sure object is initialized */
-		(void)get();
-
-		val = rhs.val;
-
-		return *this;
+		return *this = rhs.get();
 	}
 
 	/**
-	 * Retrieves reference of the object.
+	 * Retrieves reference to the object.
+	 *
+	 * @param[in] args forwarded to objects constructor. If object was
+	 * constructed earlier during application lifetime (even with different
+	 * arguments) no constructor is called.
 	 *
 	 * @return a reference to the object.
-	 *
 	 */
+	template <typename... Args>
 	T &
-	get() noexcept
+	get(Args &&... args) noexcept
 	{
+		auto arg_pack =
+			std::forward_as_tuple(std::forward<Args>(args)...);
+
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (pop == NULL)
 			return this->val;
 
 		T *value = static_cast<T *>(pmemobj_volatile(
 			pop, &this->vlt, &this->val, sizeof(T),
-			pmem::detail::instantiate_volatile_object<T>, NULL));
+			pmem::detail::c_style_construct<T, decltype(arg_pack),
+							Args...>,
+			static_cast<void *>(&arg_pack)));
 
 		return *value;
+	}
+
+	/**
+	 * Retrieves reference to the object.
+	 *
+	 * If object was not constructed (e.g. using get()) return value is
+	 * unspecified.
+	 *
+	 * @return a reference to the object.
+	 */
+	T &
+	unsafe_get()
+	{
+		return val;
 	}
 
 	/**
@@ -159,15 +178,20 @@ public:
 	void
 	swap(v &other)
 	{
-		/* make sure object is initialized */
-		(void)get();
-
-		std::swap(this->val, other.val);
+		std::swap(get(), other.get());
 	}
 
 private:
 	struct pmemvlt vlt;
-	T val;
+
+	/*
+	 * Normally C++ requires all class members to be constructed during
+	 * enclosing type construction. Holding a value inside of a union allows
+	 * to bypass this requirement. val is only constructed by call to get().
+	 */
+	union {
+		T val;
+	};
 };
 
 /**

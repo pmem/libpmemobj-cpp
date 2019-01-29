@@ -50,6 +50,44 @@
 #define POBJ_CPP_DEPRECATED
 #endif
 
+#if defined(LIBPMEMOBJ_CPP_VG_ENABLED)
+#undef LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+#undef LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+#undef LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+#undef LIBPMEMOBJ_CPP_VG_DRD_ENABLED
+
+#define LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED 1
+#define LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED 1
+#define LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED 1
+#define LIBPMEMOBJ_CPP_VG_DRD_ENABLED 1
+#endif
+
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED ||                                     \
+	LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED ||                                  \
+	LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED || LIBPMEMOBJ_CPP_VG_DRD_ENABLED
+#define LIBPMEMOBJ_CPP_ANY_VG_TOOL_ENABLED 1
+#endif
+
+#if LIBPMEMOBJ_CPP_ANY_VG_TOOL_ENABLED
+#include <valgrind.h>
+#endif
+
+#if defined(LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED)
+#include <pmemcheck.h>
+#endif
+
+#if defined(LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED)
+#include <memcheck.h>
+#endif
+
+#if defined(LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED)
+#include <helgrind.h>
+#endif
+
+#if defined(LIBPMEMOBJ_CPP_VG_DRD_ENABLED)
+#include <drd.h>
+#endif
+
 /*
  * Workaround for missing "is_trivially_copyable" in gcc < 5.0.
  * Be aware of a difference between __has_trivial_copy and is_trivially_copyable

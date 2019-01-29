@@ -44,11 +44,16 @@ $GEN is type of package generator and can be RPM or DEB
 
 CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installed
 
-#### To use with pmemcheck ####
+#### To use with valgrind ####
 
-In order to build your application with libpmemobj-cpp and [pmemcheck](https://github.com/pmem/valgrind),
-Valgrind instrumentation must be enabled by setting preprocessor flag
-LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION=1.
+In order to build your application with libpmemobj-cpp and
+[pmemcheck](https://github.com/pmem/valgrind)/memcheck/helgrind/drd,
+Valgrind instrumentation must be enabled during compilation by adding flags:
+LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1 for pmemcheck instrumentation,
+LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1 for memcheck instrumentation,
+LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1 for helgrind instrumentation,
+LIBPMEMOBJ_CPP_VG_DRD_ENABLED=1 for drd instrumentation,
+LIBPMEMOBJ_CPP_VG_ENABLED=1 for all Valgrind instrumentation (including pmemcheck).
 
 ## On Windows ##
 

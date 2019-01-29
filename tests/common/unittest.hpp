@@ -34,6 +34,7 @@
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
 #include "../test_backtrace.h"
+#include "../valgrind_internal.hpp"
 #include "iterators_support.hpp"
 #include <cstdarg>
 #include <cstdio>
@@ -48,6 +49,7 @@
 #define START()                                                                \
 	do {                                                                   \
 		test_register_sighandlers();                                   \
+		set_valgrind_internals();                                      \
 	} while (0)
 
 #ifndef _WIN32

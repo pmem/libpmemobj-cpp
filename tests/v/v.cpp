@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,11 @@
 
 #include <atomic>
 #include <libpmemobj++/experimental/v.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
 #define LAYOUT "cpp"
 
@@ -52,6 +54,35 @@ namespace
 {
 
 static const int TEST_VALUE = 10;
+
+struct emplace_constructible {
+	emplace_constructible()
+	{
+	}
+
+	emplace_constructible(int &a, int &b, int &&c)
+	    : a(a), b(b), c(std::move(c))
+	{
+	}
+
+	int a, b, c;
+};
+
+static int destructor_called = 0;
+
+struct work_in_destructor {
+	work_in_destructor()
+	{
+		a = TEST_VALUE;
+	}
+
+	~work_in_destructor()
+	{
+		destructor_called = 1;
+	}
+
+	int a;
+};
 
 struct foo {
 	foo() : counter(TEST_VALUE){};
@@ -64,6 +95,7 @@ struct bar {
 	nvobj_exp::v<int> vi;
 	nvobj_exp::v<int> vi2;
 	nvobj_exp::v<char> vc;
+	nvobj_exp::v<emplace_constructible> ndc;
 
 	bar()
 	{
@@ -73,6 +105,7 @@ struct bar {
 struct root {
 	nvobj_exp::v<foo> f;
 	nvobj::persistent_ptr<bar> bar_ptr;
+	nvobj::persistent_ptr<nvobj_exp::v<work_in_destructor>> work_ptr;
 };
 
 /*
@@ -111,7 +144,7 @@ test_conversion(nvobj::pool<root> &pop)
 }
 
 /*
- * test_operators-- test v assignment operators
+ * test_operators -- test v assignment operators
  */
 void
 test_operators(nvobj::pool<root> &pop)
@@ -134,6 +167,52 @@ test_operators(nvobj::pool<root> &pop)
 	r->vi2 = 2;
 	r->vi = r->vi2;
 	UT_ASSERT(r->vi == 2);
+}
+
+/*
+ * test_variadic_get -- test v get with arguments
+ */
+void
+test_variadic_get(nvobj::pool<root> &pop)
+{
+	auto r = pop.root()->bar_ptr;
+
+	int a = 1, b = 2;
+	auto &ref = r->ndc.get(a, b, 3);
+	UT_ASSERT(ref.a == 1);
+	UT_ASSERT(ref.b == 2);
+	UT_ASSERT(ref.c == 3);
+
+	auto &ref2 = r->ndc.unsafe_get();
+	UT_ASSERT(&ref == &ref2);
+	UT_ASSERT(ref2.a == 1);
+	UT_ASSERT(ref2.b == 2);
+	UT_ASSERT(ref2.c == 3);
+}
+
+/*
+ * test_destructor -- test v destructor
+ */
+void
+test_destructor(nvobj::pool<root> &pop)
+{
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->work_ptr = nvobj::make_persistent<
+			nvobj_exp::v<work_in_destructor>>();
+	});
+
+	UT_ASSERT(r->work_ptr->get().a == TEST_VALUE);
+	UT_ASSERT(destructor_called == 0);
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<nvobj_exp::v<work_in_destructor>>(
+			r->work_ptr);
+	});
+
+	/* destructor should not be called */
+	UT_ASSERT(destructor_called == 0);
 }
 }
 
@@ -170,6 +249,8 @@ main(int argc, char *argv[])
 	test_init(pop);
 	test_conversion(pop);
 	test_operators(pop);
+	test_variadic_get(pop);
+	test_destructor(pop);
 
 	pop.close();
 

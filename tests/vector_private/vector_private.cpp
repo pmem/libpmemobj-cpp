@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,15 +40,6 @@
 
 #include <cstring>
 #include <vector>
-
-/**
- * We are testing private methods, with precondition of snapshotted initialized
- * memory area. For unitialized memory area, we have to use Valgrind annotations
- * and let pmemcheck know that this area is added to transaction and is flushed.
- */
-#ifdef LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION
-#include <pmemcheck.h>
-#endif
 
 /**
  * Ugly way to test private methods, but safe since vector is header-only
@@ -210,16 +201,19 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 	nvobj::transaction::run(pop, [&] {
 		UT_ASSERT(r->v_pptr->_capacity >=
 			  r->v_pptr->_size + TEST_SIZE_2);
-#ifdef LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION
+#ifdef LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 		auto *addr = r->v_pptr->_data.get() +
 			static_cast<std::size_t>(r->v_pptr->_size);
 		auto sz = sizeof(*addr) * TEST_SIZE_2;
-		VALGRIND_PMC_ADD_TO_TX(addr, sz);
+		if (On_valgrind)
+			VALGRIND_PMC_ADD_TO_TX(addr, sz);
 #endif
 		r->v_pptr->_grow(TEST_SIZE_2, TEST_VAL_2);
-#ifdef LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION
-		VALGRIND_PMC_SET_CLEAN(addr, sz);
-		VALGRIND_PMC_REMOVE_FROM_TX(addr, sz);
+#ifdef LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		if (On_valgrind) {
+			VALGRIND_PMC_SET_CLEAN(addr, sz);
+			VALGRIND_PMC_REMOVE_FROM_TX(addr, sz);
+		}
 #endif
 	});
 	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1 + TEST_SIZE_2);
@@ -258,16 +252,19 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 	nvobj::transaction::run(pop, [&] {
 		UT_ASSERT(r->v_pptr->_capacity >=
 			  r->v_pptr->_size + TEST_SIZE_2);
-#ifdef LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION
+#ifdef LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 		auto *addr = r->v_pptr->_data.get() +
 			static_cast<std::size_t>(r->v_pptr->_size);
 		auto sz = sizeof(*addr) * TEST_SIZE_2;
-		VALGRIND_PMC_ADD_TO_TX(addr, sz);
+		if (On_valgrind)
+			VALGRIND_PMC_ADD_TO_TX(addr, sz);
 #endif
 		r->v_pptr->_grow(middle, last);
-#ifdef LIBPMEMOBJ_CPP_PMEMCHECK_INSTRUMENTATION
-		VALGRIND_PMC_SET_CLEAN(addr, sz);
-		VALGRIND_PMC_REMOVE_FROM_TX(addr, sz);
+#ifdef LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		if (On_valgrind) {
+			VALGRIND_PMC_SET_CLEAN(addr, sz);
+			VALGRIND_PMC_REMOVE_FROM_TX(addr, sz);
+		}
 #endif
 	});
 	UT_ASSERT(r->v_pptr->_size == TEST_SIZE_1 + TEST_SIZE_2);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include <utility>
 
 #include <libpmemobj++/detail/array_traits.hpp>
+#include <libpmemobj++/detail/integer_sequence.hpp>
 
 namespace pmem
 {
@@ -121,6 +122,39 @@ create(typename if_size_array<T>::type *ptr, Args &&... args)
 
 	for (std::size_t i = 0; i < N; ++i)
 		create<I>(&(*ptr)[i], std::forward<Args>(args)...);
+}
+
+/*
+ * Calls the objects constructor.
+ *
+ * Unpacks the tuple to get constructor's parameters.
+ */
+template <typename T, size_t... Indices, typename Tuple>
+void
+create_from_tuple(void *ptr, index_sequence<Indices...>, Tuple tuple)
+{
+	new (ptr) T(std::get<Indices>(std::move(tuple))...);
+}
+
+/*
+ * C-style function which calls T constructor with arguments packed in a tuple.
+ *
+ * The arg is a tuple containing constructor parameters.
+ */
+template <typename T, typename Tuple, typename... Args>
+int
+c_style_construct(void *ptr, void *arg)
+{
+	auto *arg_pack = static_cast<Tuple *>(arg);
+
+	typedef typename make_index_sequence<Args...>::type index;
+	try {
+		create_from_tuple<T>(ptr, index(), std::move(*arg_pack));
+	} catch (...) {
+		return -1;
+	}
+
+	return 0;
 }
 
 /*

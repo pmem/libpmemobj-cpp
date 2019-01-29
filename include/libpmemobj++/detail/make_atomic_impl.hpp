@@ -52,18 +52,6 @@ namespace detail
 {
 
 /*
- * Calls the objects constructor.
- *
- * Unpacks the tuple to get constructor's parameters.
- */
-template <typename T, size_t... Indices, typename Tuple>
-void
-create_object(void *ptr, index_sequence<Indices...>, Tuple tuple)
-{
-	new (ptr) T(std::get<Indices>(std::move(tuple))...);
-}
-
-/*
  * C-style function called by the allocator.
  *
  * The arg is a tuple containing constructor parameters.
@@ -72,14 +60,10 @@ template <typename T, typename Tuple, typename... Args>
 int
 obj_constructor(PMEMobjpool *pop, void *ptr, void *arg)
 {
-	auto *arg_pack = static_cast<Tuple *>(arg);
+	auto ret = c_style_construct<T, Tuple, Args...>(ptr, arg);
 
-	typedef typename make_index_sequence<Args...>::type index;
-	try {
-		create_object<T>(ptr, index(), std::move(*arg_pack));
-	} catch (...) {
-		return -1;
-	}
+	if (ret != 0)
+		return 0;
 
 	pmemobj_persist(pop, ptr, sizeof(T));
 

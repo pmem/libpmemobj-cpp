@@ -52,11 +52,14 @@ public:
 	{
 		++count;
 	}
+
 	~default_constructible_only()
 	{
 		--count;
 	};
+
 	default_constructible_only(const default_constructible_only &) = delete;
+
 	default_constructible_only &
 	operator=(default_constructible_only &) = delete;
 
@@ -83,6 +86,7 @@ struct emplace_constructible {
 	emplace_constructible(T val) : value(val)
 	{
 	}
+
 	emplace_constructible(const emplace_constructible &) = delete;
 };
 
@@ -95,16 +99,19 @@ struct emplace_constructible {
 template <typename T>
 struct emplace_constructible_and_move_insertable {
 	T value;
+
 	int moved = 0;
 
 	emplace_constructible_and_move_insertable(T val) : value(val)
 	{
 	}
+
 	emplace_constructible_and_move_insertable(
 		emplace_constructible_and_move_insertable &&other)
 	    : value(other.value), moved(other.moved + 1)
 	{
 	}
+
 	/* Since move constructor is user-declared, copy constructor and copy
 	 * assignment operator are not implicitly declared by compiler */
 };
@@ -118,19 +125,23 @@ struct emplace_constructible_and_move_insertable {
 template <typename T>
 struct emplace_constructible_copy_insertable_move_insertable {
 	T value;
+
 	int copied = 0;
+
 	int moved = 0;
 
 	emplace_constructible_copy_insertable_move_insertable(T val)
 	    : value(val)
 	{
 	}
+
 	emplace_constructible_copy_insertable_move_insertable(
 		const emplace_constructible_copy_insertable_move_insertable
 			&other)
 	    : value(other.value), copied(other.copied + 1)
 	{
 	}
+
 	emplace_constructible_copy_insertable_move_insertable(
 		emplace_constructible_copy_insertable_move_insertable &&other)
 	    : value(other.value), moved(other.moved + 1)
@@ -146,9 +157,11 @@ struct failing_reference_operator {
 	failing_reference_operator() : val(0)
 	{
 	}
+
 	failing_reference_operator(int i) : val(i)
 	{
 	}
+
 	~failing_reference_operator()
 	{
 	}
@@ -158,7 +171,43 @@ struct failing_reference_operator {
 		UT_ASSERT(0);
 		return nullptr;
 	}
+
 	int val;
+};
+
+/**
+ *  move_only - helper class
+ *  Instance of that type can be constructed from an rvalue argument only
+ */
+struct move_only {
+	int value;
+
+	move_only(int val = 1) : value(val)
+	{
+	}
+
+	move_only(const move_only &) = delete;
+
+	move_only &operator=(const move_only &) = delete;
+
+	move_only &
+	operator=(move_only &&other)
+	{
+		value = other.value;
+		other.value = 0;
+		return *this;
+	}
+
+	move_only(move_only &&other) : value(other.value)
+	{
+		other.value = 0;
+	}
+
+	bool
+	operator==(const move_only &other) const
+	{
+		return value == other.value;
+	}
 };
 
 #endif /* HELPER_CLASSES_HPP */

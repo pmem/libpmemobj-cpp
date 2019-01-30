@@ -6,108 +6,79 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: c++98, c++03
+#include "helper_classes.hpp"
+#include "unittest.hpp"
 
-// <vector>
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// void push_back(value_type&& x);
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include <vector>
-#include <cassert>
-#include <cstddef>
-#include "MoveOnly.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
+using C = pmem_exp::vector<move_only>;
 
-int main()
+struct root {
+	nvobj::persistent_ptr<C> c;
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<MoveOnly> c;
-        c.push_back(MoveOnly(0));
-        assert(c.size() == 1);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(1));
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(2));
-        assert(c.size() == 3);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(3));
-        assert(c.size() == 4);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(4));
-        assert(c.size() == 5);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-    }
-    {
-        // libc++ needs 15 because it grows by 2x (1 + 2 + 4 + 8).
-        // Use 17 for implementations that dynamically allocate a container proxy
-        // and grow by 1.5x (1 for proxy + 1 + 2 + 3 + 4 + 6).
-        std::vector<MoveOnly, limited_allocator<MoveOnly, 17> > c;
-        c.push_back(MoveOnly(0));
-        assert(c.size() == 1);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(1));
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(2));
-        assert(c.size() == 3);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(3));
-        assert(c.size() == 4);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(4));
-        assert(c.size() == 5);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-    }
-    {
-        std::vector<MoveOnly, min_allocator<MoveOnly>> c;
-        c.push_back(MoveOnly(0));
-        assert(c.size() == 1);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(1));
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(2));
-        assert(c.size() == 3);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(3));
-        assert(c.size() == 4);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-        c.push_back(MoveOnly(4));
-        assert(c.size() == 5);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == MoveOnly(j));
-    }
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: push_back_rvalue",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(
+			pop, [&] { r->c = nvobj::make_persistent<C>(); });
+		r->c->push_back(move_only(0));
+		UT_ASSERT(r->c->size() == 1);
+		for (std::size_t j = 0;
+		     static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[j] == move_only(j));
+		r->c->push_back(move_only(1));
+		UT_ASSERT(r->c->size() == 2);
+		for (std::size_t j = 0;
+		     static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[j] == move_only(j));
+		r->c->push_back(move_only(2));
+		UT_ASSERT(r->c->size() == 3);
+		for (std::size_t j = 0;
+		     static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[j] == move_only(j));
+		r->c->push_back(move_only(3));
+		UT_ASSERT(r->c->size() == 4);
+		for (std::size_t j = 0;
+		     static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[j] == move_only(j));
+		r->c->push_back(move_only(4));
+		UT_ASSERT(r->c->size() == 5);
+		for (std::size_t j = 0;
+		     static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[j] == move_only(j));
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->c); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

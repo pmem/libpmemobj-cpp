@@ -34,6 +34,10 @@
 #define VALGRIND_INTERNAL_HPP
 
 extern unsigned On_valgrind;
+extern unsigned On_pmemcheck;
+extern unsigned On_memcheck;
+extern unsigned On_helgrind;
+extern unsigned On_drd;
 
 void set_valgrind_internals(void);
 

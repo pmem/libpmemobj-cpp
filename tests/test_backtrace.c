@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017, Intel Corporation
+ * Copyright 2015-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,18 +38,18 @@
 #define _GNU_SOURCE
 #endif
 
+#include "test_backtrace.h"
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <signal.h>
-#include "test_backtrace.h"
 
 #ifdef USE_LIBUNWIND
 
 #define UNW_LOCAL_ONLY
-#include <libunwind.h>
 #include <dlfcn.h>
+#include <libunwind.h>
 
 #define PROCNAMELEN 256
 /*
@@ -84,7 +84,7 @@ test_dump_backtrace(void)
 		ret = unw_get_proc_info(&cursor, &pip);
 		if (ret) {
 			printf("unw_get_proc_info: %s [%d]\n",
-					unw_strerror(ret), ret);
+			       unw_strerror(ret), ret);
 			break;
 		}
 
@@ -93,7 +93,7 @@ test_dump_backtrace(void)
 		if (ret && ret != -UNW_ENOMEM) {
 			if (ret != -UNW_EUNSPEC) {
 				printf("unw_get_proc_name: %s [%d]\n",
-					unw_strerror(ret), ret);
+				       unw_strerror(ret), ret);
 			}
 
 			strcpy(procname, "?");
@@ -104,11 +104,11 @@ test_dump_backtrace(void)
 		const char *fname = "?";
 
 		if (dladdr(ptr, &dlinfo) && dlinfo.dli_fname &&
-				*dlinfo.dli_fname)
+		    *dlinfo.dli_fname)
 			fname = dlinfo.dli_fname;
 
 		printf("%u: %s (%s%s+0x%lx) [%p]\n", i++, fname, procname,
-				ret == -UNW_ENOMEM ? "..." : "", off, ptr);
+		       ret == -UNW_ENOMEM ? "..." : "", off, ptr);
 
 		ret = unw_step(&cursor);
 		if (ret < 0)
@@ -149,9 +149,10 @@ test_dump_backtrace(void)
 
 #else /* _WIN32 */
 
-#include <windows.h>
 #include <assert.h>
 #include <tchar.h>
+#include <windows.h>
+
 #include <DbgHelp.h>
 
 /*
@@ -175,7 +176,7 @@ test_dump_backtrace(void)
 	for (unsigned i = 0; i < nptrs; i++) {
 		if (SymFromAddr(proc_hndl, (DWORD64)buffer[i], 0, symbol)) {
 			printf("%u: %s [%p]\n", nptrs - i - 1, symbol->Name,
-				buffer[i]);
+			       buffer[i]);
 		} else {
 			printf("%u: [%p]\n", nptrs - i - 1, buffer[i]);
 		}

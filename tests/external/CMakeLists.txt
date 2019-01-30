@@ -267,7 +267,8 @@ add_test_generic(NAME vector_libcxx_clear TRACERS none pmemcheck memcheck)
 
 # XXX: port libcxx test vector.special/swap_noexcept.pass
 
-# XXX: port libcxx test vector.special/swap.pass
+build_test(vector_libcxx_special_swap libcxx/vector/vector.special/swap.pass.cpp)
+add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck)
 
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.string_view.pass
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.ptr.pass

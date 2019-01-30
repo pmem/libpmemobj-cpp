@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,11 +56,11 @@ namespace detail
  *
  * Unpacks the tuple to get constructor's parameters.
  */
-template <typename T, size_t... Indices, typename... Args>
+template <typename T, size_t... Indices, typename Tuple>
 void
-create_object(void *ptr, index_sequence<Indices...>, std::tuple<Args...> &tuple)
+create_object(void *ptr, index_sequence<Indices...>, Tuple tuple)
 {
-	new (ptr) T(std::get<Indices>(tuple)...);
+	new (ptr) T(std::get<Indices>(std::move(tuple))...);
 }
 
 /*
@@ -68,15 +68,15 @@ create_object(void *ptr, index_sequence<Indices...>, std::tuple<Args...> &tuple)
  *
  * The arg is a tuple containing constructor parameters.
  */
-template <typename T, typename... Args>
+template <typename T, typename Tuple, typename... Args>
 int
 obj_constructor(PMEMobjpool *pop, void *ptr, void *arg)
 {
-	auto *arg_pack = static_cast<std::tuple<Args &...> *>(arg);
+	auto *arg_pack = static_cast<Tuple *>(arg);
 
 	typedef typename make_index_sequence<Args...>::type index;
 	try {
-		create_object<T>(ptr, index(), *arg_pack);
+		create_object<T>(ptr, index(), std::move(*arg_pack));
 	} catch (...) {
 		return -1;
 	}

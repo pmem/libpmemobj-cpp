@@ -6,143 +6,107 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: c++98, c++03
+#include "unittest.hpp"
 
-// <vector>
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// template <class... Args> reference emplace_back(Args&&... args);
-// return type is 'reference' in C++17; 'void' before
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include <vector>
-#include <cassert>
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
-#include "test_allocator.h"
-#include "asan_testing.h"
+class A;
 
-class A
-{
-    int i_;
-    double d_;
+using C = pmem_exp::vector<A>;
 
-    A(const A&);
-    A& operator=(const A&);
-public:
-    A(int i, double d)
-        : i_(i), d_(d) {}
-
-    A(A&& a)
-        : i_(a.i_),
-          d_(a.d_)
-    {
-        a.i_ = 0;
-        a.d_ = 0;
-    }
-
-    A& operator=(A&& a)
-    {
-        i_ = a.i_;
-        d_ = a.d_;
-        a.i_ = 0;
-        a.d_ = 0;
-        return *this;
-    }
-
-    int geti() const {return i_;}
-    double getd() const {return d_;}
+struct root {
+	nvobj::persistent_ptr<C> c;
 };
 
-int main()
+class A {
+	int64_t i_;
+	double d_;
+
+	A(const A &);
+	A &operator=(const A &);
+
+public:
+	A(int64_t i, double d) : i_(i), d_(d)
+	{
+	}
+
+	A(A &&a) : i_(a.i_), d_(a.d_)
+	{
+		a.i_ = 0;
+		a.d_ = 0;
+	}
+
+	A &
+	operator=(A &&a)
+	{
+		i_ = a.i_;
+		d_ = a.d_;
+		a.i_ = 0;
+		a.d_ = 0;
+		return *this;
+	}
+
+	int
+	geti() const
+	{
+		return i_;
+	}
+	double
+	getd() const
+	{
+		return d_;
+	}
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<A> c;
-#if TEST_STD_VER > 14
-        A& r1 = c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(&r1 == &c.back());
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        A& r2 = c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-        assert(&r2 == &c.back());
-#else
-        c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-#endif
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(c.back().geti() == 3);
-        assert(c.back().getd() == 4.5);
-        assert(is_contiguous_container_asan_correct(c));
-    }
-    {
-        std::vector<A, limited_allocator<A, 4> > c;
-#if TEST_STD_VER > 14
-        A& r1 = c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(&r1 == &c.back());
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        A& r2 = c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-        assert(&r2 == &c.back());
-#else
-        c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-#endif
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(c.back().geti() == 3);
-        assert(c.back().getd() == 4.5);
-        assert(is_contiguous_container_asan_correct(c));
-    }
-    {
-        std::vector<A, min_allocator<A>> c;
-#if TEST_STD_VER > 14
-        A& r1 = c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(&r1 == &c.back());
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        A& r2 = c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-        assert(&r2 == &c.back());
-#else
-        c.emplace_back(2, 3.5);
-        assert(c.size() == 1);
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(is_contiguous_container_asan_correct(c));
-        c.emplace_back(3, 4.5);
-        assert(c.size() == 2);
-#endif
-        assert(c.front().geti() == 2);
-        assert(c.front().getd() == 3.5);
-        assert(c.back().geti() == 3);
-        assert(c.back().getd() == 4.5);
-        assert(is_contiguous_container_asan_correct(c));
-    }
-    {
-        std::vector<Tag_X, TaggingAllocator<Tag_X>> c;
-        c.emplace_back();
-        assert(c.size() == 1);
-        c.emplace_back(1, 2, 3);
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-    }
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: emplace_back",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(
+			pop, [&] { r->c = nvobj::make_persistent<C>(); });
+
+		r->c->emplace_back((int64_t)2, 3.5);
+		UT_ASSERT(r->c->size() == 1);
+		UT_ASSERT(r->c->front().geti() == 2);
+		UT_ASSERT(r->c->front().getd() == 3.5);
+		r->c->emplace_back((int64_t)3, 4.5);
+		UT_ASSERT(r->c->size() == 2);
+		UT_ASSERT(r->c->front().geti() == 2);
+		UT_ASSERT(r->c->front().getd() == 3.5);
+		UT_ASSERT(r->c->back().geti() == 3);
+		UT_ASSERT(r->c->back().getd() == 4.5);
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->c); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

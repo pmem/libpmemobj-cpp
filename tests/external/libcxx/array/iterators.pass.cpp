@@ -34,6 +34,9 @@ struct Testcase1 {
 		C::const_iterator j;
 		j = c.cbegin();
 		UT_ASSERT(i == j);
+		C::const_iterator k;
+		k = static_cast<const C &>(c).begin();
+		UT_ASSERT(i == k);
 	}
 };
 
@@ -49,6 +52,9 @@ struct Testcase2 {
 		C::const_iterator j;
 		j = c.cbegin();
 		UT_ASSERT(i == j);
+		C::const_iterator k;
+		k = static_cast<const C &>(c).begin();
+		UT_ASSERT(i == k);
 	}
 };
 
@@ -142,11 +148,14 @@ struct Testcase5 {
 		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
 		UT_ASSERT(c.end() == pmem_exp::end(c));
 		UT_ASSERT(c.cend() == pmem_exp::cend(c));
+		UT_ASSERT(static_cast<const C &>(c).end() == pmem_exp::cend(c));
 
 		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
 		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
 		UT_ASSERT(c.rend() == pmem_exp::rend(c));
 		UT_ASSERT(c.crend() == pmem_exp::crend(c));
+		UT_ASSERT(static_cast<const C &>(c).rend() ==
+			  pmem_exp::crend(c));
 
 		UT_ASSERT(pmem_exp::begin(c) != pmem_exp::end(c));
 		UT_ASSERT(pmem_exp::rbegin(c) != pmem_exp::rend(c));
@@ -155,11 +164,27 @@ struct Testcase5 {
 
 		UT_ASSERT(*c.begin() == 0);
 		UT_ASSERT(*c.rbegin() == 4);
+		UT_ASSERT(*static_cast<const C &>(c).begin() == 0);
+		UT_ASSERT(*static_cast<const C &>(c).rbegin() == 4);
+		UT_ASSERT(*(c.end() - 1) == 4);
+		UT_ASSERT(*(c.rend() - 1) == 0);
 
 		UT_ASSERT(*pmem_exp::begin(c) == 0);
+		UT_ASSERT(*(pmem_exp::begin(c) + 1) == 1);
 		UT_ASSERT(*pmem_exp::cbegin(c) == 0);
+		UT_ASSERT(*(pmem_exp::cbegin(c) + 1) == 1);
 		UT_ASSERT(*pmem_exp::rbegin(c) == 4);
 		UT_ASSERT(*pmem_exp::crbegin(c) == 4);
+
+		UT_ASSERT(*pmem_exp::begin(static_cast<const C &>(c)) == 0);
+		UT_ASSERT(*(pmem_exp::begin(static_cast<const C &>(c)) + 1) ==
+			  1);
+		UT_ASSERT(*pmem_exp::rbegin(static_cast<const C &>(c)) == 4);
+		UT_ASSERT(*(pmem_exp::rbegin(static_cast<const C &>(c)) + 1) ==
+			  3);
+		UT_ASSERT(*(pmem_exp::end(static_cast<const C &>(c)) - 1) == 4);
+		UT_ASSERT(*(pmem_exp::rend(static_cast<const C &>(c)) - 1) ==
+			  0);
 	}
 };
 

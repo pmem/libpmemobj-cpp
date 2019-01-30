@@ -148,9 +148,9 @@ struct contiguous_iterator {
 	 * Addition operator.
 	 */
 	Iterator
-	operator+(std::ptrdiff_t n)
+	operator+(std::ptrdiff_t n) const
 	{
-		Iterator tmp(*static_cast<Iterator *>(this));
+		Iterator tmp(*static_cast<const Iterator *>(this));
 		tmp += n;
 		return tmp;
 	}
@@ -159,9 +159,9 @@ struct contiguous_iterator {
 	 * Subtraction operator overload for integral type.
 	 */
 	Iterator
-	operator-(std::ptrdiff_t n)
+	operator-(std::ptrdiff_t n) const
 	{
-		Iterator tmp(*static_cast<Iterator *>(this));
+		Iterator tmp(*static_cast<const Iterator *>(this));
 		tmp -= n;
 		return tmp;
 	}

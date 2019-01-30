@@ -50,11 +50,20 @@ struct Testcase2 {
 	void
 	run()
 	{
-		C::const_reference r1 = c.front();
-		UT_ASSERT(r1 == 1);
+		{
+			C::const_reference r1 = c.front();
+			UT_ASSERT(r1 == 1);
 
-		C::const_reference r2 = c.back();
-		UT_ASSERT(r2 == 3.5);
+			C::const_reference r2 = c.back();
+			UT_ASSERT(r2 == 3.5);
+		}
+		{
+			C::const_reference r1 = c.cfront();
+			UT_ASSERT(r1 == 1);
+
+			C::const_reference r2 = c.cback();
+			UT_ASSERT(r2 == 3.5);
+		}
 	}
 };
 
@@ -77,11 +86,27 @@ struct Testcase3 {
 		static_assert(
 			(std::is_same<decltype(cc.back()), const T &>::value),
 			"");
+		static_assert(
+			(std::is_same<decltype(c.cfront()), const T &>::value),
+			"");
+		static_assert(
+			(std::is_same<decltype(cc.cfront()), const T &>::value),
+			"");
+		static_assert(
+			(std::is_same<decltype(c.cback()), const T &>::value),
+			"");
+		static_assert(
+			(std::is_same<decltype(cc.cback()), const T &>::value),
+			"");
 		if (c.size() > (0)) { // always false
 			c.front();
 			c.back();
+			c.cfront();
+			c.cback();
 			cc.front();
 			cc.back();
+			cc.cfront();
+			cc.cback();
 		}
 	}
 };
@@ -107,11 +132,27 @@ struct Testcase4 {
 		static_assert(
 			(std::is_same<decltype(cc.back()), const T &>::value),
 			"");
+		static_assert(
+			(std::is_same<decltype(c.cfront()), const T &>::value),
+			"");
+		static_assert(
+			(std::is_same<decltype(cc.cfront()), const T &>::value),
+			"");
+		static_assert(
+			(std::is_same<decltype(c.cback()), const T &>::value),
+			"");
+		static_assert(
+			(std::is_same<decltype(cc.cback()), const T &>::value),
+			"");
 		if (c.size() > (0)) {
 			c.front();
 			c.back();
+			c.cfront();
+			c.cback();
 			cc.front();
 			cc.back();
+			cc.cfront();
+			cc.cback();
 		}
 	}
 };

@@ -6,61 +6,63 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: c++98, c++03
+#include "helper_classes.hpp"
+#include "unittest.hpp"
 
-// <vector>
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// iterator insert(const_iterator position, value_type&& x);
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include <vector>
-#include <cassert>
+using C = pmem_exp::vector<move_only>;
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "MoveOnly.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
+struct root {
+	nvobj::persistent_ptr<C> v;
+};
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<MoveOnly> v(100);
-        std::vector<MoveOnly>::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-        assert(i == v.begin() + 10);
-        int j;
-        for (j = 0; j < 10; ++j)
-            assert(v[j] == MoveOnly());
-        assert(v[j] == MoveOnly(3));
-        for (++j; j < 101; ++j)
-            assert(v[j] == MoveOnly());
-    }
-    {
-        std::vector<MoveOnly, limited_allocator<MoveOnly, 300> > v(100);
-        std::vector<MoveOnly, limited_allocator<MoveOnly, 300> >::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-        assert(i == v.begin() + 10);
-        int j;
-        for (j = 0; j < 10; ++j)
-            assert(v[j] == MoveOnly());
-        assert(v[j] == MoveOnly(3));
-        for (++j; j < 101; ++j)
-            assert(v[j] == MoveOnly());
-    }
-    {
-        std::vector<MoveOnly, min_allocator<MoveOnly>> v(100);
-        std::vector<MoveOnly, min_allocator<MoveOnly>>::iterator i = v.insert(v.cbegin() + 10, MoveOnly(3));
-        assert(v.size() == 101);
-        assert(is_contiguous_container_asan_correct(v));
-        assert(i == v.begin() + 10);
-        int j;
-        for (j = 0; j < 10; ++j)
-            assert(v[j] == MoveOnly());
-        assert(v[j] == MoveOnly(3));
-        for (++j; j < 101; ++j)
-            assert(v[j] == MoveOnly());
-    }
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: insert_iter_rvalue", PMEMOBJ_MIN_POOL,
+		S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(
+			pop, [&] { r->v = nvobj::make_persistent<C>(100U); });
+		C::iterator i = r->v->insert(r->v->cbegin() + 10, move_only(3));
+		UT_ASSERT(r->v->size() == 101);
+		UT_ASSERT(i == r->v->begin() + 10);
+		unsigned j;
+		for (j = 0; j < 10; ++j)
+			UT_ASSERT((*r->v)[j] == move_only());
+		UT_ASSERT((*r->v)[j] == move_only(3));
+		for (++j; j < 101; ++j)
+			UT_ASSERT((*r->v)[j] == move_only());
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->v); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

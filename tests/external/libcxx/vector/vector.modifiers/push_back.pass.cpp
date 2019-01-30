@@ -6,107 +6,73 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
+#include "unittest.hpp"
 
-// void push_back(const value_type& x);
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#include <vector>
-#include <cassert>
-#include <cstddef>
-#include "test_allocator.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-int main()
+using C = pmem_exp::vector<int>;
+
+struct root {
+	nvobj::persistent_ptr<C> c;
+};
+
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<int> c;
-        c.push_back(0);
-        assert(c.size() == 1);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(1);
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(2);
-        assert(c.size() == 3);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(3);
-        assert(c.size() == 4);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(4);
-        assert(c.size() == 5);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-    }
-    {
-        // libc++ needs 15 because it grows by 2x (1 + 2 + 4 + 8).
-        // Use 17 for implementations that dynamically allocate a container proxy
-        // and grow by 1.5x (1 for proxy + 1 + 2 + 3 + 4 + 6).
-        std::vector<int, limited_allocator<int, 17> > c;
-        c.push_back(0);
-        assert(c.size() == 1);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(1);
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(2);
-        assert(c.size() == 3);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(3);
-        assert(c.size() == 4);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(4);
-        assert(c.size() == 5);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-    }
-#if TEST_STD_VER >= 11
-    {
-        std::vector<int, min_allocator<int>> c;
-        c.push_back(0);
-        assert(c.size() == 1);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(1);
-        assert(c.size() == 2);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(2);
-        assert(c.size() == 3);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(3);
-        assert(c.size() == 4);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-        c.push_back(4);
-        assert(c.size() == 5);
-        assert(is_contiguous_container_asan_correct(c));
-        for (int j = 0; static_cast<std::size_t>(j) < c.size(); ++j)
-            assert(c[j] == j);
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: push_back",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(
+			pop, [&] { r->c = nvobj::make_persistent<C>(); });
+		r->c->push_back(0);
+		UT_ASSERT(r->c->size() == 1);
+		for (int j = 0; static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[static_cast<C::size_type>(j)] == j);
+		r->c->push_back(1);
+		UT_ASSERT(r->c->size() == 2);
+		for (int j = 0; static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[static_cast<C::size_type>(j)] == j);
+		r->c->push_back(2);
+		UT_ASSERT(r->c->size() == 3);
+		for (int j = 0; static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[static_cast<C::size_type>(j)] == j);
+		r->c->push_back(3);
+		UT_ASSERT(r->c->size() == 4);
+		for (int j = 0; static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[static_cast<C::size_type>(j)] == j);
+		r->c->push_back(4);
+		UT_ASSERT(r->c->size() == 5);
+		for (int j = 0; static_cast<std::size_t>(j) < r->c->size(); ++j)
+			UT_ASSERT((*r->c)[static_cast<C::size_type>(j)] == j);
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->c); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

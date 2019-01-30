@@ -49,11 +49,11 @@ CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installe
 In order to build your application with libpmemobj-cpp and
 [pmemcheck](https://github.com/pmem/valgrind) / memcheck / helgrind / drd,
 Valgrind instrumentation must be enabled during compilation by adding flags:
-LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1 for pmemcheck instrumentation,
-LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1 for memcheck instrumentation,
-LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1 for helgrind instrumentation,
-LIBPMEMOBJ_CPP_VG_DRD_ENABLED=1 for drd instrumentation, or
-LIBPMEMOBJ_CPP_VG_ENABLED=1 for all Valgrind instrumentations (including pmemcheck).
+- LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1 for pmemcheck instrumentation,
+- LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1 for memcheck instrumentation,
+- LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1 for helgrind instrumentation,
+- LIBPMEMOBJ_CPP_VG_DRD_ENABLED=1 for drd instrumentation,
+- LIBPMEMOBJ_CPP_VG_ENABLED=1 for all Valgrind instrumentations (including pmemcheck).
 If there are no memcheck / helgrind / drd / pmemcheck headers installed on your
 system, build will fail.
 

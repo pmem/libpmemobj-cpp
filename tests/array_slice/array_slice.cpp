@@ -64,6 +64,9 @@ struct TestSuccess {
 		UT_ASSERT(c[2] == 0);
 		UT_ASSERT(c[3] == 0);
 
+		auto zero_slice = c.range(0, 0);
+		UT_ASSERT(zero_slice.begin() == zero_slice.end());
+
 		try {
 			/* Out of range */
 			slice.at(2) = 2;
@@ -193,6 +196,15 @@ struct TestAbort {
 				       101, 14, 15}};
 			UT_ASSERT(c == expected);
 		}
+	}
+
+	void
+	run_zero()
+	{
+		auto slice = c.range(0, c.size(), 0);
+
+		for(auto &e : slice)
+			e = 0;
 	}
 
 	using C = pmemobj_exp::array<double, 15>;
@@ -352,6 +364,26 @@ run_test_abort_with_revert(pmem::obj::pool<struct root> &pop)
 		}
 	} catch (...) {
 		UT_ASSERT(0);
+	}
+
+	if (!Is_pmemcheck_enabled) {
+	/* Run TestAbort expecting transaction abort */
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			r->ptr_a->run_zero();
+
+			pmem::obj::transaction::abort(0);
+			UT_ASSERT(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+			/* Ensure that changes not added to the transaction were
+			 * not reverted */
+			TestAbort::C expected = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+						  0, 0, 0, 0, 0}};
+			UT_ASSERT(r->ptr_a->c == expected);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
 	}
 
 	try {

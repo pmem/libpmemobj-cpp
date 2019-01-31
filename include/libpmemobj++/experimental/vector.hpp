@@ -175,26 +175,26 @@ public:
 
 private:
 	/* helper functions */
-	void _alloc(size_type size);
-	void _check_pmem();
-	void _check_tx_stage_work();
-	void _dealloc();
-	pool_base _get_pool() const noexcept;
+	void alloc(size_type size);
+	void check_pmem();
+	void check_tx_stage_work();
+	void dealloc();
+	pool_base get_pool() const noexcept;
 	template <typename... Args>
-	void _grow(size_type idx, size_type count, Args &&... args);
+	void construct(size_type idx, size_type count, Args &&... args);
 	template <typename InputIt,
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
 			  InputIt>::type * = nullptr>
-	void _grow(size_type idx, InputIt first, InputIt last);
+	void construct_range(size_type idx, InputIt first, InputIt last);
 	template <typename InputIt,
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
 			  InputIt>::type * = nullptr>
-	void _grow_copy(size_type idx, InputIt first, InputIt last);
-	void _realloc(size_type size, size_type idx = 0, size_type count = 0);
-	void _shrink(size_type size_new);
-	void _snapshot_data(size_type count = 0);
+	void construct_range_copy(size_type idx, InputIt first, InputIt last);
+	void realloc(size_type size, size_type idx = 0, size_type count = 0);
+	void shrink(size_type size_new);
+	void snapshot_data(size_type count = 0);
 
 	/* Underlying array */
 	persistent_ptr<T[]> _data;
@@ -228,8 +228,8 @@ bool operator>=(const vector<T> &lhs, const vector<T> &rhs);
 template <typename T>
 vector<T>::vector()
 {
-	_check_pmem();
-	_check_tx_stage_work();
+	check_pmem();
+	check_tx_stage_work();
 
 	_data = nullptr;
 	_size = 0;
@@ -256,13 +256,13 @@ vector<T>::vector()
 template <typename T>
 vector<T>::vector(size_type count, const value_type &value)
 {
-	_check_pmem();
-	_check_tx_stage_work();
+	check_pmem();
+	check_tx_stage_work();
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(count);
-	_grow(_size, count, value);
+	alloc(count);
+	construct(_size, count, value);
 }
 
 /**
@@ -284,13 +284,13 @@ vector<T>::vector(size_type count, const value_type &value)
 template <typename T>
 vector<T>::vector(size_type count)
 {
-	_check_pmem();
-	_check_tx_stage_work();
+	check_pmem();
+	check_tx_stage_work();
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(count);
-	_grow(_size, count);
+	alloc(count);
+	construct(_size, count);
 }
 
 /**
@@ -320,13 +320,13 @@ template <typename InputIt,
 				  InputIt>::type *>
 vector<T>::vector(InputIt first, InputIt last)
 {
-	_check_pmem();
-	_check_tx_stage_work();
+	check_pmem();
+	check_tx_stage_work();
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(static_cast<size_type>(std::distance(first, last)));
-	_grow_copy(_size, first, last);
+	alloc(static_cast<size_type>(std::distance(first, last)));
+	construct_range_copy(_size, first, last);
 }
 
 /**
@@ -349,13 +349,13 @@ vector<T>::vector(InputIt first, InputIt last)
 template <typename T>
 vector<T>::vector(const vector &other)
 {
-	_check_pmem();
-	_check_tx_stage_work();
+	check_pmem();
+	check_tx_stage_work();
 
 	_data = nullptr;
 	_size = 0;
-	_alloc(other.capacity());
-	_grow_copy(_size, other.begin(), other.end());
+	alloc(other.capacity());
+	construct_range_copy(_size, other.begin(), other.end());
 }
 
 /**
@@ -379,8 +379,8 @@ vector<T>::vector(const vector &other)
 template <typename T>
 vector<T>::vector(vector &&other)
 {
-	_check_pmem();
-	_check_tx_stage_work();
+	check_pmem();
+	check_tx_stage_work();
 
 	_data = other._data;
 	_capacity = other.capacity();
@@ -630,7 +630,7 @@ typename vector<T>::value_type *
 vector<T>::data()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	_snapshot_data();
+	snapshot_data();
 	return _data.get();
 }
 
@@ -885,8 +885,8 @@ vector<T>::reserve(size_type capacity_new)
 	if (capacity_new <= _capacity)
 		return;
 
-	pool_base pb = _get_pool();
-	transaction::run(pb, [&] { _realloc(capacity_new); });
+	pool_base pb = get_pool();
+	transaction::run(pb, [&] { realloc(capacity_new); });
 }
 
 /**
@@ -921,8 +921,8 @@ vector<T>::shrink_to_fit()
 	if (capacity() == capacity_new)
 		return;
 
-	pool_base pb = _get_pool();
-	transaction::run(pb, [&] { _realloc(capacity_new); });
+	pool_base pb = get_pool();
+	transaction::run(pb, [&] { realloc(capacity_new); });
 }
 
 /**
@@ -937,8 +937,8 @@ template <typename T>
 void
 vector<T>::clear()
 {
-	pool_base pb = _get_pool();
-	transaction::run(pb, [&] { _shrink(0); });
+	pool_base pb = get_pool();
+	transaction::run(pb, [&] { shrink(0); });
 }
 
 /**
@@ -960,8 +960,8 @@ vector<T>::free_data()
 	if (_data == nullptr)
 		return;
 
-	pool_base pb = _get_pool();
-	transaction::run(pb, [&] { _dealloc(); });
+	pool_base pb = get_pool();
+	transaction::run(pb, [&] { dealloc(); });
 }
 
 /**
@@ -984,14 +984,14 @@ template <typename T>
 void
 vector<T>::resize(size_type count)
 {
-	pool_base pb = _get_pool();
+	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
 		if (count <= _size)
-			_shrink(count);
+			shrink(count);
 		else {
 			if (_capacity < count)
-				_realloc(count);
-			_grow(_size, count - _size);
+				realloc(count);
+			construct(_size, count - _size);
 		}
 	});
 }
@@ -1020,14 +1020,14 @@ vector<T>::resize(size_type count, const value_type &value)
 	if (_capacity == count)
 		return;
 
-	pool_base pb = _get_pool();
+	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
 		if (count <= _size)
-			_shrink(count);
+			shrink(count);
 		else {
 			if (_capacity < count)
-				_realloc(count);
-			_grow(_size, count - _size, value);
+				realloc(count);
+			construct(_size, count - _size, value);
 		}
 	});
 }
@@ -1039,7 +1039,7 @@ template <typename T>
 void
 vector<T>::swap(vector &other)
 {
-	pool_base pb = _get_pool();
+	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
 		std::swap(this->_data, other._data);
 		std::swap(this->_size, other._size);
@@ -1066,7 +1066,7 @@ vector<T>::swap(vector &other)
  */
 template <typename T>
 void
-vector<T>::_alloc(size_type capacity_new)
+vector<T>::alloc(size_type capacity_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(_data == nullptr);
@@ -1104,7 +1104,7 @@ vector<T>::_alloc(size_type capacity_new)
  */
 template <typename T>
 void
-vector<T>::_check_pmem()
+vector<T>::check_pmem()
 {
 	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pool_error("Invalid pool handle.");
@@ -1119,7 +1119,7 @@ vector<T>::_check_pmem()
  */
 template <typename T>
 void
-vector<T>::_check_tx_stage_work()
+vector<T>::check_tx_stage_work()
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw transaction_error(
@@ -1143,12 +1143,12 @@ vector<T>::_check_tx_stage_work()
  */
 template <typename T>
 void
-vector<T>::_dealloc()
+vector<T>::dealloc()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
 	if (_data != nullptr) {
-		_shrink(0);
+		shrink(0);
 		if (pmemobj_tx_free(*_data.raw_ptr()) != 0)
 			throw transaction_free_error(
 				"failed to delete persistent memory object");
@@ -1166,7 +1166,7 @@ vector<T>::_dealloc()
  */
 template <typename T>
 pool_base
-vector<T>::_get_pool() const noexcept
+vector<T>::get_pool() const noexcept
 {
 	auto pop = pmemobj_pool_by_ptr(this);
 	assert(pop != nullptr);
@@ -1195,7 +1195,7 @@ vector<T>::_get_pool() const noexcept
 template <typename T>
 template <typename... Args>
 void
-vector<T>::_grow(size_type idx, size_type count, Args &&... args)
+vector<T>::construct(size_type idx, size_type count, Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(_capacity >= count + _size);
@@ -1236,7 +1236,7 @@ template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::_grow(size_type idx, InputIt first, InputIt last)
+vector<T>::construct_range(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	size_type diff = static_cast<size_type>(std::distance(first, last));
@@ -1275,7 +1275,7 @@ template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::_grow_copy(size_type idx, InputIt first, InputIt last)
+vector<T>::construct_range_copy(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	size_type diff = static_cast<size_type>(std::distance(first, last));
@@ -1310,11 +1310,11 @@ vector<T>::_grow_copy(size_type idx, InputIt first, InputIt last)
  */
 template <typename T>
 void
-vector<T>::_realloc(size_type capacity_new, size_type idx, size_type count)
+vector<T>::realloc(size_type capacity_new, size_type idx, size_type count)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	_snapshot_data();
+	snapshot_data();
 
 	auto cache_data = _data;
 	size_type cache_size = _size;
@@ -1324,16 +1324,16 @@ vector<T>::_realloc(size_type capacity_new, size_type idx, size_type count)
 
 	_data = nullptr;
 	_size = _capacity = 0;
-	_alloc(capacity_new);
+	alloc(capacity_new);
 
 	if (idx)
-		_grow(0, grow_begin, grow_mid);
+		construct_range(0, grow_begin, grow_mid);
 
 	if (idx + count < capacity_new) {
 		iterator grow_end = grow_begin;
 		std::advance(grow_end,
 			     (std::min)(cache_size, capacity_new - count));
-		_grow(idx + count, grow_mid, grow_end);
+		construct_range(idx + count, grow_mid, grow_end);
 	}
 
 	/* destroy and free cached data */
@@ -1362,12 +1362,12 @@ vector<T>::_realloc(size_type capacity_new, size_type idx, size_type count)
  */
 template <typename T>
 void
-vector<T>::_shrink(size_type size_new)
+vector<T>::shrink(size_type size_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
 
-	_snapshot_data(size_new);
+	snapshot_data(size_new);
 
 	for (size_type i = size_new; i < _size; ++i)
 		detail::destroy<value_type>(_data[i]);
@@ -1384,7 +1384,7 @@ vector<T>::_shrink(size_type size_new)
  */
 template <typename T>
 void
-vector<T>::_snapshot_data(size_type count)
+vector<T>::snapshot_data(size_type count)
 {
 	detail::conditional_add_to_tx(_data.get() + count, _size - count);
 }

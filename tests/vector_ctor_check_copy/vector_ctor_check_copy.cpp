@@ -43,7 +43,7 @@ const static size_t pool_size = PMEMOBJ_MIN_POOL;
 
 using test_type = emplace_constructible_copy_insertable_move_insertable<int>;
 using vector_type = pmem_exp::vector<test_type>;
-using It = test_support::input_it<test_type>;
+using It = test_support::input_it<test_type *>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr1;
@@ -76,7 +76,7 @@ main(int argc, char *argv[])
 	try {
 		nvobj::transaction::run(pop, [&] {
 			r->pptr1 = nvobj::make_persistent<vector_type>(
-				It(arr), It(std::end(arr)));
+				It(std::begin(arr)), It(std::end(arr)));
 		});
 
 		UT_ASSERTeq(r->pptr1->const_at(0).value, 1);

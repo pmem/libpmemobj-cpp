@@ -233,9 +233,9 @@ test_vector_grow(nvobj::pool<struct root> &pop) try {
 	/* third case */
 	std::vector<int> v(TEST_SIZE_1, TEST_VAL_1);
 	v.insert(v.end(), TEST_SIZE_2, TEST_VAL_2);
-	auto first = test::input_it<int>(v.data());
-	auto middle = test::input_it<int>(v.data() + TEST_SIZE_1);
-	auto last = test::input_it<int>(v.data() + v.size());
+	auto first = test::input_it<int *>(v.data());
+	auto middle = test::input_it<int *>(v.data() + TEST_SIZE_1);
+	auto last = test::input_it<int *>(v.data() + v.size());
 	nvobj::transaction::run(pop, [&] {
 		r->v_pptr = nvobj::make_persistent<pmem_exp::vector<int>>();
 		r->v_pptr->_alloc(TEST_CAPACITY);

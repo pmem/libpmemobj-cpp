@@ -78,16 +78,16 @@ basic_test_cases(nvobj::pool<struct root> &pop)
 {
 	int a[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 1, 0};
 	int *an = a + sizeof(a) / sizeof(a[0]);
-	basic_test<vector_type>(pop, test_support::input_it<const int>(a),
-				test_support::input_it<const int>(an));
-	basic_test<vector_type>(pop, test_support::forward_it<const int>(a),
-				test_support::forward_it<const int>(an));
-	basic_test<vector_type>(pop,
-				test_support::bidirectional_it<const int>(a),
-				test_support::bidirectional_it<const int>(an));
-	basic_test<vector_type>(pop,
-				test_support::random_access_it<const int>(a),
-				test_support::random_access_it<const int>(an));
+	basic_test<vector_type>(pop, test_support::input_it<const int *>(a),
+				test_support::input_it<const int *>(an));
+	basic_test<vector_type>(pop, test_support::forward_it<const int *>(a),
+				test_support::forward_it<const int *>(an));
+	basic_test<vector_type>(
+		pop, test_support::bidirectional_it<const int *>(a),
+		test_support::bidirectional_it<const int *>(an));
+	basic_test<vector_type>(
+		pop, test_support::random_access_it<const int *>(a),
+		test_support::random_access_it<const int *>(an));
 }
 
 /**
@@ -110,7 +110,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 	auto r = pop.root();
 	/* TEST_1 */
 	{
-		using It = test_support::forward_it<int>;
+		using It = test_support::forward_it<int *>;
 		/* construct */
 		try {
 			nvobj::transaction::run(pop, [&] {
@@ -157,7 +157,7 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 	}
 	/* TEST_2 */
 	{
-		using It = test_support::input_it<int>;
+		using It = test_support::input_it<int *>;
 		/* construct */
 		try {
 			nvobj::transaction::run(pop, [&] {

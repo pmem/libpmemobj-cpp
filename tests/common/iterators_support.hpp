@@ -50,18 +50,19 @@ namespace test_support
  * - can be incremented
  * - can be dereferenced as an lvalue
  */
-template <typename T>
+template <typename It>
 class output_it {
 public:
 	using iterator_category = std::output_iterator_tag;
-	using value_type = T;
-	using difference_type = std::ptrdiff_t;
-	using pointer = T *;
-	using reference = T &;
+	using value_type = typename std::iterator_traits<It>::value_type;
+	using difference_type =
+		typename std::iterator_traits<It>::difference_type;
+	using pointer = typename std::iterator_traits<It>::pointer;
+	using reference = typename std::iterator_traits<It>::reference;
 
 	output_it() = delete;
 
-	explicit output_it(pointer it) : _it(it)
+	explicit output_it(It it) : _it(it)
 	{
 	}
 
@@ -90,7 +91,7 @@ public:
 	}
 
 private:
-	pointer _it;
+	It _it;
 };
 
 /**
@@ -102,18 +103,19 @@ private:
  * - can be dereferenced as an rvalue
  * - supports equality/inequality comparisons
  */
-template <typename T>
+template <typename It>
 class input_it {
 public:
 	using iterator_category = std::input_iterator_tag;
-	using value_type = T;
-	using difference_type = std::ptrdiff_t;
-	using pointer = T *;
-	using reference = T &;
+	using value_type = typename std::iterator_traits<It>::value_type;
+	using difference_type =
+		typename std::iterator_traits<It>::difference_type;
+	using pointer = typename std::iterator_traits<It>::pointer;
+	using reference = typename std::iterator_traits<It>::reference;
 
 	input_it() = delete;
 
-	explicit input_it(pointer it) : _it(it)
+	explicit input_it(It it) : _it(it)
 	{
 	}
 
@@ -159,7 +161,7 @@ public:
 	}
 
 private:
-	pointer _it;
+	It _it;
 };
 
 /**
@@ -175,20 +177,21 @@ private:
  * - multi-pass: neither dereferencing nor incrementing affects
  *   dereferenceability
  */
-template <typename T>
+template <typename It>
 class forward_it {
 public:
 	using iterator_category = std::forward_iterator_tag;
-	using value_type = T;
-	using difference_type = std::ptrdiff_t;
-	using pointer = T *;
-	using reference = T &;
+	using value_type = typename std::iterator_traits<It>::value_type;
+	using difference_type =
+		typename std::iterator_traits<It>::difference_type;
+	using pointer = typename std::iterator_traits<It>::pointer;
+	using reference = typename std::iterator_traits<It>::reference;
 
 	forward_it() : _it()
 	{
 	}
 
-	explicit forward_it(pointer it) : _it(it)
+	explicit forward_it(It it) : _it(it)
 	{
 	}
 
@@ -234,7 +237,7 @@ public:
 	}
 
 private:
-	pointer _it;
+	It _it;
 };
 
 /**
@@ -251,20 +254,21 @@ private:
  * - multi-pass: neither dereferencing nor incrementing affects
  *   dereferenceability
  */
-template <typename T>
+template <typename It>
 class bidirectional_it {
 public:
 	using iterator_category = std::bidirectional_iterator_tag;
-	using value_type = T;
-	using difference_type = std::ptrdiff_t;
-	using pointer = T *;
-	using reference = T &;
+	using value_type = typename std::iterator_traits<It>::value_type;
+	using difference_type =
+		typename std::iterator_traits<It>::difference_type;
+	using pointer = typename std::iterator_traits<It>::pointer;
+	using reference = typename std::iterator_traits<It>::reference;
 
 	bidirectional_it() : _it()
 	{
 	}
 
-	explicit bidirectional_it(pointer it) : _it(it)
+	explicit bidirectional_it(It it) : _it(it)
 	{
 	}
 
@@ -325,7 +329,7 @@ public:
 	}
 
 private:
-	pointer _it;
+	It _it;
 };
 
 /**
@@ -347,20 +351,21 @@ private:
  * - multi-pass: neither dereferencing nor incrementing affects
  *   dereferenceability
  */
-template <typename T>
+template <typename It>
 class random_access_it {
 public:
 	using iterator_category = std::random_access_iterator_tag;
-	using value_type = T;
-	using difference_type = std::ptrdiff_t;
-	using pointer = T *;
-	using reference = T &;
+	using value_type = typename std::iterator_traits<It>::value_type;
+	using difference_type =
+		typename std::iterator_traits<It>::difference_type;
+	using pointer = typename std::iterator_traits<It>::pointer;
+	using reference = typename std::iterator_traits<It>::reference;
 
 	random_access_it() : _it()
 	{
 	}
 
-	explicit random_access_it(pointer it) : _it(it)
+	explicit random_access_it(It it) : _it(it)
 	{
 	}
 
@@ -493,7 +498,7 @@ public:
 	}
 
 private:
-	pointer _it;
+	It _it;
 };
 
 } /* namespace test_common */

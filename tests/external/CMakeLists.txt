@@ -214,8 +214,6 @@ add_test_default(vector_libcxx_initializer_list memcheck)
 #add_test_default(vector_libcxx_capacity pmemcheck)
 #add_test_default(vector_libcxx_capacity memcheck)
 
-# XXX: port libcxx test vector.capacity/empty.fail
-
 # XXX: enable vector_libcxx_empty test when vector's push_back method is implemented
 #build_test(vector_libcxx_empty libcxx/vector/vector.capacity/empty.pass.cpp)
 #add_test_default(vector_libcxx_empty none)
@@ -268,8 +266,6 @@ add_test_default(vector_libcxx_swap memcheck)
 # XXX: port libcxx test vector.cons/assign_move.pass
 
 # XXX: port libcxx test vector.cons/assign_size_value.pass
-
-# XXX: port libcxx test vector.cons/deduct.pass
 
 # XXX: port libcxx test vector.cons/default_noexcept.pass
 

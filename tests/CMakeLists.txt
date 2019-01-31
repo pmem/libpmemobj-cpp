@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -219,6 +219,7 @@ add_test_generic(array_algorithms pmemcheck)
 build_test(array_slice array_slice/array_slice.cpp)
 add_test_generic(array_slice none)
 add_test_generic(array_slice pmemcheck)
+add_test_generic(array_slice memcheck)
 
 build_test(array_iterator array_iterator/array_iterator.cpp)
 add_test_generic(array_iterator none)

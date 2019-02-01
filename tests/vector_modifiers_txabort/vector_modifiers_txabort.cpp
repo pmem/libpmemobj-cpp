@@ -30,19 +30,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "unittest.hpp"
+#include "helper_classes.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
+#include <vector>
+
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
+
 using C = pmem_exp::vector<int>;
+using C2 = pmem_exp::vector<move_only>;
 
 struct root {
 	nvobj::persistent_ptr<C> v1;
 	nvobj::persistent_ptr<C> v2;
+	nvobj::persistent_ptr<C2> v3;
 };
+
+using It = C::const_iterator;
+
+void
+check_value(It start, It end, int value)
+{
+	for (auto it = start; it != end; ++it) {
+		UT_ASSERTeq(*it, value);
+	}
+}
+
+void
+check_vector(nvobj::persistent_ptr<C> pptr, size_t count, int value)
+{
+	UT_ASSERTeq(pptr->size(), count);
+
+	check_value(pptr->cbegin(), pptr->cend(), value);
+}
+
+void
+check_range(It start, It end, int value)
+{
+	check_value(start, end, value);
+}
 
 /**
  * Test pmem::obj::experimental::vector modifiers
@@ -53,13 +82,25 @@ struct root {
  * - resize()
  * - resize() with value
  * - swap()
+ * - insert() single element version
+ * - insert() fill version
+ * - insert() range version
+ * - insert() move version
+ * - insert() initializer list version
+ * - erase() single element version
+ * - erase() range version
+ * - pop_back()
+ * - push_back() copy version
+ * - push_back() move version
+ * - emplace()
+ * - emplace_back()
  */
 void
 test(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
 
-	UT_ASSERT(r->v1->size() == 100);
+	check_vector(r->v1, 100, 1);
 
 	bool exception_thrown = false;
 
@@ -76,13 +117,7 @@ test(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 
-	UT_ASSERT(r->v1->size() == 100);
-
-	nvobj::transaction::run(pop, [&] {
-		for (unsigned i = 0; i < 100; ++i) {
-			UT_ASSERT((*r->v1)[i] == 1);
-		}
-	});
+	check_vector(r->v1, 100, 1);
 
 	UT_ASSERT(exception_thrown);
 
@@ -99,13 +134,7 @@ test(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 
-	UT_ASSERT(r->v1->size() == 100);
-
-	nvobj::transaction::run(pop, [&] {
-		for (unsigned i = 0; i < 100; ++i) {
-			UT_ASSERT((*r->v1)[i] == 1);
-		}
-	});
+	check_vector(r->v1, 100, 1);
 
 	UT_ASSERT(exception_thrown);
 
@@ -122,13 +151,7 @@ test(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 
-	UT_ASSERT(r->v1->size() == 100);
-
-	nvobj::transaction::run(pop, [&] {
-		for (unsigned i = 0; i < 100; ++i) {
-			UT_ASSERT((*r->v1)[i] == 1);
-		}
-	});
+	check_vector(r->v1, 100, 1);
 
 	UT_ASSERT(exception_thrown);
 
@@ -137,17 +160,271 @@ test(nvobj::pool<struct root> &pop)
 		nvobj::transaction::run(pop, [&] {
 			r->v1->swap(*r->v2);
 
-			UT_ASSERT(r->v1->size() == 50);
-			UT_ASSERT(r->v2->size() == 100);
+			check_vector(r->v1, 50, 2);
+			check_vector(r->v2, 100, 1);
 
-			nvobj::transaction::run(pop, [&] {
-				for (unsigned i = 0; i < 50; ++i) {
-					UT_ASSERT((*r->v1)[i] == 2);
-				}
-				for (unsigned i = 0; i < 100; ++i) {
-					UT_ASSERT((*r->v2)[i] == 1);
-				}
-			});
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+	check_vector(r->v2, 50, 2);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test insert() single element version */
+	try {
+		auto pos = r->v1->begin() + 50;
+		nvobj::transaction::run(pop, [&] {
+			r->v1->insert(pos, 5);
+
+			/* pos has invalided after reallocation */
+			auto pos_new = r->v1->begin() + 50;
+
+			UT_ASSERT(r->v1->size() == 101);
+			check_range(r->v1->begin(), pos_new, 1);
+			check_range(pos_new, pos_new + 1, 5);
+			check_range(pos_new + 1, r->v1->end(), 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test insert() fill version */
+	try {
+		auto pos = r->v1->begin() + 50;
+		nvobj::transaction::run(pop, [&] {
+			r->v1->insert(pos, 10, 5);
+
+			/* pos has invalided after reallocation */
+			auto pos_new = r->v1->begin() + 50;
+
+			UT_ASSERT(r->v1->size() == 110);
+			check_range(r->v1->begin(), pos_new, 1);
+			check_range(pos_new, pos_new + 10, 5);
+			check_range(pos_new + 10, r->v1->end(), 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test insert() range version */
+	try {
+		std::vector<int> v(10, 5);
+		auto pos = r->v1->begin() + 50;
+		nvobj::transaction::run(pop, [&] {
+			r->v1->insert(pos, v.begin(), v.end());
+
+			/* pos has invalided after reallocation */
+			auto pos_new = r->v1->begin() + 50;
+
+			UT_ASSERT(r->v1->size() == 110);
+			check_range(r->v1->begin(), pos_new, 1);
+			check_range(pos_new, pos_new + 10, 5);
+			check_range(pos_new + 10, r->v1->end(), 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test insert() move version */
+	try {
+		int a = 5;
+		auto pos = r->v1->begin() + 50;
+		nvobj::transaction::run(pop, [&] {
+			r->v1->insert(pos, std::move(a));
+
+			/* pos has invalided after reallocation */
+			auto pos_new = r->v1->begin() + 50;
+
+			UT_ASSERT(r->v1->size() == 101);
+			check_range(r->v1->begin(), pos_new, 1);
+			check_range(pos_new, pos_new + 1, 5);
+			check_range(pos_new + 1, r->v1->end(), 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test insert() initializer list version */
+	try {
+		auto pos = r->v1->begin() + 50;
+		nvobj::transaction::run(pop, [&] {
+			r->v1->insert(pos, {5, 5, 5, 5, 5});
+
+			/* pos has invalided after reallocation */
+			auto pos_new = r->v1->begin() + 50;
+
+			UT_ASSERT(r->v1->size() == 105);
+			check_range(r->v1->begin(), pos_new, 1);
+			check_range(pos_new, pos_new + 5, 5);
+			check_range(pos_new + 5, r->v1->end(), 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test erase() single element version */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1->erase(r->v1->begin());
+
+			check_vector(r->v1, 99, 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test erase() range version */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto pos = r->v1->begin();
+			r->v1->erase(pos, pos + 10);
+
+			check_vector(r->v1, 90, 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test pop_back() */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1->pop_back();
+
+			check_vector(r->v1, 99, 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test push_back() copy version */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1->push_back(1);
+
+			check_vector(r->v1, 101, 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
+	/* test push_back() move version */
+	UT_ASSERT(r->v3->size() == 100);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v3->push_back(move_only(1));
+
+			UT_ASSERT(r->v3->size() == 101);
+			for (auto it = r->v3->cbegin(); it != r->v3->cend();
+			     ++it) {
+				UT_ASSERT((*it).value == 1);
+			}
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(r->v3->size() == 100);
+	for (auto it = r->v3->cbegin(); it != r->v3->cend(); ++it) {
+		UT_ASSERT((*it).value == 1);
+	}
+
+	UT_ASSERT(exception_thrown);
+
+	/* test emplace() */
+	UT_ASSERT(r->v1->size() == 100);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1->emplace(r->v1->begin(), 1);
+
+			UT_ASSERT(r->v1->size() == 101);
+			for (auto it = r->v1->cbegin(); it != r->v1->cend();
+			     ++it) {
+				UT_ASSERT(*it == 1);
+			}
 
 			nvobj::transaction::abort(EINVAL);
 		});
@@ -158,16 +435,35 @@ test(nvobj::pool<struct root> &pop)
 	}
 
 	UT_ASSERT(r->v1->size() == 100);
-	UT_ASSERT(r->v2->size() == 50);
+	for (auto it = r->v1->cbegin(); it != r->v1->cend(); ++it) {
+		UT_ASSERT(*it == 1);
+	}
 
-	nvobj::transaction::run(pop, [&] {
-		for (unsigned i = 0; i < 100; ++i) {
-			UT_ASSERT((*r->v1)[i] == 1);
-		}
-		for (unsigned i = 0; i < 50; ++i) {
-			UT_ASSERT((*r->v2)[i] == 2);
-		}
-	});
+	UT_ASSERT(exception_thrown);
+
+	/* test emplace_back() */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v1->emplace_back(1);
+
+			UT_ASSERT(r->v1->size() == 101);
+			for (auto it = r->v1->cbegin(); it != r->v1->cend();
+			     ++it) {
+				UT_ASSERT(*it == 1);
+			}
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(r->v1->size() == 100);
+	for (auto it = r->v1->cbegin(); it != r->v1->cend(); ++it) {
+		UT_ASSERT(*it == 1);
+	}
 
 	UT_ASSERT(exception_thrown);
 }
@@ -193,6 +489,7 @@ main(int argc, char *argv[])
 		nvobj::transaction::run(pop, [&] {
 			r->v1 = nvobj::make_persistent<C>(100U, 1);
 			r->v2 = nvobj::make_persistent<C>(50U, 2);
+			r->v3 = nvobj::make_persistent<C2>(100U);
 		});
 
 		test(pop);
@@ -200,6 +497,7 @@ main(int argc, char *argv[])
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<C>(r->v1);
 			nvobj::delete_persistent<C>(r->v2);
+			nvobj::delete_persistent<C2>(r->v3);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

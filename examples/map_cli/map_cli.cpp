@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -179,7 +179,7 @@ exec_op(pool_base pop, T &map, queue_op op, char *argv[], int &argn)
 			insert(pop, map, argv, argn);
 			break;
 		case MAP_GET: {
-			auto val = map->get(atoll(argv[argn]));
+			auto val = map->get(atoll(argv[argn++]));
 			if (val)
 				std::cout << *val << std::endl;
 			else
@@ -190,7 +190,7 @@ exec_op(pool_base pop, T &map, queue_op op, char *argv[], int &argn)
 			remove(pop, map, argv, argn);
 			break;
 		case MAP_REMOVE_FREE:
-			map->remove_free(atoll(argv[4]));
+			map->remove_free(atoll(argv[argn++]));
 			break;
 		case MAP_CLEAR:
 			map->clear();

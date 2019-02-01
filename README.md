@@ -40,7 +40,7 @@ cmake .. -DCPACK_GENERATOR="$GEN" -DCMAKE_INSTALL_PREFIX=/usr
 make package
 ```
 
-$GEN is type of package generator and can be RPM or DEB
+$GEN is type of package generator and can be `rpm` or `deb`
 
 CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installed
 

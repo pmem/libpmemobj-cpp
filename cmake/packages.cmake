@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ string(TOUPPER "${CPACK_GENERATOR}" CPACK_GENERATOR)
 
 if(NOT ("${CPACK_GENERATOR}" STREQUAL "DEB" OR
 	"${CPACK_GENERATOR}" STREQUAL "RPM"))
-	message(FATAL_ERROR "Wrong CPACK_GENERATOR value, valid generators are: DEB, RPM")
+	message(FATAL_ERROR "Wrong CPACK_GENERATOR value, valid generators are: deb, rpm")
 endif()
 
 set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")

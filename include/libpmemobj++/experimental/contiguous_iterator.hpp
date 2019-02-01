@@ -317,7 +317,8 @@ struct range_snapshotting_iterator
 	{
 		assert(data <= ptr);
 
-		snapshot_range(ptr);
+		if (snapshot_size > 0)
+			snapshot_range(ptr);
 	}
 
 	/**
@@ -363,6 +364,9 @@ private:
 	conditional_snapshot_range(pointer ptr, difference_type diff)
 	{
 		auto new_ptr = ptr + diff;
+
+		if (snapshot_size == 0)
+			return;
 
 		/* if new pointer is outside of the array */
 		if (new_ptr < data || new_ptr >= data + size)

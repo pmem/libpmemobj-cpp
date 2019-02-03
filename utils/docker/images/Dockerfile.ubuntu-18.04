@@ -57,7 +57,7 @@ RUN apt-get update \
 	gdb \
 	git \
 	graphviz \
-	libunwind8-dev \
+	libunwind-dev \
 	libtext-diff-perl \
 	pkg-config \
 	ruby \

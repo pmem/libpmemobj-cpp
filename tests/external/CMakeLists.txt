@@ -29,6 +29,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set(TESTS_USE_FORCED_PMEM 1)
+
 include(../ctest_helpers.cmake)
 
 function(add_test_default name tracer)

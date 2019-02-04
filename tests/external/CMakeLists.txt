@@ -31,18 +31,6 @@
 
 include(../ctest_helpers.cmake)
 
-function(add_test_default name tracer)
-	if ("${ARGN}" STREQUAL "")
-		set(testcase "0")
-	else()
-		set(testcase "${ARGN}")
-	endif()
-
-	set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/run_default.cmake)
-
-	add_test_common(${name} ${tracer} ${testcase} ${cmake_script})
-endfunction()
-
 function(add_test_expect_failure name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})

@@ -41,6 +41,7 @@
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
+#include <libpmemobj++/detail/temp_value.hpp>
 #include <libpmemobj++/experimental/contiguous_iterator.hpp>
 #include <libpmemobj++/experimental/slice.hpp>
 #include <libpmemobj++/make_persistent_array.hpp>
@@ -155,22 +156,24 @@ public:
 	/* Modifiers */
 	void clear();
 	void free_data();
-	// iterator insert(const_iterator pos, const T &value);
-	// iterator insert(const_iterator pos, T &&value);
-	// iterator insert(const_iterator pos, size_type count, const T &value);
-	// template <typename InputIt>
-	// iterator insert(const_iterator pos, InputIt first, typename
-	// std::enable_if<detail::is_input_iterator<InputIt>::value,
-	// InputIt>::type last); iterator insert(const_iterator pos,
-	// std::initializer_list<T> ilist); template <class... Args> iterator
-	// emplace(const_iterator pos, Args&&... args); template< class... Args
-	// > void emplace_back(Args&&... args); iterator erase(iterator pos);
-	// iterator erase(const_iterator pos);
-	// iterator erase(iterator first, iterator last);
-	// iterator erase(const_iterator first, const_iterator last);
-	// void push_back(const T& value);
-	// void push_back(T&& value);
-	// void pop_back();
+	iterator insert(const_iterator pos, const T &value);
+	iterator insert(const_iterator pos, T &&value);
+	iterator insert(const_iterator pos, size_type count, const T &value);
+	template <typename InputIt,
+		  typename std::enable_if<
+			  detail::is_input_iterator<InputIt>::value,
+			  InputIt>::type * = nullptr>
+	iterator insert(const_iterator pos, InputIt first, InputIt last);
+	iterator insert(const_iterator pos, std::initializer_list<T> ilist);
+	template <class... Args>
+	iterator emplace(const_iterator pos, Args &&... args);
+	template <class... Args>
+	reference emplace_back(Args &&... args);
+	iterator erase(const_iterator pos);
+	iterator erase(const_iterator first, const_iterator last);
+	void push_back(const T &value);
+	void push_back(T &&value);
+	void pop_back();
 	void resize(size_type count);
 	void resize(size_type count, const value_type &value);
 	void swap(vector &other);
@@ -1239,6 +1242,470 @@ vector<T>::free_data()
 }
 
 /**
+ * Inserts value before pos in the container transactionally. Causes
+ * reallocation if the new size() is greater than the old capacity(). If the new
+ * size() is greater than capacity(), all iterators and references are
+ * invalidated. Otherwise, only the iterators and references before the
+ * insertion point remain valid. The past-the-end iterator is also invalidated.
+ *
+ * @param[in] pos iterator before which the content will be inserted. pos may be
+ * the end() iterator.
+ * @param[in] value element value to be inserted.
+ *
+ * @return Iterator pointing to the inserted value.
+ *
+ * @pre value_type must meet the requirements of CopyAssignable and
+ * CopyInsertable.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity, or remains the same if there is enough space to add single element.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::insert(const_iterator pos, const value_type &value)
+{
+	return insert(pos, 1, value);
+}
+
+/**
+ * Moves value before pos in the container transactionally. Causes reallocation
+ * if the new size() is greater than the old capacity(). If the new size() is
+ * greater than capacity(), all iterators and references are invalidated.
+ * Otherwise, only the iterators and references before the insertion point
+ * remain valid. The past-the-end iterator is also invalidated.
+ *
+ * @param[in] pos iterator before which the content will be inserted. pos may be
+ * the end() iterator.
+ * @param[in] value element value to be inserted.
+ *
+ * @return Iterator pointing to the inserted value.
+ *
+ * @pre value_type must meet the requirements of MoveAssignable and
+ * MoveInsertable.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity, or remains the same if there is enough space to add single element.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::insert(const_iterator pos, value_type &&value)
+{
+	pool_base pb = get_pool();
+
+	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
+
+	transaction::run(pb, [&] {
+		insert_gap(idx, 1);
+		construct(idx, 1, std::move(value));
+	});
+
+	return iterator(&_data[idx]);
+}
+
+/**
+ * Inserts count copies of the value before pos in the container
+ * transactionally. Causes reallocation if the new size() is greater than the
+ * old capacity(). If the new size() is greater than capacity(), all iterators
+ * and references are invalidated. Otherwise, only the iterators and references
+ * before the insertion point remain valid. The past-the-end iterator is also
+ * invalidated.
+ *
+ * @param[in] pos iterator before which the content will be inserted. pos may be
+ * the end() iterator.
+ * @param[in] count number of copies to be inserted.
+ * @param[in] value element value to be inserted.
+ *
+ * @return Iterator pointing to the first element inserted, or pos if count ==
+ * 0.
+ *
+ * @pre value_type must meet the requirements of CopyAssignable and
+ * CopyInsertable.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity + count, or remains the same if there is enough space to add count
+ * elements.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
+{
+	pool_base pb = get_pool();
+
+	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
+
+	transaction::run(pb, [&] {
+		insert_gap(idx, count);
+		construct(idx, count, value);
+	});
+
+	return iterator(&_data[idx]);
+}
+
+/**
+ * Inserts elements from range [first, last) before pos in the container
+ * transactionally. Causes reallocation if the new size() is greater than the
+ * old capacity(). If the new size() is greater than capacity(), all iterators
+ * and references are invalidated. Otherwise, only the iterators and references
+ * before the insertion point remain valid. The past-the-end iterator is also
+ * invalidated. This overload participates in overload resolution only if
+ * InputIt qualifies as InputIterator, to avoid ambiguity with the
+ * pos-count-value overload. The behavior is undefined if first and last are
+ * iterators into *this.
+ *
+ * @param[in] pos iterator before which the content will be inserted. pos may be
+ * the end() iterator.
+ * @param[in] first begin of the range of elements to insert, can't be iterator
+ * into container for which insert is called.
+ * @param[in] last end of the range of elements to insert, can't be iterator
+ * into container for which insert is called.
+ *
+ * @return Iterator pointing to the first element inserted or pos if first ==
+ * last.
+ *
+ * @pre value_type must meet the requirements of EmplaceConstructible,
+ * Swappable, CopyAssignable, CopyConstructible and CopyInsertable.
+ * @pre InputIt must satisfies requirements of InputIterator.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity + std::distance(first, last), or remains the same if there is enough
+ * space to add std::distance(first, last) elements.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+template <typename InputIt,
+	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
+				  InputIt>::type *>
+typename vector<T>::iterator
+vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
+{
+	pool_base pb = get_pool();
+
+	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
+	size_type gap_size = static_cast<size_type>(std::distance(first, last));
+
+	transaction::run(pb, [&] {
+		insert_gap(idx, gap_size);
+		construct_range_copy(idx, first, last);
+	});
+
+	return iterator(&_data[idx]);
+}
+
+/**
+ * Inserts elements from initializer list ilist before pos in the container
+ * transactionally. Causes reallocation if the new size() is greater than the
+ * old capacity(). If the new size() is greater than capacity(), all iterators
+ * and references are invalidated. Otherwise, only the iterators and references
+ * before the insertion point remain valid. The past-the-end iterator is also
+ * invalidated.
+ *
+ * @param[in] pos iterator before which the content will be inserted. pos may be
+ * the end() iterator.
+ * @param[in] ilist initializer list to insert the values from.
+ *
+ * @return Iterator pointing to the first element inserted, or pos if ilist is
+ * empty.
+ *
+ * @pre value_type must meet the requirements of EmplaceConstructible,
+ * Swappable, CopyAssignable, CopyConstructible and CopyInsertable.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity + std::distance(ilist.begin(), ilist.end()), or remains the same if
+ * there is enough space to add std::distance(ilist.begin(), ilist.end())
+ * elements.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::insert(const_iterator pos, std::initializer_list<value_type> ilist)
+{
+	return insert(pos, ilist.begin(), ilist.end());
+}
+
+/**
+ * Inserts a new element into the container directly before pos. The element is
+ * constructed in-place. The arguments args... are forwarded to the constructor
+ * as std::forward<Args>(args).... If the new size() is greater than capacity(),
+ * all iterators and references are invalidated. Otherwise, only the iterators
+ * and references before the insertion point remain valid. The past-the-end
+ * iterator is also invalidated. Note that standard allows args to be a self
+ * reference and internal emplace implementation handles this case by creating
+ * temporary element_type object. This object is being stored either on stack or
+ * on pmem, see @ref temp_value for details.
+ *
+ * @param[in] pos iterator before which the new element will be constructed.
+ * @param[in] args arguments to forward to the constructor of the element.
+ *
+ * @return Iterator pointing to the emplaced element.
+ *
+ * @pre value_type must meet the requirements of MoveAssignable, MoveInsertable
+ * and EmplaceConstructible.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity, or remains the same if there is enough space to add single element.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+template <class... Args>
+typename vector<T>::iterator
+vector<T>::emplace(const_iterator pos, Args &&... args)
+{
+	pool_base pb = get_pool();
+
+	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
+
+	transaction::run(pb, [&] {
+		/*
+		 * args might be a reference to underlying array element. This
+		 * reference can be invalidated after insert_gap() call. Hence,
+		 * we must cache value_type object in temp_value.
+		 */
+		detail::temp_value<value_type,
+				   noexcept(T(std::forward<Args>(args)...))>
+		tmp(std::forward<Args>(args)...);
+
+		insert_gap(idx, 1);
+		construct(idx, 1, std::move(tmp.get()));
+	});
+
+	return iterator(&_data[idx]);
+}
+
+/**
+ * Appends a new element to the end of the container. The element is constructed
+ * in-place. The arguments args... are forwarded to the constructor as
+ * std::forward<Args>(args).... If the new size() is greater than capacity()
+ * then all iterators and references (including the past-the-end iterator) are
+ * invalidated. Otherwise only the past-the-end iterator is invalidated.
+ *
+ * @param[in] args arguments to forward to the constructor of the element.
+ *
+ * @return Iterator pointing to the emplaced element.
+ *
+ * @pre value_type must meet the requirements of MoveInsertable and
+ * EmplaceConstructible.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity, or remains the same if there is enough space to add single element.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+template <class... Args>
+typename vector<T>::reference
+vector<T>::emplace_back(Args &&... args)
+{
+	/*
+	 * emplace() cannot be used here, because emplace_back() doesn't require
+	 * element_type to be MoveAssignable and emplace() uses
+	 * std::move_backward() function.
+	 */
+	pool_base pb = get_pool();
+
+	transaction::run(pb, [&] {
+		if (_size == _capacity) {
+			realloc(get_recommended_capacity(_size + 1));
+		} else {
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+			/*
+			 * Range of memory: [&_data[_size], &_data[_size + 1])
+			 * is undefined, there is no need to snapshot and
+			 * eventually rollback old data.
+			 */
+			VALGRIND_PMC_ADD_TO_TX(&_data[size()], sizeof(T));
+#endif
+		}
+
+		construct(size(), 1, std::forward<Args>(args)...);
+		/*
+		 * XXX: explicit persist is required here because given range
+		 * wasn't snapshotted and won't be persisted automatically on tx
+		 * commit. This can be changed once we will have implemented
+		 * "uninitialized" flag for pmemobj_tx_xadd in libpmemobj.
+		 */
+		pb.persist(&_data[size() - 1], sizeof(T));
+	});
+
+	return back();
+}
+
+/**
+ * Removes the element at pos. Invalidates iterators and references at or after
+ * the point of the erase, including the end() iterator. The iterator pos must
+ * be valid and dereferenceable. Thus the end() iterator (which is valid, but is
+ * not dereferencable) cannot be used as a value for pos.
+ *
+ * @param[in] pos iterator to the element to be removed.
+ *
+ * @return Iterator following the last removed element. If the iterator pos
+ * refers to the last element, the end() iterator is returned.
+ *
+ * @pre value_type must meet the requirements of MoveAssignable.
+ *
+ * @post size() = size() - 1.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::erase(const_iterator pos)
+{
+	return erase(pos, pos + 1);
+}
+
+/**
+ * Removes the elements in the range [first, last). Invalidates iterators and
+ * references at or after the point of the erase, including the end() iterator.
+ * The iterator pos must be valid and dereferenceable. Thus the end() iterator
+ * (which is valid, but is not dereferenceable) cannot be used as a value for
+ * pos.
+ *
+ * @param[in] first beginning of the range of elements to be removed.
+ * @param[in] last end of range of elements to be removed.
+ *
+ * @return Iterator following the last removed element. If the iterator pos
+ * refers to the last element, the end() iterator is returned. If first and last
+ * refer to the same element, iterator to this element is returned.
+ *
+ * @pre value_type must meet the requirements of MoveAssignable.
+ *
+ * @post size() = size() - std::distance(first, last).
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ */
+template <typename T>
+typename vector<T>::iterator
+vector<T>::erase(const_iterator first, const_iterator last)
+{
+	size_type idx = static_cast<size_type>(
+		std::distance(const_iterator(&_data[0]), first));
+	size_type count = static_cast<size_type>(std::distance(first, last));
+
+	if (count == 0)
+		return iterator(&_data[idx]);
+
+	pool_base pb = get_pool();
+
+	transaction::run(pb, [&] {
+		/*
+		 * XXX: future optimization: no need to snapshot trivial types,
+		 * if idx + count = _size
+		 */
+		snapshot_data(idx, _size);
+
+		pointer move_begin = &_data[idx + count];
+		pointer move_end = &_data[size()];
+		pointer dest = &_data[idx];
+
+		std::move(move_begin, move_end, dest);
+
+		_size -= count;
+	});
+
+	return iterator(&_data[idx]);
+}
+
+/**
+ * Appends the given element value to the end of the container transactionally.
+ * The new element is initialized as a copy of value.
+ *
+ * @param[in] value the value of the element to be appended.
+ *
+ * @pre value_type must meet the requirements of CopyInsertable.
+ *
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity, or remains the same if there is enough space to add single element.
+ *
+ * @throw transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::push_back(const value_type &value)
+{
+	emplace_back(value);
+}
+
+/**
+ * Appends the given element value to the end of the container transactionally.
+ * value is moved into the new element.
+ *
+ * @param[in] value the value of the element to be appended.
+ *
+ * @pre value_type must meet the requirements of MoveInsertable.
+ *
+ * @post size() == size() + 1
+ * @post capacity() is equal to the smallest next power of 2, bigger than old
+ * capacity, or remains the same if there is enough space to add single element.
+ *
+ * @throw transaction_error when snapshotting failed.
+ * @throw rethrows constructor exception.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::push_back(value_type &&value)
+{
+	emplace_back(std::move(value));
+}
+
+/**
+ * Removes the last element of the container transactionally. Calling pop_back
+ * on an empty container does nothing. No iterators or references except for
+ * back() and end() are invalidated.
+ *
+ * @post size() == std::max(0, size() - 1)
+ *
+ * @throw transaction_error when snapshotting failed.
+ * @throw rethrows desctructor exception.
+ */
+template <typename T>
+void
+vector<T>::pop_back()
+{
+	if (empty())
+		return;
+
+	pool_base pb = get_pool();
+	transaction::run(pb, [&] { shrink(size() - 1); });
+}
+
+/**
  * Resizes the container to count elements transactionally. If the current size
  * is greater than count, the container is reduced to its first count elements.
  * If the current size is less than count, additional default-inserted elements
@@ -1406,7 +1873,7 @@ vector<T>::check_tx_stage_work()
  * index in underlying array based on given parameters.
  *
  * @param[in] idx underyling array index where new elements will be constructed.
- * @param[in] count number of elements to construct.
+ * @param[in] count number of elements to be constructed.
  * @param[in] args variadic template arguments for value_type constructor.
  *
  * @pre must be called in transaction scope.
@@ -1605,7 +2072,7 @@ vector<T>::insert_gap(size_type idx, size_type count)
 #if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
 		VALGRIND_MAKE_MEM_DEFINED(end, sizeof(T) * count);
 #endif
-		transaction::snapshot<T>(begin, size() + count);
+		snapshot_data(idx, _size + count);
 
 		std::move_backward(begin, end, dest);
 	} else {

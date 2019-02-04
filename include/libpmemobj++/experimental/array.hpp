@@ -435,6 +435,28 @@ struct array {
 	}
 
 	/**
+	 * Returns slice and snapshots requested range.
+	 *
+	 * @param[in] start start index of requested range.
+	 * @param[in] n number of elements in range.
+	 *
+	 * @return slice from start to start + n.
+	 *
+	 * @throw std::out_of_range if any element of the range would be
+	 *	outside of the array.
+	 */
+	slice<pointer>
+	range(size_type start, size_type n)
+	{
+		if (start + n > N)
+			throw std::out_of_range("array::range");
+
+		detail::conditional_add_to_tx(_get_data() + start, n);
+
+		return {_get_data() + start, _get_data() + start + n};
+	}
+
+	/**
 	 * Returns slice.
 	 *
 	 * @param[in] start start index of requested range.
@@ -451,8 +473,7 @@ struct array {
 	 *	outside of the array.
 	 */
 	slice<range_snapshotting_iterator<T>>
-	range(size_type start, size_type n,
-	      size_type snapshot_size = std::numeric_limits<size_type>::max())
+	range(size_type start, size_type n, size_type snapshot_size)
 	{
 		if (start + n > N)
 			throw std::out_of_range("array::range");

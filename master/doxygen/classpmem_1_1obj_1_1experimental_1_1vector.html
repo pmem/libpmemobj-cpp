@@ -92,7 +92,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a486b0a598e44399198a1f05ee732e576"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a486b0a598e44399198a1f05ee732e576">vector</a> (size_type count)</td></tr>
 <tr class="memdesc:a486b0a598e44399198a1f05ee732e576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the container with count copies of T default constructed values.  <a href="#a486b0a598e44399198a1f05ee732e576">More...</a><br /></td></tr>
 <tr class="separator:a486b0a598e44399198a1f05ee732e576"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1f6b898490147e4c6e620785d5194aa"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value &amp;&amp;std::is_constructible&lt; value_type, typename std::iterator_traits&lt; InputIt &gt;::reference &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:ae1f6b898490147e4c6e620785d5194aa"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
 <tr class="memitem:ae1f6b898490147e4c6e620785d5194aa"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae1f6b898490147e4c6e620785d5194aa">vector</a> (InputIt first, InputIt last)</td></tr>
 <tr class="memdesc:ae1f6b898490147e4c6e620785d5194aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the container with the contents of the range [first, last).  <a href="#ae1f6b898490147e4c6e620785d5194aa">More...</a><br /></td></tr>
 <tr class="separator:ae1f6b898490147e4c6e620785d5194aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -193,30 +193,68 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a47ae5f550e26055428de5c6bfbe103a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e55449de7f6a9c04eaf19f3131681a7"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a8e55449de7f6a9c04eaf19f3131681a7">max_size</a> () const noexcept</td></tr>
 <tr class="separator:a8e55449de7f6a9c04eaf19f3131681a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a724b7a93aa0f7eec8847bbc9d3f8bf0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a724b7a93aa0f7eec8847bbc9d3f8bf0a">reserve</a> (size_type capacity_new)</td></tr>
+<tr class="memdesc:a724b7a93aa0f7eec8847bbc9d3f8bf0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the capacity of the vector to capacity_new transactionally.  <a href="#a724b7a93aa0f7eec8847bbc9d3f8bf0a">More...</a><br /></td></tr>
+<tr class="separator:a724b7a93aa0f7eec8847bbc9d3f8bf0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48c6f34cabfe6535991feacf04745536"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity</a> () const noexcept</td></tr>
 <tr class="separator:a48c6f34cabfe6535991feacf04745536"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae559c0be703f3dcbf0674ce4619cba40"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae559c0be703f3dcbf0674ce4619cba40">shrink_to_fit</a> ()</td></tr>
+<tr class="memdesc:ae559c0be703f3dcbf0674ce4619cba40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests transactional removal of unused capacity.  <a href="#ae559c0be703f3dcbf0674ce4619cba40">More...</a><br /></td></tr>
+<tr class="separator:ae559c0be703f3dcbf0674ce4619cba40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a800a206dfb1d76ce938b31d1ce9eed93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a800a206dfb1d76ce938b31d1ce9eed93">clear</a> ()</td></tr>
+<tr class="memdesc:a800a206dfb1d76ce938b31d1ce9eed93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a vector transactionally.  <a href="#a800a206dfb1d76ce938b31d1ce9eed93">More...</a><br /></td></tr>
+<tr class="separator:a800a206dfb1d76ce938b31d1ce9eed93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6008f5170008840628525c7e8327a2e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a6008f5170008840628525c7e8327a2e2">free_data</a> ()</td></tr>
-<tr class="memdesc:a6008f5170008840628525c7e8327a2e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a vector and frees all allocated persistent memory for data in transaction.  <a href="#a6008f5170008840628525c7e8327a2e2">More...</a><br /></td></tr>
+<tr class="memdesc:a6008f5170008840628525c7e8327a2e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a vector and frees all allocated persistent memory for data transactionally.  <a href="#a6008f5170008840628525c7e8327a2e2">More...</a><br /></td></tr>
 <tr class="separator:a6008f5170008840628525c7e8327a2e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b95b576242f9fdcdfecfaad1188178b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a5b95b576242f9fdcdfecfaad1188178b">resize</a> (size_type count)</td></tr>
+<tr class="memdesc:a5b95b576242f9fdcdfecfaad1188178b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the container to count elements transactionally.  <a href="#a5b95b576242f9fdcdfecfaad1188178b">More...</a><br /></td></tr>
+<tr class="separator:a5b95b576242f9fdcdfecfaad1188178b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a66eb353a0725e84d14b18b9b5fc325"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a1a66eb353a0725e84d14b18b9b5fc325">resize</a> (size_type count, const value_type &amp;value)</td></tr>
+<tr class="memdesc:a1a66eb353a0725e84d14b18b9b5fc325"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the container to contain count elements transactionally.  <a href="#a1a66eb353a0725e84d14b18b9b5fc325">More...</a><br /></td></tr>
+<tr class="separator:a1a66eb353a0725e84d14b18b9b5fc325"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a1ed01e57919aa22d333b13ef2087bf"><td class="memItemLeft" align="right" valign="top"><a id="a3a1ed01e57919aa22d333b13ef2087bf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a3a1ed01e57919aa22d333b13ef2087bf">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a> &amp;other)</td></tr>
+<tr class="memdesc:a3a1ed01e57919aa22d333b13ef2087bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exchanges the contents of the container with other transactionally. <br /></td></tr>
+<tr class="separator:a3a1ed01e57919aa22d333b13ef2087bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:ab667822e6db1a4ed0ea917ab75b5e02e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ab667822e6db1a4ed0ea917ab75b5e02e">_alloc</a> (size_type <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size</a>)</td></tr>
 <tr class="memdesc:ab667822e6db1a4ed0ea917ab75b5e02e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ab667822e6db1a4ed0ea917ab75b5e02e">More...</a><br /></td></tr>
 <tr class="separator:ab667822e6db1a4ed0ea917ab75b5e02e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5a4b850a420442f46d30ab3f6f61a64"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#af5a4b850a420442f46d30ab3f6f61a64">_check_pmem</a> ()</td></tr>
+<tr class="memdesc:af5a4b850a420442f46d30ab3f6f61a64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#af5a4b850a420442f46d30ab3f6f61a64">More...</a><br /></td></tr>
+<tr class="separator:af5a4b850a420442f46d30ab3f6f61a64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52b4dd6e194896d5e1a8143338f245ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a52b4dd6e194896d5e1a8143338f245ae">_check_tx_stage_work</a> ()</td></tr>
+<tr class="memdesc:a52b4dd6e194896d5e1a8143338f245ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a52b4dd6e194896d5e1a8143338f245ae">More...</a><br /></td></tr>
+<tr class="separator:a52b4dd6e194896d5e1a8143338f245ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae55506a53b2f29e68def838b8c32bc25"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae55506a53b2f29e68def838b8c32bc25">_dealloc</a> ()</td></tr>
 <tr class="memdesc:ae55506a53b2f29e68def838b8c32bc25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ae55506a53b2f29e68def838b8c32bc25">More...</a><br /></td></tr>
 <tr class="separator:ae55506a53b2f29e68def838b8c32bc25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d230c82cfe442fb366399812c362889"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a5d230c82cfe442fb366399812c362889">_get_pool</a> () const noexcept</td></tr>
+<tr class="memdesc:a5d230c82cfe442fb366399812c362889"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a5d230c82cfe442fb366399812c362889">More...</a><br /></td></tr>
+<tr class="separator:a5d230c82cfe442fb366399812c362889"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e900597e407247e7c0e3d9dc1b0734e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a9e900597e407247e7c0e3d9dc1b0734e">_grow</a> (size_type count, const_reference value)</td></tr>
 <tr class="memdesc:a9e900597e407247e7c0e3d9dc1b0734e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a9e900597e407247e7c0e3d9dc1b0734e">More...</a><br /></td></tr>
 <tr class="separator:a9e900597e407247e7c0e3d9dc1b0734e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e8c0c53838d13b751004eab5b60c4e7"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value &amp;&amp;std::is_constructible&lt; value_type, typename std::iterator_traits&lt; InputIt &gt;::reference &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:af8f1881a92ee7c1a868177b0b389e77e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#af8f1881a92ee7c1a868177b0b389e77e">_grow</a> (size_type count)</td></tr>
+<tr class="memdesc:af8f1881a92ee7c1a868177b0b389e77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#af8f1881a92ee7c1a868177b0b389e77e">More...</a><br /></td></tr>
+<tr class="separator:af8f1881a92ee7c1a868177b0b389e77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e8c0c53838d13b751004eab5b60c4e7"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
 <tr class="memitem:a2e8c0c53838d13b751004eab5b60c4e7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a2e8c0c53838d13b751004eab5b60c4e7">_grow</a> (InputIt first, InputIt last)</td></tr>
 <tr class="memdesc:a2e8c0c53838d13b751004eab5b60c4e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a2e8c0c53838d13b751004eab5b60c4e7">More...</a><br /></td></tr>
 <tr class="separator:a2e8c0c53838d13b751004eab5b60c4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ab1a8a0b0f53e4d3d03fce745586669"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a2ab1a8a0b0f53e4d3d03fce745586669">_shrink</a> (size_type size_new) noexcept</td></tr>
-<tr class="memdesc:a2ab1a8a0b0f53e4d3d03fce745586669"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a2ab1a8a0b0f53e4d3d03fce745586669">More...</a><br /></td></tr>
-<tr class="separator:a2ab1a8a0b0f53e4d3d03fce745586669"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a30e3e5c8dd6707a3ce6776292262ac"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:a9a30e3e5c8dd6707a3ce6776292262ac"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a9a30e3e5c8dd6707a3ce6776292262ac">_grow_copy</a> (InputIt first, InputIt last)</td></tr>
+<tr class="memdesc:a9a30e3e5c8dd6707a3ce6776292262ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a9a30e3e5c8dd6707a3ce6776292262ac">More...</a><br /></td></tr>
+<tr class="separator:a9a30e3e5c8dd6707a3ce6776292262ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f71521607debe89913cef2ca9dd53ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a1f71521607debe89913cef2ca9dd53ed">_realloc</a> (size_type <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size</a>)</td></tr>
+<tr class="memdesc:a1f71521607debe89913cef2ca9dd53ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a1f71521607debe89913cef2ca9dd53ed">More...</a><br /></td></tr>
+<tr class="separator:a1f71521607debe89913cef2ca9dd53ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5ce37d119d23b37b10984dbfb3380e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae5ce37d119d23b37b10984dbfb3380e3">_shrink</a> (size_type size_new)</td></tr>
+<tr class="memdesc:ae5ce37d119d23b37b10984dbfb3380e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ae5ce37d119d23b37b10984dbfb3380e3">More...</a><br /></td></tr>
+<tr class="separator:ae5ce37d119d23b37b10984dbfb3380e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
@@ -363,7 +401,7 @@ template&lt;typename T &gt; </div>
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
 <div class="memtemplate">
-template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value &amp;&amp;std::is_constructible&lt; T, typename std::iterator_traits&lt; InputIt &gt;::reference &gt;::value, InputIt &gt;::type * &gt; </div>
+template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type * &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a> </td>
@@ -559,7 +597,14 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Destructor. </p>
-<p>Note that free_data may throw an <a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">transaction_free_error</a> when freeing underlying array failed. It is recommended to call free_data manually before object destruction. </p>
+<p>Note that free_data may throw an <a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">transaction_free_error</a> when freeing underlying array failed. It is recommended to call free_data manually before object destruction.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">transaction_free_error</a></td><td>when freeing underlying array failed. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -614,6 +659,78 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="af5a4b850a420442f46d30ab3f6f61a64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5a4b850a420442f46d30ab3f6f61a64">&#9670;&nbsp;</a></span>_check_pmem()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::_check_pmem </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>Checks if vector resides on pmem and throws an exception if not.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class. ">pool_error</a></td><td>if vector doesn't reside on pmem. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a52b4dd6e194896d5e1a8143338f245ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52b4dd6e194896d5e1a8143338f245ae">&#9670;&nbsp;</a></span>_check_tx_stage_work()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::_check_tx_stage_work </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>Checks if current transaction stage is equal to TX_STAGE_WORK and throws an exception otherwise.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>if current transaction stage is not equal to TX_STAGE_WORK. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ae55506a53b2f29e68def838b8c32bc25"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae55506a53b2f29e68def838b8c32bc25">&#9670;&nbsp;</a></span>_dealloc()</h2>
 
@@ -649,6 +766,8 @@ template&lt;typename T &gt; </div>
 <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a10579fdbcf3a682355025954d4ba665f" title="Returns raw pointer to the underlying data and adds entire array to a transaction. ">data()</a> == nullptr</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
   </dd>
@@ -656,8 +775,39 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a5d230c82cfe442fb366399812c362889"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d230c82cfe442fb366399812c362889">&#9670;&nbsp;</a></span>_get_pool()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::_get_pool </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<dl class="section return"><dt>Returns</dt><dd>reference to <a class="el" href="classpmem_1_1obj_1_1pool__base.html" title="The non-template pool base class. ">pool_base</a> object where vector resides.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>underlying array must reside in persistent memory pool. </dd></dl>
+
+</div>
+</div>
 <a id="a9e900597e407247e7c0e3d9dc1b0734e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e900597e407247e7c0e3d9dc1b0734e">&#9670;&nbsp;</a></span>_grow() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e900597e407247e7c0e3d9dc1b0734e">&#9670;&nbsp;</a></span>_grow() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -718,15 +868,64 @@ value is valid argument for value_type copy constructor.</dd></dl>
 
 </div>
 </div>
+<a id="af8f1881a92ee7c1a868177b0b389e77e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8f1881a92ee7c1a868177b0b389e77e">&#9670;&nbsp;</a></span>_grow() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::_grow </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>Must be called during transaction. Assumes that there is enough space for additional elements. Constructs default elements at the end of underlying array based on given parameters.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>number of elements to construct.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope. </dd>
+<dd>
+if initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end. ">end()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end. ">end()</a> + count) must be snapshotted in current transaction </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> &gt;= count + <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a></dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> + count</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a2e8c0c53838d13b751004eab5b60c4e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e8c0c53838d13b751004eab5b60c4e7">&#9670;&nbsp;</a></span>_grow() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e8c0c53838d13b751004eab5b60c4e7">&#9670;&nbsp;</a></span>_grow() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
 <div class="memtemplate">
-template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value &amp;&amp;std::is_constructible&lt; T, typename std::iterator_traits&lt; InputIt &gt;::reference &gt;::value, InputIt &gt;::type * &gt; </div>
+template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type * &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -757,7 +956,73 @@ template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iter
 </div><div class="memdoc">
 
 <p>Private helper function. </p>
-<p>Must be called during transaction. Assumes that there is enough space for additional elements and input arguments satisfy InputIterator requirements. Constructs elements in underlying array with the contents of the range [first, last). The first and last arguments must satisfy InputIterator requirements. This overload participates in overload resolution only if InputIt satisfies InputIterator.</p>
+<p>Must be called during transaction. Assumes that there is enough space for additional elements and input arguments satisfy InputIterator requirements. Constructs elements in underlying array with the contents of the range [first, last). This overload participates in overload resolution only if InputIt satisfies InputIterator.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>first iterator. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>last iterator.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope. </dd>
+<dd>
+if initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end. ">end()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end. ">end()</a> + std::distance(first, last)) must be snapshotted in current transaction. </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> &gt;= std::distance(first, last) + <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> </dd>
+<dd>
+InputIt is InputIterator. </dd>
+<dd>
+std::move(InputIt::reference) is valid argument for value_type constructor.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> + std::distance(first, last)</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9a30e3e5c8dd6707a3ce6776292262ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a30e3e5c8dd6707a3ce6776292262ac">&#9670;&nbsp;</a></span>_grow_copy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type * &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::_grow_copy </td>
+          <td>(</td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>last</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>Must be called during transaction. Assumes that there is enough space for additional elements and input arguments satisfy InputIterator requirements. Copy-constructs elements in underlying array with the contents of the range [first, last).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>first iterator. </td></tr>
@@ -784,8 +1049,53 @@ InputIt::reference is valid argument for value_type copy constructor.</dd></dl>
 
 </div>
 </div>
-<a id="a2ab1a8a0b0f53e4d3d03fce745586669"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ab1a8a0b0f53e4d3d03fce745586669">&#9670;&nbsp;</a></span>_shrink()</h2>
+<a id="a1f71521607debe89913cef2ca9dd53ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f71521607debe89913cef2ca9dd53ed">&#9670;&nbsp;</a></span>_realloc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::_realloc </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>capacity_new</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>Must be called during transaction. Allocates new memory for capacity_new number of elements and copies or moves old elements to new memory area. If the current size is greater than capacity_new, the container is reduced to its first capacity_new elements.</p>
+<p>param[in] capacity_new new capacity.</p>
+<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope. </dd>
+<dd>
+if not initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aab88d348f9aec780a683e0572b60be83" title="Returns an iterator to the beginning. ">begin()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end. ">end()</a>) must be snapshotted in current transaction</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> == capacity_new</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae5ce37d119d23b37b10984dbfb3380e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5ce37d119d23b37b10984dbfb3380e3">&#9670;&nbsp;</a></span>_shrink()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -805,7 +1115,7 @@ template&lt;typename T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span><span class="mlabel">noexcept</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -823,7 +1133,14 @@ template&lt;typename T &gt; </div>
 if initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aab88d348f9aec780a683e0572b60be83" title="Returns an iterator to the beginning. ">begin()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end. ">end()</a>) must be snapshotted in current transaction. </dd>
 <dd>
 size_new &lt;= <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a></dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == size_new </dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == size_new</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1170,6 +1487,35 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a800a206dfb1d76ce938b31d1ce9eed93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a800a206dfb1d76ce938b31d1ce9eed93">&#9670;&nbsp;</a></span>clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears the content of a vector transactionally. </p>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == 0</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a38fc08c07d12cdacc4426285962f0c21"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a38fc08c07d12cdacc4426285962f0c21">&#9670;&nbsp;</a></span>const_at()</h2>
 
@@ -1427,7 +1773,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Clears the content of a vector and frees all allocated persistent memory for data in transaction. </p>
+<p>Clears the content of a vector and frees all allocated persistent memory for data transactionally. </p>
 <dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == 0 </dd>
 <dd>
 <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> == 0 </dd>
@@ -1435,6 +1781,8 @@ template&lt;typename T &gt; </div>
 <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a10579fdbcf3a682355025954d4ba665f" title="Returns raw pointer to the underlying data and adds entire array to a transaction. ">data()</a> == nullptr</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing underlying array failed. </td></tr>
   </table>
   </dd>
@@ -1691,6 +2039,172 @@ template&lt;typename T &gt; </div>
 
 <p>Returns a const reverse iterator to the end. </p>
 <dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the theoretical element preceding the first element in the vector. </dd></dl>
+
+</div>
+</div>
+<a id="a724b7a93aa0f7eec8847bbc9d3f8bf0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a724b7a93aa0f7eec8847bbc9d3f8bf0a">&#9670;&nbsp;</a></span>reserve()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::reserve </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>capacity_new</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Increases the capacity of the vector to capacity_new transactionally. </p>
+<p>If capacity_new is greater than the current <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a>, new storage is allocated, otherwise the method does nothing. If capacity_new is greater than <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a>, all iterators, including the past-the-end iterator, and all references to the elements are invalidated. Otherwise, no iterators or references are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">capacity_new</td><td>new capacity.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> == max(capacity(), capacity_new)</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new_cap &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a8e55449de7f6a9c04eaf19f3131681a7">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class. ">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5b95b576242f9fdcdfecfaad1188178b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b95b576242f9fdcdfecfaad1188178b">&#9670;&nbsp;</a></span>resize() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::resize </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resizes the container to count elements transactionally. </p>
+<p>If the current size is greater than count, the container is reduced to its first count elements. If the current size is less than count, additional default-inserted elements are appended.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>new size of the container</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> == std::max(count, capacity()) </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == count</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1a66eb353a0725e84d14b18b9b5fc325"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a66eb353a0725e84d14b18b9b5fc325">&#9670;&nbsp;</a></span>resize() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::resize </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const value_type &amp;&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resizes the container to contain count elements transactionally. </p>
+<p>If the current size is greater than count, the container is reduced to its first count elements. If the current size is less than count, additional copies of value are appended.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>new size of the container. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>the value to initialize the new elements with.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> == count </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == std::min(_size, count)</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae559c0be703f3dcbf0674ce4619cba40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae559c0be703f3dcbf0674ce4619cba40">&#9670;&nbsp;</a></span>shrink_to_fit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::shrink_to_fit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Requests transactional removal of unused capacity. </p>
+<p>New capacity will be set to current vector size. If reallocation occurs, all iterators, including the past the end iterator, and all references to the elements are invalidated. If no reallocation takes place, no iterators or references are invalidated.</p>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">pmem::transaction_error</a></td><td>when snapshotting failed </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class. ">pmem::transaction_alloc_error</a></td><td>when reallocating failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class. ">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

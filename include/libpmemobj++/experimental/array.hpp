@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -420,10 +420,10 @@ struct array {
 			snapshot_size = n;
 
 		return {range_snapshotting_iterator<T>(_get_data() + start,
-						       _get_data(), N,
+						       _get_data() + start, n,
 						       snapshot_size),
 			range_snapshotting_iterator<T>(_get_data() + start + n,
-						       _get_data(), N,
+						       _get_data() + start, n,
 						       snapshot_size)};
 	}
 

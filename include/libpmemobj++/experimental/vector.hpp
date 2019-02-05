@@ -436,8 +436,6 @@ vector<T>::~vector()
  *
  * @return reference to element number n in underlying array.
  *
- * @pre must be called in transaction scope.
- *
  * @throw std::out_of_range if n is not within the range of the container.
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
@@ -446,7 +444,6 @@ template <typename T>
 typename vector<T>::reference
 vector<T>::at(size_type n)
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
 	detail::conditional_add_to_tx(&_data[n]);
@@ -500,16 +497,14 @@ vector<T>::const_at(size_type n) const
  *
  * @return reference to element number n in underlying array.
  *
- * @pre must be called in transaction scope.
- *
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
 template <typename T>
 typename vector<T>::reference vector<T>::operator[](size_type n)
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	detail::conditional_add_to_tx(&_data[n]);
+
 	return _data[n];
 }
 
@@ -531,8 +526,6 @@ typename vector<T>::const_reference vector<T>::operator[](size_type n) const
  *
  * @return reference to first element in underlying array.
  *
- * @pre must be called in transaction scope.
- *
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
@@ -540,8 +533,8 @@ template <typename T>
 typename vector<T>::reference
 vector<T>::front()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	detail::conditional_add_to_tx(&_data[0]);
+
 	return _data[0];
 }
 
@@ -576,8 +569,6 @@ vector<T>::cfront() const
  *
  * @return reference to the last element in underlying array.
  *
- * @pre must be called in transaction scope.
- *
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
@@ -585,8 +576,8 @@ template <typename T>
 typename vector<T>::reference
 vector<T>::back()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	detail::conditional_add_to_tx(&_data[size() - 1]);
+
 	return _data[size() - 1];
 }
 
@@ -622,8 +613,6 @@ vector<T>::cback() const
  *
  * @return pointer to the underlying data.
  *
- * @pre must be called in transaction scope.
- *
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
@@ -631,8 +620,8 @@ template <typename T>
 typename vector<T>::value_type *
 vector<T>::data()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	snapshot_data();
+
 	return _data.get();
 }
 
@@ -666,14 +655,11 @@ vector<T>::cdata() const noexcept
  * Returns an iterator to the beginning.
  *
  * @return iterator pointing to the first element in the vector.
- *
- * @pre must be called in transaction scope.
  */
 template <typename T>
 typename vector<T>::iterator
 vector<T>::begin()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	return iterator(_data.get());
 }
 
@@ -707,14 +693,11 @@ vector<T>::cbegin() const noexcept
  * Returns an iterator to past the end.
  *
  * @return iterator referring to the past-the-end element in the vector.
- *
- * @pre must be called in transaction scope.
  */
 template <typename T>
 typename vector<T>::iterator
 vector<T>::end()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	return iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
 }
 
@@ -748,14 +731,11 @@ vector<T>::cend() const noexcept
  * Returns a reverse iterator to the beginning.
  *
  * @return reverse_iterator pointing to the last element in the vector.
- *
- * @pre must be called in transaction scope.
  */
 template <typename T>
 typename vector<T>::reverse_iterator
 vector<T>::rbegin()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	return reverse_iterator(end());
 }
 
@@ -790,14 +770,11 @@ vector<T>::crbegin() const noexcept
  *
  * @return reverse_iterator pointing to the theoretical element preceding the
  * first element in the vector.
- *
- * @pre must be called in transaction scope.
  */
 template <typename T>
 typename vector<T>::reverse_iterator
 vector<T>::rend()
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	return reverse_iterator(begin());
 }
 

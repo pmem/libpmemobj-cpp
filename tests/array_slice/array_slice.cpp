@@ -64,6 +64,9 @@ struct TestSuccess {
 		UT_ASSERT(c[2] == 0);
 		UT_ASSERT(c[3] == 0);
 
+		auto zero_slice = c.range(0, 0);
+		UT_ASSERT(zero_slice.begin() == zero_slice.end());
+
 		try {
 			/* Out of range */
 			slice.at(2) = 2;
@@ -156,7 +159,7 @@ struct TestAbort {
 	run()
 	{
 		/* slice from 2 to 12 with snapshot_size = 3
-		 * snapshotting ranges are: <2,4>, <5,7>, <8,10>, <11,12> */
+		 * snapshotting ranges are: <2,4>, <5,7>, <8,10>, <11> */
 		auto slice = c.range(2, 10, 3);
 
 		auto it = slice.begin();
@@ -165,13 +168,12 @@ struct TestAbort {
 		 * <2,4> should be added to a transaction */
 		*it = 99;
 
-		it += 10;
+		it += 9;
 
-		/* it points to c[12],
-		 * <11, 12> should be added to a transaction */
-		*it = 101;
+		/* it points to c[11]
+		 * <11> should be snapshotted */
+		*it = 102;
 
-		it--;
 		it--;
 		it--;
 
@@ -180,19 +182,33 @@ struct TestAbort {
 		*it = 100;
 
 		C expected = {
-			{1, 2, 99, 4, 5, 6, 7, 8, 9, 100, 11, 12, 101, 14, 15}};
+			{1, 2, 99, 4, 5, 6, 7, 8, 9, 100, 11, 102, 13, 14, 15}};
 		UT_ASSERT(c == expected);
 
 		if (!Is_pmemcheck_enabled) {
+			it = slice.begin() + 10;
+			/* it points to c[12] (outside of range)
+			 * no snapshotting */
+			*it = 101;
+
 			/* zero <5,7> range not adding it to a transaction */
 			c._data[5] = 0;
 			c._data[6] = 0;
 			c._data[7] = 0;
 
-			C expected = {{1, 2, 99, 4, 5, 0, 0, 0, 9, 100, 11, 12,
+			C expected = {{1, 2, 99, 4, 5, 0, 0, 0, 9, 100, 11, 102,
 				       101, 14, 15}};
 			UT_ASSERT(c == expected);
 		}
+	}
+
+	void
+	run_zero()
+	{
+		auto slice = c.range(0, c.size(), 0);
+
+		for (auto &e : slice)
+			e = 0;
 	}
 
 	using C = pmemobj_exp::array<double, 15>;
@@ -347,11 +363,31 @@ run_test_abort_with_revert(pmem::obj::pool<struct root> &pop)
 			/* Ensure that changes not added to the transaction were
 			 * not reverted */
 			TestAbort::C expected = {{1, 2, 3, 4, 5, 0, 0, 0, 9, 10,
-						  11, 12, 13, 14, 15}};
+						  11, 12, 101, 14, 15}};
 			UT_ASSERT(r->ptr_a->c == expected);
 		}
 	} catch (...) {
 		UT_ASSERT(0);
+	}
+
+	if (!Is_pmemcheck_enabled) {
+		/* Run TestAbort expecting transaction abort */
+		try {
+			pmem::obj::transaction::run(pop, [&] {
+				r->ptr_a->run_zero();
+
+				pmem::obj::transaction::abort(0);
+				UT_ASSERT(0);
+			});
+		} catch (pmem::manual_tx_abort &) {
+			/* Ensure that changes not added to the transaction were
+			 * not reverted */
+			TestAbort::C expected = {
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+			UT_ASSERT(r->ptr_a->c == expected);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
 	}
 
 	try {

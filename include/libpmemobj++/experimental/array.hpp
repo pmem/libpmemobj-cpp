@@ -461,10 +461,10 @@ struct array {
 			snapshot_size = n;
 
 		return {range_snapshotting_iterator<T>(_get_data() + start,
-						       _get_data(), N,
+						       _get_data() + start, n,
 						       snapshot_size),
 			range_snapshotting_iterator<T>(_get_data() + start + n,
-						       _get_data(), N,
+						       _get_data() + start, n,
 						       snapshot_size)};
 	}
 

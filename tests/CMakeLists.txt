@@ -237,6 +237,7 @@ add_test_generic(array_algorithms pmemcheck)
 build_test(array_slice array_slice/array_slice.cpp)
 add_test_generic(array_slice none)
 add_test_generic(array_slice pmemcheck)
+add_test_generic(array_slice memcheck)
 
 build_test(array_iterator array_iterator/array_iterator.cpp)
 add_test_generic(array_iterator none)

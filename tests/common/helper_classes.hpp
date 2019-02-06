@@ -99,7 +99,6 @@ struct emplace_constructible {
 template <typename T>
 struct emplace_constructible_and_move_insertable {
 	T value;
-
 	int moved = 0;
 
 	emplace_constructible_and_move_insertable(T val) : value(val)
@@ -117,7 +116,7 @@ struct emplace_constructible_and_move_insertable {
 };
 
 /**
- * copy_insertable_and_move_insertable - helper class
+ * emplace_constructible_copy_insertable_and_move_insertable - helper class
  * Satisfies requirements:
  * - instance of that type can be copy-constructed in uninitialized storage
  * - rvalue of the type can be copied in uninitialized storage
@@ -125,9 +124,7 @@ struct emplace_constructible_and_move_insertable {
 template <typename T>
 struct emplace_constructible_copy_insertable_move_insertable {
 	T value;
-
 	int copied = 0;
-
 	int moved = 0;
 
 	emplace_constructible_copy_insertable_move_insertable(T val)

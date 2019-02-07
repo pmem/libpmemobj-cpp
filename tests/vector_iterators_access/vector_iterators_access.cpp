@@ -60,7 +60,7 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 		r->v->crbegin();
 		r->v->crend();
 
-		static_cast<const C &>(*r->v).const_at(0);
+		static_cast<const C &>(*r->v).at(0);
 		static_cast<const C &>(*r->v).data();
 		static_cast<const C &>(*r->v).front();
 		static_cast<const C &>(*r->v).back();
@@ -68,6 +68,7 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 		static_cast<const C &>(*r->v).end();
 		static_cast<const C &>(*r->v).rbegin();
 		static_cast<const C &>(*r->v).rend();
+		static_cast<const C &>(*r->v)[0];
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
@@ -94,6 +95,47 @@ check_add_to_tx(nvobj::pool<struct root> &pop)
 		nvobj::transaction::run(pop, [&] { r->v->back() = 4; });
 		nvobj::transaction::run(pop, [&] { *r->v->begin() = 5; });
 		nvobj::transaction::run(pop, [&] { *r->v->rend() = 6; });
+		nvobj::transaction::run(pop, [&] { r->v->rbegin(); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+/*
+ * Access element beyond the vector's bounds.
+ * Check if std::out_of_range exception is thrown.
+ */
+void
+check_out_of_range(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	auto size = r->v->size();
+
+	/* at() */
+	try {
+		nvobj::transaction::run(pop, [&] { r->v->at(size); });
+		UT_ASSERT(0);
+	} catch (std::out_of_range &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/* const at() */
+	try {
+		nvobj::transaction::run(
+			pop, [&] { const_cast<const C &>(*r->v).at(size); });
+		UT_ASSERT(0);
+	} catch (std::out_of_range &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/* const_at() */
+	try {
+		nvobj::transaction::run(pop, [&] { r->v->const_at(size); });
+		UT_ASSERT(0);
+	} catch (std::out_of_range &) {
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
@@ -121,6 +163,7 @@ main(int argc, char *argv[])
 
 	check_access_out_of_tx(pop);
 	check_add_to_tx(pop);
+	check_out_of_range(pop);
 
 	nvobj::delete_persistent_atomic<C>(r->v);
 

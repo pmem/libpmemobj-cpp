@@ -38,11 +38,108 @@
 
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
-using vector_type = pmem_exp::vector<int>;
+using C = pmem_exp::vector<int>;
 
 struct root {
-	nvobj::persistent_ptr<vector_type> v_pptr;
+	nvobj::persistent_ptr<C> v;
 };
+
+/* Check if access method can be called out of transaction scope */
+void
+check_access_out_of_tx(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		r->v->const_at(0);
+		r->v->cdata();
+		r->v->cfront();
+		r->v->cback();
+		r->v->cbegin();
+		r->v->cend();
+		r->v->crbegin();
+		r->v->crend();
+
+		static_cast<const C &>(*r->v).at(0);
+		static_cast<const C &>(*r->v).data();
+		static_cast<const C &>(*r->v).front();
+		static_cast<const C &>(*r->v).back();
+		static_cast<const C &>(*r->v).begin();
+		static_cast<const C &>(*r->v).end();
+		static_cast<const C &>(*r->v).rbegin();
+		static_cast<const C &>(*r->v).rend();
+		static_cast<const C &>(*r->v)[0];
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+/*
+ * Check if access methods, iterators and dereference operator add
+ * elements to transaction. Expect no pmemcheck errors.
+ */
+void
+check_add_to_tx(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] { (*r->v)[0] = 0; });
+		nvobj::transaction::run(pop, [&] { r->v->at(0) = 1; });
+		nvobj::transaction::run(pop, [&] {
+			auto p = r->v->data();
+			for (unsigned i = 0; i < r->v->size(); ++i)
+				*(p + i) = 2;
+		});
+		nvobj::transaction::run(pop, [&] { r->v->front() = 3; });
+		nvobj::transaction::run(pop, [&] { r->v->back() = 4; });
+		nvobj::transaction::run(pop, [&] { *r->v->begin() = 5; });
+		nvobj::transaction::run(pop, [&] { *r->v->rend() = 6; });
+		nvobj::transaction::run(pop, [&] { r->v->rbegin(); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+/*
+ * Access element beyond the vector's bounds.
+ * Check if std::out_of_range exception is thrown.
+ */
+void
+check_out_of_range(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	auto size = r->v->size();
+
+	/* at() */
+	try {
+		nvobj::transaction::run(pop, [&] { r->v->at(size); });
+		UT_ASSERT(0);
+	} catch (std::out_of_range &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/* const at() */
+	try {
+		nvobj::transaction::run(
+			pop, [&] { const_cast<const C &>(*r->v).at(size); });
+		UT_ASSERT(0);
+	} catch (std::out_of_range &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/* const_at() */
+	try {
+		nvobj::transaction::run(pop, [&] { r->v->const_at(size); });
+		UT_ASSERT(0);
+	} catch (std::out_of_range &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
 
 int
 main(int argc, char *argv[])
@@ -61,72 +158,14 @@ main(int argc, char *argv[])
 
 	auto r = pop.root();
 
-	nvobj::transaction::run(pop, [&] {
-		r->v_pptr = nvobj::make_persistent<vector_type>(10U, 5);
-	});
+	nvobj::transaction::run(
+		pop, [&] { r->v = nvobj::make_persistent<C>(10U, 5); });
 
-	/* check if access method can be called out of transaction scope */
-	try {
-		auto a1 = r->v_pptr->const_at(0);
-		(void)a1;
-		auto a2 = r->v_pptr->cdata();
-		(void)a2;
-		auto a3 = r->v_pptr->cfront();
-		(void)a3;
-		auto a4 = r->v_pptr->cback();
-		(void)a4;
-		auto a5 = r->v_pptr->cbegin();
-		(void)a5;
-		auto a6 = r->v_pptr->cend();
-		(void)a6;
-		auto a7 = r->v_pptr->crbegin();
-		(void)a7;
-		auto a8 = r->v_pptr->crend();
-		(void)a8;
+	check_access_out_of_tx(pop);
+	check_add_to_tx(pop);
+	check_out_of_range(pop);
 
-		auto a9 = static_cast<const vector_type &>(*r->v_pptr)
-				  .const_at(0);
-		(void)a9;
-		auto a10 = static_cast<const vector_type &>(*r->v_pptr).data();
-		(void)a10;
-		auto a11 = static_cast<const vector_type &>(*r->v_pptr).front();
-		(void)a11;
-		auto a12 = static_cast<const vector_type &>(*r->v_pptr).back();
-		(void)a12;
-		auto a13 = static_cast<const vector_type &>(*r->v_pptr).begin();
-		(void)a13;
-		auto a14 = static_cast<const vector_type &>(*r->v_pptr).end();
-		(void)a14;
-		auto a15 =
-			static_cast<const vector_type &>(*r->v_pptr).rbegin();
-		(void)a15;
-		auto a16 = static_cast<const vector_type &>(*r->v_pptr).rend();
-		(void)a16;
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
-
-	/*
-	 * Check if access methods, iterators and dereference operator add
-	 * elements to transaction. Expect no pmemcheck errors.
-	 */
-	try {
-		nvobj::transaction::run(pop, [&] { (*r->v_pptr)[0] = 0; });
-		nvobj::transaction::run(pop, [&] { r->v_pptr->at(0) = 1; });
-		nvobj::transaction::run(pop, [&] {
-			auto p = r->v_pptr->data();
-			for (unsigned i = 0; i < r->v_pptr->size(); ++i)
-				*(p + i) = 2;
-		});
-		nvobj::transaction::run(pop, [&] { r->v_pptr->front() = 3; });
-		nvobj::transaction::run(pop, [&] { r->v_pptr->back() = 4; });
-		nvobj::transaction::run(pop, [&] { *r->v_pptr->begin() = 5; });
-		nvobj::transaction::run(pop, [&] { *r->v_pptr->rend() = 6; });
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
-
-	nvobj::delete_persistent_atomic<vector_type>(r->v_pptr);
+	nvobj::delete_persistent_atomic<C>(r->v);
 
 	pop.close();
 

@@ -61,6 +61,9 @@ test()
 				   std::reverse_iterator<
 					   typename C::const_iterator>>::value,
 		      "");
+	static_assert(
+		(std::is_same<typename C::const_iterator, const T *>::value),
+		"");
 }
 
 int

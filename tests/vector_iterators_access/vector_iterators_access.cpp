@@ -60,6 +60,15 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 		r->v->crbegin();
 		r->v->crend();
 
+		r->v->at(0);
+		r->v->data();
+		r->v->front();
+		r->v->back();
+		r->v->begin();
+		r->v->end();
+		r->v->rbegin();
+		r->v->rend();
+
 		static_cast<const C &>(*r->v).at(0);
 		static_cast<const C &>(*r->v).data();
 		static_cast<const C &>(*r->v).front();

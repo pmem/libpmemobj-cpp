@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,6 +103,7 @@ struct Test3 {
 		auto sub_slice = c.range(1, c.size() - 2);
 		auto cslice = c.crange(0, c.size());
 
+		UT_ASSERT(c.begin() == c.cbegin());
 		UT_ASSERT(c.begin() == slice.begin());
 		UT_ASSERT(c.begin() == sub_slice.begin() - 1);
 		UT_ASSERT(c.begin() == cslice.begin());
@@ -116,6 +117,7 @@ struct Test3 {
 		UT_ASSERT(slice.begin() == cslice.begin());
 		UT_ASSERT(cslice.begin() == slice.begin());
 
+		UT_ASSERT(c.end() == c.cend());
 		UT_ASSERT(c.end() == slice.end());
 		UT_ASSERT(c.end() == sub_slice.end() + 1);
 		UT_ASSERT(c.end() == cslice.end());
@@ -129,6 +131,7 @@ struct Test3 {
 		UT_ASSERT(slice.end() == cslice.end());
 		UT_ASSERT(cslice.end() == slice.end());
 
+		UT_ASSERT(c.end() > c.begin());
 		UT_ASSERT(c.end() > slice.begin());
 		UT_ASSERT(c.end() > sub_slice.begin() + 1);
 		UT_ASSERT(c.end() > cslice.begin());

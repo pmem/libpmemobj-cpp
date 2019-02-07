@@ -101,7 +101,7 @@ struct array {
 	using reference = value_type &;
 	using const_reference = const value_type &;
 	using iterator = basic_contiguous_iterator<T>;
-	using const_iterator = const_contiguous_iterator<T>;
+	using const_iterator = const_pointer;
 	using size_type = std::size_t;
 	using difference_type = std::ptrdiff_t;
 	using reverse_iterator = std::reverse_iterator<iterator>;

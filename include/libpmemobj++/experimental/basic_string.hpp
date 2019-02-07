@@ -95,9 +95,7 @@ public:
 	{
 		check_pmem_tx();
 
-		_size = 0;
-
-		data_sso[_size] = '\0';
+		initialize(0U, '\0');
 	}
 
 	/**
@@ -232,7 +230,7 @@ public:
 	 * Copy constructor. Construct the string with the copy of the contents
 	 * of other.
 	 *
-	 * @param[in] other reference to the vector to be copied.
+	 * @param[in] other reference to the string to be copied.
 	 *
 	 * @pre must be called in transaction scope.
 	 *
@@ -253,7 +251,7 @@ public:
 	 * Move constructor. Construct the string with the contents of other
 	 * using move semantics.
 	 *
-	 * @param[in] other rvalue reference to the vector to be moved from.
+	 * @param[in] other rvalue reference to the string to be moved from.
 	 *
 	 * @pre must be called in transaction scope.
 	 *
@@ -269,15 +267,8 @@ public:
 
 		initialize(std::move(other));
 
-		/*
-		 * other.data_larger destructor must be called manually.
-		 * When other is in moved-from state other.is_sso_used() can
-		 * return true and in consequence data_large destructor could
-		 * not be called in other's destructor.
-		 */
-		if (!other.is_sso_used())
-			detail::destroy<non_sso_type>(other.data_large);
-		other._size = 0;
+		if (other.is_sso_used())
+			other.initialize(0U, '\0');
 	}
 
 	/**
@@ -310,6 +301,259 @@ public:
 	{
 		if (!is_sso_used())
 			detail::destroy<non_sso_type>(data_large);
+	}
+
+	/**
+	 * Copy assignment operator. Replace the string with contents of other
+	 * transactionally.
+	 *
+	 * @param[in] other reference to the string to be copied.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	operator=(const basic_string &other)
+	{
+		return assign(other);
+	}
+
+	/**
+	 * Move assignment operator. Replace the string with the contents of
+	 * other using move semantics transactionally.
+	 *
+	 * @param[in] other rvalue reference to the string to be moved from.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	operator=(basic_string &&other)
+	{
+		return assign(std::move(other));
+	}
+
+	/**
+	 * Replace the contents with copy of C-style string s transactionally.
+	 *
+	 * @param[in] s pointer to source string.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	operator=(const CharT *s)
+	{
+		return assign(s);
+	}
+
+	/**
+	 * Replace the contents with character ch transactionally.
+	 *
+	 * @param[in] ch character.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	operator=(CharT ch)
+	{
+		return assign(1, ch);
+	}
+
+	/**
+	 * Replace the contents with those of the initializer list ilist
+	 * transactionally.
+	 *
+	 * @param[in] ilist initializer_list of characters.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	operator=(std::initializer_list<CharT> ilist)
+	{
+		return assign(ilist);
+	}
+
+	/**
+	 * Replace the contents with count copies of character ch
+	 * transactionally.
+	 *
+	 * @param[in] ch character.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(size_type count, CharT ch)
+	{
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] { replace(count, ch); });
+
+		return *this;
+	}
+
+	/**
+	 * Replace the string with the copy of the contents of other
+	 * transactionally.
+	 *
+	 * @param[in] other reference to the string to be copied.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(const basic_string &other)
+	{
+		if (&other == this)
+			return *this;
+
+		auto pop = get_pool();
+
+		transaction::run(
+			pop, [&] { replace(other.cbegin(), other.cend()); });
+
+		return *this;
+	}
+
+	/**
+	 * Replace the contents with a substring
+	 * [pos, std::min(pos+count, other.size()) of other transactionally.
+	 *
+	 * @param[in] other string from which substring will be copied.
+	 * @param[in] pos start position of substring in other.
+	 * @param[in] count length of substring.
+	 *
+	 * @throw std::out_of_range is pos > other.size()
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(const basic_string &other, size_type pos, size_type count = npos)
+	{
+		if (pos > other.size())
+			throw std::out_of_range("Index out of range.");
+
+		if (count == npos || pos + count > other.size())
+			count = other.size() - pos;
+
+		auto pop = get_pool();
+		auto first = static_cast<difference_type>(pos);
+		auto last = first + static_cast<difference_type>(count);
+
+		transaction::run(pop, [&] {
+			replace(other.cbegin() + first, other.cbegin() + last);
+		});
+
+		return *this;
+	}
+
+	/**
+	 * Replace the contents with the first count elements of C-style string
+	 * s transactionally.
+	 *
+	 * @param[in] s pointer to source string.
+	 * @param[in] count length of the string.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(const CharT *s, size_type count)
+	{
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] { replace(s, s + count); });
+
+		return *this;
+	}
+
+	/**
+	 * Replace the contents with copy of C-style string s transactionally.
+	 *
+	 * @param[in] s pointer to source string.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(const CharT *s)
+	{
+		auto pop = get_pool();
+
+		auto length = traits_type::length(s);
+
+		transaction::run(pop, [&] { replace(s, s + length); });
+
+		return *this;
+	}
+
+	/**
+	 * Replace the contents with copies of elements in the range [first,
+	 * last) transactionally. This function participates in overload
+	 * resolution only if InputIt satisfies InputIterator.
+	 *
+	 * @param[in] first iterator to beginning of the range.
+	 * @param[in] last iterator to end of the range.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	template <typename InputIt,
+		  typename Enable = typename pmem::detail::is_input_iterator<
+			  InputIt>::type>
+	basic_string &
+	assign(InputIt first, InputIt last)
+	{
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] { replace(first, last); });
+
+		return *this;
+	}
+
+	/**
+	 * Replace the string with the contents of other using move semantics
+	 * transactionally. Other is left in valid state with size equal to 0.
+	 *
+	 * @param[in] other rvalue reference to the string to be moved from.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(basic_string &&other)
+	{
+		if (&other == this)
+			return *this;
+
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] {
+			replace(std::move(other));
+
+			if (other.is_sso_used())
+				other.initialize(0U, '\0');
+		});
+
+		return *this;
+	}
+
+	/**
+	 * Replaces the contents with those of the initializer list ilist
+	 * transactionally.
+	 *
+	 * @param[in] ilist initializer_list of characters.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating memory for
+	 * underlying storage in transaction failed.
+	 */
+	basic_string &
+	assign(std::initializer_list<CharT> ilist)
+	{
+		return assign(ilist.begin(), ilist.end());
 	}
 
 	/**
@@ -630,7 +874,12 @@ public:
 	size_type
 	size() const noexcept
 	{
-		return _size;
+		if (is_sso_used())
+			return _size;
+		else if (data_large.size() == 0)
+			return 0;
+		else
+			return data_large.size() - sizeof('\0');
 	}
 
 	/**
@@ -818,7 +1067,7 @@ public:
 	size_type
 	length() const noexcept
 	{
-		return _size;
+		return size();
 	}
 
 	/**
@@ -868,16 +1117,38 @@ private:
 		non_sso_type data_large;
 	};
 
-	/* Number of characters stored (excluding null-terminator) */
+	/* Holds size if sso is used, std::numeric_limits<size_type>::max()
+	 * otherwise */
 	p<size_type> _size;
 
-	/**
-	 * Checks if sso is currently used.
-	 */
 	bool
-	is_sso_used() const noexcept
+	is_sso_used() const
 	{
-		return size() <= sso_capacity;
+		assert(_size <= sso_capacity ||
+		       _size == std::numeric_limits<size_type>::max());
+
+		return _size <= sso_capacity;
+	}
+
+	void
+	destroy_data()
+	{
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+		/*
+		 * XXX: this can be optimized - only snapshot length() elements.
+		 */
+#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+		VALGRIND_MAKE_MEM_DEFINED(&data_sso, sizeof(data_sso));
+#endif
+
+		if (is_sso_used()) {
+			data_sso.data();
+			/* data_sso constructor does not have to be called */
+		} else {
+			data_large.free_data();
+			detail::destroy<decltype(data_large)>(data_large);
+		}
 	}
 
 	/**
@@ -921,6 +1192,30 @@ private:
 	}
 
 	/**
+	 * Generic function which replaces current content based on provided
+	 * parameters. Allowed parameters are:
+	 * - size_type count, CharT value
+	 * - InputIt first, InputIt last
+	 * - basic_string &&
+	 */
+	template <typename... Args>
+	pointer
+	replace(Args &&... args)
+	{
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+		auto new_size = get_size(std::forward<Args>(args)...);
+
+		/* If data_large is used and there is enough capacity */
+		if (!is_sso_used() && new_size <= capacity())
+			return assign_large_data(std::forward<Args>(args)...);
+
+		destroy_data();
+
+		return initialize(std::forward<Args>(args)...);
+	}
+
+	/**
 	 * Generic function which initializes memory based on provided
 	 * parameters - forwards parameters to initialize function of either
 	 * data_large or data_soo. Allowed parameters are:
@@ -936,12 +1231,23 @@ private:
 	{
 		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-		_size = get_size(std::forward<Args>(args)...);
+		auto new_size = get_size(std::forward<Args>(args)...);
 
-		if (is_sso_used())
-			return init_sso_data(std::forward<Args>(args)...);
+		if (new_size <= sso_capacity)
+			_size = new_size;
 		else
-			return init_large_data(std::forward<Args>(args)...);
+			_size = std::numeric_limits<size_type>::max();
+
+		if (is_sso_used()) {
+			/*
+			 * array is aggregate type so it's not required to call
+			 * a constructor.
+			 */
+			return assign_sso_data(std::forward<Args>(args)...);
+		} else {
+			detail::create<decltype(data_large)>(&data_large);
+			return assign_large_data(std::forward<Args>(args)...);
+		}
 	}
 
 	/**
@@ -952,18 +1258,17 @@ private:
 		typename Enable = typename std::enable_if<
 			pmem::detail::is_input_iterator<InputIt>::value>::type>
 	pointer
-	init_sso_data(InputIt first, InputIt last)
+	assign_sso_data(InputIt first, InputIt last)
 	{
-		assert(size() <= sso_capacity);
+		auto size = static_cast<size_type>(std::distance(first, last));
 
-		/*
-		 * array is aggregate type so it's not required to call a
-		 * contructor.
-		 */
-		auto dest = data_sso.data();
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+		assert(size <= sso_capacity);
+
+		auto dest = data_sso.range(0, size + sizeof('\0')).begin();
 		std::copy(first, last, dest);
 
-		dest[size()] = '\0';
+		dest[size] = '\0';
 
 		return dest;
 	}
@@ -972,18 +1277,15 @@ private:
 	 * Initialize sso data. Overload for (count, value).
 	 */
 	pointer
-	init_sso_data(size_type new_size, value_type ch)
+	assign_sso_data(size_type count, value_type ch)
 	{
-		assert(size() <= sso_capacity);
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+		assert(count <= sso_capacity);
 
-		/*
-		 * array is aggregate type so it's not required to call a
-		 * contructor.
-		 */
-		auto dest = data_sso.data();
-		traits_type::assign(dest, size(), ch);
+		auto dest = data_sso.range(0, count + sizeof('\0')).begin();
+		traits_type::assign(dest, count, ch);
 
-		dest[size()] = '\0';
+		dest[count] = '\0';
 
 		return dest;
 	}
@@ -992,11 +1294,11 @@ private:
 	 * Initialize sso data. Overload for rvalue reference of basic_string.
 	 */
 	pointer
-	init_sso_data(basic_string &&other)
+	assign_sso_data(basic_string &&other)
 	{
-		assert(other.is_sso_used());
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-		return init_sso_data(other.cbegin(), other.cend());
+		return assign_sso_data(other.cbegin(), other.cend());
 	}
 
 	/**
@@ -1008,27 +1310,17 @@ private:
 		typename Enable = typename std::enable_if<
 			pmem::detail::is_input_iterator<InputIt>::value>::type>
 	pointer
-	init_large_data(InputIt first, InputIt last)
+	assign_large_data(InputIt first, InputIt last)
 	{
-		assert(size() > sso_capacity);
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-		detail::create<non_sso_type>(&data_large,
-					     size() + sizeof('\0'));
+		auto size = static_cast<size_type>(std::distance(first, last));
 
-		auto dest = data_large.data();
-		std::copy(first, last, dest);
-		dest[size()] = '\0';
+		data_large.reserve(size + sizeof('\0'));
+		data_large.assign(first, last);
+		data_large.push_back('\0');
 
-		/*
-		 * XXX: Enable once vector provides insert and push back.
-		 * This will allow to delete second init_large_data overload.
-		 * detail::create<non_sso_type>(&data_large);
-		 * data_large.reserve(size() + sizeof('\0'));
-		 * data_large.insert(0, first, last);
-		 * data_large.push_back('\0');
-		 */
-
-		return dest;
+		return data_large.data();
 	}
 
 	/**
@@ -1036,13 +1328,13 @@ private:
 	 * Overload for (count, value).
 	 */
 	pointer
-	init_large_data(size_type count, value_type ch)
+	assign_large_data(size_type count, value_type ch)
 	{
-		assert(count > sso_capacity);
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-		detail::create<non_sso_type>(&data_large, count + sizeof('\0'),
-					     ch);
-		data_large[count] = '\0';
+		data_large.reserve(count + sizeof('\0'));
+		data_large.assign(count, ch);
+		data_large.push_back('\0');
 
 		return data_large.data();
 	}
@@ -1052,12 +1344,14 @@ private:
 	 * Overload for rvalue reference of basic_string.
 	 */
 	pointer
-	init_large_data(basic_string &&other)
+	assign_large_data(basic_string &&other)
 	{
-		assert(!other.is_sso_used());
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-		detail::create<non_sso_type>(&data_large,
-					     std::move(other.data_large));
+		if (other.is_sso_used())
+			return assign_large_data(other.cbegin(), other.cend());
+
+		data_large = std::move(other.data_large);
 
 		return data_large.data();
 	}

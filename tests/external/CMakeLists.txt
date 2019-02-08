@@ -303,6 +303,78 @@ add_test_generic(NAME string_libcxx_cons_substr TRACERS none pmemcheck memcheck)
 build_test(string_libcxx_dtor_noexcept libcxx/basic_string/string.cons/dtor_noexcept.pass.cpp)
 add_test_generic(NAME string_libcxx_dtor_noexcept TRACERS none)
 
+build_test(string_libcxx_ops_compare_pointer libcxx/basic_string/string.ops/string_compare/pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_compare_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_ops_compare_size_size_pointer_size libcxx/basic_string/string.ops/string_compare/size_size_pointer_size.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_compare_size_size_pointer_size TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_ops_compare_size_size_pointer libcxx/basic_string/string.ops/string_compare/size_size_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_compare_size_size_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_ops_compare_size_size_string_size_size libcxx/basic_string/string.ops/string_compare/size_size_string_size_size.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_compare_size_size_string_size_size TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_ops_compare_size_size_string libcxx/basic_string/string.ops/string_compare/size_size_string.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_compare_size_size_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_ops_compare_string libcxx/basic_string/string.ops/string_compare/string.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_compare_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opne_pointer_string libcxx/basic_string/string.nonmembers/string_opne/pointer_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opne_pointer_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opne_string_pointer libcxx/basic_string/string.nonmembers/string_opne/string_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opne_string_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opne_string_string libcxx/basic_string/string.nonmembers/string_opne/string_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opne_string_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opeq_pointer_string libcxx/basic_string/string.nonmembers/string_opeq/pointer_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opeq_pointer_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opeq_string_pointer libcxx/basic_string/string.nonmembers/string_opeq/string_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opeq_string_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opeq_string_string libcxx/basic_string/string.nonmembers/string_opeq/string_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opeq_string_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opgt_pointer_string libcxx/basic_string/string.nonmembers/string_opgt/pointer_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opgt_pointer_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opgt_string_pointer libcxx/basic_string/string.nonmembers/string_opgt/string_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opgt_string_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opgt_string_string libcxx/basic_string/string.nonmembers/string_opgt/string_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opgt_string_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opge_pointer_string libcxx/basic_string/string.nonmembers/string_opge/pointer_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opge_pointer_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opge_string_pointer libcxx/basic_string/string.nonmembers/string_opge/string_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opge_string_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_opge_string_string libcxx/basic_string/string.nonmembers/string_opge/string_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_opge_string_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_ople_pointer_string libcxx/basic_string/string.nonmembers/string_ople/pointer_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_ople_pointer_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_ople_string_pointer libcxx/basic_string/string.nonmembers/string_ople/string_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_ople_string_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_ople_string_string libcxx/basic_string/string.nonmembers/string_ople/string_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_ople_string_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_oplt_pointer_string libcxx/basic_string/string.nonmembers/string_oplt/pointer_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_oplt_pointer_string TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_oplt_string_pointer libcxx/basic_string/string.nonmembers/string_oplt/string_pointer.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_oplt_string_pointer TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_nonmembers_oplt_string_string libcxx/basic_string/string.nonmembers/string_oplt/string_string.pass.cpp)
+add_test_generic(NAME string_libcxx_nonmembers_oplt_string_string TRACERS none pmemcheck memcheck)
+
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.string_view.pass
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.ptr.pass
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.char.pass
@@ -323,15 +395,9 @@ add_test_generic(NAME string_libcxx_access_front TRACERS none pmemcheck memcheck
 build_test(string_libcxx_access_index libcxx/basic_string/string.access/index.pass.cpp)
 add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck)
 
-# XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/pointer_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_string_view.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_view_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_operator==/pointer_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_operator==/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_operator==/string_string_view.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_operator==/string_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_operator==/string_view_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string.special/swap.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string.special/swap_noexcept.pass
@@ -346,25 +412,13 @@ add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck
 # XXX: port libcxx test basic_string/string.nonmembers/string_op+/char_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_op+/string_char.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_op+/string_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_oplt/pointer_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_oplt/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt/string_string_view.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_oplt/string_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt/string_view_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_op!=/pointer_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_op!=/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_op!=/string_string_view.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_op!=/string_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_op!=/string_view_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_opgt/pointer_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_opgt/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_opgt/string_string_view.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_opgt/string_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_opgt/string_view_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/pointer_string.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_string_view.pass
-# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_view_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/nothing_to_do.pass
 # XXX: port libcxx test basic_string/string.ops/string_find.last.of/string_size.pass
@@ -377,15 +431,9 @@ add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck
 # XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/pointer_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/char_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/pointer_size_size.pass
-# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_string_size_size.pass
-# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_string.pass
 # XXX: port libcxx test basic_string/string.ops/string_compare/size_size_string_view.pass
 # XXX: port libcxx test basic_string/string.ops/string_compare/size_size_T_size_size.pass
-# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_pointer.pass
 # XXX: port libcxx test basic_string/string.ops/string_compare/string_view.pass
-# XXX: port libcxx test basic_string/string.ops/string_compare/string.pass
-# XXX: port libcxx test basic_string/string.ops/string_compare/pointer.pass
-# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_pointer_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/string_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/string_view_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/pointer_size.pass

@@ -31,7 +31,7 @@ template <class S>
 void
 test(const S &lhs, const S &rhs, bool x)
 {
-	UT_ASSERT((lhs > rhs) == x);
+	UT_ASSERT((lhs <= rhs) == x);
 }
 
 void
@@ -50,22 +50,22 @@ run(pmem::obj::pool<root> &pop)
 				"abcdefghijklmnopqrst");
 		});
 
-		test(*r->s1, *r->s1, false);
-		test(*r->s1, *r->s2, false);
-		test(*r->s1, *r->s3, false);
-		test(*r->s1, *r->s4, false);
-		test(*r->s2, *r->s1, true);
-		test(*r->s2, *r->s2, false);
-		test(*r->s2, *r->s3, false);
-		test(*r->s2, *r->s4, false);
-		test(*r->s3, *r->s1, true);
-		test(*r->s3, *r->s2, true);
-		test(*r->s3, *r->s3, false);
-		test(*r->s3, *r->s4, false);
-		test(*r->s4, *r->s1, true);
-		test(*r->s4, *r->s2, true);
-		test(*r->s4, *r->s3, true);
-		test(*r->s4, *r->s4, false);
+		test(*r->s1, *r->s1, true);
+		test(*r->s1, *r->s2, true);
+		test(*r->s1, *r->s3, true);
+		test(*r->s1, *r->s4, true);
+		test(*r->s2, *r->s1, false);
+		test(*r->s2, *r->s2, true);
+		test(*r->s2, *r->s3, true);
+		test(*r->s2, *r->s4, true);
+		test(*r->s3, *r->s1, false);
+		test(*r->s3, *r->s2, false);
+		test(*r->s3, *r->s3, true);
+		test(*r->s3, *r->s4, true);
+		test(*r->s4, *r->s1, false);
+		test(*r->s4, *r->s2, false);
+		test(*r->s4, *r->s3, false);
+		test(*r->s4, *r->s4, true);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<pmem_exp::string>(r->s1);

@@ -6,64 +6,101 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// template<class charT, class traits, class Allocator>
-//   bool operator<(const basic_string<charT,traits,Allocator>& lhs, const charT* rhs);
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-#include <string>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
+namespace nvobj = pmem::obj;
 
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<pmem_exp::string> s1, s2, s3, s4;
+};
 
 template <class S>
 void
-test(const S& lhs, const typename S::value_type* rhs, bool x)
+test(const S &lhs, const typename S::value_type *rhs, bool x)
 {
-    assert((lhs < rhs) == x);
+	UT_ASSERT((lhs < rhs) == x);
 }
 
-int main()
+void
+run(pmem::obj::pool<root> &pop)
 {
-    {
-    typedef std::string S;
-    test(S(""), "", false);
-    test(S(""), "abcde", true);
-    test(S(""), "abcdefghij", true);
-    test(S(""), "abcdefghijklmnopqrst", true);
-    test(S("abcde"), "", false);
-    test(S("abcde"), "abcde", false);
-    test(S("abcde"), "abcdefghij", true);
-    test(S("abcde"), "abcdefghijklmnopqrst", true);
-    test(S("abcdefghij"), "", false);
-    test(S("abcdefghij"), "abcde", false);
-    test(S("abcdefghij"), "abcdefghij", false);
-    test(S("abcdefghij"), "abcdefghijklmnopqrst", true);
-    test(S("abcdefghijklmnopqrst"), "", false);
-    test(S("abcdefghijklmnopqrst"), "abcde", false);
-    test(S("abcdefghijklmnopqrst"), "abcdefghij", false);
-    test(S("abcdefghijklmnopqrst"), "abcdefghijklmnopqrst", false);
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(""), "", false);
-    test(S(""), "abcde", true);
-    test(S(""), "abcdefghij", true);
-    test(S(""), "abcdefghijklmnopqrst", true);
-    test(S("abcde"), "", false);
-    test(S("abcde"), "abcde", false);
-    test(S("abcde"), "abcdefghij", true);
-    test(S("abcde"), "abcdefghijklmnopqrst", true);
-    test(S("abcdefghij"), "", false);
-    test(S("abcdefghij"), "abcde", false);
-    test(S("abcdefghij"), "abcdefghij", false);
-    test(S("abcdefghij"), "abcdefghijklmnopqrst", true);
-    test(S("abcdefghijklmnopqrst"), "", false);
-    test(S("abcdefghijklmnopqrst"), "abcde", false);
-    test(S("abcdefghijklmnopqrst"), "abcdefghij", false);
-    test(S("abcdefghijklmnopqrst"), "abcdefghijklmnopqrst", false);
-    }
-#endif
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->s1 = nvobj::make_persistent<pmem_exp::string>("");
+			r->s2 = nvobj::make_persistent<pmem_exp::string>(
+				"abcde");
+			r->s3 = nvobj::make_persistent<pmem_exp::string>(
+				"abcdefghij");
+			r->s4 = nvobj::make_persistent<pmem_exp::string>(
+				"abcdefghijklmnopqrst");
+		});
+
+		test(*r->s1, "", false);
+		test(*r->s1, "abcde", true);
+		test(*r->s1, "abcdefghij", true);
+		test(*r->s1, "abcdefghijklmnopqrst", true);
+		test(*r->s2, "", false);
+		test(*r->s2, "abcde", false);
+		test(*r->s2, "abcdefghij", true);
+		test(*r->s2, "abcdefghijklmnopqrst", true);
+		test(*r->s3, "", false);
+		test(*r->s3, "abcde", false);
+		test(*r->s3, "abcdefghij", false);
+		test(*r->s3, "abcdefghijklmnopqrst", true);
+		test(*r->s4, "", false);
+		test(*r->s4, "abcde", false);
+		test(*r->s4, "abcdefghij", false);
+		test(*r->s4, "abcdefghijklmnopqrst", false);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<pmem_exp::string>(r->s1);
+			nvobj::delete_persistent<pmem_exp::string>(r->s2);
+			nvobj::delete_persistent<pmem_exp::string>(r->s3);
+			nvobj::delete_persistent<pmem_exp::string>(r->s4);
+		});
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	START();
+
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+
+	try {
+		pop = pmem::obj::pool<root>::create(
+			path, "move.pass", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+
+	run(pop);
+
+	pop.close();
+
+	return 0;
 }

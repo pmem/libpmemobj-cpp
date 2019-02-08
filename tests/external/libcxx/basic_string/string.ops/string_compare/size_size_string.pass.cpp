@@ -6,382 +6,425 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// int compare(size_type pos1, size_type n1, const basic_string& str) const;
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-#include <string>
-#include <stdexcept>
-#include <cassert>
+namespace pmem_exp = pmem::obj::experimental;
+namespace nvobj = pmem::obj;
 
-#include "test_macros.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<pmem_exp::string> s1, s2, s3, s4;
+};
 
-int sign(int x)
+int
+sign(int x)
 {
-    if (x == 0)
-        return 0;
-    if (x < 0)
-        return -1;
-    return 1;
+	if (x == 0)
+		return 0;
+	if (x < 0)
+		return -1;
+	return 1;
 }
 
 template <class S>
 void
-test(const S& s, typename S::size_type pos1, typename S::size_type n1,
-     const S& str, int x)
+test(const S &s, typename S::size_type pos1, typename S::size_type n1,
+     const S &str, int x)
 {
-    if (pos1 <= s.size())
-        assert(sign(s.compare(pos1, n1, str)) == sign(x));
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    else
-    {
-        try
-        {
-            TEST_IGNORE_NODISCARD s.compare(pos1, n1, str);
-            assert(false);
-        }
-        catch (std::out_of_range&)
-        {
-            assert(pos1 > s.size());
-        }
-    }
-#endif
+	if (pos1 <= s.size())
+		UT_ASSERT(sign(s.compare(pos1, n1, str)) == sign(x));
+	else {
+		try {
+			s.compare(pos1, n1, str);
+			UT_ASSERT(false);
+		} catch (std::out_of_range &) {
+			UT_ASSERT(pos1 > s.size());
+		}
+	}
 }
 
 template <class S>
-void test0()
+void
+test0(pmem::obj::persistent_ptr<root> &r)
 {
-    test(S(""), 0, 0, S(""), 0);
-    test(S(""), 0, 0, S("abcde"), -5);
-    test(S(""), 0, 0, S("abcdefghij"), -10);
-    test(S(""), 0, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S(""), 0, 1, S(""), 0);
-    test(S(""), 0, 1, S("abcde"), -5);
-    test(S(""), 0, 1, S("abcdefghij"), -10);
-    test(S(""), 0, 1, S("abcdefghijklmnopqrst"), -20);
-    test(S(""), 1, 0, S(""), 0);
-    test(S(""), 1, 0, S("abcde"), 0);
-    test(S(""), 1, 0, S("abcdefghij"), 0);
-    test(S(""), 1, 0, S("abcdefghijklmnopqrst"), 0);
-    test(S("abcde"), 0, 0, S(""), 0);
-    test(S("abcde"), 0, 0, S("abcde"), -5);
-    test(S("abcde"), 0, 0, S("abcdefghij"), -10);
-    test(S("abcde"), 0, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcde"), 0, 1, S(""), 1);
-    test(S("abcde"), 0, 1, S("abcde"), -4);
-    test(S("abcde"), 0, 1, S("abcdefghij"), -9);
-    test(S("abcde"), 0, 1, S("abcdefghijklmnopqrst"), -19);
-    test(S("abcde"), 0, 2, S(""), 2);
-    test(S("abcde"), 0, 2, S("abcde"), -3);
-    test(S("abcde"), 0, 2, S("abcdefghij"), -8);
-    test(S("abcde"), 0, 2, S("abcdefghijklmnopqrst"), -18);
-    test(S("abcde"), 0, 4, S(""), 4);
-    test(S("abcde"), 0, 4, S("abcde"), -1);
-    test(S("abcde"), 0, 4, S("abcdefghij"), -6);
-    test(S("abcde"), 0, 4, S("abcdefghijklmnopqrst"), -16);
-    test(S("abcde"), 0, 5, S(""), 5);
-    test(S("abcde"), 0, 5, S("abcde"), 0);
-    test(S("abcde"), 0, 5, S("abcdefghij"), -5);
-    test(S("abcde"), 0, 5, S("abcdefghijklmnopqrst"), -15);
-    test(S("abcde"), 0, 6, S(""), 5);
-    test(S("abcde"), 0, 6, S("abcde"), 0);
-    test(S("abcde"), 0, 6, S("abcdefghij"), -5);
-    test(S("abcde"), 0, 6, S("abcdefghijklmnopqrst"), -15);
-    test(S("abcde"), 1, 0, S(""), 0);
-    test(S("abcde"), 1, 0, S("abcde"), -5);
-    test(S("abcde"), 1, 0, S("abcdefghij"), -10);
-    test(S("abcde"), 1, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcde"), 1, 1, S(""), 1);
-    test(S("abcde"), 1, 1, S("abcde"), 1);
-    test(S("abcde"), 1, 1, S("abcdefghij"), 1);
-    test(S("abcde"), 1, 1, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcde"), 1, 2, S(""), 2);
-    test(S("abcde"), 1, 2, S("abcde"), 1);
-    test(S("abcde"), 1, 2, S("abcdefghij"), 1);
-    test(S("abcde"), 1, 2, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcde"), 1, 3, S(""), 3);
-    test(S("abcde"), 1, 3, S("abcde"), 1);
-    test(S("abcde"), 1, 3, S("abcdefghij"), 1);
-    test(S("abcde"), 1, 3, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcde"), 1, 4, S(""), 4);
-    test(S("abcde"), 1, 4, S("abcde"), 1);
-    test(S("abcde"), 1, 4, S("abcdefghij"), 1);
-    test(S("abcde"), 1, 4, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcde"), 1, 5, S(""), 4);
-    test(S("abcde"), 1, 5, S("abcde"), 1);
-    test(S("abcde"), 1, 5, S("abcdefghij"), 1);
-    test(S("abcde"), 1, 5, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcde"), 2, 0, S(""), 0);
-    test(S("abcde"), 2, 0, S("abcde"), -5);
-    test(S("abcde"), 2, 0, S("abcdefghij"), -10);
-    test(S("abcde"), 2, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcde"), 2, 1, S(""), 1);
-    test(S("abcde"), 2, 1, S("abcde"), 2);
-    test(S("abcde"), 2, 1, S("abcdefghij"), 2);
-    test(S("abcde"), 2, 1, S("abcdefghijklmnopqrst"), 2);
-    test(S("abcde"), 2, 2, S(""), 2);
-    test(S("abcde"), 2, 2, S("abcde"), 2);
-    test(S("abcde"), 2, 2, S("abcdefghij"), 2);
-    test(S("abcde"), 2, 2, S("abcdefghijklmnopqrst"), 2);
-    test(S("abcde"), 2, 3, S(""), 3);
-    test(S("abcde"), 2, 3, S("abcde"), 2);
-    test(S("abcde"), 2, 3, S("abcdefghij"), 2);
-    test(S("abcde"), 2, 3, S("abcdefghijklmnopqrst"), 2);
-    test(S("abcde"), 2, 4, S(""), 3);
-    test(S("abcde"), 2, 4, S("abcde"), 2);
-    test(S("abcde"), 2, 4, S("abcdefghij"), 2);
-    test(S("abcde"), 2, 4, S("abcdefghijklmnopqrst"), 2);
-    test(S("abcde"), 4, 0, S(""), 0);
-    test(S("abcde"), 4, 0, S("abcde"), -5);
-    test(S("abcde"), 4, 0, S("abcdefghij"), -10);
-    test(S("abcde"), 4, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcde"), 4, 1, S(""), 1);
-    test(S("abcde"), 4, 1, S("abcde"), 4);
-    test(S("abcde"), 4, 1, S("abcdefghij"), 4);
-    test(S("abcde"), 4, 1, S("abcdefghijklmnopqrst"), 4);
-    test(S("abcde"), 4, 2, S(""), 1);
-    test(S("abcde"), 4, 2, S("abcde"), 4);
-    test(S("abcde"), 4, 2, S("abcdefghij"), 4);
-    test(S("abcde"), 4, 2, S("abcdefghijklmnopqrst"), 4);
-    test(S("abcde"), 5, 0, S(""), 0);
-    test(S("abcde"), 5, 0, S("abcde"), -5);
-    test(S("abcde"), 5, 0, S("abcdefghij"), -10);
-    test(S("abcde"), 5, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcde"), 5, 1, S(""), 0);
-    test(S("abcde"), 5, 1, S("abcde"), -5);
-    test(S("abcde"), 5, 1, S("abcdefghij"), -10);
-    test(S("abcde"), 5, 1, S("abcdefghijklmnopqrst"), -20);
+	test(*r->s1, 0, 0, *r->s1, 0);
+	test(*r->s1, 0, 0, *r->s2, -5);
+	test(*r->s1, 0, 0, *r->s3, -10);
+	test(*r->s1, 0, 0, *r->s4, -20);
+	test(*r->s1, 0, 1, *r->s1, 0);
+	test(*r->s1, 0, 1, *r->s2, -5);
+	test(*r->s1, 0, 1, *r->s3, -10);
+	test(*r->s1, 0, 1, *r->s4, -20);
+	test(*r->s1, 1, 0, *r->s1, 0);
+	test(*r->s1, 1, 0, *r->s2, 0);
+	test(*r->s1, 1, 0, *r->s3, 0);
+	test(*r->s1, 1, 0, *r->s4, 0);
+	test(*r->s2, 0, 0, *r->s1, 0);
+	test(*r->s2, 0, 0, *r->s2, -5);
+	test(*r->s2, 0, 0, *r->s3, -10);
+	test(*r->s2, 0, 0, *r->s4, -20);
+	test(*r->s2, 0, 1, *r->s1, 1);
+	test(*r->s2, 0, 1, *r->s2, -4);
+	test(*r->s2, 0, 1, *r->s3, -9);
+	test(*r->s2, 0, 1, *r->s4, -19);
+	test(*r->s2, 0, 2, *r->s1, 2);
+	test(*r->s2, 0, 2, *r->s2, -3);
+	test(*r->s2, 0, 2, *r->s3, -8);
+	test(*r->s2, 0, 2, *r->s4, -18);
+	test(*r->s2, 0, 4, *r->s1, 4);
+	test(*r->s2, 0, 4, *r->s2, -1);
+	test(*r->s2, 0, 4, *r->s3, -6);
+	test(*r->s2, 0, 4, *r->s4, -16);
+	test(*r->s2, 0, 5, *r->s1, 5);
+	test(*r->s2, 0, 5, *r->s2, 0);
+	test(*r->s2, 0, 5, *r->s3, -5);
+	test(*r->s2, 0, 5, *r->s4, -15);
+	test(*r->s2, 0, 6, *r->s1, 5);
+	test(*r->s2, 0, 6, *r->s2, 0);
+	test(*r->s2, 0, 6, *r->s3, -5);
+	test(*r->s2, 0, 6, *r->s4, -15);
+	test(*r->s2, 1, 0, *r->s1, 0);
+	test(*r->s2, 1, 0, *r->s2, -5);
+	test(*r->s2, 1, 0, *r->s3, -10);
+	test(*r->s2, 1, 0, *r->s4, -20);
+	test(*r->s2, 1, 1, *r->s1, 1);
+	test(*r->s2, 1, 1, *r->s2, 1);
+	test(*r->s2, 1, 1, *r->s3, 1);
+	test(*r->s2, 1, 1, *r->s4, 1);
+	test(*r->s2, 1, 2, *r->s1, 2);
+	test(*r->s2, 1, 2, *r->s2, 1);
+	test(*r->s2, 1, 2, *r->s3, 1);
+	test(*r->s2, 1, 2, *r->s4, 1);
+	test(*r->s2, 1, 3, *r->s1, 3);
+	test(*r->s2, 1, 3, *r->s2, 1);
+	test(*r->s2, 1, 3, *r->s3, 1);
+	test(*r->s2, 1, 3, *r->s4, 1);
+	test(*r->s2, 1, 4, *r->s1, 4);
+	test(*r->s2, 1, 4, *r->s2, 1);
+	test(*r->s2, 1, 4, *r->s3, 1);
+	test(*r->s2, 1, 4, *r->s4, 1);
+	test(*r->s2, 1, 5, *r->s1, 4);
+	test(*r->s2, 1, 5, *r->s2, 1);
+	test(*r->s2, 1, 5, *r->s3, 1);
+	test(*r->s2, 1, 5, *r->s4, 1);
+	test(*r->s2, 2, 0, *r->s1, 0);
+	test(*r->s2, 2, 0, *r->s2, -5);
+	test(*r->s2, 2, 0, *r->s3, -10);
+	test(*r->s2, 2, 0, *r->s4, -20);
+	test(*r->s2, 2, 1, *r->s1, 1);
+	test(*r->s2, 2, 1, *r->s2, 2);
+	test(*r->s2, 2, 1, *r->s3, 2);
+	test(*r->s2, 2, 1, *r->s4, 2);
+	test(*r->s2, 2, 2, *r->s1, 2);
+	test(*r->s2, 2, 2, *r->s2, 2);
+	test(*r->s2, 2, 2, *r->s3, 2);
+	test(*r->s2, 2, 2, *r->s4, 2);
+	test(*r->s2, 2, 3, *r->s1, 3);
+	test(*r->s2, 2, 3, *r->s2, 2);
+	test(*r->s2, 2, 3, *r->s3, 2);
+	test(*r->s2, 2, 3, *r->s4, 2);
+	test(*r->s2, 2, 4, *r->s1, 3);
+	test(*r->s2, 2, 4, *r->s2, 2);
+	test(*r->s2, 2, 4, *r->s3, 2);
+	test(*r->s2, 2, 4, *r->s4, 2);
+	test(*r->s2, 4, 0, *r->s1, 0);
+	test(*r->s2, 4, 0, *r->s2, -5);
+	test(*r->s2, 4, 0, *r->s3, -10);
+	test(*r->s2, 4, 0, *r->s4, -20);
+	test(*r->s2, 4, 1, *r->s1, 1);
+	test(*r->s2, 4, 1, *r->s2, 4);
+	test(*r->s2, 4, 1, *r->s3, 4);
+	test(*r->s2, 4, 1, *r->s4, 4);
+	test(*r->s2, 4, 2, *r->s1, 1);
+	test(*r->s2, 4, 2, *r->s2, 4);
+	test(*r->s2, 4, 2, *r->s3, 4);
+	test(*r->s2, 4, 2, *r->s4, 4);
+	test(*r->s2, 5, 0, *r->s1, 0);
+	test(*r->s2, 5, 0, *r->s2, -5);
+	test(*r->s2, 5, 0, *r->s3, -10);
+	test(*r->s2, 5, 0, *r->s4, -20);
+	test(*r->s2, 5, 1, *r->s1, 0);
+	test(*r->s2, 5, 1, *r->s2, -5);
+	test(*r->s2, 5, 1, *r->s3, -10);
+	test(*r->s2, 5, 1, *r->s4, -20);
 }
 
 template <class S>
-void test1()
+void
+test1(pmem::obj::persistent_ptr<root> &r)
 {
-    test(S("abcde"), 6, 0, S(""), 0);
-    test(S("abcde"), 6, 0, S("abcde"), 0);
-    test(S("abcde"), 6, 0, S("abcdefghij"), 0);
-    test(S("abcde"), 6, 0, S("abcdefghijklmnopqrst"), 0);
-    test(S("abcdefghij"), 0, 0, S(""), 0);
-    test(S("abcdefghij"), 0, 0, S("abcde"), -5);
-    test(S("abcdefghij"), 0, 0, S("abcdefghij"), -10);
-    test(S("abcdefghij"), 0, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghij"), 0, 1, S(""), 1);
-    test(S("abcdefghij"), 0, 1, S("abcde"), -4);
-    test(S("abcdefghij"), 0, 1, S("abcdefghij"), -9);
-    test(S("abcdefghij"), 0, 1, S("abcdefghijklmnopqrst"), -19);
-    test(S("abcdefghij"), 0, 5, S(""), 5);
-    test(S("abcdefghij"), 0, 5, S("abcde"), 0);
-    test(S("abcdefghij"), 0, 5, S("abcdefghij"), -5);
-    test(S("abcdefghij"), 0, 5, S("abcdefghijklmnopqrst"), -15);
-    test(S("abcdefghij"), 0, 9, S(""), 9);
-    test(S("abcdefghij"), 0, 9, S("abcde"), 4);
-    test(S("abcdefghij"), 0, 9, S("abcdefghij"), -1);
-    test(S("abcdefghij"), 0, 9, S("abcdefghijklmnopqrst"), -11);
-    test(S("abcdefghij"), 0, 10, S(""), 10);
-    test(S("abcdefghij"), 0, 10, S("abcde"), 5);
-    test(S("abcdefghij"), 0, 10, S("abcdefghij"), 0);
-    test(S("abcdefghij"), 0, 10, S("abcdefghijklmnopqrst"), -10);
-    test(S("abcdefghij"), 0, 11, S(""), 10);
-    test(S("abcdefghij"), 0, 11, S("abcde"), 5);
-    test(S("abcdefghij"), 0, 11, S("abcdefghij"), 0);
-    test(S("abcdefghij"), 0, 11, S("abcdefghijklmnopqrst"), -10);
-    test(S("abcdefghij"), 1, 0, S(""), 0);
-    test(S("abcdefghij"), 1, 0, S("abcde"), -5);
-    test(S("abcdefghij"), 1, 0, S("abcdefghij"), -10);
-    test(S("abcdefghij"), 1, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghij"), 1, 1, S(""), 1);
-    test(S("abcdefghij"), 1, 1, S("abcde"), 1);
-    test(S("abcdefghij"), 1, 1, S("abcdefghij"), 1);
-    test(S("abcdefghij"), 1, 1, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghij"), 1, 4, S(""), 4);
-    test(S("abcdefghij"), 1, 4, S("abcde"), 1);
-    test(S("abcdefghij"), 1, 4, S("abcdefghij"), 1);
-    test(S("abcdefghij"), 1, 4, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghij"), 1, 8, S(""), 8);
-    test(S("abcdefghij"), 1, 8, S("abcde"), 1);
-    test(S("abcdefghij"), 1, 8, S("abcdefghij"), 1);
-    test(S("abcdefghij"), 1, 8, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghij"), 1, 9, S(""), 9);
-    test(S("abcdefghij"), 1, 9, S("abcde"), 1);
-    test(S("abcdefghij"), 1, 9, S("abcdefghij"), 1);
-    test(S("abcdefghij"), 1, 9, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghij"), 1, 10, S(""), 9);
-    test(S("abcdefghij"), 1, 10, S("abcde"), 1);
-    test(S("abcdefghij"), 1, 10, S("abcdefghij"), 1);
-    test(S("abcdefghij"), 1, 10, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghij"), 5, 0, S(""), 0);
-    test(S("abcdefghij"), 5, 0, S("abcde"), -5);
-    test(S("abcdefghij"), 5, 0, S("abcdefghij"), -10);
-    test(S("abcdefghij"), 5, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghij"), 5, 1, S(""), 1);
-    test(S("abcdefghij"), 5, 1, S("abcde"), 5);
-    test(S("abcdefghij"), 5, 1, S("abcdefghij"), 5);
-    test(S("abcdefghij"), 5, 1, S("abcdefghijklmnopqrst"), 5);
-    test(S("abcdefghij"), 5, 2, S(""), 2);
-    test(S("abcdefghij"), 5, 2, S("abcde"), 5);
-    test(S("abcdefghij"), 5, 2, S("abcdefghij"), 5);
-    test(S("abcdefghij"), 5, 2, S("abcdefghijklmnopqrst"), 5);
-    test(S("abcdefghij"), 5, 4, S(""), 4);
-    test(S("abcdefghij"), 5, 4, S("abcde"), 5);
-    test(S("abcdefghij"), 5, 4, S("abcdefghij"), 5);
-    test(S("abcdefghij"), 5, 4, S("abcdefghijklmnopqrst"), 5);
-    test(S("abcdefghij"), 5, 5, S(""), 5);
-    test(S("abcdefghij"), 5, 5, S("abcde"), 5);
-    test(S("abcdefghij"), 5, 5, S("abcdefghij"), 5);
-    test(S("abcdefghij"), 5, 5, S("abcdefghijklmnopqrst"), 5);
-    test(S("abcdefghij"), 5, 6, S(""), 5);
-    test(S("abcdefghij"), 5, 6, S("abcde"), 5);
-    test(S("abcdefghij"), 5, 6, S("abcdefghij"), 5);
-    test(S("abcdefghij"), 5, 6, S("abcdefghijklmnopqrst"), 5);
-    test(S("abcdefghij"), 9, 0, S(""), 0);
-    test(S("abcdefghij"), 9, 0, S("abcde"), -5);
-    test(S("abcdefghij"), 9, 0, S("abcdefghij"), -10);
-    test(S("abcdefghij"), 9, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghij"), 9, 1, S(""), 1);
-    test(S("abcdefghij"), 9, 1, S("abcde"), 9);
-    test(S("abcdefghij"), 9, 1, S("abcdefghij"), 9);
-    test(S("abcdefghij"), 9, 1, S("abcdefghijklmnopqrst"), 9);
-    test(S("abcdefghij"), 9, 2, S(""), 1);
-    test(S("abcdefghij"), 9, 2, S("abcde"), 9);
-    test(S("abcdefghij"), 9, 2, S("abcdefghij"), 9);
-    test(S("abcdefghij"), 9, 2, S("abcdefghijklmnopqrst"), 9);
-    test(S("abcdefghij"), 10, 0, S(""), 0);
-    test(S("abcdefghij"), 10, 0, S("abcde"), -5);
-    test(S("abcdefghij"), 10, 0, S("abcdefghij"), -10);
-    test(S("abcdefghij"), 10, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghij"), 10, 1, S(""), 0);
-    test(S("abcdefghij"), 10, 1, S("abcde"), -5);
-    test(S("abcdefghij"), 10, 1, S("abcdefghij"), -10);
-    test(S("abcdefghij"), 10, 1, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghij"), 11, 0, S(""), 0);
-    test(S("abcdefghij"), 11, 0, S("abcde"), 0);
-    test(S("abcdefghij"), 11, 0, S("abcdefghij"), 0);
-    test(S("abcdefghij"), 11, 0, S("abcdefghijklmnopqrst"), 0);
+	test(*r->s2, 6, 0, *r->s1, 0);
+	test(*r->s2, 6, 0, *r->s2, 0);
+	test(*r->s2, 6, 0, *r->s3, 0);
+	test(*r->s2, 6, 0, *r->s4, 0);
+	test(*r->s3, 0, 0, *r->s1, 0);
+	test(*r->s3, 0, 0, *r->s2, -5);
+	test(*r->s3, 0, 0, *r->s3, -10);
+	test(*r->s3, 0, 0, *r->s4, -20);
+	test(*r->s3, 0, 1, *r->s1, 1);
+	test(*r->s3, 0, 1, *r->s2, -4);
+	test(*r->s3, 0, 1, *r->s3, -9);
+	test(*r->s3, 0, 1, *r->s4, -19);
+	test(*r->s3, 0, 5, *r->s1, 5);
+	test(*r->s3, 0, 5, *r->s2, 0);
+	test(*r->s3, 0, 5, *r->s3, -5);
+	test(*r->s3, 0, 5, *r->s4, -15);
+	test(*r->s3, 0, 9, *r->s1, 9);
+	test(*r->s3, 0, 9, *r->s2, 4);
+	test(*r->s3, 0, 9, *r->s3, -1);
+	test(*r->s3, 0, 9, *r->s4, -11);
+	test(*r->s3, 0, 10, *r->s1, 10);
+	test(*r->s3, 0, 10, *r->s2, 5);
+	test(*r->s3, 0, 10, *r->s3, 0);
+	test(*r->s3, 0, 10, *r->s4, -10);
+	test(*r->s3, 0, 11, *r->s1, 10);
+	test(*r->s3, 0, 11, *r->s2, 5);
+	test(*r->s3, 0, 11, *r->s3, 0);
+	test(*r->s3, 0, 11, *r->s4, -10);
+	test(*r->s3, 1, 0, *r->s1, 0);
+	test(*r->s3, 1, 0, *r->s2, -5);
+	test(*r->s3, 1, 0, *r->s3, -10);
+	test(*r->s3, 1, 0, *r->s4, -20);
+	test(*r->s3, 1, 1, *r->s1, 1);
+	test(*r->s3, 1, 1, *r->s2, 1);
+	test(*r->s3, 1, 1, *r->s3, 1);
+	test(*r->s3, 1, 1, *r->s4, 1);
+	test(*r->s3, 1, 4, *r->s1, 4);
+	test(*r->s3, 1, 4, *r->s2, 1);
+	test(*r->s3, 1, 4, *r->s3, 1);
+	test(*r->s3, 1, 4, *r->s4, 1);
+	test(*r->s3, 1, 8, *r->s1, 8);
+	test(*r->s3, 1, 8, *r->s2, 1);
+	test(*r->s3, 1, 8, *r->s3, 1);
+	test(*r->s3, 1, 8, *r->s4, 1);
+	test(*r->s3, 1, 9, *r->s1, 9);
+	test(*r->s3, 1, 9, *r->s2, 1);
+	test(*r->s3, 1, 9, *r->s3, 1);
+	test(*r->s3, 1, 9, *r->s4, 1);
+	test(*r->s3, 1, 10, *r->s1, 9);
+	test(*r->s3, 1, 10, *r->s2, 1);
+	test(*r->s3, 1, 10, *r->s3, 1);
+	test(*r->s3, 1, 10, *r->s4, 1);
+	test(*r->s3, 5, 0, *r->s1, 0);
+	test(*r->s3, 5, 0, *r->s2, -5);
+	test(*r->s3, 5, 0, *r->s3, -10);
+	test(*r->s3, 5, 0, *r->s4, -20);
+	test(*r->s3, 5, 1, *r->s1, 1);
+	test(*r->s3, 5, 1, *r->s2, 5);
+	test(*r->s3, 5, 1, *r->s3, 5);
+	test(*r->s3, 5, 1, *r->s4, 5);
+	test(*r->s3, 5, 2, *r->s1, 2);
+	test(*r->s3, 5, 2, *r->s2, 5);
+	test(*r->s3, 5, 2, *r->s3, 5);
+	test(*r->s3, 5, 2, *r->s4, 5);
+	test(*r->s3, 5, 4, *r->s1, 4);
+	test(*r->s3, 5, 4, *r->s2, 5);
+	test(*r->s3, 5, 4, *r->s3, 5);
+	test(*r->s3, 5, 4, *r->s4, 5);
+	test(*r->s3, 5, 5, *r->s1, 5);
+	test(*r->s3, 5, 5, *r->s2, 5);
+	test(*r->s3, 5, 5, *r->s3, 5);
+	test(*r->s3, 5, 5, *r->s4, 5);
+	test(*r->s3, 5, 6, *r->s1, 5);
+	test(*r->s3, 5, 6, *r->s2, 5);
+	test(*r->s3, 5, 6, *r->s3, 5);
+	test(*r->s3, 5, 6, *r->s4, 5);
+	test(*r->s3, 9, 0, *r->s1, 0);
+	test(*r->s3, 9, 0, *r->s2, -5);
+	test(*r->s3, 9, 0, *r->s3, -10);
+	test(*r->s3, 9, 0, *r->s4, -20);
+	test(*r->s3, 9, 1, *r->s1, 1);
+	test(*r->s3, 9, 1, *r->s2, 9);
+	test(*r->s3, 9, 1, *r->s3, 9);
+	test(*r->s3, 9, 1, *r->s4, 9);
+	test(*r->s3, 9, 2, *r->s1, 1);
+	test(*r->s3, 9, 2, *r->s2, 9);
+	test(*r->s3, 9, 2, *r->s3, 9);
+	test(*r->s3, 9, 2, *r->s4, 9);
+	test(*r->s3, 10, 0, *r->s1, 0);
+	test(*r->s3, 10, 0, *r->s2, -5);
+	test(*r->s3, 10, 0, *r->s3, -10);
+	test(*r->s3, 10, 0, *r->s4, -20);
+	test(*r->s3, 10, 1, *r->s1, 0);
+	test(*r->s3, 10, 1, *r->s2, -5);
+	test(*r->s3, 10, 1, *r->s3, -10);
+	test(*r->s3, 10, 1, *r->s4, -20);
+	test(*r->s3, 11, 0, *r->s1, 0);
+	test(*r->s3, 11, 0, *r->s2, 0);
+	test(*r->s3, 11, 0, *r->s3, 0);
+	test(*r->s3, 11, 0, *r->s4, 0);
 }
 
 template <class S>
-void test2()
+void
+test2(pmem::obj::persistent_ptr<root> &r)
 {
-    test(S("abcdefghijklmnopqrst"), 0, 0, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 0, 0, S("abcde"), -5);
-    test(S("abcdefghijklmnopqrst"), 0, 0, S("abcdefghij"), -10);
-    test(S("abcdefghijklmnopqrst"), 0, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghijklmnopqrst"), 0, 1, S(""), 1);
-    test(S("abcdefghijklmnopqrst"), 0, 1, S("abcde"), -4);
-    test(S("abcdefghijklmnopqrst"), 0, 1, S("abcdefghij"), -9);
-    test(S("abcdefghijklmnopqrst"), 0, 1, S("abcdefghijklmnopqrst"), -19);
-    test(S("abcdefghijklmnopqrst"), 0, 10, S(""), 10);
-    test(S("abcdefghijklmnopqrst"), 0, 10, S("abcde"), 5);
-    test(S("abcdefghijklmnopqrst"), 0, 10, S("abcdefghij"), 0);
-    test(S("abcdefghijklmnopqrst"), 0, 10, S("abcdefghijklmnopqrst"), -10);
-    test(S("abcdefghijklmnopqrst"), 0, 19, S(""), 19);
-    test(S("abcdefghijklmnopqrst"), 0, 19, S("abcde"), 14);
-    test(S("abcdefghijklmnopqrst"), 0, 19, S("abcdefghij"), 9);
-    test(S("abcdefghijklmnopqrst"), 0, 19, S("abcdefghijklmnopqrst"), -1);
-    test(S("abcdefghijklmnopqrst"), 0, 20, S(""), 20);
-    test(S("abcdefghijklmnopqrst"), 0, 20, S("abcde"), 15);
-    test(S("abcdefghijklmnopqrst"), 0, 20, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 0, 20, S("abcdefghijklmnopqrst"), 0);
-    test(S("abcdefghijklmnopqrst"), 0, 21, S(""), 20);
-    test(S("abcdefghijklmnopqrst"), 0, 21, S("abcde"), 15);
-    test(S("abcdefghijklmnopqrst"), 0, 21, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 0, 21, S("abcdefghijklmnopqrst"), 0);
-    test(S("abcdefghijklmnopqrst"), 1, 0, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 1, 0, S("abcde"), -5);
-    test(S("abcdefghijklmnopqrst"), 1, 0, S("abcdefghij"), -10);
-    test(S("abcdefghijklmnopqrst"), 1, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghijklmnopqrst"), 1, 1, S(""), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 1, S("abcde"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 1, S("abcdefghij"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 1, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 9, S(""), 9);
-    test(S("abcdefghijklmnopqrst"), 1, 9, S("abcde"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 9, S("abcdefghij"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 9, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 18, S(""), 18);
-    test(S("abcdefghijklmnopqrst"), 1, 18, S("abcde"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 18, S("abcdefghij"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 18, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 19, S(""), 19);
-    test(S("abcdefghijklmnopqrst"), 1, 19, S("abcde"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 19, S("abcdefghij"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 19, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 20, S(""), 19);
-    test(S("abcdefghijklmnopqrst"), 1, 20, S("abcde"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 20, S("abcdefghij"), 1);
-    test(S("abcdefghijklmnopqrst"), 1, 20, S("abcdefghijklmnopqrst"), 1);
-    test(S("abcdefghijklmnopqrst"), 10, 0, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 10, 0, S("abcde"), -5);
-    test(S("abcdefghijklmnopqrst"), 10, 0, S("abcdefghij"), -10);
-    test(S("abcdefghijklmnopqrst"), 10, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghijklmnopqrst"), 10, 1, S(""), 1);
-    test(S("abcdefghijklmnopqrst"), 10, 1, S("abcde"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 1, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 1, S("abcdefghijklmnopqrst"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 5, S(""), 5);
-    test(S("abcdefghijklmnopqrst"), 10, 5, S("abcde"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 5, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 5, S("abcdefghijklmnopqrst"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 9, S(""), 9);
-    test(S("abcdefghijklmnopqrst"), 10, 9, S("abcde"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 9, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 9, S("abcdefghijklmnopqrst"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 10, S(""), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 10, S("abcde"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 10, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 10, S("abcdefghijklmnopqrst"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 11, S(""), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 11, S("abcde"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 11, S("abcdefghij"), 10);
-    test(S("abcdefghijklmnopqrst"), 10, 11, S("abcdefghijklmnopqrst"), 10);
-    test(S("abcdefghijklmnopqrst"), 19, 0, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 19, 0, S("abcde"), -5);
-    test(S("abcdefghijklmnopqrst"), 19, 0, S("abcdefghij"), -10);
-    test(S("abcdefghijklmnopqrst"), 19, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghijklmnopqrst"), 19, 1, S(""), 1);
-    test(S("abcdefghijklmnopqrst"), 19, 1, S("abcde"), 19);
-    test(S("abcdefghijklmnopqrst"), 19, 1, S("abcdefghij"), 19);
-    test(S("abcdefghijklmnopqrst"), 19, 1, S("abcdefghijklmnopqrst"), 19);
-    test(S("abcdefghijklmnopqrst"), 19, 2, S(""), 1);
-    test(S("abcdefghijklmnopqrst"), 19, 2, S("abcde"), 19);
-    test(S("abcdefghijklmnopqrst"), 19, 2, S("abcdefghij"), 19);
-    test(S("abcdefghijklmnopqrst"), 19, 2, S("abcdefghijklmnopqrst"), 19);
-    test(S("abcdefghijklmnopqrst"), 20, 0, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 20, 0, S("abcde"), -5);
-    test(S("abcdefghijklmnopqrst"), 20, 0, S("abcdefghij"), -10);
-    test(S("abcdefghijklmnopqrst"), 20, 0, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghijklmnopqrst"), 20, 1, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 20, 1, S("abcde"), -5);
-    test(S("abcdefghijklmnopqrst"), 20, 1, S("abcdefghij"), -10);
-    test(S("abcdefghijklmnopqrst"), 20, 1, S("abcdefghijklmnopqrst"), -20);
-    test(S("abcdefghijklmnopqrst"), 21, 0, S(""), 0);
-    test(S("abcdefghijklmnopqrst"), 21, 0, S("abcde"), 0);
-    test(S("abcdefghijklmnopqrst"), 21, 0, S("abcdefghij"), 0);
-    test(S("abcdefghijklmnopqrst"), 21, 0, S("abcdefghijklmnopqrst"), 0);
+	test(*r->s4, 0, 0, *r->s1, 0);
+	test(*r->s4, 0, 0, *r->s2, -5);
+	test(*r->s4, 0, 0, *r->s3, -10);
+	test(*r->s4, 0, 0, *r->s4, -20);
+	test(*r->s4, 0, 1, *r->s1, 1);
+	test(*r->s4, 0, 1, *r->s2, -4);
+	test(*r->s4, 0, 1, *r->s3, -9);
+	test(*r->s4, 0, 1, *r->s4, -19);
+	test(*r->s4, 0, 10, *r->s1, 10);
+	test(*r->s4, 0, 10, *r->s2, 5);
+	test(*r->s4, 0, 10, *r->s3, 0);
+	test(*r->s4, 0, 10, *r->s4, -10);
+	test(*r->s4, 0, 19, *r->s1, 19);
+	test(*r->s4, 0, 19, *r->s2, 14);
+	test(*r->s4, 0, 19, *r->s3, 9);
+	test(*r->s4, 0, 19, *r->s4, -1);
+	test(*r->s4, 0, 20, *r->s1, 20);
+	test(*r->s4, 0, 20, *r->s2, 15);
+	test(*r->s4, 0, 20, *r->s3, 10);
+	test(*r->s4, 0, 20, *r->s4, 0);
+	test(*r->s4, 0, 21, *r->s1, 20);
+	test(*r->s4, 0, 21, *r->s2, 15);
+	test(*r->s4, 0, 21, *r->s3, 10);
+	test(*r->s4, 0, 21, *r->s4, 0);
+	test(*r->s4, 1, 0, *r->s1, 0);
+	test(*r->s4, 1, 0, *r->s2, -5);
+	test(*r->s4, 1, 0, *r->s3, -10);
+	test(*r->s4, 1, 0, *r->s4, -20);
+	test(*r->s4, 1, 1, *r->s1, 1);
+	test(*r->s4, 1, 1, *r->s2, 1);
+	test(*r->s4, 1, 1, *r->s3, 1);
+	test(*r->s4, 1, 1, *r->s4, 1);
+	test(*r->s4, 1, 9, *r->s1, 9);
+	test(*r->s4, 1, 9, *r->s2, 1);
+	test(*r->s4, 1, 9, *r->s3, 1);
+	test(*r->s4, 1, 9, *r->s4, 1);
+	test(*r->s4, 1, 18, *r->s1, 18);
+	test(*r->s4, 1, 18, *r->s2, 1);
+	test(*r->s4, 1, 18, *r->s3, 1);
+	test(*r->s4, 1, 18, *r->s4, 1);
+	test(*r->s4, 1, 19, *r->s1, 19);
+	test(*r->s4, 1, 19, *r->s2, 1);
+	test(*r->s4, 1, 19, *r->s3, 1);
+	test(*r->s4, 1, 19, *r->s4, 1);
+	test(*r->s4, 1, 20, *r->s1, 19);
+	test(*r->s4, 1, 20, *r->s2, 1);
+	test(*r->s4, 1, 20, *r->s3, 1);
+	test(*r->s4, 1, 20, *r->s4, 1);
+	test(*r->s4, 10, 0, *r->s1, 0);
+	test(*r->s4, 10, 0, *r->s2, -5);
+	test(*r->s4, 10, 0, *r->s3, -10);
+	test(*r->s4, 10, 0, *r->s4, -20);
+	test(*r->s4, 10, 1, *r->s1, 1);
+	test(*r->s4, 10, 1, *r->s2, 10);
+	test(*r->s4, 10, 1, *r->s3, 10);
+	test(*r->s4, 10, 1, *r->s4, 10);
+	test(*r->s4, 10, 5, *r->s1, 5);
+	test(*r->s4, 10, 5, *r->s2, 10);
+	test(*r->s4, 10, 5, *r->s3, 10);
+	test(*r->s4, 10, 5, *r->s4, 10);
+	test(*r->s4, 10, 9, *r->s1, 9);
+	test(*r->s4, 10, 9, *r->s2, 10);
+	test(*r->s4, 10, 9, *r->s3, 10);
+	test(*r->s4, 10, 9, *r->s4, 10);
+	test(*r->s4, 10, 10, *r->s1, 10);
+	test(*r->s4, 10, 10, *r->s2, 10);
+	test(*r->s4, 10, 10, *r->s3, 10);
+	test(*r->s4, 10, 10, *r->s4, 10);
+	test(*r->s4, 10, 11, *r->s1, 10);
+	test(*r->s4, 10, 11, *r->s2, 10);
+	test(*r->s4, 10, 11, *r->s3, 10);
+	test(*r->s4, 10, 11, *r->s4, 10);
+	test(*r->s4, 19, 0, *r->s1, 0);
+	test(*r->s4, 19, 0, *r->s2, -5);
+	test(*r->s4, 19, 0, *r->s3, -10);
+	test(*r->s4, 19, 0, *r->s4, -20);
+	test(*r->s4, 19, 1, *r->s1, 1);
+	test(*r->s4, 19, 1, *r->s2, 19);
+	test(*r->s4, 19, 1, *r->s3, 19);
+	test(*r->s4, 19, 1, *r->s4, 19);
+	test(*r->s4, 19, 2, *r->s1, 1);
+	test(*r->s4, 19, 2, *r->s2, 19);
+	test(*r->s4, 19, 2, *r->s3, 19);
+	test(*r->s4, 19, 2, *r->s4, 19);
+	test(*r->s4, 20, 0, *r->s1, 0);
+	test(*r->s4, 20, 0, *r->s2, -5);
+	test(*r->s4, 20, 0, *r->s3, -10);
+	test(*r->s4, 20, 0, *r->s4, -20);
+	test(*r->s4, 20, 1, *r->s1, 0);
+	test(*r->s4, 20, 1, *r->s2, -5);
+	test(*r->s4, 20, 1, *r->s3, -10);
+	test(*r->s4, 20, 1, *r->s4, -20);
+	test(*r->s4, 21, 0, *r->s1, 0);
+	test(*r->s4, 21, 0, *r->s2, 0);
+	test(*r->s4, 21, 0, *r->s3, 0);
+	test(*r->s4, 21, 0, *r->s4, 0);
 }
 
-int main()
+void
+run(pmem::obj::pool<root> &pop)
 {
-    {
-    typedef std::string S;
-    test0<S>();
-    test1<S>();
-    test2<S>();
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test0<S>();
-    test1<S>();
-    test2<S>();
-    }
-#endif
+	auto r = pop.root();
 
-#if TEST_STD_VER > 3
-    {   // LWG 2946
-    std::string s = " !";
-    assert(s.compare(0, 1, {"abc", 1}) < 0);
-    }
-#endif
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->s1 = nvobj::make_persistent<pmem_exp::string>("");
+			r->s2 = nvobj::make_persistent<pmem_exp::string>(
+				"abcde");
+			r->s3 = nvobj::make_persistent<pmem_exp::string>(
+				"abcdefghij");
+			r->s4 = nvobj::make_persistent<pmem_exp::string>(
+				"abcdefghijklmnopqrst");
+		});
+
+		{
+			typedef pmem_exp::string S;
+			test0<S>(r);
+			test1<S>(r);
+			test2<S>(r);
+		}
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<pmem_exp::string>(r->s1);
+			nvobj::delete_persistent<pmem_exp::string>(r->s2);
+			nvobj::delete_persistent<pmem_exp::string>(r->s3);
+			nvobj::delete_persistent<pmem_exp::string>(r->s4);
+		});
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	START();
+
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+
+	try {
+		pop = pmem::obj::pool<root>::create(
+			path, "move.pass", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+
+	run(pop);
+
+	pop.close();
+
+	return 0;
 }

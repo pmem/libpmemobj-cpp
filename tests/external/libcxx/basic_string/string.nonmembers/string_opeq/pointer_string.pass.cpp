@@ -29,9 +29,9 @@ struct root {
 
 template <class S>
 void
-test(const S &lhs, const S &rhs, bool x)
+test(const typename S::value_type *lhs, const S &rhs, bool x)
 {
-	UT_ASSERT((lhs > rhs) == x);
+	UT_ASSERT((lhs == rhs) == x);
 }
 
 void
@@ -50,22 +50,22 @@ run(pmem::obj::pool<root> &pop)
 				"abcdefghijklmnopqrst");
 		});
 
-		test(*r->s1, *r->s1, false);
-		test(*r->s1, *r->s2, false);
-		test(*r->s1, *r->s3, false);
-		test(*r->s1, *r->s4, false);
-		test(*r->s2, *r->s1, true);
-		test(*r->s2, *r->s2, false);
-		test(*r->s2, *r->s3, false);
-		test(*r->s2, *r->s4, false);
-		test(*r->s3, *r->s1, true);
-		test(*r->s3, *r->s2, true);
-		test(*r->s3, *r->s3, false);
-		test(*r->s3, *r->s4, false);
-		test(*r->s4, *r->s1, true);
-		test(*r->s4, *r->s2, true);
-		test(*r->s4, *r->s3, true);
-		test(*r->s4, *r->s4, false);
+		test("", *r->s1, true);
+		test("", *r->s2, false);
+		test("", *r->s3, false);
+		test("", *r->s4, false);
+		test("abcde", *r->s1, false);
+		test("abcde", *r->s2, true);
+		test("abcde", *r->s3, false);
+		test("abcde", *r->s4, false);
+		test("abcdefghij", *r->s1, false);
+		test("abcdefghij", *r->s2, false);
+		test("abcdefghij", *r->s3, true);
+		test("abcdefghij", *r->s4, false);
+		test("abcdefghijklmnopqrst", *r->s1, false);
+		test("abcdefghijklmnopqrst", *r->s2, false);
+		test("abcdefghijklmnopqrst", *r->s3, false);
+		test("abcdefghijklmnopqrst", *r->s4, true);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<pmem_exp::string>(r->s1);

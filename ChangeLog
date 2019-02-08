@@ -1,3 +1,16 @@
+Fri Feb 08 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
+
+	* Version 1.5.1-rc1
+
+	This release fixes minor bugs and improves documentation.
+
+	Notable changes:
+	- Fix v swap, assignment operators and constructors
+	- Change conversion operator from T() to T&() in v<>
+	- persistent_ptr: add unsigned index operator
+	- Fix range_snapshotting initialization in array.hpp.
+	- Fix range_snapshotting_iterator bahaviour for snapshot_size == 0.
+
 Fri Oct 26 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 
 	* Version 1.5

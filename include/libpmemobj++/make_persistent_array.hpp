@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,6 +98,12 @@ make_persistent(std::size_t N)
 					      "persistent memory array");
 
 	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
+	/*
 	 * When an exception is thrown from one of the constructors
 	 * we don't perform any cleanup - i.e. we don't call destructors
 	 * (unlike new[] operator), we only rely on transaction abort.
@@ -106,7 +112,7 @@ make_persistent(std::size_t N)
 	 * we have no way to call destructors.
 	 */
 	for (std::size_t i = 0; i < N; ++i)
-		detail::create<I>(ptr.get() + i);
+		detail::create<I>(data + i);
 
 	return ptr;
 }
@@ -144,6 +150,12 @@ make_persistent()
 					      "persistent memory array");
 
 	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
+	/*
 	 * When an exception is thrown from one of the constructors
 	 * we don't perform any cleanup - i.e. we don't call destructors
 	 * (unlike new[] operator), we only rely on transaction abort.
@@ -152,7 +164,7 @@ make_persistent()
 	 * we have no way to call destructors.
 	 */
 	for (std::size_t i = 0; i < N; ++i)
-		detail::create<I>(ptr.get() + i);
+		detail::create<I>(data + i);
 
 	return ptr;
 }
@@ -186,8 +198,14 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 	if (ptr == nullptr)
 		return;
 
+	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
 	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+		detail::destroy<I>(data[N - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "
@@ -223,8 +241,14 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 	if (ptr == nullptr)
 		return;
 
+	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
 	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+		detail::destroy<I>(data[N - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "

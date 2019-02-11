@@ -6,58 +6,82 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// const_reference operator[](size_type pos) const;
-//       reference operator[](size_type pos);
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#ifdef _LIBCPP_DEBUG
-#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using C = pmem_exp::string;
 
-#include <string>
-#include <cassert>
+struct root {
+	nvobj::persistent_ptr<C> s1;
+	nvobj::persistent_ptr<C> s2;
+};
 
-#include "min_allocator.h"
-
-int main()
+template <class S>
+void
+test(pmem::obj::pool<root> &pop, S &s)
 {
-    {
-    typedef std::string S;
-    S s("0123456789");
-    const S& cs = s;
-    for (S::size_type i = 0; i < cs.size(); ++i)
-    {
-        assert(s[i] == static_cast<char>('0' + i));
-        assert(cs[i] == s[i]);
-    }
-    assert(cs[cs.size()] == '\0');
-    const S s2 = S();
-    assert(s2[0] == '\0');
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    S s("0123456789");
-    const S& cs = s;
-    for (S::size_type i = 0; i < cs.size(); ++i)
-    {
-        assert(s[i] == static_cast<char>('0' + i));
-        assert(cs[i] == s[i]);
-    }
-    assert(cs[cs.size()] == '\0');
-    const S s2 = S();
-    assert(s2[0] == '\0');
-    }
-#endif
-#ifdef _LIBCPP_DEBUG
-    {
-        std::string s;
-        char c = s[0];
-        assert(c == '\0');
-        c = s[1];
-        assert(false);
-    }
-#endif
+	const S &cs = s;
+	for (typename S::size_type i = 0; i < cs.size(); ++i) {
+		UT_ASSERT(s[i] == static_cast<char>('0' + i % 10));
+		UT_ASSERT(cs[i] == s[i]);
+	}
+	UT_ASSERT(cs[cs.size()] == '\0');
+
+	nvobj::transaction::run(pop, [&] {
+		const nvobj::persistent_ptr<C> s2 = nvobj::make_persistent<C>();
+		UT_ASSERT((*s2)[0] == '\0');
+		nvobj::delete_persistent<C>(s2);
+	});
+}
+
+int
+main(int argc, char *argv[])
+{
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "StringTest: index", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->s1 = nvobj::make_persistent<C>("0123456789");
+			r->s2 = nvobj::make_persistent<C>(
+				"0123456789012345678901234567890123456789"
+				"0123456789012345678901234567890123456789"
+				"0123456789012345678901234567890123456789"
+				"01234567890");
+		});
+
+		test(pop, *r->s1);
+		test(pop, *r->s2);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<C>(r->s1);
+			nvobj::delete_persistent<C>(r->s2);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

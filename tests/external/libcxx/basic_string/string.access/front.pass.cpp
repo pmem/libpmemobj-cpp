@@ -6,51 +6,79 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// const charT& front() const;
-//       charT& front();
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-#ifdef _LIBCPP_DEBUG
-#define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
-#endif
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using C = pmem_exp::string;
 
-#include <string>
-#include <cassert>
-
-#include "min_allocator.h"
+struct root {
+  nvobj::persistent_ptr<C> s1;
+  nvobj::persistent_ptr<C> s2;
+  nvobj::persistent_ptr<C> s3;
+};
 
 template <class S>
 void
-test(S s)
+test(S& s)
 {
     const S& cs = s;
-    assert(&cs.front() == &cs[0]);
-    assert(&s.front() == &s[0]);
+    UT_ASSERT(&cs.front() == &cs[0]);
+    UT_ASSERT(&s.front() == &s[0]);
     s.front() = typename S::value_type('z');
-    assert(s.front() == typename S::value_type('z'));
+    UT_ASSERT(s.front() == typename S::value_type('z'));
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S("1"));
-    test(S("1234567890123456789012345678901234567890"));
+    START();
+
+    if (argc < 2) {
+        std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+        return 1;
     }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S("1"));
-    test(S("1234567890123456789012345678901234567890"));
+
+    auto path = argv[1];
+    auto pop =
+        nvobj::pool<root>::create(path, "StringTest: front",
+                                  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+    auto r = pop.root();
+
+    try {
+        nvobj::transaction::run(pop, [&] {
+          r->s1 = nvobj::make_persistent<C>("1");
+          r->s2 = nvobj::make_persistent<C>("1234567890123456789012345678901234567890");
+          r->s3 = nvobj::make_persistent<C>("1234567890123456789012345678901234567890"
+              "1234567890123456789012345678901234567890"
+              "1234567890123456789012345678901234567890"
+              "1234567890");
+        });
+
+        test(*r->s1);
+        test(*r->s2);
+        test(*r->s3);
+
+        nvobj::transaction::run(pop, [&] {
+          nvobj::delete_persistent<C>(r->s1);
+          nvobj::delete_persistent<C>(r->s2);
+          nvobj::delete_persistent<C>(r->s3);
+        });
+    } catch (std::exception &e) {
+        UT_FATALexc(e);
     }
-#endif
-#ifdef _LIBCPP_DEBUG
-    {
-        std::string s;
-        char c = s.front();
-        assert(false);
-    }
-#endif
+
+    pop.close();
+
+    return 0;
 }

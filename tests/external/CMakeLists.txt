@@ -304,8 +304,13 @@ add_test_generic(NAME string_libcxx_dtor_noexcept TRACERS none)
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.char.pass
 # XXX: port libcxx test basic_string/string.access/db_front.pass
 # XXX: port libcxx test basic_string/string.access/db_cindex.pass
-# XXX: port libcxx test basic_string/string.access/at.pass
-# XXX: port libcxx test basic_string/string.access/index.pass
+
+build_test(string_libcxx_access_at libcxx/basic_string/string.access/at.pass.cpp)
+add_test_generic(NAME string_libcxx_access_at TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_access_index libcxx/basic_string/string.access/index.pass.cpp)
+add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck)
+
 # XXX: port libcxx test basic_string/string.access/back.pass
 # XXX: port libcxx test basic_string/string.access/db_back.pass
 # XXX: port libcxx test basic_string/string.access/db_index.pass

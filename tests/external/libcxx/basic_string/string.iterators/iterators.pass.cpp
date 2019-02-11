@@ -6,68 +6,72 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: c++98, c++03, c++11
+#include "unittest.hpp"
 
-// <string>
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// iterator       begin();
-// iterator       end();
-// const_iterator begin()  const;
-// const_iterator end()    const;
-// const_iterator cbegin() const;
-// const_iterator cend()   const;
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
 
-#include <string>
-#include <cassert>
-
-int main()
+int
+main(int argc, char *argv[])
 {
-    { // N3644 testing
-        typedef std::string C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
-        assert ( ii1 == cii );
-        assert ( !(ii1 != ii2 ));
-        assert ( !(ii1 != cii ));
-    }
+	START();
 
-    { // N3644 testing
-        typedef std::wstring C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
-        assert ( ii1 == cii );
-        assert ( !(ii1 != ii2 ));
-        assert ( !(ii1 != cii ));
-    }
+	{ // N3644 testing
+		typedef pmem_exp::string C;
+		C::iterator ii1{}, ii2{};
+		C::iterator ii4 = ii1;
+		C::const_iterator cii{};
+		UT_ASSERT(ii1 == ii2);
+		UT_ASSERT(ii1 == ii4);
+		UT_ASSERT(ii1 == cii);
+		UT_ASSERT(!(ii1 != ii2));
+		UT_ASSERT(!(ii1 != cii));
+	}
 
-    { // N3644 testing
-        typedef std::u16string C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
-        assert ( ii1 == cii );
-        assert ( !(ii1 != ii2 ));
-        assert ( !(ii1 != cii ));
-    }
+	{ // N3644 testing
+		typedef pmem_exp::wstring C;
+		C::iterator ii1{}, ii2{};
+		C::iterator ii4 = ii1;
+		C::const_iterator cii{};
+		UT_ASSERT(ii1 == ii2);
+		UT_ASSERT(ii1 == ii4);
+		UT_ASSERT(ii1 == cii);
+		UT_ASSERT(!(ii1 != ii2));
+		UT_ASSERT(!(ii1 != cii));
+	}
 
-    { // N3644 testing
-        typedef std::u32string C;
-        C::iterator ii1{}, ii2{};
-        C::iterator ii4 = ii1;
-        C::const_iterator cii{};
-        assert ( ii1 == ii2 );
-        assert ( ii1 == ii4 );
-        assert ( ii1 == cii );
-        assert ( !(ii1 != ii2 ));
-        assert ( !(ii1 != cii ));
-    }
+	{ // N3644 testing
+		typedef pmem_exp::u16string C;
+		C::iterator ii1{}, ii2{};
+		C::iterator ii4 = ii1;
+		C::const_iterator cii{};
+		UT_ASSERT(ii1 == ii2);
+		UT_ASSERT(ii1 == ii4);
+		UT_ASSERT(ii1 == cii);
+		UT_ASSERT(!(ii1 != ii2));
+		UT_ASSERT(!(ii1 != cii));
+	}
+
+	{ // N3644 testing
+		typedef pmem_exp::u32string C;
+		C::iterator ii1{}, ii2{};
+		C::iterator ii4 = ii1;
+		C::const_iterator cii{};
+		UT_ASSERT(ii1 == ii2);
+		UT_ASSERT(ii1 == ii4);
+		UT_ASSERT(ii1 == cii);
+		UT_ASSERT(!(ii1 != ii2));
+		UT_ASSERT(!(ii1 != cii));
+	}
+
+	return 0;
 }

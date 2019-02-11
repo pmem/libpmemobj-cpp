@@ -15,37 +15,41 @@
 
 #define _LIBCPP_ASSERT(x, m) ((x) ? (void)0 : std::exit(0))
 
-#include <string>
 #include <cassert>
-#include <iterator>
-#include <exception>
 #include <cstdlib>
+#include <exception>
+#include <iterator>
+#include <string>
 
 #include "min_allocator.h"
 
-int main()
+int
+main()
 {
-    {
-    typedef std::string S;
-    S s1;
-    S s2;
-    bool b = s1.begin() < s2.begin();
-    assert(false);
-    }
+	{
+		typedef std::string S;
+		S s1;
+		S s2;
+		bool b = s1.begin() < s2.begin();
+		assert(false);
+	}
 #if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    S s1;
-    S s2;
-    bool b = s1.begin() < s2.begin();
-    assert(false);
-    }
+	{
+		typedef std::basic_string<char, std::char_traits<char>,
+					  min_allocator<char>>
+			S;
+		S s1;
+		S s2;
+		bool b = s1.begin() < s2.begin();
+		assert(false);
+	}
 #endif
 }
 
 #else
 
-int main()
+int
+main()
 {
 }
 

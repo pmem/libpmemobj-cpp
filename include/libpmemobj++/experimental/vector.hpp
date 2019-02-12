@@ -205,6 +205,9 @@ private:
 	p<size_type> _capacity;
 };
 
+/* Non-member swap */
+template <typename T>
+void swap(vector<T> &lhs, vector<T> &rhs);
 /* Comparison operators */
 template <typename T>
 bool operator==(const vector<T> &lhs, const vector<T> &rhs);
@@ -1813,6 +1816,19 @@ bool
 operator>=(const vector<T> &lhs, const vector<T> &rhs)
 {
 	return !(lhs < rhs);
+}
+
+/**
+ * Swaps the contents of lhs and rhs.
+ *
+ * @param[in] lhs first vector
+ * @param[in] rhs second vector
+ */
+template <typename T>
+void
+swap(vector<T> &lhs, vector<T> &rhs)
+{
+	lhs.swap(rhs);
 }
 
 } /* namespace experimental */

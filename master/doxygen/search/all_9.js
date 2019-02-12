@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['insert_5fgap',['insert_gap',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a37b5953150fc9a2a3f6547f3ae77d64e',1,'pmem::obj::experimental::vector']]],
   ['integer_5fsequence_2ehpp',['integer_sequence.hpp',['../integer__sequence_8hpp.html',1,'']]],
   ['is_5fbidirectional_5fiterator',['is_bidirectional_iterator',['../structpmem_1_1detail_1_1is__bidirectional__iterator.html',1,'pmem::detail']]],
   ['is_5fforward_5fiterator',['is_forward_iterator',['../structpmem_1_1detail_1_1is__forward__iterator.html',1,'pmem::detail']]],

@@ -265,8 +265,6 @@ add_test_generic(NAME vector_libcxx_clear TRACERS none pmemcheck memcheck)
 
 # XXX: port libcxx test vector.modifiers/push_back.pass
 
-# XXX: port libcxx test vector.special/swap_noexcept.pass
-
 build_test(vector_libcxx_special_swap libcxx/vector/vector.special/swap.pass.cpp)
 add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck)
 

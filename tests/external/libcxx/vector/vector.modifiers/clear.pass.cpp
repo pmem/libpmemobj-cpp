@@ -37,9 +37,8 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: reserve",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: clear", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

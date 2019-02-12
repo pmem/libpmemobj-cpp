@@ -224,6 +224,9 @@ add_test_generic(NAME array_modifiers TRACERS none pmemcheck memcheck)
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(NAME iterator_traits TRACERS none)
 
+build_test(temp_value temp_value/temp_value.cpp)
+add_test_generic(NAME temp_value TRACERS none pmemcheck memcheck)
+
 build_test(ctl ctl/ctl.cpp)
 add_test_generic(NAME ctl CASE 0 TRACERS none)
 

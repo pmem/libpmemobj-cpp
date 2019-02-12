@@ -303,6 +303,9 @@ add_test_generic(NAME string_exceptions TRACERS none memcheck pmemcheck)
 build_test(string_snapshot string_snapshot/string_snapshot.cpp)
 add_test_generic(NAME string_snapshot TRACERS none memcheck pmemcheck)
 
+build_test(string_assign_tx_abort string_assign_tx_abort/string_assign_tx_abort.cpp)
+add_test_generic(NAME string_assign_tx_abort TRACERS none memcheck pmemcheck)
+
 build_test(vector_modifiers_type_requirements vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp)
 add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
 

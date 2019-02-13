@@ -1428,13 +1428,12 @@ void
 vector<T>::construct_range(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	size_type range_size =
-		static_cast<size_type>(std::distance(first, last));
+	difference_type range_size = std::distance(first, last);
 	assert(range_size >= 0);
-	assert(_capacity >= range_size + _size);
+	assert(_capacity >= static_cast<size_type>(range_size) + _size);
 
 	pointer dest = _data.get() + idx;
-	_size += range_size;
+	_size += static_cast<size_type>(range_size);
 	while (first != last)
 		detail::create<value_type>(dest++, std::move(*first++));
 }
@@ -1468,12 +1467,12 @@ void
 vector<T>::construct_range_copy(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	size_type diff = static_cast<size_type>(std::distance(first, last));
+	difference_type diff = std::distance(first, last);
 	assert(diff >= 0);
-	assert(_capacity >= diff + _size);
+	assert(_capacity >= static_cast<size_type>(diff) + _size);
 
 	pointer dest = _data.get() + idx;
-	_size += diff;
+	_size += static_cast<size_type>(diff);
 	while (first != last)
 		detail::create<value_type>(dest++, *first++);
 }

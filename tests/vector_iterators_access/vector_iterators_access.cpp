@@ -103,8 +103,8 @@ check_add_to_tx(nvobj::pool<struct root> &pop)
 		nvobj::transaction::run(pop, [&] { r->v->front() = 3; });
 		nvobj::transaction::run(pop, [&] { r->v->back() = 4; });
 		nvobj::transaction::run(pop, [&] { *r->v->begin() = 5; });
-		nvobj::transaction::run(pop, [&] { *r->v->rend() = 6; });
-		nvobj::transaction::run(pop, [&] { r->v->rbegin(); });
+		nvobj::transaction::run(pop, [&] { *r->v->rbegin() = 7; });
+		nvobj::transaction::run(pop, [&] { *(r->v->rend() - 1) = 8; });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

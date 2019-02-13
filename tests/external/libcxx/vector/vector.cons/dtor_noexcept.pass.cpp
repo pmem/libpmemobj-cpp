@@ -32,4 +32,6 @@ main()
 		static_assert(std::is_nothrow_destructible<vector_type>::value,
 			      "");
 	}
+
+	return 0;
 }

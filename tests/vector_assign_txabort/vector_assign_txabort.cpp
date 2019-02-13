@@ -128,6 +128,45 @@ test(nvobj::pool<struct root> &pop)
 	UT_ASSERT(exception_thrown);
 	check_vector(pop, 10, 1);
 
+	/* assign() - copy version */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::persistent_ptr<C> v2 =
+				nvobj::make_persistent<C>(100U, 2);
+			r->v->assign(*v2);
+			check_vector(pop, 100, 2);
+			nvobj::delete_persistent<C>(v2);
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+	check_vector(pop, 10, 1);
+
+	/* assign() - move version */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::persistent_ptr<C> v2 =
+				nvobj::make_persistent<C>(100U, 2);
+			r->v->assign(std::move(*v2));
+			check_vector(pop, 100, 2);
+			UT_ASSERT(v2->empty());
+			nvobj::delete_persistent<C>(v2);
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+	check_vector(pop, 10, 1);
+
 	/* copy assignment operator */
 	exception_thrown = false;
 	try {

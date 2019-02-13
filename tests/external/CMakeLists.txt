@@ -302,21 +302,16 @@ add_test_generic(NAME string_libcxx_dtor_noexcept TRACERS none)
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.ptr.pass
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.string_view.pass
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.char.pass
-# XXX: port libcxx test basic_string/string.access/db_front.pass
-# XXX: port libcxx test basic_string/string.access/db_cindex.pass
 
 build_test(string_libcxx_access_at libcxx/basic_string/string.access/at.pass.cpp)
 add_test_generic(NAME string_libcxx_access_at TRACERS none pmemcheck memcheck)
 
+# XXX: port libcxx test basic_string/string.access/back.pass
+# XXX: port libcxx test basic_string/string.access/front.pass
+
 build_test(string_libcxx_access_index libcxx/basic_string/string.access/index.pass.cpp)
 add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck)
 
-# XXX: port libcxx test basic_string/string.access/back.pass
-# XXX: port libcxx test basic_string/string.access/db_back.pass
-# XXX: port libcxx test basic_string/string.access/db_index.pass
-# XXX: port libcxx test basic_string/string.access/front.pass
-# XXX: port libcxx test basic_string/string.access/db_cback.pass
-# XXX: port libcxx test basic_string/string.access/db_cfront.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/pointer_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_string_view.pass

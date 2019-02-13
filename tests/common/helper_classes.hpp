@@ -63,7 +63,7 @@ public:
 	default_constructible_only(const default_constructible_only &) = delete;
 
 	default_constructible_only &
-	operator=(default_constructible_only &) = delete;
+	operator=(const default_constructible_only &) = delete;
 
 	bool
 	operator==(const default_constructible_only &other) const

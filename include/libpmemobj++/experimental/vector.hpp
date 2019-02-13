@@ -108,6 +108,8 @@ public:
 			  InputIt>::type * = nullptr>
 	void assign(InputIt first, InputIt last);
 	void assign(std::initializer_list<T> ilist);
+	void assign(const vector &other);
+	void assign(vector &&other);
 
 	/* Destructor */
 	~vector();
@@ -431,8 +433,7 @@ template <typename T>
 vector<T> &
 vector<T>::operator=(const vector &other)
 {
-	if (this != &other)
-		assign(other.begin(), other.end());
+	assign(other);
 
 	return *this;
 }
@@ -451,21 +452,7 @@ template <typename T>
 vector<T> &
 vector<T>::operator=(vector &&other)
 {
-	if (this == &other)
-		return *this;
-
-	pool_base pb = get_pool();
-
-	transaction::run(pb, [&] {
-		dealloc();
-
-		_data = other._data;
-		_capacity = other._capacity;
-		_size = other._size;
-
-		other._data = nullptr;
-		other._capacity = other._size = 0;
-	});
+	assign(std::move(other));
 
 	return *this;
 }
@@ -668,6 +655,57 @@ void
 vector<T>::assign(std::initializer_list<T> ilist)
 {
 	assign(ilist.begin(), ilist.end());
+}
+
+/**
+ * Copy assignment method. Replaces the contents with a copy of the contents
+ * of other transactionally. This method is not specified by STL standards.
+ *
+ * @post size() == other.size()
+ * @post capacity() == max(size(), other.capacity())
+ *
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+void
+vector<T>::assign(const vector &other)
+{
+	if (this != &other)
+		assign(other.begin(), other.end());
+}
+
+/**
+ * Move assignment method. Replaces the contents with those of other using
+ * move semantics (i.e. the data in other is moved from other into this
+ * container) transactionally. Other is in a valid but empty state afterwards.
+ * This method is not specified by STL standards.
+ *
+ * @post size() == other.size()
+ * @post capacity() == other.capacity()
+ *
+ * @throw pmem::transaction_free_error when freeing underlying array failed.
+ */
+template <typename T>
+void
+vector<T>::assign(vector &&other)
+{
+	if (this == &other)
+		return;
+
+	pool_base pb = get_pool();
+
+	transaction::run(pb, [&] {
+		dealloc();
+
+		_data = other._data;
+		_capacity = other._capacity;
+		_size = other._size;
+
+		other._data = nullptr;
+		other._capacity = other._size = 0;
+	});
 }
 
 /**

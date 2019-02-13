@@ -61,12 +61,19 @@ struct allocation_flag {
 	allocation_flag() = delete;
 
 	/**
+	 * Emplace constructor.
+	 */
+	allocation_flag(uint64_t val) : value(val)
+	{
+	}
+
+	/**
 	 * Allocate the object from the allocation class with id equal to id.
 	 */
 	static allocation_flag
 	class_id(uint64_t id)
 	{
-		return {POBJ_CLASS_ID(id)};
+		return static_cast<uint64_t>(POBJ_CLASS_ID(id));
 	}
 
 	/**
@@ -75,7 +82,7 @@ struct allocation_flag {
 	static allocation_flag
 	no_flush()
 	{
-		return {POBJ_XALLOC_NO_FLUSH};
+		return static_cast<uint64_t>(POBJ_XALLOC_NO_FLUSH);
 	}
 
 	/**
@@ -84,7 +91,7 @@ struct allocation_flag {
 	static allocation_flag
 	none()
 	{
-		return {0};
+		return static_cast<uint64_t>(0);
 	}
 
 	/**
@@ -99,7 +106,7 @@ struct allocation_flag {
 	allocation_flag
 	operator|(const allocation_flag &rhs)
 	{
-		return {value | rhs.value};
+		return static_cast<uint64_t>(value | rhs.value);
 	}
 
 	uint64_t value;
@@ -119,12 +126,19 @@ struct allocation_flag_atomic {
 	allocation_flag_atomic() = delete;
 
 	/**
+	 * Emplace constructor.
+	 */
+	allocation_flag_atomic(uint64_t val) : value(val)
+	{
+	}
+
+	/**
 	 * Allocate the object from the allocation class with id equal to id.
 	 */
 	static allocation_flag_atomic
 	class_id(uint64_t id)
 	{
-		return {POBJ_CLASS_ID(id)};
+		return static_cast<uint64_t>(POBJ_CLASS_ID(id));
 	}
 
 	/**
@@ -133,7 +147,7 @@ struct allocation_flag_atomic {
 	static allocation_flag_atomic
 	none()
 	{
-		return {0};
+		return static_cast<uint64_t>(0);
 	}
 
 	/**
@@ -148,7 +162,7 @@ struct allocation_flag_atomic {
 	allocation_flag_atomic
 	operator|(const allocation_flag_atomic &rhs)
 	{
-		return {value | rhs.value};
+		return static_cast<uint64_t>(value | rhs.value);
 	}
 
 	uint64_t value;

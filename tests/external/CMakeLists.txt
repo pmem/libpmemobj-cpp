@@ -149,9 +149,8 @@ add_test_generic(NAME vector_libcxx_assign_initializer_list TRACERS none pmemche
 build_test(vector_libcxx_assign_iter_iter libcxx/vector/vector.cons/assign_iter_iter.pass.cpp)
 add_test_generic(NAME vector_libcxx_assign_iter_iter TRACERS none pmemcheck memcheck)
 
-# XXX: uncomment tests below when vector's push back method is implemented
-#build_test(vector_libcxx_assign_move_pass libcxx/vector/vector.cons/assign_move.pass.cpp)
-#add_test_generic(NAME vector_libcxx_assign_move_pass TRACERS none pmemcheck memcheck)
+build_test(vector_libcxx_assign_move_pass libcxx/vector/vector.cons/assign_move.pass.cpp)
+add_test_generic(NAME vector_libcxx_assign_move_pass TRACERS none pmemcheck memcheck)
 
 build_test(vector_libcxx_assign_size_value libcxx/vector/vector.cons/assign_size_value.pass.cpp)
 add_test_generic(NAME vector_libcxx_assign_size_value TRACERS none pmemcheck memcheck)
@@ -195,13 +194,11 @@ add_test_generic(NAME vector_libcxx_initializer_list TRACERS none pmemcheck memc
 build_test(vector_libcxx_op_equal_initializer_list libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp)
 add_test_generic(NAME vector_libcxx_op_equal_initializer_list TRACERS none pmemcheck memcheck)
 
-# XXX: enable vector_libcxx_capacity test when vector's push_back method is implemented
-#build_test(vector_libcxx_capacity libcxx/vector/vector.capacity/capacity.pass.cpp)
-#add_test_generic(NAME vector_libcxx_capacity TRACERS none pmemcheck memcheck)
+build_test(vector_libcxx_capacity libcxx/vector/vector.capacity/capacity.pass.cpp)
+add_test_generic(NAME vector_libcxx_capacity TRACERS none pmemcheck memcheck)
 
-# XXX: enable vector_libcxx_empty test when vector's push_back method is implemented
-#build_test(vector_libcxx_empty libcxx/vector/vector.capacity/empty.pass.cpp)
-#add_test_generic(NAME vector_libcxx_empty TRACERS none pmemcheck memcheck)
+build_test(vector_libcxx_empty libcxx/vector/vector.capacity/empty.pass.cpp)
+add_test_generic(NAME vector_libcxx_empty TRACERS none pmemcheck memcheck)
 
 build_test(vector_libcxx_max_size libcxx/vector/vector.capacity/max_size.pass.cpp)
 add_test_generic(NAME vector_libcxx_max_size TRACERS none pmemcheck memcheck)
@@ -215,13 +212,11 @@ add_test_generic(NAME vector_libcxx_resize_size TRACERS none pmemcheck memcheck)
 build_test(vector_libcxx_resize_size_value libcxx/vector/vector.capacity/resize_size_value.pass.cpp)
 add_test_generic(NAME vector_libcxx_resize_size_value TRACERS none pmemcheck memcheck)
 
-# XXX: enable vector_libcxx_shrink_to_fit test when vector's push_back method is implemented
-#build_test(vector_libcxx_shrink_to_fit libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp)
-#add_test_generic(NAME vector_libcxx_shrink_to_fit TRACERS none pmemcheck memcheck)
+build_test(vector_libcxx_shrink_to_fit libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp)
+add_test_generic(NAME vector_libcxx_shrink_to_fit TRACERS none pmemcheck memcheck)
 
-# XXX: enable vector_libcxx_size test when vector's push_back and erase methods are implemented
-#build_test(vector_libcxx_size libcxx/vector/vector.capacity/size.pass.cpp)
-#add_test_generic(NAME vector_libcxx_size TRACERS none pmemcheck memcheck)
+build_test(vector_libcxx_size libcxx/vector/vector.capacity/size.pass.cpp)
+add_test_generic(NAME vector_libcxx_size TRACERS none pmemcheck memcheck)
 
 build_test(vector_libcxx_swap libcxx/vector/vector.capacity/swap.pass.cpp)
 add_test_generic(NAME vector_libcxx_swap TRACERS none pmemcheck memcheck)

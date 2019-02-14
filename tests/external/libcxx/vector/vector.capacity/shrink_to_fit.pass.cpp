@@ -44,10 +44,9 @@ main(int argc, char *argv[])
 	auto r = pop.root();
 
 	try {
-		nvobj::transaction::run(pop, [&] {
-			r->v = nvobj::make_persistent<C>(100U);
-			r->v->push_back(1);
-		});
+		nvobj::transaction::run(
+			pop, [&] { r->v = nvobj::make_persistent<C>(100U); });
+		r->v->push_back(1);
 
 		r->v->shrink_to_fit();
 		UT_ASSERT(r->v->capacity() == 101);

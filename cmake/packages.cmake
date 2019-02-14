@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -80,6 +80,9 @@ if("${CPACK_GENERATOR}" STREQUAL "RPM")
 	set(CPACK_PACKAGE_FILE_NAME
 		${CPACK_RPM_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}.${CPACK_RPM_PACKAGE_ARCHITECTURE})
 elseif("${CPACK_GENERATOR}" STREQUAL "DEB")
+	# We are using "gnutar" to avoid this bug:
+	# https://gitlab.kitware.com/cmake/cmake/issues/14332
+	set(CPACK_DEBIAN_ARCHIVE_TYPE "gnutar")
 	set(CPACK_PACKAGE_FILE_NAME
 		${CPACK_DEBIAN_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_PACKAGE_ARCHITECTURE})
 endif()

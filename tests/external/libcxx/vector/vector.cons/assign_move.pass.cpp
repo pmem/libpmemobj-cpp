@@ -36,27 +36,25 @@ test(nvobj::pool<struct root> &pop)
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			 r->l = nvobj::make_persistent<C>();
-			 r->lo = nvobj::make_persistent<C>();
-
-			for (int i = 1; i <= 3; ++i)
-			{
-			  r->l->push_back(i);
-			  r->lo->push_back(i);
-			}
-
+			r->l = nvobj::make_persistent<C>();
+			r->lo = nvobj::make_persistent<C>();
 			r->l2 = nvobj::make_persistent<C>();
-			*r->l2 = std::move(*r->l);
 		});
 
-      UT_ASSERT(*r->l2 == *r->lo);
-      UT_ASSERT(r->l->empty());
+		for (int i = 1; i <= 3; ++i) {
+			r->l->push_back(i);
+			r->lo->push_back(i);
+		}
+		*r->l2 = std::move(*r->l);
 
-      nvobj::transaction::run(pop, [&] {
-        nvobj::delete_persistent<C>(r->l);
-        nvobj::delete_persistent<C>(r->lo);
-        nvobj::delete_persistent<C>(r->l2);
-      });
+		UT_ASSERT(*r->l2 == *r->lo);
+		UT_ASSERT(r->l->empty());
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<C>(r->l);
+			nvobj::delete_persistent<C>(r->lo);
+			nvobj::delete_persistent<C>(r->l2);
+		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

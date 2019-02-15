@@ -6,129 +6,98 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: c++98, c++03
+#include "helper_classes.hpp"
+#include "unittest.hpp"
 
-// <vector>
+#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 
-// vector(vector&& c);
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+using C = pmem_exp::vector<move_only>;
+using C2 = pmem_exp::vector<int>;
 
-#include <vector>
-#include <cassert>
+struct root {
+	nvobj::persistent_ptr<C> l, lo, l2;
+	nvobj::persistent_ptr<C2> c1, c2;
+};
 
-#include "test_macros.h"
-#include "MoveOnly.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
-#include "asan_testing.h"
-#include "verbose_assert.h"
-
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-        std::vector<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
-        std::vector<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
-        assert(is_contiguous_container_asan_correct(l));
-        assert(is_contiguous_container_asan_correct(lo));
-        for (int i = 1; i <= 3; ++i)
-        {
-            l.push_back(i);
-            lo.push_back(i);
-        }
-        assert(is_contiguous_container_asan_correct(l));
-        assert(is_contiguous_container_asan_correct(lo));
-        std::vector<MoveOnly, test_allocator<MoveOnly> > l2 = std::move(l);
-        assert(l2 == lo);
-        assert(l.empty());
-        assert(l2.get_allocator() == lo.get_allocator());
-        assert(is_contiguous_container_asan_correct(l2));
-    }
-    {
-        std::vector<MoveOnly, other_allocator<MoveOnly> > l(other_allocator<MoveOnly>(5));
-        std::vector<MoveOnly, other_allocator<MoveOnly> > lo(other_allocator<MoveOnly>(5));
-        assert(is_contiguous_container_asan_correct(l));
-        assert(is_contiguous_container_asan_correct(lo));
-        for (int i = 1; i <= 3; ++i)
-        {
-            l.push_back(i);
-            lo.push_back(i);
-        }
-        assert(is_contiguous_container_asan_correct(l));
-        assert(is_contiguous_container_asan_correct(lo));
-        std::vector<MoveOnly, other_allocator<MoveOnly> > l2 = std::move(l);
-        assert(l2 == lo);
-        assert(l.empty());
-        assert(l2.get_allocator() == lo.get_allocator());
-        assert(is_contiguous_container_asan_correct(l2));
-    }
-    {
-        int a1[] = {1, 3, 7, 9, 10};
-        std::vector<int> c1(a1, a1+sizeof(a1)/sizeof(a1[0]));
-        assert(is_contiguous_container_asan_correct(c1));
-        std::vector<int>::const_iterator i = c1.begin();
-        std::vector<int> c2 = std::move(c1);
-        assert(is_contiguous_container_asan_correct(c2));
-        std::vector<int>::iterator j = c2.erase(i);
-        assert(*j == 3);
-        assert(is_contiguous_container_asan_correct(c2));
-    }
-    {
-        std::vector<MoveOnly, min_allocator<MoveOnly> > l(min_allocator<MoveOnly>{});
-        std::vector<MoveOnly, min_allocator<MoveOnly> > lo(min_allocator<MoveOnly>{});
-        assert(is_contiguous_container_asan_correct(l));
-        assert(is_contiguous_container_asan_correct(lo));
-        for (int i = 1; i <= 3; ++i)
-        {
-            l.push_back(i);
-            lo.push_back(i);
-        }
-        assert(is_contiguous_container_asan_correct(l));
-        assert(is_contiguous_container_asan_correct(lo));
-        std::vector<MoveOnly, min_allocator<MoveOnly> > l2 = std::move(l);
-        assert(l2 == lo);
-        assert(l.empty());
-        assert(l2.get_allocator() == lo.get_allocator());
-        assert(is_contiguous_container_asan_correct(l2));
-    }
-    {
-        int a1[] = {1, 3, 7, 9, 10};
-        std::vector<int, min_allocator<int>> c1(a1, a1+sizeof(a1)/sizeof(a1[0]));
-        assert(is_contiguous_container_asan_correct(c1));
-        std::vector<int, min_allocator<int>>::const_iterator i = c1.begin();
-        std::vector<int, min_allocator<int>> c2 = std::move(c1);
-        assert(is_contiguous_container_asan_correct(c2));
-        std::vector<int, min_allocator<int>>::iterator j = c2.erase(i);
-        assert(*j == 3);
-        assert(is_contiguous_container_asan_correct(c2));
-    }
-    {
-      test_alloc_base::clear();
-      using Vect = std::vector<int, test_allocator<int> >;
-      Vect v(test_allocator<int>(42, 101));
-      assert(test_alloc_base::count == 1);
-      assert(test_alloc_base::copied == 1);
-      assert(test_alloc_base::moved == 0);
-      {
-        const test_allocator<int>& a = v.get_allocator();
-        assert(a.get_data() == 42);
-        assert(a.get_id() == 101);
-      }
-      assert(test_alloc_base::count == 1);
-      test_alloc_base::clear_ctor_counters();
+	START();
 
-      Vect v2 = std::move(v);
-      assert(test_alloc_base::count == 2);
-      assert(test_alloc_base::copied == 0);
-      assert(test_alloc_base::moved == 1);
-      {
-        const test_allocator<int>& a = v.get_allocator();
-        assert(a.get_id() == test_alloc_base::moved_value);
-        assert(a.get_data() == test_alloc_base::moved_value);
-      }
-      {
-        const test_allocator<int>& a = v2.get_allocator();
-        assert(a.get_id() == 101);
-        assert(a.get_data() == 42);
-      }
-    }
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: move", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	{
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->l = nvobj::make_persistent<C>(5U);
+				r->lo = nvobj::make_persistent<C>(5U);
+			});
+			for (int i = 1; i <= 3; ++i) {
+				r->l->push_back(i);
+				r->lo->push_back(i);
+			}
+
+			nvobj::transaction::run(pop, [&] {
+				r->l2 = nvobj::make_persistent<C>(
+					std::move(*r->l));
+			});
+			UT_ASSERT(*r->l2 == *r->lo);
+			UT_ASSERT(r->l->empty());
+
+			nvobj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<C>(r->l);
+				nvobj::delete_persistent<C>(r->lo);
+				nvobj::delete_persistent<C>(r->l2);
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+	{
+		int a1[] = {1, 3, 7, 9, 10};
+		try {
+			nvobj::transaction::run(pop, [&] {
+				r->c1 = nvobj::make_persistent<C2>(
+					a1, a1 + sizeof(a1) / sizeof(a1[0]));
+			});
+
+			C2::const_iterator i = r->c1->begin();
+
+			nvobj::transaction::run(pop, [&] {
+				r->c2 = nvobj::make_persistent<C2>(
+					std::move(*r->c1));
+			});
+
+			C2::iterator j = r->c2->erase(i);
+			UT_ASSERT(*j == 3);
+
+			nvobj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<C2>(r->c1);
+				nvobj::delete_persistent<C2>(r->c2);
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+
+	pop.close();
+
+	return 0;
 }

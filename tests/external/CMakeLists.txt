@@ -221,11 +221,7 @@ add_test_generic(NAME vector_libcxx_size TRACERS none pmemcheck memcheck)
 build_test(vector_libcxx_swap libcxx/vector/vector.capacity/swap.pass.cpp)
 add_test_generic(NAME vector_libcxx_swap TRACERS none pmemcheck memcheck)
 
-# XXX: port libcxx test vector.cons/default_noexcept.pass
-
 # XXX: port libcxx test vector.cons/default_recursive.pass
-
-# XXX: port libcxx test vector.cons/move_noexcept.pass
 
 # XXX: port libcxx test vector.cons/move.pass
 

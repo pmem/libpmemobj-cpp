@@ -6,18 +6,24 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <vector>
-// class vector
-// vector();
+#include "unittest.hpp"
 
-#include <vector>
+#include <libpmemobj++/experimental/vector.hpp>
 
-struct X
-{
-    std::vector<X> q;
+namespace nvobj = pmem::obj;
+namespace pmem_exp = nvobj::experimental;
+
+struct X {
+	pmem_exp::vector<X> q;
 };
 
-int main()
+int
+main()
 {
 }

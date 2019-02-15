@@ -111,7 +111,7 @@ make_persistent(std::size_t N)
 	 * case when transaction is aborted after make_persistent completes and
 	 * we have no way to call destructors.
 	 */
-	for (std::size_t i = 0; i < N; ++i)
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
 		detail::create<I>(data + i);
 
 	return ptr;
@@ -163,7 +163,7 @@ make_persistent()
 	 * case when transaction is aborted after make_persistent completes and
 	 * we have no way to call destructors.
 	 */
-	for (std::size_t i = 0; i < N; ++i)
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
 		detail::create<I>(data + i);
 
 	return ptr;
@@ -204,8 +204,9 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 	 */
 	auto data = ptr.get();
 
-	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(data[N - 1 - i]);
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::destroy<I>(
+			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "
@@ -247,8 +248,9 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 	 */
 	auto data = ptr.get();
 
-	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(data[N - 1 - i]);
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::destroy<I>(
+			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error("failed to delete "

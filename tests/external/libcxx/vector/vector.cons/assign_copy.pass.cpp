@@ -36,10 +36,9 @@ test(nvobj::pool<struct root> &pop)
 		nvobj::transaction::run(pop, [&] {
 			r->v1 = nvobj::make_persistent<C>(3U, 2);
 			r->v2 = nvobj::make_persistent<C>(*r->v1);
-
-			*r->v2 = *r->v1;
 		});
 
+		*r->v2 = *r->v1;
 		UT_ASSERT(*r->v2 == *r->v1);
 
 		nvobj::transaction::run(pop, [&] {

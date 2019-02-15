@@ -122,9 +122,8 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 		}
 		/* validate */
 		try {
+			UT_ASSERTeq((*r->test2)[0].value, 42);
 			nvobj::transaction::run(pop, [&] {
-				UT_ASSERTeq((*r->test2)[0].value, 42);
-
 				nvobj::delete_persistent<vector_type2>(
 					r->test2);
 			});
@@ -143,11 +142,11 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 		}
 		/* validate */
 		try {
-			nvobj::transaction::run(pop, [&] {
-				UT_ASSERTeq((*r->test2)[0].value, 1);
-				UT_ASSERTeq((*r->test2)[1].value, 101);
-				UT_ASSERTeq((*r->test2)[2].value, 42);
+			UT_ASSERTeq((*r->test2)[0].value, 1);
+			UT_ASSERTeq((*r->test2)[1].value, 101);
+			UT_ASSERTeq((*r->test2)[2].value, 42);
 
+			nvobj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<vector_type2>(
 					r->test2);
 			});
@@ -169,10 +168,10 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 		}
 		/* validate */
 		try {
-			nvobj::transaction::run(pop, [&] {
-				UT_ASSERTeq((*r->test3)[0].value, 42);
-				UT_ASSERTeq((*r->test3)[0].moved, 0);
+			UT_ASSERTeq((*r->test3)[0].value, 42);
+			UT_ASSERTeq((*r->test3)[0].moved, 0);
 
+			nvobj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<vector_type3>(
 					r->test3);
 			});
@@ -191,12 +190,12 @@ emplaceable_concept_tests(nvobj::pool<struct root> &pop)
 		}
 		/* validate */
 		try {
-			nvobj::transaction::run(pop, [&] {
-				UT_ASSERTeq((*r->test3)[0].value, 1);
-				UT_ASSERTeq((*r->test3)[1].value, 101);
-				UT_ASSERTeq((*r->test3)[2].value, 42);
-				UT_ASSERTeq((*r->test3)[2].moved, 0);
+			UT_ASSERTeq((*r->test3)[0].value, 1);
+			UT_ASSERTeq((*r->test3)[1].value, 101);
+			UT_ASSERTeq((*r->test3)[2].value, 42);
+			UT_ASSERTeq((*r->test3)[2].moved, 0);
 
+			nvobj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<vector_type3>(
 					r->test3);
 			});

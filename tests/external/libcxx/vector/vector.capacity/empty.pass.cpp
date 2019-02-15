@@ -47,14 +47,9 @@ main(int argc, char *argv[])
 			pop, [&] { r->v = nvobj::make_persistent<C>(); });
 
 		UT_ASSERT(r->v->empty());
-
-		nvobj::transaction::run(
-			pop, [&] { r->v->push_back(C::value_type(1)); });
-
+		r->v->push_back(C::value_type(1));
 		UT_ASSERT(!r->v->empty());
-
-		nvobj::transaction::run(pop, [&] { r->v->clear(); });
-
+		r->v->clear();
 		UT_ASSERT(r->v->empty());
 
 		nvobj::transaction::run(

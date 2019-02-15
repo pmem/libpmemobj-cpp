@@ -42,24 +42,18 @@ main(int argc, char *argv[])
 	auto r = pop.root();
 
 	try {
-		nvobj::transaction::run(pop, [&] {
-			r->d = nvobj::make_persistent<C>();
-			*r->d = {3, 4, 5, 6};
-		});
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
+		nvobj::transaction::run(
+			pop, [&] { r->d = nvobj::make_persistent<C>(); });
+		*r->d = {3, 4, 5, 6};
 
-	try {
-		nvobj::transaction::run(pop, [&] {
-			UT_ASSERT(r->d->size() == 4);
-			UT_ASSERT((*r->d)[0] == 3);
-			UT_ASSERT((*r->d)[1] == 4);
-			UT_ASSERT((*r->d)[2] == 5);
-			UT_ASSERT((*r->d)[3] == 6);
+		UT_ASSERT(r->d->size() == 4);
+		UT_ASSERT((*r->d)[0] == 3);
+		UT_ASSERT((*r->d)[1] == 4);
+		UT_ASSERT((*r->d)[2] == 5);
+		UT_ASSERT((*r->d)[3] == 6);
 
-			nvobj::delete_persistent<C>(r->d);
-		});
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->d); });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

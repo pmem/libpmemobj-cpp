@@ -49,16 +49,15 @@ test(nvobj::pool<struct root> &pop, typename C::size_type n)
 	}
 	/* validate */
 	try {
-		nvobj::transaction::run(pop, [&] {
-			UT_ASSERTeq(r->pptr->size(), n);
+		UT_ASSERTeq(r->pptr->size(), n);
 
-			for (typename C::const_iterator i = r->pptr->begin(),
-							e = r->pptr->end();
-			     i != e; ++i)
-				UT_ASSERTeq(*i, val);
+		for (typename C::const_iterator i = r->pptr->begin(),
+						e = r->pptr->end();
+		     i != e; ++i)
+			UT_ASSERTeq(*i, val);
 
-			nvobj::delete_persistent<C>(r->pptr);
-		});
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(r->pptr); });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

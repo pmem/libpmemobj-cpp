@@ -35,18 +35,14 @@ test(nvobj::pool<struct root> &pop)
 			r->v = nvobj::make_persistent<vector_type>(
 				std::initializer_list<int>{3, 4, 5, 6});
 		});
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
 
-	try {
+		UT_ASSERT(r->v->size() == 4);
+		UT_ASSERT((*r->v)[0] == 3);
+		UT_ASSERT((*r->v)[1] == 4);
+		UT_ASSERT((*r->v)[2] == 5);
+		UT_ASSERT((*r->v)[3] == 6);
+
 		nvobj::transaction::run(pop, [&] {
-			UT_ASSERT(r->v->size() == 4);
-			UT_ASSERT((*r->v)[0] == 3);
-			UT_ASSERT((*r->v)[1] == 4);
-			UT_ASSERT((*r->v)[2] == 5);
-			UT_ASSERT((*r->v)[3] == 6);
-
 			nvobj::delete_persistent<vector_type>(r->v);
 		});
 	} catch (std::exception &e) {

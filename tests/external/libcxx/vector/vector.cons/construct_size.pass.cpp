@@ -41,25 +41,19 @@ void
 test(nvobj::pool<struct root> &pop, nvobj::persistent_ptr<C> &pptr,
      typename C::size_type n)
 {
-	/* construct */
 	try {
 		nvobj::transaction::run(
 			pop, [&] { pptr = nvobj::make_persistent<C>(n); });
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
-	/* validate */
-	try {
-		nvobj::transaction::run(pop, [&] {
-			UT_ASSERTeq(pptr->size(), n);
 
-			for (typename C::const_iterator i = pptr->begin(),
-							e = pptr->end();
-			     i != e; ++i)
-				UT_ASSERT(*i == typename C::value_type());
+		UT_ASSERTeq(pptr->size(), n);
 
-			nvobj::delete_persistent<C>(pptr);
-		});
+		for (typename C::const_iterator i = pptr->begin(),
+						e = pptr->end();
+		     i != e; ++i)
+			UT_ASSERT(*i == typename C::value_type());
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<C>(pptr); });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

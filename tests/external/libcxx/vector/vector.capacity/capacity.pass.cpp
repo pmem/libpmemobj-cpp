@@ -65,8 +65,7 @@ main(int argc, char *argv[])
 
 			UT_ASSERT(r->v->capacity() == 100);
 
-			nvobj::transaction::run(pop,
-						[&] { r->v->push_back(0); });
+			r->v->push_back(0);
 
 			UT_ASSERT(r->v->capacity() > 101);
 

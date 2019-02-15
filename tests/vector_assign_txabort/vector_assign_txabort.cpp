@@ -52,11 +52,9 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 
 	UT_ASSERTeq(r->v->size(), count);
 
-	nvobj::transaction::run(pop, [&] {
-		for (unsigned i = 0; i < count; ++i) {
-			UT_ASSERTeq((*r->v)[i], value);
-		}
-	});
+	for (unsigned i = 0; i < count; ++i) {
+		UT_ASSERTeq((*r->v)[i], value);
+	}
 }
 
 /**

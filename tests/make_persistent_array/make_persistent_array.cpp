@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include <libpmemobj++/make_persistent_array.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
@@ -115,7 +116,7 @@ test_make_one_d(nvobj::pool_base &pop)
 	try {
 		nvobj::transaction::run(pop, [&] {
 			auto pfoo = nvobj::make_persistent<foo[]>(5);
-			for (int i = 0; i < 5; ++i)
+			for (nvobj::p<int> i = 0; i < 5; ++i)
 				pfoo[i].check_foo();
 
 			nvobj::delete_persistent<foo[]>(pfoo, 5);

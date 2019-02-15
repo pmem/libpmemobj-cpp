@@ -62,24 +62,20 @@ main(int argc, char *argv[])
 		UT_ASSERT(r->v->size() == 200);
 		UT_ASSERT(r->v->capacity() >= 200);
 
-		nvobj::transaction::run(pop, [&] {
-			for (unsigned i = 0; i < 50; ++i)
-				UT_ASSERT((*r->v)[i] == 0);
-			for (unsigned i = 50; i < 200; ++i)
-				UT_ASSERT((*r->v)[i] == 1);
-		});
+		for (unsigned i = 0; i < 50; ++i)
+			UT_ASSERT((*r->v)[i] == 0);
+		for (unsigned i = 50; i < 200; ++i)
+			UT_ASSERT((*r->v)[i] == 1);
 
 		/* test count == capacity() */
 		r->v->resize(r->v->capacity(), 1);
 		UT_ASSERT(r->v->size() == 200);
 		UT_ASSERT(r->v->capacity() >= 200);
 
-		nvobj::transaction::run(pop, [&] {
-			for (unsigned i = 0; i < 50; ++i)
-				UT_ASSERT((*r->v)[i] == 0);
-			for (unsigned i = 50; i < 200; ++i)
-				UT_ASSERT((*r->v)[i] == 1);
-		});
+		for (unsigned i = 0; i < 50; ++i)
+			UT_ASSERT((*r->v)[i] == 0);
+		for (unsigned i = 50; i < 200; ++i)
+			UT_ASSERT((*r->v)[i] == 1);
 
 		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<C>(r->v); });

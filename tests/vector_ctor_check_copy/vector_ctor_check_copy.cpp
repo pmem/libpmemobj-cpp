@@ -93,7 +93,6 @@ main(int argc, char *argv[])
 		UT_ASSERTeq(r->pptr1->const_at(1).moved, 0);
 		UT_ASSERTeq(r->pptr1->const_at(2).moved, 0);
 		UT_ASSERTeq(r->pptr1->const_at(3).moved, 0);
-
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
@@ -122,7 +121,6 @@ main(int argc, char *argv[])
 		UT_ASSERTeq(r->pptr2->const_at(1).moved, 0);
 		UT_ASSERTeq(r->pptr2->const_at(2).moved, 0);
 		UT_ASSERTeq(r->pptr2->const_at(3).moved, 0);
-
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

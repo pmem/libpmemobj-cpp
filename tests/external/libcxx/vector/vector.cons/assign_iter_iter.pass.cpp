@@ -44,9 +44,9 @@ test_emplaceable_concept(nvobj::pool<struct root> &pop)
 			});
 
 			r->v->assign(It(arr1), It(std::end(arr1)));
+			UT_ASSERT((*r->v)[0].value == 42);
 
 			nvobj::transaction::run(pop, [&] {
-				UT_ASSERT((*r->v)[0].value == 42);
 				nvobj::delete_persistent<C>(r->v);
 			});
 		} catch (std::exception &e) {
@@ -59,12 +59,11 @@ test_emplaceable_concept(nvobj::pool<struct root> &pop)
 			});
 
 			r->v->assign(It(arr2), It(std::end(arr2)));
+			UT_ASSERT((*r->v)[0].value == 1);
+			UT_ASSERT((*r->v)[1].value == 101);
+			UT_ASSERT((*r->v)[2].value == 42);
 
 			nvobj::transaction::run(pop, [&] {
-				UT_ASSERT((*r->v)[0].value == 1);
-				UT_ASSERT((*r->v)[1].value == 101);
-				UT_ASSERT((*r->v)[2].value == 42);
-
 				nvobj::delete_persistent<C>(r->v);
 			});
 		} catch (std::exception &e) {
@@ -81,11 +80,10 @@ test_emplaceable_concept(nvobj::pool<struct root> &pop)
 			});
 
 			r->v->assign(It(arr1), It(std::end(arr1)));
+			UT_ASSERT((*r->v)[0].value == 42);
+			UT_ASSERT((*r->v)[0].moved == 0);
 
 			nvobj::transaction::run(pop, [&] {
-				UT_ASSERT((*r->v)[0].value == 42);
-				UT_ASSERT((*r->v)[0].moved == 0);
-
 				nvobj::delete_persistent<C>(r->v);
 			});
 		} catch (std::exception &e) {
@@ -98,13 +96,12 @@ test_emplaceable_concept(nvobj::pool<struct root> &pop)
 			});
 
 			r->v->assign(It(arr2), It(std::end(arr2)));
+			UT_ASSERT((*r->v)[0].value == 1);
+			UT_ASSERT((*r->v)[1].value == 101);
+			UT_ASSERT((*r->v)[2].value == 42);
+			UT_ASSERT((*r->v)[2].moved == 0);
 
 			nvobj::transaction::run(pop, [&] {
-				UT_ASSERT((*r->v)[0].value == 1);
-				UT_ASSERT((*r->v)[1].value == 101);
-				UT_ASSERT((*r->v)[2].value == 42);
-				UT_ASSERT((*r->v)[2].moved == 0);
-
 				nvobj::delete_persistent<C>(r->v);
 			});
 		} catch (std::exception &e) {

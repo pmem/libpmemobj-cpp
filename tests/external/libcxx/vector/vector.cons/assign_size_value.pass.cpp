@@ -43,12 +43,10 @@ template <typename Vec>
 void
 test(nvobj::pool<struct root> &pop, Vec &v)
 {
-	v.assign(5, 6);
-	UT_ASSERT(v.size() == 5);
-
 	try {
-		nvobj::transaction::run(
-			pop, [&] { std::all_of(v.begin(), v.end(), is6); });
+		v.assign(5, 6);
+		UT_ASSERT(v.size() == 5);
+		std::all_of(v.begin(), v.end(), is6);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

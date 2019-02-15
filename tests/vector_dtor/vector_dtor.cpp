@@ -77,22 +77,19 @@ test_dtor(nvobj::pool<struct root> &pop)
 
 	using size_type = vector_type::size_type;
 	const size_type size = 100;
-	{
-		try {
-			nvobj::transaction::run(pop, [&] {
-				r->pptr = nvobj::make_persistent<vector_type>(
-					size);
-				UT_ASSERTeq(r->pptr->size(), X::count);
-				UT_ASSERTeq(X::count, size);
-			});
-		} catch (std::exception &e) {
-			UT_FATALexc(e);
-		}
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->pptr = nvobj::make_persistent<vector_type>(size);
+		});
+		UT_ASSERTeq(r->pptr->size(), X::count);
+		UT_ASSERTeq(X::count, size);
 
 		r->pptr->~vector();
 
 		UT_ASSERT(r->pptr->empty());
 		UT_ASSERTeq(X::count, 0);
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
 	}
 }
 

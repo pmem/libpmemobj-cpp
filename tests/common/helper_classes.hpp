@@ -78,6 +78,34 @@ private:
 int default_constructible_only::count = 0;
 
 /**
+ * copy_assignable_copy_insertable
+ * Instance of that type satisfies requirements of CopyAssignable and
+ * CopyInsertable concepts.
+ */
+template <typename T>
+struct copy_assignable_copy_insertable {
+	T value;
+	int copied = 0;
+	int copied_assigned = 0;
+
+	/* emplace ctor is need to create first object */
+	copy_assignable_copy_insertable(const T &val) : value(val){};
+
+	copy_assignable_copy_insertable(
+		const copy_assignable_copy_insertable &other)
+	    : value(other.value), copied(other.copied + 1){};
+
+	copy_assignable_copy_insertable &
+	operator=(const copy_assignable_copy_insertable &other)
+	{
+		copied = other.copied;
+		copied_assigned = other.copied_assigned + 1;
+		value = other.value;
+		return *this;
+	}
+};
+
+/**
  * emplace_constructible - helper class
  * Instance of that type can be constructed in uninitialized storage
  */
@@ -247,6 +275,61 @@ struct move_only {
 	operator==(const move_only &other) const
 	{
 		return value == other.value;
+	}
+};
+
+/**
+ *  move_assignable - helper class
+ *  Instance of satisfies MoveAssignable concept requirements.
+ */
+struct move_assignable {
+	int value;
+
+	/* emplace ctor is need to create first object */
+	move_assignable(int val = 0) : value(val)
+	{
+	}
+
+	move_assignable &
+	operator=(move_assignable &&other)
+	{
+		value = other.value;
+		other.value = 0;
+		return *this;
+	}
+};
+
+/**
+ *  copy_insertable - helper class
+ *  Instance of satisfies CopyInsertable concept requirements.
+ */
+struct copy_insertable {
+	int value;
+
+	/* emplace ctor is need to create first object */
+	copy_insertable(int val) : value(val)
+	{
+	}
+
+	copy_insertable(const copy_insertable &other) : value(other.value)
+	{
+	}
+};
+
+/**
+ *  move_insertable - helper class
+ *  Instance of satisfies MoveInsertable concept requirements.
+ */
+struct move_insertable {
+	int value;
+
+	/* emplace ctor is need to create first object */
+	move_insertable(int val) : value(val)
+	{
+	}
+
+	move_insertable(const copy_insertable &&other) : value(other.value)
+	{
 	}
 };
 

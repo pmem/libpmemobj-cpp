@@ -60,6 +60,7 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 		r->v->crbegin();
 		r->v->crend();
 
+		(*r->v)[0];
 		r->v->at(0);
 		r->v->data();
 		r->v->front();
@@ -103,11 +104,27 @@ check_add_to_tx(nvobj::pool<struct root> &pop)
 		nvobj::transaction::run(pop, [&] { r->v->front() = 3; });
 		nvobj::transaction::run(pop, [&] { r->v->back() = 4; });
 		nvobj::transaction::run(pop, [&] { *r->v->begin() = 5; });
-		nvobj::transaction::run(pop, [&] { *r->v->rend() = 6; });
-		nvobj::transaction::run(pop, [&] { r->v->rbegin(); });
+		nvobj::transaction::run(pop, [&] { *(r->v->end() - 1) = 6; });
+		nvobj::transaction::run(pop, [&] { *r->v->rbegin() = 7; });
+		nvobj::transaction::run(pop, [&] { *(r->v->rend() - 1) = 8; });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+}
+
+void
+assert_out_of_range(pmem::obj::pool<struct root> &pop,
+		    std::function<void(void)> f)
+{
+	bool exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] { f(); });
+	} catch (std::out_of_range &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
 }
 
 /*
@@ -121,30 +138,65 @@ check_out_of_range(nvobj::pool<struct root> &pop)
 
 	auto size = r->v->size();
 
-	/* at() */
 	try {
-		nvobj::transaction::run(pop, [&] { r->v->at(size); });
-		UT_ASSERT(0);
-	} catch (std::out_of_range &) {
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
+		assert_out_of_range(pop, [&] { r->v->at(size); });
 
-	/* const at() */
-	try {
-		nvobj::transaction::run(
+		assert_out_of_range(
 			pop, [&] { const_cast<const C &>(*r->v).at(size); });
-		UT_ASSERT(0);
-	} catch (std::out_of_range &) {
+
+		assert_out_of_range(pop, [&] { r->v->const_at(size); });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+}
 
-	/* const_at() */
+void
+assert_tx_abort(pmem::obj::pool<struct root> &pop, std::function<void(void)> f)
+{
+	bool exception_thrown = false;
 	try {
-		nvobj::transaction::run(pop, [&] { r->v->const_at(size); });
-		UT_ASSERT(0);
-	} catch (std::out_of_range &) {
+		nvobj::transaction::run(pop, [&] {
+			f();
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+}
+
+/* Checks if vector's state is reverted when transaction aborts. */
+void
+check_tx_abort(pmem::obj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		assert_tx_abort(pop, [&] { (*r->v)[0] = 5; });
+		UT_ASSERTeq((*r->v)[0], 1);
+
+		assert_tx_abort(pop, [&] { r->v->at(0) = 5; });
+		UT_ASSERT(r->v->at(0) == 1);
+
+		assert_tx_abort(pop, [&] { *r->v->begin() = 5; });
+		UT_ASSERT(*r->v->begin() == 1);
+
+		assert_tx_abort(pop, [&] { *(r->v->end() - 1) = 5; });
+		UT_ASSERT(*(r->v->end() - 1) == 1);
+
+		assert_tx_abort(pop, [&] { *r->v->rbegin() = 5; });
+		UT_ASSERT(*r->v->rbegin() == 1);
+
+		assert_tx_abort(pop, [&] { *(r->v->rend() - 1) = 5; });
+		UT_ASSERT(*(r->v->rend() - 1) == 1);
+
+		assert_tx_abort(pop, [&] { r->v->front() = 5; });
+		UT_ASSERT(r->v->front() == 1);
+
+		assert_tx_abort(pop, [&] { r->v->back() = 5; });
+		UT_ASSERT(r->v->back() == 1);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
@@ -168,11 +220,12 @@ main(int argc, char *argv[])
 	auto r = pop.root();
 
 	nvobj::transaction::run(
-		pop, [&] { r->v = nvobj::make_persistent<C>(10U, 5); });
+		pop, [&] { r->v = nvobj::make_persistent<C>(10U, 1); });
 
 	check_access_out_of_tx(pop);
-	check_add_to_tx(pop);
 	check_out_of_range(pop);
+	check_tx_abort(pop);
+	check_add_to_tx(pop);
 
 	nvobj::delete_persistent_atomic<C>(r->v);
 

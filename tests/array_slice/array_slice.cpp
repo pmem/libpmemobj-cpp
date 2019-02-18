@@ -97,6 +97,27 @@ struct TestSuccess {
 
 		try {
 			/* Out of range */
+			c.range(5, 2, 1);
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
+			/* Out of range */
+			c.range(5, 2, 999);
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
+			/* Out of range */
+			c.range(5, 2, std::numeric_limits<std::size_t>::max());
+			UT_ASSERT(0);
+		} catch (...) {
+		}
+
+		try {
+			/* Out of range */
 			static_cast<const C &>(c).range(5, 2);
 			UT_ASSERT(0);
 		} catch (...) {
@@ -110,6 +131,24 @@ struct TestSuccess {
 
 		try {
 			c.crange(4, 2);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			c.range(4, 2, 1);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			c.range(4, 2, 999);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			c.range(4, 2, std::numeric_limits<std::size_t>::max());
 		} catch (...) {
 			UT_ASSERT(0);
 		}
@@ -255,13 +294,14 @@ struct TestAbort {
 };
 
 struct TestRanges {
+	template <std::size_t snapshot_size>
 	void
 	run()
 	{
 		int ex1[] = {1, 1, 1, 1, 1};
 		int ex2[] = {2, 2, 2, 2, 2};
 
-		auto slice = c.range(0, 7, 1);
+		auto slice = c.range(0, 7, snapshot_size);
 		auto cslice = static_cast<const C &>(c).range(0, 7);
 
 		UT_ASSERT(slice.begin() == cslice.begin());
@@ -467,7 +507,44 @@ run_test_ranges(pmem::obj::pool<struct root> &pop)
 
 	try {
 		pmem::obj::transaction::run(pop, [&] {
-			r->ptr_r->run();
+			r->ptr_r->run<1>();
+
+			pmem::obj::delete_persistent<TestRanges>(r->ptr_r);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			r->ptr_r = pmem::obj::make_persistent<TestRanges>();
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			r->ptr_r->run<
+				std::numeric_limits<std::size_t>::max()>();
+
+			pmem::obj::delete_persistent<TestRanges>(r->ptr_r);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			r->ptr_r = pmem::obj::make_persistent<TestRanges>();
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			r->ptr_r->run<999>();
 
 			pmem::obj::delete_persistent<TestRanges>(r->ptr_r);
 		});

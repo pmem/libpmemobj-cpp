@@ -6,84 +6,102 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// basic_string(const charT* s, const Allocator& a = Allocator());
+#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-#include <string>
-#include <stdexcept>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
+namespace pmem_exp = pmem::obj::experimental;
+namespace nvobj = pmem::obj;
 
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<pmem_exp::string> s1;
+};
 
 template <class charT>
 void
-test(const charT* s)
+test(const charT *s, pmem::obj::pool<root> &pop)
 {
-    typedef std::basic_string<charT, std::char_traits<charT>, test_allocator<charT> > S;
-    typedef typename S::traits_type T;
-    typedef typename S::allocator_type A;
-    std::size_t n = T::length(s);
-    S s2(s);
-    LIBCPP_ASSERT(s2.__invariants());
-    assert(s2.size() == n);
-    assert(T::compare(s2.data(), s, n) == 0);
-    assert(s2.get_allocator() == A());
-    assert(s2.capacity() >= s2.size());
+	typedef pmem_exp::basic_string<charT, std::char_traits<charT>> S;
+	typedef typename S::traits_type T;
+	std::size_t n = T::length(s);
+
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->s1 = nvobj::make_persistent<pmem_exp::string>(s);
+	});
+
+	auto &s2 = *r->s1;
+
+	UT_ASSERT(s2.size() == n);
+	UT_ASSERT(T::compare(s2.c_str(), s, n) == 0);
+
+	nvobj::transaction::run(pop, [&] {
+		UT_ASSERT(s2.c_str() == s2.data());
+		UT_ASSERT(s2.c_str() == s2.cdata());
+		UT_ASSERT(s2.c_str() ==
+			  static_cast<const pmem_exp::string &>(s2).data());
+	});
+	UT_ASSERT(s2.capacity() >= s2.size());
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<pmem_exp::string>(r->s1);
+	});
 }
 
-template <class charT, class A>
 void
-test(const charT* s, const A& a)
+run(pmem::obj::pool<root> &pop)
 {
-    typedef std::basic_string<charT, std::char_traits<charT>, A> S;
-    typedef typename S::traits_type T;
-    std::size_t n = T::length(s);
-    S s2(s, a);
-    LIBCPP_ASSERT(s2.__invariants());
-    assert(s2.size() == n);
-    assert(T::compare(s2.data(), s, n) == 0);
-    assert(s2.get_allocator() == a);
-    assert(s2.capacity() >= s2.size());
+	try {
+		test("", pop);
+		test("1", pop);
+		test("1234567980", pop);
+		test("123456798012345679801234567980"
+		     "123456798012345679801234567980",
+		     pop);
+		test("12345679801234567980123456798012345679801234567980"
+		     "12345679801234567980123456798012345679801234567980"
+		     "12345679801234567980",
+		     pop);
+
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef test_allocator<char> A;
+	START();
 
-    test("");
-    test("", A(2));
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
 
-    test("1");
-    test("1", A(2));
+	const char *path = argv[1];
 
-    test("1234567980");
-    test("1234567980", A(2));
+	pmem::obj::pool<root> pop;
 
-    test("123456798012345679801234567980123456798012345679801234567980");
-    test("123456798012345679801234567980123456798012345679801234567980", A(2));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef min_allocator<char> A;
+	try {
+		pop = pmem::obj::pool<root>::create(path, "string_test",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
 
-    test("");
-    test("", A());
+	run(pop);
 
-    test("1");
-    test("1", A());
+	pop.close();
 
-    test("1234567980");
-    test("1234567980", A());
-
-    test("123456798012345679801234567980123456798012345679801234567980");
-    test("123456798012345679801234567980123456798012345679801234567980", A());
-    }
-#endif
+	return 0;
 }

@@ -268,6 +268,33 @@ add_test_generic(NAME vector_libcxx_clear TRACERS none pmemcheck memcheck)
 build_test(vector_libcxx_special_swap libcxx/vector/vector.special/swap.pass.cpp)
 add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck)
 
+build_test(string_libcxx_cons_initializer_list libcxx/basic_string/string.cons/initializer_list.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_initializer_list TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_iter_alloc libcxx/basic_string/string.cons/iter_alloc.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_iter_alloc TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_move libcxx/basic_string/string.cons/move.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_move TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_pointer_alloc libcxx/basic_string/string.cons/pointer_alloc.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_pointer_alloc TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_pointer_size_alloc libcxx/basic_string/string.cons/pointer_size_alloc.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_pointer_size_alloc TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_size_char_alloc libcxx/basic_string/string.cons/size_char_alloc.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_size_char_alloc TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_copy libcxx/basic_string/string.cons/copy.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_copy TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_cons_substr libcxx/basic_string/string.cons/substr.pass.cpp)
+add_test_generic(NAME string_libcxx_cons_substr TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_dtor_noexcept libcxx/basic_string/string.cons/dtor_noexcept.pass.cpp)
+add_test_generic(NAME string_libcxx_dtor_noexcept TRACERS none)
+
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.string_view.pass
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.ptr.pass
 # XXX: port libcxx test basic_string/string.starts_with/starts_with.char.pass
@@ -275,16 +302,19 @@ add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.ptr.pass
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.string_view.pass
 # XXX: port libcxx test basic_string/string.ends_with/ends_with.char.pass
-# XXX: port libcxx test basic_string/string.access/db_front.pass
-# XXX: port libcxx test basic_string/string.access/db_cindex.pass
-# XXX: port libcxx test basic_string/string.access/at.pass
-# XXX: port libcxx test basic_string/string.access/index.pass
-# XXX: port libcxx test basic_string/string.access/back.pass
-# XXX: port libcxx test basic_string/string.access/db_back.pass
-# XXX: port libcxx test basic_string/string.access/db_index.pass
-# XXX: port libcxx test basic_string/string.access/front.pass
-# XXX: port libcxx test basic_string/string.access/db_cback.pass
-# XXX: port libcxx test basic_string/string.access/db_cfront.pass
+
+build_test(string_libcxx_access_at libcxx/basic_string/string.access/at.pass.cpp)
+add_test_generic(NAME string_libcxx_access_at TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_access_back libcxx/basic_string/string.access/back.pass.cpp)
+add_test_generic(NAME string_libcxx_access_back TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_access_front libcxx/basic_string/string.access/front.pass.cpp)
+add_test_generic(NAME string_libcxx_access_front TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_access_index libcxx/basic_string/string.access/index.pass.cpp)
+add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck)
+
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/pointer_string.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_pointer.pass
 # XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_string_view.pass
@@ -463,20 +493,11 @@ add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck
 # XXX: port libcxx test basic_string/string.capacity/over_max_size.pass
 # XXX: port libcxx test basic_string/string.cons/copy_assignment.pass
 # XXX: port libcxx test basic_string/string.cons/string_view_assignment.pass
-# XXX: port libcxx test basic_string/string.cons/iter_alloc.pass
 # XXX: port libcxx test basic_string/string.cons/T_size_size.pass
 # XXX: port libcxx test basic_string/string.cons/brace_assignment.pass
-# XXX: port libcxx test basic_string/string.cons/substr.pass
-# XXX: port libcxx test basic_string/string.cons/move.pass
-# XXX: port libcxx test basic_string/string.cons/dtor_noexcept.pass
-# XXX: port libcxx test basic_string/string.cons/pointer_alloc.pass
 # XXX: port libcxx test basic_string/string.cons/char_assignment.pass
-# XXX: port libcxx test basic_string/string.cons/pointer_size_alloc.pass
-# XXX: port libcxx test basic_string/string.cons/copy.pass
 # XXX: port libcxx test basic_string/string.cons/string_view.pass
 # XXX: port libcxx test basic_string/string.cons/initializer_list_assignment.pass
 # XXX: port libcxx test basic_string/string.cons/pointer_assignment.pass
-# XXX: port libcxx test basic_string/string.cons/initializer_list.pass
 # XXX: port libcxx test basic_string/string.cons/string_view.fail
-# XXX: port libcxx test basic_string/string.cons/size_char_alloc.pass
 # XXX: port libcxx test basic_string/string.cons/move_assignment.pass

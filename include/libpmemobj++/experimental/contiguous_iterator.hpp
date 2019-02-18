@@ -204,77 +204,6 @@ protected:
 	Pointer ptr;
 };
 
-template <typename T>
-struct const_contiguous_iterator;
-
-/**
- * This struct provides comparison operators between const_contiguous_iterator
- * for specified type (as all iterators can be converted to const_iterator this
- * allows to compare all of them).
- */
-template <typename T>
-struct operator_base {
-	/**
-	 * Non-member equal operator.
-	 */
-	friend bool
-	operator==(const const_contiguous_iterator<T> &lhs,
-		   const const_contiguous_iterator<T> &rhs)
-	{
-		return lhs.get_ptr() == rhs.get_ptr();
-	}
-
-	/**
-	 * Non-member not equal operator.
-	 */
-	friend bool
-	operator!=(const const_contiguous_iterator<T> &lhs,
-		   const const_contiguous_iterator<T> &rhs)
-	{
-		return !(lhs == rhs);
-	}
-
-	/**
-	 * Non-member less than operator.
-	 */
-	friend bool
-	operator<(const const_contiguous_iterator<T> &lhs,
-		  const const_contiguous_iterator<T> &rhs)
-	{
-		return lhs.get_ptr() < rhs.get_ptr();
-	}
-
-	/**
-	 * Non-member greater than operator.
-	 */
-	friend bool
-	operator>(const const_contiguous_iterator<T> &lhs,
-		  const const_contiguous_iterator<T> &rhs)
-	{
-		return lhs.get_ptr() > rhs.get_ptr();
-	}
-
-	/**
-	 * Non-member less or equal operator.
-	 */
-	friend bool
-	operator<=(const const_contiguous_iterator<T> &lhs,
-		   const const_contiguous_iterator<T> &rhs)
-	{
-		return !(lhs > rhs);
-	}
-
-	/**
-	 * Non-member greater or equal operator.
-	 */
-	friend bool
-	operator>=(const const_contiguous_iterator<T> &lhs,
-		   const const_contiguous_iterator<T> &rhs)
-	{
-		return !(lhs < rhs);
-	}
-};
-
 /**
  * Non-const iterator which adds elements to a transaction in a bulk.
  *
@@ -292,8 +221,7 @@ struct operator_base {
  */
 template <typename T>
 struct range_snapshotting_iterator
-    : public contiguous_iterator<range_snapshotting_iterator<T>, T &, T *>,
-      public operator_base<T> {
+    : public contiguous_iterator<range_snapshotting_iterator<T>, T &, T *> {
 	using iterator_category = std::random_access_iterator_tag;
 	using value_type = T;
 	using difference_type = std::ptrdiff_t;
@@ -319,6 +247,14 @@ struct range_snapshotting_iterator
 
 		if (snapshot_size > 0)
 			snapshot_range(ptr);
+	}
+
+	/**
+	 * Conversion operator to const T*.
+	 */
+	operator const T *()
+	{
+		return this->ptr;
 	}
 
 	/**
@@ -422,8 +358,7 @@ private:
  */
 template <typename T>
 struct basic_contiguous_iterator
-    : public contiguous_iterator<basic_contiguous_iterator<T>, T &, T *>,
-      public operator_base<T> {
+    : public contiguous_iterator<basic_contiguous_iterator<T>, T &, T *> {
 	using iterator_category = std::random_access_iterator_tag;
 	using value_type = T;
 	using difference_type = std::ptrdiff_t;
@@ -438,6 +373,14 @@ struct basic_contiguous_iterator
 	 */
 	basic_contiguous_iterator(pointer ptr = nullptr) : base_type(ptr)
 	{
+	}
+
+	/**
+	 * Conversion operator to const T*.
+	 */
+	operator const T *()
+	{
+		return this->ptr;
 	}
 
 	/**
@@ -476,55 +419,6 @@ struct basic_contiguous_iterator
 	 */
 	friend void
 	swap(basic_contiguous_iterator &lhs, basic_contiguous_iterator &rhs)
-	{
-		std::swap(lhs.ptr, rhs.ptr);
-	}
-};
-
-/**
- * Const iterator.
- */
-template <typename T>
-struct const_contiguous_iterator
-    : public contiguous_iterator<const_contiguous_iterator<T>, const T &,
-				 const T *>,
-      public operator_base<T> {
-	using iterator_category = std::random_access_iterator_tag;
-	using value_type = T;
-	using difference_type = std::ptrdiff_t;
-	using reference = const T &;
-	using pointer = const T *;
-	using base_type = contiguous_iterator<const_contiguous_iterator<T>,
-					      reference, pointer>;
-
-	/**
-	 * Constructor taking pointer as argument.
-	 */
-	const_contiguous_iterator(pointer ptr = nullptr) : base_type(ptr)
-	{
-	}
-
-	/**
-	 * Conversion operator from non-const iterator.
-	 */
-	const_contiguous_iterator(const basic_contiguous_iterator<T> &other)
-	    : base_type(other.get_ptr())
-	{
-	}
-
-	/**
-	 * Conversion operator from non-const iterator.
-	 */
-	const_contiguous_iterator(const range_snapshotting_iterator<T> &other)
-	    : base_type(other.get_ptr())
-	{
-	}
-
-	/**
-	 * Non-member swap function.
-	 */
-	friend void
-	swap(const_contiguous_iterator &lhs, const_contiguous_iterator &rhs)
 	{
 		std::swap(lhs.ptr, rhs.ptr);
 	}

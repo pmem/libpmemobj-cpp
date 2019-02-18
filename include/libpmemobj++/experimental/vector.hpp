@@ -78,7 +78,7 @@ public:
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
 	using iterator = basic_contiguous_iterator<T>;
-	using const_iterator = const_contiguous_iterator<T>;
+	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 

@@ -77,9 +77,7 @@ main()
 				pmem_exp::basic_contiguous_iterator<T>>::value),
 			"");
 		static_assert(
-			(std::is_same<
-				C::const_iterator,
-				pmem_exp::const_contiguous_iterator<T>>::value),
+			(std::is_same<C::const_iterator, const T *>::value),
 			"");
 		test_iterators<C>();
 		static_assert((std::is_same<C::pointer, T *>::value), "");
@@ -130,9 +128,7 @@ main()
 				pmem_exp::basic_contiguous_iterator<T>>::value),
 			"");
 		static_assert(
-			(std::is_same<
-				C::const_iterator,
-				pmem_exp::const_contiguous_iterator<T>>::value),
+			(std::is_same<C::const_iterator, const T *>::value),
 			"");
 		test_iterators<C>();
 		static_assert((std::is_same<C::pointer, T *>::value), "");

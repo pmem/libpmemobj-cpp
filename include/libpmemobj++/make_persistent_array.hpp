@@ -100,6 +100,12 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
 			"failed to allocate persistent memory array");
 
 	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
+	/*
 	 * When an exception is thrown from one of the constructors
 	 * we don't perform any cleanup - i.e. we don't call destructors
 	 * (unlike new[] operator), we only rely on transaction abort.
@@ -107,8 +113,8 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
 	 * case when transaction is aborted after make_persistent completes and
 	 * we have no way to call destructors.
 	 */
-	for (std::size_t i = 0; i < N; ++i)
-		detail::create<I>(ptr.get() + i);
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::create<I>(data + i);
 
 	return ptr;
 }
@@ -147,6 +153,12 @@ make_persistent(allocation_flag flag = allocation_flag::none())
 			"failed to allocate persistent memory array");
 
 	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
+	/*
 	 * When an exception is thrown from one of the constructors
 	 * we don't perform any cleanup - i.e. we don't call destructors
 	 * (unlike new[] operator), we only rely on transaction abort.
@@ -154,8 +166,8 @@ make_persistent(allocation_flag flag = allocation_flag::none())
 	 * case when transaction is aborted after make_persistent completes and
 	 * we have no way to call destructors.
 	 */
-	for (std::size_t i = 0; i < N; ++i)
-		detail::create<I>(ptr.get() + i);
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::create<I>(data + i);
 
 	return ptr;
 }
@@ -188,8 +200,15 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 	if (ptr == nullptr)
 		return;
 
-	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::destroy<I>(
+			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error(
@@ -224,8 +243,15 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 	if (ptr == nullptr)
 		return;
 
-	for (std::size_t i = 0; i < N; ++i)
-		detail::destroy<I>(ptr[N - 1 - i]);
+	/*
+	 * cache raw pointer to data - using persistent_ptr.get() in a loop
+	 * is expensive.
+	 */
+	auto data = ptr.get();
+
+	for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
+		detail::destroy<I>(
+			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
 		throw transaction_free_error(

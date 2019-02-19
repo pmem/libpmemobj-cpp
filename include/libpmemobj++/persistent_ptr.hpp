@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018, Intel Corporation
+ * Copyright 2015-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -177,17 +177,13 @@ public:
 	}
 
 	/**
-	 * Array access operator. This function template participates in
-	 * overload resolution only if 'I' satisfies requirements of
-	 * is_integral.
+	 * Array access operator.
 	 *
 	 * Contains run-time bounds checking for static arrays.
 	 */
-	template <typename I,
-		  typename std::enable_if<std::is_integral<I>::value,
-					  int>::type = 0>
-	typename pmem::detail::sp_array_access<T>::type operator[](I i) const
-		noexcept
+	template <typename = typename std::enable_if<!std::is_void<T>::value>>
+	typename pmem::detail::sp_array_access<T>::type
+	operator[](std::ptrdiff_t i) const noexcept
 	{
 		assert(i >= 0 &&
 		       (i < pmem::detail::sp_extent<T>::value ||

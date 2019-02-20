@@ -6,45 +6,75 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// basic_string<charT,traits,Allocator>& operator=(charT c);
+#include <libpmemobj++/experimental/string.hpp>
 
-#include <string>
-#include <cassert>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = pmem::obj::experimental;
+using S = pmem_exp::string;
 
-#include "test_macros.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<S> s_arr[4];
+};
 
 template <class S>
 void
-test(S s1, typename S::value_type s2)
+test(S &s1, typename S::value_type s2)
 {
-    typedef typename S::traits_type T;
-    s1 = s2;
-    LIBCPP_ASSERT(s1.__invariants());
-    assert(s1.size() == 1);
-    assert(T::eq(s1[0], s2));
-    assert(s1.capacity() >= s1.size());
+	typedef typename S::traits_type T;
+	s1 = s2;
+	UT_ASSERT(s1.size() == 1);
+	UT_ASSERT(T::eq(s1[0], s2));
+	UT_ASSERT(s1.capacity() >= s1.size());
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S(), 'a');
-    test(S("1"), 'a');
-    test(S("123456789"), 'a');
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890"), 'a');
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(), 'a');
-    test(S("1"), 'a');
-    test(S("123456789"), 'a');
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890"), 'a');
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto &s_arr = pop.root()->s_arr;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			s_arr[0] = nvobj::make_persistent<S>();
+			s_arr[1] = nvobj::make_persistent<S>("1");
+			s_arr[2] = nvobj::make_persistent<S>("123456789");
+			s_arr[3] = nvobj::make_persistent<S>(
+				"1234567890123456789012345678901234567890123456789012345678901234567890");
+		});
+
+		test(*s_arr[0], 'a');
+		test(*s_arr[1], 'a');
+		test(*s_arr[2], 'a');
+		test(*s_arr[3], 'a');
+
+		nvobj::transaction::run(pop, [&] {
+			for (unsigned i = 0; i < 4; ++i) {
+				nvobj::delete_persistent<S>(s_arr[i]);
+			}
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

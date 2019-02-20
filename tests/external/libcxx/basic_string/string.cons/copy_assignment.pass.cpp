@@ -6,75 +6,95 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// basic_string<charT,traits,Allocator>&
-//   operator=(const basic_string<charT,traits,Allocator>& str);
+#include <libpmemobj++/experimental/string.hpp>
 
-#include <string>
-#include <cassert>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = pmem::obj::experimental;
+using S = pmem_exp::string;
 
-#include "test_macros.h"
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<S> s1;
+	nvobj::persistent_ptr<S> s_arr[7];
+};
 
 template <class S>
 void
-test(S s1, const S& s2)
+test(nvobj::pool<struct root> &pop, const S &s, const S &s2)
 {
-    s1 = s2;
-    LIBCPP_ASSERT(s1.__invariants());
-    assert(s1 == s2);
-    assert(s1.capacity() >= s1.size());
+	auto r = pop.root();
+	nvobj::transaction::run(pop,
+				[&] { r->s1 = nvobj::make_persistent<S>(s); });
+	auto &s1 = *r->s1;
+
+	s1 = s2;
+	// XXX: enable operator==
+	// UT_ASSERT(s1 == s2);
+	UT_ASSERT(s1.capacity() >= s1.size());
+
+	nvobj::transaction::run(pop,
+				[&] { nvobj::delete_persistent<S>(r->s1); });
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S(), S());
-    test(S("1"), S());
-    test(S(), S("1"));
-    test(S("1"), S("2"));
-    test(S("1"), S("2"));
+	START();
 
-    test(S(),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    test(S("123456789"),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890"),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890"
-           "1234567890123456789012345678901234567890123456789012345678901234567890"),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(), S());
-    test(S("1"), S());
-    test(S(), S("1"));
-    test(S("1"), S("2"));
-    test(S("1"), S("2"));
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
 
-    test(S(),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    test(S("123456789"),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890"),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    test(S("1234567890123456789012345678901234567890123456789012345678901234567890"
-           "1234567890123456789012345678901234567890123456789012345678901234567890"),
-         S("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"));
-    }
-#endif
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
-#if TEST_STD_VER > 3
-    {   // LWG 2946
-    std::string s;
-    s = {"abc", 1};
-    assert(s.size() == 1);
-    assert(s == "a");
-    }
-#endif
+	auto &s_arr = pop.root()->s_arr;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			s_arr[0] = nvobj::make_persistent<S>();
+			s_arr[1] = nvobj::make_persistent<S>("1");
+			s_arr[2] = nvobj::make_persistent<S>("2");
+			s_arr[3] = nvobj::make_persistent<S>("123456789");
+			s_arr[4] = nvobj::make_persistent<S>(
+				"1234567890123456789012345678901234567890123456789012345678901234567890");
+			s_arr[5] = nvobj::make_persistent<S>(
+				"1234567890123456789012345678901234567890123456789012345678901234567890"
+				"1234567890123456789012345678901234567890123456789012345678901234567890");
+			s_arr[6] = nvobj::make_persistent<S>(
+				"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
+		});
+
+		test(pop, *s_arr[0], *s_arr[0]);
+		test(pop, *s_arr[1], *s_arr[0]);
+		test(pop, *s_arr[0], *s_arr[1]);
+		test(pop, *s_arr[1], *s_arr[2]);
+		test(pop, *s_arr[1], *s_arr[2]);
+
+		test(pop, *s_arr[0], *s_arr[6]);
+		test(pop, *s_arr[3], *s_arr[6]);
+		test(pop, *s_arr[4], *s_arr[6]);
+		test(pop, *s_arr[5], *s_arr[6]);
+
+		nvobj::transaction::run(pop, [&] {
+			for (unsigned i = 0; i < 7; ++i) {
+				nvobj::delete_persistent<S>(s_arr[i]);
+			}
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

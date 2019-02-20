@@ -255,9 +255,6 @@ add_test_generic(NAME vector_assign_txabort TRACERS none memcheck pmemcheck)
 build_test(vector_comp_operators vector_comp_operators/vector_comp_operators.cpp)
 add_test_generic(NAME vector_comp_operators TRACERS none memcheck pmemcheck)
 
-build_test(vector_private vector_private/vector_private.cpp)
-add_test_generic(NAME vector_private TRACERS none memcheck pmemcheck)
-
 build_test(vector_capacity_exceptions_length vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp)
 add_test_generic(NAME vector_capacity_exceptions_length TRACERS none memcheck pmemcheck)
 

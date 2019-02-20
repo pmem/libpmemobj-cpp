@@ -309,4 +309,7 @@ add_test_generic(NAME string_snapshot TRACERS none memcheck pmemcheck)
 build_test(vector_modifiers_type_requirements vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp)
 add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
 
+build_test(vector_std_arg vector_std_arg/vector_std_arg.cpp)
+add_test_generic(NAME vector_std_arg TRACERS none memcheck pmemcheck)
+
 add_subdirectory(external)

@@ -161,6 +161,9 @@ add_test_generic(NAME vector_libcxx_ctor_default TRACERS none pmemcheck memcheck
 build_test(vector_libcxx_ctor_iter_iter libcxx/vector/vector.cons/construct_iter_iter.pass.cpp)
 add_test_generic(NAME vector_libcxx_ctor_iter_iter TRACERS none pmemcheck memcheck)
 
+build_test(vector_libcxx_ctor_move libcxx/vector/vector.cons/move.pass.cpp)
+add_test_generic(NAME vector_libcxx_ctor_move TRACERS none pmemcheck memcheck)
+
 build_test(vector_libcxx_ctor_size libcxx/vector/vector.cons/construct_size.pass.cpp)
 add_test_generic(NAME vector_libcxx_ctor_size TRACERS none pmemcheck memcheck)
 
@@ -220,14 +223,6 @@ add_test_generic(NAME vector_libcxx_size TRACERS none pmemcheck memcheck)
 
 build_test(vector_libcxx_swap libcxx/vector/vector.capacity/swap.pass.cpp)
 add_test_generic(NAME vector_libcxx_swap TRACERS none pmemcheck memcheck)
-
-# XXX: port libcxx test vector.cons/default_noexcept.pass
-
-# XXX: port libcxx test vector.cons/default_recursive.pass
-
-# XXX: port libcxx test vector.cons/move_noexcept.pass
-
-# XXX: port libcxx test vector.cons/move.pass
 
 build_test(vector_libcxx_clear libcxx/vector/vector.modifiers/clear.pass.cpp)
 add_test_generic(NAME vector_libcxx_clear TRACERS none pmemcheck memcheck)

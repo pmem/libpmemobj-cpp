@@ -369,7 +369,7 @@ vector<T>::vector(const vector &other)
 	_data = nullptr;
 	_size = 0;
 	alloc(other.capacity());
-	construct_range_copy(0, other.begin(), other.end());
+	construct_range_copy(0, other.cbegin(), other.cend());
 }
 
 /**
@@ -724,7 +724,7 @@ void
 vector<T>::assign(const vector &other)
 {
 	if (this != &other)
-		assign(other.begin(), other.end());
+		assign(other.cbegin(), other.cend());
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
+#include <vector>
+
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
 using vector_type = pmem_exp::vector<int>;
@@ -59,6 +61,10 @@ test_comp_operators(nvobj::pool<struct root> &pop)
 	int arr1[] = {0, 1, 2, 3, 4};
 	int arr2[] = {0, 1, 2, 3, 4, 5};
 
+	std::vector<int> stdvec1(std::begin(arr1), std::end(arr1));
+	std::vector<int> stdvec2(std::begin(arr2), std::end(arr2));
+	std::vector<int> stdvec3(std::begin(arr2) + 1, std::end(arr2));
+
 	try {
 		nvobj::transaction::run(pop, [&] {
 			r->v1 = nvobj::make_persistent<vector_type>(
@@ -81,6 +87,26 @@ test_comp_operators(nvobj::pool<struct root> &pop)
 	UT_ASSERT(*(r->v2) > *(r->v1));
 	UT_ASSERT(*(r->v2) >= *(r->v1));
 	UT_ASSERT(*(r->v2) >= *(r->v2));
+
+	UT_ASSERT(*(r->v1) == stdvec1);
+	UT_ASSERT(*(r->v1) != stdvec2);
+	UT_ASSERT(*(r->v1) != stdvec3);
+	UT_ASSERT(*(r->v1) < stdvec2);
+	UT_ASSERT(*(r->v1) <= stdvec2);
+	UT_ASSERT(*(r->v1) <= stdvec1);
+	UT_ASSERT(*(r->v2) > stdvec1);
+	UT_ASSERT(*(r->v2) >= stdvec1);
+	UT_ASSERT(*(r->v2) >= stdvec2);
+
+	UT_ASSERT(stdvec1 == *(r->v1));
+	UT_ASSERT(stdvec1 != *(r->v2));
+	UT_ASSERT(stdvec1 != *(r->v3));
+	UT_ASSERT(stdvec1 < *(r->v2));
+	UT_ASSERT(stdvec1 <= *(r->v2));
+	UT_ASSERT(stdvec1 <= *(r->v1));
+	UT_ASSERT(stdvec2 > *(r->v1));
+	UT_ASSERT(stdvec2 >= *(r->v1));
+	UT_ASSERT(stdvec2 >= *(r->v2));
 
 	try {
 		nvobj::transaction::run(pop, [&] {

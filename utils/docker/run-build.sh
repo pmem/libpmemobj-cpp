@@ -48,8 +48,11 @@ function test_command() {
 	if [ "$COVERAGE" = "1" ]; then
 		if [[ "$2" == "llvm" ]]; then
 			gcovexe="llvm-cov gcov"
-		else
+		elif [[ "$2" == "gcc" ]]; then
 			gcovexe="gcov"
+		else
+			echo "Wrong 2nd parameter"
+			exit 1
 		fi
 
 		ctest --output-on-failure -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
@@ -57,7 +60,11 @@ function test_command() {
 		bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe" > /dev/null
 		cleanup
 	else
-		ctest --output-on-failure --timeout 540
+		if [[ "$3" == "with_valgrind" ]]; then
+			ctest --output-on-failure --timeout 540
+		else
+			ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --output-on-failure --timeout 540
+		fi
 	fi
 }
 
@@ -151,7 +158,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_gcc_debug
+test_command tests_gcc_debug gcc with_valgrind
 
 cd ..
 rm -r build
@@ -174,7 +181,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_gcc_release_cpp17
+test_command tests_gcc_release_cpp17 gcc
 
 cd ..
 rm -r build
@@ -199,7 +206,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_gcc_release_cpp17_no_pmemcheck
+test_command tests_gcc_release_cpp17_no_pmemcheck gcc
 
 cd ..
 rm -r build

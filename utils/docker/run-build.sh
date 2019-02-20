@@ -44,21 +44,18 @@ function cleanup() {
 	find . -name "*.gcda" -exec rm {} \;
 }
 
-function test_command() {
-	if [ "$COVERAGE" = "1" ]; then
-		if [[ "$2" == "llvm" ]]; then
-			gcovexe="llvm-cov gcov"
-		else
-			gcovexe="gcov"
-		fi
+function upload_codecov() {
+	clang_used=$(cmake -LA -N . | grep CMAKE_CXX_COMPILER | grep clang | wc -c)
 
-		ctest --output-on-failure -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
-		# the output is redundant in this case, i.e. we rely on parsed report from codecov on github
-		bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe" > /dev/null
-		cleanup
+	if [[ $clang_used > 0 ]]; then
+		gcovexe="llvm-cov gcov"
 	else
-		ctest --output-on-failure --timeout 540
+		gcovexe="gcov"
 	fi
+
+	# the output is redundant in this case, i.e. we rely on parsed report from codecov on github
+	bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe" > /dev/null
+	cleanup
 }
 
 function compile_example_standalone() {
@@ -101,10 +98,14 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
+			-DTESTS_USE_VALGRIND=0 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_clang_release llvm
+ctest --output-on-failure --timeout 540
+if [ "$COVERAGE" = "1" ]; then
+	upload_codecov tests_clang_release
+fi
 
 cd ..
 rm -r build
@@ -125,10 +126,14 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
+			-DTESTS_USE_VALGRIND=0 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_clang_debug_cpp17 llvm
+ctest --output-on-failure --timeout 540
+if [ "$COVERAGE" = "1" ]; then
+	upload_codecov tests_clang_debug_cpp17
+fi
 
 cd ..
 rm -r build
@@ -148,10 +153,17 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
+			-DTESTS_USE_VALGRIND=1 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_gcc_debug
+if [ "$COVERAGE" = "1" ]; then
+	# valgrind reports error when used with code coverage
+	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
+	upload_codecov tests_gcc_debug
+else
+	ctest --output-on-failure --timeout 540
+fi
 
 cd ..
 rm -r build
@@ -171,19 +183,23 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
+			-DTESTS_USE_VALGRIND=0 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_gcc_release_cpp17
+ctest --output-on-failure --timeout 540
+if [ "$COVERAGE" = "1" ]; then
+	upload_codecov tests_gcc_release_cpp17
+fi
 
 cd ..
 rm -r build
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sgr 0)\n\n"
 
 ###############################################################################
-# BUILD tests_gcc_release_cpp17_no_pmemcheck
+# BUILD tests_gcc_release_cpp17_no_valgrind
 ###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_pmemcheck START$(tput sgr 0)\n"
+printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_valgrind START$(tput sgr 0)\n"
 VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc")
 sudo_password mv $VALGRIND_PC_PATH tmp_valgrind_pc
 mkdir build
@@ -196,15 +212,19 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
+			-DTESTS_USE_VALGRIND=1 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
-test_command tests_gcc_release_cpp17_no_pmemcheck
+ctest --output-on-failure --timeout 540
+if [ "$COVERAGE" = "1" ]; then
+	upload_codecov tests_gcc_release_cpp17_no_valgrind
+fi
 
 cd ..
 rm -r build
 sudo_password mv tmp_valgrind_pc $VALGRIND_PC_PATH
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_pmemcheck END$(tput sgr 0)\n\n"
+printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_valgrind END$(tput sgr 0)\n\n"
 
 ###############################################################################
 # BUILD tests_package
@@ -221,11 +241,13 @@ elif [ $PACKAGE_MANAGER = "rpm" ]; then
 	sudo_password rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
 fi
 
+CC=gcc CXX=g++ \
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+		-DTESTS_USE_VALGRIND=0 \
 		-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
 make -j2
-test_command tests_package
+ctest --output-on-failure --timeout 540
 
 make package
 

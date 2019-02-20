@@ -73,6 +73,7 @@ option(TRACE_TESTS "more verbose test outputs" OFF)
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1" OFF)
+option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")

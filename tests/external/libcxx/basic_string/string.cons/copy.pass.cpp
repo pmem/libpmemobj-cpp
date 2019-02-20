@@ -39,8 +39,7 @@ test(S &s1, pmem::obj::pool<root> &pop, nvobj::persistent_ptr<S> &ptr)
 
 	auto &s2 = *ptr;
 
-	// XXX: enable operator==
-	// UT_ASSERT(s2 == s1);
+	UT_ASSERT(s2 == s1);
 
 	UT_ASSERT(s1.size() == s2.size());
 	UT_ASSERT(T::compare(s2.c_str(), s1.c_str(), s1.size()) == 0);

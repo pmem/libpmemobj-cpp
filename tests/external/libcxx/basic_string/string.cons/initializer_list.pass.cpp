@@ -37,11 +37,10 @@ struct testcase1 {
 	run()
 	{
 		using T = typename pmem_exp::string::traits_type;
-		// XXX: enable operator ===
-		// UT_ASSERT(s == "abc");
-		// UT_ASSERT(
-		//	s_long ==
-		//	"1234567890123456789012345678901234567890123456789012345678901234567890");
+		UT_ASSERT(s == "abc");
+		UT_ASSERT(
+			s_long ==
+			"1234567890123456789012345678901234567890123456789012345678901234567890");
 		UT_ASSERT(T::compare(s.c_str(), "abc", s.size()) == 0);
 		UT_ASSERT(
 			T::compare(
@@ -52,14 +51,12 @@ struct testcase1 {
 };
 
 struct testcase2 {
-	// XXX enable operator=
-	// std::wstring s;
-	// s = {L'a', L'b', L'c'};
+	std::wstring s = {L'a', L'b', L'c'};
 
 	void
 	run()
 	{
-		// UT_ASSERT(s == L"abc");
+		UT_ASSERT(s == L"abc");
 	}
 };
 

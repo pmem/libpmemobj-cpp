@@ -53,6 +53,7 @@
 #include <algorithm>
 #include <cassert>
 #include <utility>
+#include <vector>
 
 namespace pmem
 {
@@ -95,11 +96,13 @@ public:
 	vector(const vector &other);
 	vector(vector &&other);
 	vector(std::initializer_list<T> init);
+	vector(const std::vector<T> &other);
 
 	/* Assign operators */
 	vector &operator=(const vector &other);
 	vector &operator=(vector &&other);
 	vector &operator=(std::initializer_list<T> ilist);
+	vector &operator=(const std::vector<T> &other);
 
 	/* Assign methods */
 	void assign(size_type count, const T &value);
@@ -111,6 +114,7 @@ public:
 	void assign(std::initializer_list<T> ilist);
 	void assign(const vector &other);
 	void assign(vector &&other);
+	void assign(const std::vector<T> &other);
 
 	/* Destructor */
 	~vector();
@@ -365,7 +369,7 @@ vector<T>::vector(const vector &other)
 	_data = nullptr;
 	_size = 0;
 	alloc(other.capacity());
-	construct_range_copy(0, other.begin(), other.end());
+	construct_range_copy(0, other.cbegin(), other.cend());
 }
 
 /**
@@ -422,6 +426,29 @@ vector<T>::vector(std::initializer_list<T> init)
 }
 
 /**
+ * Copy constructor. Constructs the container with the copy of the contents of
+ * std::vector<T> other. This constructor is not specified by STL standards.
+ *
+ * @param[in] other reference to the vector to be copied.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post size() == other.size()
+ * @post capacity() == other.capacity()
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for underlying
+ * array in transaction failed.
+ * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw rethrows element constructor exception.
+ */
+template <typename T>
+vector<T>::vector(const std::vector<T> &other)
+    : vector(other.cbegin(), other.cend())
+{
+}
+
+/**
  * Copy assignment operator. Replaces the contents with a copy of the contents
  * of other transactionally.
  *
@@ -474,6 +501,27 @@ vector<T> &
 vector<T>::operator=(std::initializer_list<T> ilist)
 {
 	assign(ilist.begin(), ilist.end());
+
+	return *this;
+}
+
+/**
+ * Copy assignment operator. Replaces the contents with a copy of the contents
+ * of std::vector<T> other transactionally. This method is not specified by STL
+ * standards.
+ *
+ * @post size() == other.size()
+ * @post capacity() == max(size(), other.capacity())
+ *
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+vector<T> &
+vector<T>::operator=(const std::vector<T> &other)
+{
+	assign(other);
 
 	return *this;
 }
@@ -680,7 +728,7 @@ void
 vector<T>::assign(const vector &other)
 {
 	if (this != &other)
-		assign(other.begin(), other.end());
+		assign(other.cbegin(), other.cend());
 }
 
 /**
@@ -713,6 +761,25 @@ vector<T>::assign(vector &&other)
 		other._data = nullptr;
 		other._capacity = other._size = 0;
 	});
+}
+
+/**
+ * Copy assignment method. Replaces the contents with a copy of the contents
+ * of std::vector<T> other transactionally. This method is not specified by STL
+ * standards.
+ *
+ * @post size() == other.size()
+ * @post capacity() == max(size(), other.capacity())
+ *
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename T>
+void
+vector<T>::assign(const std::vector<T> &other)
+{
+	assign(other.cbegin(), other.cend());
 }
 
 /**

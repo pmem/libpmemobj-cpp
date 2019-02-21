@@ -217,7 +217,11 @@ private:
 /* Non-member swap */
 template <typename T>
 void swap(vector<T> &lhs, vector<T> &rhs);
-/* Comparison operators */
+
+/*
+ * Comparison operators between pmem::obj::experimental::vector<T> and
+ * pmem::obj::experimental::vector<T>
+ */
 template <typename T>
 bool operator==(const vector<T> &lhs, const vector<T> &rhs);
 template <typename T>
@@ -230,6 +234,40 @@ template <typename T>
 bool operator>(const vector<T> &lhs, const vector<T> &rhs);
 template <typename T>
 bool operator>=(const vector<T> &lhs, const vector<T> &rhs);
+
+/*
+ * Comparison operators between pmem::obj::experimental::vector<T> and
+ * std::vector<T>
+ */
+template <typename T>
+bool operator==(const vector<T> &lhs, const std::vector<T> &rhs);
+template <typename T>
+bool operator!=(const vector<T> &lhs, const std::vector<T> &rhs);
+template <typename T>
+bool operator<(const vector<T> &lhs, const std::vector<T> &rhs);
+template <typename T>
+bool operator<=(const vector<T> &lhs, const std::vector<T> &rhs);
+template <typename T>
+bool operator>(const vector<T> &lhs, const std::vector<T> &rhs);
+template <typename T>
+bool operator>=(const vector<T> &lhs, const std::vector<T> &rhs);
+
+/*
+ * Comparison operators between std::vector<T> and
+ * pmem::obj::experimental::vector<T>
+ */
+template <typename T>
+bool operator==(const std::vector<T> &lhs, const vector<T> &rhs);
+template <typename T>
+bool operator!=(const std::vector<T> &lhs, const vector<T> &rhs);
+template <typename T>
+bool operator<(const std::vector<T> &lhs, const vector<T> &rhs);
+template <typename T>
+bool operator<=(const std::vector<T> &lhs, const vector<T> &rhs);
+template <typename T>
+bool operator>(const std::vector<T> &lhs, const vector<T> &rhs);
+template <typename T>
+bool operator>=(const std::vector<T> &lhs, const vector<T> &rhs);
 
 /**
  * Default constructor. Constructs an empty container.
@@ -2306,8 +2344,8 @@ vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
  * Checks if containers have the same number of elements and each element in lhs
  * is equal to element in rhs at the same position.
  *
- * @param[in] lhs first vector
- * @param[in] rhs second vector
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
  */
@@ -2325,8 +2363,8 @@ operator==(const vector<T> &lhs, const vector<T> &rhs)
  * Checks if containers have the same number of elements and each element in lhs
  * is equal to element in rhs at the same position.
  *
- * @param[in] lhs first vector
- * @param[in] rhs second vector
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
  */
@@ -2341,8 +2379,8 @@ operator!=(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector
- * @param[in] rhs second vector
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
@@ -2359,8 +2397,8 @@ operator<(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector
- * @param[in] rhs second vector
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
@@ -2376,8 +2414,8 @@ operator<=(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector
- * @param[in] rhs second vector
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
@@ -2394,8 +2432,8 @@ operator>(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector
- * @param[in] rhs second vector
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
@@ -2403,6 +2441,219 @@ operator>(const vector<T> &lhs, const vector<T> &rhs)
 template <typename T>
 bool
 operator>=(const vector<T> &lhs, const vector<T> &rhs)
+{
+	return !(lhs < rhs);
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers.
+ *
+ * Checks if containers have the same number of elements and each element in lhs
+ * is equal to element in rhs at the same position.
+ *
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type std::vector<T>
+ *
+ * @return true if contents of the containers are equal, false otherwise
+ */
+template <typename T>
+bool
+operator==(const vector<T> &lhs, const std::vector<T> &rhs)
+{
+	return lhs.size() == rhs.size() &&
+		std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers.
+ *
+ * Checks if containers have the same number of elements and each element in lhs
+ * is equal to element in rhs at the same position.
+ *
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type std::vector<T>
+ *
+ * @return true if contents of the containers are not equal, false otherwise
+ */
+template <typename T>
+bool
+operator!=(const vector<T> &lhs, const std::vector<T> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type std::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically less than contents of
+ * rhs, false otherwise
+ */
+template <typename T>
+bool
+operator<(const vector<T> &lhs, const std::vector<T> &rhs)
+{
+	return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
+					    rhs.end());
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of ype std::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically lesser than or equal to
+ * contents of rhs, false otherwise
+ */
+template <typename T>
+bool
+operator<=(const vector<T> &lhs, const std::vector<T> &rhs)
+{
+	return !(std::lexicographical_compare(rhs.begin(), rhs.end(),
+					      lhs.begin(), lhs.end()));
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type std::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically greater than contents
+ * of rhs, false otherwise
+ */
+
+template <typename T>
+bool
+operator>(const vector<T> &lhs, const std::vector<T> &rhs)
+{
+	return !(lhs <= rhs);
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type std::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically greater than or equal
+ * to contents of rhs, false otherwise
+ */
+template <typename T>
+bool
+operator>=(const vector<T> &lhs, const std::vector<T> &rhs)
+{
+	return !(lhs < rhs);
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers.
+ *
+ * Checks if containers have the same number of elements and each element in lhs
+ * is equal to element in rhs at the same position.
+ *
+ * @param[in] lhs first vector of type std::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ *
+ * @return true if contents of the containers are equal, false otherwise
+ */
+template <typename T>
+bool
+operator==(const std::vector<T> &lhs, const vector<T> &rhs)
+{
+	return rhs == lhs;
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers.
+ *
+ * Checks if containers have the same number of elements and each element in lhs
+ * is equal to element in rhs at the same position.
+ *
+ * @param[in] lhs first vector of type std::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ *
+ * @return true if contents of the containers are not equal, false otherwise
+ */
+template <typename T>
+bool
+operator!=(const std::vector<T> &lhs, const vector<T> &rhs)
+{
+	return !(lhs == rhs);
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type std::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically less than contents of
+ * rhs, false otherwise
+ */
+template <typename T>
+bool
+operator<(const std::vector<T> &lhs, const vector<T> &rhs)
+{
+	return rhs > lhs;
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of ype std::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically lesser than or equal to
+ * contents of rhs, false otherwise
+ */
+template <typename T>
+bool
+operator<=(const std::vector<T> &lhs, const vector<T> &rhs)
+{
+	return !(rhs < lhs);
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type std::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically greater than contents
+ * of rhs, false otherwise
+ */
+
+template <typename T>
+bool
+operator>(const std::vector<T> &lhs, const vector<T> &rhs)
+{
+	return rhs < lhs;
+}
+
+/**
+ * Comparison operator. Compares the contents of two containers
+ * lexicographically.
+ *
+ * @param[in] lhs first vector of type std::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ *
+ * @return true if contents of lhs are lexicographically greater than or equal
+ * to contents of rhs, false otherwise
+ */
+template <typename T>
+bool
+operator>=(const std::vector<T> &lhs, const vector<T> &rhs)
 {
 	return !(lhs < rhs);
 }

@@ -526,7 +526,8 @@ vector<T>::assign(size_type count, const_reference value)
 				 * and eventually rollback old data.
 				 */
 				VALGRIND_PMC_ADD_TO_TX(
-					&_data[size_old],
+					&_data[static_cast<difference_type>(
+						size_old)],
 					sizeof(T) * (count - size_old));
 #endif
 
@@ -539,7 +540,8 @@ vector<T>::assign(size_type count, const_reference value)
 				 * implemented "uninitialized" flag for
 				 * pmemobj_tx_xadd in libpmemobj.
 				 */
-				pb.persist(&_data[size_old],
+				pb.persist(&_data[static_cast<difference_type>(
+						   size_old)],
 					   sizeof(T) * (count - size_old));
 			} else {
 				shrink(count);
@@ -604,7 +606,8 @@ vector<T>::assign(InputIt first, InputIt last)
 				 * and eventually rollback old data.
 				 */
 				VALGRIND_PMC_ADD_TO_TX(
-					&_data[size_old],
+					&_data[static_cast<difference_type>(
+						size_old)],
 					sizeof(T) * (size_new - size_old));
 #endif
 
@@ -624,7 +627,8 @@ vector<T>::assign(InputIt first, InputIt last)
 				 * implemented "uninitialized" flag for
 				 * pmemobj_tx_xadd in libpmemobj.
 				 */
-				pb.persist(&_data[size_old],
+				pb.persist(&_data[static_cast<difference_type>(
+						   size_old)],
 					   sizeof(T) * (size_new - size_old));
 			} else {
 				shrink(static_cast<size_type>(std::distance(
@@ -744,8 +748,10 @@ vector<T>::at(size_type n)
 {
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
-	detail::conditional_add_to_tx(&_data[n]);
-	return _data[n];
+
+	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
+
+	return _data[static_cast<difference_type>(n)];
 }
 
 /**
@@ -763,7 +769,8 @@ vector<T>::at(size_type n) const
 {
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
-	return _data[n];
+
+	return _data[static_cast<difference_type>(n)];
 }
 
 /**
@@ -784,7 +791,8 @@ vector<T>::const_at(size_type n) const
 {
 	if (n >= _size)
 		throw std::out_of_range("vector::const_at");
-	return _data[n];
+
+	return _data[static_cast<difference_type>(n)];
 }
 
 /**
@@ -801,9 +809,9 @@ vector<T>::const_at(size_type n) const
 template <typename T>
 typename vector<T>::reference vector<T>::operator[](size_type n)
 {
-	detail::conditional_add_to_tx(&_data[n]);
+	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
 
-	return _data[n];
+	return _data[static_cast<difference_type>(n)];
 }
 
 /**
@@ -816,7 +824,7 @@ typename vector<T>::reference vector<T>::operator[](size_type n)
 template <typename T>
 typename vector<T>::const_reference vector<T>::operator[](size_type n) const
 {
-	return _data[n];
+	return _data[static_cast<difference_type>(n)];
 }
 
 /**
@@ -874,9 +882,10 @@ template <typename T>
 typename vector<T>::reference
 vector<T>::back()
 {
-	detail::conditional_add_to_tx(&_data[size() - 1]);
+	detail::conditional_add_to_tx(
+		&_data[static_cast<difference_type>(size() - 1)]);
 
-	return _data[size() - 1];
+	return _data[static_cast<difference_type>(size() - 1)];
 }
 
 /**
@@ -888,7 +897,7 @@ template <typename T>
 typename vector<T>::const_reference
 vector<T>::back() const
 {
-	return _data[size() - 1];
+	return _data[static_cast<difference_type>(size() - 1)];
 }
 
 /**
@@ -902,7 +911,7 @@ template <typename T>
 typename vector<T>::const_reference
 vector<T>::cback() const
 {
-	return _data[size() - 1];
+	return _data[static_cast<difference_type>(size() - 1)];
 }
 
 /**
@@ -1309,7 +1318,7 @@ vector<T>::insert(const_iterator pos, value_type &&value)
 		construct(idx, 1, std::move(value));
 	});
 
-	return iterator(&_data[idx]);
+	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
 
 /**
@@ -1353,7 +1362,7 @@ vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
 		construct(idx, count, value);
 	});
 
-	return iterator(&_data[idx]);
+	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
 
 /**
@@ -1407,7 +1416,7 @@ vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
 		construct_range_copy(idx, first, last);
 	});
 
-	return iterator(&_data[idx]);
+	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
 
 /**
@@ -1495,7 +1504,7 @@ vector<T>::emplace(const_iterator pos, Args &&... args)
 		construct(idx, 1, std::move(tmp.get()));
 	});
 
-	return iterator(&_data[idx]);
+	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
 
 /**
@@ -1542,7 +1551,9 @@ vector<T>::emplace_back(Args &&... args)
 			 * is undefined, there is no need to snapshot and
 			 * eventually rollback old data.
 			 */
-			VALGRIND_PMC_ADD_TO_TX(&_data[size()], sizeof(T));
+			VALGRIND_PMC_ADD_TO_TX(
+				&_data[static_cast<difference_type>(size())],
+				sizeof(T));
 #endif
 		}
 
@@ -1553,7 +1564,8 @@ vector<T>::emplace_back(Args &&... args)
 		 * commit. This can be changed once we will have implemented
 		 * "uninitialized" flag for pmemobj_tx_xadd in libpmemobj.
 		 */
-		pb.persist(&_data[size() - 1], sizeof(T));
+		pb.persist(&_data[static_cast<difference_type>(size() - 1)],
+			   sizeof(T));
 	});
 
 	return back();
@@ -1616,7 +1628,7 @@ vector<T>::erase(const_iterator first, const_iterator last)
 	size_type count = static_cast<size_type>(std::distance(first, last));
 
 	if (count == 0)
-		return iterator(&_data[idx]);
+		return iterator(&_data[static_cast<difference_type>(idx)]);
 
 	pool_base pb = get_pool();
 
@@ -1627,16 +1639,17 @@ vector<T>::erase(const_iterator first, const_iterator last)
 		 */
 		snapshot_data(idx, _size);
 
-		pointer move_begin = &_data[idx + count];
-		pointer move_end = &_data[size()];
-		pointer dest = &_data[idx];
+		pointer move_begin =
+			&_data[static_cast<difference_type>(idx + count)];
+		pointer move_end = &_data[static_cast<difference_type>(size())];
+		pointer dest = &_data[static_cast<difference_type>(idx)];
 
 		std::move(move_begin, move_end, dest);
 
 		_size -= count;
 	});
 
-	return iterator(&_data[idx]);
+	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
 
 /**
@@ -2054,9 +2067,10 @@ vector<T>::insert_gap(size_type idx, size_type count)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
 	if (_capacity >= _size + count) {
-		pointer dest = &_data[size() + count];
-		pointer begin = &_data[idx];
-		pointer end = &_data[size()];
+		pointer dest =
+			&_data[static_cast<difference_type>(size() + count)];
+		pointer begin = &_data[static_cast<difference_type>(idx)];
+		pointer end = &_data[static_cast<difference_type>(size())];
 
 		/*
 		 * XXX: There is no necessity to snapshot uninitialized data, so
@@ -2085,8 +2099,8 @@ vector<T>::insert_gap(size_type idx, size_type count)
 		auto old_data = _data;
 		auto old_size = _size;
 		pointer old_begin = &_data[0];
-		pointer old_mid = &_data[idx];
-		pointer old_end = &_data[size()];
+		pointer old_mid = &_data[static_cast<difference_type>(idx)];
+		pointer old_end = &_data[static_cast<difference_type>(size())];
 
 		_data = nullptr;
 		_size = _capacity = 0;
@@ -2098,7 +2112,8 @@ vector<T>::insert_gap(size_type idx, size_type count)
 
 		/* destroy and free old data */
 		for (size_type i = 0; i < old_size; ++i)
-			detail::destroy<value_type>(old_data[i]);
+			detail::destroy<value_type>(
+				old_data[static_cast<difference_type>(i)]);
 		if (pmemobj_tx_free(old_data.raw()) != 0)
 			throw transaction_free_error(
 				"failed to delete persistent memory object");
@@ -2137,8 +2152,9 @@ vector<T>::realloc(size_type capacity_new)
 	auto old_data = _data;
 	auto old_size = _size;
 	pointer old_begin = &_data[0];
-	pointer old_end =
-		capacity_new < _size ? &_data[capacity_new] : &_data[size()];
+	pointer old_end = capacity_new < _size
+		? &_data[static_cast<difference_type>(capacity_new)]
+		: &_data[static_cast<difference_type>(size())];
 
 	_data = nullptr;
 	_size = _capacity = 0;
@@ -2149,7 +2165,8 @@ vector<T>::realloc(size_type capacity_new)
 
 	/* destroy and free old data */
 	for (size_type i = 0; i < old_size; ++i)
-		detail::destroy<value_type>(old_data[i]);
+		detail::destroy<value_type>(
+			old_data[static_cast<difference_type>(i)]);
 	if (pmemobj_tx_free(old_data.raw()) != 0)
 		throw transaction_free_error(
 			"failed to delete persistent memory object");
@@ -2194,7 +2211,8 @@ vector<T>::shrink(size_type size_new)
 	snapshot_data(size_new, _size);
 
 	for (size_type i = size_new; i < _size; ++i)
-		detail::destroy<value_type>(_data[i]);
+		detail::destroy<value_type>(
+			_data[static_cast<difference_type>(i)]);
 	_size = size_new;
 }
 

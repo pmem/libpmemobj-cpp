@@ -149,6 +149,13 @@ public:
 	const_reverse_iterator rend() const noexcept;
 	const_reverse_iterator crend() const noexcept;
 
+	/* Range */
+	slice<pointer> range(size_type start, size_type n);
+	slice<range_snapshotting_iterator<T>>
+	range(size_type start, size_type n, size_type snapshot_size);
+	slice<const_iterator> range(size_type start, size_type n) const;
+	slice<const_iterator> crange(size_type start, size_type n) const;
+
 	/* Capacity */
 	constexpr bool empty() const noexcept;
 	size_type size() const noexcept;
@@ -1178,6 +1185,108 @@ typename vector<T>::const_reverse_iterator
 vector<T>::crend() const noexcept
 {
 	return const_reverse_iterator(cbegin());
+}
+
+/**
+ * Returns slice and snapshots requested range. This method is not specified by
+ * STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice from start to start + n.
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * vector.
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
+template <typename T>
+slice<typename vector<T>::pointer>
+vector<T>::range(size_type start, size_type n)
+{
+	if (start + n >= size())
+		throw std::out_of_range("vector::range");
+
+	detail::conditional_add_to_tx(cdata() + start, n);
+
+	return {_data.get() + start, _data.get() + start + n};
+}
+
+/**
+ * Returns slice. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ * @param[in] snapshot_size number of elements which should be snapshotted in a
+ * bulk while traversing this slice. If provided value is larger or equal to n,
+ * entire range is added to a transaction. If value is equal to 0 no
+ * snapshotting happens.
+ *
+ * @return slice from start to start + n.
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * vector.
+ */
+template <typename T>
+slice<range_snapshotting_iterator<T>>
+vector<T>::range(size_type start, size_type n, size_type snapshot_size)
+{
+	if (start + n >= size())
+		throw std::out_of_range("vector::range");
+
+	if (snapshot_size > n)
+		snapshot_size = n;
+
+	return {range_snapshotting_iterator<T>(_data.get() + start,
+					       _data.get() + start, n,
+					       snapshot_size),
+		range_snapshotting_iterator<T>(_data.get() + start + n,
+					       _data.get() + start, n,
+					       snapshot_size)};
+}
+
+/**
+ * Returns const slice. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice from start to start + n.
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * vector.
+ */
+template <typename T>
+slice<typename vector<T>::const_iterator>
+vector<T>::range(size_type start, size_type n) const
+{
+	if (start + n >= size())
+		throw std::out_of_range("vector::range");
+
+	return {const_iterator(cdata() + start),
+		const_iterator(cdata() + start + n)};
+}
+
+/**
+ * Returns const slice. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice from start to start + n.
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * vector.
+ */
+template <typename T>
+slice<typename vector<T>::const_iterator>
+vector<T>::crange(size_type start, size_type n) const
+{
+	if (start + n >= size())
+		throw std::out_of_range("vector::crange");
+
+	return {const_iterator(cdata() + start),
+		const_iterator(cdata() + start + n)};
 }
 
 /**

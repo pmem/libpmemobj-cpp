@@ -86,6 +86,13 @@ function(check_file_exists file)
     endif()
 endfunction()
 
+# Verifies file doesn't exist
+function(check_file_doesnt_exist file)
+    if(EXISTS ${file})
+        message(FATAL_ERROR "${file} exists")
+    endif()
+endfunction()
+
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=810295
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=780173
 # https://bugs.kde.org/show_bug.cgi?id=303877

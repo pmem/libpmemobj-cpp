@@ -64,8 +64,8 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 		pop = nvobj::pool<root>::create(path, layout, poolsize, mode);
 		nvobj::persistent_ptr<root> root = pop.root();
 		UT_ASSERT(root != nullptr);
-	} catch (pmem::pool_error &) {
-		UT_OUT("!%s: pool::create", path);
+	} catch (pmem::pool_error &e) {
+		UT_OUT("%s: pool::create: %s", path, e.what());
 		return;
 	}
 
@@ -98,8 +98,8 @@ pool_open(const char *path, const char *layout)
 	nvobj::pool<root> pop;
 	try {
 		pop = nvobj::pool<root>::open(path, layout);
-	} catch (pmem::pool_error &) {
-		UT_OUT("!%s: pool::open", path);
+	} catch (pmem::pool_error &e) {
+		UT_OUT("%s: pool::open: %s", path, e.what());
 		return;
 	}
 

@@ -248,6 +248,44 @@ pool_test_persist_ptr_obj_no_pop(nvobj::pool<root> &pop)
 }
 
 /*
+ * pool_test_flush_ptr_invalid -- (internal) test flush primitive on
+ * pptr pointing to closed pool
+ */
+void
+pool_test_flush_ptr_invalid(nvobj::persistent_ptr<root> &root)
+{
+	bool exc = false;
+	try {
+		root.flush();
+	} catch (pmem::pool_error &e) {
+		exc = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(exc);
+}
+
+/*
+ * pool_test_persist_ptr_invalid -- (internal) test persist primitive on
+ * pptr pointing to closed pool
+ */
+void
+pool_test_persist_ptr_invalid(nvobj::persistent_ptr<root> &root)
+{
+	bool exc = false;
+	try {
+		root.persist();
+	} catch (pmem::pool_error &e) {
+		exc = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(exc);
+}
+
+/*
  * pool_create -- (internal) test pool create
  */
 nvobj::pool<root>
@@ -288,7 +326,12 @@ main(int argc, char *argv[])
 	pool_test_memcpy(pop);
 	pool_test_memset(pop);
 
+	nvobj::persistent_ptr<root> root = pop.root();
+
 	pop.close();
+
+	pool_test_flush_ptr_invalid(root);
+	pool_test_persist_ptr_invalid(root);
 
 	return 0;
 }

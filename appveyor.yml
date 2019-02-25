@@ -30,7 +30,7 @@ build_script:
 
 test_script:
 - cd build
-- ctest -C %CONFIGURATION% --output-on-failure
+- ctest -C %CONFIGURATION% --output-on-failure --timeout 540
 - msbuild INSTALL.vcxproj
 - cd ..
 # build standalone example

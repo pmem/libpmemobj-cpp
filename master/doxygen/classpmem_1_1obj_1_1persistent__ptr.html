@@ -154,10 +154,10 @@ pmem::detail::sp_dereference&lt; T &gt;::type&#160;</td><td class="memItemRight"
 pmem::detail::sp_member_access&lt; T &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a60126ca2fe1952c22d85ba73ea05575a">operator-&gt;</a> () const noexcept</td></tr>
 <tr class="memdesc:a60126ca2fe1952c22d85ba73ea05575a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Member access operator. <br /></td></tr>
 <tr class="separator:a60126ca2fe1952c22d85ba73ea05575a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc984560aec47bf50f2d34fb6e6ef062"><td class="memTemplParams" colspan="2">template&lt;typename I , typename std::enable_if&lt; std::is_integral&lt; I &gt;::value, int &gt;::type  = 0&gt; </td></tr>
-<tr class="memitem:abc984560aec47bf50f2d34fb6e6ef062"><td class="memTemplItemLeft" align="right" valign="top">pmem::detail::sp_array_access&lt; T &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#abc984560aec47bf50f2d34fb6e6ef062">operator[]</a> (I i) const noexcept</td></tr>
-<tr class="memdesc:abc984560aec47bf50f2d34fb6e6ef062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array access operator.  <a href="#abc984560aec47bf50f2d34fb6e6ef062">More...</a><br /></td></tr>
-<tr class="separator:abc984560aec47bf50f2d34fb6e6ef062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90ab81005cbc26bbb5fd796cacb5f809"><td class="memTemplParams" colspan="2">template&lt;typename  = typename std::enable_if&lt;!std::is_void&lt;T&gt;::value&gt;&gt; </td></tr>
+<tr class="memitem:a90ab81005cbc26bbb5fd796cacb5f809"><td class="memTemplItemLeft" align="right" valign="top">pmem::detail::sp_array_access&lt; T &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a90ab81005cbc26bbb5fd796cacb5f809">operator[]</a> (std::ptrdiff_t i) const noexcept</td></tr>
+<tr class="memdesc:a90ab81005cbc26bbb5fd796cacb5f809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array access operator.  <a href="#a90ab81005cbc26bbb5fd796cacb5f809">More...</a><br /></td></tr>
+<tr class="separator:a90ab81005cbc26bbb5fd796cacb5f809"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc70b76fe385715c59d72e12420b6070"><td class="memItemLeft" align="right" valign="top"><a id="abc70b76fe385715c59d72e12420b6070"></a>
 <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#abc70b76fe385715c59d72e12420b6070">operator++</a> ()</td></tr>
 <tr class="memdesc:abc70b76fe385715c59d72e12420b6070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefix increment operator. <br /></td></tr>
@@ -357,15 +357,15 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="abc984560aec47bf50f2d34fb6e6ef062"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc984560aec47bf50f2d34fb6e6ef062">&#9670;&nbsp;</a></span>operator[]()</h2>
+<a id="a90ab81005cbc26bbb5fd796cacb5f809"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90ab81005cbc26bbb5fd796cacb5f809">&#9670;&nbsp;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T&gt; </div>
 <div class="memtemplate">
-template&lt;typename I , typename std::enable_if&lt; std::is_integral&lt; I &gt;::value, int &gt;::type  = 0&gt; </div>
+template&lt;typename  = typename std::enable_if&lt;!std::is_void&lt;T&gt;::value&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -373,7 +373,7 @@ template&lt;typename I , typename std::enable_if&lt; std::is_integral&lt; I &gt;
         <tr>
           <td class="memname">pmem::detail::sp_array_access&lt;T&gt;::type <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::operator[] </td>
           <td>(</td>
-          <td class="paramtype">I&#160;</td>
+          <td class="paramtype">std::ptrdiff_t&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -386,7 +386,6 @@ template&lt;typename I , typename std::enable_if&lt; std::is_integral&lt; I &gt;
 </div><div class="memdoc">
 
 <p>Array access operator. </p>
-<p>This function template participates in overload resolution only if 'I' satisfies requirements of is_integral.</p>
 <p>Contains run-time bounds checking for static arrays. </p>
 
 </div>

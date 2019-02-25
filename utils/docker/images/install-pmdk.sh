@@ -38,7 +38,7 @@ set -e
 
 git clone https://github.com/pmem/pmdk
 cd pmdk
-git checkout 9b8a2bec65c9eb4922841d53d696463a503842ee
+git checkout 1.5.1
 
 sudo make -j2 install prefix=/opt/pmdk
 

@@ -160,6 +160,55 @@ mutex_test(nvobj::pool<root> &pop, const Worker &writer, const Worker &reader)
 	for (unsigned i = 0; i < total_threads; ++i)
 		threads[i].join();
 }
+
+void
+test_stack()
+{
+	/* shared_mutex is not allowed outside of pmem */
+	try {
+		nvobj::shared_mutex stack_mutex;
+		UT_ASSERT(0);
+	} catch (pmem::lock_error &le) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+void
+test_error_handling(nvobj::pool<root> &pop)
+{
+	nvobj::persistent_ptr<root> proot = pop.root();
+
+	proot->pmutex.lock();
+
+	/* pmemobj doesn't implement this on Windows */
+#if !defined(_WIN32)
+	/* double wrlock should fail with an exception */
+	try {
+		proot->pmutex.lock();
+	} catch (pmem::lock_error &le) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	/*
+	 * rdlock should fail with an exception when wrlock is already taken
+	 * by the same thread
+	 */
+	try {
+		proot->pmutex.lock_shared();
+	} catch (pmem::lock_error &le) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+#endif
+
+	/* but try_locking fails with false */
+	UT_ASSERT(proot->pmutex.try_lock() == false);
+	UT_ASSERT(proot->pmutex.try_lock_shared() == false);
+
+	proot->pmutex.unlock();
+}
 }
 
 int
@@ -195,6 +244,9 @@ main(int argc, char *argv[])
 	/* pmemcheck related persist */
 	pmemobj_persist(pop.handle(), &(pop.root()->counter),
 			sizeof(pop.root()->counter));
+
+	test_stack();
+	test_error_handling(pop);
 
 	pop.close();
 

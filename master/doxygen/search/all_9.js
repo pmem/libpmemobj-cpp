@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['insert',['insert',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a79c7fcde8060a3f69cb7c637331a0e60',1,'pmem::obj::experimental::vector::insert(const_iterator pos, const T &amp;value)'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#afd7adb0e485e06743157655fcf0023f4',1,'pmem::obj::experimental::vector::insert(const_iterator pos, T &amp;&amp;value)'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#a9caf183169e9da9ff8b0b62d394ef9a5',1,'pmem::obj::experimental::vector::insert(const_iterator pos, size_type count, const T &amp;value)'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#a027a813f6ba99c92c93b82c857d2fd21',1,'pmem::obj::experimental::vector::insert(const_iterator pos, InputIt first, InputIt last)'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#aff133b9e6be243d3d424f87265eb329c',1,'pmem::obj::experimental::vector::insert(const_iterator pos, std::initializer_list&lt; T &gt; ilist)']]],
   ['insert_5fgap',['insert_gap',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a37b5953150fc9a2a3f6547f3ae77d64e',1,'pmem::obj::experimental::vector']]],
   ['integer_5fsequence_2ehpp',['integer_sequence.hpp',['../integer__sequence_8hpp.html',1,'']]],
   ['is_5fbidirectional_5fiterator',['is_bidirectional_iterator',['../structpmem_1_1detail_1_1is__bidirectional__iterator.html',1,'pmem::detail']]],

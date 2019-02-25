@@ -35,8 +35,7 @@ test(nvobj::pool<struct root> &pop, const S &s, const S &s2)
 	auto &s1 = *r->s1;
 
 	s1 = s2;
-	// XXX: enable operator==
-	// UT_ASSERT(s1 == s2);
+	UT_ASSERT(s1 == s2);
 	UT_ASSERT(s1.capacity() >= s1.size());
 
 	nvobj::transaction::run(pop,

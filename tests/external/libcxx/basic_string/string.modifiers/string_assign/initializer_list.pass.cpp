@@ -46,8 +46,7 @@ main(int argc, char *argv[])
 			pop, [&] { r->s = nvobj::make_persistent<S>("123"); });
 
 		r->s->assign({'a', 'b', 'c'});
-		// XXX: enable operator==
-		// UT_ASSERT(*r->s == "abc");
+		UT_ASSERT(*r->s == "abc");
 
 		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<S>(r->s); });

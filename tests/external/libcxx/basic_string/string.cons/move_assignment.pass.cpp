@@ -32,25 +32,21 @@ test(nvobj::pool<struct root> &pop, const S &s_1, const S &s_2)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		// XXX: enable operator==
-		// r->s0 = nvobj::make_persistent<S>(s_2);
+		r->s0 = nvobj::make_persistent<S>(s_2);
 		r->s1 = nvobj::make_persistent<S>(s_1);
 		r->s2 = nvobj::make_persistent<S>(s_2);
 	});
 
-	// XXX: enable operator==
-	// auto &s0 = *r->s0;
+	auto &s0 = *r->s0;
 	auto &s1 = *r->s1;
 	auto &s2 = *r->s2;
 
 	s1 = std::move(s2);
-	// XXX: enable operator==
-	// UT_ASSERT(s1 == s0);
+	UT_ASSERT(s1 == s0);
 	UT_ASSERT(s1.capacity() >= s1.size());
 
 	nvobj::transaction::run(pop, [&] {
-		// XXX: enable operator==
-		// nvobj::delete_persistent<S>(r->s0);
+		nvobj::delete_persistent<S>(r->s0);
 		nvobj::delete_persistent<S>(r->s1);
 		nvobj::delete_persistent<S>(r->s2);
 	});

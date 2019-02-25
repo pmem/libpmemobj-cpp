@@ -22,7 +22,7 @@ using S = pmem_exp::string;
 
 struct root {
 	nvobj::persistent_ptr<S> s, s_short, s_long;
-	nvobj::persistent_ptr<S> s_arr[7];
+	nvobj::persistent_ptr<S> s_arr[8];
 };
 
 template <class S>
@@ -39,8 +39,7 @@ test(nvobj::pool<struct root> &pop, const S &s1,
 	auto &s = *r->s;
 
 	s.assign(str, n);
-	// XXX: enable operator==
-	//	UT_ASSERT(s == expected);
+	UT_ASSERT(s == expected);
 
 	nvobj::transaction::run(pop,
 				[&] { nvobj::delete_persistent<S>(r->s); });
@@ -74,6 +73,8 @@ main(int argc, char *argv[])
 					nvobj::make_persistent<S>("1234567890");
 				s_arr[6] = nvobj::make_persistent<S>(
 					"12345678901234567890");
+				s_arr[7] = nvobj::make_persistent<S>(
+					"12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 			});
 
 			test(pop, *s_arr[0], "", 0, *s_arr[0]);
@@ -87,6 +88,9 @@ main(int argc, char *argv[])
 			     *s_arr[2]);
 			test(pop, *s_arr[0], "12345678901234567890", 20,
 			     *s_arr[6]);
+			test(pop, *s_arr[0],
+			     "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
+			     80, *s_arr[7]);
 
 			test(pop, *s_arr[4], "", 0, *s_arr[0]);
 			test(pop, *s_arr[4], "12345", 5, *s_arr[4]);
@@ -98,7 +102,7 @@ main(int argc, char *argv[])
 			     *s_arr[6]);
 
 			nvobj::transaction::run(pop, [&] {
-				for (unsigned i = 0; i < 7; ++i) {
+				for (unsigned i = 0; i < 8; ++i) {
 					nvobj::delete_persistent<S>(s_arr[i]);
 				}
 			});
@@ -120,25 +124,18 @@ main(int argc, char *argv[])
 				auto &s_long = *r->s_long;
 
 				s_short.assign(s_short.data(), s_short.size());
-				// XXX: enable operator==
-				//			UT_ASSERT(s_short ==
-				//"123/");
+				UT_ASSERT(s_short == "123/");
 				s_short.assign(s_short.data() + 2,
 					       s_short.size() - 2);
-				// XXX: enable operator==
-				//			UT_ASSERT(s_short ==
-				//"3/");
+				UT_ASSERT(s_short == "3/");
 
 				s_long.assign(s_long.data(), s_long.size());
-				// XXX: enable operator==
-				//                UT_ASSERT(s_long == "Lorem
-				//                ipsum dolor sit amet,
-				//                consectetur/");
+				UT_ASSERT(
+					s_long ==
+					"Lorem ipsum dolor sit amet, consectetur/");
 
 				s_long.assign(s_long.data() + 2, 8);
-				// XXX: enable operator==
-				//                UT_ASSERT(s_long == "rem
-				//                ipsu");
+				UT_ASSERT(s_long == "rem ipsu");
 
 				nvobj::transaction::run(pop, [&] {
 					nvobj::delete_persistent<S>(r->s_short);

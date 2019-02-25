@@ -62,8 +62,7 @@ main(int argc, char *argv[])
 		});
 
 		*r->s = *tmp;
-		// XXX: enable operator==
-		// UT_ASSERT(*r->s == "ab");
+		UT_ASSERT(*r->s == "ab");
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<S>(r->s);

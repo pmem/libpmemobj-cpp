@@ -45,9 +45,7 @@ test(S &s0, pmem::obj::pool<root> &pop)
 	});
 
 	UT_ASSERT(s0.size() == 0);
-
-	// XXX: enable operator==
-	// UT_ASSERT(*r->s2 == *r->s1);
+	UT_ASSERT(*r->s2 == *r->s1);
 
 	UT_ASSERT(r->s1->size() == r->s2->size());
 	UT_ASSERT(T::compare(r->s2->c_str(), r->s1->c_str(), r->s1->size()) ==

@@ -38,8 +38,7 @@ test(nvobj::pool<struct root> &pop, const S &s1, typename S::size_type n,
 	auto &s = *r->s;
 
 	s.assign(n, c);
-	// XXX: enable operator==
-	//	UT_ASSERT(s == expected);
+	UT_ASSERT(s == expected);
 
 	nvobj::transaction::run(pop,
 				[&] { nvobj::delete_persistent<S>(r->s); });

@@ -22,7 +22,7 @@ using S = pmem_exp::string;
 
 struct root {
 	nvobj::persistent_ptr<S> s;
-	nvobj::persistent_ptr<S> s_arr[16];
+	nvobj::persistent_ptr<S> s_arr[17];
 };
 
 template <class S>
@@ -39,8 +39,7 @@ test(nvobj::pool<struct root> &pop, const S &s1, const S &str,
 
 	if (pos <= str.size()) {
 		s.assign(str, pos, n);
-		// XXX: enable operator==
-		// UT_ASSERT(s == expected);
+		UT_ASSERT(s == expected);
 	} else {
 		try {
 			s.assign(str, pos, n);
@@ -68,8 +67,7 @@ test_npos(nvobj::pool<struct root> &pop, const S &s1, const S &str,
 
 	if (pos <= str.size()) {
 		s.assign(str, pos);
-		// XXX: enable operator==
-		// UT_ASSERT(s == expected);
+		UT_ASSERT(s == expected);
 	} else {
 		try {
 			s.assign(str, pos);
@@ -123,6 +121,8 @@ main(int argc, char *argv[])
 				s_arr[14] = nvobj::make_persistent<S>("234");
 				s_arr[15] =
 					nvobj::make_persistent<S>("6789012345");
+				s_arr[16] = nvobj::make_persistent<S>(
+					"12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 			});
 
 			test(pop, *s_arr[0], *s_arr[0], 0, 0, *s_arr[0]);
@@ -137,6 +137,8 @@ main(int argc, char *argv[])
 			test(pop, *s_arr[0], *s_arr[7], 2, 3, *s_arr[9]);
 			test(pop, *s_arr[0], *s_arr[7], 12, 13, *s_arr[10]);
 			test(pop, *s_arr[0], *s_arr[7], 21, 13, *s_arr[6]);
+			test(pop, *s_arr[0], *s_arr[16], 10, 20, *s_arr[7]);
+			test(pop, *s_arr[0], *s_arr[16], 0, 80, *s_arr[16]);
 
 			test(pop, *s_arr[2], *s_arr[0], 0, 0, *s_arr[0]);
 			test(pop, *s_arr[2], *s_arr[2], 2, 2, *s_arr[11]);
@@ -146,8 +148,12 @@ main(int argc, char *argv[])
 			test(pop, *s_arr[7], *s_arr[2], 1, 3, *s_arr[14]);
 			test(pop, *s_arr[7], *s_arr[7], 5, 10, *s_arr[15]);
 
+			test(pop, *s_arr[16], *s_arr[0], 0, 0, *s_arr[0]);
+			test(pop, *s_arr[16], *s_arr[2], 1, 3, *s_arr[14]);
+			test(pop, *s_arr[16], *s_arr[7], 5, 10, *s_arr[15]);
+
 			nvobj::transaction::run(pop, [&] {
-				for (unsigned i = 0; i < 16; ++i) {
+				for (unsigned i = 0; i < 17; ++i) {
 					nvobj::delete_persistent<S>(s_arr[i]);
 				}
 			});
@@ -170,6 +176,8 @@ main(int argc, char *argv[])
 						nvobj::make_persistent<S>("");
 					s_arr[5] = nvobj::make_persistent<S>(
 						"not happening");
+					s_arr[6] = nvobj::make_persistent<S>(
+						"12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 				});
 
 				test_npos(pop, *s_arr[0], *s_arr[0], 0,
@@ -187,9 +195,13 @@ main(int argc, char *argv[])
 					  *s_arr[4]);
 				test_npos(pop, *s_arr[0], *s_arr[1], 6,
 					  *s_arr[5]);
+				test_npos(pop, *s_arr[0], *s_arr[6], 0,
+					  *s_arr[6]);
+				test_npos(pop, *s_arr[6], *s_arr[1], 1,
+					  *s_arr[2]);
 
 				nvobj::transaction::run(pop, [&] {
-					for (unsigned i = 0; i < 6; ++i) {
+					for (unsigned i = 0; i < 7; ++i) {
 						nvobj::delete_persistent<S>(
 							s_arr[i]);
 					}

@@ -263,10 +263,6 @@ endfunction()
 function(pmreorder_create_store_log pool name)
     check_target(${name})
 
-    if(NOT (${TRACER} STREQUAL none))
-        message(FATAL_ERROR "Pmreorder test must be run without any tracer.")
-    endif()
-
     configure_file(${pool} ${pool}.copy COPYONLY)
 
     set(ENV{PMREORDER_EMIT_LOG} 1)
@@ -288,7 +284,10 @@ function(pmreorder_create_store_log pool name)
         --expect-fence-after-clflush=yes
         ${name} ${ARGN})
 
+    set(TRACER_SAVED ${TRACER})
+    set(TRACER none)
     execute_common(true ${TRACER}_${TESTCASE} ${cmd})
+    set(TRACER ${TRACER_SAVED})
 
     unset(ENV{PMREORDER_EMIT_LOG})
 
@@ -306,8 +305,8 @@ endfunction()
 function(pmreorder_execute expect_success engine conf_file name)
     check_target(${name})
 
-    if(NOT (${TRACER} STREQUAL none))
-        message(FATAL_ERROR "Pmreorder test must be run without any tracer.")
+    if(${TRACER} STREQUAL pmemcheck)
+        message(FATAL_ERROR "Pmreorder test cannot be run under pmemcheck.")
     endif()
 
     set(ENV{PMEMOBJ_COW} 1)

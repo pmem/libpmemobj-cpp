@@ -79,6 +79,10 @@ function sudo_password() {
 	echo $USERPASS | sudo -Sk $*
 }
 
+sudo_password mkdir /mnt/pmem
+sudo_password chmod 0777 /mnt/pmem
+sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
+
 cd $WORKDIR
 INSTALL_DIR=/tmp/libpmemobj-cpp
 
@@ -99,6 +103,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=0 \
+			-DTEST_DIR=/mnt/pmem \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
@@ -127,6 +132,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
+			-DTEST_DIR=/mnt/pmem \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
@@ -154,6 +160,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=1 \
+			-DTEST_DIR=/mnt/pmem \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
@@ -184,6 +191,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
+			-DTEST_DIR=/mnt/pmem \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
@@ -213,6 +221,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCOVERAGE=$COVERAGE \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=1 \
+			-DTEST_DIR=/mnt/pmem \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2

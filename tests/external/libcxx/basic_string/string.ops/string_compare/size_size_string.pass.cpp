@@ -14,17 +14,16 @@
 
 #include "unittest.hpp"
 
+#include <array>
 #include <libpmemobj++/experimental/string.hpp>
-#include <libpmemobj++/make_persistent.hpp>
-#include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/pool.hpp>
-#include <libpmemobj++/transaction.hpp>
 
 namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
+using S = pmem_exp::string;
+
 struct root {
-	nvobj::persistent_ptr<pmem_exp::string> s1, s2, s3, s4;
+	nvobj::persistent_ptr<S> s1, s2, s3, s4;
 };
 
 int
@@ -37,10 +36,10 @@ sign(int x)
 	return 1;
 }
 
-template <class S>
+template <class S, class U>
 void
 test(const S &s, typename S::size_type pos1, typename S::size_type n1,
-     const S &str, int x)
+     const U &str, int x)
 {
 	if (pos1 <= s.size())
 		UT_ASSERT(sign(s.compare(pos1, n1, str)) == sign(x));
@@ -54,318 +53,318 @@ test(const S &s, typename S::size_type pos1, typename S::size_type n1,
 	}
 }
 
-template <class S>
+template <class S, class U>
 void
-test0(pmem::obj::persistent_ptr<root> &r)
+test0(pmem::obj::persistent_ptr<root> &r, const std::array<U, 4> &arr)
 {
-	test(*r->s1, 0, 0, *r->s1, 0);
-	test(*r->s1, 0, 0, *r->s2, -5);
-	test(*r->s1, 0, 0, *r->s3, -10);
-	test(*r->s1, 0, 0, *r->s4, -20);
-	test(*r->s1, 0, 1, *r->s1, 0);
-	test(*r->s1, 0, 1, *r->s2, -5);
-	test(*r->s1, 0, 1, *r->s3, -10);
-	test(*r->s1, 0, 1, *r->s4, -20);
-	test(*r->s1, 1, 0, *r->s1, 0);
-	test(*r->s1, 1, 0, *r->s2, 0);
-	test(*r->s1, 1, 0, *r->s3, 0);
-	test(*r->s1, 1, 0, *r->s4, 0);
-	test(*r->s2, 0, 0, *r->s1, 0);
-	test(*r->s2, 0, 0, *r->s2, -5);
-	test(*r->s2, 0, 0, *r->s3, -10);
-	test(*r->s2, 0, 0, *r->s4, -20);
-	test(*r->s2, 0, 1, *r->s1, 1);
-	test(*r->s2, 0, 1, *r->s2, -4);
-	test(*r->s2, 0, 1, *r->s3, -9);
-	test(*r->s2, 0, 1, *r->s4, -19);
-	test(*r->s2, 0, 2, *r->s1, 2);
-	test(*r->s2, 0, 2, *r->s2, -3);
-	test(*r->s2, 0, 2, *r->s3, -8);
-	test(*r->s2, 0, 2, *r->s4, -18);
-	test(*r->s2, 0, 4, *r->s1, 4);
-	test(*r->s2, 0, 4, *r->s2, -1);
-	test(*r->s2, 0, 4, *r->s3, -6);
-	test(*r->s2, 0, 4, *r->s4, -16);
-	test(*r->s2, 0, 5, *r->s1, 5);
-	test(*r->s2, 0, 5, *r->s2, 0);
-	test(*r->s2, 0, 5, *r->s3, -5);
-	test(*r->s2, 0, 5, *r->s4, -15);
-	test(*r->s2, 0, 6, *r->s1, 5);
-	test(*r->s2, 0, 6, *r->s2, 0);
-	test(*r->s2, 0, 6, *r->s3, -5);
-	test(*r->s2, 0, 6, *r->s4, -15);
-	test(*r->s2, 1, 0, *r->s1, 0);
-	test(*r->s2, 1, 0, *r->s2, -5);
-	test(*r->s2, 1, 0, *r->s3, -10);
-	test(*r->s2, 1, 0, *r->s4, -20);
-	test(*r->s2, 1, 1, *r->s1, 1);
-	test(*r->s2, 1, 1, *r->s2, 1);
-	test(*r->s2, 1, 1, *r->s3, 1);
-	test(*r->s2, 1, 1, *r->s4, 1);
-	test(*r->s2, 1, 2, *r->s1, 2);
-	test(*r->s2, 1, 2, *r->s2, 1);
-	test(*r->s2, 1, 2, *r->s3, 1);
-	test(*r->s2, 1, 2, *r->s4, 1);
-	test(*r->s2, 1, 3, *r->s1, 3);
-	test(*r->s2, 1, 3, *r->s2, 1);
-	test(*r->s2, 1, 3, *r->s3, 1);
-	test(*r->s2, 1, 3, *r->s4, 1);
-	test(*r->s2, 1, 4, *r->s1, 4);
-	test(*r->s2, 1, 4, *r->s2, 1);
-	test(*r->s2, 1, 4, *r->s3, 1);
-	test(*r->s2, 1, 4, *r->s4, 1);
-	test(*r->s2, 1, 5, *r->s1, 4);
-	test(*r->s2, 1, 5, *r->s2, 1);
-	test(*r->s2, 1, 5, *r->s3, 1);
-	test(*r->s2, 1, 5, *r->s4, 1);
-	test(*r->s2, 2, 0, *r->s1, 0);
-	test(*r->s2, 2, 0, *r->s2, -5);
-	test(*r->s2, 2, 0, *r->s3, -10);
-	test(*r->s2, 2, 0, *r->s4, -20);
-	test(*r->s2, 2, 1, *r->s1, 1);
-	test(*r->s2, 2, 1, *r->s2, 2);
-	test(*r->s2, 2, 1, *r->s3, 2);
-	test(*r->s2, 2, 1, *r->s4, 2);
-	test(*r->s2, 2, 2, *r->s1, 2);
-	test(*r->s2, 2, 2, *r->s2, 2);
-	test(*r->s2, 2, 2, *r->s3, 2);
-	test(*r->s2, 2, 2, *r->s4, 2);
-	test(*r->s2, 2, 3, *r->s1, 3);
-	test(*r->s2, 2, 3, *r->s2, 2);
-	test(*r->s2, 2, 3, *r->s3, 2);
-	test(*r->s2, 2, 3, *r->s4, 2);
-	test(*r->s2, 2, 4, *r->s1, 3);
-	test(*r->s2, 2, 4, *r->s2, 2);
-	test(*r->s2, 2, 4, *r->s3, 2);
-	test(*r->s2, 2, 4, *r->s4, 2);
-	test(*r->s2, 4, 0, *r->s1, 0);
-	test(*r->s2, 4, 0, *r->s2, -5);
-	test(*r->s2, 4, 0, *r->s3, -10);
-	test(*r->s2, 4, 0, *r->s4, -20);
-	test(*r->s2, 4, 1, *r->s1, 1);
-	test(*r->s2, 4, 1, *r->s2, 4);
-	test(*r->s2, 4, 1, *r->s3, 4);
-	test(*r->s2, 4, 1, *r->s4, 4);
-	test(*r->s2, 4, 2, *r->s1, 1);
-	test(*r->s2, 4, 2, *r->s2, 4);
-	test(*r->s2, 4, 2, *r->s3, 4);
-	test(*r->s2, 4, 2, *r->s4, 4);
-	test(*r->s2, 5, 0, *r->s1, 0);
-	test(*r->s2, 5, 0, *r->s2, -5);
-	test(*r->s2, 5, 0, *r->s3, -10);
-	test(*r->s2, 5, 0, *r->s4, -20);
-	test(*r->s2, 5, 1, *r->s1, 0);
-	test(*r->s2, 5, 1, *r->s2, -5);
-	test(*r->s2, 5, 1, *r->s3, -10);
-	test(*r->s2, 5, 1, *r->s4, -20);
+	test(*r->s1, 0, 0, *arr[0], 0);
+	test(*r->s1, 0, 0, *arr[1], -5);
+	test(*r->s1, 0, 0, *arr[2], -10);
+	test(*r->s1, 0, 0, *arr[3], -20);
+	test(*r->s1, 0, 1, *arr[0], 0);
+	test(*r->s1, 0, 1, *arr[1], -5);
+	test(*r->s1, 0, 1, *arr[2], -10);
+	test(*r->s1, 0, 1, *arr[3], -20);
+	test(*r->s1, 1, 0, *arr[0], 0);
+	test(*r->s1, 1, 0, *arr[1], 0);
+	test(*r->s1, 1, 0, *arr[2], 0);
+	test(*r->s1, 1, 0, *arr[3], 0);
+	test(*r->s2, 0, 0, *arr[0], 0);
+	test(*r->s2, 0, 0, *arr[1], -5);
+	test(*r->s2, 0, 0, *arr[2], -10);
+	test(*r->s2, 0, 0, *arr[3], -20);
+	test(*r->s2, 0, 1, *arr[0], 1);
+	test(*r->s2, 0, 1, *arr[1], -4);
+	test(*r->s2, 0, 1, *arr[2], -9);
+	test(*r->s2, 0, 1, *arr[3], -19);
+	test(*r->s2, 0, 2, *arr[0], 2);
+	test(*r->s2, 0, 2, *arr[1], -3);
+	test(*r->s2, 0, 2, *arr[2], -8);
+	test(*r->s2, 0, 2, *arr[3], -18);
+	test(*r->s2, 0, 4, *arr[0], 4);
+	test(*r->s2, 0, 4, *arr[1], -1);
+	test(*r->s2, 0, 4, *arr[2], -6);
+	test(*r->s2, 0, 4, *arr[3], -16);
+	test(*r->s2, 0, 5, *arr[0], 5);
+	test(*r->s2, 0, 5, *arr[1], 0);
+	test(*r->s2, 0, 5, *arr[2], -5);
+	test(*r->s2, 0, 5, *arr[3], -15);
+	test(*r->s2, 0, 6, *arr[0], 5);
+	test(*r->s2, 0, 6, *arr[1], 0);
+	test(*r->s2, 0, 6, *arr[2], -5);
+	test(*r->s2, 0, 6, *arr[3], -15);
+	test(*r->s2, 1, 0, *arr[0], 0);
+	test(*r->s2, 1, 0, *arr[1], -5);
+	test(*r->s2, 1, 0, *arr[2], -10);
+	test(*r->s2, 1, 0, *arr[3], -20);
+	test(*r->s2, 1, 1, *arr[0], 1);
+	test(*r->s2, 1, 1, *arr[1], 1);
+	test(*r->s2, 1, 1, *arr[2], 1);
+	test(*r->s2, 1, 1, *arr[3], 1);
+	test(*r->s2, 1, 2, *arr[0], 2);
+	test(*r->s2, 1, 2, *arr[1], 1);
+	test(*r->s2, 1, 2, *arr[2], 1);
+	test(*r->s2, 1, 2, *arr[3], 1);
+	test(*r->s2, 1, 3, *arr[0], 3);
+	test(*r->s2, 1, 3, *arr[1], 1);
+	test(*r->s2, 1, 3, *arr[2], 1);
+	test(*r->s2, 1, 3, *arr[3], 1);
+	test(*r->s2, 1, 4, *arr[0], 4);
+	test(*r->s2, 1, 4, *arr[1], 1);
+	test(*r->s2, 1, 4, *arr[2], 1);
+	test(*r->s2, 1, 4, *arr[3], 1);
+	test(*r->s2, 1, 5, *arr[0], 4);
+	test(*r->s2, 1, 5, *arr[1], 1);
+	test(*r->s2, 1, 5, *arr[2], 1);
+	test(*r->s2, 1, 5, *arr[3], 1);
+	test(*r->s2, 2, 0, *arr[0], 0);
+	test(*r->s2, 2, 0, *arr[1], -5);
+	test(*r->s2, 2, 0, *arr[2], -10);
+	test(*r->s2, 2, 0, *arr[3], -20);
+	test(*r->s2, 2, 1, *arr[0], 1);
+	test(*r->s2, 2, 1, *arr[1], 2);
+	test(*r->s2, 2, 1, *arr[2], 2);
+	test(*r->s2, 2, 1, *arr[3], 2);
+	test(*r->s2, 2, 2, *arr[0], 2);
+	test(*r->s2, 2, 2, *arr[1], 2);
+	test(*r->s2, 2, 2, *arr[2], 2);
+	test(*r->s2, 2, 2, *arr[3], 2);
+	test(*r->s2, 2, 3, *arr[0], 3);
+	test(*r->s2, 2, 3, *arr[1], 2);
+	test(*r->s2, 2, 3, *arr[2], 2);
+	test(*r->s2, 2, 3, *arr[3], 2);
+	test(*r->s2, 2, 4, *arr[0], 3);
+	test(*r->s2, 2, 4, *arr[1], 2);
+	test(*r->s2, 2, 4, *arr[2], 2);
+	test(*r->s2, 2, 4, *arr[3], 2);
+	test(*r->s2, 4, 0, *arr[0], 0);
+	test(*r->s2, 4, 0, *arr[1], -5);
+	test(*r->s2, 4, 0, *arr[2], -10);
+	test(*r->s2, 4, 0, *arr[3], -20);
+	test(*r->s2, 4, 1, *arr[0], 1);
+	test(*r->s2, 4, 1, *arr[1], 4);
+	test(*r->s2, 4, 1, *arr[2], 4);
+	test(*r->s2, 4, 1, *arr[3], 4);
+	test(*r->s2, 4, 2, *arr[0], 1);
+	test(*r->s2, 4, 2, *arr[1], 4);
+	test(*r->s2, 4, 2, *arr[2], 4);
+	test(*r->s2, 4, 2, *arr[3], 4);
+	test(*r->s2, 5, 0, *arr[0], 0);
+	test(*r->s2, 5, 0, *arr[1], -5);
+	test(*r->s2, 5, 0, *arr[2], -10);
+	test(*r->s2, 5, 0, *arr[3], -20);
+	test(*r->s2, 5, 1, *arr[0], 0);
+	test(*r->s2, 5, 1, *arr[1], -5);
+	test(*r->s2, 5, 1, *arr[2], -10);
+	test(*r->s2, 5, 1, *arr[3], -20);
 }
 
-template <class S>
+template <class S, class U>
 void
-test1(pmem::obj::persistent_ptr<root> &r)
+test1(pmem::obj::persistent_ptr<root> &r, const std::array<U, 4> &arr)
 {
-	test(*r->s2, 6, 0, *r->s1, 0);
-	test(*r->s2, 6, 0, *r->s2, 0);
-	test(*r->s2, 6, 0, *r->s3, 0);
-	test(*r->s2, 6, 0, *r->s4, 0);
-	test(*r->s3, 0, 0, *r->s1, 0);
-	test(*r->s3, 0, 0, *r->s2, -5);
-	test(*r->s3, 0, 0, *r->s3, -10);
-	test(*r->s3, 0, 0, *r->s4, -20);
-	test(*r->s3, 0, 1, *r->s1, 1);
-	test(*r->s3, 0, 1, *r->s2, -4);
-	test(*r->s3, 0, 1, *r->s3, -9);
-	test(*r->s3, 0, 1, *r->s4, -19);
-	test(*r->s3, 0, 5, *r->s1, 5);
-	test(*r->s3, 0, 5, *r->s2, 0);
-	test(*r->s3, 0, 5, *r->s3, -5);
-	test(*r->s3, 0, 5, *r->s4, -15);
-	test(*r->s3, 0, 9, *r->s1, 9);
-	test(*r->s3, 0, 9, *r->s2, 4);
-	test(*r->s3, 0, 9, *r->s3, -1);
-	test(*r->s3, 0, 9, *r->s4, -11);
-	test(*r->s3, 0, 10, *r->s1, 10);
-	test(*r->s3, 0, 10, *r->s2, 5);
-	test(*r->s3, 0, 10, *r->s3, 0);
-	test(*r->s3, 0, 10, *r->s4, -10);
-	test(*r->s3, 0, 11, *r->s1, 10);
-	test(*r->s3, 0, 11, *r->s2, 5);
-	test(*r->s3, 0, 11, *r->s3, 0);
-	test(*r->s3, 0, 11, *r->s4, -10);
-	test(*r->s3, 1, 0, *r->s1, 0);
-	test(*r->s3, 1, 0, *r->s2, -5);
-	test(*r->s3, 1, 0, *r->s3, -10);
-	test(*r->s3, 1, 0, *r->s4, -20);
-	test(*r->s3, 1, 1, *r->s1, 1);
-	test(*r->s3, 1, 1, *r->s2, 1);
-	test(*r->s3, 1, 1, *r->s3, 1);
-	test(*r->s3, 1, 1, *r->s4, 1);
-	test(*r->s3, 1, 4, *r->s1, 4);
-	test(*r->s3, 1, 4, *r->s2, 1);
-	test(*r->s3, 1, 4, *r->s3, 1);
-	test(*r->s3, 1, 4, *r->s4, 1);
-	test(*r->s3, 1, 8, *r->s1, 8);
-	test(*r->s3, 1, 8, *r->s2, 1);
-	test(*r->s3, 1, 8, *r->s3, 1);
-	test(*r->s3, 1, 8, *r->s4, 1);
-	test(*r->s3, 1, 9, *r->s1, 9);
-	test(*r->s3, 1, 9, *r->s2, 1);
-	test(*r->s3, 1, 9, *r->s3, 1);
-	test(*r->s3, 1, 9, *r->s4, 1);
-	test(*r->s3, 1, 10, *r->s1, 9);
-	test(*r->s3, 1, 10, *r->s2, 1);
-	test(*r->s3, 1, 10, *r->s3, 1);
-	test(*r->s3, 1, 10, *r->s4, 1);
-	test(*r->s3, 5, 0, *r->s1, 0);
-	test(*r->s3, 5, 0, *r->s2, -5);
-	test(*r->s3, 5, 0, *r->s3, -10);
-	test(*r->s3, 5, 0, *r->s4, -20);
-	test(*r->s3, 5, 1, *r->s1, 1);
-	test(*r->s3, 5, 1, *r->s2, 5);
-	test(*r->s3, 5, 1, *r->s3, 5);
-	test(*r->s3, 5, 1, *r->s4, 5);
-	test(*r->s3, 5, 2, *r->s1, 2);
-	test(*r->s3, 5, 2, *r->s2, 5);
-	test(*r->s3, 5, 2, *r->s3, 5);
-	test(*r->s3, 5, 2, *r->s4, 5);
-	test(*r->s3, 5, 4, *r->s1, 4);
-	test(*r->s3, 5, 4, *r->s2, 5);
-	test(*r->s3, 5, 4, *r->s3, 5);
-	test(*r->s3, 5, 4, *r->s4, 5);
-	test(*r->s3, 5, 5, *r->s1, 5);
-	test(*r->s3, 5, 5, *r->s2, 5);
-	test(*r->s3, 5, 5, *r->s3, 5);
-	test(*r->s3, 5, 5, *r->s4, 5);
-	test(*r->s3, 5, 6, *r->s1, 5);
-	test(*r->s3, 5, 6, *r->s2, 5);
-	test(*r->s3, 5, 6, *r->s3, 5);
-	test(*r->s3, 5, 6, *r->s4, 5);
-	test(*r->s3, 9, 0, *r->s1, 0);
-	test(*r->s3, 9, 0, *r->s2, -5);
-	test(*r->s3, 9, 0, *r->s3, -10);
-	test(*r->s3, 9, 0, *r->s4, -20);
-	test(*r->s3, 9, 1, *r->s1, 1);
-	test(*r->s3, 9, 1, *r->s2, 9);
-	test(*r->s3, 9, 1, *r->s3, 9);
-	test(*r->s3, 9, 1, *r->s4, 9);
-	test(*r->s3, 9, 2, *r->s1, 1);
-	test(*r->s3, 9, 2, *r->s2, 9);
-	test(*r->s3, 9, 2, *r->s3, 9);
-	test(*r->s3, 9, 2, *r->s4, 9);
-	test(*r->s3, 10, 0, *r->s1, 0);
-	test(*r->s3, 10, 0, *r->s2, -5);
-	test(*r->s3, 10, 0, *r->s3, -10);
-	test(*r->s3, 10, 0, *r->s4, -20);
-	test(*r->s3, 10, 1, *r->s1, 0);
-	test(*r->s3, 10, 1, *r->s2, -5);
-	test(*r->s3, 10, 1, *r->s3, -10);
-	test(*r->s3, 10, 1, *r->s4, -20);
-	test(*r->s3, 11, 0, *r->s1, 0);
-	test(*r->s3, 11, 0, *r->s2, 0);
-	test(*r->s3, 11, 0, *r->s3, 0);
-	test(*r->s3, 11, 0, *r->s4, 0);
+	test(*r->s2, 6, 0, *arr[0], 0);
+	test(*r->s2, 6, 0, *arr[1], 0);
+	test(*r->s2, 6, 0, *arr[2], 0);
+	test(*r->s2, 6, 0, *arr[3], 0);
+	test(*r->s3, 0, 0, *arr[0], 0);
+	test(*r->s3, 0, 0, *arr[1], -5);
+	test(*r->s3, 0, 0, *arr[2], -10);
+	test(*r->s3, 0, 0, *arr[3], -20);
+	test(*r->s3, 0, 1, *arr[0], 1);
+	test(*r->s3, 0, 1, *arr[1], -4);
+	test(*r->s3, 0, 1, *arr[2], -9);
+	test(*r->s3, 0, 1, *arr[3], -19);
+	test(*r->s3, 0, 5, *arr[0], 5);
+	test(*r->s3, 0, 5, *arr[1], 0);
+	test(*r->s3, 0, 5, *arr[2], -5);
+	test(*r->s3, 0, 5, *arr[3], -15);
+	test(*r->s3, 0, 9, *arr[0], 9);
+	test(*r->s3, 0, 9, *arr[1], 4);
+	test(*r->s3, 0, 9, *arr[2], -1);
+	test(*r->s3, 0, 9, *arr[3], -11);
+	test(*r->s3, 0, 10, *arr[0], 10);
+	test(*r->s3, 0, 10, *arr[1], 5);
+	test(*r->s3, 0, 10, *arr[2], 0);
+	test(*r->s3, 0, 10, *arr[3], -10);
+	test(*r->s3, 0, 11, *arr[0], 10);
+	test(*r->s3, 0, 11, *arr[1], 5);
+	test(*r->s3, 0, 11, *arr[2], 0);
+	test(*r->s3, 0, 11, *arr[3], -10);
+	test(*r->s3, 1, 0, *arr[0], 0);
+	test(*r->s3, 1, 0, *arr[1], -5);
+	test(*r->s3, 1, 0, *arr[2], -10);
+	test(*r->s3, 1, 0, *arr[3], -20);
+	test(*r->s3, 1, 1, *arr[0], 1);
+	test(*r->s3, 1, 1, *arr[1], 1);
+	test(*r->s3, 1, 1, *arr[2], 1);
+	test(*r->s3, 1, 1, *arr[3], 1);
+	test(*r->s3, 1, 4, *arr[0], 4);
+	test(*r->s3, 1, 4, *arr[1], 1);
+	test(*r->s3, 1, 4, *arr[2], 1);
+	test(*r->s3, 1, 4, *arr[3], 1);
+	test(*r->s3, 1, 8, *arr[0], 8);
+	test(*r->s3, 1, 8, *arr[1], 1);
+	test(*r->s3, 1, 8, *arr[2], 1);
+	test(*r->s3, 1, 8, *arr[3], 1);
+	test(*r->s3, 1, 9, *arr[0], 9);
+	test(*r->s3, 1, 9, *arr[1], 1);
+	test(*r->s3, 1, 9, *arr[2], 1);
+	test(*r->s3, 1, 9, *arr[3], 1);
+	test(*r->s3, 1, 10, *arr[0], 9);
+	test(*r->s3, 1, 10, *arr[1], 1);
+	test(*r->s3, 1, 10, *arr[2], 1);
+	test(*r->s3, 1, 10, *arr[3], 1);
+	test(*r->s3, 5, 0, *arr[0], 0);
+	test(*r->s3, 5, 0, *arr[1], -5);
+	test(*r->s3, 5, 0, *arr[2], -10);
+	test(*r->s3, 5, 0, *arr[3], -20);
+	test(*r->s3, 5, 1, *arr[0], 1);
+	test(*r->s3, 5, 1, *arr[1], 5);
+	test(*r->s3, 5, 1, *arr[2], 5);
+	test(*r->s3, 5, 1, *arr[3], 5);
+	test(*r->s3, 5, 2, *arr[0], 2);
+	test(*r->s3, 5, 2, *arr[1], 5);
+	test(*r->s3, 5, 2, *arr[2], 5);
+	test(*r->s3, 5, 2, *arr[3], 5);
+	test(*r->s3, 5, 4, *arr[0], 4);
+	test(*r->s3, 5, 4, *arr[1], 5);
+	test(*r->s3, 5, 4, *arr[2], 5);
+	test(*r->s3, 5, 4, *arr[3], 5);
+	test(*r->s3, 5, 5, *arr[0], 5);
+	test(*r->s3, 5, 5, *arr[1], 5);
+	test(*r->s3, 5, 5, *arr[2], 5);
+	test(*r->s3, 5, 5, *arr[3], 5);
+	test(*r->s3, 5, 6, *arr[0], 5);
+	test(*r->s3, 5, 6, *arr[1], 5);
+	test(*r->s3, 5, 6, *arr[2], 5);
+	test(*r->s3, 5, 6, *arr[3], 5);
+	test(*r->s3, 9, 0, *arr[0], 0);
+	test(*r->s3, 9, 0, *arr[1], -5);
+	test(*r->s3, 9, 0, *arr[2], -10);
+	test(*r->s3, 9, 0, *arr[3], -20);
+	test(*r->s3, 9, 1, *arr[0], 1);
+	test(*r->s3, 9, 1, *arr[1], 9);
+	test(*r->s3, 9, 1, *arr[2], 9);
+	test(*r->s3, 9, 1, *arr[3], 9);
+	test(*r->s3, 9, 2, *arr[0], 1);
+	test(*r->s3, 9, 2, *arr[1], 9);
+	test(*r->s3, 9, 2, *arr[2], 9);
+	test(*r->s3, 9, 2, *arr[3], 9);
+	test(*r->s3, 10, 0, *arr[0], 0);
+	test(*r->s3, 10, 0, *arr[1], -5);
+	test(*r->s3, 10, 0, *arr[2], -10);
+	test(*r->s3, 10, 0, *arr[3], -20);
+	test(*r->s3, 10, 1, *arr[0], 0);
+	test(*r->s3, 10, 1, *arr[1], -5);
+	test(*r->s3, 10, 1, *arr[2], -10);
+	test(*r->s3, 10, 1, *arr[3], -20);
+	test(*r->s3, 11, 0, *arr[0], 0);
+	test(*r->s3, 11, 0, *arr[1], 0);
+	test(*r->s3, 11, 0, *arr[2], 0);
+	test(*r->s3, 11, 0, *arr[3], 0);
 }
 
-template <class S>
+template <class S, class U>
 void
-test2(pmem::obj::persistent_ptr<root> &r)
+test2(pmem::obj::persistent_ptr<root> &r, const std::array<U, 4> &arr)
 {
-	test(*r->s4, 0, 0, *r->s1, 0);
-	test(*r->s4, 0, 0, *r->s2, -5);
-	test(*r->s4, 0, 0, *r->s3, -10);
-	test(*r->s4, 0, 0, *r->s4, -20);
-	test(*r->s4, 0, 1, *r->s1, 1);
-	test(*r->s4, 0, 1, *r->s2, -4);
-	test(*r->s4, 0, 1, *r->s3, -9);
-	test(*r->s4, 0, 1, *r->s4, -19);
-	test(*r->s4, 0, 10, *r->s1, 10);
-	test(*r->s4, 0, 10, *r->s2, 5);
-	test(*r->s4, 0, 10, *r->s3, 0);
-	test(*r->s4, 0, 10, *r->s4, -10);
-	test(*r->s4, 0, 19, *r->s1, 19);
-	test(*r->s4, 0, 19, *r->s2, 14);
-	test(*r->s4, 0, 19, *r->s3, 9);
-	test(*r->s4, 0, 19, *r->s4, -1);
-	test(*r->s4, 0, 20, *r->s1, 20);
-	test(*r->s4, 0, 20, *r->s2, 15);
-	test(*r->s4, 0, 20, *r->s3, 10);
-	test(*r->s4, 0, 20, *r->s4, 0);
-	test(*r->s4, 0, 21, *r->s1, 20);
-	test(*r->s4, 0, 21, *r->s2, 15);
-	test(*r->s4, 0, 21, *r->s3, 10);
-	test(*r->s4, 0, 21, *r->s4, 0);
-	test(*r->s4, 1, 0, *r->s1, 0);
-	test(*r->s4, 1, 0, *r->s2, -5);
-	test(*r->s4, 1, 0, *r->s3, -10);
-	test(*r->s4, 1, 0, *r->s4, -20);
-	test(*r->s4, 1, 1, *r->s1, 1);
-	test(*r->s4, 1, 1, *r->s2, 1);
-	test(*r->s4, 1, 1, *r->s3, 1);
-	test(*r->s4, 1, 1, *r->s4, 1);
-	test(*r->s4, 1, 9, *r->s1, 9);
-	test(*r->s4, 1, 9, *r->s2, 1);
-	test(*r->s4, 1, 9, *r->s3, 1);
-	test(*r->s4, 1, 9, *r->s4, 1);
-	test(*r->s4, 1, 18, *r->s1, 18);
-	test(*r->s4, 1, 18, *r->s2, 1);
-	test(*r->s4, 1, 18, *r->s3, 1);
-	test(*r->s4, 1, 18, *r->s4, 1);
-	test(*r->s4, 1, 19, *r->s1, 19);
-	test(*r->s4, 1, 19, *r->s2, 1);
-	test(*r->s4, 1, 19, *r->s3, 1);
-	test(*r->s4, 1, 19, *r->s4, 1);
-	test(*r->s4, 1, 20, *r->s1, 19);
-	test(*r->s4, 1, 20, *r->s2, 1);
-	test(*r->s4, 1, 20, *r->s3, 1);
-	test(*r->s4, 1, 20, *r->s4, 1);
-	test(*r->s4, 10, 0, *r->s1, 0);
-	test(*r->s4, 10, 0, *r->s2, -5);
-	test(*r->s4, 10, 0, *r->s3, -10);
-	test(*r->s4, 10, 0, *r->s4, -20);
-	test(*r->s4, 10, 1, *r->s1, 1);
-	test(*r->s4, 10, 1, *r->s2, 10);
-	test(*r->s4, 10, 1, *r->s3, 10);
-	test(*r->s4, 10, 1, *r->s4, 10);
-	test(*r->s4, 10, 5, *r->s1, 5);
-	test(*r->s4, 10, 5, *r->s2, 10);
-	test(*r->s4, 10, 5, *r->s3, 10);
-	test(*r->s4, 10, 5, *r->s4, 10);
-	test(*r->s4, 10, 9, *r->s1, 9);
-	test(*r->s4, 10, 9, *r->s2, 10);
-	test(*r->s4, 10, 9, *r->s3, 10);
-	test(*r->s4, 10, 9, *r->s4, 10);
-	test(*r->s4, 10, 10, *r->s1, 10);
-	test(*r->s4, 10, 10, *r->s2, 10);
-	test(*r->s4, 10, 10, *r->s3, 10);
-	test(*r->s4, 10, 10, *r->s4, 10);
-	test(*r->s4, 10, 11, *r->s1, 10);
-	test(*r->s4, 10, 11, *r->s2, 10);
-	test(*r->s4, 10, 11, *r->s3, 10);
-	test(*r->s4, 10, 11, *r->s4, 10);
-	test(*r->s4, 19, 0, *r->s1, 0);
-	test(*r->s4, 19, 0, *r->s2, -5);
-	test(*r->s4, 19, 0, *r->s3, -10);
-	test(*r->s4, 19, 0, *r->s4, -20);
-	test(*r->s4, 19, 1, *r->s1, 1);
-	test(*r->s4, 19, 1, *r->s2, 19);
-	test(*r->s4, 19, 1, *r->s3, 19);
-	test(*r->s4, 19, 1, *r->s4, 19);
-	test(*r->s4, 19, 2, *r->s1, 1);
-	test(*r->s4, 19, 2, *r->s2, 19);
-	test(*r->s4, 19, 2, *r->s3, 19);
-	test(*r->s4, 19, 2, *r->s4, 19);
-	test(*r->s4, 20, 0, *r->s1, 0);
-	test(*r->s4, 20, 0, *r->s2, -5);
-	test(*r->s4, 20, 0, *r->s3, -10);
-	test(*r->s4, 20, 0, *r->s4, -20);
-	test(*r->s4, 20, 1, *r->s1, 0);
-	test(*r->s4, 20, 1, *r->s2, -5);
-	test(*r->s4, 20, 1, *r->s3, -10);
-	test(*r->s4, 20, 1, *r->s4, -20);
-	test(*r->s4, 21, 0, *r->s1, 0);
-	test(*r->s4, 21, 0, *r->s2, 0);
-	test(*r->s4, 21, 0, *r->s3, 0);
-	test(*r->s4, 21, 0, *r->s4, 0);
+	test(*r->s4, 0, 0, *arr[0], 0);
+	test(*r->s4, 0, 0, *arr[1], -5);
+	test(*r->s4, 0, 0, *arr[2], -10);
+	test(*r->s4, 0, 0, *arr[3], -20);
+	test(*r->s4, 0, 1, *arr[0], 1);
+	test(*r->s4, 0, 1, *arr[1], -4);
+	test(*r->s4, 0, 1, *arr[2], -9);
+	test(*r->s4, 0, 1, *arr[3], -19);
+	test(*r->s4, 0, 10, *arr[0], 10);
+	test(*r->s4, 0, 10, *arr[1], 5);
+	test(*r->s4, 0, 10, *arr[2], 0);
+	test(*r->s4, 0, 10, *arr[3], -10);
+	test(*r->s4, 0, 19, *arr[0], 19);
+	test(*r->s4, 0, 19, *arr[1], 14);
+	test(*r->s4, 0, 19, *arr[2], 9);
+	test(*r->s4, 0, 19, *arr[3], -1);
+	test(*r->s4, 0, 20, *arr[0], 20);
+	test(*r->s4, 0, 20, *arr[1], 15);
+	test(*r->s4, 0, 20, *arr[2], 10);
+	test(*r->s4, 0, 20, *arr[3], 0);
+	test(*r->s4, 0, 21, *arr[0], 20);
+	test(*r->s4, 0, 21, *arr[1], 15);
+	test(*r->s4, 0, 21, *arr[2], 10);
+	test(*r->s4, 0, 21, *arr[3], 0);
+	test(*r->s4, 1, 0, *arr[0], 0);
+	test(*r->s4, 1, 0, *arr[1], -5);
+	test(*r->s4, 1, 0, *arr[2], -10);
+	test(*r->s4, 1, 0, *arr[3], -20);
+	test(*r->s4, 1, 1, *arr[0], 1);
+	test(*r->s4, 1, 1, *arr[1], 1);
+	test(*r->s4, 1, 1, *arr[2], 1);
+	test(*r->s4, 1, 1, *arr[3], 1);
+	test(*r->s4, 1, 9, *arr[0], 9);
+	test(*r->s4, 1, 9, *arr[1], 1);
+	test(*r->s4, 1, 9, *arr[2], 1);
+	test(*r->s4, 1, 9, *arr[3], 1);
+	test(*r->s4, 1, 18, *arr[0], 18);
+	test(*r->s4, 1, 18, *arr[1], 1);
+	test(*r->s4, 1, 18, *arr[2], 1);
+	test(*r->s4, 1, 18, *arr[3], 1);
+	test(*r->s4, 1, 19, *arr[0], 19);
+	test(*r->s4, 1, 19, *arr[1], 1);
+	test(*r->s4, 1, 19, *arr[2], 1);
+	test(*r->s4, 1, 19, *arr[3], 1);
+	test(*r->s4, 1, 20, *arr[0], 19);
+	test(*r->s4, 1, 20, *arr[1], 1);
+	test(*r->s4, 1, 20, *arr[2], 1);
+	test(*r->s4, 1, 20, *arr[3], 1);
+	test(*r->s4, 10, 0, *arr[0], 0);
+	test(*r->s4, 10, 0, *arr[1], -5);
+	test(*r->s4, 10, 0, *arr[2], -10);
+	test(*r->s4, 10, 0, *arr[3], -20);
+	test(*r->s4, 10, 1, *arr[0], 1);
+	test(*r->s4, 10, 1, *arr[1], 10);
+	test(*r->s4, 10, 1, *arr[2], 10);
+	test(*r->s4, 10, 1, *arr[3], 10);
+	test(*r->s4, 10, 5, *arr[0], 5);
+	test(*r->s4, 10, 5, *arr[1], 10);
+	test(*r->s4, 10, 5, *arr[2], 10);
+	test(*r->s4, 10, 5, *arr[3], 10);
+	test(*r->s4, 10, 9, *arr[0], 9);
+	test(*r->s4, 10, 9, *arr[1], 10);
+	test(*r->s4, 10, 9, *arr[2], 10);
+	test(*r->s4, 10, 9, *arr[3], 10);
+	test(*r->s4, 10, 10, *arr[0], 10);
+	test(*r->s4, 10, 10, *arr[1], 10);
+	test(*r->s4, 10, 10, *arr[2], 10);
+	test(*r->s4, 10, 10, *arr[3], 10);
+	test(*r->s4, 10, 11, *arr[0], 10);
+	test(*r->s4, 10, 11, *arr[1], 10);
+	test(*r->s4, 10, 11, *arr[2], 10);
+	test(*r->s4, 10, 11, *arr[3], 10);
+	test(*r->s4, 19, 0, *arr[0], 0);
+	test(*r->s4, 19, 0, *arr[1], -5);
+	test(*r->s4, 19, 0, *arr[2], -10);
+	test(*r->s4, 19, 0, *arr[3], -20);
+	test(*r->s4, 19, 1, *arr[0], 1);
+	test(*r->s4, 19, 1, *arr[1], 19);
+	test(*r->s4, 19, 1, *arr[2], 19);
+	test(*r->s4, 19, 1, *arr[3], 19);
+	test(*r->s4, 19, 2, *arr[0], 1);
+	test(*r->s4, 19, 2, *arr[1], 19);
+	test(*r->s4, 19, 2, *arr[2], 19);
+	test(*r->s4, 19, 2, *arr[3], 19);
+	test(*r->s4, 20, 0, *arr[0], 0);
+	test(*r->s4, 20, 0, *arr[1], -5);
+	test(*r->s4, 20, 0, *arr[2], -10);
+	test(*r->s4, 20, 0, *arr[3], -20);
+	test(*r->s4, 20, 1, *arr[0], 0);
+	test(*r->s4, 20, 1, *arr[1], -5);
+	test(*r->s4, 20, 1, *arr[2], -10);
+	test(*r->s4, 20, 1, *arr[3], -20);
+	test(*r->s4, 21, 0, *arr[0], 0);
+	test(*r->s4, 21, 0, *arr[1], 0);
+	test(*r->s4, 21, 0, *arr[2], 0);
+	test(*r->s4, 21, 0, *arr[3], 0);
 }
 
 void
@@ -375,27 +374,34 @@ run(pmem::obj::pool<root> &pop)
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->s1 = nvobj::make_persistent<pmem_exp::string>("");
-			r->s2 = nvobj::make_persistent<pmem_exp::string>(
-				"abcde");
-			r->s3 = nvobj::make_persistent<pmem_exp::string>(
-				"abcdefghij");
-			r->s4 = nvobj::make_persistent<pmem_exp::string>(
+			r->s1 = nvobj::make_persistent<S>("");
+			r->s2 = nvobj::make_persistent<S>("abcde");
+			r->s3 = nvobj::make_persistent<S>("abcdefghij");
+			r->s4 = nvobj::make_persistent<S>(
 				"abcdefghijklmnopqrst");
 		});
 
-		{
-			typedef pmem_exp::string S;
-			test0<S>(r);
-			test1<S>(r);
-			test2<S>(r);
-		}
+		std::array<S *, 4> arr{&*r->s1, &*r->s2, &*r->s3, &*r->s4};
+
+		std::string s1(""), s2("abcde"), s3("abcdefghij"),
+			s4("abcdefghijklmnopqrst");
+		std::array<std::string *, 4> arr_std_str = {&s1, &s2, &s3, &s4};
+
+		/* test pmem::string with pmem::string comparison */
+		test0<S>(r, arr);
+		test1<S>(r, arr);
+		test2<S>(r, arr);
+
+		/* test pmem::string with std::string comparison */
+		test0<S>(r, arr_std_str);
+		test1<S>(r, arr_std_str);
+		test2<S>(r, arr_std_str);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::string>(r->s1);
-			nvobj::delete_persistent<pmem_exp::string>(r->s2);
-			nvobj::delete_persistent<pmem_exp::string>(r->s3);
-			nvobj::delete_persistent<pmem_exp::string>(r->s4);
+			nvobj::delete_persistent<S>(r->s1);
+			nvobj::delete_persistent<S>(r->s2);
+			nvobj::delete_persistent<S>(r->s3);
+			nvobj::delete_persistent<S>(r->s4);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

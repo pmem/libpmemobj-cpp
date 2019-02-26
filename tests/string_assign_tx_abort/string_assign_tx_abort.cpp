@@ -80,7 +80,8 @@ assert_tx_abort(pmem::obj::pool<struct root> &pop, std::function<void(void)> f)
  *
  * Checks if string's state is reverted when transaction aborts.
  */
-template <std::size_t InitialSize, std::size_t TestSize, typename CharT>
+template <std::size_t InitialSize, std::size_t TestSize, typename CharT,
+	  typename StringType>
 void
 test(nvobj::pool<struct root> &pop,
      nvobj::persistent_ptr<pmem_exp::basic_string<CharT>> &ptr)
@@ -224,6 +225,31 @@ test(nvobj::pool<struct root> &pop,
 		nvobj::transaction::abort(EINVAL);
 	});
 	check_string(ptr, InitialSize, static_cast<CharT>('a'));
+
+	/* assignment operator for std::string */
+	assert_tx_abort(pop, [&] {
+		StringType str(TestSize, 'b');
+		*ptr = str;
+		check_string(ptr, TestSize, static_cast<CharT>('b'));
+	});
+	check_string(ptr, InitialSize, static_cast<CharT>('a'));
+
+	/* assign() -  std::string, count */
+	assert_tx_abort(pop, [&] {
+		StringType str(TestSize, 'b');
+		ptr->assign(str);
+		check_string(ptr, TestSize, static_cast<CharT>('b'));
+	});
+	check_string(ptr, InitialSize, static_cast<CharT>('a'));
+
+	/* assign() - std::string, pos, count */
+	assert_tx_abort(pop, [&] {
+		StringType str(TestSize + 20, 'b');
+		ptr->assign(str, 20, TestSize);
+		check_string(ptr, TestSize, static_cast<CharT>('b'));
+	});
+
+	check_string(ptr, InitialSize, static_cast<CharT>('a'));
 }
 
 int
@@ -248,14 +274,14 @@ main(int argc, char *argv[])
 			r->ws = nvobj::make_persistent<WS>(10U, L'a');
 		});
 
-		test<10, 20, char>(pop, r->s);
-		test<10, 11, char>(pop, r->s);
-		test<10, 9, char>(pop, r->s);
-		test<10, 5, char>(pop, r->s);
-		test<10, 100, char>(pop, r->s);
+		test<10, 20, char, std::string>(pop, r->s);
+		test<10, 11, char, std::string>(pop, r->s);
+		test<10, 9, char, std::string>(pop, r->s);
+		test<10, 5, char, std::string>(pop, r->s);
+		test<10, 100, char, std::string>(pop, r->s);
 
-		test<10, 11, wchar_t>(pop, r->ws);
-		test<10, 100, wchar_t>(pop, r->ws);
+		test<10, 11, wchar_t, std::wstring>(pop, r->ws);
+		test<10, 100, wchar_t, std::wstring>(pop, r->ws);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<S>(r->s);
@@ -264,14 +290,14 @@ main(int argc, char *argv[])
 			r->ws = nvobj::make_persistent<WS>(100U, L'a');
 		});
 
-		test<100, 10, char>(pop, r->s);
-		test<100, 101, char>(pop, r->s);
-		test<100, 150, char>(pop, r->s);
-		test<100, 99, char>(pop, r->s);
-		test<100, 70, char>(pop, r->s);
+		test<100, 10, char, std::string>(pop, r->s);
+		test<100, 101, char, std::string>(pop, r->s);
+		test<100, 150, char, std::string>(pop, r->s);
+		test<100, 99, char, std::string>(pop, r->s);
+		test<100, 70, char, std::string>(pop, r->s);
 
-		test<100, 10, wchar_t>(pop, r->ws);
-		test<100, 101, wchar_t>(pop, r->ws);
+		test<100, 10, wchar_t, std::wstring>(pop, r->ws);
+		test<100, 101, wchar_t, std::wstring>(pop, r->ws);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<S>(r->s);

@@ -27,9 +27,9 @@ struct root {
 	nvobj::persistent_ptr<pmem_exp::string> s1, s2, s3, s4;
 };
 
-template <class S>
+template <class S, class T>
 void
-test(const S &lhs, const S &rhs, bool x)
+test(const S &lhs, const T &rhs, bool x)
 {
 	UT_ASSERT((lhs < rhs) == x);
 }
@@ -50,6 +50,10 @@ run(pmem::obj::pool<root> &pop)
 				"abcdefghijklmnopqrst");
 		});
 
+		std::string s1(""), s2("abcde"), s3("abcdefghij"),
+			s4("abcdefghijklmnopqrst");
+
+		/* test pmem::string with pmem::string comparison */
 		test(*r->s1, *r->s1, false);
 		test(*r->s1, *r->s2, true);
 		test(*r->s1, *r->s3, true);
@@ -66,6 +70,42 @@ run(pmem::obj::pool<root> &pop)
 		test(*r->s4, *r->s2, false);
 		test(*r->s4, *r->s3, false);
 		test(*r->s4, *r->s4, false);
+
+		/* test pmem::string with std::string comparison */
+		test(*r->s1, s1, false);
+		test(*r->s1, s2, true);
+		test(*r->s1, s3, true);
+		test(*r->s1, s4, true);
+		test(*r->s2, s1, false);
+		test(*r->s2, s2, false);
+		test(*r->s2, s3, true);
+		test(*r->s2, s4, true);
+		test(*r->s3, s1, false);
+		test(*r->s3, s2, false);
+		test(*r->s3, s3, false);
+		test(*r->s3, s4, true);
+		test(*r->s4, s1, false);
+		test(*r->s4, s2, false);
+		test(*r->s4, s3, false);
+		test(*r->s4, s4, false);
+
+		/* test std::string with pmem::string comparison */
+		test(s1, *r->s1, false);
+		test(s1, *r->s2, true);
+		test(s1, *r->s3, true);
+		test(s1, *r->s4, true);
+		test(s2, *r->s1, false);
+		test(s2, *r->s2, false);
+		test(s2, *r->s3, true);
+		test(s2, *r->s4, true);
+		test(s3, *r->s1, false);
+		test(s3, *r->s2, false);
+		test(s3, *r->s3, false);
+		test(s3, *r->s4, true);
+		test(s4, *r->s1, false);
+		test(s4, *r->s2, false);
+		test(s4, *r->s3, false);
+		test(s4, *r->s4, false);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<pmem_exp::string>(r->s1);

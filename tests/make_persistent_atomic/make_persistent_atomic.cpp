@@ -52,6 +52,9 @@ namespace
 
 const int TEST_ARR_SIZE = 10;
 
+struct force_throw {
+};
+
 class foo {
 public:
 	foo() : bar(1)
@@ -70,6 +73,11 @@ public:
 	{
 		for (int i = 0; i < TEST_ARR_SIZE; ++i)
 			this->arr[i] = arr_val;
+	}
+
+	explicit foo(struct force_throw &val)
+	{
+		throw std::bad_alloc();
 	}
 
 	/*
@@ -151,6 +159,30 @@ test_make_args(nvobj::pool<struct root> &pop)
 	r->pfoo->check_foo(3, 4);
 
 	nvobj::delete_persistent_atomic<foo>(r->pfoo);
+}
+
+/*
+ * test_throw -- (internal) test if make_persistent_atomic rethrows constructor
+ * exception
+ */
+void
+test_throw(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<root> r = pop.root();
+	UT_ASSERT(r->pfoo == nullptr);
+
+	bool exception_thrown = false;
+	force_throw val;
+	try {
+		nvobj::make_persistent_atomic<foo>(pop, r->pfoo, val);
+	} catch (std::bad_alloc &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(exception_thrown);
+	UT_ASSERT(r->pfoo == nullptr);
 }
 
 /*
@@ -274,6 +306,7 @@ main(int argc, char *argv[])
 
 	test_make_no_args(pop);
 	test_make_args(pop);
+	test_throw(pop);
 	test_delete_null(pop);
 	test_flags(pop);
 	test_rlvalue_parameters(pop);

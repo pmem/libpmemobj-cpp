@@ -232,7 +232,7 @@ public:
 	 * Copy constructor. Construct the string with the copy of the contents
 	 * of other.
 	 *
-	 * @param[in] other reference to the vector to be copied.
+	 * @param[in] other reference to the string to be copied.
 	 *
 	 * @pre must be called in transaction scope.
 	 *
@@ -253,7 +253,7 @@ public:
 	 * Move constructor. Construct the string with the contents of other
 	 * using move semantics.
 	 *
-	 * @param[in] other rvalue reference to the vector to be moved from.
+	 * @param[in] other rvalue reference to the string to be moved from.
 	 *
 	 * @pre must be called in transaction scope.
 	 *

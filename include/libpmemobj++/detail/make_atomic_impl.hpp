@@ -63,7 +63,7 @@ obj_constructor(PMEMobjpool *pop, void *ptr, void *arg)
 	auto ret = c_style_construct<T, Tuple, Args...>(ptr, arg);
 
 	if (ret != 0)
-		return 0;
+		return -1;
 
 	pmemobj_persist(pop, ptr, sizeof(T));
 

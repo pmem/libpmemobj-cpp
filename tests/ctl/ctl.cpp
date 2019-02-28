@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ struct root {
 using Object = int[10240];
 
 void
-run_ctl_pool_alloc_class(pmem::obj::pool<struct root> &pop) try {
+run_ctl_pool_prefault(pmem::obj::pool<struct root> &pop) try {
 	pop.ctl_set<int>("prefault.at_open", 1);
 
 	auto prefault_at_open = pop.ctl_get<int>("prefault.at_open");
@@ -143,7 +143,7 @@ main(int argc, char *argv[])
 	auto pop = pmem::obj::pool<root>::create(path, "ctl_test", 0,
 						 S_IWUSR | S_IRUSR);
 
-	run_ctl_pool_alloc_class(pop);
+	run_ctl_pool_prefault(pop);
 	run_ctl_pool_extend(pop);
 	run_ctl_global();
 	run_ctl_exception();

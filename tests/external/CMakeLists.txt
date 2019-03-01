@@ -454,7 +454,6 @@ if (ENABLE_STRING)
 	# XXX: port libcxx test basic_string/string.ops/string_find/char_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find/pointer_size_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_substr/substr.pass
-	# XXX: port libcxx test basic_string/string.ops/string.accessors/get_allocator.pass
 
 	build_test(string_libcxx_ops_accessors_c_str libcxx/basic_string/string.ops/string.accessors/c_str.pass.cpp)
 	add_test_generic(NAME string_libcxx_ops_accessors_c_str TRACERS none pmemcheck memcheck)

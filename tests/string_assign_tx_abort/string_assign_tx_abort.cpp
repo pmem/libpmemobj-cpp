@@ -41,10 +41,12 @@ namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
 using S = pmem_exp::string;
 using WS = pmem_exp::wstring;
+using W16 = pmem_exp::basic_string<char16_t>;
 
 struct root {
 	nvobj::persistent_ptr<S> s;
 	nvobj::persistent_ptr<WS> ws;
+	nvobj::persistent_ptr<W16> w16;
 };
 
 template <typename CharT>
@@ -97,7 +99,7 @@ test(nvobj::pool<struct root> &pop,
 
 	/* assign() - range version */
 	assert_tx_abort(pop, [&] {
-		std::string v2(TestSize, static_cast<CharT>('b'));
+		std::basic_string<CharT> v2(TestSize, static_cast<CharT>('b'));
 		ptr->assign(v2.begin(), v2.end());
 		check_string(ptr, TestSize, static_cast<CharT>('b'));
 	});
@@ -246,6 +248,8 @@ main(int argc, char *argv[])
 		nvobj::transaction::run(pop, [&] {
 			r->s = nvobj::make_persistent<S>(10U, 'a');
 			r->ws = nvobj::make_persistent<WS>(10U, L'a');
+			r->w16 =
+				nvobj::make_persistent<W16>(10U, char16_t('a'));
 		});
 
 		test<10, 20, char>(pop, r->s);
@@ -257,11 +261,17 @@ main(int argc, char *argv[])
 		test<10, 11, wchar_t>(pop, r->ws);
 		test<10, 100, wchar_t>(pop, r->ws);
 
+		test<10, 101, char16_t>(pop, r->w16);
+		test<10, 100, char16_t>(pop, r->w16);
+
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<S>(r->s);
 			nvobj::delete_persistent<WS>(r->ws);
+			nvobj::delete_persistent<W16>(r->w16);
 			r->s = nvobj::make_persistent<S>(100U, 'a');
 			r->ws = nvobj::make_persistent<WS>(100U, L'a');
+			r->w16 = nvobj::make_persistent<W16>(100U,
+							     char16_t('a'));
 		});
 
 		test<100, 10, char>(pop, r->s);
@@ -272,6 +282,9 @@ main(int argc, char *argv[])
 
 		test<100, 10, wchar_t>(pop, r->ws);
 		test<100, 101, wchar_t>(pop, r->ws);
+
+		test<100, 10, char16_t>(pop, r->w16);
+		test<100, 101, char16_t>(pop, r->w16);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<S>(r->s);

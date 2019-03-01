@@ -101,7 +101,7 @@ public:
 	{
 		check_pmem_tx();
 
-		initialize(0U, '\0');
+		initialize(0U, value_type('\0'));
 	}
 
 	/**
@@ -274,7 +274,7 @@ public:
 		initialize(std::move(other));
 
 		if (other.is_sso_used())
-			other.initialize(0U, '\0');
+			other.initialize(0U, value_type('\0'));
 	}
 
 	/**
@@ -542,7 +542,7 @@ public:
 			replace(std::move(other));
 
 			if (other.is_sso_used())
-				other.initialize(0U, '\0');
+				other.initialize(0U, value_type('\0'));
 		});
 
 		return *this;
@@ -1275,7 +1275,7 @@ private:
 		auto dest = data_sso.range(0, size + sizeof('\0')).begin();
 		std::copy(first, last, dest);
 
-		dest[size] = '\0';
+		dest[size] = value_type('\0');
 
 		return dest;
 	}
@@ -1292,7 +1292,7 @@ private:
 		auto dest = data_sso.range(0, count + sizeof('\0')).begin();
 		traits_type::assign(dest, count, ch);
 
-		dest[count] = '\0';
+		dest[count] = value_type('\0');
 
 		return dest;
 	}
@@ -1325,7 +1325,7 @@ private:
 
 		data_large.reserve(size + sizeof('\0'));
 		data_large.assign(first, last);
-		data_large.push_back('\0');
+		data_large.push_back(value_type('\0'));
 
 		return data_large.data();
 	}
@@ -1341,7 +1341,7 @@ private:
 
 		data_large.reserve(count + sizeof('\0'));
 		data_large.assign(count, ch);
-		data_large.push_back('\0');
+		data_large.push_back(value_type('\0'));
 
 		return data_large.data();
 	}

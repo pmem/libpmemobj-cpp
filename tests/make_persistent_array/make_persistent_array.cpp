@@ -433,6 +433,23 @@ test_flags(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 }
+
+/*
+ * test_nullptr -- (internal) test proper handling of null pointers
+ */
+void
+test_nullptr(nvobj::pool<struct root> &pop)
+{
+	nvobj::transaction::run(pop, [&] {
+		nvobj::persistent_ptr<foo[]> f;
+		f = nullptr;
+		nvobj::delete_persistent<foo[]>(f, 1);
+
+		nvobj::persistent_ptr<foo[10]> f2;
+		f2 = nullptr;
+		nvobj::delete_persistent<foo[10]>(f2);
+	});
+}
 }
 
 int
@@ -460,6 +477,7 @@ main(int argc, char *argv[])
 	test_exceptions_handling(pop);
 	test_exceptions_handling_sized(pop);
 	test_flags(pop);
+	test_nullptr(pop);
 
 	pop.close();
 

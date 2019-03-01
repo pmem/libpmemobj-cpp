@@ -136,6 +136,8 @@ add_test_generic(NAME pool CASE 0 TRACERS none)
 add_test_generic(NAME pool CASE 1 TRACERS none)
 add_test_generic(NAME pool CASE 2 TRACERS none)
 add_test_generic(NAME pool CASE 3 TRACERS none)
+add_test_generic(NAME pool CASE 4 TRACERS none)
+add_test_generic(NAME pool CASE 5 TRACERS none)
 
 build_test(pool_primitives pool_primitives/pool_primitives.cpp)
 add_test_generic(NAME pool_primitives CASE 0 TRACERS none pmemcheck)

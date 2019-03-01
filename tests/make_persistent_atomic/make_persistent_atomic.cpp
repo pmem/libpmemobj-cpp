@@ -283,6 +283,28 @@ test_rlvalue_parameters(nvobj::pool<struct root> &pop)
 	UT_ASSERT(var_bar_copy_ctors_called == 2);
 	UT_ASSERT(var_bar_move_ctors_called == 1);
 }
+
+/*
+ * test_make_invalid -- (internal) test failure of atomic make_persistent
+ */
+void
+test_make_invalid(nvobj::pool<struct root> &pop)
+{
+	nvobj::persistent_ptr<foo> pfoo;
+
+	bool thrown = false;
+	try {
+		nvobj::make_persistent_atomic<foo>(
+			pop, pfoo,
+			nvobj::allocation_flag_atomic::class_id(254));
+	} catch (std::bad_alloc &e) {
+		thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(thrown);
+}
 }
 
 int
@@ -310,6 +332,7 @@ main(int argc, char *argv[])
 	test_delete_null(pop);
 	test_flags(pop);
 	test_rlvalue_parameters(pop);
+	test_make_invalid(pop);
 
 	pop.close();
 

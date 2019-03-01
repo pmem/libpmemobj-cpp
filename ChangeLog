@@ -1,3 +1,35 @@
+Fri Mar 1 2019 Igor Chorążewicz <igor.chorazewicz@intel.com>
+
+	* Version 1.6-rc1
+
+	This release introduces ctl support, allocation flags, snapshot
+	method and new experimental persistent container - vector.
+
+	New features:
+	- add support for pmemobj_ctl_set/get/exec
+	- expose allocation flags in make_persistent(_atomic)
+	- transaction: add snapshot method
+
+	Experimental features:
+	- persistent vector container
+
+	Other changes:
+	- automatically start transaction inside pmem::obj::experimental::array
+	  modifier methods (assignment operators, swap and fill)
+	- add const methods for pmem::obj::experimental::array
+	- add Valgrind instrumentation support
+	- remove experimental const_contiguous_iterator
+	- add get with arguments method overload for v
+
+	Bug fixes:
+	- throw an exception when dropping pmem lock failed
+	- fix crash when previous transaction failed to start
+	- fix forwarding parameters to constructor in make_persistent_atomic
+
+	Optimizations:
+	- decrease number of persistent_ptr dereferences in
+	  make_persistent_array
+
 Tue Feb 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 
 	* Version 1.5.1
@@ -5,10 +37,10 @@ Tue Feb 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 	This release fixes minor bugs and improves documentation.
 
 	Notable changes:
-	- Fix v swap, assignment operators and constructors
-	- Change conversion operator from T() to T&() in v<>
-	- Fix range_snapshotting initialization in array.hpp.
-	- Fix range_snapshotting_iterator bahaviour for snapshot_size == 0.
+	- fix v swap, assignment operators and constructors
+	- change conversion operator from T() to T&() in v<>
+	- fix range_snapshotting initialization in array.hpp.
+	- fix range_snapshotting_iterator bahaviour for snapshot_size == 0.
 
 Fri Oct 26 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 

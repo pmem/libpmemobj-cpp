@@ -42,6 +42,24 @@ test(nvobj::pool<struct root> &pop, const S &s, const S &s2)
 				[&] { nvobj::delete_persistent<S>(r->s1); });
 }
 
+void
+test_self_assignment(nvobj::pool<struct root> &pop, const S &s1)
+{
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop,
+				[&] { r->s1 = nvobj::make_persistent<S>(s1); });
+
+	auto &s = *r->s1;
+
+	s = s;
+	UT_ASSERT(s == s1);
+	UT_ASSERT(s.capacity() >= s1.size());
+
+	nvobj::transaction::run(pop,
+				[&] { nvobj::delete_persistent<S>(r->s1); });
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -83,6 +101,9 @@ main(int argc, char *argv[])
 		test(pop, *s_arr[3], *s_arr[6]);
 		test(pop, *s_arr[4], *s_arr[6]);
 		test(pop, *s_arr[5], *s_arr[6]);
+
+		test_self_assignment(pop, *s_arr[0]);
+		test_self_assignment(pop, *s_arr[3]);
 
 		nvobj::transaction::run(pop, [&] {
 			for (unsigned i = 0; i < 7; ++i) {

@@ -116,6 +116,7 @@ public:
 
 			if (err) {
 				pmemobj_tx_abort(EINVAL);
+				(void)pmemobj_tx_end();
 				throw transaction_error("failed to add lock");
 			}
 		}

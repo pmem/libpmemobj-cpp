@@ -449,9 +449,14 @@ add_test_generic(NAME string_libcxx_access_index TRACERS none pmemcheck memcheck
 # XXX: port libcxx test basic_string/string.ops/string_find/char_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_find/pointer_size_size.pass
 # XXX: port libcxx test basic_string/string.ops/string_substr/substr.pass
+
+build_test(string_libcxx_ops_accessors_c_str libcxx/basic_string/string.ops/string.accessors/c_str.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_accessors_c_str TRACERS none pmemcheck memcheck)
+
+build_test(string_libcxx_ops_accessors_data libcxx/basic_string/string.ops/string.accessors/data.pass.cpp)
+add_test_generic(NAME string_libcxx_ops_accessors_data TRACERS none pmemcheck memcheck)
+
 # XXX: port libcxx test basic_string/string.ops/string.accessors/get_allocator.pass
-# XXX: port libcxx test basic_string/string.ops/string.accessors/c_str.pass
-# XXX: port libcxx test basic_string/string.ops/string.accessors/data.pass
 # XXX: port libcxx test basic_string/types.pass
 # XXX: port libcxx test basic_string/traits_mismatch.fail
 # XXX: port libcxx test basic_string/string.modifiers/string_swap/swap.pass

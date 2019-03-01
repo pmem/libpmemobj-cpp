@@ -38,7 +38,7 @@ set -e
 
 git clone https://github.com/pmem/pmdk
 cd pmdk
-git checkout 9c85651d287c4d2ac9cc6785c8534e1b0b1c16bd
+git checkout 1.5.1
 
 sudo make EXTRA_CFLAGS="-DUSE_COW_ENV" -j2 install prefix=/opt/pmdk
 

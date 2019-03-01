@@ -199,7 +199,10 @@ public:
 	unlock()
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
-		(void)pmemobj_rwlock_unlock(pop, &this->plock);
+		int ret = pmemobj_rwlock_unlock(pop, &this->plock);
+		if (ret)
+			throw lock_error(ret, std::system_category(),
+					 "Failed to unlock a shared mutex.");
 	}
 
 	/**

@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,5 +39,5 @@ if(DOXYGEN_FOUND)
 
 	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cpp_html/ DESTINATION ${CMAKE_INSTALL_DOCDIR})
 else()
-	message(WARNING "Doxygen not found - doucumentation will not be generated")
+	message(WARNING "Doxygen not found - documentation will not be generated")
 endif()

@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -67,6 +67,9 @@ add_check_whitespace(examples-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 add_cppstyle(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*pp)
 add_check_whitespace(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*pp)
+
+add_cppstyle(examples-dictionary ${CMAKE_CURRENT_SOURCE_DIR}/dictionary/*.*pp)
+add_check_whitespace(examples-dictionary ${CMAKE_CURRENT_SOURCE_DIR}/dictionary/*.*pp)
 
 add_cppstyle(examples-doc_snippets ${CMAKE_CURRENT_SOURCE_DIR}/doc_snippets/*.*pp)
 add_check_whitespace(examples-doc_snippets ${CMAKE_CURRENT_SOURCE_DIR}/doc_snippets/*.*pp)
@@ -156,6 +159,9 @@ target_link_libraries(example-map_cli ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIB
 
 add_example(array array/array.cpp)
 target_link_libraries(example-array ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_example(dictionary dictionary/dictionary_cli.cpp)
+target_link_libraries(example-dictionary ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 if(PMEMVLT_PRESENT)
 	add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)

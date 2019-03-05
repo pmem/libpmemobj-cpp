@@ -70,6 +70,12 @@ endif()
 add_library(test_backtrace STATIC test_backtrace.c)
 add_library(valgrind_internal STATIC valgrind_internal.cpp)
 
+function(build_example_dictionary)
+	add_executable(ex-dictionary ../examples/dictionary/dictionary_cli.cpp)
+	target_include_directories(ex-dictionary PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../examples)
+	target_link_libraries(ex-dictionary ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+endfunction()
+
 function(build_example_queue)
 	add_executable(ex-queue ../examples/queue/queue.cpp)
 	target_include_directories(ex-queue PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../examples)
@@ -89,6 +95,11 @@ endfunction()
 find_packages()
 
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
+	build_example_dictionary()
+	add_test_generic(NAME ex-dictionary CASE 0 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME ex-dictionary CASE 1 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME ex-dictionary CASE 2 TRACERS none memcheck pmemcheck)
+
 	build_example_queue()
 	add_test_generic(NAME ex-queue CASE 0 TRACERS none)
 

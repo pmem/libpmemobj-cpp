@@ -1,0 +1,63 @@
+There are 7 element(s) in dictionary (listed in alphabetic order):
+current node:
+             word: 
+             prefix: 
+             is_word: 0
+             children(s): abc b 
+             parent: nullptr (this is root node)
+current node:
+             word: abc
+             prefix: abc
+             is_word: 0
+             children(s): d e 
+             parent: (root)
+
+current node:
+             word: abcd
+             prefix: d
+             is_word: 1
+             children(s): (leaf)
+             parent: abc
+
+current node:
+             word: abce
+             prefix: e
+             is_word: 1
+             children(s): (leaf)
+             parent: abc
+
+current node:
+             word: b
+             prefix: b
+             is_word: 1
+             children(s): c d 
+             parent: (root)
+
+current node:
+             word: bc
+             prefix: c
+             is_word: 1
+             children(s): d e 
+             parent: b
+
+current node:
+             word: bcd
+             prefix: d
+             is_word: 1
+             children(s): (leaf)
+             parent: c
+
+current node:
+             word: bce
+             prefix: e
+             is_word: 1
+             children(s): (leaf)
+             parent: c
+
+current node:
+             word: bd
+             prefix: d
+             is_word: 1
+             children(s): (leaf)
+             parent: b
+

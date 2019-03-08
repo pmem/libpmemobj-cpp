@@ -1677,7 +1677,7 @@ vector<T>::insert(const_iterator pos, std::initializer_list<value_type> ilist)
  * iterator is also invalidated. Note that standard allows args to be a self
  * reference and internal emplace implementation handles this case by creating
  * temporary element_type object. This object is being stored either on stack or
- * on pmem, see @ref temp_value for details.
+ * on pmem, see pmem::detail::temp_value for details.
  *
  * @param[in] pos iterator before which the new element will be constructed.
  * @param[in] args arguments to forward to the constructor of the element.

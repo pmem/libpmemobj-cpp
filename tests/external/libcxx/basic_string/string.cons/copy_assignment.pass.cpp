@@ -50,9 +50,10 @@ test_self_assignment(nvobj::pool<struct root> &pop, const S &s1)
 	nvobj::transaction::run(pop,
 				[&] { r->s1 = nvobj::make_persistent<S>(s1); });
 
+	/* Workaround for -Wself-assign-overloaded compile error */
 	auto &s = *r->s1;
 
-	s = s;
+	s = *r->s1;
 	UT_ASSERT(s == s1);
 	UT_ASSERT(s.capacity() >= s1.size());
 

@@ -138,7 +138,10 @@ test_modifiers(pmem::obj::pool<struct root> &pop)
 	}
 
 	try {
-		stack_array = stack_array;
+		/* Workaround for -Wself-assign-overloaded compile error */
+		auto &ref = stack_array;
+
+		stack_array = ref;
 		UT_ASSERT(0);
 	} catch (pmem::pool_error &) {
 	} catch (std::exception &e) {

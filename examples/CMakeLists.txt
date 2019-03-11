@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -86,6 +86,9 @@ add_check_whitespace(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*pp)
 add_cppstyle(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
 add_check_whitespace(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
 
+add_cppstyle(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
+add_check_whitespace(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
@@ -165,3 +168,9 @@ add_library(doc_snippets_make_persistent OBJECT doc_snippets/make_persistent.cpp
 add_library(doc_snippets_mutex OBJECT doc_snippets/mutex.cpp)
 add_library(doc_snippets_pool OBJECT doc_snippets/pool.cpp)
 add_library(doc_snippets_transaction OBJECT doc_snippets/transaction.cpp)
+
+add_example(simplekv-simple simplekv/simplekv_simple.cpp)
+target_link_libraries(example-simplekv-simple ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_example(simplekv-word-count simplekv/simplekv_word_count.cpp)
+target_link_libraries(example-simplekv-word-count ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

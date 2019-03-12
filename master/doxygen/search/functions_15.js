@@ -2,6 +2,7 @@ var searchData=
 [
   ['_7eallocator',['~allocator',['../classpmem_1_1obj_1_1allocator.html#a114931ebb6ca2b8ac01a6ab636be8cc8',1,'pmem::obj::allocator']]],
   ['_7eautomatic',['~automatic',['../classpmem_1_1obj_1_1transaction_1_1automatic.html#a593d2bffef5c248413190a68f3236742',1,'pmem::obj::transaction::automatic']]],
+  ['_7ebasic_5fstring',['~basic_string',['../classpmem_1_1obj_1_1experimental_1_1basic__string.html#af2846936f4c528d98782ac959020347a',1,'pmem::obj::experimental::basic_string']]],
   ['_7econdition_5fvariable',['~condition_variable',['../classpmem_1_1obj_1_1condition__variable.html#a02c1d8e61ca3913f79257ff09094c694',1,'pmem::obj::condition_variable']]],
   ['_7emanual',['~manual',['../classpmem_1_1obj_1_1transaction_1_1manual.html#ad6789a8d572bd59085dc357557719a6c',1,'pmem::obj::transaction::manual']]],
   ['_7emutex',['~mutex',['../classpmem_1_1obj_1_1mutex.html#a9b52382afaf080173640963d2598eb1e',1,'pmem::obj::mutex']]],

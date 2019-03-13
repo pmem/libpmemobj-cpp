@@ -89,34 +89,6 @@ INSTALL_DIR=/tmp/libpmemobj-cpp
 mkdir $INSTALL_DIR
 
 ###############################################################################
-# BUILD tests_clang_release llvm
-###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_release llvm START$(tput sgr 0)\n"
-mkdir build
-cd build
-
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-CC=clang CXX=clang++ \
-cmake .. -DDEVELOPER_MODE=1 \
-			-DCMAKE_BUILD_TYPE=Release \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DTESTS_USE_VALGRIND=0 \
-			-DTEST_DIR=/mnt/pmem \
-			-DTESTS_USE_FORCED_PMEM=1
-
-make -j2
-ctest --output-on-failure --timeout 540
-if [ "$COVERAGE" = "1" ]; then
-	upload_codecov tests_clang_release
-fi
-
-cd ..
-rm -r build
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_clang_release llvm END$(tput sgr 0)\n\n"
-
-###############################################################################
 # BUILD tests_clang_debug_cpp17 llvm
 ###############################################################################
 printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 START$(tput sgr 0)\n"
@@ -177,34 +149,6 @@ rm -r build
 printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug END$(tput sgr 0)\n\n"
 
 ###############################################################################
-# BUILD tests_gcc_release_cpp17
-###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 START$(tput sgr 0)\n"
-mkdir build
-cd build
-
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-CC=gcc CXX=g++ \
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DCXX_STANDARD=17 \
-			-DTESTS_USE_VALGRIND=0 \
-			-DTEST_DIR=/mnt/pmem \
-			-DTESTS_USE_FORCED_PMEM=1
-
-make -j2
-ctest --output-on-failure --timeout 540
-if [ "$COVERAGE" = "1" ]; then
-	upload_codecov tests_gcc_release_cpp17
-fi
-
-cd ..
-rm -r build
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17 END$(tput sgr 0)\n\n"
-
-###############################################################################
 # BUILD tests_gcc_release_cpp17_no_valgrind
 ###############################################################################
 printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_valgrind START$(tput sgr 0)\n"
@@ -222,6 +166,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=1 \
 			-DTEST_DIR=/mnt/pmem \
+			-DBUILD_EXAMPLES=0 \
 			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2

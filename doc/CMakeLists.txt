@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 include(FindDoxygen)
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
 	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/libpmemobj++.Doxyfile.in"
 		       "${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.Doxyfile" @ONLY)
 
@@ -38,6 +38,8 @@ if(DOXYGEN_FOUND)
 			  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cpp_html/ DESTINATION ${CMAKE_INSTALL_DOCDIR})
+elseif(NOT DOXYGEN_FOUND)
+	message(WARNING "Doxygen not found - documentation will not be generated")
 else()
-	message(WARNING "Doxygen not found - doucumentation will not be generated")
+	message(WARNING "Dot tool not found - documentation will not be generated")
 endif()

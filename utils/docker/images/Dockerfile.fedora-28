@@ -32,7 +32,7 @@
 #
 # Dockerfile - a 'recipe' for Docker to build an image of fedora-based
 #              environment prepared for running libpmemobj-cpp tests.
-#
+#...
 
 # Pull base image
 FROM fedora:28

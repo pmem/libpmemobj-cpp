@@ -74,6 +74,9 @@ option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1" OFF)
 option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
+option(USE_ARRAY "enable installation and testing of pmem::obj::experimental::array" ON)
+option(USE_VECTOR "enable installation and testing of pmem::obj::experimental::vector" ON)
+option(USE_STRING "enable installation and testing of pmem::obj::experimental::string (should be off if USE_VECTOR=OFF)" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
@@ -223,7 +226,31 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
 		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-	FILES_MATCHING PATTERN "*.hpp")
+	FILES_MATCHING PATTERN "*.hpp"
+	PATTERN "array.hpp" EXCLUDE
+	PATTERN "vector.hpp" EXCLUDE
+	PATTERN "string.hpp" EXCLUDE
+	PATTERN "basic_string.hpp" EXCLUDE
+	PATTERN "contiguous_iterator.hpp" EXCLUDE
+	PATTERN "slice.hpp" EXCLUDE)
+
+if (USE_ARRAY)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
+endif()
+
+if (USE_VECTOR)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "vector.hpp")
+endif()
+
+if (USE_STRING)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "basic_string.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "string.hpp")
+endif()
+
+if (USE_ARRAY OR USE_VECTOR OR USE_STRING)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "contiguous_iterator.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "slice.hpp")
+endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 	FILES_MATCHING PATTERN "*.*pp")

@@ -212,23 +212,8 @@ else()
 	skip_test("make_persistent_array" "SKIPPED_BECAUSE_OF_CLANG_TEMPLATE_BUG")
 endif()
 
-build_test(array_algorithms array_algorithms/array_algorithms.cpp)
-add_test_generic(NAME array_algorithms TRACERS none pmemcheck)
-
-build_test(array_slice array_slice/array_slice.cpp)
-add_test_generic(NAME array_slice CASE 0 TRACERS none pmemcheck memcheck)
-
-build_test(array_iterator array_iterator/array_iterator.cpp)
-add_test_generic(NAME array_iterator TRACERS none pmemcheck)
-
-build_test(array_modifiers array_modifiers/array_modifiers.cpp)
-add_test_generic(NAME array_modifiers TRACERS none pmemcheck memcheck)
-
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(NAME iterator_traits TRACERS none)
-
-build_test(temp_value temp_value/temp_value.cpp)
-add_test_generic(NAME temp_value TRACERS none pmemcheck memcheck)
 
 build_test(ctl ctl/ctl.cpp)
 add_test_generic(NAME ctl CASE 0 TRACERS none)
@@ -238,84 +223,105 @@ if(WIN32)
 	add_test_generic(NAME ctl_win CASE 0 TRACERS none)
 endif()
 
-if(PMREORDER_SUPPORTED)
-	build_test(array_slice_pmreorder array_slice_pmreorder/array_slice_pmreorder.cpp)
-	add_test_generic(NAME array_slice_pmreorder CASE 0 TRACERS none)
-	add_test_generic(NAME array_slice_pmreorder CASE 1 TRACERS none)
-else()
-	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
+if (USE_ARRAY)
+	build_test(array_algorithms array_algorithms/array_algorithms.cpp)
+	add_test_generic(NAME array_algorithms TRACERS none pmemcheck)
+
+	build_test(array_slice array_slice/array_slice.cpp)
+	add_test_generic(NAME array_slice CASE 0 TRACERS none pmemcheck memcheck)
+
+	build_test(array_iterator array_iterator/array_iterator.cpp)
+	add_test_generic(NAME array_iterator TRACERS none pmemcheck)
+
+	build_test(array_modifiers array_modifiers/array_modifiers.cpp)
+	add_test_generic(NAME array_modifiers TRACERS none pmemcheck memcheck)
+
+	if(PMREORDER_SUPPORTED)
+		build_test(array_slice_pmreorder array_slice_pmreorder/array_slice_pmreorder.cpp)
+		add_test_generic(NAME array_slice_pmreorder CASE 0 TRACERS none)
+		add_test_generic(NAME array_slice_pmreorder CASE 1 TRACERS none)
+	else()
+		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
+	endif()
 endif()
 
-build_test(vector_assign_exceptions_length vector_assign_exceptions_length/vector_assign_exceptions_length.cpp)
-add_test_generic(NAME vector_assign_exceptions_length TRACERS none memcheck pmemcheck)
+if (USE_VECTOR)
+	build_test(temp_value temp_value/temp_value.cpp)
+	add_test_generic(NAME temp_value TRACERS none pmemcheck memcheck)
 
-build_test(vector_assign_exceptions_oom vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp)
-add_test_generic(NAME vector_assign_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test(vector_assign_exceptions_length vector_assign_exceptions_length/vector_assign_exceptions_length.cpp)
+	add_test_generic(NAME vector_assign_exceptions_length TRACERS none memcheck pmemcheck)
 
-build_test(vector_assign_txabort vector_assign_txabort/vector_assign_txabort.cpp)
-add_test_generic(NAME vector_assign_txabort TRACERS none memcheck pmemcheck)
+	build_test(vector_assign_exceptions_oom vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp)
+	add_test_generic(NAME vector_assign_exceptions_oom TRACERS none memcheck pmemcheck)
 
-build_test(vector_comp_operators vector_comp_operators/vector_comp_operators.cpp)
-add_test_generic(NAME vector_comp_operators TRACERS none memcheck pmemcheck)
+	build_test(vector_assign_txabort vector_assign_txabort/vector_assign_txabort.cpp)
+	add_test_generic(NAME vector_assign_txabort TRACERS none memcheck pmemcheck)
 
-build_test(vector_capacity_exceptions_length vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp)
-add_test_generic(NAME vector_capacity_exceptions_length TRACERS none memcheck pmemcheck)
+	build_test(vector_comp_operators vector_comp_operators/vector_comp_operators.cpp)
+	add_test_generic(NAME vector_comp_operators TRACERS none memcheck pmemcheck)
 
-build_test(vector_capacity_exceptions_oom vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp)
-add_test_generic(NAME vector_capacity_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test(vector_capacity_exceptions_length vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp)
+	add_test_generic(NAME vector_capacity_exceptions_length TRACERS none memcheck pmemcheck)
 
-build_test(vector_capacity_txabort vector_capacity_txabort/vector_capacity_txabort.cpp)
-add_test_generic(NAME vector_capacity_txabort TRACERS none memcheck pmemcheck)
+	build_test(vector_capacity_exceptions_oom vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp)
+	add_test_generic(NAME vector_capacity_exceptions_oom TRACERS none memcheck pmemcheck)
 
-build_test(vector_ctor_exceptions_nopmem vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp)
-add_test_generic(NAME vector_ctor_exceptions_nopmem TRACERS none memcheck )
+	build_test(vector_capacity_txabort vector_capacity_txabort/vector_capacity_txabort.cpp)
+	add_test_generic(NAME vector_capacity_txabort TRACERS none memcheck pmemcheck)
 
-build_test(vector_ctor_exceptions_notx vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp)
-add_test_generic(NAME vector_ctor_exceptions_notx TRACERS none memcheck)
+	build_test(vector_ctor_exceptions_nopmem vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp)
+	add_test_generic(NAME vector_ctor_exceptions_nopmem TRACERS none memcheck )
 
-build_test(vector_ctor_exceptions_oom vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp)
-add_test_generic(NAME vector_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test(vector_ctor_exceptions_notx vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp)
+	add_test_generic(NAME vector_ctor_exceptions_notx TRACERS none memcheck)
 
-build_test(vector_ctor_move vector_ctor_move/vector_ctor_move.cpp)
-add_test_generic(NAME vector_ctor_move TRACERS none memcheck pmemcheck)
+	build_test(vector_ctor_exceptions_oom vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp)
+	add_test_generic(NAME vector_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
 
-build_test(vector_ctor_capacity vector_ctor_capacity/vector_ctor_capacity.cpp)
-add_test_generic(NAME vector_ctor_capacity TRACERS none memcheck pmemcheck)
+	build_test(vector_ctor_move vector_ctor_move/vector_ctor_move.cpp)
+	add_test_generic(NAME vector_ctor_move TRACERS none memcheck pmemcheck)
 
-build_test(vector_dtor vector_dtor/vector_dtor.cpp)
-add_test_generic(NAME vector_dtor TRACERS none memcheck pmemcheck)
+	build_test(vector_ctor_capacity vector_ctor_capacity/vector_ctor_capacity.cpp)
+	add_test_generic(NAME vector_ctor_capacity TRACERS none memcheck pmemcheck)
 
-build_test(vector_iterators_access vector_iterators_access/vector_iterators_access.cpp)
-add_test_generic(NAME vector_iterators_access TRACERS none memcheck pmemcheck)
+	build_test(vector_dtor vector_dtor/vector_dtor.cpp)
+	add_test_generic(NAME vector_dtor TRACERS none memcheck pmemcheck)
 
-build_test(vector_ctor_check_copy vector_ctor_check_copy/vector_ctor_check_copy.cpp)
-add_test_generic(NAME vector_ctor_check_copy TRACERS none memcheck pmemcheck)
+	build_test(vector_iterators_access vector_iterators_access/vector_iterators_access.cpp)
+	add_test_generic(NAME vector_iterators_access TRACERS none memcheck pmemcheck)
 
-build_test(vector_modifiers_exceptions_oom vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp)
-add_test_generic(NAME vector_modifiers_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test(vector_ctor_check_copy vector_ctor_check_copy/vector_ctor_check_copy.cpp)
+	add_test_generic(NAME vector_ctor_check_copy TRACERS none memcheck pmemcheck)
 
-build_test(vector_modifiers_txabort vector_modifiers_txabort/vector_modifiers_txabort.cpp)
-add_test_generic(NAME vector_modifiers_txabort TRACERS none memcheck pmemcheck)
+	build_test(vector_modifiers_exceptions_oom vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp)
+	add_test_generic(NAME vector_modifiers_exceptions_oom TRACERS none memcheck pmemcheck)
 
-build_test(string_access string_access/string_access.cpp)
-add_test_generic(NAME string_access TRACERS none memcheck pmemcheck)
+	build_test(vector_modifiers_txabort vector_modifiers_txabort/vector_modifiers_txabort.cpp)
+	add_test_generic(NAME vector_modifiers_txabort TRACERS none memcheck pmemcheck)
 
-build_test(string_exceptions string_exceptions/string_exceptions.cpp)
-add_test_generic(NAME string_exceptions TRACERS none memcheck pmemcheck)
+	build_test(vector_modifiers_type_requirements vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp)
+	add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
 
-build_test(string_snapshot string_snapshot/string_snapshot.cpp)
-add_test_generic(NAME string_snapshot TRACERS none memcheck pmemcheck)
+	build_test(vector_std_arg vector_std_arg/vector_std_arg.cpp)
+	add_test_generic(NAME vector_std_arg TRACERS none memcheck pmemcheck)
 
-build_test(string_assign_tx_abort string_assign_tx_abort/string_assign_tx_abort.cpp)
-add_test_generic(NAME string_assign_tx_abort TRACERS none memcheck pmemcheck)
+	build_test(vector_range vector_range/vector_range.cpp)
+	add_test_generic(NAME vector_range TRACERS none memcheck pmemcheck)
+endif()
 
-build_test(vector_modifiers_type_requirements vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp)
-add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
+if (USE_STRING)
+	build_test(string_access string_access/string_access.cpp)
+	add_test_generic(NAME string_access TRACERS none memcheck pmemcheck)
 
-build_test(vector_std_arg vector_std_arg/vector_std_arg.cpp)
-add_test_generic(NAME vector_std_arg TRACERS none memcheck pmemcheck)
+	build_test(string_exceptions string_exceptions/string_exceptions.cpp)
+	add_test_generic(NAME string_exceptions TRACERS none memcheck pmemcheck)
 
-build_test(vector_range vector_range/vector_range.cpp)
-add_test_generic(NAME vector_range TRACERS none memcheck pmemcheck)
+	build_test(string_snapshot string_snapshot/string_snapshot.cpp)
+	add_test_generic(NAME string_snapshot TRACERS none memcheck pmemcheck)
+
+	build_test(string_assign_tx_abort string_assign_tx_abort/string_assign_tx_abort.cpp)
+	add_test_generic(NAME string_assign_tx_abort TRACERS none memcheck pmemcheck)
+endif()
 
 add_subdirectory(external)

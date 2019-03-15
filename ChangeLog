@@ -1,6 +1,6 @@
-Fri Mar 1 2019 Igor Chorążewicz <igor.chorazewicz@intel.com>
+Fri Mar 15 2019 Igor Chorążewicz <igor.chorazewicz@intel.com>
 
-	* Version 1.6-rc1
+	* Version 1.6
 
 	This release introduces ctl support, allocation flags, snapshot
 	method and new experimental persistent container - vector.

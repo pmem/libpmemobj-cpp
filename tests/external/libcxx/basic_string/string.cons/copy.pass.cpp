@@ -23,14 +23,17 @@
 namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
+using T = pmem_exp::string;
+using W = pmem_exp::wstring;
+
 struct root {
-	nvobj::persistent_ptr<pmem_exp::string> s;
-	nvobj::persistent_ptr<pmem_exp::wstring> ws;
+	nvobj::persistent_ptr<T> s;
+	nvobj::persistent_ptr<W> ws;
 };
 
-template <class S>
+template <class S, class U>
 void
-test(S &s1, pmem::obj::pool<root> &pop, nvobj::persistent_ptr<S> &ptr)
+test(U &s1, pmem::obj::pool<root> &pop, nvobj::persistent_ptr<S> &ptr)
 {
 	using T = typename S::traits_type;
 
@@ -59,42 +62,48 @@ run(pmem::obj::pool<root> &pop)
 {
 	auto r = pop.root();
 
+	/* test pmem::string copy construction from pmem::string */
 	try {
-		nvobj::persistent_ptr<pmem_exp::string> s1, s2, s3, s4;
+		nvobj::persistent_ptr<T> s1, s2, s3, s4;
 
 		nvobj::transaction::run(pop, [&] {
-			s1 = nvobj::make_persistent<pmem_exp::string>();
-		});
-
-		nvobj::transaction::run(pop, [&] {
-			s2 = nvobj::make_persistent<pmem_exp::string>("1");
-		});
-
-		nvobj::transaction::run(pop, [&] {
-			s3 = nvobj::make_persistent<pmem_exp::string>(
-				"1234567890");
-		});
-
-		nvobj::transaction::run(pop, [&] {
-			s4 = nvobj::make_persistent<pmem_exp::string>(
+			s1 = nvobj::make_persistent<T>();
+			s2 = nvobj::make_persistent<T>("1");
+			s3 = nvobj::make_persistent<T>("1234567890");
+			s4 = nvobj::make_persistent<T>(
 				"1234567890123456789012345678901234567890"
 				"1234567890123456789012345678901234567890"
 				"1234567890123456789012345678901234567890"
 				"1234567890");
 		});
 
-		test(*s1, pop, r->s);
-		test(*s2, pop, r->s);
-		test(*s3, pop, r->s);
-		test(*s4, pop, r->s);
+		test<T>(*s1, pop, r->s);
+		test<T>(*s2, pop, r->s);
+		test<T>(*s3, pop, r->s);
+		test<T>(*s4, pop, r->s);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::string>(s1);
-			nvobj::delete_persistent<pmem_exp::string>(s2);
-			nvobj::delete_persistent<pmem_exp::string>(s3);
-			nvobj::delete_persistent<pmem_exp::string>(s4);
+			nvobj::delete_persistent<T>(s1);
+			nvobj::delete_persistent<T>(s2);
+			nvobj::delete_persistent<T>(s3);
+			nvobj::delete_persistent<T>(s4);
 		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 
+	/* test pmem::string copy construction from std::string */
+	try {
+		std::string s1, s2("1"), s3("1234567890"),
+			s4("1234567890123456789012345678901234567890"
+			   "1234567890123456789012345678901234567890"
+			   "1234567890123456789012345678901234567890"
+			   "1234567890");
+
+		test<T>(s1, pop, r->s);
+		test<T>(s2, pop, r->s);
+		test<T>(s3, pop, r->s);
+		test<T>(s4, pop, r->s);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
@@ -105,42 +114,50 @@ run_wstring(pmem::obj::pool<root> &pop)
 {
 	auto r = pop.root();
 
+	/* test pmem::wstring copy construction from pmem::wstring */
 	try {
-		nvobj::persistent_ptr<pmem_exp::wstring> ws1, ws2, ws3, ws4;
+		nvobj::persistent_ptr<W> ws1, ws2, ws3, ws4;
 
 		nvobj::transaction::run(pop, [&] {
-			ws1 = nvobj::make_persistent<pmem_exp::wstring>();
-		});
-
-		nvobj::transaction::run(pop, [&] {
-			ws2 = nvobj::make_persistent<pmem_exp::wstring>(L"1");
-		});
-
-		nvobj::transaction::run(pop, [&] {
-			ws3 = nvobj::make_persistent<pmem_exp::wstring>(
+			ws1 = nvobj::make_persistent<W>();
+			ws2 = nvobj::make_persistent<W>(L"1");
+			ws3 = nvobj::make_persistent<W>(
 				L"12345678901234567890");
-		});
-
-		nvobj::transaction::run(pop, [&] {
-			ws4 = nvobj::make_persistent<pmem_exp::wstring>(
+			ws4 = nvobj::make_persistent<W>(
 				L"1234567890123456789012345678901234567890"
 				"1234567890123456789012345678901234567890"
 				"1234567890123456789012345678901234567890"
 				"1234567890");
 		});
 
-		test(*ws1, pop, r->ws);
-		test(*ws2, pop, r->ws);
-		test(*ws3, pop, r->ws);
-		test(*ws4, pop, r->ws);
+		test<W>(*ws1, pop, r->ws);
+		test<W>(*ws2, pop, r->ws);
+		test<W>(*ws3, pop, r->ws);
+		test<W>(*ws4, pop, r->ws);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::wstring>(ws1);
-			nvobj::delete_persistent<pmem_exp::wstring>(ws2);
-			nvobj::delete_persistent<pmem_exp::wstring>(ws3);
-			nvobj::delete_persistent<pmem_exp::wstring>(ws4);
+			nvobj::delete_persistent<W>(ws1);
+			nvobj::delete_persistent<W>(ws2);
+			nvobj::delete_persistent<W>(ws3);
+			nvobj::delete_persistent<W>(ws4);
 		});
 
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/* test pmem::wstring copy construction from std::wstring */
+	try {
+		std::wstring ws1, ws2(L"1"), ws3(L"12345678901234567890"),
+			ws4(L"1234567890123456789012345678901234567890"
+			    "1234567890123456789012345678901234567890"
+			    "1234567890123456789012345678901234567890"
+			    "1234567890");
+
+		test<W>(ws1, pop, r->ws);
+		test<W>(ws2, pop, r->ws);
+		test<W>(ws3, pop, r->ws);
+		test<W>(ws4, pop, r->ws);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

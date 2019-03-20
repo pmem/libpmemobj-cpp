@@ -14,6 +14,7 @@
 
 #include "unittest.hpp"
 
+#include <array>
 #include <libpmemobj++/experimental/string.hpp>
 
 namespace nvobj = pmem::obj;
@@ -25,9 +26,9 @@ struct root {
 	nvobj::persistent_ptr<S> s_arr[5];
 };
 
-template <class S>
+template <class T>
 void
-test(nvobj::pool<struct root> &pop, const S &s1, const S &str,
+test(nvobj::pool<struct root> &pop, const S &s1, const T &str,
      const S &expected)
 {
 	auto r = pop.root();
@@ -90,6 +91,7 @@ main(int argc, char *argv[])
 					"12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 			});
 
+			/* assign from pmem::string */
 			test(pop, *s_arr[0], *s_arr[0], *s_arr[0]);
 			test(pop, *s_arr[0], *s_arr[1], *s_arr[1]);
 			test(pop, *s_arr[0], *s_arr[2], *s_arr[2]);
@@ -115,6 +117,36 @@ main(int argc, char *argv[])
 			test(pop, *s_arr[3], *s_arr[4], *s_arr[4]);
 
 			test_self_assignment(pop, *s_arr[3], *s_arr[3]);
+
+			/* assign from std::string */
+			std::array<std::string, 5> std_str_arr = {
+				"", "12345", "1234567890",
+				"12345678901234567890",
+				"12345678901234567890123456789012345678901234567890123456789012345678901234567890"};
+
+			test(pop, *s_arr[0], std_str_arr[0], *s_arr[0]);
+			test(pop, *s_arr[0], std_str_arr[1], *s_arr[1]);
+			test(pop, *s_arr[0], std_str_arr[2], *s_arr[2]);
+			test(pop, *s_arr[0], std_str_arr[3], *s_arr[3]);
+			test(pop, *s_arr[0], std_str_arr[4], *s_arr[4]);
+
+			test(pop, *s_arr[1], std_str_arr[0], *s_arr[0]);
+			test(pop, *s_arr[1], std_str_arr[1], *s_arr[1]);
+			test(pop, *s_arr[1], std_str_arr[2], *s_arr[2]);
+			test(pop, *s_arr[1], std_str_arr[3], *s_arr[3]);
+			test(pop, *s_arr[1], std_str_arr[4], *s_arr[4]);
+
+			test(pop, *s_arr[2], std_str_arr[0], *s_arr[0]);
+			test(pop, *s_arr[2], std_str_arr[1], *s_arr[1]);
+			test(pop, *s_arr[2], std_str_arr[2], *s_arr[2]);
+			test(pop, *s_arr[2], std_str_arr[3], *s_arr[3]);
+			test(pop, *s_arr[2], std_str_arr[4], *s_arr[4]);
+
+			test(pop, *s_arr[3], std_str_arr[0], *s_arr[0]);
+			test(pop, *s_arr[3], std_str_arr[1], *s_arr[1]);
+			test(pop, *s_arr[3], std_str_arr[2], *s_arr[2]);
+			test(pop, *s_arr[3], std_str_arr[3], *s_arr[3]);
+			test(pop, *s_arr[3], std_str_arr[4], *s_arr[4]);
 
 			nvobj::transaction::run(pop, [&] {
 				for (unsigned i = 0; i < 5; ++i) {

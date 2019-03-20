@@ -14,6 +14,7 @@
 
 #include "unittest.hpp"
 
+#include <array>
 #include <libpmemobj++/experimental/string.hpp>
 
 namespace nvobj = pmem::obj;
@@ -25,9 +26,9 @@ struct root {
 	nvobj::persistent_ptr<S> s_arr[7];
 };
 
-template <class S>
+template <class T>
 void
-test(nvobj::pool<struct root> &pop, const S &s, const S &s2)
+test(nvobj::pool<struct root> &pop, const T &s, const S &s2)
 {
 	auto r = pop.root();
 	nvobj::transaction::run(pop,
@@ -92,6 +93,7 @@ main(int argc, char *argv[])
 				"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz");
 		});
 
+		/* assign from pmem::string */
 		test(pop, *s_arr[0], *s_arr[0]);
 		test(pop, *s_arr[1], *s_arr[0]);
 		test(pop, *s_arr[0], *s_arr[1]);
@@ -105,6 +107,27 @@ main(int argc, char *argv[])
 
 		test_self_assignment(pop, *s_arr[0]);
 		test_self_assignment(pop, *s_arr[3]);
+
+		/* assign from std::string */
+		std::array<std::string, 7> std_str_arr = {
+			std::string(),
+			"1",
+			"2",
+			"123456789",
+			"1234567890123456789012345678901234567890123456789012345678901234567890",
+			"12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
+			"abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"};
+
+		test(pop, std_str_arr[0], *s_arr[0]);
+		test(pop, std_str_arr[1], *s_arr[0]);
+		test(pop, std_str_arr[0], *s_arr[1]);
+		test(pop, std_str_arr[1], *s_arr[2]);
+		test(pop, std_str_arr[1], *s_arr[2]);
+
+		test(pop, std_str_arr[0], *s_arr[6]);
+		test(pop, std_str_arr[3], *s_arr[6]);
+		test(pop, std_str_arr[4], *s_arr[6]);
+		test(pop, std_str_arr[5], *s_arr[6]);
 
 		nvobj::transaction::run(pop, [&] {
 			for (unsigned i = 0; i < 7; ++i) {

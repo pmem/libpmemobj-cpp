@@ -29,9 +29,9 @@ struct root {
 	nvobj::persistent_ptr<string_type> s1;
 };
 
-template <class S>
+template <class S, class U>
 void
-test(S &str, unsigned pos, pmem::obj::pool<root> &pop)
+test(U &str, unsigned pos, pmem::obj::pool<root> &pop)
 {
 	typedef typename S::traits_type T;
 
@@ -45,7 +45,7 @@ test(S &str, unsigned pos, pmem::obj::pool<root> &pop)
 
 		typename S::size_type rlen = str.size() - pos;
 		UT_ASSERT(s2.size() == rlen);
-		UT_ASSERT(T::compare(s2.cdata(), str.cdata() + pos, rlen) == 0);
+		UT_ASSERT(T::compare(s2.cdata(), str.data() + pos, rlen) == 0);
 		UT_ASSERT(s2.capacity() >= s2.size());
 
 		nvobj::transaction::run(pop, [&] {
@@ -71,9 +71,9 @@ test(S &str, unsigned pos, pmem::obj::pool<root> &pop)
 	}
 }
 
-template <class S>
+template <class S, class U>
 void
-test(S &str, unsigned pos, unsigned n, pmem::obj::pool<root> &pop)
+test(U &str, unsigned pos, unsigned n, pmem::obj::pool<root> &pop)
 {
 	typedef typename S::traits_type T;
 
@@ -90,7 +90,7 @@ test(S &str, unsigned pos, unsigned n, pmem::obj::pool<root> &pop)
 		typename S::size_type rlen =
 			std::min<typename S::size_type>(str.size() - pos, n);
 		UT_ASSERT(s2.size() == rlen);
-		UT_ASSERT(T::compare(s2.cdata(), str.cdata() + pos, rlen) == 0);
+		UT_ASSERT(T::compare(s2.cdata(), str.data() + pos, rlen) == 0);
 		UT_ASSERT(s2.capacity() >= s2.size());
 
 		nvobj::transaction::run(pop, [&] {
@@ -144,50 +144,105 @@ run(pmem::obj::pool<root> &pop)
 				"1234567890");
 		});
 
-		test(*s_default, 0, pop);
-		test(*s_default, 1, pop);
+		test<string_type>(*s_default, 0, pop);
+		test<string_type>(*s_default, 1, pop);
 
-		test(*s1, 0, pop);
-		test(*s1, 1, pop);
-		test(*s1, 2, pop);
+		test<string_type>(*s1, 0, pop);
+		test<string_type>(*s1, 1, pop);
+		test<string_type>(*s1, 2, pop);
 
-		test(*s2, 0, pop);
-		test(*s2, 5, pop);
-		test(*s2, 50, pop);
-		test(*s2, 500, pop);
+		test<string_type>(*s2, 0, pop);
+		test<string_type>(*s2, 5, pop);
+		test<string_type>(*s2, 50, pop);
+		test<string_type>(*s2, 500, pop);
 
-		test(*s3, 0, pop);
-		test(*s3, 5, pop);
-		test(*s3, 50, pop);
-		test(*s3, 500, pop);
+		test<string_type>(*s3, 0, pop);
+		test<string_type>(*s3, 5, pop);
+		test<string_type>(*s3, 50, pop);
+		test<string_type>(*s3, 500, pop);
 
-		test(*s_default, 0, 0, pop);
-		test(*s_default, 0, 1, pop);
-		test(*s_default, 1, 0, pop);
-		test(*s_default, 1, 1, pop);
-		test(*s_default, 1, 2, pop);
+		test<string_type>(*s_default, 0, 0, pop);
+		test<string_type>(*s_default, 0, 1, pop);
+		test<string_type>(*s_default, 1, 0, pop);
+		test<string_type>(*s_default, 1, 1, pop);
+		test<string_type>(*s_default, 1, 2, pop);
 
-		test(*s1, 0, 0, pop);
-		test(*s1, 0, 1, pop);
-		test(*s1, 1, 1, pop);
+		test<string_type>(*s1, 0, 0, pop);
+		test<string_type>(*s1, 0, 1, pop);
+		test<string_type>(*s1, 1, 1, pop);
 
-		test(*s2, 0, 5, pop);
-		test(*s2, 50, 0, pop);
-		test(*s2, 50, 1, pop);
-		test(*s2, 50, 10, pop);
-		test(*s2, 50, 100, pop);
+		test<string_type>(*s2, 0, 5, pop);
+		test<string_type>(*s2, 50, 0, pop);
+		test<string_type>(*s2, 50, 1, pop);
+		test<string_type>(*s2, 50, 10, pop);
+		test<string_type>(*s2, 50, 100, pop);
 
-		test(*s3, 0, 5, pop);
-		test(*s3, 50, 0, pop);
-		test(*s3, 50, 1, pop);
-		test(*s3, 50, 10, pop);
-		test(*s3, 50, 100, pop);
+		test<string_type>(*s3, 0, 5, pop);
+		test<string_type>(*s3, 50, 0, pop);
+		test<string_type>(*s3, 50, 1, pop);
+		test<string_type>(*s3, 50, 10, pop);
+		test<string_type>(*s3, 50, 100, pop);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<string_type>(s1);
 			nvobj::delete_persistent<string_type>(s2);
 			nvobj::delete_persistent<string_type>(s3);
 		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+void
+run_on_std_str(pmem::obj::pool<root> &pop)
+{
+	try {
+		std::string s_default, s1("1"),
+			s2("1234567890123456789012345678901234567890"
+			   "123456789012345678901234567890"),
+			s3("1234567890123456789012345678901234567890"
+			   "1234567890123456789012345678901234567890"
+			   "1234567890123456789012345678901234567890"
+			   "1234567890");
+
+		test<string_type>(s_default, 0, pop);
+		test<string_type>(s_default, 1, pop);
+
+		test<string_type>(s1, 0, pop);
+		test<string_type>(s1, 1, pop);
+		test<string_type>(s1, 2, pop);
+
+		test<string_type>(s2, 0, pop);
+		test<string_type>(s2, 5, pop);
+		test<string_type>(s2, 50, pop);
+		test<string_type>(s2, 500, pop);
+
+		test<string_type>(s3, 0, pop);
+		test<string_type>(s3, 5, pop);
+		test<string_type>(s3, 50, pop);
+		test<string_type>(s3, 500, pop);
+
+		test<string_type>(s_default, 0, 0, pop);
+		test<string_type>(s_default, 0, 1, pop);
+		test<string_type>(s_default, 1, 0, pop);
+		test<string_type>(s_default, 1, 1, pop);
+		test<string_type>(s_default, 1, 2, pop);
+
+		test<string_type>(s1, 0, 0, pop);
+		test<string_type>(s1, 0, 1, pop);
+		test<string_type>(s1, 1, 1, pop);
+
+		test<string_type>(s2, 0, 5, pop);
+		test<string_type>(s2, 50, 0, pop);
+		test<string_type>(s2, 50, 1, pop);
+		test<string_type>(s2, 50, 10, pop);
+		test<string_type>(s2, 50, 100, pop);
+
+		test<string_type>(s3, 0, 5, pop);
+		test<string_type>(s3, 50, 0, pop);
+		test<string_type>(s3, 50, 1, pop);
+		test<string_type>(s3, 50, 10, pop);
+		test<string_type>(s3, 50, 100, pop);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
@@ -214,6 +269,7 @@ main(int argc, char *argv[])
 	}
 
 	run(pop);
+	run_on_std_str(pop);
 
 	pop.close();
 

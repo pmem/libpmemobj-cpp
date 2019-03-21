@@ -103,30 +103,6 @@ CHECK_CXX_SOURCE_COMPILES(
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 
-function(find_pmemcheck)
-	set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})
-	execute_process(COMMAND valgrind --tool=pmemcheck --help
-			RESULT_VARIABLE VALGRIND_PMEMCHECK_RET
-			OUTPUT_QUIET
-			ERROR_QUIET)
-	if(VALGRIND_PMEMCHECK_RET)
-		set(VALGRIND_PMEMCHECK_FOUND 0 CACHE INTERNAL "")
-	else()
-		set(VALGRIND_PMEMCHECK_FOUND 1 CACHE INTERNAL "")
-	endif()
-
-	if(VALGRIND_PMEMCHECK_FOUND)
-		execute_process(COMMAND valgrind --tool=pmemcheck true
-				ERROR_VARIABLE PMEMCHECK_OUT
-				OUTPUT_QUIET)
-
-		string(REGEX MATCH ".*pmemcheck-([0-9.]*),.*" PMEMCHECK_OUT "${PMEMCHECK_OUT}")
-		set(PMEMCHECK_VERSION ${CMAKE_MATCH_1} CACHE INTERNAL "")
-	else()
-		message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
-	endif()
-endfunction()
-
 function(build_pmemobj_cow_check)
 	execute_process(COMMAND ${CMAKE_COMMAND}
 			${PROJECT_SOURCE_DIR}/tests/pmemobj_check_cow/CMakeLists.txt
@@ -174,15 +150,6 @@ function(find_packages)
 		find_package(Curses QUIET)
 	endif()
 
-	# Look for valgrind only if proper option is enabled.
-	if (TESTS_USE_VALGRIND)
-		if(PKG_CONFIG_FOUND)
-			pkg_check_modules(VALGRIND QUIET valgrind)
-		else()
-			find_package(VALGRIND QUIET)
-		endif()
-	endif()
-
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(LIBUNWIND QUIET libunwind)
 	else()
@@ -194,9 +161,6 @@ function(find_packages)
 
 	if(NOT WIN32)
 		if(VALGRIND_FOUND)
-			include_directories(${VALGRIND_INCLUDE_DIRS})
-			find_pmemcheck()
-
 			if ((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
 				check_pmemobj_cow_support("cow.pool")
@@ -296,7 +260,7 @@ function(add_test_common name tracer testcase cmake_script)
 	    set(tracer none)
 	endif()
 
-	if (NOT WIN32 AND (NOT VALGRIND_FOUND) AND ${tracer} IN_LIST vg_tracers)
+	if (NOT WIN32 AND ((NOT VALGRIND_FOUND) OR (NOT TESTS_USE_VALGRIND)) AND ${tracer} IN_LIST vg_tracers)
 		# Only print "SKIPPED_*" message when option is enabled
 		if (TESTS_USE_VALGRIND)
 			skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_OF_MISSING_VALGRIND")
@@ -304,7 +268,7 @@ function(add_test_common name tracer testcase cmake_script)
 		return()
 	endif()
 
-	if (NOT WIN32 AND (NOT VALGRIND_PMEMCHECK_FOUND) AND ${tracer} STREQUAL "pmemcheck")
+	if (NOT WIN32 AND ((NOT VALGRIND_PMEMCHECK_FOUND) OR (NOT TESTS_USE_VALGRIND)) AND ${tracer} STREQUAL "pmemcheck")
 		# Only print "SKIPPED_*" message when option is enabled
 		if (TESTS_USE_VALGRIND)
 			skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_OF_MISSING_PMEMCHECK")

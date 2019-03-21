@@ -50,6 +50,16 @@ test(nvobj::pool<struct root> &pop)
 		UT_ASSERT(*r->l2 == *r->lo);
 		UT_ASSERT(r->l->empty());
 
+		/* self move assignment */
+		*r->l2 = std::move(*r->l2);
+
+		UT_ASSERT(*r->l2 == *r->lo);
+
+		/* self assign */
+		r->l2->assign(std::move(*r->l2));
+
+		UT_ASSERT(*r->l2 == *r->lo);
+
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<C>(r->l);
 			nvobj::delete_persistent<C>(r->lo);

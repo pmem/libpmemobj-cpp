@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,34 @@ test_alloc_invalid()
 }
 
 /*
+ * test_dealloc_invalid -- (internal) test an deallocation outside of a
+ * transaction
+ */
+void
+test_dealloc_invalid(nvobj::pool_base &pop)
+{
+	nvobj::allocator<foo> al;
+	nvobj::persistent_ptr<foo> fooptr;
+	bool thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] { fooptr = al.allocate(1); });
+		al.deallocate(fooptr);
+	} catch (pmem::transaction_scope_error &) {
+		thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERT(thrown);
+
+	try {
+		nvobj::transaction::run(pop, [&] { al.deallocate(fooptr); });
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+/*
  * test_alloc_equal -- (internal) test allocator equality/inequality operators
  */
 void
@@ -178,6 +206,7 @@ main(int argc, char *argv[])
 
 	test_alloc_valid(pop);
 	test_alloc_invalid();
+	test_dealloc_invalid(pop);
 	test_alloc_equal();
 
 	pop.close();

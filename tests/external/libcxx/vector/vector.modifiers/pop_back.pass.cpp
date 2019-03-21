@@ -50,6 +50,8 @@ main(int argc, char *argv[])
 		UT_ASSERT(r->c->size() == 1);
 		r->c->pop_back();
 		UT_ASSERT(r->c->size() == 0);
+		r->c->pop_back();
+		UT_ASSERT(r->c->size() == 0);
 		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<C>(r->c); });
 	} catch (std::exception &e) {

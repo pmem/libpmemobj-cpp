@@ -288,6 +288,25 @@ include_directories(include)
 
 include(${CMAKE_SOURCE_DIR}/cmake/check_compiler_issues.cmake)
 
+if(PKG_CONFIG_FOUND)
+	pkg_check_modules(VALGRIND QUIET valgrind)
+else()
+	find_package(VALGRIND QUIET)
+endif()
+
+if(VALGRIND_FOUND)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_DRD_ENABLED=1)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1)
+
+	include_directories(${VALGRIND_INCLUDE_DIRS})
+	find_pmemcheck()
+
+	if(VALGRIND_PMEMCHECK_FOUND)
+		add_flag(-DLIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1)
+	endif()
+endif()
+
 if(BUILD_TESTS)
 	if(TEST_DIR)
 		enable_testing()

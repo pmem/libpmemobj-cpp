@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['accessor',['accessor',['../classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html',1,'pmem::obj::experimental::concurrent_hash_map']]],
   ['allocation_5fflag',['allocation_flag',['../structpmem_1_1obj_1_1allocation__flag.html',1,'pmem::obj']]],
   ['allocation_5fflag_5fatomic',['allocation_flag_atomic',['../structpmem_1_1obj_1_1allocation__flag__atomic.html',1,'pmem::obj']]],
   ['allocator',['allocator',['../classpmem_1_1obj_1_1allocator.html',1,'pmem::obj']]],

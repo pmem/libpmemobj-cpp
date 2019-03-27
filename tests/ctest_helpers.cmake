@@ -52,57 +52,6 @@ set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS})
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
 
-set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
-
-if(NOT MSVC_VERSION)
-	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
-	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/../include ${LIBPMEMOBJ_INCLUDE_DIRS})
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
-	CHECK_CXX_SOURCE_COMPILES(
-		"#include <libpmemobj++/make_persistent_array.hpp>
-		using namespace pmem::obj;
-		int main() {
-			delete_persistent<int[][3]>(make_persistent<int[][3]>(2), 2);
-			return 0;
-		}"
-		NO_CLANG_TEMPLATE_BUG)
-
-	# This is a workaround for older incompatible versions of libstdc++ and clang.
-	# Please see https://llvm.org/bugs/show_bug.cgi?id=15517 for more info.
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -include future")
-	CHECK_CXX_SOURCE_COMPILES(
-		"int main() { return 0; }"
-		NO_CHRONO_BUG)
-
-	set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-	CHECK_CXX_SOURCE_COMPILES(
-		"#include <type_traits>
-		int main() {
-		#if !__cpp_lib_is_aggregate
-			static_assert(false, \"\");
-		#endif
-		}"
-		AGGREGATE_INITIALIZATION_AVAILABLE
-	)
-else()
-	set(AGGREGATE_INITIALIZATION_AVAILABLE FALSE)
-	set(NO_CLANG_TEMPLATE_BUG TRUE)
-	set(NO_CHRONO_BUG TRUE)
-endif()
-
-set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-CHECK_CXX_SOURCE_COMPILES(
-	"#include <cstddef>
-	int main() {
-	    std::max_align_t var;
-	    return 0;
-	}"
-	MAX_ALIGN_TYPE_EXISTS)
-
-set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
-set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
-
 function(find_pmemcheck)
 	set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})
 	execute_process(COMMAND valgrind --tool=pmemcheck --help
@@ -174,15 +123,6 @@ function(find_packages)
 		find_package(Curses QUIET)
 	endif()
 
-	# Look for valgrind only if proper option is enabled.
-	if (TESTS_USE_VALGRIND)
-		if(PKG_CONFIG_FOUND)
-			pkg_check_modules(VALGRIND QUIET valgrind)
-		else()
-			find_package(VALGRIND QUIET)
-		endif()
-	endif()
-
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(LIBUNWIND QUIET libunwind)
 	else()
@@ -194,9 +134,6 @@ function(find_packages)
 
 	if(NOT WIN32)
 		if(VALGRIND_FOUND)
-			include_directories(${VALGRIND_INCLUDE_DIRS})
-			find_pmemcheck()
-
 			if ((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
 				check_pmemobj_cow_support("cow.pool")
@@ -296,7 +233,7 @@ function(add_test_common name tracer testcase cmake_script)
 	    set(tracer none)
 	endif()
 
-	if (NOT WIN32 AND (NOT VALGRIND_FOUND) AND ${tracer} IN_LIST vg_tracers)
+	if (NOT WIN32 AND ((NOT VALGRIND_FOUND) OR (NOT TESTS_USE_VALGRIND)) AND ${tracer} IN_LIST vg_tracers)
 		# Only print "SKIPPED_*" message when option is enabled
 		if (TESTS_USE_VALGRIND)
 			skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_OF_MISSING_VALGRIND")
@@ -304,7 +241,7 @@ function(add_test_common name tracer testcase cmake_script)
 		return()
 	endif()
 
-	if (NOT WIN32 AND (NOT VALGRIND_PMEMCHECK_FOUND) AND ${tracer} STREQUAL "pmemcheck")
+	if (NOT WIN32 AND ((NOT VALGRIND_PMEMCHECK_FOUND) OR (NOT TESTS_USE_VALGRIND)) AND ${tracer} STREQUAL "pmemcheck")
 		# Only print "SKIPPED_*" message when option is enabled
 		if (TESTS_USE_VALGRIND)
 			skip_test(${name}_${testcase}_${tracer} "SKIPPED_BECAUSE_OF_MISSING_PMEMCHECK")

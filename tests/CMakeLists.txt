@@ -88,16 +88,6 @@ endfunction()
 
 find_packages()
 
-if(VALGRIND_FOUND)
-	add_flag(-DLIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1)
-	add_flag(-DLIBPMEMOBJ_CPP_VG_DRD_ENABLED=1)
-	add_flag(-DLIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1)
-
-	if(VALGRIND_PMEMCHECK_FOUND)
-		add_flag(-DLIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1)
-	endif()
-endif()
-
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
 	add_test_generic(NAME ex-queue CASE 0 TRACERS none)

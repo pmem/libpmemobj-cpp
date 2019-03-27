@@ -284,64 +284,28 @@ write_basic_package_version_file(libpmemobj++-config-version.cmake
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config-version.cmake
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/libpmemobj++/cmake)
 
-if(NOT MSVC_VERSION)
-	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+include_directories(include)
 
-	# Check for issues with older gcc compilers which do not expand variadic template
-	# variables in lambda expressions.
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
-	CHECK_CXX_SOURCE_COMPILES(
-		"void print() {}
-		template<typename...Args, typename T>
-		void print(const T&, const Args &...arg) {
-			auto f = [&]{ print(arg...);};
-		}
-		int main() {
-			print(1, 2, 3);
-			return 0;
-		}"
-		NO_GCC_VARIADIC_TEMPLATE_BUG)
+include(${CMAKE_SOURCE_DIR}/cmake/check_compiler_issues.cmake)
 
-	# Check for issues with older gcc compilers if "inline" aggregate initialization
-	# works for array class members https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65815
-	CHECK_CXX_SOURCE_COMPILES(
-		"struct array {
-			int data[2];
-		};
-		struct X {
-			array a = { 1, 2 };
-		};
-		int main() {
-			return 0;
-		}"
-		NO_GCC_AGGREGATE_INITIALIZATION_BUG)
-
-	# Check for issues related to agregate initialization in new expression.
-	# Following code will fail for LLVM compiler https://bugs.llvm.org/show_bug.cgi?id=39988
-	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error")
-	CHECK_CXX_SOURCE_COMPILES(
-		"template<typename T>
-		struct A {
-			 A() {};
-			~A() {};
-		};
-		struct B {
-			A<int> a;
-			A<int> b;
-		};
-		int main() {
-			new B{};
-			return 0;
-		}"
-		NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG)
-	set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+if(PKG_CONFIG_FOUND)
+	pkg_check_modules(VALGRIND QUIET valgrind)
 else()
-	set(NO_GCC_VARIADIC_TEMPLATE_BUG TRUE)
-	set(NO_GCC_AGGREGATE_INITIALIZATION_BUG TRUE)
-	set(NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG TRUE)
+	find_package(VALGRIND QUIET)
 endif()
 
-include_directories(include)
+if(VALGRIND_FOUND)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_DRD_ENABLED=1)
+	add_flag(-DLIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1)
+
+	include_directories(${VALGRIND_INCLUDE_DIRS})
+	find_pmemcheck()
+
+	if(VALGRIND_PMEMCHECK_FOUND)
+		add_flag(-DLIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1)
+	endif()
+endif()
 
 if(BUILD_TESTS)
 	if(TEST_DIR)

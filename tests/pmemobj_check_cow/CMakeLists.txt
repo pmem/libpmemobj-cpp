@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,6 +31,9 @@
 
 cmake_minimum_required(VERSION 3.3)
 project(pmemobj_check_cow CXX)
+
+set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${LIBPMEMOBJ_INCLUDE_DIRS})
 include_directories(${LIBPMEMOBJ++_INCLUDE_DIRS})

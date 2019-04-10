@@ -38,8 +38,9 @@
 #ifndef LIBPMEMOBJ_CPP_COMMON_HPP
 #define LIBPMEMOBJ_CPP_COMMON_HPP
 
-#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/tx_base.h>
+#include <string>
 #include <typeinfo>
 
 #if defined(__GNUC__) || defined(__clang__)

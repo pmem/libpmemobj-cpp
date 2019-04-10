@@ -46,6 +46,9 @@
 namespace pmem
 {
 
+namespace detail
+{
+
 /**
  * Return last libpmemobj error message as a std::string.
  */
@@ -59,8 +62,6 @@ errormsg(void)
 #endif
 }
 
-namespace detail
-{
 inline const std::string
 exception_msg_get(const std::string &s)
 {

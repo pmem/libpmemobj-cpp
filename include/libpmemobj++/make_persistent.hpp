@@ -44,8 +44,8 @@
 #include <libpmemobj++/detail/check_persistent_ptr_array.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj++/detail/variadic.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/tx_base.h>
 
 #include <new>

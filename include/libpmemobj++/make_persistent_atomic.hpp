@@ -44,9 +44,9 @@
 #include <libpmemobj++/detail/check_persistent_ptr_array.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/make_atomic_impl.hpp>
-#include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj++/detail/variadic.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/atomic_base.h>
 

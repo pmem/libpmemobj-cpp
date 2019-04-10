@@ -42,7 +42,7 @@
 #include <string>
 
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/tx_base.h>
 

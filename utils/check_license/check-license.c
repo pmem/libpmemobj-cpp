@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  * Copyright (c) 2016, Microsoft Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -184,7 +184,8 @@ format_license(char *license, size_t length)
 	/* is there any comment? */
 	if (comment + 1 != license) {
 		/* separate out a comment */
-		strncpy(comment_str, comment, COMMENT_STR_LEN);
+		strncpy(comment_str, comment, COMMENT_STR_LEN - 1);
+		comment_str[COMMENT_STR_LEN - 1] = 0;
 		comment = comment_str + 1;
 		while (isspace(*comment))
 			comment++;
@@ -227,7 +228,7 @@ format_license(char *license, size_t length)
  * analyze_license -- check correctness of the license
  */
 static int
-analyze_license(const char *path_to_check,
+analyze_license(const char *name_to_print,
 		char *buffer,
 		char **license)
 {
@@ -240,11 +241,11 @@ analyze_license(const char *path_to_check,
 		if (!beg_str)
 			ERROR2("%s:1: error: incorrect license"
 				" (license should start with the string '%s')",
-				path_to_check, LICENSE_BEG);
+				name_to_print, LICENSE_BEG);
 		else
 			ERROR2("%s:1: error: incorrect license"
 				" (license should end with the string '%s')",
-				path_to_check, LICENSE_END);
+				name_to_print, LICENSE_END);
 		return -1;
 	}
 
@@ -288,8 +289,7 @@ create_pattern(const char *path_license, char *pattern)
 	if (analyze_license(path_license, buffer, &license) == -1)
 		return -1;
 
-	memset(pattern, 0, LICENSE_MAX_LEN);
-	strncpy(pattern, license, strlen(license) + 1);
+	strncpy(pattern, license, LICENSE_MAX_LEN);
 
 	return 0;
 }
@@ -347,7 +347,7 @@ verify_license(const char *path_to_check, char *pattern, const char *filename)
 		return -1;
 	}
 
-	if (analyze_license(path_to_check, buffer, &license) == -1)
+	if (analyze_license(name_to_print, buffer, &license) == -1)
 		return -1;
 
 	/* check the copyright notice */

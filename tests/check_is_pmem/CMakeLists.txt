@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,10 +29,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_path(LIBPMEMOBJ_INCLUDE_DIR libpmemobj.h)
-find_library(LIBPMEMOBJ_LIBRARY NAMES pmemobj libpmemobj)
+cmake_minimum_required(VERSION 3.3)
+project(check_is_pmem CXX)
 
-set(LIBPMEMOBJ_LIBRARIES ${LIBPMEMOBJ_LIBRARY})
-set(LIBPMEMOBJ_INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIR})
+set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 11)
 
-mark_as_advanced(LIBPMEMOBJ_LIBRARY LIBPMEMOBJ_INCLUDE_DIR)
+include_directories(${LIBPMEM_INCLUDE_DIRS})
+link_directories(${LIBPMEM_LIBRARY_DIRS})
+link_libraries(${LIBPMEM_LIBRARIES})
+
+message(WARNING "${LIBPMEMOBJ_LIBRARIES}")
+
+add_executable(check_is_pmem check_is_pmem.cpp)

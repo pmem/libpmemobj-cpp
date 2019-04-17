@@ -33,6 +33,8 @@ include(ctest_helpers.cmake)
 
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_cppstyle(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
+add_cppstyle(tests-check_is_pmem ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*cpp)
+add_check_whitespace(tests-check_is_pmem ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*cpp)
 add_check_whitespace(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
 add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
@@ -87,6 +89,7 @@ function(build_example_pman)
 endfunction()
 
 find_packages()
+check_is_pmem("${TEST_DIR}" TEST_DIR_IS_PMEM)
 
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
@@ -316,10 +319,17 @@ endif()
 
 if(PMEMVLT_PRESENT)
 	build_test(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
-	add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
+	add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
-	add_test_generic(NAME concurrent_hash_map_rehash TRACERS none memcheck pmemcheck helgrind)
+	add_test_generic(NAME concurrent_hash_map_rehash TRACERS none memcheck pmemcheck)
+
+	if(TEST_DIR_IS_PMEM)
+		add_test_generic(NAME concurrent_hash_map TRACERS drd helgrind)
+		add_test_generic(NAME concurrent_hash_map_rehash TRACERS helgrind)
+	else()
+		message(WARNING "Skipping concurrent_hash_map drd/helgrind tests because pmem was not used.")
+	endif()
 
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_check TRACERS none memcheck pmemcheck)

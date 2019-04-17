@@ -91,6 +91,20 @@ function(build_pmemobj_cow_check)
 			OUTPUT_QUIET)
 endfunction()
 
+function(build_check_is_pmem)
+	execute_process(COMMAND ${CMAKE_COMMAND}
+			${PROJECT_SOURCE_DIR}/tests/check_is_pmem/CMakeLists.txt
+			-DLIBPMEM_INCLUDE_DIRS=${LIBPMEM_INCLUDE_DIRS}
+			-DLIBPMEM_LIBRARIES=${LIBPMEM_LIBRARIES}
+			-DLIBPMEM_LIBRARY_DIRS=${LIBPMEM_LIBRARY_DIRS}
+			-Bcheck_is_pmem
+			OUTPUT_QUIET)
+
+	execute_process(COMMAND ${CMAKE_COMMAND}
+			--build check_is_pmem
+			OUTPUT_QUIET)
+endfunction()
+
 # pmreorder tests require COW support in libpmemobj because if checker program
 # does any recovery (for example in pool::open) this is not logged and will not
 # be reverted by pmreorder. This results in unexpected state in proceding
@@ -111,6 +125,27 @@ function(check_pmemobj_cow_support pool)
 	endif()
 
 	unset(ENV{PMEMOBJ_COW})
+endfunction()
+
+function(check_is_pmem path ret)
+	build_check_is_pmem()
+
+	if (TESTS_USE_FORCED_PMEM)
+		set(ENV{PMEM_IS_PMEM_FORCE} 1)
+	endif()
+
+	execute_process(COMMAND check_is_pmem/check_is_pmem
+			${path} RESULT_VARIABLE out)
+
+	if(out EQUAL 0)
+		SET(${ret} 1 PARENT_SCOPE)
+	elseif(out EQUAL 1)
+		SET(${ret} 0 PARENT_SCOPE)
+	else()
+		message(WARNING "check_is_pmem failed")
+	endif()
+
+	unset(ENV{PMEM_IS_PMEM_FORCE})
 endfunction()
 
 function(find_packages)

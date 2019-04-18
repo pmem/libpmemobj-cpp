@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -57,3 +57,23 @@ add_executable(pmpong Ball.cpp GameController.cpp GameOverView.cpp
 		PongGameStatus.cpp Pool.cpp)
 target_include_directories(pmpong PUBLIC ${SFML_INCLUDE_DIR} ${LIBPMEMOBJ++_INCLUDE_DIRS} .)
 target_link_libraries(pmpong ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})
+
+if(NOT WIN32)
+	execute_process(COMMAND uname -s OUTPUT_VARIABLE SYSTEM_TYPE)
+	if(SYSTEM_TYPE STREQUAL "FreeBSD")
+		set(FONTDIR "/usr/local/share/fonts")
+	else()
+		set(FONTDIR "/usr/share/fonts")
+	endif()
+
+	file(GLOB_RECURSE fonts ${FONTDIR}/*.ttf)
+	list(LENGTH fonts NUMBER_OF_FONTS)
+
+	if(NUMBER_OF_FONTS GREATER 0)
+		list(GET fonts 0 font)
+	endif()
+else()
+	set(font "C:/Windows/Fonts/Arial.ttf")
+endif()
+
+target_compile_options(pmpong PUBLIC -DLIBPMEMOBJ_CPP_PMPONG_FONT_PATH="${font}")

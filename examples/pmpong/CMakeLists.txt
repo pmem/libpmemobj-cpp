@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -57,3 +57,17 @@ add_executable(pmpong Ball.cpp GameController.cpp GameOverView.cpp
 		PongGameStatus.cpp Pool.cpp)
 target_include_directories(pmpong PUBLIC ${SFML_INCLUDE_DIR} ${LIBPMEMOBJ++_INCLUDE_DIRS} .)
 target_link_libraries(pmpong ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})
+
+if(NOT WIN32)
+	find_program(FCLIST NAMES fc-list)
+	if(NOT FCLIST)
+		message(WARNING "fc-list not found. Install fontconfig to allow examples-pmpong to automatically find fonts.")
+	endif()
+
+	execute_process(COMMAND bash -c "fc-list --format='%{file}\n' | head -n1 | tr -d '\n'" OUTPUT_VARIABLE FONT_PATH ERROR_QUIET)
+	set(font ${FONT_PATH})
+else()
+	set(font "C:/Windows/Fonts/Arial.ttf")
+endif()
+
+target_compile_options(pmpong PUBLIC -DLIBPMEMOBJ_CPP_PMPONG_FONT_PATH="${font}")

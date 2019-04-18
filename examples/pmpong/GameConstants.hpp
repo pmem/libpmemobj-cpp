@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018, Intel Corporation
+ * Copyright 2017-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,20 +68,26 @@
 #define LAYOUT_NAME "DEFAULT_LAYOUT_NAME"
 #define DEFAULT_POOLFILE_NAME "DEFAULT_FILENAME"
 
-static inline std::string
-readFontConf()
+static inline sf::Font
+getFont()
 {
-	static std::string path = "";
-	std::ifstream file("fontConf");
-	if (file.is_open()) {
-		getline(file, path);
+	std::string font_path = "";
+#ifdef LIBPMEMOBJ_CPP_PMPONG_FONT_PATH
+	font_path = LIBPMEMOBJ_CPP_PMPONG_FONT_PATH;
+#endif
+
+	auto env = getenv("LIBPMEMOBJ_CPP_PMPONG_FONT_PATH");
+	if (env != nullptr)
+		font_path = env;
+
+	sf::Font font;
+	if (!font.loadFromFile(font_path)) {
+		throw std::runtime_error(
+			"Cannot find fonts. Please set environmental variable LIBPMEMOBJ_CPP_PMPONG_FONT_PATH"
+			" to path to existing font file");
 	}
-	return path;
+
+	return font;
 }
 
-#ifndef _WIN32
-#define FONT_PATH readFontConf()
-#else
-#define FONT_PATH "C:/Windows/Fonts/Arial.ttf"
-#endif
 #endif /* LIBPMEMOBJ_CPP_EXAMPLES_PMPONG_GAMECONSTANTS_HPP */

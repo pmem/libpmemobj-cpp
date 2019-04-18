@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -129,16 +129,18 @@ if(SFML_FOUND)
 	target_link_libraries(example-pmpong ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})
 
 	if(NOT WIN32)
-		execute_process(COMMAND uname -s OUTPUT_VARIABLE SYSTEM_TYPE)
-		if(SYSTEM_TYPE STREQUAL "FreeBSD")
-			set(FONTDIR "/usr/local/share/fonts")
-		else()
-			set(FONTDIR "/usr/share/fonts")
+		find_program(FCLIST NAMES fc-list)
+		if(NOT FCLIST)
+			message(WARNING "fc-list not found. Install fontconfig to allow examples-pmpong to automatically find fonts.")
 		endif()
-		file(GLOB_RECURSE fonts ${FONTDIR}/*.ttf)
-		list(GET fonts 0 font)
-		file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/fontConf ${font})
+
+		execute_process(COMMAND bash -c "fc-list --format='%{file}\n' | head -n1 | tr -d '\n'" OUTPUT_VARIABLE FONT_PATH ERROR_QUIET)
+		set(font ${FONT_PATH})
+	else()
+		set(font "C:/Windows/Fonts/Arial.ttf")
 	endif()
+
+	target_compile_options(example-pmpong PUBLIC -DLIBPMEMOBJ_CPP_PMPONG_FONT_PATH="${font}")
 else()
 	message(WARNING "SFML 2.4 or newer not found - pmpong won't be build")
 endif()

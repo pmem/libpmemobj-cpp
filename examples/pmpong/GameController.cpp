@@ -54,10 +54,7 @@ GameController::gameLoop(bool isSimulation)
 		sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), GAME_NAME);
 	gameWindow->setFramerateLimit(FRAMERATE_LIMIT);
 
-	sf::Font font;
-	if (!font.loadFromFile(FONT_PATH)) {
-		throw std::runtime_error("Cannot load font from file");
-	}
+	sf::Font font = getFont();
 
 	View *menuView = new MenuView(font);
 	View *gameView = new GameView(font);

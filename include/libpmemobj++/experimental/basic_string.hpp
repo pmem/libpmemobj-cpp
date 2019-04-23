@@ -174,6 +174,18 @@ public:
 	size_type capacity() const noexcept;
 
 	/* Modifiers */
+	basic_string &append(size_type count, CharT ch);
+	basic_string &append(const basic_string &str);
+	basic_string &append(const basic_string &str, size_type pos,
+			     size_type count);
+	basic_string &append(const CharT *s, size_type count);
+	basic_string &append(const CharT *s);
+	template <typename InputIt,
+		  typename Enable = typename pmem::detail::is_input_iterator<
+			  InputIt>::type>
+	basic_string &append(InputIt first, InputIt last);
+	basic_string &append(std::initializer_list<CharT> ilist);
+
 	int compare(const basic_string &other) const;
 	int compare(const std::basic_string<CharT> &other) const;
 	int compare(size_type pos, size_type count,
@@ -1246,6 +1258,262 @@ basic_string<CharT, Traits>::data()
 	return is_sso_used() ? data_sso.range(0, size() + sizeof('\0')).begin()
 			     : data_large.data();
 }
+
+/**
+ * Append count copies of character ch to the string transactionally.
+ *
+ * @param[in] count number of characters to append.
+ * @param[in] ch character value to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + count
+ * @post capacity() == std::max(size() + count, capacity())
+ *
+ * @throw std::length_error if size() + count > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(size_type count, CharT ch)
+{
+	auto sz = size();
+	auto new_size = sz + count;
+
+	if (new_size > max_size())
+		throw std::length_error("Size exceeds max size");
+
+	auto pop = get_pool();
+
+	transaction::run(pop, [&] {
+		if (is_sso_used()) {
+			if (new_size > sso_capacity) {
+				sso_to_large(new_size);
+				data_large.resize(new_size, ch);
+				data_large.push_back(value_type('\0'));
+			} else {
+				snapshot_sso();
+				auto dest =
+					data_sso.range(sz, count + sizeof('\0'))
+						.begin();
+				traits_type::assign(dest, count, ch);
+
+				set_size(new_size);
+				data_sso[new_size] = '\0';
+			}
+		} else {
+			data_large.resize(new_size, ch);
+			data_large.push_back(value_type('\0'));
+		}
+	});
+
+	return *this;
+}
+
+/**
+ * Append string str transactionally.
+ *
+ * @param[in] str string to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + str.size()
+ * @post capacity() == std::max(size() + str.size(), capacity())
+ *
+ * @throw std::length_error if size() + str.size() > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const basic_string &str)
+{
+	append(str.data(), str.size());
+
+	return *this;
+}
+
+/**
+ * Append substring [pos, pos + count) of str string transactionally.
+ * Length of the string to append is determined as the smaller of count and
+ * str.size() - pos.
+ *
+ * @param[in] str string to append.
+ * @param[in] pos index of the first character to append.
+ * @param[in] count characters to append.
+ *
+ * @return *this
+ *
+ * @pre pos <= str.size()
+ *
+ * @post size() == size() + std::min(count, str.size() - pos)
+ * @post capacity() == std::max(size() + std::min(count, str.size() - pos),
+ * capacity())
+ *
+ * @throw std::out_of_range if pos > str.size()
+ * @throw std::length_error if size() + count > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const basic_string &str, size_type pos,
+				    size_type count)
+{
+	auto sz = str.size();
+	assert(pos <= sz);
+
+	if (pos > sz)
+		throw std::out_of_range("Index out of range.");
+
+	auto len = std::min(count, sz - pos);
+
+	append(str.data() + pos, len);
+
+	return *this;
+}
+
+/**
+ * Append characters in the range [s, s + count) transactionally.
+ *
+ * @param[in] s pointer to C-style string to append.
+ * @param[in] count characters to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + count
+ * @post capacity() == std::max(size() + count, capacity())
+ *
+ * @throw std::length_error if size() + count > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const CharT *s, size_type count)
+{
+	auto sz = size();
+	auto new_size = sz + count;
+
+	if (new_size > max_size())
+		throw std::length_error("Size exceeds max size");
+
+	auto pop = get_pool();
+
+	transaction::run(pop, [&] {
+		if (is_sso_used()) {
+			if (new_size > sso_capacity) {
+				sso_to_large(new_size);
+				data_large.insert(
+					data_large.begin() +
+						static_cast<ptrdiff_t>(sz),
+					s, s + count);
+				data_large.push_back(value_type('\0'));
+			} else {
+				snapshot_sso();
+				auto dest =
+					data_sso.range(sz,
+						       new_size + sizeof('\0'))
+						.begin();
+				traits_type::copy(dest, s, count);
+
+				set_size(new_size);
+				data_sso[new_size] = '\0';
+			}
+		} else {
+			data_large.insert(data_large.end(), s, s + count);
+			data_large.push_back(value_type('\0'));
+		}
+	});
+
+	return *this;
+}
+
+/**
+ * Append C-style string transactionally.
+ * Length of the string is determined by the first null character.
+ *
+ * @param[in] s pointer to C-style string to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + traits::length(s)
+ * @post capacity() == std::max(size() + traits::length(s), capacity())
+ *
+ * @throw std::length_error if size() + traits::length(s) > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const CharT *s)
+{
+	append(s, traits_type::length(s));
+
+	return *this;
+}
+
+/**
+ * Append characters in the range [first, last) transactionally.
+ * This overload participates in overload resolution only if
+ * InputIt qualifies as InputIterator.
+ *
+ * @param[in] first begin of the range of characters to append.
+ * @param[in] last end of the range of characters to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + std::distance(first, last)
+ * @post capacity() == std::max(size() + std::distance(first, last), capacity())
+ *
+ * @throw std::length_error if size() + std::distance(first, last) > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+template <typename InputIt, typename Enable>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(InputIt first, InputIt last)
+{
+	const std::basic_string<CharT, Traits> tmp(first, last);
+
+	append(tmp.data(), tmp.size());
+
+	return *this;
+}
+
+/**
+ * Append characters from the ilist initializer list.
+ *
+ * @param[in] ilist initializer list with characters to append from
+ *
+ * @return *this
+ *
+ * @post size() == size() + std::distance(ilist.begin(), ilist.end())
+ * @post capacity() == std::max(size() + std::distance(ilist.begin(),
+ * ilist.end()), capacity())
+ *
+ * @throw std::length_error if size() + std::distance(ilist.begin(),
+ * ilist.end()) > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(std::initializer_list<CharT> ilist)
+{
+	append(ilist.begin(), ilist.end());
+
+	return *this;
+};
 
 /**
  * Compares [pos, pos + count1) substring of this to

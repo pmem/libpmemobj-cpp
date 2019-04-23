@@ -251,6 +251,8 @@ private:
 	void enable_sso();
 	void disable_sso();
 	void set_size(size_type new_size);
+	void sso_to_large(size_t new_capacity);
+	void large_to_sso();
 };
 
 /**
@@ -1892,6 +1894,63 @@ basic_string<CharT, Traits>::set_size(size_type new_size)
 		/* LSB must be cleared */
 		_size = std::numeric_limits<unsigned char>::max() - 1;
 }
+
+/**
+ * Resize sso string to large string of new_capacity capacity.
+ * Content of sso string is preserved and copied to the large string object.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @param[in] new_capacity capacity of constructed large string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::sso_to_large(size_t new_capacity)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	auto sz = size();
+
+	sso_type tmp;
+	if (sz) {
+		std::copy(cbegin(), cend(), &*tmp.begin());
+		tmp[sz] = '\0';
+	}
+
+	destroy_data();
+	allocate(new_capacity);
+
+	if (sz) {
+		initialize(tmp.cbegin(), tmp.cbegin() + sz);
+	} else {
+		data_large.data();
+	}
+};
+
+/**
+ * Resize large string to sso string of size() size.
+ * Content of large string is preserved and copied to the sso string.
+ *
+ * @pre must be called in transaction scope.
+ * @pre size() of large string must be less than or equal sso_capacity
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::large_to_sso()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	assert(size() <= sso_capacity);
+
+	sso_type tmp;
+	std::copy(cbegin(), cbegin() + size(), &*tmp.begin());
+	tmp[size()] = '\0';
+
+	auto begin = tmp.cbegin();
+	auto end = begin + size();
+
+	destroy_data();
+	initialize(begin, end);
+};
 
 /**
  * Non-member equal operator.

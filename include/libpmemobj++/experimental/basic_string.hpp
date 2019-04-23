@@ -172,6 +172,11 @@ public:
 	size_type length() const noexcept;
 	size_type max_size() const noexcept;
 	size_type capacity() const noexcept;
+	void resize(size_type count, CharT ch);
+	void resize(size_type n);
+	void reserve(size_type new_cap = 0);
+	void shrink_to_fit();
+	void clear();
 
 	/* Modifiers */
 	basic_string &erase(size_type index = 0, size_type count = npos);
@@ -1913,6 +1918,149 @@ basic_string<CharT, Traits>::capacity() const noexcept
 {
 	return is_sso_used() ? sso_capacity
 			     : data_large.capacity() - sizeof('\0');
+}
+
+/**
+ * Resize the string to count characters transactionally. If the current size
+ * is greater than count, the string is reduced to its first count elements.
+ * If the current size is less than count, additional characters of ch value are
+ * appended.
+ *
+ * @param[in] count new size of the container.
+ * @param[in] ch character to initialize elements.
+ *
+ * @post capacity() == std::max(count, capacity())
+ * @post size() == count
+ *
+ * @throw std::length_error if count > max_size()
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::resize(size_type count, CharT ch)
+{
+	if (count > max_size())
+		throw std::length_error("Count exceeds max size.");
+
+	auto sz = size();
+
+	auto pop = get_pool();
+
+	transaction::run(pop, [&] {
+		if (count > sz) {
+			append(count - sz, ch);
+		} else if (is_sso_used()) {
+			set_size(count);
+			data_sso[count] = '\0';
+		} else {
+			data_large.resize(count, ch);
+			data_large.push_back(value_type('\0'));
+		}
+	});
+}
+
+/**
+ * Resize the string to count characters transactionally. If the current size
+ * is greater than count, the string is reduced to its first count elements.
+ * If the current size is less than count, additional default-initialized
+ * characters are appended.
+ *
+ * @param[in] count new size of the container.
+ *
+ * @post capacity() == std::max(count, capacity())
+ * @post size() == count
+ *
+ * @throw std::length_error if count > max_size()
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::resize(size_type count)
+{
+	resize(count, CharT());
+}
+
+/**
+ * Increase the capacity of the string to new_cap transactionally. If
+ * new_cap is greater than the current capacity(), new storage is
+ * allocated, otherwise the method does nothing. If new_cap is greater than
+ * capacity(), all iterators, including the past-the-end iterator, and all
+ * references to the elements are invalidated. Otherwise, no iterators or
+ * references are invalidated.
+ *
+ * @param[in] new_cap new capacity.
+ *
+ * @post capacity() == max(capacity(), capacity_new)
+ *
+ * @throw rethrows destructor exception.
+ * @throw std::length_error if new_cap > max_size().
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::reserve(size_type new_cap)
+{
+	if (new_cap > max_size())
+		throw std::length_error("New capacity exceeds max size");
+
+	if (new_cap < capacity())
+		return;
+
+	if (is_sso_used()) {
+		sso_to_large(new_cap);
+	} else {
+		data_large.reserve(new_cap + sizeof('\0'));
+	}
+}
+
+/**
+ * Remove unused capacity transactionally. If large string is used capacity will
+ * be set to current size. If sso is used nothing happens.
+ *
+ * @post capacity() == std::min(sso_capacity, capacity())
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when reallocating failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::shrink_to_fit()
+{
+	if (is_sso_used())
+		return;
+
+	if (size() <= sso_capacity) {
+		large_to_sso();
+	} else {
+		data_large.shrink_to_fit();
+	}
+}
+
+/**
+ * Remove all characters from the string transactionally.
+ * All pointers, references, and iterators are invalidated.
+ *
+ * @post size() == 0
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::clear()
+{
+	erase(cbegin(), cend());
 }
 
 /**

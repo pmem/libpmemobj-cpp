@@ -174,6 +174,10 @@ public:
 	size_type capacity() const noexcept;
 
 	/* Modifiers */
+	basic_string &erase(size_type index = 0, size_type count = npos);
+	iterator erase(const_iterator pos);
+	iterator erase(const_iterator first, const_iterator last);
+
 	basic_string &append(size_type count, CharT ch);
 	basic_string &append(const basic_string &str);
 	basic_string &append(const basic_string &str, size_type pos,
@@ -1258,6 +1262,121 @@ basic_string<CharT, Traits>::data()
 	return is_sso_used() ? data_sso.range(0, size() + sizeof('\0')).begin()
 			     : data_large.data();
 }
+
+/**
+ * Remove characters from string starting at index transactionally.
+ * Length of the string to erase is determined as the smaller of count and
+ * size() - index.
+ *
+ * @param[in] index first character to remove.
+ * @param[in] count number of characters to remove.
+ *
+ * @return *this
+ *
+ * @pre index <= size()
+ *
+ * @post size() = size() - std::min(count, size() - index)
+ *
+ * @throw std::out_of_range if index > size().
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::erase(size_type index, size_type count)
+{
+	auto sz = size();
+
+	assert(index <= sz);
+
+	if (index > sz)
+		throw std::out_of_range("Index exceeds size");
+
+	auto len = std::min(count, sz - index);
+
+	auto pop = get_pool();
+
+	auto first = begin() + static_cast<difference_type>(index);
+	auto last = first + static_cast<difference_type>(len);
+
+	transaction::run(pop, [&] {
+		if (is_sso_used()) {
+			auto dest = data_sso.range(index, len + sizeof('\0'))
+					    .begin();
+
+			traits_type::move(dest, &*last, len);
+
+			auto new_size = sz - len;
+			set_size(new_size);
+			data_sso[new_size] = value_type('\0');
+		} else {
+			data_large.erase(first, last);
+		}
+	});
+
+	return *this;
+};
+
+/**
+ * Remove character from string at pos position transactionally.
+ *
+ * @param[in] pos position of character to be removed.
+ *
+ * @return Iterator following the removed element. If the iterator pos
+ * refers to the last element, the end() iterator is returned.
+ *
+ * @pre pos <= size()
+ *
+ * @post size() = size() - 1
+ *
+ * @throw std::out_of_range if pos > size().
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::erase(const_iterator pos)
+{
+	auto begin = cbegin();
+	size_type index = static_cast<size_type>(std::distance(begin, pos));
+
+	erase(index, 1);
+
+	return begin + index;
+};
+
+/**
+ * Remove characters from string at [first, last) range transactionally.
+ *
+ * @param[in] first begin of the range of characters to be removed.
+ * @param[in] last end of the range of characters to be removed.
+ *
+ * @return Iterator which points to the element pointed by the last iterator
+ * before the erase operation. If no such element exists then end() iterator is
+ * returned.
+ *
+ * @pre first and last are valid iterators on *this.
+ *
+ * @post size() = size() - std::distance(first, last)
+ *
+ * @throw std::out_of_range if [first, last) is not a valid range of *this.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::erase(const_iterator first, const_iterator last)
+{
+	auto beg = begin();
+
+	size_type index =
+		static_cast<size_type>(std::distance(cbegin(), first));
+	size_type len = static_cast<size_type>(std::distance(first, last));
+
+	erase(index, len);
+
+	return beg + static_cast<difference_type>(index);
+};
 
 /**
  * Append count copies of character ch to the string transactionally.

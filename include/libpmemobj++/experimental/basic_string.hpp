@@ -208,9 +208,10 @@ private:
 		non_sso_type data_large;
 	};
 
-	/* Holds size if sso is used, std::numeric_limits<size_type>::max()
-	 * otherwise */
-	p<size_type> _size;
+	/* Holds size for sso string, LSB indicates if sso is used */
+	p<unsigned char> _size;
+
+	static constexpr unsigned char _sso_mask = 0x01;
 
 	/* helper functions */
 	bool is_sso_used() const;
@@ -244,6 +245,10 @@ private:
 	void check_pmem() const;
 	void check_tx_stage_work() const;
 	void check_pmem_tx() const;
+	size_type get_sso_size() const;
+	void enable_sso();
+	void disable_sso();
+	void set_size(size_type new_size);
 };
 
 /**
@@ -1202,7 +1207,7 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::size() const noexcept
 {
 	if (is_sso_used())
-		return _size;
+		return get_sso_size();
 	else if (data_large.size() == 0)
 		return 0;
 	else
@@ -1518,10 +1523,7 @@ template <typename CharT, typename Traits>
 bool
 basic_string<CharT, Traits>::is_sso_used() const
 {
-	assert(_size <= sso_capacity ||
-	       _size == std::numeric_limits<size_type>::max());
-
-	return _size <= sso_capacity;
+	return _size & _sso_mask;
 }
 
 template <typename CharT, typename Traits>
@@ -1539,6 +1541,7 @@ basic_string<CharT, Traits>::destroy_data()
 
 	if (is_sso_used()) {
 		data_sso.data();
+		disable_sso();
 		/* data_sso constructor does not have to be called */
 	} else {
 		data_large.free_data();
@@ -1630,10 +1633,13 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 
 	auto new_size = get_size(std::forward<Args>(args)...);
 
-	if (new_size <= sso_capacity)
-		_size = new_size;
-	else
-		_size = std::numeric_limits<size_type>::max();
+	if (new_size <= sso_capacity) {
+		enable_sso();
+	} else {
+		disable_sso();
+	}
+
+	set_size(new_size);
 
 	if (is_sso_used()) {
 		/*
@@ -1798,6 +1804,51 @@ basic_string<CharT, Traits>::check_pmem_tx() const
 {
 	check_pmem();
 	check_tx_stage_work();
+}
+
+/**
+ * Return size of sso string.
+ */
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::get_sso_size() const
+{
+	return static_cast<size_type>(_size >> 1);
+}
+
+/**
+ * Enable sso string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::enable_sso()
+{
+	/* bitwise operators take args by const&, we create temporary around
+	 * static constant to avoid undefined reference linker error */
+	_size |= (unsigned char)(_sso_mask);
+}
+
+/**
+ * Disable sso string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::disable_sso()
+{
+	/* bitwise operators take args by const&, we create temporary around
+	 * static constant to avoid undefined reference linker error */
+	_size &= (unsigned char)(~_sso_mask);
+}
+
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::set_size(size_type new_size)
+{
+	if (is_sso_used())
+		_size = new_size << 1 | _sso_mask;
+	else
+		/* LSB must be cleared */
+		_size = std::numeric_limits<unsigned char>::max() - 1;
 }
 
 /**

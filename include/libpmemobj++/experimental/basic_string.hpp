@@ -251,6 +251,8 @@ private:
 	void enable_sso();
 	void disable_sso();
 	void set_size(size_type new_size);
+	void sso_to_large(size_t new_capacity);
+	void large_to_sso();
 };
 
 /**
@@ -1898,6 +1900,75 @@ basic_string<CharT, Traits>::set_size(size_type new_size)
 		/* LSB must be cleared */
 		_size = std::numeric_limits<unsigned char>::max() - 1;
 }
+
+/**
+ * Resize sso string to large string.
+ * Capacity is equal new_capacity plus byte for null character.
+ * Content of sso string is preserved and copied to the large string object.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post sso is not used.
+ *
+ * @param[in] new_capacity capacity of constructed large string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::sso_to_large(size_t new_capacity)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	assert(new_capacity > sso_capacity);
+
+	auto sz = size();
+
+	sso_type tmp;
+	std::copy(cbegin(), cend(), tmp.data());
+	tmp[sz] = '\0';
+
+	destroy_data();
+	allocate(new_capacity);
+
+	auto begin = tmp.cbegin();
+	auto end = begin + sz;
+
+	initialize(begin, end);
+
+	assert(!is_sso_used());
+};
+
+/**
+ * Resize large string to sso string of size() size.
+ * Content of large string is preserved and copied to the sso string.
+ *
+ * @pre must be called in transaction scope.
+ * @pre size() of large string must be less than or equal sso_capacity
+ *
+ * @post sso is used.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::large_to_sso()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	auto sz = size();
+
+	assert(sz <= sso_capacity);
+
+	sso_type tmp;
+	std::copy(cbegin(), cbegin() + sz, tmp.data());
+	tmp[sz] = '\0';
+
+	destroy_data();
+	allocate(sz);
+
+	auto begin = tmp.cbegin();
+	auto end = begin + sz;
+
+	initialize(begin, end);
+
+	assert(is_sso_used());
+};
 
 /**
  * Non-member equal operator.

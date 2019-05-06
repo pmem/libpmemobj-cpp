@@ -625,7 +625,6 @@ if (ENABLE_STRING)
 	build_test(string_libcxx_capacity_shrink_to_fit libcxx/basic_string/string.capacity/shrink_to_fit.pass.cpp)
 	add_test_generic(NAME string_libcxx_capacity_shrink_to_fit TRACERS none pmemcheck memcheck)
 
-	# XXX: port libcxx test basic_string/string.capacity/empty.fail
 	# XXX: port libcxx test basic_string/string.capacity/max_size.pass
 	# XXX: port libcxx test basic_string/string.cons/string_view_assignment.pass
 	# XXX: port libcxx test basic_string/string.cons/T_size_size.pass

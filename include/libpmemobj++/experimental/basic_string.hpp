@@ -227,6 +227,7 @@ private:
 	pointer replace(Args &&... args);
 	template <typename... Args>
 	pointer initialize(Args &&... args);
+	void allocate(size_type capacity);
 	template <
 		typename InputIt,
 		typename Enable = typename std::enable_if<
@@ -245,6 +246,7 @@ private:
 	void check_pmem() const;
 	void check_tx_stage_work() const;
 	void check_pmem_tx() const;
+	void snapshot_sso() const;
 	size_type get_sso_size() const;
 	void enable_sso();
 	void disable_sso();
@@ -265,6 +267,7 @@ basic_string<CharT, Traits>::basic_string()
 {
 	check_pmem_tx();
 
+	allocate(0);
 	initialize(0U, value_type('\0'));
 }
 
@@ -287,6 +290,7 @@ basic_string<CharT, Traits>::basic_string(size_type count, CharT ch)
 {
 	check_pmem_tx();
 
+	allocate(count);
 	initialize(count, ch);
 }
 
@@ -322,6 +326,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other,
 	auto first = static_cast<difference_type>(pos);
 	auto last = first + static_cast<difference_type>(count);
 
+	allocate(count);
 	initialize(other.cbegin() + first, other.cbegin() + last);
 }
 
@@ -358,6 +363,7 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
 	auto first = static_cast<difference_type>(pos);
 	auto last = first + static_cast<difference_type>(count);
 
+	allocate(count);
 	initialize(other.cbegin() + first, other.cbegin() + last);
 }
 
@@ -381,6 +387,7 @@ basic_string<CharT, Traits>::basic_string(const CharT *s, size_type count)
 {
 	check_pmem_tx();
 
+	allocate(count);
 	initialize(s, s + count);
 }
 
@@ -404,6 +411,7 @@ basic_string<CharT, Traits>::basic_string(const CharT *s)
 
 	auto length = traits_type::length(s);
 
+	allocate(length);
 	initialize(s, s + length);
 }
 
@@ -427,10 +435,12 @@ template <typename CharT, typename Traits>
 template <typename InputIt, typename Enable>
 basic_string<CharT, Traits>::basic_string(InputIt first, InputIt last)
 {
-	assert(std::distance(first, last) >= 0);
+	auto len = std::distance(first, last);
+	assert(len >= 0);
 
 	check_pmem_tx();
 
+	allocate(static_cast<size_type>(len));
 	initialize(first, last);
 }
 
@@ -453,6 +463,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other)
 {
 	check_pmem_tx();
 
+	allocate(other.size());
 	initialize(other.cbegin(), other.cend());
 }
 
@@ -496,10 +507,13 @@ basic_string<CharT, Traits>::basic_string(basic_string &&other)
 {
 	check_pmem_tx();
 
+	allocate(other.size());
 	initialize(std::move(other));
 
-	if (other.is_sso_used())
+	if (other.is_sso_used()) {
+		other.set_size(0);
 		other.initialize(0U, value_type('\0'));
+	}
 }
 
 /**
@@ -521,6 +535,7 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 {
 	check_pmem_tx();
 
+	allocate(ilist.size());
 	initialize(ilist.begin(), ilist.end());
 }
 
@@ -840,8 +855,10 @@ basic_string<CharT, Traits>::assign(basic_string &&other)
 	transaction::run(pop, [&] {
 		replace(std::move(other));
 
-		if (other.is_sso_used())
+		if (other.is_sso_used()) {
+			other.set_size(0);
 			other.initialize(0U, value_type('\0'));
+		}
 	});
 
 	return *this;
@@ -1532,17 +1549,10 @@ basic_string<CharT, Traits>::destroy_data()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	/*
-	 * XXX: this can be optimized - only snapshot length() elements.
-	 */
-#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
-	VALGRIND_MAKE_MEM_DEFINED(&data_sso, sizeof(data_sso));
-#endif
-
 	if (is_sso_used()) {
-		data_sso.data();
+		snapshot_sso();
 		disable_sso();
-		/* data_sso constructor does not have to be called */
+		/* data_sso destructor does not have to be called */
 	} else {
 		data_large.free_data();
 		detail::destroy<decltype(data_large)>(data_large);
@@ -1611,6 +1621,7 @@ basic_string<CharT, Traits>::replace(Args &&... args)
 
 	destroy_data();
 
+	allocate(new_size);
 	return initialize(std::forward<Args>(args)...);
 }
 
@@ -1623,6 +1634,7 @@ basic_string<CharT, Traits>::replace(Args &&... args)
  * - basic_string &&
  *
  * @pre must be called in transaction scope.
+ * @pre memory must be allocated before initialization.
  */
 template <typename CharT, typename Traits>
 template <typename... Args>
@@ -1631,25 +1643,45 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	auto new_size = get_size(std::forward<Args>(args)...);
+	auto size = get_size(std::forward<Args>(args)...);
 
-	if (new_size <= sso_capacity) {
+	set_size(size);
+
+	if (is_sso_used()) {
+		return assign_sso_data(std::forward<Args>(args)...);
+	} else {
+		return assign_large_data(std::forward<Args>(args)...);
+	}
+}
+
+/**
+ * Allocate storage for container of capacity bytes.
+ * Based on capacity determine if sso or large string is used.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @param[in] capacity bytes to allocate.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::allocate(size_type capacity)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	if (capacity <= sso_capacity) {
 		enable_sso();
 	} else {
 		disable_sso();
 	}
 
-	set_size(new_size);
-
-	if (is_sso_used()) {
-		/*
-		 * array is aggregate type so it's not required to call
-		 * a constructor.
-		 */
-		return assign_sso_data(std::forward<Args>(args)...);
-	} else {
+	/*
+	 * array is aggregate type so it's not required to call
+	 * a constructor.
+	 */
+	if (!is_sso_used()) {
+		detail::conditional_add_to_tx(&data_large);
 		detail::create<decltype(data_large)>(&data_large);
-		return assign_large_data(std::forward<Args>(args)...);
+		data_large.reserve(capacity + sizeof('\0'));
 	}
 }
 
@@ -1805,6 +1837,22 @@ basic_string<CharT, Traits>::check_pmem_tx() const
 	check_pmem();
 	check_tx_stage_work();
 }
+
+/**
+ * Snapshot sso data.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::snapshot_sso() const
+{
+/*
+ * XXX: this can be optimized - only snapshot length() elements.
+ */
+#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+	VALGRIND_MAKE_MEM_DEFINED(&data_sso, sizeof(data_sso));
+#endif
+	data_sso.data();
+};
 
 /**
  * Return size of sso string.

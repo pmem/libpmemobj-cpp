@@ -6,49 +6,95 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: libcpp-no-exceptions
-// XFAIL: with_system_cxx_lib=macosx10.11
-// XFAIL: with_system_cxx_lib=macosx10.10
-// XFAIL: with_system_cxx_lib=macosx10.9
-// XFAIL: with_system_cxx_lib=macosx10.8
-// XFAIL: with_system_cxx_lib=macosx10.7
+#include "unittest.hpp"
 
-// <string>
+#include <libpmemobj++/experimental/string.hpp>
 
-// size_type max_size() const;
+namespace nvobj = pmem::obj;
+namespace pmem_exp = pmem::obj::experimental;
+using S = pmem_exp::string;
 
-#include <string>
-#include <cassert>
-
-#include "min_allocator.h"
+struct root {
+	nvobj::persistent_ptr<S> s2;
+	nvobj::persistent_ptr<S> s_arr[4];
+};
 
 template <class S>
 void
-test(const S& s)
+test(nvobj::pool<struct root> &pop, const S &s)
 {
-    assert(s.max_size() >= s.size());
-    S s2(s);
-    const size_t sz = s2.max_size() + 1;
-    try { s2.resize(sz, 'x'); }
-    catch ( const std::length_error & ) { return ; }
-    assert ( false );
+	UT_ASSERT(s.max_size() >= s.size());
+
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop,
+				[&] { r->s2 = nvobj::make_persistent<S>(s); });
+
+	auto &s2 = *r->s2;
+
+	const size_t sz = s2.max_size() + 1;
+
+	bool exception_thrown = false;
+	try {
+		s2.resize(sz, 'x');
+	} catch (const std::length_error &) {
+		exception_thrown = true;
+	}
+	UT_ASSERT(exception_thrown);
+
+	nvobj::transaction::run(pop,
+				[&] { nvobj::delete_persistent<S>(r->s2); });
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S());
-    test(S("123"));
-    test(S("12345678901234567890123456789012345678901234567890"));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S());
-    test(S("123"));
-    test(S("12345678901234567890123456789012345678901234567890"));
-    }
-#endif
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+	{
+		auto &s_arr = r->s_arr;
+		try {
+			nvobj::transaction::run(pop, [&] {
+				s_arr[0] = nvobj::make_persistent<S>();
+				s_arr[1] = nvobj::make_persistent<S>("123");
+				s_arr[2] = nvobj::make_persistent<S>(
+					"12345678901234567890123456789012345678901234567890");
+				s_arr[3] = nvobj::make_persistent<S>(
+					"1234567890123456789012345678901234567890123456789012345678901234567890");
+			});
+
+			test(pop, *s_arr[0]);
+			test(pop, *s_arr[1]);
+			test(pop, *s_arr[2]);
+			test(pop, *s_arr[3]);
+
+			nvobj::transaction::run(pop, [&] {
+				for (unsigned i = 0; i < 4; ++i) {
+					nvobj::delete_persistent<S>(s_arr[i]);
+				}
+			});
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+
+	pop.close();
+
+	return 0;
 }

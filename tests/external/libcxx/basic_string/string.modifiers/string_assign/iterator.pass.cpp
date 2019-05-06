@@ -12,6 +12,7 @@
 // Modified to test pmem::obj containers
 //
 
+#include "../throwing_iterator.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/string.hpp>
@@ -19,157 +20,6 @@
 namespace nvobj = pmem::obj;
 namespace pmem_exp = pmem::obj::experimental;
 using S = pmem_exp::string;
-
-template <typename T>
-struct ThrowingIterator {
-	typedef std::bidirectional_iterator_tag iterator_category;
-	typedef ptrdiff_t difference_type;
-	typedef const T value_type;
-	typedef const T *pointer;
-	typedef const T &reference;
-
-	enum ThrowingAction {
-		TAIncrement,
-		TADecrement,
-		TADereference,
-		TAAssignment,
-		TAComparison
-	};
-
-	//  Constructors
-	ThrowingIterator()
-	    : begin_(nullptr),
-	      end_(nullptr),
-	      current_(nullptr),
-	      action_(TADereference),
-	      index_(0)
-	{
-	}
-	ThrowingIterator(const T *first, const T *last, size_t index = 0,
-			 ThrowingAction action = TADereference)
-	    : begin_(first),
-	      end_(last),
-	      current_(first),
-	      action_(action),
-	      index_(index)
-	{
-	}
-	ThrowingIterator(const ThrowingIterator &rhs)
-	    : begin_(rhs.begin_),
-	      end_(rhs.end_),
-	      current_(rhs.current_),
-	      action_(rhs.action_),
-	      index_(rhs.index_)
-	{
-	}
-	ThrowingIterator &
-	operator=(const ThrowingIterator &rhs)
-	{
-		if (action_ == TAAssignment) {
-			if (index_ == 0)
-				throw std::runtime_error(
-					"throw from iterator assignment");
-			else
-				--index_;
-		}
-		begin_ = rhs.begin_;
-		end_ = rhs.end_;
-		current_ = rhs.current_;
-		action_ = rhs.action_;
-		index_ = rhs.index_;
-		return *this;
-	}
-
-	//  iterator operations
-	reference operator*() const
-	{
-		if (action_ == TADereference) {
-			if (index_ == 0)
-				throw std::runtime_error(
-					"throw from iterator dereference");
-			else
-				--index_;
-		}
-		return *current_;
-	}
-
-	ThrowingIterator &
-	operator++()
-	{
-		if (action_ == TAIncrement) {
-			if (index_ == 0)
-				throw std::runtime_error(
-					"throw from iterator increment");
-			else
-				--index_;
-		}
-		++current_;
-		return *this;
-	}
-
-	ThrowingIterator
-	operator++(int)
-	{
-		ThrowingIterator temp = *this;
-		++(*this);
-		return temp;
-	}
-
-	ThrowingIterator &
-	operator--()
-	{
-		if (action_ == TADecrement) {
-			if (index_ == 0)
-				throw std::runtime_error(
-					"throw from iterator decrement");
-			else
-				--index_;
-		}
-		--current_;
-		return *this;
-	}
-
-	ThrowingIterator
-	operator--(int)
-	{
-		ThrowingIterator temp = *this;
-		--(*this);
-		return temp;
-	}
-
-	bool
-	operator==(const ThrowingIterator &rhs) const
-	{
-		if (action_ == TAComparison) {
-			if (index_ == 0)
-				throw std::runtime_error(
-					"throw from iterator comparison");
-			else
-				--index_;
-		}
-		bool atEndL = current_ == end_;
-		bool atEndR = rhs.current_ == rhs.end_;
-		if (atEndL != atEndR)
-			return false; // one is at the end (or empty), the other
-				      // is not.
-		if (atEndL)
-			return true; // both are at the end (or empty)
-		return current_ == rhs.current_;
-	}
-
-	bool
-	operator!=(const ThrowingIterator &rhs) const
-	{
-		return !(*this == rhs);
-	}
-
-private:
-	const T *begin_;
-	const T *end_;
-	const T *current_;
-	ThrowingAction action_;
-	mutable size_t index_;
-};
 
 struct root {
 	nvobj::persistent_ptr<S> s, s_short, s_long;
@@ -370,7 +220,7 @@ main(int argc, char *argv[])
 		}
 	}
 	{
-		typedef ThrowingIterator<char> TIter;
+		typedef throwing_it<char> TIter;
 		typedef test_support::forward_it<TIter> IIter;
 		const char *s =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

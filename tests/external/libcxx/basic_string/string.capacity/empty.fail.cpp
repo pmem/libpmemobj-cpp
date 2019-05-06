@@ -26,3 +26,4 @@ int main ()
     std::string c;
     c.empty();  // expected-error {{ignoring return value of function declared with 'nodiscard' attribute}}
 }
+

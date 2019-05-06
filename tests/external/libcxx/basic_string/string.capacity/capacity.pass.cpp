@@ -6,59 +6,82 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// size_type capacity() const;
+#include <libpmemobj++/experimental/string.hpp>
 
-#include <string>
-#include <cassert>
+namespace nvobj = pmem::obj;
+namespace pmem_exp = pmem::obj::experimental;
+using S = pmem_exp::string;
 
-#include "test_allocator.h"
-#include "min_allocator.h"
-
-#include "test_macros.h"
+struct root {
+  nvobj::persistent_ptr<S> s;
+};
 
 template <class S>
 void
-test(S s)
+test(S &s)
 {
-    S::allocator_type::throw_after = 0;
-#ifndef TEST_HAS_NO_EXCEPTIONS
     try
-#endif
     {
         while (s.size() < s.capacity())
             s.push_back(typename S::value_type());
-        assert(s.size() == s.capacity());
+        UT_ASSERT(s.size() == s.capacity());
     }
-#ifndef TEST_HAS_NO_EXCEPTIONS
     catch (...)
     {
-        assert(false);
+        UT_ASSERT(false);
     }
-#endif
-    S::allocator_type::throw_after = INT_MAX;
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::basic_string<char, std::char_traits<char>, test_allocator<char> > S;
-    S s;
-    test(s);
-    s.assign(10, 'a');
-    s.erase(5);
-    test(s);
-    s.assign(100, 'a');
-    s.erase(50);
-    test(s);
+    START();
+
+    if (argc < 2) {
+        std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+        return 1;
     }
-#if TEST_STD_VER >= 11
+
+    auto path = argv[1];
+    auto pop = nvobj::pool<root>::create(
+        path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+    auto r = pop.root();
     {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    S s;
-    assert(s.capacity() > 0);
+        try {
+            nvobj::transaction::run(pop, [&] {
+              r->s = nvobj::make_persistent<S>();
+            });
+
+            auto &s = *r->s;
+
+            test(s);
+
+            s.assign(10, 'a');
+            s.erase(5);
+            test(s);
+
+            s.assign(100, 'a');
+            s.erase(50);
+            test(s);
+
+            nvobj::transaction::run(pop, [&] {
+              nvobj::delete_persistent<S>(r->s);
+            });
+        } catch (std::exception &e) {
+            UT_FATALexc(e);
+        }
     }
-#endif
+
+    pop.close();
+
+    return 0;
 }

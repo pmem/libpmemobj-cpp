@@ -307,8 +307,14 @@ if (ENABLE_STRING)
 	build_test(string_access string_access/string_access.cpp)
 	add_test_generic(NAME string_access TRACERS none memcheck pmemcheck)
 
+	build_test(string_capacity string_capacity/string_capacity.cpp)
+	add_test_generic(NAME string_capacity TRACERS none memcheck pmemcheck)
+
 	build_test(string_exceptions string_exceptions/string_exceptions.cpp)
 	add_test_generic(NAME string_exceptions TRACERS none memcheck pmemcheck)
+
+	build_test(string_modifiers string_modifiers/string_modifiers.cpp)
+	add_test_generic(NAME string_modifiers TRACERS none memcheck pmemcheck)
 
 	build_test(string_snapshot string_snapshot/string_snapshot.cpp)
 	add_test_generic(NAME string_snapshot TRACERS none memcheck pmemcheck)

@@ -566,13 +566,6 @@ if (ENABLE_STRING)
 	build_test(string_libcxx_iterators_rend libcxx/basic_string/string.iterators/rend.pass.cpp)
 	add_test_generic(NAME string_libcxx_iterators_rend TRACERS none pmemcheck memcheck)
 		
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_8.pass
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_5.pass
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_2.pass
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_7.pass
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_3.pass
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_4.pass
-	# XXX: port libcxx test basic_string/string.iterators/db_iterators_6.pass
 	# XXX: port libcxx test basic_string/string.require/contiguous.pass
 	# XXX: port libcxx test basic_string/string.capacity/clear.pass
 	# XXX: port libcxx test basic_string/string.capacity/resize_size.pass

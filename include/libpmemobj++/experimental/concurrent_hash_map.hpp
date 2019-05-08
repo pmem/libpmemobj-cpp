@@ -1680,7 +1680,6 @@ public:
 protected:
 	friend class const_accessor;
 	struct node;
-	HashCompare my_hash_compare;
 
 	/**
 	 * Node structure to store Key/Value pair.
@@ -1789,8 +1788,8 @@ protected:
 				b->node_list);
 
 		while (is_valid(n) &&
-		       !my_hash_compare.equal(
-			       key, n.get(my_pool_uuid)->item.first)) {
+		       !HashCompare::equal(key,
+					   n.get(my_pool_uuid)->item.first)) {
 			n = detail::static_persistent_pool_pointer_cast<node>(
 				n.get(my_pool_uuid)->next);
 		}
@@ -1956,7 +1955,7 @@ protected:
 	hashcode_t
 	get_hash_code(node_base_ptr_t &n)
 	{
-		return my_hash_compare.hash(
+		return HashCompare::hash(
 			detail::static_persistent_pool_pointer_cast<node>(n)(
 				my_pool_uuid)
 				->item.first);
@@ -2655,7 +2654,7 @@ concurrent_hash_map<Key, T, HashCompare>::lookup(
 	assert(!result || !result->my_node);
 
 	bool return_value = false;
-	hashcode_t const h = my_hash_compare.hash(key);
+	hashcode_t const h = HashCompare::hash(key);
 	hashcode_t m = mask().load(std::memory_order_acquire);
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(&my_mask);
@@ -2756,7 +2755,7 @@ bool
 concurrent_hash_map<Key, T, HashCompare>::erase(const Key &key)
 {
 	node_base_ptr_t n;
-	hashcode_t const h = my_hash_compare.hash(key);
+	hashcode_t const h = HashCompare::hash(key);
 	hashcode_t m = mask().load(std::memory_order_acquire);
 	pool_base pop = get_pool_base();
 
@@ -2770,7 +2769,7 @@ search:
 	n = *p;
 
 	while (is_valid(n) &&
-	       !my_hash_compare.equal(
+	       !HashCompare::equal(
 		       key,
 		       detail::static_persistent_pool_pointer_cast<node>(n)(
 			       my_pool_uuid)
@@ -2829,7 +2828,6 @@ void
 concurrent_hash_map<Key, T, HashCompare>::swap(
 	concurrent_hash_map<Key, T, HashCompare> &table)
 {
-	std::swap(this->my_hash_compare, table.my_hash_compare);
 	internal_swap(table);
 }
 
@@ -2943,7 +2941,7 @@ concurrent_hash_map<Key, T, HashCompare>::internal_copy(I first, I last)
 	pool_base pop = get_pool_base();
 
 	for (; first != last; ++first) {
-		hashcode_t h = my_hash_compare.hash(first->first);
+		hashcode_t h = HashCompare::hash(first->first);
 		bucket *b = get_bucket(h & m);
 
 		assert(b->is_rehashed(std::memory_order_relaxed));

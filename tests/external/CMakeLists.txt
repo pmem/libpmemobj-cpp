@@ -538,21 +538,40 @@ if (ENABLE_STRING)
 
 	# XXX: port libcxx test basic_string/string.modifiers/nothing_to_do.pass
 	# XXX: port libcxx test basic_string/char.bad.fail
+
+	build_test(string_libcxx_iterators_begin libcxx/basic_string/string.iterators/begin.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_begin TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_cbegin libcxx/basic_string/string.iterators/cbegin.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_cbegin TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_cend libcxx/basic_string/string.iterators/cend.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_cend TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_crbegin libcxx/basic_string/string.iterators/crbegin.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_crbegin TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_crend libcxx/basic_string/string.iterators/crend.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_crend TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_end libcxx/basic_string/string.iterators/end.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_end TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_iterators libcxx/basic_string/string.iterators/iterators.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_iterators TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_rbegin libcxx/basic_string/string.iterators/rbegin.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_rbegin TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_iterators_rend libcxx/basic_string/string.iterators/rend.pass.cpp)
+	add_test_generic(NAME string_libcxx_iterators_rend TRACERS none pmemcheck memcheck)
+		
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_8.pass
-	# XXX: port libcxx test basic_string/string.iterators/begin.pass
-	# XXX: port libcxx test basic_string/string.iterators/cbegin.pass
-	# XXX: port libcxx test basic_string/string.iterators/rend.pass
-	# XXX: port libcxx test basic_string/string.iterators/cend.pass
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_5.pass
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_2.pass
-	# XXX: port libcxx test basic_string/string.iterators/crbegin.pass
-	# XXX: port libcxx test basic_string/string.iterators/iterators.pass
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_7.pass
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_3.pass
-	# XXX: port libcxx test basic_string/string.iterators/rbegin.pass
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_4.pass
-	# XXX: port libcxx test basic_string/string.iterators/crend.pass
-	# XXX: port libcxx test basic_string/string.iterators/end.pass
 	# XXX: port libcxx test basic_string/string.iterators/db_iterators_6.pass
 	# XXX: port libcxx test basic_string/string.require/contiguous.pass
 	# XXX: port libcxx test basic_string/string.capacity/clear.pass

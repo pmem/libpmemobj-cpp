@@ -182,6 +182,15 @@ public:
 	basic_string &erase(size_type index = 0, size_type count = npos);
 	iterator erase(const_iterator pos);
 	iterator erase(const_iterator first, const_iterator last);
+	template <typename T,
+		  typename Enable = typename std::enable_if<
+			  std::is_convertible<T, size_type>::value>::type>
+	basic_string &erase(T param);
+
+	template <typename T,
+		  typename Enable = typename std::enable_if<
+			  !std::is_convertible<T, size_type>::value>::type>
+	iterator erase(T param);
 
 	basic_string &append(size_type count, CharT ch);
 	basic_string &append(const basic_string &str);
@@ -2527,6 +2536,30 @@ basic_string<CharT, Traits>::large_to_sso()
 
 	assert(is_sso_used());
 };
+
+/**
+ * Participate in overload resulution only if T is convertible to size_type.
+ * Call basic_string &erase(size_type index, size_type count = npos) if enabled.
+ */
+template <typename CharT, typename Traits>
+template <typename T, typename Enable>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::erase(T param)
+{
+	return erase(static_cast<size_type>(param));
+}
+
+/**
+ * Participate in overload resulution only if T is not convertible to size_type.
+ * Call iterator erase(const_iterator pos) if enabled.
+ */
+template <typename CharT, typename Traits>
+template <typename T, typename Enable>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::erase(T param)
+{
+	return erase(static_cast<const_iterator>(param));
+}
 
 /**
  * Non-member equal operator.

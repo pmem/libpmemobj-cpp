@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2016-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # Update the Apt cache and install basic tools
 RUN apt-get update \
  && apt-get install -y software-properties-common \
-	tzdata \
+	asciidoc \
 	autoconf \
 	clang \
 	clang-format \
@@ -52,25 +52,25 @@ RUN apt-get update \
 	debhelper \
 	devscripts \
 	doxygen \
-	libncurses5-dev \
 	gcc \
 	gdb \
 	git \
 	graphviz \
-	libunwind-dev \
+	libjson-c-dev \
+	libkmod-dev \
+	libncurses5-dev \
+	libsfml-dev \
 	libtext-diff-perl \
+	libudev-dev \
+	libunwind-dev \
+	llvm \
 	pkg-config \
 	ruby \
-	libsfml-dev \
-	llvm \
 	sudo \
+	tzdata \
+	uuid-dev \
 	wget \
 	whois \
-	libjson-c-dev \
-	asciidoc \
-	uuid-dev \
-	libkmod-dev \
-	libudev-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # Install libndctl

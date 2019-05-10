@@ -315,6 +315,9 @@ if (ENABLE_STRING)
 
 	build_test(string_assign_tx_abort string_assign_tx_abort/string_assign_tx_abort.cpp)
 	add_test_generic(NAME string_assign_tx_abort TRACERS none memcheck pmemcheck)
+
+	build_test(string_layout string_layout/string_layout.cpp)
+	add_test_generic(NAME string_layout TRACERS none)
 endif()
 
 if(PMEMVLT_PRESENT)

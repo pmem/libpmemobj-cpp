@@ -86,7 +86,7 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 	/* Number of characters which can be stored using sso */
-	static constexpr size_type sso_capacity = 64 - sizeof('\0');
+	static constexpr size_type sso_capacity = (32 - 8) / sizeof(CharT) - 1;
 
 	/* Constructors */
 	basic_string();
@@ -201,16 +201,42 @@ private:
 	 * This union holds sso data inside of an array and non sso data inside
 	 * a vector. If vector is used, it must be manually created and
 	 * destroyed.
+	 *
+	 * _size is used to store length in case when SSO is used. It is the
+	 * same type as first member of data field. This means that it can be
+	 * safely accessed through both sso (_size variable) and non_sso (as
+	 * size in a vector) no matter which one is used.
+	 *
+	 * C++11 §9.2/18 says:
+	 * If a standard-layout union contains two or more standard-layout
+	 * structs that share a common initial sequence, and if the
+	 * standard-layout union object currently contains one of these
+	 * standard-layout structs, it is permitted to inspect the common
+	 * initial part of any of them.
 	 */
 	union {
-		sso_type data_sso;
+		struct {
+			/*
+			 * EXACTLY the same type as first member in vector
+			 * Holds size for sso string, bit specified by _sso_mask
+			 * indicates if sso is used.
+			 */
+			p<size_type> _size;
 
-		non_sso_type data_large;
+			sso_type data;
+		} sso;
+
+		struct {
+			non_sso_type data;
+		} non_sso;
 	};
 
-	/* Holds size if sso is used, std::numeric_limits<size_type>::max()
-	 * otherwise */
-	p<size_type> _size;
+	/*
+	 * MSB is used because vector is known not to use entire range of
+	 * size_type.
+	 */
+	static constexpr size_type _sso_mask = 1ULL
+		<< (std::numeric_limits<size_type>::digits - 1);
 
 	/* helper functions */
 	bool is_sso_used() const;
@@ -244,6 +270,10 @@ private:
 	void check_pmem() const;
 	void check_tx_stage_work() const;
 	void check_pmem_tx() const;
+	size_type get_sso_size() const;
+	void enable_sso();
+	void disable_sso();
+	void set_sso_size(size_type new_size);
 };
 
 /**
@@ -528,7 +558,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::~basic_string()
 {
 	if (!is_sso_used())
-		detail::destroy<non_sso_type>(data_large);
+		detail::destroy<non_sso_type>(non_sso.data);
 }
 
 /**
@@ -867,8 +897,8 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::iterator
 basic_string<CharT, Traits>::begin()
 {
-	return is_sso_used() ? iterator(&*data_sso.begin())
-			     : iterator(&*data_large.begin());
+	return is_sso_used() ? iterator(&*sso.data.begin())
+			     : iterator(&*non_sso.data.begin());
 }
 
 /**
@@ -892,8 +922,8 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::const_iterator
 basic_string<CharT, Traits>::cbegin() const noexcept
 {
-	return is_sso_used() ? const_iterator(&*data_sso.cbegin())
-			     : const_iterator(&*data_large.cbegin());
+	return is_sso_used() ? const_iterator(&*sso.data.cbegin())
+			     : const_iterator(&*non_sso.data.cbegin());
 }
 
 /**
@@ -1032,7 +1062,7 @@ basic_string<CharT, Traits>::at(size_type n)
 	if (n >= size())
 		throw std::out_of_range("string::at");
 
-	return is_sso_used() ? data_sso[n] : data_large[n];
+	return is_sso_used() ? sso.data[n] : non_sso.data[n];
 }
 
 /**
@@ -1072,8 +1102,9 @@ basic_string<CharT, Traits>::const_at(size_type n) const
 	if (n >= size())
 		throw std::out_of_range("string::const_at");
 
-	return is_sso_used() ? static_cast<const sso_type &>(data_sso)[n]
-			     : static_cast<const non_sso_type &>(data_large)[n];
+	return is_sso_used()
+		? static_cast<const sso_type &>(sso.data)[n]
+		: static_cast<const non_sso_type &>(non_sso.data)[n];
 }
 
 /**
@@ -1091,7 +1122,7 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::reference basic_string<CharT, Traits>::
 operator[](size_type n)
 {
-	return is_sso_used() ? data_sso[n] : data_large[n];
+	return is_sso_used() ? sso.data[n] : non_sso.data[n];
 }
 
 /**
@@ -1105,7 +1136,7 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::const_reference
 	basic_string<CharT, Traits>::operator[](size_type n) const
 {
-	return is_sso_used() ? data_sso[n] : data_large[n];
+	return is_sso_used() ? sso.data[n] : non_sso.data[n];
 }
 
 /**
@@ -1202,11 +1233,11 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::size() const noexcept
 {
 	if (is_sso_used())
-		return _size;
-	else if (data_large.size() == 0)
+		return get_sso_size();
+	else if (non_sso.data.size() == 0)
 		return 0;
 	else
-		return data_large.size() - sizeof('\0');
+		return non_sso.data.size() - sizeof('\0');
 }
 
 /**
@@ -1219,8 +1250,9 @@ template <typename CharT, typename Traits>
 CharT *
 basic_string<CharT, Traits>::data()
 {
-	return is_sso_used() ? data_sso.range(0, size() + sizeof('\0')).begin()
-			     : data_large.data();
+	return is_sso_used()
+		? sso.data.range(0, get_sso_size() + sizeof('\0')).begin()
+		: non_sso.data.data();
 }
 
 /**
@@ -1449,7 +1481,7 @@ template <typename CharT, typename Traits>
 const CharT *
 basic_string<CharT, Traits>::cdata() const noexcept
 {
-	return is_sso_used() ? data_sso.cdata() : data_large.cdata();
+	return is_sso_used() ? sso.data.cdata() : non_sso.data.cdata();
 }
 
 /**
@@ -1501,7 +1533,7 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::capacity() const noexcept
 {
 	return is_sso_used() ? sso_capacity
-			     : data_large.capacity() - sizeof('\0');
+			     : non_sso.data.capacity() - sizeof('\0');
 }
 
 /**
@@ -1518,10 +1550,7 @@ template <typename CharT, typename Traits>
 bool
 basic_string<CharT, Traits>::is_sso_used() const
 {
-	assert(_size <= sso_capacity ||
-	       _size == std::numeric_limits<size_type>::max());
-
-	return _size <= sso_capacity;
+	return sso._size & _sso_mask;
 }
 
 template <typename CharT, typename Traits>
@@ -1534,15 +1563,15 @@ basic_string<CharT, Traits>::destroy_data()
 	 * XXX: this can be optimized - only snapshot length() elements.
 	 */
 #if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
-	VALGRIND_MAKE_MEM_DEFINED(&data_sso, sizeof(data_sso));
+	VALGRIND_MAKE_MEM_DEFINED(&sso.data, sizeof(sso.data));
 #endif
 
 	if (is_sso_used()) {
-		data_sso.data();
-		/* data_sso constructor does not have to be called */
+		sso.data.data();
+		/* sso.data destructor does not have to be called */
 	} else {
-		data_large.free_data();
-		detail::destroy<decltype(data_large)>(data_large);
+		non_sso.data.free_data();
+		detail::destroy<decltype(non_sso.data)>(non_sso.data);
 	}
 }
 
@@ -1602,7 +1631,7 @@ basic_string<CharT, Traits>::replace(Args &&... args)
 
 	auto new_size = get_size(std::forward<Args>(args)...);
 
-	/* If data_large is used and there is enough capacity */
+	/* If non_sso.data is used and there is enough capacity */
 	if (!is_sso_used() && new_size <= capacity())
 		return assign_large_data(std::forward<Args>(args)...);
 
@@ -1614,7 +1643,7 @@ basic_string<CharT, Traits>::replace(Args &&... args)
 /**
  * Generic function which initializes memory based on provided
  * parameters - forwards parameters to initialize function of either
- * data_large or data_sso. Allowed parameters are:
+ * non_sso.data or sso.data. Allowed parameters are:
  * - size_type count, CharT value
  * - InputIt first, InputIt last
  * - basic_string &&
@@ -1630,19 +1659,22 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 
 	auto new_size = get_size(std::forward<Args>(args)...);
 
-	if (new_size <= sso_capacity)
-		_size = new_size;
-	else
-		_size = std::numeric_limits<size_type>::max();
+	if (new_size <= sso_capacity) {
+		enable_sso();
+	} else {
+		disable_sso();
+	}
 
 	if (is_sso_used()) {
+		set_sso_size(new_size);
+
 		/*
 		 * array is aggregate type so it's not required to call
 		 * a constructor.
 		 */
 		return assign_sso_data(std::forward<Args>(args)...);
 	} else {
-		detail::create<decltype(data_large)>(&data_large);
+		detail::create<decltype(non_sso.data)>(&non_sso.data);
 		return assign_large_data(std::forward<Args>(args)...);
 	}
 }
@@ -1660,7 +1692,7 @@ basic_string<CharT, Traits>::assign_sso_data(InputIt first, InputIt last)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size <= sso_capacity);
 
-	auto dest = data_sso.range(0, size + sizeof('\0')).begin();
+	auto dest = sso.data.range(0, size + sizeof('\0')).begin();
 	std::copy(first, last, dest);
 
 	dest[size] = value_type('\0');
@@ -1678,7 +1710,7 @@ basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(count <= sso_capacity);
 
-	auto dest = data_sso.range(0, count + sizeof('\0')).begin();
+	auto dest = sso.data.range(0, count + sizeof('\0')).begin();
 	traits_type::assign(dest, count, ch);
 
 	dest[count] = value_type('\0');
@@ -1699,7 +1731,7 @@ basic_string<CharT, Traits>::assign_sso_data(basic_string &&other)
 }
 
 /**
- * Initialize data_large - call constructor of data_large.
+ * Initialize non_sso.data - call constructor of non_sso.data.
  * Overload for pair of iterators.
  */
 template <typename CharT, typename Traits>
@@ -1711,15 +1743,15 @@ basic_string<CharT, Traits>::assign_large_data(InputIt first, InputIt last)
 
 	auto size = static_cast<size_type>(std::distance(first, last));
 
-	data_large.reserve(size + sizeof('\0'));
-	data_large.assign(first, last);
-	data_large.push_back(value_type('\0'));
+	non_sso.data.reserve(size + sizeof('\0'));
+	non_sso.data.assign(first, last);
+	non_sso.data.push_back(value_type('\0'));
 
-	return data_large.data();
+	return non_sso.data.data();
 }
 
 /**
- * Initialize data_large - call constructor of data_large.
+ * Initialize non_sso.data - call constructor of non_sso.data.
  * Overload for (count, value).
  */
 template <typename CharT, typename Traits>
@@ -1728,15 +1760,15 @@ basic_string<CharT, Traits>::assign_large_data(size_type count, value_type ch)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	data_large.reserve(count + sizeof('\0'));
-	data_large.assign(count, ch);
-	data_large.push_back(value_type('\0'));
+	non_sso.data.reserve(count + sizeof('\0'));
+	non_sso.data.assign(count, ch);
+	non_sso.data.push_back(value_type('\0'));
 
-	return data_large.data();
+	return non_sso.data.data();
 }
 
 /**
- * Initialize data_large - call constructor of data_large.
+ * Initialize non_sso.data - call constructor of non_sso.data.
  * Overload for rvalue reference of basic_string.
  */
 template <typename CharT, typename Traits>
@@ -1748,9 +1780,9 @@ basic_string<CharT, Traits>::assign_large_data(basic_string &&other)
 	if (other.is_sso_used())
 		return assign_large_data(other.cbegin(), other.cend());
 
-	data_large = std::move(other.data_large);
+	non_sso.data = std::move(other.non_sso.data);
 
-	return data_large.data();
+	return non_sso.data.data();
 }
 
 /**
@@ -1798,6 +1830,52 @@ basic_string<CharT, Traits>::check_pmem_tx() const
 {
 	check_pmem();
 	check_tx_stage_work();
+}
+
+/**
+ * Return size of sso string.
+ */
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::get_sso_size() const
+{
+	/* bitwise operators take args by const&, we create temporary around
+	 * static constant to avoid undefined reference linker error */
+	return sso._size & (size_type)(~_sso_mask);
+}
+
+/**
+ * Enable sso string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::enable_sso()
+{
+	/* bitwise operators take args by const&, we create temporary around
+	 * static constant to avoid undefined reference linker error */
+	sso._size |= (size_type)(_sso_mask);
+}
+
+/**
+ * Disable sso string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::disable_sso()
+{
+	/* bitwise operators take args by const&, we create temporary around
+	 * static constant to avoid undefined reference linker error */
+	sso._size &= (size_type)(~_sso_mask);
+}
+
+/**
+ * Set size for sso.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::set_sso_size(size_type new_size)
+{
+	sso._size = new_size | _sso_mask;
 }
 
 /**

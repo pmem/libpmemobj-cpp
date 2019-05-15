@@ -214,11 +214,11 @@ private:
 	void shrink(size_type size_new);
 	void snapshot_data(size_type idx_first, size_type idx_last);
 
-	/* Underlying array */
-	persistent_ptr<T[]> _data;
-
 	p<size_type> _size;
 	p<size_type> _capacity;
+
+	/* Underlying array */
+	persistent_ptr<T[]> _data;
 };
 
 /* Non-member swap */

@@ -298,6 +298,9 @@ if (ENABLE_VECTOR)
 
 	build_test(vector_range vector_range/vector_range.cpp)
 	add_test_generic(NAME vector_range TRACERS none memcheck pmemcheck)
+
+	build_test(vector_layout vector_layout/vector_layout.cpp)
+	add_test_generic(NAME vector_layout TRACERS none)
 endif()
 
 if (ENABLE_STRING)

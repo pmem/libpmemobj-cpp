@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2016-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,8 +41,10 @@ MAINTAINER marcin.slusarz@intel.com
 # Install basic tools
 RUN dnf update -y \
  && dnf install -y \
+	asciidoc \
 	autoconf \
 	automake \
+	bash-completion \
 	clang \
 	cmake \
 	doxygen \
@@ -50,7 +52,12 @@ RUN dnf update -y \
 	gdb \
 	git \
 	hub \
+	json-c-devel \
+	kmod-devel \
+	libtool \
+	libudev-devel \
 	libunwind-devel \
+	libuuid-devel \
 	make \
 	man \
 	ncurses-devel \
@@ -65,14 +72,7 @@ RUN dnf update -y \
 	tar \
 	wget \
 	which \
-	json-c-devel \
-	kmod-devel \
-	libudev-devel \
-	asciidoc \
 	xmlto \
-	libuuid-devel \
-	libtool \
-	bash-completion \
  && dnf clean all
 
 # Install libndctl

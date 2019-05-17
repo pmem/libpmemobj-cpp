@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017-2018, Intel Corporation
+# Copyright 2017-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -62,12 +62,12 @@ fi
 chmod -R a+w $HOST_WORKDIR
 
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" || "$TRAVIS_BRANCH" == "coverity_scan" ]]; then
-	if [[ $TYPE != coverity ]]; then
+	if [[ "$TYPE" != "coverity" ]]; then
 		echo "Skipping non-Coverity job for cron/Coverity build"
 		exit 0
 	fi
 else
-	if [[ $TYPE = "coverity" ]]; then
+	if [[ "$TYPE" == "coverity" ]]; then
 		echo "Skipping Coverity job for non cron/Coverity build"
 		exit 0
 	fi
@@ -87,7 +87,7 @@ if [[ "$command" == "" ]]; then
 	esac
 fi
 
-if [ "$COVERAGE" = "1" ]; then
+if [ "$COVERAGE" == "1" ]; then
 	docker_opts="${docker_opts} `bash <(curl -s https://codecov.io/env)`";
 fi
 

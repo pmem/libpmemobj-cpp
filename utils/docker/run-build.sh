@@ -111,7 +111,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 
 make -j2
 ctest --output-on-failure --timeout 540
-if [ "$COVERAGE" = "1" ]; then
+if [ "$COVERAGE" == "1" ]; then
 	upload_codecov tests_clang_debug_cpp17
 fi
 
@@ -140,7 +140,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DTBB_DIR=/opt/tbb/cmake
 
 make -j2
-if [ "$COVERAGE" = "1" ]; then
+if [ "$COVERAGE" == "1" ]; then
 	# valgrind reports error when used with code coverage
 	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
 	upload_codecov tests_gcc_debug
@@ -175,7 +175,7 @@ cmake .. -DCMAKE_BUILD_TYPE=Release \
 
 make -j2
 ctest --output-on-failure --timeout 540
-if [ "$COVERAGE" = "1" ]; then
+if [ "$COVERAGE" == "1" ]; then
 	upload_codecov tests_gcc_release_cpp17_no_valgrind
 fi
 

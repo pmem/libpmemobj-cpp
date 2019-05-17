@@ -9,6 +9,7 @@ environment:
 install:
 - vcpkg install pmdk:x64-windows
 - vcpkg install sfml:x64-windows
+- vcpkg install tbb:x64-windows
 - vcpkg integrate install
 
 cache: c:\tools\vcpkg\installed

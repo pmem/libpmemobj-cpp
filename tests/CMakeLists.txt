@@ -314,7 +314,7 @@ if (ENABLE_STRING)
 	add_test_generic(NAME string_assign_tx_abort TRACERS none memcheck pmemcheck)
 endif()
 
-if(PMEMVLT_PRESENT)
+if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
 	add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
 
@@ -345,7 +345,7 @@ if(PMEMVLT_PRESENT)
 	else()
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
-else()
+elseif(NOT PMEMVLT_PRESENT)
 	message(WARNING "Skipping concurrent_hash_map tests because no pmemvlt support found.")
 endif()
 

@@ -1083,7 +1083,7 @@ public:
 	size_type
 	max_size() const noexcept
 	{
-		return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(CharT);
+		return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(CharT) - 1;
 	}
 
 	/**

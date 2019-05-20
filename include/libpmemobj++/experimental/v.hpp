@@ -39,6 +39,7 @@
 #define LIBPMEMOBJ_CPP_V_HPP
 
 #include <memory>
+#include <tuple>
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>

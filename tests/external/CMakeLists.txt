@@ -420,39 +420,90 @@ if (ENABLE_STRING)
 	# XXX: port libcxx test basic_string/string.nonmembers/string_opgt/string_view_string.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_string_view.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_view_string.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/pointer_size_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_string_view.pass
 	# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_T_size_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_compare/string_view.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/string_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/string_size.pass
+
+	build_test(string_libcxx_ops_find_char_size libcxx/basic_string/string.ops/string_find/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_char_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_find_pointer_size libcxx/basic_string/string.ops/string_find/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_pointer_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_find_pointer_size_size libcxx/basic_string/string.ops/string_find/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_pointer_size_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_find_string_size libcxx/basic_string/string.ops/string_find/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_string_size TRACERS none pmemcheck memcheck)
+		
 	# XXX: port libcxx test basic_string/string.ops/string_find/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/pointer_size_size.pass
+
+	build_test(string_libcxx_ops_find_first_of_char_size libcxx/basic_string/string.ops/string_find.first.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_of_pointer_size libcxx/basic_string/string.ops/string_find.first.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_of_pointer_size_size libcxx/basic_string/string.ops/string_find.first.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_of_string_size libcxx/basic_string/string.ops/string_find.first.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_string_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_char_size libcxx/basic_string/string.ops/string_find.first.not.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_pointer_size libcxx/basic_string/string.ops/string_find.first.not.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_pointer_size_size libcxx/basic_string/string.ops/string_find.first.not.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_string_size libcxx/basic_string/string.ops/string_find.first.not.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_string_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_char_size libcxx/basic_string/string.ops/string_find.last.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_pointer_size libcxx/basic_string/string.ops/string_find.last.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_pointer_size_size libcxx/basic_string/string.ops/string_find.last.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_string_size libcxx/basic_string/string.ops/string_find.last.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_string_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_char_size libcxx/basic_string/string.ops/string_find.last.not.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_pointer_size libcxx/basic_string/string.ops/string_find.last.not.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_pointer_size_size libcxx/basic_string/string.ops/string_find.last.not.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_string_size libcxx/basic_string/string.ops/string_find.last.not.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_string_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_rfind_char_size libcxx/basic_string/string.ops/string_rfind/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_rfind_pointer_size libcxx/basic_string/string.ops/string_rfind/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_pointer_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_rfind_pointer_size_size libcxx/basic_string/string.ops/string_rfind/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_rfind_string_size libcxx/basic_string/string.ops/string_rfind/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_string_size TRACERS none pmemcheck memcheck)
+		
+	# XXX: port libcxx test basic_string/string.ops/string_rfind/string_view_size.pass
+		
 	# XXX: port libcxx test basic_string/string.ops/string_substr/substr.pass
 
 	build_test(string_libcxx_ops_accessors_c_str libcxx/basic_string/string.ops/string.accessors/c_str.pass.cpp)

@@ -6,93 +6,128 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// size_type find_last_of(charT c, size_type pos = npos) const;
+#include <libpmemobj++/container/string.hpp>
 
-#include <string>
-#include <cassert>
+namespace nvobj = pmem::obj;
 
-#include "min_allocator.h"
+using C = nvobj::string;
+
+struct root {
+	nvobj::persistent_ptr<C> s_arr[22];
+};
 
 template <class S>
 void
-test(const S& s, typename S::value_type c, typename S::size_type pos,
+test(const S &s, typename S::value_type c, typename S::size_type pos,
      typename S::size_type x)
 {
-    assert(s.find_last_of(c, pos) == x);
-    if (x != S::npos)
-        assert(x <= pos && x < s.size());
+	UT_ASSERT(s.find_last_of(c, pos) == x);
+	if (x != S::npos)
+		UT_ASSERT(x <= pos && x < s.size());
 }
 
 template <class S>
 void
-test(const S& s, typename S::value_type c, typename S::size_type x)
+test(const S &s, typename S::value_type c, typename S::size_type x)
 {
-    assert(s.find_last_of(c) == x);
-    if (x != S::npos)
-        assert(x < s.size());
+	UT_ASSERT(s.find_last_of(c) == x);
+	if (x != S::npos)
+		UT_ASSERT(x < s.size());
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S(""), 'm', 0, S::npos);
-    test(S(""), 'm', 1, S::npos);
-    test(S("kitcj"), 'm', 0, S::npos);
-    test(S("qkamf"), 'm', 1, S::npos);
-    test(S("nhmko"), 'm', 2, 2);
-    test(S("tpsaf"), 'm', 4, S::npos);
-    test(S("lahfb"), 'm', 5, S::npos);
-    test(S("irkhs"), 'm', 6, S::npos);
-    test(S("gmfhdaipsr"), 'm', 0, S::npos);
-    test(S("kantesmpgj"), 'm', 1, S::npos);
-    test(S("odaftiegpm"), 'm', 5, S::npos);
-    test(S("oknlrstdpi"), 'm', 9, S::npos);
-    test(S("eolhfgpjqk"), 'm', 10, S::npos);
-    test(S("pcdrofikas"), 'm', 11, S::npos);
-    test(S("nbatdlmekrgcfqsophij"), 'm', 0, S::npos);
-    test(S("bnrpehidofmqtcksjgla"), 'm', 1, S::npos);
-    test(S("jdmciepkaqgotsrfnhlb"), 'm', 10, 2);
-    test(S("jtdaefblsokrmhpgcnqi"), 'm', 19, 12);
-    test(S("hkbgspofltajcnedqmri"), 'm', 20, 17);
-    test(S("oselktgbcapndfjihrmq"), 'm', 21, 18);
+	START();
 
-    test(S(""), 'm', S::npos);
-    test(S("csope"), 'm', S::npos);
-    test(S("gfsmthlkon"), 'm', 3);
-    test(S("laenfsbridchgotmkqpj"), 'm', 15);
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(""), 'm', 0, S::npos);
-    test(S(""), 'm', 1, S::npos);
-    test(S("kitcj"), 'm', 0, S::npos);
-    test(S("qkamf"), 'm', 1, S::npos);
-    test(S("nhmko"), 'm', 2, 2);
-    test(S("tpsaf"), 'm', 4, S::npos);
-    test(S("lahfb"), 'm', 5, S::npos);
-    test(S("irkhs"), 'm', 6, S::npos);
-    test(S("gmfhdaipsr"), 'm', 0, S::npos);
-    test(S("kantesmpgj"), 'm', 1, S::npos);
-    test(S("odaftiegpm"), 'm', 5, S::npos);
-    test(S("oknlrstdpi"), 'm', 9, S::npos);
-    test(S("eolhfgpjqk"), 'm', 10, S::npos);
-    test(S("pcdrofikas"), 'm', 11, S::npos);
-    test(S("nbatdlmekrgcfqsophij"), 'm', 0, S::npos);
-    test(S("bnrpehidofmqtcksjgla"), 'm', 1, S::npos);
-    test(S("jdmciepkaqgotsrfnhlb"), 'm', 10, 2);
-    test(S("jtdaefblsokrmhpgcnqi"), 'm', 19, 12);
-    test(S("hkbgspofltajcnedqmri"), 'm', 20, 17);
-    test(S("oselktgbcapndfjihrmq"), 'm', 21, 18);
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
 
-    test(S(""), 'm', S::npos);
-    test(S("csope"), 'm', S::npos);
-    test(S("gfsmthlkon"), 'm', 3);
-    test(S("laenfsbridchgotmkqpj"), 'm', 15);
-    }
-#endif
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto &s_arr = pop.root()->s_arr;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			s_arr[0] = nvobj::make_persistent<C>("");
+			s_arr[1] = nvobj::make_persistent<C>(
+				"bnrpehidofmqtcksjgla");
+			s_arr[2] = nvobj::make_persistent<C>("csope");
+			s_arr[3] = nvobj::make_persistent<C>("eolhfgpjqk");
+			s_arr[4] = nvobj::make_persistent<C>("gfsmthlkon");
+			s_arr[5] = nvobj::make_persistent<C>("gmfhdaipsr");
+			s_arr[6] = nvobj::make_persistent<C>(
+				"hkbgspofltajcnedqmri");
+			s_arr[7] = nvobj::make_persistent<C>("irkhs");
+			s_arr[8] = nvobj::make_persistent<C>(
+				"jdmciepkaqgotsrfnhlb");
+			s_arr[9] = nvobj::make_persistent<C>(
+				"jtdaefblsokrmhpgcnqi");
+			s_arr[10] = nvobj::make_persistent<C>("kantesmpgj");
+			s_arr[11] = nvobj::make_persistent<C>("kitcj");
+			s_arr[12] = nvobj::make_persistent<C>(
+				"laenfsbridchgotmkqpj");
+			s_arr[13] = nvobj::make_persistent<C>("lahfb");
+			s_arr[14] = nvobj::make_persistent<C>(
+				"nbatdlmekrgcfqsophij");
+			s_arr[15] = nvobj::make_persistent<C>("nhmko");
+			s_arr[16] = nvobj::make_persistent<C>("odaftiegpm");
+			s_arr[17] = nvobj::make_persistent<C>("oknlrstdpi");
+			s_arr[18] = nvobj::make_persistent<C>(
+				"oselktgbcapndfjihrmq");
+			s_arr[19] = nvobj::make_persistent<C>("pcdrofikas");
+			s_arr[20] = nvobj::make_persistent<C>("qkamf");
+			s_arr[21] = nvobj::make_persistent<C>("tpsaf");
+		});
+
+		test(*s_arr[0], 'm', 0, C::npos);
+		test(*s_arr[0], 'm', 1, C::npos);
+		test(*s_arr[11], 'm', 0, C::npos);
+		test(*s_arr[20], 'm', 1, C::npos);
+		test(*s_arr[15], 'm', 2, 2);
+		test(*s_arr[21], 'm', 4, C::npos);
+		test(*s_arr[13], 'm', 5, C::npos);
+		test(*s_arr[7], 'm', 6, C::npos);
+		test(*s_arr[5], 'm', 0, C::npos);
+		test(*s_arr[10], 'm', 1, C::npos);
+		test(*s_arr[16], 'm', 5, C::npos);
+		test(*s_arr[17], 'm', 9, C::npos);
+		test(*s_arr[3], 'm', 10, C::npos);
+		test(*s_arr[19], 'm', 11, C::npos);
+		test(*s_arr[14], 'm', 0, C::npos);
+		test(*s_arr[1], 'm', 1, C::npos);
+		test(*s_arr[8], 'm', 10, 2);
+		test(*s_arr[9], 'm', 19, 12);
+		test(*s_arr[6], 'm', 20, 17);
+		test(*s_arr[18], 'm', 21, 18);
+
+		test(*s_arr[0], 'm', C::npos);
+		test(*s_arr[2], 'm', C::npos);
+		test(*s_arr[4], 'm', 3);
+		test(*s_arr[12], 'm', 15);
+
+		nvobj::transaction::run(pop, [&] {
+			for (unsigned i = 0; i < 22; ++i) {
+				nvobj::delete_persistent<C>(s_arr[i]);
+			}
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

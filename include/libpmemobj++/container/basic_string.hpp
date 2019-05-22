@@ -273,6 +273,43 @@ public:
 	int compare(size_type pos, size_type count1, const CharT *s,
 		    size_type count2) const;
 
+	/* Search */
+	size_type find(const basic_string &str, size_type pos = 0) const
+		noexcept;
+	size_type find(const CharT *s, size_type pos, size_type count) const;
+	size_type find(const CharT *s, size_type pos = 0) const;
+	size_type find(CharT ch, size_type pos = 0) const noexcept;
+	size_type rfind(const basic_string &str, size_type pos = npos) const
+		noexcept;
+	size_type rfind(const CharT *s, size_type pos, size_type count) const;
+	size_type rfind(const CharT *s, size_type pos = npos) const;
+	size_type rfind(CharT ch, size_type pos = npos) const noexcept;
+	size_type find_first_of(const basic_string &str,
+				size_type pos = 0) const noexcept;
+	size_type find_first_of(const CharT *s, size_type pos,
+				size_type count) const;
+	size_type find_first_of(const CharT *s, size_type pos = 0) const;
+	size_type find_first_of(CharT ch, size_type pos = 0) const noexcept;
+	size_type find_first_not_of(const basic_string &str,
+				    size_type pos = 0) const noexcept;
+	size_type find_first_not_of(const CharT *s, size_type pos,
+				    size_type count) const;
+	size_type find_first_not_of(const CharT *s, size_type pos = 0) const;
+	size_type find_first_not_of(CharT ch, size_type pos = 0) const noexcept;
+	size_type find_last_of(const basic_string &str,
+			       size_type pos = npos) const noexcept;
+	size_type find_last_of(const CharT *s, size_type pos,
+			       size_type count) const;
+	size_type find_last_of(const CharT *s, size_type pos = npos) const;
+	size_type find_last_of(CharT ch, size_type pos = npos) const noexcept;
+	size_type find_last_not_of(const basic_string &str,
+				   size_type pos = npos) const noexcept;
+	size_type find_last_not_of(const CharT *s, size_type pos,
+				   size_type count) const;
+	size_type find_last_not_of(const CharT *s, size_type pos = npos) const;
+	size_type find_last_not_of(CharT ch, size_type pos = npos) const
+		noexcept;
+
 	/* Special value. The exact meaning depends on the context. */
 	static const size_type npos = static_cast<size_type>(-1);
 
@@ -2795,6 +2832,313 @@ basic_string<CharT, Traits>::compare(size_type pos, size_type count1,
 		return 0;
 	else
 		return 1;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find(const basic_string &str, size_type pos) const
+	noexcept
+{
+	return find(str.data(), pos, str.size());
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find(const CharT *s, size_type pos,
+				  size_type count) const
+{
+	auto sz = size();
+
+	if (pos > sz)
+		return npos;
+
+	if (count == 0)
+		return pos;
+
+	while (pos + count <= sz) {
+		if (traits_type::find(data() + pos, sz - pos, s[0])) {
+			if (traits_type::compare(data() + pos, s, count) == 0) {
+				return pos;
+			} else {
+				++pos;
+			}
+		} else {
+			return npos;
+		}
+	}
+
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find(const CharT *s, size_type pos) const
+{
+	return find(s, pos, traits_type::length(s));
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find(CharT ch, size_type pos) const noexcept
+{
+	if (pos > size())
+		return npos;
+
+	auto ptr = traits_type::find(data() + pos, size() - pos, ch);
+
+	if (ptr)
+		return static_cast<size_type>(ptr - data());
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::rfind(const basic_string &str, size_type pos) const
+	noexcept
+{
+	return rfind(str.data(), pos, str.size());
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::rfind(const CharT *s, size_type pos,
+				   size_type count) const
+{
+	auto sz = size();
+
+	if (traits_type::length(s) == 0 || count == 0) {
+		if (pos > sz)
+			return sz;
+		else
+			return pos;
+	}
+
+	pos = std::min(pos, sz);
+
+	if (pos < sz)
+		++pos;
+
+	while (pos > 0) {
+		if (rfind(s[0], --pos) != npos) {
+			if (traits_type::compare(data() + pos, s, count) == 0) {
+				return pos;
+			}
+		} else {
+			return npos;
+		}
+	}
+
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::rfind(const CharT *s, size_type pos) const
+{
+	return rfind(s, pos, traits_type::length(s));
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::rfind(CharT ch, size_type pos) const noexcept
+{
+	auto sz = size();
+	pos = std::min(pos, sz);
+
+	if (pos < sz)
+		++pos;
+
+	for (const CharT *c = data() + pos; c != data();)
+		if (traits_type::eq(*--c, ch))
+			return static_cast<size_type>(std::distance(data(), c));
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_of(const basic_string &str,
+					   size_type pos) const noexcept
+{
+	return find_first_of(str.data(), pos, str.size());
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_of(const CharT *s, size_type pos,
+					   size_type count) const
+{
+	if (pos >= size() || count == 0)
+		return npos;
+
+	for (auto it = begin() + pos; it != end(); ++it)
+		for (const CharT *c = s; c != s + count; ++c)
+			if (traits_type::eq(*it, *c))
+				return static_cast<size_type>(
+					std::distance(begin(), it));
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_of(const CharT *s, size_type pos) const
+{
+	return find_first_of(s, pos, traits_type::length(s));
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_of(CharT ch, size_type pos) const
+	noexcept
+{
+	return find(ch, pos);
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_not_of(const basic_string &str,
+					       size_type pos) const noexcept
+{
+	return find_first_not_of(str.data(), pos, str.size());
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_not_of(const CharT *s, size_type pos,
+					       size_type count) const
+{
+	if (pos >= size())
+		return npos;
+
+	for (auto it = begin() + pos; it != end(); ++it)
+		if (!traits_type::find(s, count, *it))
+			return static_cast<size_type>(
+				std::distance(begin(), it));
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_not_of(const CharT *s,
+					       size_type pos) const
+{
+	return find_first_not_of(s, pos, traits_type::length(s));
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_first_not_of(CharT ch, size_type pos) const
+	noexcept
+{
+	if (pos >= size())
+		return npos;
+
+	for (auto it = begin() + pos; it != end(); ++it)
+		if (!traits_type::eq(*it, ch))
+			return static_cast<size_type>(
+				std::distance(begin(), it));
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_of(const basic_string &str,
+					  size_type pos) const noexcept
+{
+	return find_last_of(str.data(), pos, str.size());
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_of(const CharT *s, size_type pos,
+					  size_type count) const
+{
+	auto sz = size();
+
+	if (sz == 0 || count == 0)
+		return npos;
+
+	pos = (std::min)(sz, pos);
+
+	if (pos < sz)
+		++pos;
+
+	for (auto it = begin() + pos; it != begin();) {
+		--it;
+		for (const CharT *c = s; c != s + count; ++c)
+			if (traits_type::eq(*it, *c))
+				return static_cast<size_type>(
+					std::distance(begin(), it));
+	}
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_of(const CharT *s, size_type pos) const
+{
+	return find_last_of(s, pos, traits_type::length(s));
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_of(CharT ch, size_type pos) const
+	noexcept
+{
+	return rfind(ch, pos);
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_not_of(const basic_string &str,
+					      size_type pos) const noexcept
+{
+	return find_last_not_of(str.data(), pos, str.size());
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_not_of(const CharT *s, size_type pos,
+					      size_type count) const
+{
+	auto sz = size();
+
+	pos = (std::min)(sz, pos);
+
+	if (pos < sz)
+		++pos;
+
+	for (auto it = begin() + pos; it != begin();)
+		if (!traits_type::find(s, count, *--it))
+			return static_cast<size_type>(
+				std::distance(begin(), it));
+	return npos;
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_not_of(const CharT *s,
+					      size_type pos) const
+{
+	return find_last_not_of(s, pos, traits_type::length(s));
+}
+
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::size_type
+basic_string<CharT, Traits>::find_last_not_of(CharT ch, size_type pos) const
+	noexcept
+{
+	auto sz = size();
+
+	pos = (std::min)(sz, pos);
+
+	if (pos < sz)
+		++pos;
+
+	for (auto it = begin() + pos; it != begin();)
+		if (!traits_type::eq(*--it, ch))
+			return static_cast<size_type>(
+				std::distance(begin(), it));
+	return npos;
 }
 
 /**

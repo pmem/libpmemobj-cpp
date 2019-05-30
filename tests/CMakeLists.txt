@@ -67,7 +67,13 @@ if(COVERAGE)
        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
+find_packages()
+
 add_library(test_backtrace STATIC test_backtrace.c)
+if(LIBUNWIND_FOUND)
+	target_compile_definitions(test_backtrace PUBLIC USE_LIBUNWIND=1)
+endif()
+
 add_library(valgrind_internal STATIC valgrind_internal.cpp)
 
 function(build_example_queue)
@@ -85,8 +91,6 @@ function(build_example_pman)
 		message(WARNING "ncurses not found - pman test won't be build")
 	endif()
 endfunction()
-
-find_packages()
 
 if(NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()

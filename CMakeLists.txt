@@ -77,6 +77,7 @@ option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
 option(ENABLE_ARRAY "enable installation and testing of pmem::obj::experimental::array" ON)
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::experimental::vector" ON)
 option(ENABLE_STRING "enable installation and testing of pmem::obj::experimental::string (depends on ENABLE_VECTOR)" ON)
+option(ENABLE_CONCURRENT_HASHMAP "enable installation and testing of pmem::obj::experimental::concurrent_hash_map (depends on ENABLE_STRING)" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
@@ -234,7 +235,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "string.hpp" EXCLUDE
 	PATTERN "basic_string.hpp" EXCLUDE
 	PATTERN "contiguous_iterator.hpp" EXCLUDE
-	PATTERN "slice.hpp" EXCLUDE)
+	PATTERN "slice.hpp" EXCLUDE
+	PATTERN "concurrent_hash_map.hpp" EXCLUDE)
 
 if (ENABLE_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
@@ -247,6 +249,10 @@ endif()
 if (ENABLE_STRING)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "basic_string.hpp")
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "string.hpp")
+endif()
+
+if (ENABLE_CONCURRENT_HASHMAP)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "concurrent_hash_map.hpp")
 endif()
 
 if (ENABLE_ARRAY OR ENABLE_VECTOR OR ENABLE_STRING)

@@ -289,4 +289,6 @@ main(int argc, char *argv[])
 	insert_erase_lookup_test(pop);
 
 	pop.close();
+
+	return 0;
 }

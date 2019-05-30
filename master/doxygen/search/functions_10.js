@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['set_5fsso_5fsize',['set_sso_size',['../classpmem_1_1obj_1_1experimental_1_1basic__string.html#a7d3bc6dde318282d9ebeb8a696678665',1,'pmem::obj::experimental::basic_string']]],
   ['shared_5fmutex',['shared_mutex',['../classpmem_1_1obj_1_1shared__mutex.html#a041c6db7c70b2e9b66955af0b8f92e82',1,'pmem::obj::shared_mutex::shared_mutex()'],['../classpmem_1_1obj_1_1shared__mutex.html#a3ed3e745981b913f8815c63b7caf9bae',1,'pmem::obj::shared_mutex::shared_mutex(const shared_mutex &amp;)=delete']]],
   ['shrink',['shrink',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a68e3cd9016b8da9a56d3d02b10a32bc0',1,'pmem::obj::experimental::vector']]],
   ['shrink_5fto_5ffit',['shrink_to_fit',['../classpmem_1_1obj_1_1experimental_1_1vector.html#ae559c0be703f3dcbf0674ce4619cba40',1,'pmem::obj::experimental::vector']]],

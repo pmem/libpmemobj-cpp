@@ -199,10 +199,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a37b9e19d268d06cfbdae3d274a99da02"><td class="memItemLeft" align="right" valign="top">const CharT &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a37b9e19d268d06cfbdae3d274a99da02">cback</a> () const</td></tr>
 <tr class="memdesc:a37b9e19d268d06cfbdae3d274a99da02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access last element.  <a href="#a37b9e19d268d06cfbdae3d274a99da02">More...</a><br /></td></tr>
 <tr class="separator:a37b9e19d268d06cfbdae3d274a99da02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19ce85e96d0137d8407f1abe6bb74dd4"><td class="memItemLeft" align="right" valign="top">CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a19ce85e96d0137d8407f1abe6bb74dd4">data</a> ()</td></tr>
-<tr class="separator:a19ce85e96d0137d8407f1abe6bb74dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26afd5f7d0bae52907053cd7bf96cf25"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a26afd5f7d0bae52907053cd7bf96cf25">data</a> () const noexcept</td></tr>
-<tr class="separator:a26afd5f7d0bae52907053cd7bf96cf25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a924a8b0829e7c20a71a322f7507dc966"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a924a8b0829e7c20a71a322f7507dc966">cdata</a> () const noexcept</td></tr>
 <tr class="separator:a924a8b0829e7c20a71a322f7507dc966"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92e9ca34c0b5b017cd5817360930e152"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a92e9ca34c0b5b017cd5817360930e152">c_str</a> () const noexcept</td></tr>
@@ -303,7 +299,7 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:ac5f3ebbbd4159f48caa7a3cb8de08599"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04af91240ccce74722307c1c8480be1e"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:a04af91240ccce74722307c1c8480be1e"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a04af91240ccce74722307c1c8480be1e">initialize</a> (Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:a04af91240ccce74722307c1c8480be1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function which initializes memory based on provided parameters - forwards parameters to initialize function of either data_large or data_sso.  <a href="#a04af91240ccce74722307c1c8480be1e">More...</a><br /></td></tr>
+<tr class="memdesc:a04af91240ccce74722307c1c8480be1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function which initializes memory based on provided parameters - forwards parameters to initialize function of either non_sso.data or sso.data.  <a href="#a04af91240ccce74722307c1c8480be1e">More...</a><br /></td></tr>
 <tr class="separator:a04af91240ccce74722307c1c8480be1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11d811ceb9088d3cc3a21ab89195a492"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename Enable  = typename std::enable_if&lt;			pmem::detail::is_input_iterator&lt;InputIt&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:a11d811ceb9088d3cc3a21ab89195a492"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a11d811ceb9088d3cc3a21ab89195a492">assign_sso_data</a> (InputIt first, InputIt last)</td></tr>
@@ -317,13 +313,13 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:abe08fb402d6b54fbeb39b37873a46438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a8a9b74ac31f6d51d3ec7bc39608d28"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename Enable  = typename std::enable_if&lt;			pmem::detail::is_input_iterator&lt;InputIt&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:a9a8a9b74ac31f6d51d3ec7bc39608d28"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a9a8a9b74ac31f6d51d3ec7bc39608d28">assign_large_data</a> (InputIt first, InputIt last)</td></tr>
-<tr class="memdesc:a9a8a9b74ac31f6d51d3ec7bc39608d28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize data_large - call constructor of data_large.  <a href="#a9a8a9b74ac31f6d51d3ec7bc39608d28">More...</a><br /></td></tr>
+<tr class="memdesc:a9a8a9b74ac31f6d51d3ec7bc39608d28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize non_sso.data - call constructor of non_sso.data.  <a href="#a9a8a9b74ac31f6d51d3ec7bc39608d28">More...</a><br /></td></tr>
 <tr class="separator:a9a8a9b74ac31f6d51d3ec7bc39608d28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3ec5e26ebc171a87b8c2c1f86c478cd"><td class="memItemLeft" align="right" valign="top">pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ad3ec5e26ebc171a87b8c2c1f86c478cd">assign_large_data</a> (size_type count, value_type ch)</td></tr>
-<tr class="memdesc:ad3ec5e26ebc171a87b8c2c1f86c478cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize data_large - call constructor of data_large.  <a href="#ad3ec5e26ebc171a87b8c2c1f86c478cd">More...</a><br /></td></tr>
+<tr class="memdesc:ad3ec5e26ebc171a87b8c2c1f86c478cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize non_sso.data - call constructor of non_sso.data.  <a href="#ad3ec5e26ebc171a87b8c2c1f86c478cd">More...</a><br /></td></tr>
 <tr class="separator:ad3ec5e26ebc171a87b8c2c1f86c478cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf74f8756e3419052aaa769b6ddf6879"><td class="memItemLeft" align="right" valign="top">pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aaf74f8756e3419052aaa769b6ddf6879">assign_large_data</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&amp;other)</td></tr>
-<tr class="memdesc:aaf74f8756e3419052aaa769b6ddf6879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize data_large - call constructor of data_large.  <a href="#aaf74f8756e3419052aaa769b6ddf6879">More...</a><br /></td></tr>
+<tr class="memdesc:aaf74f8756e3419052aaa769b6ddf6879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize non_sso.data - call constructor of non_sso.data.  <a href="#aaf74f8756e3419052aaa769b6ddf6879">More...</a><br /></td></tr>
 <tr class="separator:aaf74f8756e3419052aaa769b6ddf6879"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a464d5a536acb228fc3beb1a90bf36658"><td class="memItemLeft" align="right" valign="top"><a id="a464d5a536acb228fc3beb1a90bf36658"></a>
 <a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a464d5a536acb228fc3beb1a90bf36658">get_pool</a> () const</td></tr>
@@ -335,6 +331,22 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:acbe6cb60642353c8b1ced86492d94513"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f220a35a83a3f4d1770b022c7d82043"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a9f220a35a83a3f4d1770b022c7d82043">check_pmem_tx</a> () const</td></tr>
 <tr class="separator:a9f220a35a83a3f4d1770b022c7d82043"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e8ed5036d8df793db33592de6a946f7"><td class="memItemLeft" align="right" valign="top"><a id="a6e8ed5036d8df793db33592de6a946f7"></a>
+size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a6e8ed5036d8df793db33592de6a946f7">get_sso_size</a> () const</td></tr>
+<tr class="memdesc:a6e8ed5036d8df793db33592de6a946f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return size of sso string. <br /></td></tr>
+<tr class="separator:a6e8ed5036d8df793db33592de6a946f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad510f39d64c6f3385a834287d0810d88"><td class="memItemLeft" align="right" valign="top"><a id="ad510f39d64c6f3385a834287d0810d88"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ad510f39d64c6f3385a834287d0810d88">enable_sso</a> ()</td></tr>
+<tr class="memdesc:ad510f39d64c6f3385a834287d0810d88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable sso string. <br /></td></tr>
+<tr class="separator:ad510f39d64c6f3385a834287d0810d88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94fe00a2770ad0554a4b156df49effc7"><td class="memItemLeft" align="right" valign="top"><a id="a94fe00a2770ad0554a4b156df49effc7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a94fe00a2770ad0554a4b156df49effc7">disable_sso</a> ()</td></tr>
+<tr class="memdesc:a94fe00a2770ad0554a4b156df49effc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable sso string. <br /></td></tr>
+<tr class="separator:a94fe00a2770ad0554a4b156df49effc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d3bc6dde318282d9ebeb8a696678665"><td class="memItemLeft" align="right" valign="top"><a id="a7d3bc6dde318282d9ebeb8a696678665"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a7d3bc6dde318282d9ebeb8a696678665">set_sso_size</a> (size_type new_size)</td></tr>
+<tr class="memdesc:a7d3bc6dde318282d9ebeb8a696678665"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set size for sso. <br /></td></tr>
+<tr class="separator:a7d3bc6dde318282d9ebeb8a696678665"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -1303,7 +1315,7 @@ template&lt;typename InputIt , typename Enable &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Initialize data_large - call constructor of data_large. </p>
+<p>Initialize non_sso.data - call constructor of non_sso.data. </p>
 <p>Overload for pair of iterators. </p>
 
 </div>
@@ -1344,7 +1356,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Initialize data_large - call constructor of data_large. </p>
+<p>Initialize non_sso.data - call constructor of non_sso.data. </p>
 <p>Overload for (count, value). </p>
 
 </div>
@@ -1375,7 +1387,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Initialize data_large - call constructor of data_large. </p>
+<p>Initialize non_sso.data - call constructor of non_sso.data. </p>
 <p>Overload for rvalue reference of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html" title="pmem::obj::experimental::string - EXPERIMENTAL persistent container with std::basic_string compatible...">basic_string</a>. </p>
 
 </div>
@@ -2500,60 +2512,6 @@ template&lt;typename CharT , typename Traits &gt; </div>
 
 </div>
 </div>
-<a id="a19ce85e96d0137d8407f1abe6bb74dd4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19ce85e96d0137d8407f1abe6bb74dd4">&#9670;&nbsp;</a></span>data() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename CharT , typename Traits &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">CharT * <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::data </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">transaction_error</a></td><td>when adding data to the transaction failed. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a26afd5f7d0bae52907053cd7bf96cf25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26afd5f7d0bae52907053cd7bf96cf25">&#9670;&nbsp;</a></span>data() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename CharT , typename Traits &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const CharT * <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::data </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data. </dd></dl>
-
-</div>
-</div>
 <a id="abe1c0f6e18623b888cb65dae95a9d79d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe1c0f6e18623b888cb65dae95a9d79d">&#9670;&nbsp;</a></span>empty()</h2>
 
@@ -2827,7 +2785,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Generic function which initializes memory based on provided parameters - forwards parameters to initialize function of either data_large or data_sso. </p>
+<p>Generic function which initializes memory based on provided parameters - forwards parameters to initialize function of either non_sso.data or sso.data. </p>
 <p>Allowed parameters are:</p><ul>
 <li>size_type count, CharT value</li>
 <li>InputIt first, InputIt last</li>
@@ -3349,7 +3307,41 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </div><div class="memdoc">
 
 <p>This union holds sso data inside of an array and non sso data inside a vector. </p>
-<p>If vector is used, it must be manually created and destroyed. </p>
+<p>If vector is used, it must be manually created and destroyed.</p>
+<p>_size is used to store length in case when SSO is used. It is the same type as first member of data field. This means that it can be safely accessed through both sso (_size variable) and non_sso (as size in a vector) no matter which one is used.</p>
+<p>C++11 §9.2/18 says: If a standard-layout union contains two or more standard-layout structs that share a common initial sequence, and if the standard-layout union object currently contains one of these standard-layout structs, it is permitted to inspect the common initial part of any of them. </p>
+
+</div>
+</div>
+<a id="a89c652d0158c27321e78f21dd449dac7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89c652d0158c27321e78f21dd449dac7">&#9670;&nbsp;</a></span>data</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const CharT * <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::data</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class. ">transaction_error</a></td><td>when adding data to the transaction failed.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data. </dd></dl>
 
 </div>
 </div>

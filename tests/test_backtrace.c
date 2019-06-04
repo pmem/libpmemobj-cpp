@@ -64,14 +64,16 @@ test_dump_backtrace(void)
 	pip.unwind_info = NULL;
 	int ret = unw_getcontext(&context);
 	if (ret) {
-		printf("unw_getcontext: %s [%d]\n", unw_strerror(ret), ret);
+		fprintf(stderr, "unw_getcontext: %s [%d]\n", unw_strerror(ret),
+			ret);
 		return;
 	}
 
 	unw_cursor_t cursor;
 	ret = unw_init_local(&cursor, &context);
 	if (ret) {
-		printf("unw_init_local: %s [%d]\n", unw_strerror(ret), ret);
+		fprintf(stderr, "unw_init_local: %s [%d]\n", unw_strerror(ret),
+			ret);
 		return;
 	}
 
@@ -83,8 +85,8 @@ test_dump_backtrace(void)
 	while (ret > 0) {
 		ret = unw_get_proc_info(&cursor, &pip);
 		if (ret) {
-			printf("unw_get_proc_info: %s [%d]\n",
-			       unw_strerror(ret), ret);
+			fprintf(stderr, "[%u] unw_get_proc_info: %s [%d]\n", i,
+				unw_strerror(ret), ret);
 			break;
 		}
 
@@ -92,8 +94,9 @@ test_dump_backtrace(void)
 		ret = unw_get_proc_name(&cursor, procname, PROCNAMELEN, &off);
 		if (ret && ret != -UNW_ENOMEM) {
 			if (ret != -UNW_EUNSPEC) {
-				printf("unw_get_proc_name: %s [%d]\n",
-				       unw_strerror(ret), ret);
+				fprintf(stderr,
+					"[%u] unw_get_proc_name: %s [%d]\n", i,
+					unw_strerror(ret), ret);
 			}
 
 			strcpy(procname, "?");
@@ -112,7 +115,8 @@ test_dump_backtrace(void)
 
 		ret = unw_step(&cursor);
 		if (ret < 0)
-			printf("unw_step: %s [%d]\n", unw_strerror(ret), ret);
+			fprintf(stderr, "unw_step: %s [%d]\n",
+				unw_strerror(ret), ret);
 	}
 }
 #else /* USE_LIBUNWIND */
@@ -137,7 +141,7 @@ test_dump_backtrace(void)
 
 	strings = backtrace_symbols(buffer, nptrs);
 	if (strings == NULL) {
-		printf("backtrace_symbols %s\n", strerror(errno));
+		fprintf(stderr, "backtrace_symbols %s\n", strerror(errno));
 		return;
 	}
 

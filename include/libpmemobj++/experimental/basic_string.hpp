@@ -1521,7 +1521,7 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::max_size() const noexcept
 {
-	return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(CharT);
+	return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(CharT) - 1;
 }
 
 /**

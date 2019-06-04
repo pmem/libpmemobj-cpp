@@ -159,4 +159,6 @@ main(int argc, char *argv[])
 	rehash_test(pop);
 
 	pop.close();
+
+	return 0;
 }

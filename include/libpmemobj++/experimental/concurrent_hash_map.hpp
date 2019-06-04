@@ -207,7 +207,7 @@ public:
 	/**
 	 * Deny assignment
 	 */
-	void operator=(const atomic_backoff &) = delete;
+	atomic_backoff &operator=(const atomic_backoff &) = delete;
 
 	/** Default constructor */
 	/* In many cases, an object of this type is initialized eagerly on hot
@@ -326,7 +326,8 @@ class shared_mutex_scoped_lock {
 
 public:
 	shared_mutex_scoped_lock(const shared_mutex_scoped_lock &) = delete;
-	void operator=(const shared_mutex_scoped_lock &) = delete;
+	shared_mutex_scoped_lock &
+	operator=(const shared_mutex_scoped_lock &) = delete;
 
 	/** Default constructor. Construct lock that has not acquired a mutex.*/
 	shared_mutex_scoped_lock() : mutex(nullptr), is_writer(false)
@@ -476,7 +477,7 @@ struct hash_map_node_base {
 	hash_map_node_base(const hash_map_node_base &) = delete;
 
 	/** Assignment operator is deleted */
-	void operator=(const hash_map_node_base &) = delete;
+	hash_map_node_base &operator=(const hash_map_node_base &) = delete;
 }; /* struct hash_map_node_base */
 
 /** Empty bucket flag. */
@@ -993,7 +994,7 @@ public:
 		bucket(const bucket &) = delete;
 
 		/** Assignment operator is deleted */
-		void operator=(const bucket &) = delete;
+		bucket &operator=(const bucket &) = delete;
 	}; /* End of struct bucket */
 
 	/** Segment traits */

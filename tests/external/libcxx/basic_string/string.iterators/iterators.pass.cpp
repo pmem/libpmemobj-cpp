@@ -69,4 +69,6 @@ main()
 		UT_ASSERT(!(ii1 != ii2));
 		UT_ASSERT(!(ii1 != cii));
 	}
+
+	return 0;
 }

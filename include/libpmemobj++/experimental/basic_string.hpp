@@ -223,6 +223,14 @@ public:
 			  InputIt>::type>
 	iterator insert(const_iterator pos, InputIt first, InputIt last);
 	iterator insert(const_iterator pos, std::initializer_list<CharT> ilist);
+	template <typename T,
+		  typename Enable = typename std::enable_if<
+			  std::is_convertible<T, size_type>::value>::type>
+	basic_string &insert(T param, size_type count, CharT ch);
+	template <typename T,
+		  typename Enable = typename std::enable_if<
+			  !std::is_convertible<T, size_type>::value>::type>
+	iterator insert(T param, size_type count, CharT ch);
 
 	basic_string &replace(size_type index, size_type count,
 			      const basic_string &str);
@@ -3639,6 +3647,32 @@ typename basic_string<CharT, Traits>::iterator
 basic_string<CharT, Traits>::erase(T param)
 {
 	return erase(static_cast<const_iterator>(param));
+}
+
+/**
+ * Participate in overload resulution only if T is convertible to size_type.
+ * Call basic_string &insert(size_type index, size_type count, CharT ch) if
+ * enabled.
+ */
+template <typename CharT, typename Traits>
+template <typename T, typename Enable>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
+{
+	return insert(static_cast<size_type>(param), count, ch);
+}
+
+/**
+ * Participate in overload resulution only if T is not convertible to size_type.
+ * Call iterator insert(const_iterator pos, size_type count, CharT ch) if
+ * enabled.
+ */
+template <typename CharT, typename Traits>
+template <typename T, typename Enable>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
+{
+	return insert(static_cast<const_iterator>(param), count, ch);
 }
 
 /**

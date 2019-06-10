@@ -40,6 +40,7 @@
 
 #include <iterator>
 #include <type_traits>
+#include <stdexcept>
 
 namespace pmem
 {

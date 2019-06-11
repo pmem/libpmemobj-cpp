@@ -95,7 +95,15 @@
  * and 0 in gcc. It means that for gcc < 5 IS_TRIVIALLY_COPYABLE is more
  * restrictive than is_trivially_copyable.
  */
+#if !defined(LIBPMEMOBJ_CPP_USE_HAS_TRIVIAL_COPY)
 #if !defined(__clang__) && defined(__GNUG__) && __GNUC__ < 5
+#define LIBPMEMOBJ_CPP_USE_HAS_TRIVIAL_COPY 1
+#else
+#define LIBPMEMOBJ_CPP_USE_HAS_TRIVIAL_COPY 0
+#endif
+#endif
+
+#if LIBPMEMOBJ_CPP_USE_HAS_TRIVIAL_COPY
 #define IS_TRIVIALLY_COPYABLE(T) __has_trivial_copy(T)
 #else
 #define IS_TRIVIALLY_COPYABLE(T) std::is_trivially_copyable<T>::value

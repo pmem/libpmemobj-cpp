@@ -61,7 +61,7 @@ struct allocation_flag {
 	/**
 	 * Emplace constructor.
 	 */
-	allocation_flag(uint64_t val) : value(val)
+	explicit allocation_flag(uint64_t val) : value(val)
 	{
 	}
 
@@ -124,7 +124,7 @@ struct allocation_flag_atomic {
 	/**
 	 * Emplace constructor.
 	 */
-	allocation_flag_atomic(uint64_t val) : value(val)
+	explicit allocation_flag_atomic(uint64_t val) : value(val)
 	{
 	}
 

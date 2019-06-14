@@ -38,6 +38,7 @@
 #ifndef PMEMOBJ_CONCURRENT_HASH_MAP_HPP
 #define PMEMOBJ_CONCURRENT_HASH_MAP_HPP
 
+#include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array.hpp>
@@ -47,9 +48,6 @@
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/transaction.hpp>
-#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-#include <libpmemobj++/detail/common.hpp>
-#endif
 
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 #include "tbb/spin_rw_mutex.h"
@@ -98,30 +96,30 @@ namespace experimental
 
 using namespace pmem::obj;
 
-/**
- * hash_compare that is default argument for concurrent_hash_map
- */
-template <typename Key>
-struct hash_compare {
-	static size_t
-	hash(const Key &a)
-	{
-		return std::hash<Key>{}(a);
-	}
-
-	static bool
-	equal(const Key &a, const Key &b)
-	{
-		return std::equal_to<Key>{}(a, b);
-	}
-};
-
-template <typename Key, typename T, typename HashCompare = hash_compare<Key>>
+template <typename Key, typename T, typename Hash = std::hash<Key>,
+	  typename KeyEqual = std::equal_to<Key>>
 class concurrent_hash_map;
 
 /** @cond INTERNAL */
 namespace internal
 {
+template <typename Hash>
+using transparent_key_equal = typename Hash::transparent_key_equal;
+
+template <typename Hash>
+using has_transparent_key_equal = detail::supports<Hash, transparent_key_equal>;
+
+template <typename Hash, typename Pred,
+	  bool = has_transparent_key_equal<Hash>::value>
+struct key_equal_type {
+	using type = typename Hash::transparent_key_equal;
+};
+
+template <typename Hash, typename Pred>
+struct key_equal_type<Hash, Pred, false> {
+	using type = Pred;
+};
+
 template <typename Mutex>
 void
 assert_not_locked(Mutex &mtx)
@@ -1494,7 +1492,7 @@ public:
 
 #if !defined(_MSC_VER) || defined(__INTEL_COMPILER)
 private:
-	template <typename Key, typename T, typename HashCompare>
+	template <typename Key, typename T, typename Hash, typename KeyEqual>
 	friend class experimental::concurrent_hash_map;
 #else
 public: /* workaround */
@@ -1658,7 +1656,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
 /**
  * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
  */
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 class concurrent_hash_map : protected internal::hash_map_base {
 	template <typename Container, bool is_const>
 	friend class internal::hash_map_iterator;
@@ -1677,11 +1675,13 @@ public:
 		internal::hash_map_iterator<concurrent_hash_map, false>;
 	using const_iterator =
 		internal::hash_map_iterator<concurrent_hash_map, true>;
+	using hasher = Hash;
+	using key_equal =
+		typename internal::key_equal_type<Hash, KeyEqual>::type;
 
 protected:
 	friend class const_accessor;
 	struct node;
-	HashCompare my_hash_compare;
 
 	/**
 	 * Node structure to store Key/Value pair.
@@ -1779,8 +1779,9 @@ protected:
 		assert(false);
 	}
 
+	template <typename K>
 	persistent_node_ptr_t
-	search_bucket(const key_type &key, bucket *b) const
+	search_bucket(const K &key, bucket *b) const
 	{
 		assert(b->is_rehashed(std::memory_order_relaxed));
 		assert(!is_valid(b->tmp_node));
@@ -1790,8 +1791,7 @@ protected:
 				b->node_list);
 
 		while (is_valid(n) &&
-		       !my_hash_compare.equal(
-			       key, n.get(my_pool_uuid)->item.first)) {
+		       !key_equal{}(key, n.get(my_pool_uuid)->item.first)) {
 			n = detail::static_persistent_pool_pointer_cast<node>(
 				n.get(my_pool_uuid)->next);
 		}
@@ -1957,7 +1957,7 @@ protected:
 	hashcode_t
 	get_hash_code(node_base_ptr_t &n)
 	{
-		return my_hash_compare.hash(
+		return hasher{}(
 			detail::static_persistent_pool_pointer_cast<node>(n)(
 				my_pool_uuid)
 				->item.first);
@@ -2076,7 +2076,7 @@ public:
 	 */
 	class const_accessor
 	    : private node::scoped_t /*which derived from no_copy*/ {
-		friend class concurrent_hash_map<Key, T, HashCompare>;
+		friend class concurrent_hash_map<Key, T, Hash, KeyEqual>;
 		friend class accessor;
 		using node_ptr_t = pmem::obj::persistent_ptr<node>;
 
@@ -2407,9 +2407,32 @@ public:
 	size_type
 	count(const Key &key) const
 	{
-		return const_cast<concurrent_hash_map *>(this)->lookup(
-			/*insert*/ false, key, nullptr, nullptr,
-			/*write=*/false, &do_not_allocate_node);
+		return const_cast<concurrent_hash_map *>(this)
+			->lookup</*insert*/ false>(key, nullptr, nullptr,
+						   /*write=*/false,
+						   &do_not_allocate_node);
+	}
+
+	/**
+	 * This overload only participates in overload resolution if the
+	 * qualified-id Hash::transparent_key_equal is valid and denotes a type.
+	 * This assumes that such Hash is callable with both K and Key type, and
+	 * that its key_equal is transparent, which, together, allows calling
+	 * this function without constructing an instance of Key
+	 *
+	 * @return count of items (0 or 1)
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  internal::has_transparent_key_equal<hasher>::value,
+			  K>::type>
+	size_type
+	count(const K &key) const
+	{
+		return const_cast<concurrent_hash_map *>(this)
+			->lookup</*insert*/ false>(key, nullptr, nullptr,
+						   /*write=*/false,
+						   &do_not_allocate_node);
 	}
 
 	/**
@@ -2421,9 +2444,36 @@ public:
 	{
 		result.release();
 
-		return const_cast<concurrent_hash_map *>(this)->lookup(
-			/*insert*/ false, key, nullptr, &result,
-			/*write=*/false, &do_not_allocate_node);
+		return const_cast<concurrent_hash_map *>(this)
+			->lookup</*insert*/ false>(key, nullptr, &result,
+						   /*write=*/false,
+						   &do_not_allocate_node);
+	}
+
+	/**
+	 * Find item and acquire a read lock on the item.
+	 *
+	 * This overload only participates in overload resolution if the
+	 * qualified-id Hash::transparent_key_equal is valid and denotes a type.
+	 * This assumes that such Hash is callable with both K and Key type, and
+	 * that its key_equal is transparent, which, together, allows calling
+	 * this function without constructing an instance of Key
+	 *
+	 * @return true if item is found, false otherwise.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  internal::has_transparent_key_equal<hasher>::value,
+			  K>::type>
+	bool
+	find(const_accessor &result, const K &key) const
+	{
+		result.release();
+
+		return const_cast<concurrent_hash_map *>(this)
+			->lookup</*insert*/ false>(key, nullptr, &result,
+						   /*write=*/false,
+						   &do_not_allocate_node);
 	}
 
 	/**
@@ -2435,10 +2485,35 @@ public:
 	{
 		result.release();
 
-		return lookup(/*insert*/ false, key, nullptr, &result,
-			      /*write*/ true, &do_not_allocate_node);
+		return lookup</*insert*/ false>(key, nullptr, &result,
+						/*write*/ true,
+						&do_not_allocate_node);
 	}
 
+	/**
+	 * Find item and acquire a write lock on the item.
+	 *
+	 * This overload only participates in overload resolution if the
+	 * qualified-id Hash::transparent_key_equal is valid and denotes a type.
+	 * This assumes that such Hash is callable with both K and Key type, and
+	 * that its key_equal is transparent, which, together, allows calling
+	 * this function without constructing an instance of Key
+	 *
+	 * @return true if item is found, false otherwise.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  internal::has_transparent_key_equal<hasher>::value,
+			  K>::type>
+	bool
+	find(accessor &result, const K &key)
+	{
+		result.release();
+
+		return lookup</*insert*/ false>(key, nullptr, &result,
+						/*write*/ true,
+						&do_not_allocate_node);
+	}
 	/**
 	 * Insert item (if not already present) and
 	 * acquire a read lock on the item.
@@ -2450,9 +2525,9 @@ public:
 	{
 		result.release();
 
-		return lookup(/*insert*/ true, key, &key, &result,
-			      /*write=*/false,
-			      &allocate_node_default_construct);
+		return lookup</*insert*/ true>(
+			key, &key, &result,
+			/*write=*/false, &allocate_node_default_construct);
 	}
 
 	/**
@@ -2466,8 +2541,9 @@ public:
 	{
 		result.release();
 
-		return lookup(/*insert*/ true, key, &key, &result,
-			      /*write=*/true, &allocate_node_default_construct);
+		return lookup</*insert*/ true>(
+			key, &key, &result,
+			/*write=*/true, &allocate_node_default_construct);
 	}
 
 	/**
@@ -2481,8 +2557,9 @@ public:
 	{
 		result.release();
 
-		return lookup(/*insert*/ true, value.first, &value, &result,
-			      /*write=*/false, &allocate_node_copy_construct);
+		return lookup</*insert*/ true>(value.first, &value, &result,
+					       /*write=*/false,
+					       &allocate_node_copy_construct);
 	}
 
 	/**
@@ -2495,8 +2572,9 @@ public:
 	{
 		result.release();
 
-		return lookup(/*insert*/ true, value.first, &value, &result,
-			      /*write=*/true, &allocate_node_copy_construct);
+		return lookup</*insert*/ true>(value.first, &value, &result,
+					       /*write=*/true,
+					       &allocate_node_copy_construct);
 	}
 
 	/**
@@ -2506,8 +2584,9 @@ public:
 	bool
 	insert(const value_type &value)
 	{
-		return lookup(/*insert*/ true, value.first, &value, nullptr,
-			      /*write=*/false, &allocate_node_copy_construct);
+		return lookup</*insert*/ true>(value.first, &value, nullptr,
+					       /*write=*/false,
+					       &allocate_node_copy_construct);
 	}
 
 	/**
@@ -2573,17 +2652,47 @@ public:
 	 * @return true if element was deleted by this call
 	 * @throws std::runtime_error in case of PMDK unable to free the memory
 	 */
-	bool erase(const Key &key);
+	bool
+	erase(const Key &key)
+	{
+		return internal_erase(key);
+	}
+
+	/**
+	 * Remove element with corresponding key
+	 *
+	 * This overload only participates in overload resolution if the
+	 * qualified-id Hash::transparent_key_equal is valid and denotes a type.
+	 * This assumes that such Hash is callable with both K and Key type, and
+	 * that its key_equal is transparent, which, together, allows calling
+	 * this function without constructing an instance of Key
+	 *
+	 * @return true if element was deleted by this call
+	 * @throws std::runtime_error in case of PMDK unable to free the memory
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  internal::has_transparent_key_equal<hasher>::value,
+			  K>::type>
+	bool
+	erase(const K &key)
+	{
+		return internal_erase(key);
+	}
 
 protected:
 	/**
 	 * Insert or find item and optionally acquire a lock on the item.
 	 */
-	bool lookup(bool op_insert, const Key &key, const void *param,
-		    const_accessor *result, bool write,
+	template <bool OpInsert, typename K>
+	bool lookup(const K &key, const void *param, const_accessor *result,
+		    bool write,
 		    void (*allocate_node)(pool_base &, persistent_ptr<node> &,
 					  const void *,
 					  const node_base_ptr_t &));
+
+	template <typename K>
+	bool internal_erase(const K &key);
 
 	struct accessor_not_used {
 		void
@@ -2627,10 +2736,10 @@ protected:
 	generic_move_insert(Accessor &&result, value_type &&value)
 	{
 		result.release();
-		return lookup(/*insert*/ true, value.first, &value,
-			      accessor_location(result),
-			      is_write_access_needed(result),
-			      &allocate_node_move_construct);
+		return lookup</*insert*/ true>(value.first, &value,
+					       accessor_location(result),
+					       is_write_access_needed(result),
+					       &allocate_node_move_construct);
 	}
 
 	void clear_segment(segment_index_t s);
@@ -2645,18 +2754,18 @@ protected:
 
 }; // class concurrent_hash_map
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
+template <bool OpInsert, typename K>
 bool
-concurrent_hash_map<Key, T, HashCompare>::lookup(
-	bool op_insert, const Key &key, const void *param,
-	const_accessor *result, bool write,
+concurrent_hash_map<Key, T, Hash, KeyEqual>::lookup(
+	const K &key, const void *param, const_accessor *result, bool write,
 	void (*allocate_node)(pool_base &, persistent_ptr<node> &, const void *,
 			      const node_base_ptr_t &))
 {
 	assert(!result || !result->my_node);
 
 	bool return_value = false;
-	hashcode_t const h = my_hash_compare.hash(key);
+	hashcode_t const h = hasher{}(key);
 	hashcode_t m = mask().load(std::memory_order_acquire);
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(&my_mask);
@@ -2675,7 +2784,7 @@ restart : { /* lock scope */
 	/* find a node */
 	n = search_bucket(key, b.get());
 
-	if (op_insert) {
+	if (OpInsert) {
 		/* [opt] insert a key */
 		if (!n) {
 			if (!b.is_writer() && !b.upgrade_to_writer()) {
@@ -2731,7 +2840,7 @@ exists:
 				 * operation */
 				b.release();
 
-				assert(!op_insert || !return_value);
+				assert(!OpInsert || !return_value);
 
 				std::this_thread::yield();
 
@@ -2752,12 +2861,13 @@ check_growth:
 	return return_value;
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
+template <typename K>
 bool
-concurrent_hash_map<Key, T, HashCompare>::erase(const Key &key)
+concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_erase(const K &key)
 {
 	node_base_ptr_t n;
-	hashcode_t const h = my_hash_compare.hash(key);
+	hashcode_t const h = hasher{}(key);
 	hashcode_t m = mask().load(std::memory_order_acquire);
 	pool_base pop = get_pool_base();
 
@@ -2771,11 +2881,10 @@ search:
 	n = *p;
 
 	while (is_valid(n) &&
-	       !my_hash_compare.equal(
-		       key,
-		       detail::static_persistent_pool_pointer_cast<node>(n)(
-			       my_pool_uuid)
-			       ->item.first)) {
+	       !key_equal{}(key,
+			    detail::static_persistent_pool_pointer_cast<node>(
+				    n)(my_pool_uuid)
+				    ->item.first)) {
 		p = &n(my_pool_uuid)->next;
 		n = *p;
 	}
@@ -2825,18 +2934,17 @@ search:
 	return true;
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 void
-concurrent_hash_map<Key, T, HashCompare>::swap(
-	concurrent_hash_map<Key, T, HashCompare> &table)
+concurrent_hash_map<Key, T, Hash, KeyEqual>::swap(
+	concurrent_hash_map<Key, T, Hash, KeyEqual> &table)
 {
-	std::swap(this->my_hash_compare, table.my_hash_compare);
 	internal_swap(table);
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 void
-concurrent_hash_map<Key, T, HashCompare>::rehash(size_type sz)
+concurrent_hash_map<Key, T, Hash, KeyEqual>::rehash(size_type sz)
 {
 	reserve(sz);
 	hashcode_t m = mask();
@@ -2862,9 +2970,9 @@ concurrent_hash_map<Key, T, HashCompare>::rehash(size_type sz)
 	}
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 void
-concurrent_hash_map<Key, T, HashCompare>::clear()
+concurrent_hash_map<Key, T, Hash, KeyEqual>::clear()
 {
 	hashcode_t m = mask();
 
@@ -2905,9 +3013,9 @@ concurrent_hash_map<Key, T, HashCompare>::clear()
 	mask().store(embedded_buckets - 1, std::memory_order_relaxed);
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 void
-concurrent_hash_map<Key, T, HashCompare>::clear_segment(segment_index_t s)
+concurrent_hash_map<Key, T, Hash, KeyEqual>::clear_segment(segment_index_t s)
 {
 	segment_facade_t segment(my_table, s);
 
@@ -2926,25 +3034,25 @@ concurrent_hash_map<Key, T, HashCompare>::clear_segment(segment_index_t s)
 		segment.disable();
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 void
-concurrent_hash_map<Key, T, HashCompare>::internal_copy(
+concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_copy(
 	const concurrent_hash_map &source)
 {
 	reserve(source.my_size.get_ro());
 	internal_copy(source.begin(), source.end());
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 template <typename I>
 void
-concurrent_hash_map<Key, T, HashCompare>::internal_copy(I first, I last)
+concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_copy(I first, I last)
 {
 	hashcode_t m = mask();
 	pool_base pop = get_pool_base();
 
 	for (; first != last; ++first) {
-		hashcode_t h = my_hash_compare.hash(first->first);
+		hashcode_t h = hasher{}(first->first);
 		bucket *b = get_bucket(h & m);
 
 		assert(b->is_rehashed(std::memory_order_relaxed));
@@ -2958,19 +3066,19 @@ concurrent_hash_map<Key, T, HashCompare>::internal_copy(I first, I last)
 	}
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 inline bool
-operator==(const concurrent_hash_map<Key, T, HashCompare> &a,
-	   const concurrent_hash_map<Key, T, HashCompare> &b)
+operator==(const concurrent_hash_map<Key, T, Hash, KeyEqual> &a,
+	   const concurrent_hash_map<Key, T, Hash, KeyEqual> &b)
 {
 	if (a.size() != b.size())
 		return false;
 
-	typename concurrent_hash_map<Key, T, HashCompare>::const_iterator i(
+	typename concurrent_hash_map<Key, T, Hash, KeyEqual>::const_iterator i(
 		a.begin()),
 		i_end(a.end());
 
-	typename concurrent_hash_map<Key, T, HashCompare>::const_iterator j,
+	typename concurrent_hash_map<Key, T, Hash, KeyEqual>::const_iterator j,
 		j_end(b.end());
 
 	for (; i != i_end; ++i) {
@@ -2983,18 +3091,18 @@ operator==(const concurrent_hash_map<Key, T, HashCompare> &a,
 	return true;
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 inline bool
-operator!=(const concurrent_hash_map<Key, T, HashCompare> &a,
-	   const concurrent_hash_map<Key, T, HashCompare> &b)
+operator!=(const concurrent_hash_map<Key, T, Hash, KeyEqual> &a,
+	   const concurrent_hash_map<Key, T, Hash, KeyEqual> &b)
 {
 	return !(a == b);
 }
 
-template <typename Key, typename T, typename HashCompare>
+template <typename Key, typename T, typename Hash, typename KeyEqual>
 inline void
-swap(concurrent_hash_map<Key, T, HashCompare> &a,
-     concurrent_hash_map<Key, T, HashCompare> &b)
+swap(concurrent_hash_map<Key, T, Hash, KeyEqual> &a,
+     concurrent_hash_map<Key, T, Hash, KeyEqual> &b)
 {
 	a.swap(b);
 }

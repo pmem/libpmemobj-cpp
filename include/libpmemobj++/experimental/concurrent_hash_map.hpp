@@ -40,8 +40,6 @@
 
 #include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-#include <libpmemobj++/make_persistent_array.hpp>
-#include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/p.hpp>

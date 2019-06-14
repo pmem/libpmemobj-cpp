@@ -46,6 +46,7 @@
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj++/detail/variadic.hpp>
+#include <libpmemobj++/make_persistent_array.hpp>
 #include <libpmemobj/tx_base.h>
 
 #include <new>

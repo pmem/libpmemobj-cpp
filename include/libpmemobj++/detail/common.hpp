@@ -122,6 +122,23 @@ class persistent_ptr;
 namespace detail
 {
 
+template <typename...>
+using void_t = void;
+
+// Generic SFINAE helper for expression checks, based on the idea demonstrated
+// in ISO C++ paper n4502
+template <typename T, typename, template <typename> class... Checks>
+struct supports_impl {
+	using type = std::false_type;
+};
+template <typename T, template <typename> class... Checks>
+struct supports_impl<T, void_t<Checks<T>...>, Checks...> {
+	using type = std::true_type;
+};
+
+template <typename T, template <typename> class... Checks>
+using supports = typename supports_impl<T, void, Checks...>::type;
+
 /*
  * Conditionally add 'count' objects to a transaction.
  *

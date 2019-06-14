@@ -83,16 +83,90 @@ struct move_element {
 	nvobj::p<int> val;
 };
 
+class MyLong {
+public:
+	MyLong() : val(0)
+	{
+	}
+
+	explicit MyLong(long v) : val(v)
+	{
+	}
+
+	MyLong(int v)
+	{
+		UT_ASSERT(false);
+	}
+
+	long
+	get_val() const
+	{
+		return val.get_ro();
+	}
+
+	bool
+	operator==(const MyLong &other) const
+	{
+		return val.get_ro() == other.val.get_ro();
+	}
+
+	bool
+	operator==(int other) const
+	{
+		return val.get_ro() == long(other);
+	}
+
+private:
+	nvobj::p<long> val;
+};
+
+bool
+operator==(int lhs, const MyLong &rhs)
+{
+	return rhs == lhs;
+}
+
+class TransparentKeyEqual {
+public:
+	template <typename M, typename U>
+	bool
+	operator()(const M &lhs, const U &rhs) const
+	{
+		return lhs == rhs;
+	}
+};
+
+class HeteroHasher {
+public:
+	using transparent_key_equal = TransparentKeyEqual;
+	size_t
+	operator()(const MyLong &myLong) const
+	{
+		return size_t(myLong.get_val());
+	}
+
+	size_t
+	operator()(int i) const
+	{
+		return size_t(i);
+	}
+};
+
 typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, move_element>
 	persistent_map_move_type;
 
 typedef persistent_map_move_type::value_type value_move_type;
+
+typedef nvobj::experimental::concurrent_hash_map<MyLong, MyLong, HeteroHasher>
+	persistent_map_hetero_type;
 
 struct root {
 	nvobj::persistent_ptr<persistent_map_type> map1;
 	nvobj::persistent_ptr<persistent_map_type> map2;
 
 	nvobj::persistent_ptr<persistent_map_move_type> map_move;
+
+	nvobj::persistent_ptr<persistent_map_hetero_type> map_hetero;
 };
 
 void
@@ -393,6 +467,49 @@ insert_test(nvobj::pool<root> &pop)
 	pmem::detail::destroy<persistent_map_type>(*map1);
 	pmem::detail::destroy<persistent_map_move_type>(*map_move);
 }
+
+/*
+ * hetero_test -- (internal) test heterogeneous count/find/erase methods
+ * pmem::obj::concurrent_hash_map<MyLong, MyLong, HeteroHasher >
+ */
+void
+hatero_test(nvobj::pool<root> &pop)
+{
+	typedef persistent_map_hetero_type::value_type value_type;
+	auto &map = pop.root()->map_hetero;
+
+	tx_alloc_wrapper<persistent_map_hetero_type>(pop, map);
+
+	for (long i = 0; i < 100; ++i) {
+		map->insert(value_type(i, i));
+	}
+
+	for (int i = 0; i < 100; ++i) {
+		UT_ASSERTeq(map->count(i), 1);
+	}
+
+	for (int i = 0; i < 100; ++i) {
+		persistent_map_hetero_type::accessor accessor;
+		UT_ASSERT(map->find(accessor, i));
+		UT_ASSERT(i == accessor->first);
+		UT_ASSERT(i == accessor->second);
+	}
+
+	for (int i = 0; i < 100; ++i) {
+		persistent_map_hetero_type::const_accessor accessor;
+		UT_ASSERT(map->find(accessor, i));
+		UT_ASSERT(i == accessor->first);
+		UT_ASSERT(i == accessor->second);
+	}
+
+	for (int i = 0; i < 100; ++i) {
+		UT_ASSERT(map->erase(i));
+	}
+
+	for (int i = 0; i < 100; ++i) {
+		UT_ASSERTeq(map->count(i), 0);
+	}
+}
 }
 
 int
@@ -420,6 +537,7 @@ main(int argc, char *argv[])
 	access_test(pop);
 	swap_test(pop);
 	insert_test(pop);
+	hatero_test(pop);
 
 	pop.close();
 

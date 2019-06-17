@@ -2952,7 +2952,7 @@ concurrent_hash_map<Key, T, HashCompare>::internal_copy(I first, I last)
 		allocate_node_copy_construct(
 			pop,
 			reinterpret_cast<persistent_ptr<node> &>(b->tmp_node),
-			&(*first), b->tmp_node);
+			&(*first), b->node_list);
 
 		insert_new_node(pop, b);
 	}

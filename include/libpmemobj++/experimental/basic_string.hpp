@@ -194,7 +194,7 @@ public:
 	static const size_type npos = static_cast<size_type>(-1);
 
 private:
-	using sso_type = array<value_type, sso_capacity + sizeof('\0')>;
+	using sso_type = array<value_type, sso_capacity + 1>;
 	using non_sso_type = vector<value_type>;
 
 	/**
@@ -1237,7 +1237,7 @@ basic_string<CharT, Traits>::size() const noexcept
 	else if (non_sso.data.size() == 0)
 		return 0;
 	else
-		return non_sso.data.size() - sizeof('\0');
+		return non_sso.data.size() - 1;
 }
 
 /**
@@ -1250,9 +1250,8 @@ template <typename CharT, typename Traits>
 CharT *
 basic_string<CharT, Traits>::data()
 {
-	return is_sso_used()
-		? sso.data.range(0, get_sso_size() + sizeof('\0')).begin()
-		: non_sso.data.data();
+	return is_sso_used() ? sso.data.range(0, get_sso_size() + 1).begin()
+			     : non_sso.data.data();
 }
 
 /**
@@ -1532,8 +1531,7 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::capacity() const noexcept
 {
-	return is_sso_used() ? sso_capacity
-			     : non_sso.data.capacity() - sizeof('\0');
+	return is_sso_used() ? sso_capacity : non_sso.data.capacity() - 1;
 }
 
 /**
@@ -1692,7 +1690,7 @@ basic_string<CharT, Traits>::assign_sso_data(InputIt first, InputIt last)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size <= sso_capacity);
 
-	auto dest = sso.data.range(0, size + sizeof('\0')).begin();
+	auto dest = sso.data.range(0, size + 1).begin();
 	std::copy(first, last, dest);
 
 	dest[size] = value_type('\0');
@@ -1710,7 +1708,7 @@ basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(count <= sso_capacity);
 
-	auto dest = sso.data.range(0, count + sizeof('\0')).begin();
+	auto dest = sso.data.range(0, count + 1).begin();
 	traits_type::assign(dest, count, ch);
 
 	dest[count] = value_type('\0');
@@ -1743,7 +1741,7 @@ basic_string<CharT, Traits>::assign_large_data(InputIt first, InputIt last)
 
 	auto size = static_cast<size_type>(std::distance(first, last));
 
-	non_sso.data.reserve(size + sizeof('\0'));
+	non_sso.data.reserve(size + 1);
 	non_sso.data.assign(first, last);
 	non_sso.data.push_back(value_type('\0'));
 
@@ -1760,7 +1758,7 @@ basic_string<CharT, Traits>::assign_large_data(size_type count, value_type ch)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	non_sso.data.reserve(count + sizeof('\0'));
+	non_sso.data.reserve(count + 1);
 	non_sso.data.assign(count, ch);
 	non_sso.data.push_back(value_type('\0'));
 

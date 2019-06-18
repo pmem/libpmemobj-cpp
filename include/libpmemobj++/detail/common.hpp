@@ -154,11 +154,30 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 /*
  * Return type number for given type.
  */
-template <typename T>
-uint64_t
-type_num()
-{
+template <typename T, typename U = int>
+struct type_num_cls {
+  uint64_t operator()(){
 	return typeid(T).hash_code();
+  }
+};
+
+/*
+ * Return type number for given type.
+ */
+template <typename T>
+struct type_num_cls <T, decltype((void)T::type_num(), 0)> {
+  uint64_t operator()(){
+	return T::type_num();
+  }
+};
+
+/*
+ * Return type number for given type.
+ */
+template <typename T>
+uint64_t type_num() {
+  static type_num_cls<T> type_num_fn;
+  return type_num_fn();
 }
 
 /**

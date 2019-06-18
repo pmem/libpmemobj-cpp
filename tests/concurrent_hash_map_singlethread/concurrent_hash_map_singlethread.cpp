@@ -284,11 +284,8 @@ access_test(nvobj::pool<root> &pop)
 	auto const_it =
 		const_cast<const persistent_map_type *>(map1.get())->begin();
 	while (it != map1->end()) {
-		UT_ASSERT(it->first == i);
-		UT_ASSERT(it->second == i);
-
-		UT_ASSERT(const_it->first == i);
-		UT_ASSERT(const_it->second == i);
+		UT_ASSERT(it->first == const_it->first);
+		UT_ASSERT(it->second == const_it->second);
 
 		i++;
 		it++;

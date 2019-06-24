@@ -172,8 +172,38 @@ public:
 	size_type length() const noexcept;
 	size_type max_size() const noexcept;
 	size_type capacity() const noexcept;
+	void resize(size_type count, CharT ch);
+	void resize(size_type n);
+	void reserve(size_type new_cap = 0);
+	void shrink_to_fit();
+	void clear();
 
 	/* Modifiers */
+	basic_string &erase(size_type index = 0, size_type count = npos);
+	iterator erase(const_iterator pos);
+	iterator erase(const_iterator first, const_iterator last);
+	/* We add following overloads to resolve erase(0) ambiguity */
+	template <typename T,
+		  typename Enable = typename std::enable_if<
+			  std::is_convertible<T, size_type>::value>::type>
+	basic_string &erase(T param);
+	template <typename T,
+		  typename Enable = typename std::enable_if<
+			  !std::is_convertible<T, size_type>::value>::type>
+	iterator erase(T param);
+
+	basic_string &append(size_type count, CharT ch);
+	basic_string &append(const basic_string &str);
+	basic_string &append(const basic_string &str, size_type pos,
+			     size_type count = npos);
+	basic_string &append(const CharT *s, size_type count);
+	basic_string &append(const CharT *s);
+	template <typename InputIt,
+		  typename Enable = typename pmem::detail::is_input_iterator<
+			  InputIt>::type>
+	basic_string &append(InputIt first, InputIt last);
+	basic_string &append(std::initializer_list<CharT> ilist);
+
 	int compare(const basic_string &other) const;
 	int compare(const std::basic_string<CharT> &other) const;
 	int compare(size_type pos, size_type count,
@@ -252,6 +282,7 @@ private:
 	pointer replace(Args &&... args);
 	template <typename... Args>
 	pointer initialize(Args &&... args);
+	void allocate(size_type capacity);
 	template <
 		typename InputIt,
 		typename Enable = typename std::enable_if<
@@ -270,10 +301,13 @@ private:
 	void check_pmem() const;
 	void check_tx_stage_work() const;
 	void check_pmem_tx() const;
+	void snapshot_sso() const;
 	size_type get_sso_size() const;
 	void enable_sso();
 	void disable_sso();
 	void set_sso_size(size_type new_size);
+	void sso_to_large(size_t new_capacity);
+	void large_to_sso();
 };
 
 /**
@@ -290,6 +324,7 @@ basic_string<CharT, Traits>::basic_string()
 {
 	check_pmem_tx();
 
+	allocate(0);
 	initialize(0U, value_type('\0'));
 }
 
@@ -312,6 +347,7 @@ basic_string<CharT, Traits>::basic_string(size_type count, CharT ch)
 {
 	check_pmem_tx();
 
+	allocate(count);
 	initialize(count, ch);
 }
 
@@ -347,6 +383,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other,
 	auto first = static_cast<difference_type>(pos);
 	auto last = first + static_cast<difference_type>(count);
 
+	allocate(count);
 	initialize(other.cbegin() + first, other.cbegin() + last);
 }
 
@@ -383,6 +420,7 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
 	auto first = static_cast<difference_type>(pos);
 	auto last = first + static_cast<difference_type>(count);
 
+	allocate(count);
 	initialize(other.cbegin() + first, other.cbegin() + last);
 }
 
@@ -406,6 +444,7 @@ basic_string<CharT, Traits>::basic_string(const CharT *s, size_type count)
 {
 	check_pmem_tx();
 
+	allocate(count);
 	initialize(s, s + count);
 }
 
@@ -429,6 +468,7 @@ basic_string<CharT, Traits>::basic_string(const CharT *s)
 
 	auto length = traits_type::length(s);
 
+	allocate(length);
 	initialize(s, s + length);
 }
 
@@ -452,10 +492,12 @@ template <typename CharT, typename Traits>
 template <typename InputIt, typename Enable>
 basic_string<CharT, Traits>::basic_string(InputIt first, InputIt last)
 {
-	assert(std::distance(first, last) >= 0);
+	auto len = std::distance(first, last);
+	assert(len >= 0);
 
 	check_pmem_tx();
 
+	allocate(static_cast<size_type>(len));
 	initialize(first, last);
 }
 
@@ -478,6 +520,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other)
 {
 	check_pmem_tx();
 
+	allocate(other.size());
 	initialize(other.cbegin(), other.cend());
 }
 
@@ -521,6 +564,7 @@ basic_string<CharT, Traits>::basic_string(basic_string &&other)
 {
 	check_pmem_tx();
 
+	allocate(other.size());
 	initialize(std::move(other));
 
 	if (other.is_sso_used())
@@ -546,6 +590,7 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 {
 	check_pmem_tx();
 
+	allocate(ilist.size());
 	initialize(ilist.begin(), ilist.end());
 }
 
@@ -1255,6 +1300,408 @@ basic_string<CharT, Traits>::data()
 }
 
 /**
+ * Remove characters from string starting at index transactionally.
+ * Length of the string to erase is determined as the smaller of count and
+ * size() - index.
+ *
+ * @param[in] index first character to remove.
+ * @param[in] count number of characters to remove.
+ *
+ * @return *this
+ *
+ * @pre index <= size()
+ *
+ * @post size() = size() - std::min(count, size() - index)
+ *
+ * @throw std::out_of_range if index > size().
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::erase(size_type index, size_type count)
+{
+	auto sz = size();
+
+	if (index > sz)
+		throw std::out_of_range("Index exceeds size.");
+
+	count = (std::min)(count, sz - index);
+
+	auto pop = get_pool();
+
+	auto first = begin() + static_cast<difference_type>(index);
+	auto last = first + static_cast<difference_type>(count);
+
+	if (is_sso_used()) {
+		transaction::run(pop, [&] {
+			auto move_len = sz - index - count;
+
+			auto dest = sso.data.range(index, move_len + 1).begin();
+
+			traits_type::move(dest, &*last, move_len);
+
+			auto new_size = sz - count;
+			set_sso_size(new_size);
+			sso.data[new_size] = value_type('\0');
+		});
+	} else {
+		non_sso.data.erase(first, last);
+	}
+
+	return *this;
+};
+
+/**
+ * Remove character from string at pos position transactionally.
+ *
+ * @param[in] pos position of character to be removed.
+ *
+ * @return Iterator following the removed element. If the iterator pos
+ * refers to the last element, the end() iterator is returned.
+ *
+ * @pre pos <= size()
+ *
+ * @post size() = size() - 1
+ *
+ * @throw std::out_of_range if pos > size().
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::erase(const_iterator pos)
+{
+	return erase(pos, pos + 1);
+};
+
+/**
+ * Remove characters from string at [first, last) range transactionally.
+ *
+ * @param[in] first begin of the range of characters to be removed.
+ * @param[in] last end of the range of characters to be removed.
+ *
+ * @return Iterator which points to the element pointed by the last iterator
+ * before the erase operation. If no such element exists then end() iterator is
+ * returned.
+ *
+ * @pre first and last are valid iterators on *this.
+ *
+ * @post size() = size() - std::distance(first, last)
+ *
+ * @throw std::out_of_range if [first, last) is not a valid range of *this.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::erase(const_iterator first, const_iterator last)
+{
+	size_type index =
+		static_cast<size_type>(std::distance(cbegin(), first));
+	size_type len = static_cast<size_type>(std::distance(first, last));
+
+	erase(index, len);
+
+	return begin() + static_cast<difference_type>(index);
+};
+
+/**
+ * Append count copies of character ch to the string transactionally.
+ *
+ * @param[in] count number of characters to append.
+ * @param[in] ch character value to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + count
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(size_type count, CharT ch)
+{
+	auto sz = size();
+	auto new_size = sz + count;
+
+	if (new_size > max_size())
+		throw std::length_error("Size exceeds max size.");
+
+	if (is_sso_used()) {
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] {
+			if (new_size > sso_capacity) {
+				sso_to_large(new_size);
+
+				non_sso.data.insert(
+					non_sso.data.cbegin() +
+						static_cast<difference_type>(
+							sz),
+					count, ch);
+			} else {
+				/*
+				 * XXX: There is no necessity to snapshot
+				 * uninitialized data. However, we need
+				 * libpmemobj support for that, because right
+				 * now pmemcheck will report an error
+				 * (uninitialized part of data not added to tx).
+				 *
+				 * XXX: future optimization: we don't have to
+				 * snapshot data which we will not overwrite. We
+				 * should snapshot terminating null character
+				 * only.
+				 */
+				snapshot_sso();
+				auto dest =
+					sso.data.range(sz, count + 1).begin();
+				traits_type::assign(dest, count, ch);
+
+				set_sso_size(new_size);
+				sso.data[new_size] = value_type('\0');
+			}
+		});
+	} else {
+		non_sso.data.insert(non_sso.data.cbegin() +
+					    static_cast<difference_type>(sz),
+				    count, ch);
+	}
+
+	return *this;
+}
+
+/**
+ * Append string str transactionally.
+ *
+ * @param[in] str string to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + str.size()
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const basic_string &str)
+{
+	return append(str.data(), str.size());
+}
+
+/**
+ * Append substring [pos, pos + count) of str string transactionally.
+ * Length of the string to append is determined as the smaller of count and
+ * str.size() - pos.
+ *
+ * @param[in] str string to append.
+ * @param[in] pos index of the first character to append.
+ * @param[in] count characters to append.
+ *
+ * @return *this
+ *
+ * @pre pos <= str.size()
+ *
+ * @post size() == size() + std::min(count, str.size() - pos).
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::out_of_range if pos > str.size().
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const basic_string &str, size_type pos,
+				    size_type count)
+{
+	auto sz = str.size();
+
+	if (pos > sz)
+		throw std::out_of_range("Index out of range.");
+
+	count = (std::min)(count, sz - pos);
+
+	append(str.data() + pos, count);
+
+	return *this;
+}
+
+/**
+ * Append characters in the range [s, s + count) transactionally.
+ *
+ * @param[in] s pointer to C-style string to append.
+ * @param[in] count characters to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + count.
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const CharT *s, size_type count)
+{
+	return append(s, s + count);
+}
+
+/**
+ * Append C-style string transactionally.
+ * Length of the string is determined by the first null character.
+ *
+ * @param[in] s pointer to C-style string to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + traits::length(s).
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(const CharT *s)
+{
+	return append(s, traits_type::length(s));
+}
+
+/**
+ * Append characters in the range [first, last) transactionally.
+ * This overload participates in overload resolution only if
+ * InputIt qualifies as InputIterator.
+ *
+ * @param[in] first begin of the range of characters to append.
+ * @param[in] last end of the range of characters to append.
+ *
+ * @return *this
+ *
+ * @post size() == size() + std::distance(first, last)
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+template <typename InputIt, typename Enable>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(InputIt first, InputIt last)
+{
+	auto sz = size();
+	auto count = static_cast<size_type>(std::distance(first, last));
+	auto new_size = sz + count;
+
+	if (new_size > max_size())
+		throw std::length_error("Size exceeds max size.");
+
+	if (is_sso_used()) {
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] {
+			if (new_size > sso_capacity) {
+				/* 1) Cache C-style string in case of
+				 * self-append, because it will be destroyed
+				 * when switching from sso to large string.
+				 *
+				 * 2) We cache in std::vector instead of
+				 * std::string because of overload deduction
+				 * ambiguity on Windows
+				 */
+				std::vector<value_type> str(first, last);
+
+				sso_to_large(new_size);
+				non_sso.data.insert(
+					non_sso.data.cbegin() +
+						static_cast<difference_type>(
+							sz),
+					str.begin(), str.end());
+			} else {
+				/*
+				 * XXX: future optimization: we don't have to
+				 * snapshot data which we will not overwrite. We
+				 * should snapshot terminating null character
+				 * only.
+				 */
+				snapshot_sso();
+				auto dest =
+					sso.data.range(sz, count + 1).begin();
+				std::copy(first, last, dest);
+
+				set_sso_size(new_size);
+				sso.data[new_size] = value_type('\0');
+			}
+		});
+	} else {
+		non_sso.data.insert(non_sso.data.cbegin() +
+					    static_cast<difference_type>(sz),
+				    first, last);
+	}
+
+	return *this;
+}
+
+/**
+ * Append characters from the ilist initializer list transactionally.
+ *
+ * @param[in] ilist initializer list with characters to append from
+ *
+ * @return *this
+ *
+ * @post size() == size() + std::distance(ilist.begin(), ilist.end())
+ * @post capacity() == sso_capacity if new size is less than or equal to
+ * sso_capacity, or the smallest next power of 2, bigger than new size if it is
+ * greater than old capacity, or remains the same if there is enough space to
+ * store all new elements.
+ *
+ * @throw std::length_error if new size > max_size().
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::append(std::initializer_list<CharT> ilist)
+{
+	return append(ilist.begin(), ilist.end());
+}
+
+/**
  * Compares [pos, pos + count1) substring of this to
  * [s, s + count2) substring of s.
  *
@@ -1535,6 +1982,153 @@ basic_string<CharT, Traits>::capacity() const noexcept
 }
 
 /**
+ * Resize the string to count characters transactionally. If the current size
+ * is greater than count, the string is reduced to its first count elements.
+ * If the current size is less than count, additional characters of ch value are
+ * appended.
+ *
+ * @param[in] count new size of the container.
+ * @param[in] ch character to initialize elements.
+ *
+ * @post capacity() == std::max(count, capacity())
+ * @post size() == count
+ *
+ * @throw std::length_error if count > max_size()
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::resize(size_type count, CharT ch)
+{
+	if (count > max_size())
+		throw std::length_error("Count exceeds max size.");
+
+	auto sz = size();
+
+	auto pop = get_pool();
+
+	transaction::run(pop, [&] {
+		if (count > sz) {
+			append(count - sz, ch);
+		} else if (is_sso_used()) {
+			set_sso_size(count);
+			sso.data[count] = value_type('\0');
+		} else {
+			non_sso.data.resize(count + 1, ch);
+			non_sso.data.back() = value_type('\0');
+		}
+	});
+}
+
+/**
+ * Resize the string to count characters transactionally. If the current size
+ * is greater than count, the string is reduced to its first count elements.
+ * If the current size is less than count, additional default-initialized
+ * characters are appended.
+ *
+ * @param[in] count new size of the container.
+ *
+ * @post capacity() == std::max(count, capacity())
+ * @post size() == count
+ *
+ * @throw std::length_error if count > max_size()
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::resize(size_type count)
+{
+	resize(count, CharT());
+}
+
+/**
+ * Increase the capacity of the string to new_cap transactionally. If
+ * new_cap is greater than the current capacity(), new storage is
+ * allocated, otherwise the method does nothing. If new_cap is greater than
+ * capacity(), all iterators, including the past-the-end iterator, and all
+ * references to the elements are invalidated. Otherwise, no iterators or
+ * references are invalidated.
+ *
+ * @param[in] new_cap new capacity.
+ *
+ * @post capacity() == max(capacity(), capacity_new)
+ *
+ * @throw rethrows destructor exception.
+ * @throw std::length_error if new_cap > max_size().
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::reserve(size_type new_cap)
+{
+	if (new_cap > max_size())
+		throw std::length_error("New capacity exceeds max size.");
+
+	if (new_cap < capacity() || new_cap <= sso_capacity)
+		return;
+
+	if (is_sso_used()) {
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] { sso_to_large(new_cap); });
+	} else {
+		non_sso.data.reserve(new_cap + 1);
+	}
+}
+
+/**
+ * Remove unused capacity transactionally. If large string is used capacity will
+ * be set to current size. If sso is used nothing happens.
+ *
+ * @post capacity() == std::min(sso_capacity, capacity())
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when reallocating failed.
+ * @throw pmem::transaction_free_error when freeing old underlying array failed.
+ * @throw rethrows constructor exception.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::shrink_to_fit()
+{
+	if (is_sso_used())
+		return;
+
+	if (size() <= sso_capacity) {
+		auto pop = get_pool();
+
+		transaction::run(pop, [&] { large_to_sso(); });
+	} else {
+		non_sso.data.shrink_to_fit();
+	}
+}
+
+/**
+ * Remove all characters from the string transactionally.
+ * All pointers, references, and iterators are invalidated.
+ *
+ * @post size() == 0
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::clear()
+{
+	erase(begin(), end());
+}
+
+/**
  * @return true if string is empty, false otherwise.
  */
 template <typename CharT, typename Traits>
@@ -1557,15 +2151,8 @@ basic_string<CharT, Traits>::destroy_data()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	/*
-	 * XXX: this can be optimized - only snapshot length() elements.
-	 */
-#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
-	VALGRIND_MAKE_MEM_DEFINED(&sso.data, sizeof(sso.data));
-#endif
-
 	if (is_sso_used()) {
-		sso.data.data();
+		snapshot_sso();
 		/* sso.data destructor does not have to be called */
 	} else {
 		non_sso.data.free_data();
@@ -1635,6 +2222,7 @@ basic_string<CharT, Traits>::replace(Args &&... args)
 
 	destroy_data();
 
+	allocate(new_size);
 	return initialize(std::forward<Args>(args)...);
 }
 
@@ -1647,6 +2235,7 @@ basic_string<CharT, Traits>::replace(Args &&... args)
  * - basic_string &&
  *
  * @pre must be called in transaction scope.
+ * @pre memory must be allocated before initialization.
  */
 template <typename CharT, typename Traits>
 template <typename... Args>
@@ -1655,25 +2244,45 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	auto new_size = get_size(std::forward<Args>(args)...);
+	auto size = get_size(std::forward<Args>(args)...);
 
-	if (new_size <= sso_capacity) {
+	if (is_sso_used()) {
+		set_sso_size(size);
+		return assign_sso_data(std::forward<Args>(args)...);
+	} else {
+		return assign_large_data(std::forward<Args>(args)...);
+	}
+}
+
+/**
+ * Allocate storage for container of capacity bytes.
+ * Based on capacity determine if sso or large string is used.
+ *
+ * @pre data must be uninitialized.
+ * @pre must be called in transaction scope.
+ *
+ * @param[in] capacity bytes to allocate.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::allocate(size_type capacity)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	if (capacity <= sso_capacity) {
 		enable_sso();
 	} else {
 		disable_sso();
 	}
 
-	if (is_sso_used()) {
-		set_sso_size(new_size);
-
-		/*
-		 * array is aggregate type so it's not required to call
-		 * a constructor.
-		 */
-		return assign_sso_data(std::forward<Args>(args)...);
-	} else {
+	/*
+	 * array is aggregate type so it's not required to call
+	 * a constructor.
+	 */
+	if (!is_sso_used()) {
+		detail::conditional_add_to_tx(&non_sso.data);
 		detail::create<decltype(non_sso.data)>(&non_sso.data);
-		return assign_large_data(std::forward<Args>(args)...);
+		non_sso.data.reserve(capacity + sizeof('\0'));
 	}
 }
 
@@ -1831,6 +2440,22 @@ basic_string<CharT, Traits>::check_pmem_tx() const
 }
 
 /**
+ * Snapshot sso data.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::snapshot_sso() const
+{
+/*
+ * XXX: this can be optimized - only snapshot length() elements.
+ */
+#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+	VALGRIND_MAKE_MEM_DEFINED(&sso.data, sizeof(sso.data));
+#endif
+	sso.data.data();
+};
+
+/**
  * Return size of sso string.
  */
 template <typename CharT, typename Traits>
@@ -1870,6 +2495,99 @@ void
 basic_string<CharT, Traits>::set_sso_size(size_type new_size)
 {
 	sso._size = new_size | _sso_mask;
+}
+
+/**
+ * Resize sso string to large string.
+ * Capacity is equal new_capacity plus sizeof(CharT) bytes for null character.
+ * Content of sso string is preserved and copied to the large string object.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @post sso is not used.
+ *
+ * @param[in] new_capacity capacity of constructed large string.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::sso_to_large(size_t new_capacity)
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	assert(new_capacity > sso_capacity);
+
+	auto sz = size();
+
+	sso_type tmp;
+	std::copy(cbegin(), cend(), tmp.data());
+	tmp[sz] = value_type('\0');
+
+	destroy_data();
+	allocate(new_capacity);
+
+	auto begin = tmp.cbegin();
+	auto end = begin + sz;
+
+	initialize(begin, end);
+
+	assert(!is_sso_used());
+};
+
+/**
+ * Resize large string to sso string of size() size.
+ * Content of large string is preserved and copied to the sso string.
+ *
+ * @pre must be called in transaction scope.
+ * @pre size() of large string must be less than or equal sso_capacity
+ *
+ * @post sso is used.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::large_to_sso()
+{
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	auto sz = size();
+
+	assert(sz <= sso_capacity);
+
+	sso_type tmp;
+	std::copy(cbegin(), cbegin() + sz, tmp.data());
+	tmp[sz] = value_type('\0');
+
+	destroy_data();
+	allocate(sz);
+
+	auto begin = tmp.cbegin();
+	auto end = begin + sz;
+
+	initialize(begin, end);
+
+	assert(is_sso_used());
+};
+
+/**
+ * Participate in overload resulution only if T is convertible to size_type.
+ * Call basic_string &erase(size_type index, size_type count = npos) if enabled.
+ */
+template <typename CharT, typename Traits>
+template <typename T, typename Enable>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::erase(T param)
+{
+	return erase(static_cast<size_type>(param));
+}
+
+/**
+ * Participate in overload resulution only if T is not convertible to size_type.
+ * Call iterator erase(const_iterator pos) if enabled.
+ */
+template <typename CharT, typename Traits>
+template <typename T, typename Enable>
+typename basic_string<CharT, Traits>::iterator
+basic_string<CharT, Traits>::erase(T param)
+{
+	return erase(static_cast<const_iterator>(param));
 }
 
 /**

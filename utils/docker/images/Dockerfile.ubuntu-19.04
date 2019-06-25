@@ -30,54 +30,52 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
+# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
-FROM fedora:28
+FROM ubuntu:19.04
 MAINTAINER marcin.slusarz@intel.com
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
+ENV DEBIAN_FRONTEND noninteractive
+
+# Update the Apt cache and install basic tools
+RUN apt-get update \
+ && apt-get install -y software-properties-common \
 	asciidoc \
 	autoconf \
-	automake \
-	bash-completion \
 	clang \
+	clang-format \
 	cmake \
+	curl \
+	debhelper \
+	devscripts \
 	doxygen \
 	gcc \
 	gdb \
 	git \
-	hub \
-	json-c-devel \
-	kmod-devel \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
-	man \
-	ncurses-devel \
-	open-sans-fonts \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	rpm-build-libs \
-	rpmdevtools \
-	SFML-devel \
+	graphviz \
+	libjson-c-dev \
+	libkmod-dev \
+	libncurses5-dev \
+	libsfml-dev \
+	libtext-diff-perl \
+	libudev-dev \
+	libunwind-dev \
+	llvm \
+	pkg-config \
+	ruby \
 	sudo \
-	tar \
+	tzdata \
+	uuid-dev \
 	wget \
-	which \
-	xmlto \
- && dnf clean all
+	whois \
+ && rm -rf /var/lib/apt/lists/*
 
 # Install libndctl
 COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh fedora
+RUN ./install-libndctl.sh
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
@@ -85,7 +83,7 @@ RUN ./install-valgrind.sh
 
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
+RUN ./install-pmdk.sh dpkg
 
 # Install Intel TBB
 COPY install-tbb.sh install-tbb.sh
@@ -94,14 +92,11 @@ RUN ./install-tbb.sh
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
 USER $USER
 
 # Set required environment variables
-ENV OS fedora
-ENV OS_VER 28
-ENV PACKAGE_MANAGER rpm
+ENV OS ubuntu
+ENV OS_VER 19.04
+ENV PACKAGE_MANAGER deb
 ENV NOTTY 1
-

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,13 +127,14 @@ mutex_zero_test(nvobj::pool<struct root> &pop)
 {
 	PMEMoid raw_mutex;
 
-	pmemobj_alloc(pop.handle(), &raw_mutex, sizeof(PMEMrwlock), 1,
-		      [](PMEMobjpool *pop, void *ptr, void *arg) -> int {
-			      PMEMrwlock *mtx = static_cast<PMEMrwlock *>(ptr);
-			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
-			      return 0;
-		      },
-		      nullptr);
+	pmemobj_alloc(
+		pop.handle(), &raw_mutex, sizeof(PMEMrwlock), 1,
+		[](PMEMobjpool *pop, void *ptr, void *arg) -> int {
+			PMEMrwlock *mtx = static_cast<PMEMrwlock *>(ptr);
+			pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
+			return 0;
+		},
+		nullptr);
 
 	nvobj::shared_mutex *placed_mtx =
 		new (pmemobj_direct(raw_mutex)) nvobj::shared_mutex;

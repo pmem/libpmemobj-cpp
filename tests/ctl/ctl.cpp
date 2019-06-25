@@ -42,7 +42,8 @@ struct root {
 using Object = int[10240];
 
 void
-run_ctl_pool_prefault(pmem::obj::pool<struct root> &pop) try {
+run_ctl_pool_prefault(pmem::obj::pool<struct root> &pop)
+try {
 	pop.ctl_set<int>("prefault.at_open", 1);
 
 	auto prefault_at_open = pop.ctl_get<int>("prefault.at_open");
@@ -57,7 +58,8 @@ run_ctl_pool_prefault(pmem::obj::pool<struct root> &pop) try {
 }
 
 void
-run_ctl_pool_extend(pmem::obj::pool<struct root> &pop) try {
+run_ctl_pool_extend(pmem::obj::pool<struct root> &pop)
+try {
 	/* disable auto-extend */
 	pop.ctl_set<uint64_t>("heap.size.granularity", 0);
 
@@ -83,7 +85,8 @@ run_ctl_pool_extend(pmem::obj::pool<struct root> &pop) try {
 }
 
 void
-run_ctl_global() try {
+run_ctl_global()
+try {
 	pmem::obj::ctl_set<int>("prefault.at_create", 1);
 
 	auto prefault_at_create = pmem::obj::ctl_get<int>("prefault.at_create");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -417,13 +417,14 @@ cond_zero_test(nvobj::pool<struct root> &pop)
 {
 	PMEMoid raw_cnd;
 
-	pmemobj_alloc(pop.handle(), &raw_cnd, sizeof(PMEMcond), 1,
-		      [](PMEMobjpool *pop, void *ptr, void *arg) -> int {
-			      PMEMcond *mtx = static_cast<PMEMcond *>(ptr);
-			      pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
-			      return 0;
-		      },
-		      nullptr);
+	pmemobj_alloc(
+		pop.handle(), &raw_cnd, sizeof(PMEMcond), 1,
+		[](PMEMobjpool *pop, void *ptr, void *arg) -> int {
+			PMEMcond *mtx = static_cast<PMEMcond *>(ptr);
+			pmemobj_memset_persist(pop, mtx, 1, sizeof(*mtx));
+			return 0;
+		},
+		nullptr);
 
 	nvobj::condition_variable *placed_mtx =
 		new (pmemobj_direct(raw_cnd)) nvobj::condition_variable;

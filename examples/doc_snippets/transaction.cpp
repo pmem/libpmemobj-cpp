@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,16 +82,16 @@ general_tx_example()
 	// typical usage schemes
 	try {
 		// take locks and start a transaction
-		transaction::run(pop,
-				 [&]() {
-					 // atomically allocate objects
-					 proot->another_root =
-						 make_persistent<root>();
+		transaction::run(
+			pop,
+			[&]() {
+				// atomically allocate objects
+				proot->another_root = make_persistent<root>();
 
-					 // atomically modify objects
-					 proot->count++;
-				 },
-				 proot->pmutex, proot->shared_pmutex);
+				// atomically modify objects
+				proot->count++;
+			},
+			proot->pmutex, proot->shared_pmutex);
 	} catch (pmem::transaction_error &) {
 		// a transaction error occurred, transaction got aborted
 		// reacquire locks if necessary

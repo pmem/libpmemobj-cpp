@@ -96,7 +96,8 @@ assert_tx_exception(std::function<void(void)> f)
 }
 
 void
-test_ctor_exceptions_nopmem(pmem::obj::pool<struct root> &pop) try {
+test_ctor_exceptions_nopmem(pmem::obj::pool<struct root> &pop)
+try {
 	auto r = pop.root();
 
 	pmem::obj::transaction::run(pop, [&] {
@@ -144,7 +145,8 @@ test_ctor_exceptions_nopmem(pmem::obj::pool<struct root> &pop) try {
 }
 
 void
-test_ctor_exceptions_notx(pmem::obj::pool<struct root> &pop) try {
+test_ctor_exceptions_notx(pmem::obj::pool<struct root> &pop)
+try {
 	auto r = pop.root();
 
 	pmem::obj::transaction::run(pop, [&] {

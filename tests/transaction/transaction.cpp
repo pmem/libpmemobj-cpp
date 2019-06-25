@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -304,8 +304,8 @@ test_tx_throw_no_abort(nvobj::pool<root> &pop)
 		exception_thrown = false;
 		rootp->shared_mutex.lock();
 		try {
-			nvobj::transaction::run(pop, [&]() {},
-						rootp->shared_mutex);
+			nvobj::transaction::run(
+				pop, [&]() {}, rootp->shared_mutex);
 		} catch (pmem::transaction_error &) {
 			exception_thrown = true;
 		} catch (...) {

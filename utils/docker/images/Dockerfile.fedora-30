@@ -70,6 +70,7 @@ RUN dnf update -y \
 	SFML-devel \
 	sudo \
 	tar \
+	tbb-devel \
 	wget \
 	which \
 	xmlto \
@@ -86,10 +87,6 @@ RUN ./install-valgrind.sh
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh rpm
-
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
 
 # Add user
 ENV USER user

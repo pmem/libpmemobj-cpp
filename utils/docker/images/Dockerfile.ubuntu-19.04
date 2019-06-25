@@ -60,6 +60,7 @@ RUN apt-get update \
 	libkmod-dev \
 	libncurses5-dev \
 	libsfml-dev \
+	libtbb-dev \
 	libtext-diff-perl \
 	libudev-dev \
 	libunwind-dev \
@@ -84,10 +85,6 @@ RUN ./install-valgrind.sh
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh dpkg
-
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
 
 # Add user
 ENV USER user

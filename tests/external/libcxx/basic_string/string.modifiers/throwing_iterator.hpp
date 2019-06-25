@@ -19,7 +19,7 @@
 template <typename T>
 struct throwing_it {
   typedef std::bidirectional_iterator_tag iterator_category;
-  typedef ptrdiff_t difference_type;
+  typedef std::ptrdiff_t difference_type;
   typedef const T value_type;
   typedef const T *pointer;
   typedef const T &reference;

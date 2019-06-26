@@ -44,7 +44,7 @@
 #include <libpmemobj++/detail/temp_value.hpp>
 #include <libpmemobj++/experimental/contiguous_iterator.hpp>
 #include <libpmemobj++/experimental/slice.hpp>
-#include <libpmemobj++/make_persistent_array.hpp>
+#include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/transaction.hpp>

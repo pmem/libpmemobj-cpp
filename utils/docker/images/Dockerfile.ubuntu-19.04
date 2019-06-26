@@ -35,7 +35,7 @@
 #
 
 # Pull base image
-FROM ubuntu:18.04
+FROM ubuntu:19.04
 MAINTAINER marcin.slusarz@intel.com
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -60,6 +60,7 @@ RUN apt-get update \
 	libkmod-dev \
 	libncurses5-dev \
 	libsfml-dev \
+	libtbb-dev \
 	libtext-diff-perl \
 	libudev-dev \
 	libunwind-dev \
@@ -85,10 +86,6 @@ RUN ./install-valgrind.sh
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh dpkg
 
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
-
 # Add user
 ENV USER user
 ENV USERPASS pass
@@ -97,6 +94,6 @@ USER $USER
 
 # Set required environment variables
 ENV OS ubuntu
-ENV OS_VER 18.04
+ENV OS_VER 19.04
 ENV PACKAGE_MANAGER deb
 ENV NOTTY 1

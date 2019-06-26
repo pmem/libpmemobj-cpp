@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2016-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,8 +44,8 @@ set -e
 function usage {
 	echo "Usage:"
 	echo "    build-image.sh <DOCKERHUB_REPO> <OS-VER>"
-	echo "where <OS-VER>, for example, can be 'ubuntu-16.04', provided " \
-		"a Dockerfile named 'Dockerfile.ubuntu-16.04' exists in the " \
+	echo "where <OS-VER>, for example, can be 'ubuntu-19.04', provided " \
+		"a Dockerfile named 'Dockerfile.ubuntu-19.04' exists in the " \
 		"current directory."
 }
 

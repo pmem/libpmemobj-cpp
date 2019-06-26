@@ -35,7 +35,7 @@
 #
 
 # Pull base image
-FROM fedora:28
+FROM fedora:30
 MAINTAINER marcin.slusarz@intel.com
 
 # Install basic tools
@@ -70,6 +70,7 @@ RUN dnf update -y \
 	SFML-devel \
 	sudo \
 	tar \
+	tbb-devel \
 	wget \
 	which \
 	xmlto \
@@ -87,10 +88,6 @@ RUN ./install-valgrind.sh
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh rpm
 
-# Install Intel TBB
-COPY install-tbb.sh install-tbb.sh
-RUN ./install-tbb.sh
-
 # Add user
 ENV USER user
 ENV USERPASS pass
@@ -101,7 +98,7 @@ USER $USER
 
 # Set required environment variables
 ENV OS fedora
-ENV OS_VER 28
+ENV OS_VER 30
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 

@@ -40,7 +40,7 @@
 #   where the root of this project is on the host machine,
 # - set variables 'OS' and 'OS_VER' properly to a system you want to build this
 #	repo on (for proper values take a look on the list of Dockerfiles at the
-#   utils/docker/images directory), eg. OS=ubuntu, OS_VER=16.04.
+#   utils/docker/images directory), e.g. OS=ubuntu, OS_VER=19.04.
 #
 
 set -e
@@ -51,7 +51,7 @@ export KEEP_CONTAINER=${KEEP_CONTAINER:-0}
 
 if [[ -z "$OS" || -z "$OS_VER" ]]; then
 	echo "ERROR: The variables OS and OS_VER have to be set " \
-		"(eg. OS=ubuntu, OS_VER=16.04)."
+		"(e.g. OS=ubuntu, OS_VER=19.04)."
 	exit 1
 fi
 

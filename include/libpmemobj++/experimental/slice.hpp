@@ -39,6 +39,7 @@
 #define LIBPMEMOBJ_CPP_SLICE_HPP
 
 #include <iterator>
+#include <stdexcept>
 #include <type_traits>
 
 namespace pmem

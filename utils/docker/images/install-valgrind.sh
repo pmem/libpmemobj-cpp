@@ -38,8 +38,8 @@ set -e
 
 git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind
-# pmem-3.14: pmemcheck: add missing Ist_Flush IRStmt handling
-git checkout 332b3975989d9130486d09493a9571528d66eaf7
+# pmem-3.14: fix memcheck failure on Ubuntu-19.04
+git checkout 0965e35d7fd5c7941dc3f2a0c981cb8386c479d3
 ./autogen.sh
 ./configure --prefix=/usr
 make

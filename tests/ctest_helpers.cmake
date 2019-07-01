@@ -178,7 +178,7 @@ endfunction()
 
 function(build_test_tbb name)
 	build_test(${name} ${ARGN})
-	target_link_libraries(${name} ${TBB_IMPORTED_TARGETS})
+	target_link_libraries(${name} ${TBB_LIBRARIES})
 endfunction()
 
 set(vg_tracers memcheck helgrind drd pmemcheck)

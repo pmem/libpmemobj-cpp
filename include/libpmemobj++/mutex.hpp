@@ -71,7 +71,7 @@ public:
 	{
 		PMEMobjpool *pop;
 		if ((pop = pmemobj_pool_by_ptr(&plock)) == nullptr)
-			throw lock_error(
+			throw pmem::lock_error(
 				1, std::generic_category(),
 				"Persistent mutex not from persistent memory.");
 
@@ -99,8 +99,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_mutex_lock(pop, &this->plock))
-			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a mutex.");
+			throw pmem::lock_error(ret, std::system_category(),
+					       "Failed to lock a mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -128,8 +129,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a mutex.");
+			throw pmem::lock_error(ret, std::system_category(),
+					       "Failed to lock a mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -145,8 +147,9 @@ public:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		int ret = pmemobj_mutex_unlock(pop, &this->plock);
 		if (ret)
-			throw lock_error(ret, std::system_category(),
-					 "Failed to unlock a mutex.");
+			throw pmem::lock_error(ret, std::system_category(),
+					       "Failed to unlock a mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**

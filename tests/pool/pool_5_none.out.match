@@ -1,1 +1,1 @@
-$(nW)testfile: pool::open: Failed opening pool
+$(nW)testfile: pool::open: Failed opening pool: $(*)

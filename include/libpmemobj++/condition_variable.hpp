@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,7 +76,7 @@ public:
 	{
 		PMEMobjpool *pop;
 		if ((pop = pmemobj_pool_by_ptr(&pcond)) == nullptr)
-			throw lock_error(
+			throw pmem::lock_error(
 				1, std::generic_category(),
 				"Persistent condition variable not from persistent memory.");
 
@@ -101,9 +101,10 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_cond_signal(pop, &this->pcond))
-			throw lock_error(
+			throw pmem::lock_error(
 				ret, std::system_category(),
-				"Error notifying one on a condition variable.");
+				"Error notifying one on a condition variable.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -116,9 +117,10 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_cond_broadcast(pop, &this->pcond))
-			throw lock_error(
+			throw pmem::lock_error(
 				ret, std::system_category(),
-				"Error notifying all on a condition variable.");
+				"Error notifying all on a condition variable.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -505,9 +507,10 @@ private:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_cond_wait(pop, &this->pcond,
 						lock.native_handle()))
-			throw lock_error(
+			throw pmem::lock_error(
 				ret, std::system_category(),
-				"Error waiting on a condition variable.");
+				"Error waiting on a condition variable.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -548,9 +551,10 @@ private:
 		else if (ret == ETIMEDOUT)
 			return std::cv_status::timeout;
 		else
-			throw lock_error(
+			throw pmem::lock_error(
 				ret, std::system_category(),
-				"Error waiting on a condition variable.");
+				"Error waiting on a condition variable.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**

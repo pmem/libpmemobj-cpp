@@ -241,7 +241,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 			r->bstruct = nvobj::make_persistent<big_struct>();
 			UT_ASSERT(0);
 		});
-	} catch (pmem::transaction_alloc_error &) {
+	} catch (pmem::obj::transaction_alloc_error &) {
 		alloc_error_thrown = true;
 	}
 	UT_ASSERT(alloc_error_thrown);

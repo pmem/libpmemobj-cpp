@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,27 @@
 #include <stdexcept>
 #include <system_error>
 
+#include <libpmemobj.h>
+
 namespace pmem
 {
+
+namespace detail
+{
+
+/**
+ * Return last libpmemobj error message as a std::string.
+ */
+inline std::string
+errormsg(void)
+{
+#ifdef _WIN32
+	return std::string(pmemobj_errormsgU());
+#else
+	return std::string(pmemobj_errormsg());
+#endif
+}
+}
 
 /**
  * Custom pool error class.
@@ -125,6 +144,97 @@ class ctl_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
 };
+
+namespace obj
+{
+
+/**
+ * Custom pool error class. Extends passed error mesage with
+ * string obtained from pmemobj_errormsg().
+ *
+ * Thrown when there is a runtime problem with some action on the
+ * pool.
+ */
+class pool_error : public pmem::pool_error {
+public:
+	pool_error(const std::string &msg = "")
+	    : pmem::pool_error(msg + ": " + detail::errormsg())
+	{
+	}
+};
+
+/**
+ * Custom transaction error class. Extends passed error mesage with
+ * string obtained from pmemobj_errormsg().
+ *
+ * Thrown when there is a runtime problem with a transaction.
+ */
+class transaction_error : public pmem::transaction_error {
+public:
+	transaction_error(const std::string &msg = "")
+	    : pmem::transaction_error(msg + ": " + detail::errormsg())
+	{
+	}
+};
+
+/**
+ * Custom lock error class. Extends passed error mesage with
+ * string obtained from pmemobj_errormsg().
+ *
+ * Thrown when there is a runtime system error with an operation
+ * on a lock.
+ */
+class lock_error : public pmem::lock_error {
+public:
+	lock_error(int ev, const std::error_category &ecat,
+		   const std::string &msg = "")
+	    : pmem::lock_error(ev, ecat, msg + ": " + detail::errormsg())
+	{
+	}
+};
+
+/**
+ * Custom transaction error class. Extends passed error mesage with
+ * string obtained from pmemobj_errormsg().
+ *
+ * Thrown when there is a transactional allocation error.
+ */
+class transaction_alloc_error : public pmem::transaction_alloc_error {
+public:
+	transaction_alloc_error(const std::string &msg = "")
+	    : pmem::transaction_alloc_error(msg + ": " + detail::errormsg())
+	{
+	}
+};
+
+/**
+ * Custom transaction error class. Extends passed error mesage with
+ * string obtained from pmemobj_errormsg().
+ *
+ * Thrown when there is a transactional free error.
+ */
+class transaction_free_error : public pmem::transaction_free_error {
+public:
+	transaction_free_error(const std::string &msg = "")
+	    : pmem::transaction_free_error(msg + ": " + detail::errormsg())
+	{
+	}
+};
+
+/**
+ * Custom ctl error class. Extends passed error mesage with
+ * string obtained from pmemobj_errormsg().
+ *
+ * Thrown on ctl_[get|set|exec] failure.
+ */
+class ctl_error : public pmem::ctl_error {
+public:
+	ctl_error(const std::string &msg = "")
+	    : pmem::ctl_error(msg + ": " + detail::errormsg())
+	{
+	}
+};
+}
 
 } /* namespace pmem */
 

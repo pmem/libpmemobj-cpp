@@ -2058,7 +2058,7 @@ vector<T>::alloc(size_type capacity_new)
 				 detail::type_num<value_type>());
 
 	if (res == nullptr)
-		throw transaction_alloc_error(
+		throw pmem::obj::transaction_alloc_error(
 			"Failed to allocate persistent memory object");
 
 	_data = res;
@@ -2075,7 +2075,7 @@ void
 vector<T>::check_pmem()
 {
 	if (nullptr == pmemobj_pool_by_ptr(this))
-		throw pool_error("Invalid pool handle.");
+		throw pmem::pool_error("Invalid pool handle.");
 }
 
 /**
@@ -2090,7 +2090,7 @@ void
 vector<T>::check_tx_stage_work()
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_error(
+		throw pmem::transaction_error(
 			"Function called out of transaction scope.");
 }
 
@@ -2233,7 +2233,7 @@ vector<T>::dealloc()
 	if (_data != nullptr) {
 		shrink(0);
 		if (pmemobj_tx_free(*_data.raw_ptr()) != 0)
-			throw transaction_free_error(
+			throw pmem::obj::transaction_free_error(
 				"failed to delete persistent memory object");
 		_data = nullptr;
 		_capacity = 0;
@@ -2329,7 +2329,7 @@ vector<T>::insert_gap(size_type idx, size_type count)
 			detail::destroy<value_type>(
 				old_data[static_cast<difference_type>(i)]);
 		if (pmemobj_tx_free(old_data.raw()) != 0)
-			throw transaction_free_error(
+			throw pmem::obj::transaction_free_error(
 				"failed to delete persistent memory object");
 	}
 }
@@ -2382,7 +2382,7 @@ vector<T>::realloc(size_type capacity_new)
 		detail::destroy<value_type>(
 			old_data[static_cast<difference_type>(i)]);
 	if (pmemobj_tx_free(old_data.raw()) != 0)
-		throw transaction_free_error(
+		throw pmem::obj::transaction_free_error(
 			"failed to delete persistent memory object");
 }
 

@@ -62,7 +62,7 @@ pool_by_vptr(const T *that)
 {
 	auto pop = pmemobj_pool_by_ptr(that);
 	if (!pop)
-		throw pool_error("Object not in an open pool.");
+		throw pmem::pool_error("Object not in an open pool.");
 
 	return pool_base(pop);
 }
@@ -82,7 +82,7 @@ pool_by_pptr(const persistent_ptr<T> ptr)
 {
 	auto pop = pmemobj_pool_by_oid(ptr.raw());
 	if (!pop)
-		throw pool_error("Object not in an open pool.");
+		throw pmem::pool_error("Object not in an open pool.");
 
 	return pool_base(pop);
 }

@@ -130,7 +130,7 @@ public:
 		pmemobjpool *pop = pmemobj_open(path.c_str(), layout.c_str());
 #endif
 		if (pop == nullptr)
-			throw pool_error("Failed opening pool");
+			throw pmem::obj::pool_error("Failed opening pool");
 
 		return pool_base(pop);
 	}
@@ -163,7 +163,7 @@ public:
 						  size, mode);
 #endif
 		if (pop == nullptr)
-			throw pool_error("Failed creating pool");
+			throw pmem::obj::pool_error("Failed creating pool");
 
 		return pool_base(pop);
 	}
@@ -207,7 +207,7 @@ public:
 	{
 		pmemobjpool *pop = pmemobj_openW(path.c_str(), layout.c_str());
 		if (pop == nullptr)
-			throw pool_error("Failed opening pool");
+			throw pmem::obj::pool_error("Failed opening pool");
 
 		return pool_base(pop);
 	}
@@ -236,7 +236,7 @@ public:
 		pmemobjpool *pop = pmemobj_createW(path.c_str(), layout.c_str(),
 						   size, mode);
 		if (pop == nullptr)
-			throw pool_error("Failed creating pool");
+			throw pmem::obj::pool_error("Failed creating pool");
 
 		return pool_base(pop);
 	}
@@ -591,7 +591,7 @@ public:
 	root()
 	{
 		if (pop == nullptr)
-			throw pool_error("Invalid pool handle");
+			throw pmem::pool_error("Invalid pool handle");
 
 		persistent_ptr<T> root = pmemobj_root(this->pop, sizeof(T));
 		return root;

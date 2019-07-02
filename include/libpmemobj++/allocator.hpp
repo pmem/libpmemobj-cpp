@@ -252,7 +252,7 @@ public:
 	allocate(size_type cnt, const_void_pointer = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
@@ -271,11 +271,11 @@ public:
 	deallocate(pointer p, size_type = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(*p.raw_ptr()) != 0)
-			throw transaction_free_error(
+			throw pmem::obj::transaction_free_error(
 				"failed to delete persistent memory object");
 	}
 
@@ -352,7 +352,7 @@ public:
 	allocate(size_type cnt, const_pointer = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
@@ -370,11 +370,11 @@ public:
 	deallocate(pointer p, size_type = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(p.raw()) != 0)
-			throw transaction_free_error(
+			throw pmem::obj::transaction_free_error(
 				"failed to delete persistent memory object");
 	}
 

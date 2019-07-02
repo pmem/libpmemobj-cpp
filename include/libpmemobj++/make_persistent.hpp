@@ -79,14 +79,14 @@ typename detail::pp_if_not_array<T>::type
 make_persistent(allocation_flag flag, Args &&... args)
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_scope_error(
+		throw pmem::transaction_scope_error(
 			"refusing to allocate memory outside of transaction scope");
 
 	persistent_ptr<T> ptr =
 		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(), flag.value);
 
 	if (ptr == nullptr)
-		throw transaction_alloc_error(
+		throw pmem::obj::transaction_alloc_error(
 			"failed to allocate persistent memory object");
 
 	detail::create<T, Args...>(ptr.get(), std::forward<Args>(args)...);
@@ -138,7 +138,7 @@ void
 delete_persistent(typename detail::pp_if_not_array<T>::type ptr)
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_scope_error(
+		throw pmem::transaction_scope_error(
 			"refusing to free memory outside of transaction scope");
 
 	if (ptr == nullptr)
@@ -151,7 +151,7 @@ delete_persistent(typename detail::pp_if_not_array<T>::type ptr)
 	detail::destroy<T>(*ptr);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw transaction_free_error(
+		throw pmem::obj::transaction_free_error(
 			"failed to delete persistent memory object");
 }
 

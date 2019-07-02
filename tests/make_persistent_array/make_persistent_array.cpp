@@ -337,7 +337,7 @@ test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
 				nvobj::make_persistent<foo[PMEMOBJ_MIN_POOL]>();
 			UT_ASSERT(0);
 		});
-	} catch (pmem::transaction_alloc_error &) {
+	} catch (pmem::obj::transaction_alloc_error &) {
 		alloc_error_thrown = true;
 	}
 	UT_ASSERT(alloc_error_thrown);

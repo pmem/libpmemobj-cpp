@@ -89,14 +89,14 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
 	       static_cast<std::size_t>(std::numeric_limits<ptrdiff_t>::max()));
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_scope_error(
+		throw pmem::transaction_scope_error(
 			"refusing to allocate memory outside of transaction scope");
 
 	persistent_ptr<T> ptr = pmemobj_tx_xalloc(
 		sizeof(I) * N, detail::type_num<I>(), flag.value);
 
 	if (ptr == nullptr)
-		throw transaction_alloc_error(
+		throw pmem::obj::transaction_alloc_error(
 			"failed to allocate persistent memory array");
 
 	/*
@@ -142,14 +142,14 @@ make_persistent(allocation_flag flag = allocation_flag::none())
 	enum { N = detail::pp_array_elems<T>::elems };
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_scope_error(
+		throw pmem::transaction_scope_error(
 			"refusing to allocate memory outside of transaction scope");
 
 	persistent_ptr<T> ptr = pmemobj_tx_xalloc(
 		sizeof(I) * N, detail::type_num<I>(), flag.value);
 
 	if (ptr == nullptr)
-		throw transaction_alloc_error(
+		throw pmem::obj::transaction_alloc_error(
 			"failed to allocate persistent memory array");
 
 	/*
@@ -194,7 +194,7 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 	typedef typename detail::pp_array_type<T>::type I;
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_scope_error(
+		throw pmem::transaction_scope_error(
 			"refusing to free memory outside of transaction scope");
 
 	if (ptr == nullptr)
@@ -211,7 +211,7 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw transaction_free_error(
+		throw pmem::obj::transaction_free_error(
 			"failed to delete persistent memory object");
 }
 
@@ -237,7 +237,7 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 	enum { N = detail::pp_array_elems<T>::elems };
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_scope_error(
+		throw pmem::transaction_scope_error(
 			"refusing to free memory outside of transaction scope");
 
 	if (ptr == nullptr)
@@ -254,7 +254,7 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw transaction_free_error(
+		throw pmem::obj::transaction_free_error(
 			"failed to delete persistent memory object");
 }
 

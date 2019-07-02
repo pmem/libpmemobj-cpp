@@ -107,7 +107,7 @@ run_ctl_exception()
 		/* run query with non-existing entry point */
 		pmem::obj::ctl_set<int>("prefault.non_existing_entry_point", 1);
 		UT_ASSERT(0);
-	} catch (pmem::ctl_error &e) {
+	} catch (pmem::obj::ctl_error &e) {
 	} catch (...) {
 		UT_ASSERT(0);
 	}
@@ -116,7 +116,7 @@ run_ctl_exception()
 		/* run query with non-existing entry point */
 		pmem::obj::ctl_get<int>("prefault.non_existing_entry_point");
 		UT_ASSERT(0);
-	} catch (pmem::ctl_error &e) {
+	} catch (pmem::obj::ctl_error &e) {
 	} catch (...) {
 		UT_ASSERT(0);
 	}
@@ -126,7 +126,7 @@ run_ctl_exception()
 		pmem::obj::ctl_exec<int>("prefault.non_existing_entry_point",
 					 1);
 		UT_ASSERT(0);
-	} catch (pmem::ctl_error &e) {
+	} catch (pmem::obj::ctl_error &e) {
 	} catch (...) {
 		UT_ASSERT(0);
 	}

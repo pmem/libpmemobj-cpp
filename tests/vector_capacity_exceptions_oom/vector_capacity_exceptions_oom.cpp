@@ -66,7 +66,7 @@ test(nvobj::pool<struct root> &pop)
 	try {
 		r->v->reserve(size);
 		UT_ASSERT(0);
-	} catch (pmem::transaction_alloc_error &) {
+	} catch (pmem::obj::transaction_alloc_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

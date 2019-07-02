@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,27 @@
 #include <stdexcept>
 #include <system_error>
 
+#include <libpmemobj/base.h>
+
 namespace pmem
 {
+
+namespace detail
+{
+
+/**
+ * Return last libpmemobj error message as a std::string.
+ */
+inline std::string
+errormsg(void)
+{
+#ifdef _WIN32
+	return std::string(pmemobj_errormsgU());
+#else
+	return std::string(pmemobj_errormsg());
+#endif
+}
+}
 
 /**
  * Custom pool error class.
@@ -53,6 +72,14 @@ namespace pmem
 class pool_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	pool_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = pool_error(what() + std::string(": ") +
+				     detail::errormsg());
+		return *this;
+	}
 };
 
 /**
@@ -63,6 +90,14 @@ public:
 class transaction_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	transaction_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = transaction_error(what() + std::string(": ") +
+					    detail::errormsg());
+		return *this;
+	}
 };
 
 /**
@@ -74,6 +109,15 @@ public:
 class lock_error : public std::system_error {
 public:
 	using std::system_error::system_error;
+
+	lock_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = lock_error(code(),
+				     what() + std::string(": ") +
+					     detail::errormsg());
+		return *this;
+	}
 };
 
 /**
@@ -84,6 +128,14 @@ public:
 class transaction_alloc_error : public transaction_error {
 public:
 	using transaction_error::transaction_error;
+
+	transaction_alloc_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = transaction_alloc_error(what() + std::string(": ") +
+						  detail::errormsg());
+		return *this;
+	}
 };
 
 /**
@@ -94,6 +146,14 @@ public:
 class transaction_free_error : public transaction_alloc_error {
 public:
 	using transaction_alloc_error::transaction_alloc_error;
+
+	transaction_free_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = transaction_free_error(what() + std::string(": ") +
+						 detail::errormsg());
+		return *this;
+	}
 };
 
 /**
@@ -124,6 +184,14 @@ public:
 class ctl_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
+
+	ctl_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = ctl_error(what() + std::string(": ") +
+				    detail::errormsg());
+		return *this;
+	}
 };
 
 } /* namespace pmem */

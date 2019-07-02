@@ -109,7 +109,7 @@ public:
 		{
 			if (pmemobj_tx_begin(pop.handle(), nullptr,
 					     TX_PARAM_NONE) != 0)
-				throw transaction_error(
+				throw pmem::obj::transaction_error(
 					"failed to start transaction");
 
 			auto err = add_lock(locks...);
@@ -117,7 +117,8 @@ public:
 			if (err) {
 				pmemobj_tx_abort(EINVAL);
 				(void)pmemobj_tx_end();
-				throw transaction_error("failed to add lock");
+				throw pmem::obj::transaction_error(
+					"failed to add lock");
 			}
 		}
 
@@ -230,7 +231,8 @@ public:
 			else if (pmemobj_tx_stage() == TX_STAGE_ONABORT ||
 				 (pmemobj_tx_stage() == TX_STAGE_FINALLY &&
 				  pmemobj_tx_errno() != 0))
-				throw transaction_error("Transaction aborted");
+				throw pmem::transaction_error(
+					"Transaction aborted");
 		}
 
 		/**
@@ -325,10 +327,11 @@ public:
 	abort(int err)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_error("wrong stage for abort");
+			throw pmem::transaction_error("wrong stage for abort");
 
 		pmemobj_tx_abort(err);
-		throw manual_tx_abort("explicit abort " + std::to_string(err));
+		throw pmem::manual_tx_abort("explicit abort " +
+					    std::to_string(err));
 	}
 
 	/**
@@ -345,7 +348,7 @@ public:
 	commit()
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_error("wrong stage for commit");
+			throw pmem::transaction_error("wrong stage for commit");
 
 		pmemobj_tx_commit();
 	}
@@ -399,14 +402,15 @@ public:
 	{
 		if (pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE) !=
 		    0)
-			throw transaction_error("failed to start transaction");
+			throw pmem::obj::transaction_error(
+				"failed to start transaction");
 
 		auto err = add_lock(locks...);
 
 		if (err) {
 			pmemobj_tx_abort(err);
 			(void)pmemobj_tx_end();
-			throw transaction_error(
+			throw pmem::obj::transaction_error(
 				"failed to add a lock to the transaction");
 		}
 
@@ -431,9 +435,9 @@ public:
 			pmemobj_tx_commit();
 		} else if (stage == TX_STAGE_ONABORT) {
 			(void)pmemobj_tx_end();
-			throw transaction_error("transaction aborted");
+			throw pmem::transaction_error("transaction aborted");
 		} else if (stage == TX_STAGE_NONE) {
-			throw transaction_error(
+			throw pmem::transaction_error(
 				"transaction ended prematurely");
 		}
 
@@ -475,11 +479,11 @@ public:
 	snapshot(const T *addr, size_t num = 1)
 	{
 		if (TX_STAGE_WORK != pmemobj_tx_stage())
-			throw transaction_error(
+			throw pmem::transaction_error(
 				"wrong stage for taking a snapshot.");
 
 		if (pmemobj_tx_add_range_direct(addr, sizeof(*addr) * num))
-			throw transaction_error(
+			throw pmem::obj::transaction_error(
 				"Could not take a snapshot of given memory range.");
 	}
 

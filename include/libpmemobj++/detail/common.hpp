@@ -148,7 +148,7 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 		return;
 
 	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count))
-		throw transaction_error(
+		throw pmem::obj::transaction_error(
 			"Could not add object(s) to the transaction.");
 }
 

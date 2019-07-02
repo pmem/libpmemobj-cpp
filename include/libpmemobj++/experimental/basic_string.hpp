@@ -2413,7 +2413,7 @@ void
 basic_string<CharT, Traits>::check_pmem() const
 {
 	if (pmemobj_pool_by_ptr(this) == nullptr)
-		throw pool_error("Object is not on pmem.");
+		throw pmem::pool_error("Object is not on pmem.");
 }
 
 /**
@@ -2424,7 +2424,8 @@ void
 basic_string<CharT, Traits>::check_tx_stage_work() const
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw transaction_error("Call made out of transaction scope.");
+		throw pmem::transaction_error(
+			"Call made out of transaction scope.");
 }
 
 /**

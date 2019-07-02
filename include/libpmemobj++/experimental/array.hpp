@@ -702,7 +702,8 @@ private:
 	{
 		auto pop = pmemobj_pool_by_ptr(this);
 		if (pop == nullptr)
-			throw pool_error("Object outside of pmemobj pool.");
+			throw pmem::pool_error(
+				"Object outside of pmemobj pool.");
 
 		return pool_base(pop);
 	}

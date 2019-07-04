@@ -322,7 +322,7 @@ function(pmreorder_execute expect_success engine conf_file name)
         message(FATAL_ERROR "Pmreorder test must be run without any tracer.")
     endif()
 
-    set(ENV{PMEMOBJ_COW} 1)
+    set(ENV{PMEMOBJ_CONF} "copy_on_write.at_open=1")
 
     set(cmd pmreorder -l ${BIN_DIR}/${TEST_NAME}.storelog
                     -o ${BIN_DIR}/${TEST_NAME}.pmreorder
@@ -332,5 +332,5 @@ function(pmreorder_execute expect_success engine conf_file name)
 
     execute_common(${expect_success} ${TRACER}_${TESTCASE} ${cmd})
 
-    unset(ENV{PMEMOBJ_COW})
+    unset(ENV{PMEMOBJ_CONF})
 endfunction()

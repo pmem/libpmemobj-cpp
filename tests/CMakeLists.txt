@@ -32,8 +32,6 @@
 include(ctest_helpers.cmake)
 
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-add_cppstyle(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
-add_check_whitespace(tests-pmemobj_cow ${CMAKE_CURRENT_SOURCE_DIR}/pmemobj_check_cow/*.*cpp)
 add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp ${CMAKE_CURRENT_SOURCE_DIR}/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 

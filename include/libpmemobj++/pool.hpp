@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,8 @@
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/ctl.hpp>
-#include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/pool_base.h>
 
 namespace pmem
@@ -130,7 +130,8 @@ public:
 		pmemobjpool *pop = pmemobj_open(path.c_str(), layout.c_str());
 #endif
 		if (pop == nullptr)
-			throw pool_error("Failed opening pool");
+			throw pmem::pool_error("Failed opening pool")
+				.with_pmemobj_errormsg();
 
 		return pool_base(pop);
 	}
@@ -163,7 +164,8 @@ public:
 						  size, mode);
 #endif
 		if (pop == nullptr)
-			throw pool_error("Failed creating pool");
+			throw pmem::pool_error("Failed creating pool")
+				.with_pmemobj_errormsg();
 
 		return pool_base(pop);
 	}
@@ -207,7 +209,8 @@ public:
 	{
 		pmemobjpool *pop = pmemobj_openW(path.c_str(), layout.c_str());
 		if (pop == nullptr)
-			throw pool_error("Failed opening pool");
+			throw pmem::pool_error("Failed opening pool")
+				.with_pmemobj_errormsg();
 
 		return pool_base(pop);
 	}
@@ -236,7 +239,8 @@ public:
 		pmemobjpool *pop = pmemobj_createW(path.c_str(), layout.c_str(),
 						   size, mode);
 		if (pop == nullptr)
-			throw pool_error("Failed creating pool");
+			throw pmem::pool_error("Failed creating pool")
+				.with_pmemobj_errormsg();
 
 		return pool_base(pop);
 	}
@@ -591,7 +595,7 @@ public:
 	root()
 	{
 		if (pop == nullptr)
-			throw pool_error("Invalid pool handle");
+			throw pmem::pool_error("Invalid pool handle");
 
 		persistent_ptr<T> root = pmemobj_root(this->pop, sizeof(T));
 		return root;

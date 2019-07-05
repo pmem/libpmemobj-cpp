@@ -38,8 +38,9 @@
 #ifndef LIBPMEMOBJ_CPP_COMMON_HPP
 #define LIBPMEMOBJ_CPP_COMMON_HPP
 
-#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/tx_base.h>
+#include <string>
 #include <typeinfo>
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -147,8 +148,9 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 		return;
 
 	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count))
-		throw transaction_error(
-			"Could not add object(s) to the transaction.");
+		throw pmem::transaction_error(
+			"Could not add object(s) to the transaction.")
+			.with_pmemobj_errormsg();
 }
 
 /*

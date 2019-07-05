@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,8 +40,8 @@
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj.h>
 
@@ -252,7 +252,7 @@ public:
 	allocate(size_type cnt, const_void_pointer = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
@@ -271,12 +271,13 @@ public:
 	deallocate(pointer p, size_type = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(*p.raw_ptr()) != 0)
-			throw transaction_free_error(
-				"failed to delete persistent memory object");
+			throw pmem::transaction_free_error(
+				"failed to delete persistent memory object")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -352,7 +353,7 @@ public:
 	allocate(size_type cnt, const_pointer = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
@@ -370,12 +371,13 @@ public:
 	deallocate(pointer p, size_type = 0)
 	{
 		if (pmemobj_tx_stage() != TX_STAGE_WORK)
-			throw transaction_scope_error(
+			throw pmem::transaction_scope_error(
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(p.raw()) != 0)
-			throw transaction_free_error(
-				"failed to delete persistent memory object");
+			throw pmem::transaction_free_error(
+				"failed to delete persistent memory object")
+				.with_pmemobj_errormsg();
 	}
 
 	/**

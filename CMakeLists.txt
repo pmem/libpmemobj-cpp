@@ -272,7 +272,7 @@ if(NOT WIN32)
 		    message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
 	    endif()
     else()
-	    message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
+	    message(WARNING "Valgrind (devel) not found. Valgrind tests will not be performed.")
     endif()
 endif()
 

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: libpmemobj++/detail/pexceptions.hpp File Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/pexceptions.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -63,12 +63,13 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_260aea9212bad7ad28b9965711bc32cc.html">detail</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">pexceptions.hpp File Reference</div>  </div>
 </div><!--header-->
@@ -78,6 +79,7 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;system_error&gt;</code><br />
+<code>#include &lt;libpmemobj/base.h&gt;</code><br />
 </div>
 <p><a href="pexceptions_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -107,6 +109,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1ctl__error.html">pmem::ctl_error</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Custom ctl error class.  <a href="classpmem_1_1ctl__error.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ab6f0c138fffd276b8a5da225bbf4048f"><td class="memItemLeft" align="right" valign="top"><a id="ab6f0c138fffd276b8a5da225bbf4048f"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pexceptions_8hpp.html#ab6f0c138fffd276b8a5da225bbf4048f">pmem::detail::errormsg</a> (void)</td></tr>
+<tr class="memdesc:ab6f0c138fffd276b8a5da225bbf4048f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return last libpmemobj error message as a std::string. <br /></td></tr>
+<tr class="separator:ab6f0c138fffd276b8a5da225bbf4048f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Custom exceptions. </p>

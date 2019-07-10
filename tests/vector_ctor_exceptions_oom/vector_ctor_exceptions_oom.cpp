@@ -104,6 +104,21 @@ test_size_ctor(nvobj::pool<struct root> &pop,
 	}
 
 	UT_ASSERT(exception_thrown);
+
+	exception_thrown = false;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pptr = nvobj::make_persistent<vector_type>(test_val);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_out_of_memory &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(exception_thrown);
 }
 
 /**

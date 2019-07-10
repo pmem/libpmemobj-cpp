@@ -139,6 +139,27 @@ public:
 };
 
 /**
+ * Custom out of memory error class.
+ *
+ * Thrown when there is out of memory error inside of transaction.
+ */
+class transaction_out_of_memory : public transaction_alloc_error,
+				  public std::bad_alloc {
+public:
+	using transaction_alloc_error::transaction_alloc_error;
+	using transaction_alloc_error::what;
+
+	transaction_out_of_memory &
+	with_pmemobj_errormsg()
+	{
+		(*this) = transaction_out_of_memory(
+			transaction_alloc_error::what() + std::string(": ") +
+			detail::errormsg());
+		return *this;
+	}
+};
+
+/**
  * Custom transaction error class.
  *
  * Thrown when there is a transactional free error.

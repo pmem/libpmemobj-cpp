@@ -486,10 +486,16 @@ public:
 			throw pmem::transaction_error(
 				"wrong stage for taking a snapshot.");
 
-		if (pmemobj_tx_add_range_direct(addr, sizeof(*addr) * num))
-			throw pmem::transaction_error(
-				"Could not take a snapshot of given memory range.")
-				.with_pmemobj_errormsg();
+		if (pmemobj_tx_add_range_direct(addr, sizeof(*addr) * num)) {
+			if (errno == ENOMEM)
+				throw pmem::transaction_out_of_memory(
+					"Could not take a snapshot of given memory range.")
+					.with_pmemobj_errormsg();
+			else
+				throw pmem::transaction_error(
+					"Could not take a snapshot of given memory range.")
+					.with_pmemobj_errormsg();
+		}
 	}
 
 private:

@@ -95,10 +95,16 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
 	persistent_ptr<T> ptr = pmemobj_tx_xalloc(
 		sizeof(I) * N, detail::type_num<I>(), flag.value);
 
-	if (ptr == nullptr)
-		throw pmem::transaction_alloc_error(
-			"failed to allocate persistent memory array")
-			.with_pmemobj_errormsg();
+	if (ptr == nullptr) {
+		if (errno == ENOMEM)
+			throw pmem::transaction_out_of_memory(
+				"Failed to allocate persistent memory array")
+				.with_pmemobj_errormsg();
+		else
+			throw pmem::transaction_alloc_error(
+				"Failed to allocate persistent memory array")
+				.with_pmemobj_errormsg();
+	}
 
 	/*
 	 * cache raw pointer to data - using persistent_ptr.get() in a loop
@@ -149,10 +155,16 @@ make_persistent(allocation_flag flag = allocation_flag::none())
 	persistent_ptr<T> ptr = pmemobj_tx_xalloc(
 		sizeof(I) * N, detail::type_num<I>(), flag.value);
 
-	if (ptr == nullptr)
-		throw pmem::transaction_alloc_error(
-			"failed to allocate persistent memory array")
-			.with_pmemobj_errormsg();
+	if (ptr == nullptr) {
+		if (errno == ENOMEM)
+			throw pmem::transaction_out_of_memory(
+				"Failed to allocate persistent memory array")
+				.with_pmemobj_errormsg();
+		else
+			throw pmem::transaction_alloc_error(
+				"Failed to allocate persistent memory array")
+				.with_pmemobj_errormsg();
+	}
 
 	/*
 	 * cache raw pointer to data - using persistent_ptr.get() in a loop

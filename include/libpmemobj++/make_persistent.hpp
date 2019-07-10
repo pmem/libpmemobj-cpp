@@ -85,10 +85,16 @@ make_persistent(allocation_flag flag, Args &&... args)
 	persistent_ptr<T> ptr =
 		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(), flag.value);
 
-	if (ptr == nullptr)
-		throw pmem::transaction_alloc_error(
-			"failed to allocate persistent memory object")
-			.with_pmemobj_errormsg();
+	if (ptr == nullptr) {
+		if (errno == ENOMEM)
+			throw pmem::transaction_out_of_memory(
+				"Failed to allocate persistent memory object")
+				.with_pmemobj_errormsg();
+		else
+			throw pmem::transaction_alloc_error(
+				"Failed to allocate persistent memory object")
+				.with_pmemobj_errormsg();
+	}
 
 	detail::create<T, Args...>(ptr.get(), std::forward<Args>(args)...);
 

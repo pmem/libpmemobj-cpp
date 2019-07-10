@@ -316,7 +316,7 @@ private:
  * @pre must be called in transaction scope.
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -339,7 +339,7 @@ basic_string<CharT, Traits>::basic_string()
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -365,7 +365,7 @@ basic_string<CharT, Traits>::basic_string(size_type count, CharT ch)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -402,7 +402,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other,
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -436,7 +436,7 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -458,7 +458,7 @@ basic_string<CharT, Traits>::basic_string(const CharT *s, size_type count)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -485,7 +485,7 @@ basic_string<CharT, Traits>::basic_string(const CharT *s)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -512,7 +512,7 @@ basic_string<CharT, Traits>::basic_string(InputIt first, InputIt last)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -536,7 +536,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -556,7 +556,7 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -582,7 +582,7 @@ basic_string<CharT, Traits>::basic_string(basic_string &&other)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
 template <typename CharT, typename Traits>
@@ -2417,20 +2417,20 @@ basic_string<CharT, Traits>::check_pmem() const
 }
 
 /**
- * @throw pmem::transaction_error if called outside of a transaction.
+ * @throw pmem::transaction_scope_error if called outside of a transaction.
  */
 template <typename CharT, typename Traits>
 void
 basic_string<CharT, Traits>::check_tx_stage_work() const
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw pmem::transaction_error(
+		throw pmem::transaction_scope_error(
 			"Call made out of transaction scope.");
 }
 
 /**
  * @throw pmem::pool_error if an object is not in persistent memory.
- * @throw pmem::transaction_error if called outside of a transaction.
+ * @throw pmem::transaction_scope_error if called outside of a transaction.
  */
 template <typename CharT, typename Traits>
 void

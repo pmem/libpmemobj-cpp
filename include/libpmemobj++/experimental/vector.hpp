@@ -282,7 +282,8 @@ bool operator>=(const std::vector<T> &lhs, const vector<T> &rhs);
  * @pre must be called in transaction scope.
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  */
 template <typename T>
 vector<T>::vector()
@@ -309,7 +310,8 @@ vector<T>::vector()
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  * @throw rethrows element constructor exception.
  */
 template <typename T>
@@ -337,7 +339,8 @@ vector<T>::vector(size_type count, const value_type &value)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  * @throw rethrows element constructor exception.
  */
 template <typename T>
@@ -370,7 +373,8 @@ vector<T>::vector(size_type count)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  * @throw rethrows element constructor exception.
  */
 template <typename T>
@@ -402,7 +406,8 @@ vector<T>::vector(InputIt first, InputIt last)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  * @throw rethrows element constructor exception.
  */
 template <typename T>
@@ -433,7 +438,8 @@ vector<T>::vector(const vector &other)
  * @post other.size() == 0
  *
  * @throw pmem::pool_error if an object is not in persistent memory.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  */
 template <typename T>
 vector<T>::vector(vector &&other)
@@ -461,7 +467,8 @@ vector<T>::vector(vector &&other)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  * @throw rethrows element constructor exception.
  */
 template <typename T>
@@ -484,7 +491,8 @@ vector<T>::vector(std::initializer_list<T> init)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
- * @throw pmem::transaction_error if constructor wasn't called in transaction.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
  * @throw rethrows element constructor exception.
  */
 template <typename T>
@@ -2083,15 +2091,15 @@ vector<T>::check_pmem()
  * Private helper function. Checks if current transaction stage is equal to
  * TX_STAGE_WORK and throws an exception otherwise.
  *
- * @throw pmem::transaction_error if current transaction stage is not equal to
- * TX_STAGE_WORK.
+ * @throw pmem::transaction_scope_error if current transaction stage is not
+ * equal to TX_STAGE_WORK.
  */
 template <typename T>
 void
 vector<T>::check_tx_stage_work()
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw pmem::transaction_error(
+		throw pmem::transaction_scope_error(
 			"Function called out of transaction scope.");
 }
 

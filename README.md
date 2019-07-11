@@ -7,7 +7,7 @@ libpmemobj-cpp
 [![Coverage Status](https://codecov.io/github/pmem/libpmemobj-cpp/coverage.svg?branch=master)](https://codecov.io/gh/pmem/libpmemobj-cpp/branch/master)
 
 C++ bindings for libpmemobj (https://github.com/pmem/pmdk)
-More informations in include/libpmemobj++/README.md
+More information in include/libpmemobj++/README.md
 
 # How to build #
 

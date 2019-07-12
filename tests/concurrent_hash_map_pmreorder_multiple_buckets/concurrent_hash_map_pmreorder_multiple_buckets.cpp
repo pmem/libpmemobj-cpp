@@ -56,22 +56,16 @@ namespace nvobj = pmem::obj;
 namespace
 {
 
-struct identity {
-	static unsigned
-	hash(int a)
+struct identity_hash {
+	unsigned
+	operator()(int a)
 	{
 		return static_cast<unsigned>(a);
-	}
-
-	static bool
-	equal(int a, int b)
-	{
-		return a == b;
 	}
 };
 
 typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>,
-						 identity>
+						 identity_hash>
 	persistent_map_type;
 
 typedef persistent_map_type::value_type value_type;

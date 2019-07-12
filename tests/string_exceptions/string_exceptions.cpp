@@ -77,7 +77,7 @@ assert_pool_exception(std::function<void(void)> f)
 }
 
 /*
- * this function verifies that f() throws transaction_error exception.
+ * this function verifies that f() throws transaction_scope_error exception.
  */
 void
 assert_tx_exception(std::function<void(void)> f)
@@ -86,7 +86,7 @@ assert_tx_exception(std::function<void(void)> f)
 	try {
 		f();
 		UT_ASSERT(0);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

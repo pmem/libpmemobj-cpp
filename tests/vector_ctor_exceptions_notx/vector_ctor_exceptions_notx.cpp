@@ -44,7 +44,7 @@ using vector_type = pmem_exp::vector<int>;
  * Test pmem::obj::experimental::vector default constructor.
  *
  * Call default constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_default_ctor(nvobj::pool<struct root> &pop)
@@ -60,7 +60,7 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 				UT_ASSERT(0);
 		});
 		pmem::detail::create<vector_type>(&*pptr_v);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -72,7 +72,7 @@ test_default_ctor(nvobj::pool<struct root> &pop)
  * Test pmem::obj::experimental::vector range constructor.
  *
  * Call range constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_iter_iter_ctor(nvobj::pool<struct root> &pop)
@@ -92,7 +92,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop)
 		pmem::detail::create<vector_type, vector_type::iterator,
 				     vector_type::iterator>(
 			&*pptr_v, std::begin(a), std::end(a));
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -105,7 +105,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop)
  * default values.
  *
  * Call fill constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_size_ctor(nvobj::pool<struct root> &pop)
@@ -122,7 +122,7 @@ test_size_ctor(nvobj::pool<struct root> &pop)
 		});
 		pmem::detail::create<vector_type, vector_type::size_type>(
 			&*pptr_v, 100);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -135,7 +135,7 @@ test_size_ctor(nvobj::pool<struct root> &pop)
  * custom values.
  *
  * Call fill constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_size_value_ctor(nvobj::pool<struct root> &pop)
@@ -152,7 +152,7 @@ test_size_value_ctor(nvobj::pool<struct root> &pop)
 		});
 		pmem::detail::create<vector_type, vector_type::size_type,
 				     vector_type::value_type>(&*pptr_v, 100, 5);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -164,7 +164,7 @@ test_size_value_ctor(nvobj::pool<struct root> &pop)
  * Test pmem::obj::experimental::vector copy constructor.
  *
  * Call copy constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_copy_ctor(nvobj::pool<struct root> &pop)
@@ -191,7 +191,7 @@ test_copy_ctor(nvobj::pool<struct root> &pop)
 				UT_ASSERT(0);
 		});
 		pmem::detail::create<vector_type>(&*pptr_v, *pptr);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -211,7 +211,7 @@ test_copy_ctor(nvobj::pool<struct root> &pop)
  * Test pmem::obj::experimental::vector initializer list constructor.
  *
  * Call initializer list constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_initializer_list_ctor(nvobj::pool<struct root> &pop)
@@ -228,7 +228,7 @@ test_initializer_list_ctor(nvobj::pool<struct root> &pop)
 		});
 		pmem::detail::create<vector_type>(
 			&*pptr_v, std::initializer_list<int>{1, 2, 3, 4});
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -240,7 +240,7 @@ test_initializer_list_ctor(nvobj::pool<struct root> &pop)
  * Test pmem::obj::experimental::vector move constructor.
  *
  * Call move constructor out of transaction scope.
- * Expect pmem:transaction_error exception is thrown.
+ * Expect pmem:transaction_scope_error exception is thrown.
  */
 void
 test_move_ctor(nvobj::pool<struct root> &pop)
@@ -266,7 +266,7 @@ test_move_ctor(nvobj::pool<struct root> &pop)
 				UT_ASSERT(0);
 		});
 		pmem::detail::create<vector_type>(&*pptr_v, std::move(*pptr));
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

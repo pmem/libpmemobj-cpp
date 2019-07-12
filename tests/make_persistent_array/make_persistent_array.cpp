@@ -261,6 +261,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 	}
 	UT_ASSERT(scope_error_thrown);
 
+	/* OOM handling */
 	bool alloc_error_thrown = false;
 	try {
 		nvobj::transaction::run(pop, [&] {
@@ -271,6 +272,38 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 			UT_ASSERT(0);
 		});
 	} catch (pmem::transaction_alloc_error &) {
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	/* OOM handling */
+	alloc_error_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+
+			r->pfoo =
+				nvobj::make_persistent<foo[]>(PMEMOBJ_MIN_POOL);
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_error &e) {
+		(void)e.what();
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	/* OOM handling */
+	alloc_error_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->pfoo == nullptr);
+
+			r->pfoo =
+				nvobj::make_persistent<foo[]>(PMEMOBJ_MIN_POOL);
+			UT_ASSERT(0);
+		});
+	} catch (std::bad_alloc &e) {
+		(void)e.what();
 		alloc_error_thrown = true;
 	}
 	UT_ASSERT(alloc_error_thrown);
@@ -328,16 +361,50 @@ test_exceptions_handling_sized(nvobj::pool<struct root> &pop)
 	}
 	UT_ASSERT(scope_error_thrown);
 
+	/* OOM handling */
 	bool alloc_error_thrown = false;
 	try {
 		nvobj::transaction::run(pop, [&] {
-			UT_ASSERT(r->pfoo_sized == nullptr);
+			UT_ASSERT(r->pfoo_sized_big == nullptr);
 
 			r->pfoo_sized_big =
 				nvobj::make_persistent<foo[PMEMOBJ_MIN_POOL]>();
 			UT_ASSERT(0);
 		});
-	} catch (pmem::transaction_alloc_error &) {
+	} catch (pmem::transaction_alloc_error &e) {
+		(void)e.what();
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	/* OOM handling */
+	alloc_error_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->pfoo_sized_big == nullptr);
+
+			r->pfoo_sized_big =
+				nvobj::make_persistent<foo[PMEMOBJ_MIN_POOL]>();
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_error &e) {
+		(void)e.what();
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	/* OOM handling */
+	alloc_error_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->pfoo_sized_big == nullptr);
+
+			r->pfoo_sized_big =
+				nvobj::make_persistent<foo[PMEMOBJ_MIN_POOL]>();
+			UT_ASSERT(0);
+		});
+	} catch (std::bad_alloc &e) {
+		(void)e.what();
 		alloc_error_thrown = true;
 	}
 	UT_ASSERT(alloc_error_thrown);

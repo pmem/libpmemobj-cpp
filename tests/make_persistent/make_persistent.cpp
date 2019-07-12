@@ -233,6 +233,7 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 	}
 	UT_ASSERT(scope_error_thrown);
 
+	/* OOM handling */
 	bool alloc_error_thrown = false;
 	try {
 		nvobj::transaction::run(pop, [&] {
@@ -241,7 +242,38 @@ test_exceptions_handling(nvobj::pool<struct root> &pop)
 			r->bstruct = nvobj::make_persistent<big_struct>();
 			UT_ASSERT(0);
 		});
-	} catch (pmem::transaction_alloc_error &) {
+	} catch (pmem::transaction_alloc_error &e) {
+		(void)e.what();
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	/* OOM handling */
+	alloc_error_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->bstruct == nullptr);
+
+			r->bstruct = nvobj::make_persistent<big_struct>();
+			UT_ASSERT(0);
+		});
+	} catch (pmem::transaction_error &e) {
+		(void)e.what();
+		alloc_error_thrown = true;
+	}
+	UT_ASSERT(alloc_error_thrown);
+
+	/* OOM handling */
+	alloc_error_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->bstruct == nullptr);
+
+			r->bstruct = nvobj::make_persistent<big_struct>();
+			UT_ASSERT(0);
+		});
+	} catch (std::bad_alloc &e) {
+		(void)e.what();
 		alloc_error_thrown = true;
 	}
 	UT_ASSERT(alloc_error_thrown);

@@ -46,11 +46,15 @@ namespace pmem
 namespace detail
 {
 
-template <typename...>
-using void_t = void;
+template <typename... Ts>
+struct make_void {
+	typedef void type;
+};
+template <typename... Ts>
+using void_t = typename make_void<Ts...>::type;
 
-// Generic SFINAE helper for expression checks, based on the idea demonstrated
-// in ISO C++ paper n4502
+/* Generic SFINAE helper for expression checks, based on the idea demonstrated
+ * in ISO C++ paper n4502 */
 template <typename T, typename, template <typename> class... Checks>
 struct supports_impl {
 	using type = std::false_type;

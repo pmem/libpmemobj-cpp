@@ -323,6 +323,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string()
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(0);
 	initialize(0U, value_type('\0'));
@@ -346,6 +347,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(size_type count, CharT ch)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(count);
 	initialize(count, ch);
@@ -373,6 +375,7 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other,
 					  size_type pos, size_type count)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	if (pos > other.size())
 		throw std::out_of_range("Index out of range.");
@@ -410,6 +413,7 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
 					  size_type pos, size_type count)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	if (pos > other.size())
 		throw std::out_of_range("Index out of range.");
@@ -443,6 +447,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(const CharT *s, size_type count)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(count);
 	initialize(s, s + count);
@@ -465,6 +470,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(const CharT *s)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	auto length = traits_type::length(s);
 
@@ -496,6 +502,7 @@ basic_string<CharT, Traits>::basic_string(InputIt first, InputIt last)
 	assert(len >= 0);
 
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(static_cast<size_type>(len));
 	initialize(first, last);
@@ -519,6 +526,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(const basic_string &other)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(other.size());
 	initialize(other.cbegin(), other.cend());
@@ -563,6 +571,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(basic_string &&other)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(other.size());
 	initialize(std::move(other));
@@ -589,6 +598,7 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 {
 	check_pmem_tx();
+	sso._size = 0;
 
 	allocate(ilist.size());
 	initialize(ilist.begin(), ilist.end());

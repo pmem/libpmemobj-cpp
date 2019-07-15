@@ -38,14 +38,13 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 
 #include <future>
 #include <iostream>
-
-#define LIBPMEMOBJ_CPP_CONCURRENT_HASH_MAP_USE_ATOMIC_ALLOCATOR 1
 
 #include <libpmemobj++/experimental/concurrent_hash_map.hpp>
 

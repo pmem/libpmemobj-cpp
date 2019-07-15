@@ -45,8 +45,6 @@
 #include <pmemcheck.h>
 #include <vector>
 
-#define LIBPMEMOBJ_CPP_CONCURRENT_HASH_MAP_USE_ATOMIC_ALLOCATOR 1
-
 #include <libpmemobj++/experimental/concurrent_hash_map.hpp>
 
 #define LAYOUT "persistent_concurrent_hash_map"
@@ -225,8 +223,10 @@ main(int argc, char *argv[])
 							PMEMOBJ_MIN_POOL * 20,
 							S_IWUSR | S_IRUSR);
 
-			nvobj::make_persistent_atomic<persistent_map_type>(
-				pop, pop.root()->cons);
+			pmem::obj::transaction::run(pop, [&] {
+				pop.root()->cons = nvobj::make_persistent<
+					persistent_map_type>();
+			});
 			pop.root()->cons->insert(value_type(0, 0));
 		} else if (argv[1][0] == 'i') {
 			pop = nvobj::pool<root>::open(path, LAYOUT);

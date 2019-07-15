@@ -276,8 +276,10 @@ main(int argc, char *argv[])
 	try {
 		pop = nvobj::pool<root>::create(
 			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
-		nvobj::make_persistent_atomic<persistent_map_type>(
-			pop, pop.root()->cons);
+		pmem::obj::transaction::run(pop, [&] {
+			pop.root()->cons =
+				nvobj::make_persistent<persistent_map_type>();
+		});
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}

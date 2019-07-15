@@ -42,7 +42,6 @@
 #include <libpmemobj++/detail/template_helpers.hpp>
 #include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-#include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -304,13 +303,9 @@ template <typename T, typename U, typename... Args>
 void
 make_persistent_object(pool_base &pop, persistent_ptr<U> &ptr, Args &&... args)
 {
-#if LIBPMEMOBJ_CPP_CONCURRENT_HASH_MAP_USE_ATOMIC_ALLOCATOR
-	make_persistent_atomic<T>(pop, ptr, std::forward<Args>(args)...);
-#else
 	transaction::manual tx(pop);
 	ptr = make_persistent<T>(std::forward<Args>(args)...);
 	transaction::commit();
-#endif
 }
 
 #if !LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
@@ -874,13 +869,6 @@ private:
 	enable_big_segment(pool_base &pop)
 	{
 		block_range blocks = segment_blocks(my_seg);
-#if LIBPMEMOBJ_CPP_CONCURRENT_HASH_MAP_USE_ATOMIC_ALLOCATOR
-		for (segment_index_t b = blocks.first; b < blocks.second; ++b) {
-			if ((*my_table)[b] == nullptr)
-				make_persistent_atomic<bucket_type[]>(
-					pop, (*my_table)[b], block_size(b));
-		}
-#else
 		{
 			transaction::manual tx(pop);
 
@@ -893,7 +881,6 @@ private:
 
 			transaction::commit();
 		}
-#endif
 	}
 
 	/** Pointer to the table of blocks */

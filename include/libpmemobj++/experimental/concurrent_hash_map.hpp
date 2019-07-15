@@ -307,13 +307,9 @@ make_persistent_object(pool_base &pop, persistent_ptr<U> &ptr, Args &&... args)
 #if LIBPMEMOBJ_CPP_CONCURRENT_HASH_MAP_USE_ATOMIC_ALLOCATOR
 	make_persistent_atomic<T>(pop, ptr, std::forward<Args>(args)...);
 #else
-	try {
-		transaction::manual tx(pop);
-		ptr = make_persistent<T>(std::forward<Args>(args)...);
-		transaction::commit();
-	} catch (...) {
-		throw std::bad_alloc();
-	}
+	transaction::manual tx(pop);
+	ptr = make_persistent<T>(std::forward<Args>(args)...);
+	transaction::commit();
 #endif
 }
 
@@ -849,7 +845,7 @@ private:
 	enable_first_block(pool_base &pop)
 	{
 		assert(my_seg == embedded_segments);
-		try {
+		{
 			transaction::manual tx(pop);
 
 			size_type sz =
@@ -871,8 +867,6 @@ private:
 			}
 
 			transaction::commit();
-		} catch (...) {
-			throw std::bad_alloc();
 		}
 	}
 
@@ -887,7 +881,7 @@ private:
 					pop, (*my_table)[b], block_size(b));
 		}
 #else
-		try {
+		{
 			transaction::manual tx(pop);
 
 			for (segment_index_t b = blocks.first;
@@ -898,8 +892,6 @@ private:
 			}
 
 			transaction::commit();
-		} catch (...) {
-			throw std::bad_alloc();
 		}
 #endif
 	}
@@ -1412,7 +1404,7 @@ public:
 	internal_swap(hash_map_base &table)
 	{
 		pool_base p = get_pool_base();
-		try {
+		{
 			transaction::manual tx(p);
 
 			this->my_pool_uuid.swap(table.my_pool_uuid);
@@ -1435,8 +1427,6 @@ public:
 				this->my_table[i].swap(table.my_table[i]);
 
 			transaction::commit();
-		} catch (const pmem::transaction_error &e) {
-			throw std::runtime_error(e);
 		}
 	}
 
@@ -2901,7 +2891,7 @@ search:
 		goto search;
 	}
 
-	try {
+	{
 		transaction::manual tx(pop);
 
 		tmp_node_ptr_t del = n(my_pool_uuid);
@@ -2922,8 +2912,6 @@ search:
 		delete_node(del);
 
 		transaction::commit();
-	} catch (const pmem::transaction_free_error &e) {
-		throw std::runtime_error(e);
 	}
 
 	--(my_size.get_rw());
@@ -2991,7 +2979,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::clear()
 #endif
 
 	pool_base pop = get_pool_base();
-	try { /* transaction scope */
+	{ /* transaction scope */
 
 		transaction::manual tx(pop);
 
@@ -3006,9 +2994,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::clear()
 		} while (s-- > 0);
 
 		transaction::commit();
-	} catch (const pmem::transaction_error &e) {
-		throw std::runtime_error(e);
 	}
+
 	mask().store(embedded_buckets - 1, std::memory_order_relaxed);
 }
 

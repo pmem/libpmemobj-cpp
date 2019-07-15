@@ -147,10 +147,16 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 	if (!pmemobj_pool_by_ptr(that))
 		return;
 
-	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count))
-		throw pmem::transaction_error(
-			"Could not add object(s) to the transaction.")
-			.with_pmemobj_errormsg();
+	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count)) {
+		if (errno == ENOMEM)
+			throw pmem::transaction_out_of_memory(
+				"Could not add object(s) to the transaction.")
+				.with_pmemobj_errormsg();
+		else
+			throw pmem::transaction_error(
+				"Could not add object(s) to the transaction.")
+				.with_pmemobj_errormsg();
+	}
 }
 
 /*

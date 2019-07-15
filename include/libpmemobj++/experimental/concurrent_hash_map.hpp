@@ -1024,6 +1024,9 @@ public:
 	/** Type of my_mask field */
 	using mask_type = v<atomic_wrapper<hashcode_t, calculate_mask>>;
 
+	/** Segment mutex type. */
+	using segment_enable_mutex_t = pmem::obj::mutex;
+
 	/** ID of persistent memory pool where hash map resides. */
 	p<uint64_t> my_pool_uuid;
 
@@ -1044,9 +1047,6 @@ public:
 
 	/** Zero segment. */
 	bucket my_embedded_segment[embedded_buckets];
-
-	/** Segment mutex type. */
-	using segment_enable_mutex_t = pmem::obj::mutex;
 
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
@@ -1677,6 +1677,7 @@ protected:
 	 */
 	struct node : public node_base {
 		value_type item;
+
 		node(const Key &key, const node_base_ptr_t &_next = OID_NULL)
 		    : node_base(_next), item(key, T())
 		{

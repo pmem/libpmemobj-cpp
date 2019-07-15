@@ -38,8 +38,10 @@
 #ifndef PMEMOBJ_CONCURRENT_HASH_MAP_HPP
 #define PMEMOBJ_CONCURRENT_HASH_MAP_HPP
 
+#include <libpmemobj++/detail/atomic_backoff.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
+
 #include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/mutex.hpp>
@@ -64,11 +66,6 @@
 #include <mutex>
 #include <thread>
 #include <type_traits>
-
-#if _MSC_VER
-#include <intrin.h>
-#include <windows.h>
-#endif
 
 namespace std
 {
@@ -136,130 +133,6 @@ assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
 {
 	assert_not_locked<Mutex>(mtx.get());
 }
-
-#if _MSC_VER
-static inline int
-Log2(uint64_t x)
-{
-	unsigned long j;
-	_BitScanReverse64(&j, x);
-	return static_cast<int>(j);
-}
-#elif __GNUC__ || __clang__
-static inline int
-Log2(uint64_t x)
-{
-	// __builtin_clz builtin count _number_ of leading zeroes
-	return 8 * int(sizeof(x)) - __builtin_clzll(x) - 1;
-}
-#else
-static inline int
-Log2(uint64_t x)
-{
-	x |= (x >> 1);
-	x |= (x >> 2);
-	x |= (x >> 4);
-	x |= (x >> 8);
-	x |= (x >> 16);
-	x |= (x >> 32);
-
-	static const int table[64] = {
-		0,  58, 1,  59, 47, 53, 2,  60, 39, 48, 27, 54, 33, 42, 3,  61,
-		51, 37, 40, 49, 18, 28, 20, 55, 30, 34, 11, 43, 14, 22, 4,  62,
-		57, 46, 52, 38, 26, 32, 41, 50, 36, 17, 19, 29, 10, 13, 21, 56,
-		45, 25, 31, 35, 16, 9,  12, 44, 24, 15, 8,  23, 7,  6,  5,  63};
-
-	return table[(x * 0x03f6eaf2cd271461) >> 58];
-}
-#endif
-
-class atomic_backoff {
-	/**
-	 * Time delay, in units of "pause" instructions.
-	 * Should be equal to approximately the number of "pause" instructions
-	 * that take the same time as an context switch. Must be a power of two.
-	 */
-	static const int32_t LOOPS_BEFORE_YIELD = 16;
-	int32_t count;
-
-	static inline void
-	__pause(int32_t delay)
-	{
-		for (; delay > 0; --delay) {
-#if _MSC_VER
-			YieldProcessor();
-#elif __GNUC__ && (__i386__ || __x86_64__)
-			// Only i386 and x86-64 have pause instruction
-			__builtin_ia32_pause();
-#endif
-		}
-	}
-
-public:
-	/**
-	 * Deny copy constructor
-	 */
-	atomic_backoff(const atomic_backoff &) = delete;
-	/**
-	 * Deny assignment
-	 */
-	atomic_backoff &operator=(const atomic_backoff &) = delete;
-
-	/** Default constructor */
-	/* In many cases, an object of this type is initialized eagerly on hot
-	 * path, as in for(atomic_backoff b; ; b.pause()) {...} For this reason,
-	 * the construction cost must be very small! */
-	atomic_backoff() : count(1)
-	{
-	}
-
-	/**
-	 * This constructor pauses immediately; do not use on hot paths!
-	 */
-	atomic_backoff(bool) : count(1)
-	{
-		pause();
-	}
-
-	/**
-	 * Pause for a while.
-	 */
-	void
-	pause()
-	{
-		if (count <= LOOPS_BEFORE_YIELD) {
-			__pause(count);
-			/* Pause twice as long the next time. */
-			count *= 2;
-		} else {
-			/* Pause is so long that we might as well yield CPU to
-			 * scheduler. */
-			std::this_thread::yield();
-		}
-	}
-
-	/**
-	 * Pause for a few times and return false if saturated.
-	 */
-	bool
-	bounded_pause()
-	{
-		__pause(count);
-		if (count < LOOPS_BEFORE_YIELD) {
-			/* Pause twice as long the next time. */
-			count *= 2;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	void
-	reset()
-	{
-		count = 1;
-	}
-}; /* class atomic_backoff */
 
 /**
  * This wrapper for std::atomic<T> allows to initialize volatile atomic fields
@@ -553,7 +426,7 @@ public:
 	static segment_index_t
 	segment_index_of(size_type index)
 	{
-		return segment_index_t(Log2(index | 1));
+		return segment_index_t(detail::Log2(index | 1));
 	}
 
 	/** @return the first array index of given segment. */
@@ -1340,8 +1213,10 @@ public:
 	check_growth(hashcode_t m, size_type sz)
 	{
 		if (sz >= m) {
-			segment_index_t new_seg = static_cast<segment_index_t>(
-				Log2(m + 1)); /* optimized segment_index_of */
+			segment_index_t new_seg =
+				static_cast<segment_index_t>(detail::Log2(
+					m +
+					1)); /* optimized segment_index_of */
 
 			assert(segment_facade_t(my_table, new_seg - 1)
 				       .is_valid());
@@ -1955,7 +1830,7 @@ protected:
 		bool restore_after_crash = *p_new != nullptr;
 
 		/* get parent mask from the topmost bit */
-		hashcode_t mask = (1u << internal::Log2(h)) - 1;
+		hashcode_t mask = (1u << detail::Log2(h)) - 1;
 		assert((h & mask) < h);
 		bool writer = false;
 		accessor_type b_old(this, h & mask, writer);
@@ -1972,7 +1847,7 @@ protected:
 
 			bmask = bmask == 0
 				? 1 /* minimal mask of parent bucket */
-				: (1u << (internal::Log2(bmask) + 1)) - 1;
+				: (1u << (detail::Log2(bmask) + 1)) - 1;
 
 			assert((c & bmask) == (h & bmask));
 #endif
@@ -2807,7 +2682,7 @@ exists:
 
 	/* acquire the item */
 	if (!result->try_acquire(n.get(my_pool_uuid)->mutex, write)) {
-		for (internal::atomic_backoff backoff(true);;) {
+		for (detail::atomic_backoff backoff(true);;) {
 			if (result->try_acquire(n.get(my_pool_uuid)->mutex,
 						write))
 				break;

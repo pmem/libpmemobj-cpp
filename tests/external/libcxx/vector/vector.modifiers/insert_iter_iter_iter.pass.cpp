@@ -14,6 +14,7 @@
 
 #include "helper_classes.hpp"
 #include "iterators_support.hpp"
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/array.hpp>
@@ -27,9 +28,9 @@ namespace pmem_exp = nvobj::experimental;
 struct Throws;
 
 struct root {
-	nvobj::persistent_ptr<pmem_exp::vector<int>> v1;
-	nvobj::persistent_ptr<pmem_exp::vector<CompoundType>> v2;
-	nvobj::persistent_ptr<pmem_exp::vector<pmem_exp::string>> v3;
+	nvobj::persistent_ptr<container_t<int>> v1;
+	nvobj::persistent_ptr<container_t<CompoundType>> v2;
+	nvobj::persistent_ptr<container_t<pmem_exp::string>> v3;
 
 	nvobj::persistent_ptr<pmem_exp::array<pmem_exp::string, 5>>
 		string_test_arr;
@@ -39,15 +40,14 @@ struct root {
 template <typename C, typename Iterator, typename DefaultValueT>
 void
 test_insert_with_realloc(nvobj::pool_base &pop,
-			 nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr,
+			 nvobj::persistent_ptr<container_t<C>> &ptr,
 			 const DefaultValueT &def, Iterator begin, Iterator end)
 {
 	try {
 		nvobj::transaction::run(pop, [&] {
-			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U,
-									  def);
+			ptr = nvobj::make_persistent<container_t<C>>(100U, def);
 		});
-		typename pmem_exp::vector<C>::iterator i =
+		typename container_t<C>::iterator i =
 			ptr->insert(ptr->cbegin() + 10, begin, end);
 
 		UT_ASSERT(ptr->size() == 100 + 5);
@@ -60,7 +60,7 @@ test_insert_with_realloc(nvobj::pool_base &pop,
 		for (; j < 105; ++j)
 			UT_ASSERT((*ptr)[j] == def);
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+			nvobj::delete_persistent<container_t<C>>(ptr);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -70,19 +70,18 @@ test_insert_with_realloc(nvobj::pool_base &pop,
 template <typename C, typename Iterator, typename DefaultValueT>
 void
 test_insert_after_realloc(nvobj::pool_base &pop,
-			  nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr,
+			  nvobj::persistent_ptr<container_t<C>> &ptr,
 			  const DefaultValueT &def, Iterator begin,
 			  Iterator end)
 {
 	try {
 		nvobj::transaction::run(pop, [&] {
-			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U,
-									  def);
+			ptr = nvobj::make_persistent<container_t<C>>(100U, def);
 		});
 		while (ptr->size() < ptr->capacity())
-			ptr->push_back(0); // force reallocation
+			ptr->push_back(def); // force reallocation
 		size_t sz = ptr->size();
-		typename pmem_exp::vector<C>::iterator i =
+		typename container_t<C>::iterator i =
 			ptr->insert(ptr->cbegin() + 10, begin, end);
 		UT_ASSERT(ptr->size() == sz + 5);
 		UT_ASSERT(i == ptr->begin() + 10);
@@ -94,7 +93,7 @@ test_insert_after_realloc(nvobj::pool_base &pop,
 		for (; j < ptr->size(); ++j)
 			UT_ASSERT((*ptr)[j] == def);
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+			nvobj::delete_persistent<container_t<C>>(ptr);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -104,18 +103,17 @@ test_insert_after_realloc(nvobj::pool_base &pop,
 template <typename C, typename Iterator, typename DefaultValueT>
 void
 test_insert_with_reserve1(nvobj::pool_base &pop,
-			  nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr,
+			  nvobj::persistent_ptr<container_t<C>> &ptr,
 			  const DefaultValueT &def, Iterator begin,
 			  Iterator end)
 {
 	try {
 		nvobj::transaction::run(pop, [&] {
-			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U,
-									  def);
+			ptr = nvobj::make_persistent<container_t<C>>(100U, def);
 		});
 		ptr->reserve(128); // force no reallocation
 		size_t sz = ptr->size();
-		typename pmem_exp::vector<C>::iterator i =
+		typename container_t<C>::iterator i =
 			ptr->insert(ptr->cbegin() + 10, begin, end);
 		UT_ASSERT(ptr->size() == sz + 5);
 		UT_ASSERT(i == ptr->begin() + 10);
@@ -127,7 +125,7 @@ test_insert_with_reserve1(nvobj::pool_base &pop,
 		for (; j < ptr->size(); ++j)
 			UT_ASSERT((*ptr)[j] == def);
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+			nvobj::delete_persistent<container_t<C>>(ptr);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -137,18 +135,17 @@ test_insert_with_reserve1(nvobj::pool_base &pop,
 template <typename C, typename Iterator, typename DefaultValueT>
 void
 test_insert_with_reserve2(nvobj::pool_base &pop,
-			  nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr,
+			  nvobj::persistent_ptr<container_t<C>> &ptr,
 			  const DefaultValueT &def, Iterator begin,
 			  Iterator end)
 {
 	try {
 		nvobj::transaction::run(pop, [&] {
-			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U,
-									  def);
+			ptr = nvobj::make_persistent<container_t<C>>(100U, def);
 		});
 		ptr->reserve(128); // force no reallocation
 		size_t sz = ptr->size();
-		typename pmem_exp::vector<C>::iterator i =
+		typename container_t<C>::iterator i =
 			ptr->insert(ptr->cbegin() + 98, begin, end);
 		UT_ASSERT(ptr->size() == sz + 5);
 		UT_ASSERT(i == ptr->begin() + 98);
@@ -160,7 +157,7 @@ test_insert_with_reserve2(nvobj::pool_base &pop,
 		for (; j < ptr->size(); ++j)
 			UT_ASSERT((*ptr)[j] == def);
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+			nvobj::delete_persistent<container_t<C>>(ptr);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -170,18 +167,17 @@ test_insert_with_reserve2(nvobj::pool_base &pop,
 template <typename C, typename Iterator, typename DefaultValueT>
 void
 test_insert_with_reserve3(nvobj::pool_base &pop,
-			  nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr,
+			  nvobj::persistent_ptr<container_t<C>> &ptr,
 			  const DefaultValueT &def, Iterator begin,
 			  Iterator end)
 {
 	try {
 		nvobj::transaction::run(pop, [&] {
-			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U,
-									  def);
+			ptr = nvobj::make_persistent<container_t<C>>(100U, def);
 		});
 		ptr->reserve(128); // force no reallocation
 		size_t sz = ptr->size();
-		typename pmem_exp::vector<C>::iterator i =
+		typename container_t<C>::iterator i =
 			ptr->insert(ptr->cend(), begin, end);
 		UT_ASSERT(ptr->size() == sz + 5);
 		UT_ASSERT(i == ptr->begin() + 100);
@@ -193,7 +189,7 @@ test_insert_with_reserve3(nvobj::pool_base &pop,
 		for (; j < ptr->size(); ++j)
 			UT_ASSERT((*ptr)[j] == def);
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+			nvobj::delete_persistent<container_t<C>>(ptr);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -212,7 +208,7 @@ main(int argc, char *argv[])
 
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: insert_iter_iter_iter", PMEMOBJ_MIN_POOL,
+		path, "VectorTest: insert_iter_iter_iter", PMEMOBJ_MIN_POOL * 2,
 		S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();

@@ -34,45 +34,48 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent.hpp>
-
-#include <vector>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 
 namespace nvobj = pmem::obj;
-
 using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
 };
 
-/**
- * Test pmem::obj::experimental::vector reserve() method
- *
- * Increase capacity of the vector to value greater than pool size
- * Expect pmem::transaction_allor_error exception is thrown
- */
+/* Check if access method can be called out of transaction scope */
 void
-test(nvobj::pool<struct root> &pop)
+check_access_out_of_tx(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
 
-	UT_ASSERT(r->v->capacity() == expected_capacity<size_t>(100));
-
-	bool exception_thrown = false;
-
-	auto size = r->v->max_size();
-
 	try {
-		r->v->reserve(size);
-		UT_ASSERT(0);
-	} catch (pmem::transaction_alloc_error &) {
-		exception_thrown = true;
+		r->v->cdata();
+		r->v->data();
+		static_cast<const C &>(*r->v).data();
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+}
 
-	UT_ASSERT(exception_thrown);
-	UT_ASSERT(r->v->capacity() == expected_capacity<size_t>(100));
+/*
+ * Check if access methods, iterators and dereference operator add
+ * elements to transaction. Expect no pmemcheck errors.
+ */
+void
+check_add_to_tx(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto p = r->v->data();
+			for (unsigned i = 0; i < r->v->size(); ++i)
+				*(p + i) = 2;
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 }
 
 int
@@ -86,23 +89,19 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: vector_capacity_exceptions_oom",
-		PMEMOBJ_MIN_POOL * 2, S_IWUSR | S_IRUSR);
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: iterators",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 
-	try {
-		nvobj::transaction::run(
-			pop, [&] { r->v = nvobj::make_persistent<C>(100U); });
+	nvobj::transaction::run(
+		pop, [&] { r->v = nvobj::make_persistent<C>(10U, 1); });
 
-		test(pop);
+	check_access_out_of_tx(pop);
+	check_add_to_tx(pop);
 
-		nvobj::transaction::run(
-			pop, [&] { nvobj::delete_persistent<C>(r->v); });
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
+	nvobj::delete_persistent_atomic<C>(r->v);
 
 	pop.close();
 

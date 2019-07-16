@@ -13,17 +13,17 @@
 //
 
 #include "iterators_support.hpp"
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 struct Throws;
 
-using C = pmem_exp::vector<int>;
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;

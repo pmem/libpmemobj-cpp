@@ -12,6 +12,7 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
@@ -21,7 +22,7 @@
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<int>;
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v1;
@@ -53,9 +54,9 @@ main(int argc, char *argv[])
 		r->v1->swap(*r->v2);
 
 		UT_ASSERT(r->v1->size() == 200);
-		UT_ASSERT(r->v1->capacity() == 200);
+		UT_ASSERT(r->v1->capacity() == expected_capacity<size_t>(200));
 		UT_ASSERT(r->v2->size() == 100);
-		UT_ASSERT(r->v2->capacity() == 100);
+		UT_ASSERT(r->v2->capacity() == expected_capacity<size_t>(100));
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<C>(r->v1);

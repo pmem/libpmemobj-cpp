@@ -12,15 +12,15 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<int>;
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
@@ -48,7 +48,8 @@ main(int argc, char *argv[])
 				r->v = nvobj::make_persistent<C>();
 			});
 
-			UT_ASSERT(r->v->capacity() == 0);
+			UT_ASSERT(r->v->capacity() ==
+				  expected_capacity<size_t>(0));
 
 			nvobj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<C>(r->v);
@@ -60,14 +61,17 @@ main(int argc, char *argv[])
 	{
 		try {
 			nvobj::transaction::run(pop, [&] {
-				r->v = nvobj::make_persistent<C>(100U);
+				r->v = nvobj::make_persistent<C>(
+					expected_capacity(100U));
 			});
 
-			UT_ASSERT(r->v->capacity() == 100);
+			UT_ASSERT(r->v->capacity() ==
+				  expected_capacity<size_t>(100));
 
 			r->v->push_back(0);
 
-			UT_ASSERT(r->v->capacity() > 101);
+			UT_ASSERT(r->v->capacity() >
+				  expected_capacity<size_t>(101));
 
 			nvobj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<C>(r->v);

@@ -78,6 +78,7 @@ option(ENABLE_ARRAY "enable installation and testing of pmem::obj::experimental:
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::experimental::vector" ON)
 option(ENABLE_STRING "enable installation and testing of pmem::obj::experimental::string (depends on ENABLE_VECTOR)" ON)
 option(ENABLE_CONCURRENT_HASHMAP "enable installation and testing of pmem::obj::experimental::concurrent_hash_map (depends on ENABLE_STRING)" ON)
+option(ENABLE_SEGMENT_TABLE "enable installation and testing of pmem::obj::experimental::segment_table" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
@@ -236,7 +237,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "basic_string.hpp" EXCLUDE
 	PATTERN "contiguous_iterator.hpp" EXCLUDE
 	PATTERN "slice.hpp" EXCLUDE
-	PATTERN "concurrent_hash_map.hpp" EXCLUDE)
+	PATTERN "concurrent_hash_map.hpp" EXCLUDE
+	PATTERN "segment_table.hpp" EXCLUDE)
 
 if (ENABLE_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
@@ -258,6 +260,10 @@ endif()
 if (ENABLE_ARRAY OR ENABLE_VECTOR OR ENABLE_STRING)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "contiguous_iterator.hpp")
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "slice.hpp")
+endif()
+
+if (ENABLE_SEGMENT_TABLE)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "segment_table.hpp")
 endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples

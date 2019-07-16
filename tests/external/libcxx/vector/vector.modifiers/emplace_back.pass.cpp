@@ -12,17 +12,17 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 class A;
 
-using C = pmem_exp::vector<A>;
+using C = container_t<A>;
 
 struct root {
 	nvobj::persistent_ptr<C> c;

@@ -208,7 +208,7 @@ next_pow_2(uint32_t v)
 }
 
 #if _MSC_VER
-static inline int
+static inline constexpr int
 Log2(uint64_t x)
 {
 	unsigned long j;
@@ -216,14 +216,14 @@ Log2(uint64_t x)
 	return static_cast<int>(j);
 }
 #elif __GNUC__ || __clang__
-static inline int
+static inline constexpr int
 Log2(uint64_t x)
 {
 	// __builtin_clz builtin count _number_ of leading zeroes
 	return 8 * int(sizeof(x)) - __builtin_clzll(x) - 1;
 }
 #else
-static inline int
+static inline constexpr int
 Log2(uint64_t x)
 {
 	x |= (x >> 1);

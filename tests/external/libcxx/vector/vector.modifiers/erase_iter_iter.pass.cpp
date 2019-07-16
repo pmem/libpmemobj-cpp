@@ -12,6 +12,7 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
@@ -20,13 +21,12 @@
 #include <iterator>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 struct Throws;
 
-using C = pmem_exp::vector<int>;
-using C2 = pmem_exp::vector<Throws>;
-using C3 = pmem_exp::vector<C>;
+using C = container_t<int>;
+using C2 = container_t<Throws>;
+using C3 = container_t<C>;
 using std::distance;
 using std::next;
 
@@ -82,9 +82,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: erase_iter_iter",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: erase_iter_iter", PMEMOBJ_MIN_POOL * 2,
+		S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 	{

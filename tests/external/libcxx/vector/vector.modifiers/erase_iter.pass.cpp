@@ -12,6 +12,7 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/vector.hpp>
@@ -20,12 +21,11 @@
 #include <iterator>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 struct Throws;
 
-using C = pmem_exp::vector<int>;
-using C2 = pmem_exp::vector<Throws>;
+using C = container_t<int>;
+using C2 = container_t<Throws>;
 using std::distance;
 using std::next;
 

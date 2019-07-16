@@ -30,17 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<int>;
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
@@ -51,7 +50,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 {
 	auto r = pop.root();
 
-	UT_ASSERT(r->v->capacity() == count);
+	UT_ASSERT(r->v->capacity() == expected_capacity(count));
 	UT_ASSERT(r->v->size() == count);
 
 	for (unsigned i = 0; i < count; ++i) {

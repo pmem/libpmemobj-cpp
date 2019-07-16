@@ -30,19 +30,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-const static size_t pool_size = PMEMOBJ_MIN_POOL;
+const static size_t pool_size = PMEMOBJ_MIN_POOL * 2;
 const static size_t test_val1 = 123U;
 
-using vector_type = pmem_exp::vector<int>;
+using vector_type = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr1;
@@ -76,24 +75,28 @@ main(int argc, char *argv[])
 			r->pptr1 = nvobj::make_persistent<vector_type>(
 				test_val1, 0);
 			/* test capacity of size-value-constructed vector */
-			UT_ASSERT(test_val1 == r->pptr1->capacity());
+			UT_ASSERT(expected_capacity(test_val1) ==
+				  r->pptr1->capacity());
 
 			r->pptr2 = nvobj::make_persistent<vector_type>(
 				r->pptr1->begin(), r->pptr1->end());
 			/* test capacity of iter-iter-constructed vector */
-			UT_ASSERT(test_val1 == r->pptr2->capacity());
+			UT_ASSERT(expected_capacity(test_val1) ==
+				  r->pptr2->capacity());
 			nvobj::delete_persistent<vector_type>(r->pptr2);
 
 			r->pptr2 =
 				nvobj::make_persistent<vector_type>(*r->pptr1);
 			/* test capacity of copy-constructed vector */
-			UT_ASSERT(test_val1 == r->pptr2->capacity());
+			UT_ASSERT(expected_capacity(test_val1) ==
+				  r->pptr2->capacity());
 			nvobj::delete_persistent<vector_type>(r->pptr2);
 
 			r->pptr2 = nvobj::make_persistent<vector_type>(
 				std::move(*r->pptr1));
 			/* test capacity of move-constructed vector */
-			UT_ASSERT(test_val1 == r->pptr2->capacity());
+			UT_ASSERT(expected_capacity(test_val1) ==
+				  r->pptr2->capacity());
 			nvobj::delete_persistent<vector_type>(r->pptr2);
 			nvobj::delete_persistent<vector_type>(r->pptr1);
 		});

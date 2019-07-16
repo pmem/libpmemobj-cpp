@@ -114,6 +114,17 @@ function(find_packages)
 	endif()
 endfunction()
 
+# Function to build test with custom build options (e.g. passing defines)
+# Example: build_test_ext(NAME ... SRC_FILES ....cpp BUILD_OPTIONS -D...)
+function(build_test_ext)
+	set(oneValueArgs NAME)
+	set(multiValueArgs SRC_FILES BUILD_OPTIONS)
+	cmake_parse_arguments(TEST "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+	build_test(${TEST_NAME} ${TEST_SRC_FILES})
+	target_compile_definitions(${TEST_NAME} PRIVATE ${TEST_BUILD_OPTIONS})
+endfunction()
+
 function(build_test name)
 	# skip posix tests
 	if(${name} MATCHES "posix$" AND WIN32)

@@ -247,10 +247,10 @@ if (ENABLE_ARRAY)
 endif()
 
 if (ENABLE_VECTOR)
-	build_test(temp_value temp_value/temp_value.cpp)
-	add_test_generic(NAME temp_value TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME vector_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DVECTOR)
+	add_test_generic(NAME vector_temp_value TRACERS none pmemcheck memcheck)
 
-	build_test(vector_assign_exceptions_length vector_assign_exceptions_length/vector_assign_exceptions_length.cpp)
+	build_test_ext(NAME vector_assign_exceptions_length SRC_FILES vector_assign_exceptions_length/vector_assign_exceptions_length.cpp BUILD_OPTIONS -DVECTOR)
 
 	# array-bounds warning is expected
 	check_cxx_compiler_flag(-Wno-array-bounds wno_array_bounds_flag)
@@ -260,64 +260,67 @@ if (ENABLE_VECTOR)
 
 	add_test_generic(NAME vector_assign_exceptions_length TRACERS none memcheck pmemcheck)
 
-	build_test(vector_assign_exceptions_oom vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp)
+	build_test_ext(NAME vector_assign_exceptions_oom SRC_FILES vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_assign_exceptions_oom TRACERS none memcheck pmemcheck)
 
-	build_test(vector_assign_txabort vector_assign_txabort/vector_assign_txabort.cpp)
+	build_test_ext(NAME vector_assign_txabort SRC_FILES vector_assign_txabort/vector_assign_txabort.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_assign_txabort TRACERS none memcheck pmemcheck)
 
-	build_test(vector_comp_operators vector_comp_operators/vector_comp_operators.cpp)
+	build_test_ext(NAME vector_comp_operators SRC_FILES vector_comp_operators/vector_comp_operators.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_comp_operators TRACERS none memcheck pmemcheck)
 
-	build_test(vector_capacity_exceptions_length vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp)
+	build_test_ext(NAME vector_capacity_exceptions_length SRC_FILES vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_capacity_exceptions_length TRACERS none memcheck pmemcheck)
 
-	build_test(vector_capacity_exceptions_oom vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp)
+	build_test_ext(NAME vector_capacity_exceptions_oom SRC_FILES vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_capacity_exceptions_oom TRACERS none memcheck pmemcheck)
 
-	build_test(vector_capacity_txabort vector_capacity_txabort/vector_capacity_txabort.cpp)
+	build_test_ext(NAME vector_capacity_txabort SRC_FILES vector_capacity_txabort/vector_capacity_txabort.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_capacity_txabort TRACERS none memcheck pmemcheck)
 
-	build_test(vector_ctor_exceptions_nopmem vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp)
+	build_test_ext(NAME vector_ctor_exceptions_nopmem SRC_FILES vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_ctor_exceptions_nopmem TRACERS none memcheck )
 
-	build_test(vector_ctor_exceptions_notx vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp)
+	build_test_ext(NAME vector_ctor_exceptions_notx SRC_FILES vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_ctor_exceptions_notx TRACERS none memcheck)
 
-	build_test(vector_ctor_exceptions_oom vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp)
+	build_test_ext(NAME vector_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
 
-	build_test(vector_ctor_move vector_ctor_move/vector_ctor_move.cpp)
+	build_test_ext(NAME vector_ctor_move SRC_FILES vector_ctor_move/vector_ctor_move.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_ctor_move TRACERS none memcheck pmemcheck)
 
-	build_test(vector_ctor_capacity vector_ctor_capacity/vector_ctor_capacity.cpp)
+	build_test_ext(NAME vector_ctor_capacity SRC_FILES vector_ctor_capacity/vector_ctor_capacity.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_ctor_capacity TRACERS none memcheck pmemcheck)
 
-	build_test(vector_dtor vector_dtor/vector_dtor.cpp)
+	build_test_ext(NAME vector_dtor SRC_FILES vector_dtor/vector_dtor.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_dtor TRACERS none memcheck pmemcheck)
 
-	build_test(vector_iterators_access vector_iterators_access/vector_iterators_access.cpp)
+	build_test_ext(NAME vector_iterators_access SRC_FILES vector_iterators_access/vector_iterators_access.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_iterators_access TRACERS none memcheck pmemcheck)
 
-	build_test(vector_ctor_check_copy vector_ctor_check_copy/vector_ctor_check_copy.cpp)
+	build_test_ext(NAME vector_data_access SRC_FILES vector_iterators_access/vector_data_access.cpp BUILD_OPTIONS -DVECTOR)
+	add_test_generic(NAME vector_data_access TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME vector_ctor_check_copy SRC_FILES vector_ctor_check_copy/vector_ctor_check_copy.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_ctor_check_copy TRACERS none memcheck pmemcheck)
 
-	build_test(vector_modifiers_exceptions_oom vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp)
+	build_test_ext(NAME vector_modifiers_exceptions_oom SRC_FILES vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_modifiers_exceptions_oom TRACERS none memcheck pmemcheck)
 
-	build_test(vector_modifiers_txabort vector_modifiers_txabort/vector_modifiers_txabort.cpp)
+	build_test_ext(NAME vector_modifiers_txabort SRC_FILES vector_modifiers_txabort/vector_modifiers_txabort.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_modifiers_txabort TRACERS none memcheck pmemcheck)
 
-	build_test(vector_modifiers_type_requirements vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp)
+	build_test_ext(NAME vector_modifiers_type_requirements SRC_FILES vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
 
-	build_test(vector_std_arg vector_std_arg/vector_std_arg.cpp)
+	build_test_ext(NAME vector_std_arg SRC_FILES vector_std_arg/vector_std_arg.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_std_arg TRACERS none memcheck pmemcheck)
 
-	build_test(vector_range vector_range/vector_range.cpp)
+	build_test_ext(NAME vector_range SRC_FILES vector_range/vector_range.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_range TRACERS none memcheck pmemcheck)
 
-	build_test(vector_layout vector_layout/vector_layout.cpp)
+	build_test_ext(NAME vector_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_layout TRACERS none)
 endif()
 
@@ -396,6 +399,150 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	endif()
 elseif(NOT PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	message(WARNING "Skipping concurrent_hash_map tests because no pmemvlt support found.")
+endif()
+
+if(ENABLE_SEGMENT_TABLE)
+	build_test_ext(NAME segment_vector_static_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_temp_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_static_assign_exceptions_length SRC_FILES vector_assign_exceptions_length/vector_assign_exceptions_length.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_assign_exceptions_length TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_assign_exceptions_oom SRC_FILES vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_assign_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_assign_txabort SRC_FILES vector_assign_txabort/vector_assign_txabort.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_assign_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_comp_operators SRC_FILES vector_comp_operators/vector_comp_operators.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_comp_operators TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_capacity_exceptions_length SRC_FILES vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_capacity_exceptions_length TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_capacity_exceptions_oom SRC_FILES vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_capacity_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_capacity_txabort SRC_FILES vector_capacity_txabort/vector_capacity_txabort.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_capacity_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_ctor_exceptions_nopmem SRC_FILES vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_ctor_exceptions_nopmem TRACERS none memcheck )
+
+	build_test_ext(NAME segment_vector_static_ctor_exceptions_notx SRC_FILES vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_ctor_exceptions_notx TRACERS none memcheck)
+
+	#[[
+	 When we throwing exceptions in segment_vector_static constructor, destructors is called for all constructed element according to standart.
+	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
+	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
+	]]
+	# build_test_ext(NAME segment_vector_static_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	# add_test_generic(NAME segment_vector_static_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_ctor_move SRC_FILES vector_ctor_move/vector_ctor_move.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_ctor_move TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_ctor_capacity SRC_FILES vector_ctor_capacity/vector_ctor_capacity.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_ctor_capacity TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_dtor SRC_FILES vector_dtor/vector_dtor.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_dtor TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_iterators_access SRC_FILES vector_iterators_access/vector_iterators_access.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_iterators_access TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_ctor_check_copy SRC_FILES vector_ctor_check_copy/vector_ctor_check_copy.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_ctor_check_copy TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_modifiers_exceptions_oom SRC_FILES vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_modifiers_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_modifiers_txabort SRC_FILES vector_modifiers_txabort/vector_modifiers_txabort.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_modifiers_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_modifiers_type_requirements SRC_FILES vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_modifiers_type_requirements TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_std_arg SRC_FILES vector_std_arg/vector_std_arg.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_std_arg TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_static_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DSTATIC_SEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_static_layout TRACERS none)
+
+	# -----------------------------------------------------------------------------------------------------------------------
+	# -----------------------------------------------------------------------------------------------------------------------
+	# -----------------------------------------------------------------------------------------------------------------------
+	# -----------------------------------------------------------------------------------------------------------------------
+	# -----------------------------------------------------------------------------------------------------------------------
+
+	build_test_ext(NAME segment_vector_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_temp_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_assign_exceptions_length SRC_FILES vector_assign_exceptions_length/vector_assign_exceptions_length.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_assign_exceptions_length TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_assign_exceptions_oom SRC_FILES vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_assign_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_assign_txabort SRC_FILES vector_assign_txabort/vector_assign_txabort.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_assign_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_comp_operators SRC_FILES vector_comp_operators/vector_comp_operators.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_comp_operators TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_capacity_exceptions_length SRC_FILES vector_capacity_exceptions_length/vector_capacity_exceptions_length.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_capacity_exceptions_length TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_capacity_exceptions_oom SRC_FILES vector_capacity_exceptions_oom/vector_capacity_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_capacity_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_capacity_txabort SRC_FILES vector_capacity_txabort/vector_capacity_txabort.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_capacity_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_ctor_exceptions_nopmem SRC_FILES vector_ctor_exceptions_nopmem/vector_ctor_exceptions_nopmem.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_ctor_exceptions_nopmem TRACERS none memcheck )
+
+	build_test_ext(NAME segment_vector_ctor_exceptions_notx SRC_FILES vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_ctor_exceptions_notx TRACERS none memcheck)
+
+	#[[
+	 When we throwing exceptions in segment_vector constructor, destructors is called for all constructed element according to standart.
+	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
+	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
+	]]
+	# build_test_ext(NAME segment_vector_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	# add_test_generic(NAME segment_vector_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_ctor_move SRC_FILES vector_ctor_move/vector_ctor_move.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_ctor_move TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_ctor_capacity SRC_FILES vector_ctor_capacity/vector_ctor_capacity.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_ctor_capacity TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_dtor SRC_FILES vector_dtor/vector_dtor.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_dtor TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_iterators_access SRC_FILES vector_iterators_access/vector_iterators_access.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_iterators_access TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_ctor_check_copy SRC_FILES vector_ctor_check_copy/vector_ctor_check_copy.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_ctor_check_copy TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_modifiers_exceptions_oom SRC_FILES vector_modifiers_exceptions_oom/vector_modifiers_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_modifiers_exceptions_oom TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_modifiers_txabort SRC_FILES vector_modifiers_txabort/vector_modifiers_txabort.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_modifiers_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_modifiers_type_requirements SRC_FILES vector_modifiers_type_requirements/vector_modifiers_type_requirements.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_modifiers_type_requirements TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_std_arg SRC_FILES vector_std_arg/vector_std_arg.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_std_arg TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DSEGMENT_VECTOR)
+	add_test_generic(NAME segment_vector_layout TRACERS none)
 endif()
 
 add_subdirectory(external)

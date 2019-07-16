@@ -30,10 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/slice.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
@@ -41,7 +41,7 @@
 namespace pmemobj = pmem::obj;
 namespace pmemobj_exp = pmemobj::experimental;
 
-using vec_type = pmemobj_exp::vector<int>;
+using vec_type = container_t<int>;
 
 struct root {
 	pmemobj::persistent_ptr<vec_type> pptr;

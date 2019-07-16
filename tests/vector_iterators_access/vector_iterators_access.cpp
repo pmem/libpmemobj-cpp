@@ -30,15 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using C = pmem_exp::vector<int>;
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
@@ -52,7 +51,6 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 
 	try {
 		r->v->const_at(0);
-		r->v->cdata();
 		r->v->cfront();
 		r->v->cback();
 		r->v->cbegin();
@@ -62,7 +60,6 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 
 		(*r->v)[0];
 		r->v->at(0);
-		r->v->data();
 		r->v->front();
 		r->v->back();
 		r->v->begin();
@@ -71,7 +68,6 @@ check_access_out_of_tx(nvobj::pool<struct root> &pop)
 		r->v->rend();
 
 		static_cast<const C &>(*r->v).at(0);
-		static_cast<const C &>(*r->v).data();
 		static_cast<const C &>(*r->v).front();
 		static_cast<const C &>(*r->v).back();
 		static_cast<const C &>(*r->v).begin();
@@ -96,11 +92,6 @@ check_add_to_tx(nvobj::pool<struct root> &pop)
 	try {
 		nvobj::transaction::run(pop, [&] { (*r->v)[0] = 0; });
 		nvobj::transaction::run(pop, [&] { r->v->at(0) = 1; });
-		nvobj::transaction::run(pop, [&] {
-			auto p = r->v->data();
-			for (unsigned i = 0; i < r->v->size(); ++i)
-				*(p + i) = 2;
-		});
 		nvobj::transaction::run(pop, [&] { r->v->front() = 3; });
 		nvobj::transaction::run(pop, [&] { r->v->back() = 4; });
 		nvobj::transaction::run(pop, [&] { *r->v->begin() = 5; });
@@ -213,9 +204,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: iterators",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(path, "VectorTest: iterators",
+					     PMEMOBJ_MIN_POOL * 2,
+					     S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

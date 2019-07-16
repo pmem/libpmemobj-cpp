@@ -9,9 +9,11 @@ services:
 
 env:
   matrix:
-    - TYPE=normal OS=ubuntu OS_VER=19.04 PUSH_IMAGE=1
-    - TYPE=normal OS=fedora OS_VER=30 PUSH_IMAGE=1 AUTO_DOC_UPDATE=1
-    - TYPE=normal OS=ubuntu OS_VER=19.04 COVERAGE=1
+    - TYPE=debug OS=fedora OS_VER=30 PUSH_IMAGE=1 AUTO_DOC_UPDATE=1
+    - TYPE=debug OS=ubuntu OS_VER=19.04 PUSH_IMAGE=1
+    - TYPE=debug OS=ubuntu OS_VER=19.04 COVERAGE=1
+    - TYPE=release OS=fedora OS_VER=30
+    - TYPE=release OS=ubuntu OS_VER=19.04
     - TYPE=valgrind OS=ubuntu OS_VER=19.04
     - TYPE=coverity OS=ubuntu OS_VER=19.04
 

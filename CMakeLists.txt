@@ -78,6 +78,11 @@ option(ENABLE_ARRAY "enable installation and testing of pmem::obj::experimental:
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::experimental::vector" ON)
 option(ENABLE_STRING "enable installation and testing of pmem::obj::experimental::string (depends on ENABLE_VECTOR)" ON)
 option(ENABLE_CONCURRENT_HASHMAP "enable installation and testing of pmem::obj::experimental::concurrent_hash_map (depends on ENABLE_STRING)" ON)
+option(ENABLE_SEGMENT_VECTOR "enable installation of pmem::obj::experimental::segment_vector" ON)
+option(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and exponential_size_policy" ON)
+option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and exponential_size_policy" ON)
+option(ENABLE_SEGMENT_VECTOR_ARRAY_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and fixed_size_policy" OFF)
+option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
@@ -236,7 +241,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "basic_string.hpp" EXCLUDE
 	PATTERN "contiguous_iterator.hpp" EXCLUDE
 	PATTERN "slice.hpp" EXCLUDE
-	PATTERN "concurrent_hash_map.hpp" EXCLUDE)
+	PATTERN "concurrent_hash_map.hpp" EXCLUDE
+	PATTERN "segment_vector.hpp" EXCLUDE)
 
 if (ENABLE_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
@@ -258,6 +264,10 @@ endif()
 if (ENABLE_ARRAY OR ENABLE_VECTOR OR ENABLE_STRING)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "contiguous_iterator.hpp")
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "slice.hpp")
+endif()
+
+if (ENABLE_SEGMENT_TABLE)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "segment_vector.hpp")
 endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples

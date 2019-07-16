@@ -31,18 +31,17 @@
  */
 
 #include "helper_classes.hpp"
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-const static size_t pool_size = PMEMOBJ_MIN_POOL;
+const static size_t pool_size = PMEMOBJ_MIN_POOL * 2;
 
 using test_type = emplace_constructible_copy_insertable_move_insertable<int>;
-using vector_type = pmem_exp::vector<test_type>;
+using vector_type = container_t<test_type>;
 using It = test_support::input_it<test_type *>;
 
 struct root {

@@ -78,17 +78,15 @@ containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
 if [[ "$command" == "" ]]; then
 	case $TYPE in
-	normal)
-		if [ "$COVERAGE" == "1" ]; then
-			builds=(tests_gcc_debug_no_valgrind
+	debug)
+		builds=(tests_gcc_debug_no_valgrind
 				tests_clang_debug_cpp17_no_valgrind)
-		else
-			builds=(tests_gcc_debug_no_valgrind
-				tests_clang_debug_cpp17_no_valgrind
-				tests_gcc_release_cpp17_no_valgrind
+		command="./run-build.sh ${builds[@]}";
+		;;
+	release)
+		builds=(tests_gcc_release_cpp17_no_valgrind
 				tests_package
 				tests_findLIBPMEMOBJ_cmake)
-		fi
 		command="./run-build.sh ${builds[@]}";
 		;;
 	valgrind)

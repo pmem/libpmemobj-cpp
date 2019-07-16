@@ -30,14 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using vector_type = pmem_exp::vector<int>;
+
+using vector_type = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr;
@@ -248,9 +248,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: ctor_nopmem",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(path, "VectorTest: ctor_nopmem",
+					     PMEMOBJ_MIN_POOL * 2,
+					     S_IWUSR | S_IRUSR);
 
 	test_copy_ctor(pop);
 	test_default_ctor();

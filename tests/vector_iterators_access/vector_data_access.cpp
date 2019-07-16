@@ -34,56 +34,44 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 
 namespace nvobj = pmem::obj;
-
-using vector_type = container_t<int>;
+using C = container_t<int>;
 
 struct root {
-	nvobj::persistent_ptr<vector_type> v1;
-	nvobj::persistent_ptr<vector_type> v2;
+	nvobj::persistent_ptr<C> v;
 };
 
-/**
- * Test pmem::obj::experimental::vector move constructor.
- *
- * Checks if vector state is reverted when transaction aborts
- */
+/* Check if access method can be called out of transaction scope */
 void
-test_move_ctor_abort(nvobj::pool<struct root> &pop)
+check_access_out_of_tx(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
 
-	auto size = r->v1->size();
-
-	UT_ASSERT(r->v2 == nullptr);
 	try {
-		nvobj::transaction::run(pop, [&] {
-			r->v2 = nvobj::make_persistent<vector_type>(
-				std::move(*r->v1));
-
-			UT_ASSERT(r->v1->empty());
-			UT_ASSERT(r->v2->size() == size);
-
-			for (vector_type::size_type i = 0; i < size; ++i) {
-				UT_ASSERT((*r->v2)[i] == (int)i);
-			}
-
-			nvobj::transaction::abort(EINVAL);
-		});
-	} catch (pmem::manual_tx_abort &) {
+		r->v->cdata();
+		r->v->data();
+		static_cast<const C &>(*r->v).data();
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+}
 
-	UT_ASSERT(r->v2 == nullptr);
-	UT_ASSERT(r->v1->size() == size);
+/*
+ * Check if access methods, iterators and dereference operator add
+ * elements to transaction. Expect no pmemcheck errors.
+ */
+void
+check_add_to_tx(nvobj::pool<struct root> &pop)
+{
+	auto r = pop.root();
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			for (vector_type::size_type i = 0; i < size; ++i) {
-				UT_ASSERT((*r->v1)[i] == (int)i);
-			}
+			auto p = r->v->data();
+			for (unsigned i = 0; i < r->v->size(); ++i)
+				*(p + i) = 2;
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -101,32 +89,19 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: vector_ctor_move", PMEMOBJ_MIN_POOL * 2,
-		S_IWUSR | S_IRUSR);
-
-	int arr[] = {0, 1, 2, 3, 4, 5};
+	auto pop =
+		nvobj::pool<root>::create(path, "VectorTest: iterators",
+					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 
-	try {
-		nvobj::transaction::run(pop, [&] {
-			r->v1 = nvobj::make_persistent<vector_type>(
-				std::begin(arr), std::end(arr));
-		});
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
+	nvobj::transaction::run(
+		pop, [&] { r->v = nvobj::make_persistent<C>(10U, 1); });
 
-	test_move_ctor_abort(pop);
+	check_access_out_of_tx(pop);
+	check_add_to_tx(pop);
 
-	try {
-		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<vector_type>(r->v1);
-		});
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
+	nvobj::delete_persistent_atomic<C>(r->v);
 
 	pop.close();
 

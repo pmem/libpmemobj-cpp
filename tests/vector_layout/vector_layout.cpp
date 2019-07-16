@@ -30,28 +30,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
-
-namespace ptl = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
-using vector_type = ptl::vector<int>;
+using vector_type = container_t<int>;
+using vector_representation = container_representation_t<int>;
 
-struct vector_representation {
-	vector_type::size_type size;
-	vector_type::size_type capacity;
-	nvobj::persistent_ptr<int[]> ptr;
-};
-
+#if defined(VECTOR)
 struct check_members_order {
 	check_members_order() : vector()
 	{
 		vector.reserve(100);
 
 		UT_ASSERTeq(representation.size, 0);
-		UT_ASSERTeq(representation.capacity, 100);
+		UT_ASSERTeq(representation.capacity,
+			    expected_capacity<size_t>(100));
 
 		vector.resize(200);
 
@@ -72,6 +67,71 @@ struct check_members_order {
 		vector_representation representation;
 	};
 };
+#elif defined(SEGMENT_VECTOR_ARRAY_EXPSIZE) ||                                 \
+	defined(SEGMENT_VECTOR_VECTOR_EXPSIZE)
+struct check_members_order {
+	check_members_order() : vector()
+	{
+		vector.reserve(100);
+
+		UT_ASSERTeq(representation.segments_used, 7);
+		UT_ASSERTeq(vector.capacity(), expected_capacity<size_t>(100));
+
+		vector.resize(200);
+
+		UT_ASSERTeq(representation.segments_used, 8);
+		UT_ASSERTeq(vector.size(), 200);
+
+		vector[10] = 123456789;
+
+		size_t segment_idx =
+			static_cast<size_t>(pmem::detail::Log2(10 | 1));
+		size_t local_idx = 10 - (size_t(1) << segment_idx);
+		UT_ASSERTeq(representation.ptr[segment_idx][local_idx],
+			    123456789);
+	}
+
+	~check_members_order()
+	{
+		vector.~vector_type();
+	}
+
+	union {
+		vector_type vector;
+		vector_representation representation;
+	};
+};
+#elif defined(SEGMENT_VECTOR_VECTOR_FIXEDSIZE) ||                              \
+	defined(SEGMENT_VECTOR_ARRAY_FIXEDSIZE)
+struct check_members_order {
+	check_members_order() : vector()
+	{
+		vector.reserve(100);
+
+		UT_ASSERTeq(representation.segments_used, 1);
+		UT_ASSERTeq(vector.capacity(), expected_capacity<size_t>(100));
+
+		vector.resize(200);
+
+		UT_ASSERTeq(representation.segments_used, 2);
+		UT_ASSERTeq(vector.size(), 200);
+
+		vector[10] = 123456789;
+
+		UT_ASSERTeq(representation.ptr[0][10], 123456789);
+	}
+
+	~check_members_order()
+	{
+		vector.~vector_type();
+	}
+
+	union {
+		vector_type vector;
+		vector_representation representation;
+	};
+};
+#endif
 
 struct root {
 	nvobj::persistent_ptr<check_members_order> v;
@@ -104,11 +164,12 @@ main(int argc, char *argv[])
 
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+		path, "VectorTest", PMEMOBJ_MIN_POOL * 2, S_IWUSR | S_IRUSR);
 
-	static_assert(sizeof(ptl::vector<int>) == 32, "");
-	static_assert(sizeof(ptl::vector<char>) == 32, "");
-	static_assert(sizeof(ptl::vector<ptl::vector<int>>) == 32, "");
+	static_assert(sizeof(container_t<int>) == expected_sizeof(), "");
+	static_assert(sizeof(container_t<char>) == expected_sizeof(), "");
+	static_assert(
+		sizeof(container_t<container_t<int>>) == expected_sizeof(), "");
 
 	static_assert(std::is_standard_layout<vector_type>::value, "");
 

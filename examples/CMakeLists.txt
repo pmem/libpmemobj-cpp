@@ -86,6 +86,9 @@ add_check_whitespace(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*pp)
 add_cppstyle(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
 add_check_whitespace(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
 
+add_cppstyle(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
+add_check_whitespace(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
@@ -111,6 +114,9 @@ endif()
 
 add_example(queue queue/queue.cpp)
 target_link_libraries(example-queue ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_example(simplekv simplekv/simplekv.cpp)
+target_link_libraries(example-simplekv ${LIBPMEMOBJ_LIBRARIES})
 
 if(CURSES_FOUND)
 	add_example(pman pman/pman.cpp)

@@ -53,8 +53,6 @@ namespace nvobj_exp = pmem::obj::experimental;
 namespace
 {
 
-static const int TEST_VALUE = 10;
-
 struct emplace_constructible {
 	emplace_constructible()
 	{
@@ -68,26 +66,26 @@ struct emplace_constructible {
 	int a, b, c;
 };
 
-struct work_in_destructor {
-	static int destructor_called;
+static int WORK_IN_DESTRUCTOR_TEST_VALUE = 10;
+static int WORK_IN_DESTRUCTOR_DTOR_CALLED = 0;
 
+struct work_in_destructor {
 	work_in_destructor()
 	{
-		a = TEST_VALUE;
+		a = WORK_IN_DESTRUCTOR_TEST_VALUE++;
 	}
 
 	~work_in_destructor()
 	{
-		destructor_called = 1;
+		WORK_IN_DESTRUCTOR_DTOR_CALLED = 1;
+		a = 0;
 	}
 
 	int a;
 };
 
-int work_in_destructor::destructor_called = 0;
-
 struct foo {
-	foo() : counter(TEST_VALUE){};
+	foo() : counter(WORK_IN_DESTRUCTOR_TEST_VALUE){};
 	int counter;
 };
 
@@ -116,8 +114,10 @@ struct root {
 void
 test_init(nvobj::pool<root> &pop)
 {
-	UT_ASSERTeq(pop.root()->f.get().counter, TEST_VALUE);
-	UT_ASSERTeq(pop.root()->bar_ptr->vfoo.get().counter, TEST_VALUE);
+	WORK_IN_DESTRUCTOR_TEST_VALUE = 10;
+
+	UT_ASSERTeq(pop.root()->f.get().counter, 10);
+	UT_ASSERTeq(pop.root()->bar_ptr->vfoo.get().counter, 10);
 }
 
 /*
@@ -198,6 +198,9 @@ test_variadic_get(nvobj::pool<root> &pop)
 void
 test_destructor(nvobj::pool<root> &pop)
 {
+	WORK_IN_DESTRUCTOR_TEST_VALUE = 10;
+	WORK_IN_DESTRUCTOR_DTOR_CALLED = 0;
+
 	auto r = pop.root();
 
 	try {
@@ -209,8 +212,8 @@ test_destructor(nvobj::pool<root> &pop)
 		UT_FATALexc(e);
 	}
 
-	UT_ASSERT(r->work_ptr->get().a == TEST_VALUE);
-	UT_ASSERT(work_in_destructor::destructor_called == 0);
+	UT_ASSERT(r->work_ptr->get().a == 10);
+	UT_ASSERT(WORK_IN_DESTRUCTOR_DTOR_CALLED == 0);
 
 	try {
 		nvobj::transaction::run(pop, [&] {
@@ -221,9 +224,52 @@ test_destructor(nvobj::pool<root> &pop)
 		UT_FATALexc(e);
 	}
 
-	/* destructor should not be called */
-	UT_ASSERT(work_in_destructor::destructor_called == 0);
+	/* destructor be called */
+	UT_ASSERT(WORK_IN_DESTRUCTOR_DTOR_CALLED == 1);
 }
+
+/*
+ * test_destructor_abort -- test v destructor in tx which aborts
+ */
+void
+test_destructor_abort(nvobj::pool<root> &pop)
+{
+	WORK_IN_DESTRUCTOR_TEST_VALUE = 10;
+	WORK_IN_DESTRUCTOR_DTOR_CALLED = 0;
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->work_ptr = nvobj::make_persistent<
+				nvobj_exp::v<work_in_destructor>>();
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(r->work_ptr->get().a == 10);
+	UT_ASSERT(WORK_IN_DESTRUCTOR_DTOR_CALLED == 0);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<
+				nvobj_exp::v<work_in_destructor>>(r->work_ptr);
+
+			nvobj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	/* destructor be called */
+	UT_ASSERT(WORK_IN_DESTRUCTOR_DTOR_CALLED == 1);
+
+	/* This call to get() should call object constructor */
+	UT_ASSERT(r->work_ptr->get().a == 11);
+}
+
 }
 
 int
@@ -261,6 +307,7 @@ main(int argc, char *argv[])
 	test_operators(pop);
 	test_variadic_get(pop);
 	test_destructor(pop);
+	test_destructor_abort(pop);
 
 	pop.close();
 

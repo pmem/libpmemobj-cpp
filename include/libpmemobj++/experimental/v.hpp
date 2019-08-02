@@ -43,6 +43,7 @@
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
+#include <libpmemobj++/utils.hpp>
 
 namespace pmem
 {
@@ -63,6 +64,8 @@ namespace experimental
  * application.
  * This class has 8 bytes of storage overhead.
  * @snippet doc_snippets/v.cpp v_property_example
+ *
+ * Changes made to v<> are NOT tracked inside a transaction.
  */
 template <typename T>
 class v {
@@ -79,10 +82,23 @@ public:
 
 	/**
 	 * Destructor.
+	 *
+	 * If this destructor is called in a transaction and transaction aborts
+	 * next call to get() will reinitialize the variable.
 	 */
 	~v()
 	{
-		/* Destructor of val should NOT be called */
+		val.~T();
+
+		/*
+		 * setting runid to 0 guarantees that next call to get()
+		 * will initialize the variable
+		 */
+		vlt.runid = 0;
+
+		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
+		if (pop)
+			pool_base(pop).persist(&vlt, sizeof(vlt));
 	}
 
 	/**

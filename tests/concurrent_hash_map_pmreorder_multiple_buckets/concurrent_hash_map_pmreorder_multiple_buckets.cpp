@@ -227,7 +227,7 @@ main(int argc, char *argv[])
 
 			nvobj::make_persistent_atomic<persistent_map_type>(
 				pop, pop.root()->cons);
-			pop.root()->cons->insert(value_type(1, 1));
+			pop.root()->cons->insert(value_type(0, 0));
 		} else if (argv[1][0] == 'i') {
 			pop = nvobj::pool<root>::open(path, LAYOUT);
 

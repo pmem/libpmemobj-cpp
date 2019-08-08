@@ -78,6 +78,7 @@ option(ENABLE_ARRAY "enable installation and testing of pmem::obj::experimental:
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::experimental::vector" ON)
 option(ENABLE_STRING "enable installation and testing of pmem::obj::experimental::string (depends on ENABLE_VECTOR)" ON)
 option(ENABLE_CONCURRENT_HASHMAP "enable installation and testing of pmem::obj::experimental::concurrent_hash_map (depends on ENABLE_STRING)" ON)
+option(ENABLE_CONCURRENT_MAP "enable installation and testing of pmem::obj::experimental::concurrent_map (depends on ENABLE_STRING)" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")

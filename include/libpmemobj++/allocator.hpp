@@ -228,7 +228,7 @@ public:
 
 		/* allocate raw memory, no object construction */
 		return pmemobj_tx_alloc(sizeof(value_type) * cnt,
-					detail::type_num<T>());
+					detail::type_num<value_type>());
 	}
 
 	/**
@@ -433,9 +433,9 @@ public:
 	~allocator() = default;
 
 	/**
-	 * Explicit copy constructor.
+	 * Copy constructor.
 	 */
-	explicit allocator(allocator const &rhs) : Policy(rhs), Traits(rhs)
+	allocator(allocator const &rhs) : Policy(rhs), Traits(rhs)
 	{
 	}
 

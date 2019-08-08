@@ -4,6 +4,7 @@
 #define THREAD_HELPERS_COMMON_HPP
 
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -25,6 +26,35 @@ parallel_exec(size_t concurrency, Function f)
 }
 
 /*
+ * This function executes 'concurrency' threads and provides
+ * 'syncthreads' method (synchronization barrier) for f()
+ */
+template <typename Function>
+void
+parallel_xexec(size_t concurrency, Function f)
+{
+	std::condition_variable cv;
+	std::mutex m;
+	size_t counter = 0;
+
+	auto syncthreads = [&] {
+		std::unique_lock<std::mutex> lock(m);
+		counter++;
+		if (counter < concurrency)
+			cv.wait(lock);
+		else
+			/*
+			 * notify_call could be called outside of a lock
+			 * (it would perform better) but drd complains
+			 * in that case
+			 */
+			cv.notify_all();
+	};
+
+	parallel_exec(concurrency, [&](size_t tid) { f(tid, syncthreads); });
+}
+
+/*
  * This function executes 'concurrency' threads and wait for all of them to
  * finish executing f before calling join().
  */
@@ -32,27 +62,12 @@ template <typename Function>
 void
 parallel_exec_with_sync(size_t concurrency, Function f)
 {
-	std::condition_variable cv;
-	std::mutex m;
-	size_t counter = 0;
+	parallel_xexec(concurrency,
+		       [&](size_t tid, std::function<void(void)> syncthreads) {
+			       f(tid);
 
-	parallel_exec(concurrency, [&](size_t tid) {
-		f(tid);
-
-		{
-			std::unique_lock<std::mutex> lock(m);
-			counter++;
-			if (counter < concurrency)
-				cv.wait(lock);
-			else
-				/*
-				 * notify_call could be called outside of a lock
-				 * (it would perform better) but drd complains
-				 * in that case
-				 */
-				cv.notify_all();
-		}
-	});
+			       syncthreads();
+		       });
 }
 
 #endif /* THREAD_HELPERS_COMMON_HPP */

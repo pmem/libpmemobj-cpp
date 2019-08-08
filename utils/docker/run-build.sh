@@ -89,7 +89,8 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_TBB=${TESTS_TBB} \
 		-DTEST_DIR=/mnt/pmem \
 		-DTESTS_USE_FORCED_PMEM=1 \
-		-DTESTS_COMPATIBILITY=1
+		-DTESTS_COMPATIBILITY=1 \
+		-DTESTS_CONCURRENT_GDB=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout 590
@@ -156,7 +157,8 @@ function build_gcc_debug_cpp14() {
 		-DTEST_DIR=/mnt/pmem \
 		-DTESTS_USE_FORCED_PMEM=1 \
 		-DTESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND=1 \
-		-DTESTS_COMPATIBILITY=1
+		-DTESTS_COMPATIBILITY=1 \
+		-DTESTS_CONCURRENT_GDB=1
 
 	make -j$(nproc)
 }

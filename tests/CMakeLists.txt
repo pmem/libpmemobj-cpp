@@ -693,4 +693,15 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_layout TRACERS none)
 endif()
 
+if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_MAP)
+	build_test(concurrent_map concurrent_map/concurrent_map.cpp)
+	add_test_generic(NAME concurrent_map TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(concurrent_map_singlethread concurrent_map_singlethread/concurrent_map_singlethread.cpp)
+	add_test_generic(NAME concurrent_map_singlethread TRACERS none memcheck pmemcheck)
+elseif(NOT PMEMVLT_PRESENT AND ENABLE_CONCURRENT_MAP)
+	message(WARNING "Skipping concurrent_map tests because no pmemvlt support found.")
+endif()
+
+
 add_subdirectory(external)

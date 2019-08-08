@@ -105,8 +105,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCXX_STANDARD=17 \
 			-DTESTS_USE_VALGRIND=0 \
 			-DTEST_DIR=/mnt/pmem \
-			-DTESTS_USE_FORCED_PMEM=1 \
-			-DUSE_TBB=1 \
+			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
 ctest --output-on-failure --timeout 540
@@ -134,8 +133,7 @@ cmake .. -DDEVELOPER_MODE=1 \
 			-DCOVERAGE=$COVERAGE \
 			-DTESTS_USE_VALGRIND=1 \
 			-DTEST_DIR=/mnt/pmem \
-			-DTESTS_USE_FORCED_PMEM=1 \
-			-DUSE_TBB=1 \
+			-DTESTS_USE_FORCED_PMEM=1
 
 make -j2
 if [ "$COVERAGE" == "1" ]; then

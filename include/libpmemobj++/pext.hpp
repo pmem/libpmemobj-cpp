@@ -319,6 +319,18 @@ struct numeric_limits<pmem::obj::p<T>> : public numeric_limits<T> {
 	static constexpr bool is_specialized = true;
 };
 
+/**
+ * Specialization of std::less for p<T>
+ */
+template <typename T>
+struct less<pmem::obj::p<T>> {
+	size_t
+	operator()(const pmem::obj::p<T> &lhs, const pmem::obj::p<T> &rhs) const
+	{
+		return lhs.get_ro() < rhs.get_ro();
+	}
+};
+
 } /* namespace std */
 
 #endif /* LIBPMEMOBJ_CPP_PEXT_HPP */

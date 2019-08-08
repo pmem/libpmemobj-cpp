@@ -52,6 +52,7 @@ option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1" OFF)
 option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
 option(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND "enable concurrent_hash_map tests with drd and helgrind (can only be run on PMEM)." OFF)
+option(TESTS_CONCURRENT_GDB "enable concurrent gdb tests - require 'set scheduler-locking on' support (OS dependent) " OFF)
 option(TESTS_LONG "enable long running tests" OFF)
 option(TESTS_TBB "enable tests which require TBB" OFF)
 option(TESTS_COMPATIBILITY "enable compatibility tests (requires internet connection)" OFF)
@@ -64,7 +65,7 @@ option(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE "enable testing of pmem::obj::segment_v
 option(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::segment_vector with vector as segment_vector_type and exponential_size_policy" ON)
 option(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(TEST_ENUMERABLE_THREAD_SPECIFIC "enable testing of pmem::obj::experimental::enumerable_thread_specific" ON)
-option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::concurrent_map (depends on TEST_STRING)" ON)
+option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::experimental::concurrent_map (depends on TEST_STRING)" ON)
 
 option(INSTALL_ARRAY "enable installation of pmem::obj::array" ON)
 option(INSTALL_VECTOR "enable installation of pmem::obj::vector" ON)
@@ -237,7 +238,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "slice.hpp" EXCLUDE
 	PATTERN "concurrent_hash_map.hpp" EXCLUDE
 	PATTERN "segment_vector.hpp" EXCLUDE
-	PATTERN "enumerable_thread_specific.hpp" EXCLUDE)
+	PATTERN "enumerable_thread_specific.hpp" EXCLUDE
+	PATTERN "concurrent_map.hpp" EXCLUDE)
 
 if(INSTALL_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
@@ -265,6 +267,12 @@ endif()
 if(INSTALL_SEGMENT_VECTOR)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "segment_vector.hpp")
 endif()
+
+if(INSTALL_CONCURRENT_MAP)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "concurrent_map.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
+endif()
+
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 	FILES_MATCHING PATTERN "*.*pp")

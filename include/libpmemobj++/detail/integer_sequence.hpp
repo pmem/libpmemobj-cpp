@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2018, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -63,6 +63,13 @@ struct make_integer_seq_impl<N, I, integer_sequence<N, Indices...>, T,
 template <typename... Types>
 using make_index_sequence =
 	make_integer_seq_impl<size_t, 0, integer_sequence<size_t>, Types...>;
+
+/*
+ * A helper alias template to convert any type parameter pack into an index
+ * sequence of the same length. Analog of std::index_sequence_for.
+ */
+template <class... Types>
+using index_sequence_for = typename make_index_sequence<Types...>::type;
 
 } /* namespace detail */
 

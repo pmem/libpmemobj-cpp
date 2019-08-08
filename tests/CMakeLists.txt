@@ -517,11 +517,11 @@ if(TEST_CONCURRENT_HASHMAP)
 	if(PMREORDER_SUPPORTED)
 		build_test(concurrent_hash_map_pmreorder_simple concurrent_hash_map_pmreorder_simple/concurrent_hash_map_pmreorder_simple.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_simple CASE 0 TRACERS none
-				SCRIPT concurrent_hash_map/pmreorder.cmake)
+				SCRIPT cmake/pmreorder.cmake)
 
 		build_test(concurrent_hash_map_pmreorder_multiple_buckets concurrent_hash_map_pmreorder_multiple_buckets/concurrent_hash_map_pmreorder_multiple_buckets.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_multiple_buckets CASE 0 TRACERS none
-				SCRIPT concurrent_hash_map/pmreorder.cmake)
+				SCRIPT cmake/pmreorder.cmake)
 
 		build_test(concurrent_hash_map_pmreorder_erase concurrent_hash_map_pmreorder_erase/concurrent_hash_map_pmreorder_erase.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_erase CASE 0 TRACERS none)
@@ -791,6 +791,43 @@ if (TEST_ENUMERABLE_THREAD_SPECIFIC)
 	build_test(enumerable_thread_specific_ctor enumerable_thread_specific_ctor/enumerable_thread_specific_ctor.cpp)
 	add_test_generic(NAME enumerable_thread_specific_ctor CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+endif()
+
+if(TEST_CONCURRENT_MAP)
+	build_test(concurrent_map concurrent_map/concurrent_map.cpp)
+	add_test_generic(NAME concurrent_map TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(concurrent_map_singlethread concurrent_map_singlethread/concurrent_map_singlethread.cpp)
+	add_test_generic(NAME concurrent_map_singlethread TRACERS none memcheck pmemcheck)
+
+	if(PMREORDER_SUPPORTED)
+		build_test(concurrent_map_pmreorder_simple concurrent_map_pmreorder_simple/concurrent_map_pmreorder_simple.cpp)
+		add_test_generic(NAME concurrent_map_pmreorder_simple CASE 0 TRACERS none
+				SCRIPT cmake/pmreorder.cmake)
+		build_test(concurrent_map_pmreorder_erase concurrent_map_pmreorder_erase/concurrent_map_pmreorder_erase.cpp)
+		add_test_generic(NAME concurrent_map_pmreorder_erase CASE 0 TRACERS none)
+
+		if(GDB_FOUND)
+			set(TEST concurrent_map_pmreorder_break_insert)
+			build_test(${TEST} concurrent_map_pmreorder_simple/concurrent_map_pmreorder_simple.cpp)
+
+			# add 5 concurrent_hash_map_pmreorder_break_insert test cases
+			set(CURRENT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${TEST})
+			set(CMAKE_SCRIPT ${CURRENT_TEST_DIR}/${TEST})
+			set(GDB_SCRIPT ${CURRENT_TEST_DIR}/break_before_set_next)
+			foreach(case RANGE 4)
+				math(EXPR IGNORE "${case} + 1")
+				math(EXPR PERSIST "${case} + 2")
+				configure_file("${GDB_SCRIPT}.gdb.in" "${GDB_SCRIPT}_${PERSIST}.gdb" @ONLY)
+				configure_file("${CMAKE_SCRIPT}.cmake.in" "${CMAKE_SCRIPT}_${case}.cmake" @ONLY)
+				add_test_generic(NAME ${TEST} CASE ${case} TRACERS none)
+			endforeach()
+		else()
+			message(WARNING "Skipping concurrent_map_pmreorder_break_insert test because GDB was not found")
+		endif()
+	else()
+		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
+	endif()
 endif()
 
 add_subdirectory(external)

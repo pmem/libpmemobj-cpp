@@ -780,6 +780,23 @@ if (TEST_ENUMERABLE_THREAD_SPECIFIC)
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 endif()
 
+if(TEST_CONCURRENT_MAP)
+	build_test(concurrent_map concurrent_map/concurrent_map.cpp)
+	add_test_generic(NAME concurrent_map TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(concurrent_map_singlethread concurrent_map_singlethread/concurrent_map_singlethread.cpp)
+	add_test_generic(NAME concurrent_map_singlethread TRACERS none memcheck pmemcheck)
+
+	if(PMREORDER_SUPPORTED)
+		build_test(concurrent_map_pmreorder_simple concurrent_map_pmreorder_simple/concurrent_map_pmreorder_simple.cpp)
+		add_test_generic(NAME concurrent_map_pmreorder_simple CASE 0 TRACERS none)
+		build_test(concurrent_map_pmreorder_erase concurrent_map_pmreorder_erase/concurrent_map_pmreorder_erase.cpp)
+		add_test_generic(NAME concurrent_map_pmreorder_erase CASE 0 TRACERS none)
+	else()
+		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
+	endif()
+endif()
+
 add_subdirectory(external)
 
 if (TESTS_COMPATIBILITY)

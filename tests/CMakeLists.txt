@@ -398,4 +398,15 @@ elseif(NOT PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	message(WARNING "Skipping concurrent_hash_map tests because no pmemvlt support found.")
 endif()
 
+if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_MAP)
+	build_test(concurrent_map concurrent_map/concurrent_map.cpp)
+	add_test_generic(NAME concurrent_map TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(concurrent_map_singlethread concurrent_map_singlethread/concurrent_map_singlethread.cpp)
+	add_test_generic(NAME concurrent_map_singlethread TRACERS none memcheck pmemcheck)
+elseif(NOT PMEMVLT_PRESENT AND ENABLE_CONCURRENT_MAP)
+	message(WARNING "Skipping concurrent_map tests because no pmemvlt support found.")
+endif()
+
+
 add_subdirectory(external)

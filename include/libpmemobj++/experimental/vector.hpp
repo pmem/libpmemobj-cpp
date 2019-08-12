@@ -190,6 +190,62 @@ public:
 	void swap(vector &other);
 
 private:
+	/* helper iterator */
+	template <typename P>
+	struct single_element_iterator {
+		using iterator_category = std::input_iterator_tag;
+		using value_type = P;
+		using difference_type = std::ptrdiff_t;
+		using pointer = const P *;
+		using reference = const P &;
+
+		const P *ptr;
+		std::size_t count;
+
+		single_element_iterator(const P *ptr, std::size_t count = 0)
+		    : ptr(ptr), count(count)
+		{
+		}
+
+		reference operator*()
+		{
+			return *ptr;
+		}
+
+		pointer operator->()
+		{
+			return ptr;
+		}
+
+		single_element_iterator &
+		operator++()
+		{
+			count++;
+			return *this;
+		}
+
+		single_element_iterator
+		operator++(int)
+		{
+			single_element_iterator tmp =
+				single_element_iterator(ptr, count);
+			count++;
+			return tmp;
+		}
+
+		difference_type
+		operator-(const single_element_iterator &rhs)
+		{
+			return count - rhs.count;
+		}
+
+		bool
+		operator!=(const single_element_iterator &rhs)
+		{
+			return ptr != rhs.ptr || count != rhs.count;
+		}
+	};
+
 	/* helper functions */
 	void alloc(size_type size);
 	void check_pmem();
@@ -203,11 +259,16 @@ private:
 	void construct(size_type idx, InputIt first, InputIt last);
 	void dealloc();
 	pool_base get_pool() const noexcept;
-	void insert_gap(size_type idx, size_type count);
+	template <typename InputIt>
+	void internal_insert(size_type idx, InputIt first, InputIt last);
 	void realloc(size_type size);
 	size_type get_recommended_capacity(size_type at_least) const;
 	void shrink(size_type size_new);
 	void snapshot_data(size_type idx_first, size_type idx_last);
+	template <typename InputIt>
+	void construct_or_assign(size_type idx, InputIt first, InputIt last);
+	void move_elements_backward(pointer first, pointer last,
+				    pointer d_last);
 
 	p<size_type> _size;
 	p<size_type> _capacity;
@@ -1531,8 +1592,8 @@ vector<T>::insert(const_iterator pos, value_type &&value)
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
 
 	transaction::run(pb, [&] {
-		insert_gap(idx, 1);
-		construct(idx, 1, std::move(value));
+		internal_insert(idx, std::make_move_iterator(&value),
+				std::make_move_iterator(&value + 1));
 	});
 
 	return iterator(&_data[static_cast<difference_type>(idx)]);
@@ -1575,8 +1636,9 @@ vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
 
 	transaction::run(pb, [&] {
-		insert_gap(idx, count);
-		construct(idx, count, value);
+		internal_insert(
+			idx, single_element_iterator<value_type>(&value, 0),
+			single_element_iterator<value_type>(&value, count));
 	});
 
 	return iterator(&_data[static_cast<difference_type>(idx)]);
@@ -1626,12 +1688,8 @@ vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
 	pool_base pb = get_pool();
 
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
-	size_type gap_size = static_cast<size_type>(std::distance(first, last));
 
-	transaction::run(pb, [&] {
-		insert_gap(idx, gap_size);
-		construct(idx, first, last);
-	});
+	transaction::run(pb, [&] { internal_insert(idx, first, last); });
 
 	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
@@ -1710,15 +1768,17 @@ vector<T>::emplace(const_iterator pos, Args &&... args)
 	transaction::run(pb, [&] {
 		/*
 		 * args might be a reference to underlying array element. This
-		 * reference can be invalidated after insert_gap() call. Hence,
-		 * we must cache value_type object in temp_value.
+		 * reference can be invalidated after internal_insert() call.
+		 * Hence, we must cache value_type object in temp_value.
 		 */
 		detail::temp_value<value_type,
 				   noexcept(T(std::forward<Args>(args)...))>
 		tmp(std::forward<Args>(args)...);
 
-		insert_gap(idx, 1);
-		construct(idx, 1, std::move(tmp.get()));
+		auto &tmp_ref = tmp.get();
+
+		internal_insert(idx, std::make_move_iterator(&tmp_ref),
+				std::make_move_iterator(&tmp_ref + 1));
 	});
 
 	return iterator(&_data[static_cast<difference_type>(idx)]);
@@ -2229,12 +2289,62 @@ vector<T>::get_pool() const noexcept
 }
 
 /**
+ * Private helper function.
+ *
+ * It behaves similarly to std::move_backward but uses either
+ * copy constructor in case destination memory is not initialized
+ * or copy assignment operator otherwise.
+ */
+template <typename T>
+void
+vector<T>::move_elements_backward(pointer first, pointer last, pointer d_last)
+{
+	while (first != last && d_last >= cend())
+		detail::create<value_type>(--d_last, std::move(*(--last)));
+
+	if (first != last)
+		std::move_backward(first, last, d_last);
+}
+
+/**
+ * Private helper function.
+ *
+ * It behaves similarly to std::move_backward but uses either
+ * copy constructor in case destination memory is not initialized
+ * or copy assignment operator otherwise.
+ */
+template <typename T>
+template <typename InputIt>
+void
+vector<T>::construct_or_assign(size_type idx, InputIt first, InputIt last)
+{
+	auto count = static_cast<size_type>(std::distance(first, last));
+	auto dest = _data.get() + idx;
+	auto initialized_slots = static_cast<size_type>(cend() - dest);
+
+	/* Assign new elements to initialized memory */
+	if (dest < cend())
+		dest = std::copy_n(first, (std::min)(initialized_slots, count),
+				   dest);
+
+	std::advance(first, (std::min)(initialized_slots, count));
+
+	/* Rest of the elements will be created in uninitialized memory */
+	while (first != last)
+		detail::create<value_type>(dest++, *first++);
+
+	_size += count;
+}
+
+/**
  * Private helper function. Must be called during transaction. Inserts a gap for
  * count elements starting at index idx. If there is not enough space available,
- * reallocation occurs with new recommended size.
+ * reallocation occurs with new recommended size. Range specified by first, last
+ * is then inserted into the gap.
  *
- * param[in] idx index number where gap should be made.
- * param[in] count length (expressed in number of elements) of the gap.
+ * param[in] idx index number where insert should be made
+ * param[in] first iterator to beginning of the range to insert
+ * param[in] last iterator to end of the range to insert
  *
  * @pre must be called in transaction scope.
  *
@@ -2247,12 +2357,15 @@ vector<T>::get_pool() const noexcept
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
 template <typename T>
+template <typename InputIt>
 void
-vector<T>::insert_gap(size_type idx, size_type count)
+vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	if (_capacity >= _size + count) {
+	auto count = static_cast<size_type>(std::distance(first, last));
+
+	if (_capacity >= size() + count) {
 		pointer dest =
 			&_data[static_cast<difference_type>(size() + count)];
 		pointer begin = &_data[static_cast<difference_type>(idx)];
@@ -2272,9 +2385,13 @@ vector<T>::insert_gap(size_type idx, size_type count)
 #if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
 		VALGRIND_MAKE_MEM_DEFINED(end, sizeof(T) * count);
 #endif
-		snapshot_data(idx, _size + count);
+		snapshot_data(idx, size() + count);
 
-		std::move_backward(begin, end, dest);
+		/* Make a gap for new elements */
+		move_elements_backward(begin, end, dest);
+
+		/* Construct new elements in the gap */
+		construct_or_assign(idx, first, last);
 	} else {
 		/*
 		 * XXX: future optimization: we don't have to snapshot data
@@ -2293,8 +2410,14 @@ vector<T>::insert_gap(size_type idx, size_type count)
 
 		alloc(get_recommended_capacity(old_size + count));
 
+		/* Move range before the idx to new array */
 		construct(0, std::make_move_iterator(old_begin),
 			  std::make_move_iterator(old_mid));
+
+		/* Insert (first, last) range to the new array */
+		construct(idx, first, last);
+
+		/* Move remaining element ot the new array */
 		construct(idx + count, std::make_move_iterator(old_mid),
 			  std::make_move_iterator(old_end));
 

@@ -20,11 +20,157 @@
 namespace nvobj = pmem::obj;
 namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<int>;
+static constexpr int INITIALIZED = 99;
+
+struct CompoundType {
+	int counter = 0;
+
+	CompoundType(int c)
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = c;
+	}
+
+	CompoundType()
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = INITIALIZED;
+	}
+
+	CompoundType(CompoundType &&rhs)
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = rhs.counter;
+	}
+
+	CompoundType(const CompoundType &rhs)
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = rhs.counter;
+	}
+
+	~CompoundType()
+	{
+		counter = 0;
+	}
+
+	CompoundType &
+	operator=(CompoundType &&rhs)
+	{
+		UT_ASSERT(counter == INITIALIZED);
+		counter = rhs.counter;
+		return *this;
+	}
+
+	CompoundType &
+	operator=(const CompoundType &rhs)
+	{
+		UT_ASSERT(counter == INITIALIZED);
+		counter = rhs.counter;
+		return *this;
+	}
+
+	bool
+	operator==(const CompoundType &rhs)
+	{
+		return counter == rhs.counter;
+	}
+};
 
 struct root {
-	nvobj::persistent_ptr<C> v;
+	nvobj::persistent_ptr<pmem_exp::vector<int>> v1;
+	nvobj::persistent_ptr<pmem_exp::vector<CompoundType>> v2;
 };
+
+template <typename C>
+void
+test_insert1(nvobj::pool_base &pop,
+	     nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr)
+{
+	try {
+		nvobj::transaction::run(pop, [&] {
+			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U);
+		});
+		typename pmem_exp::vector<C>::iterator i =
+			ptr->insert(ptr->cbegin() + 10, C{1});
+		UT_ASSERT(ptr->size() == 101);
+		UT_ASSERT(i == ptr->begin() + 10);
+		unsigned j;
+		for (j = 0; j < 10; ++j)
+			UT_ASSERT((*ptr)[j] ==
+				  C{}); // C{} == default constructed value
+		UT_ASSERT((*ptr)[j] == C{1});
+		for (++j; j < 101; ++j)
+			UT_ASSERT((*ptr)[j] == C{});
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+template <typename C>
+void
+test_insert2(nvobj::pool_base &pop,
+	     nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr)
+{
+	try {
+		nvobj::transaction::run(pop, [&] {
+			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U);
+		});
+		while (ptr->size() < ptr->capacity())
+			ptr->push_back(0); // force reallocation
+		size_t sz = ptr->size();
+		typename pmem_exp::vector<C>::iterator i =
+			ptr->insert(ptr->cbegin() + 10, C{1});
+		UT_ASSERT(ptr->size() == sz + 1);
+		UT_ASSERT(i == ptr->begin() + 10);
+		std::size_t j;
+		for (j = 0; j < 10; ++j)
+			UT_ASSERT((*ptr)[j] == C{});
+		UT_ASSERT((*ptr)[j] == C{1});
+		for (++j; j < ptr->size(); ++j)
+			UT_ASSERT((*ptr)[j] == C{});
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+template <typename C>
+void
+test_insert3(nvobj::pool_base &pop,
+	     nvobj::persistent_ptr<pmem_exp::vector<C>> &ptr)
+{
+	try {
+		nvobj::transaction::run(pop, [&] {
+			ptr = nvobj::make_persistent<pmem_exp::vector<C>>(100U);
+		});
+		while (ptr->size() < ptr->capacity())
+			ptr->push_back(0);
+		ptr->pop_back();
+		ptr->pop_back(); // force no reallocation
+		size_t sz = ptr->size();
+		typename pmem_exp::vector<C>::iterator i =
+			ptr->insert(ptr->cbegin() + 10, C{1});
+		UT_ASSERT(ptr->size() == sz + 1);
+		UT_ASSERT(i == ptr->begin() + 10);
+		std::size_t j;
+		for (j = 0; j < 10; ++j)
+			UT_ASSERT((*ptr)[j] == C{});
+		UT_ASSERT((*ptr)[j] == C{1});
+		for (++j; j < ptr->size(); ++j)
+			UT_ASSERT((*ptr)[j] == C{});
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<pmem_exp::vector<C>>(ptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
 
 int
 main(int argc, char *argv[])
@@ -43,77 +189,13 @@ main(int argc, char *argv[])
 
 	auto r = pop.root();
 
-	{
-		try {
-			nvobj::transaction::run(pop, [&] {
-				r->v = nvobj::make_persistent<C>(100U);
-			});
-			C::iterator i = r->v->insert(r->v->cbegin() + 10, 1);
-			UT_ASSERT(r->v->size() == 101);
-			UT_ASSERT(i == r->v->begin() + 10);
-			unsigned j;
-			for (j = 0; j < 10; ++j)
-				UT_ASSERT((*r->v)[j] == 0);
-			UT_ASSERT((*r->v)[j] == 1);
-			for (++j; j < 101; ++j)
-				UT_ASSERT((*r->v)[j] == 0);
-			nvobj::transaction::run(pop, [&] {
-				nvobj::delete_persistent<C>(r->v);
-			});
-		} catch (std::exception &e) {
-			UT_FATALexc(e);
-		}
-	}
-	{
-		try {
-			nvobj::transaction::run(pop, [&] {
-				r->v = nvobj::make_persistent<C>(100U);
-			});
-			while (r->v->size() < r->v->capacity())
-				r->v->push_back(0); // force reallocation
-			size_t sz = r->v->size();
-			C::iterator i = r->v->insert(r->v->cbegin() + 10, 1);
-			UT_ASSERT(r->v->size() == sz + 1);
-			UT_ASSERT(i == r->v->begin() + 10);
-			std::size_t j;
-			for (j = 0; j < 10; ++j)
-				UT_ASSERT((*r->v)[j] == 0);
-			UT_ASSERT((*r->v)[j] == 1);
-			for (++j; j < r->v->size(); ++j)
-				UT_ASSERT((*r->v)[j] == 0);
-			nvobj::transaction::run(pop, [&] {
-				nvobj::delete_persistent<C>(r->v);
-			});
-		} catch (std::exception &e) {
-			UT_FATALexc(e);
-		}
-	}
-	{
-		try {
-			nvobj::transaction::run(pop, [&] {
-				r->v = nvobj::make_persistent<C>(100U);
-			});
-			while (r->v->size() < r->v->capacity())
-				r->v->push_back(0);
-			r->v->pop_back();
-			r->v->pop_back(); // force no reallocation
-			size_t sz = r->v->size();
-			C::iterator i = r->v->insert(r->v->cbegin() + 10, 1);
-			UT_ASSERT(r->v->size() == sz + 1);
-			UT_ASSERT(i == r->v->begin() + 10);
-			std::size_t j;
-			for (j = 0; j < 10; ++j)
-				UT_ASSERT((*r->v)[j] == 0);
-			UT_ASSERT((*r->v)[j] == 1);
-			for (++j; j < r->v->size(); ++j)
-				UT_ASSERT((*r->v)[j] == 0);
-			nvobj::transaction::run(pop, [&] {
-				nvobj::delete_persistent<C>(r->v);
-			});
-		} catch (std::exception &e) {
-			UT_FATALexc(e);
-		}
-	}
+	test_insert1(pop, r->v1);
+	test_insert2(pop, r->v1);
+	test_insert3(pop, r->v1);
+
+	test_insert1(pop, r->v2);
+	test_insert2(pop, r->v2);
+	test_insert3(pop, r->v2);
 
 	pop.close();
 

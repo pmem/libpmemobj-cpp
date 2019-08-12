@@ -200,12 +200,7 @@ private:
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
 			  InputIt>::type * = nullptr>
-	void construct_range(size_type idx, InputIt first, InputIt last);
-	template <typename InputIt,
-		  typename std::enable_if<
-			  detail::is_input_iterator<InputIt>::value,
-			  InputIt>::type * = nullptr>
-	void construct_range_copy(size_type idx, InputIt first, InputIt last);
+	void construct(size_type idx, InputIt first, InputIt last);
 	void dealloc();
 	pool_base get_pool() const noexcept;
 	void insert_gap(size_type idx, size_type count);
@@ -389,7 +384,7 @@ vector<T>::vector(InputIt first, InputIt last)
 	_data = nullptr;
 	_size = 0;
 	alloc(static_cast<size_type>(std::distance(first, last)));
-	construct_range_copy(0, first, last);
+	construct(0, first, last);
 }
 
 /**
@@ -419,7 +414,7 @@ vector<T>::vector(const vector &other)
 	_data = nullptr;
 	_size = 0;
 	alloc(other.capacity());
-	construct_range_copy(0, other.cbegin(), other.cend());
+	construct(0, other.cbegin(), other.cend());
 }
 
 /**
@@ -719,7 +714,7 @@ vector<T>::assign(InputIt first, InputIt last)
 			iterator shrink_to = std::copy(first, mid, &_data[0]);
 
 			if (growing) {
-				construct_range_copy(size_old, mid, last);
+				construct(size_old, mid, last);
 				/*
 				 * XXX: explicit persist is required here
 				 * because given range wasn't snapshotted and
@@ -738,7 +733,7 @@ vector<T>::assign(InputIt first, InputIt last)
 		} else {
 			dealloc();
 			alloc(size_new);
-			construct_range_copy(0, first, last);
+			construct(0, first, last);
 		}
 	});
 }
@@ -1635,7 +1630,7 @@ vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
 
 	transaction::run(pb, [&] {
 		insert_gap(idx, gap_size);
-		construct_range_copy(idx, first, last);
+		construct(idx, first, last);
 	});
 
 	return iterator(&_data[static_cast<difference_type>(idx)]);
@@ -2147,11 +2142,11 @@ vector<T>::construct(size_type idx, size_type count, Args &&... args)
 /**
  * Private helper function. Must be called during transaction. Assumes that
  * there is free space for additional elements and input arguments satisfy
- * InputIterator requirements. Moves elements at index idx in underlying array
+ * InputIterator requirements. Copies elements at index idx in underlying array
  * with the contents of the range [first, last). This overload participates in
  * overload resolution only if InputIt satisfies InputIterator.
  *
- * @param[in] idx underyling array index where new elements will be moved.
+ * @param[in] idx underlying array index where new elements will be moved.
  * @param[in] first first iterator.
  * @param[in] last last iterator.
  *
@@ -2160,7 +2155,7 @@ vector<T>::construct(size_type idx, size_type count, Args &&... args)
  * be snapshotted in current transaction.
  * @pre capacity() >= std::distance(first, last) + size()
  * @pre InputIt is InputIterator.
- * @pre std::move(InputIt::reference) is valid argument for value_type
+ * @pre InputIt::reference is valid argument for value_type
  * constructor.
  *
  * @post size() == size() + std::distance(first, last)
@@ -2172,7 +2167,7 @@ template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::construct_range(size_type idx, InputIt first, InputIt last)
+vector<T>::construct(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	difference_type range_size = std::distance(first, last);
@@ -2181,45 +2176,6 @@ vector<T>::construct_range(size_type idx, InputIt first, InputIt last)
 
 	pointer dest = _data.get() + idx;
 	_size += static_cast<size_type>(range_size);
-	while (first != last)
-		detail::create<value_type>(dest++, std::move(*first++));
-}
-
-/**
- * Private helper function. Must be called during transaction. Assumes that
- * there is free space for additional elements and input arguments satisfy
- * InputIterator requirements. Copy-constructs elements before pos in underlying
- * array with the contents of the range [first, last).
- *
- * @param[in] idx underyling array index where new elements will be constructed.
- * @param[in] first first iterator.
- * @param[in] last last iterator.
- *
- * @pre must be called in transaction scope.
- * @pre if initialized, range [end(), end() + std::distance(first, last)) must
- * be snapshotted in current transaction.
- * @pre capacity() >= std::distance(first, last) + size()
- * @pre InputIt is InputIterator.
- * @pre InputIt::reference is valid argument for value_type copy constructor.
- *
- * @post size() == size() + std::distance(first, last)
- *
- * @throw rethrows constructor exception.
- */
-template <typename T>
-template <typename InputIt,
-	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
-				  InputIt>::type *>
-void
-vector<T>::construct_range_copy(size_type idx, InputIt first, InputIt last)
-{
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	difference_type diff = std::distance(first, last);
-	assert(diff >= 0);
-	assert(_capacity >= static_cast<size_type>(diff) + _size);
-
-	pointer dest = _data.get() + idx;
-	_size += static_cast<size_type>(diff);
 	while (first != last)
 		detail::create<value_type>(dest++, *first++);
 }
@@ -2337,8 +2293,10 @@ vector<T>::insert_gap(size_type idx, size_type count)
 
 		alloc(get_recommended_capacity(old_size + count));
 
-		construct_range(0, old_begin, old_mid);
-		construct_range(idx + count, old_mid, old_end);
+		construct(0, std::make_move_iterator(old_begin),
+			  std::make_move_iterator(old_mid));
+		construct(idx + count, std::make_move_iterator(old_mid),
+			  std::make_move_iterator(old_end));
 
 		/* destroy and free old data */
 		for (size_type i = 0; i < old_size; ++i)
@@ -2392,7 +2350,8 @@ vector<T>::realloc(size_type capacity_new)
 
 	alloc(capacity_new);
 
-	construct_range(0, old_begin, old_end);
+	construct(0, std::make_move_iterator(old_begin),
+		  std::make_move_iterator(old_end));
 
 	/* destroy and free old data */
 	for (size_type i = 0; i < old_size; ++i)

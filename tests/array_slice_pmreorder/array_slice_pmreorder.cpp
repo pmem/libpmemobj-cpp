@@ -75,8 +75,9 @@ init(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	try {
-		nvobj::transaction::run(
-			pop, [&] { r->ptr = nvobj::make_persistent<Data>(); });
+		nvobj::transaction::run(pop, [&] {
+			r->ptr = nvobj::make_persistent<Data>();
+		});
 	} catch (...) {
 		UT_ASSERT(0);
 	}
@@ -88,8 +89,9 @@ run_consistent(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	try {
-		nvobj::transaction::run(pop,
-					[&] { r->ptr->increase_elements(); });
+		nvobj::transaction::run(pop, [&] {
+			r->ptr->increase_elements();
+		});
 	} catch (...) {
 		UT_ASSERT(0);
 	}

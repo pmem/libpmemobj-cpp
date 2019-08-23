@@ -354,6 +354,21 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 
 		build_test(concurrent_hash_map_pmreorder_multiple_buckets concurrent_hash_map_pmreorder_multiple_buckets/concurrent_hash_map_pmreorder_multiple_buckets.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_multiple_buckets CASE 0 TRACERS none)
+
+		set(TEST concurrent_hash_map_pmreorder_break_insert)
+		build_test(${TEST} ${TEST}/${TEST}.cpp)
+
+		# add 5 concurrent_hash_map_pmreorder_break_insert test cases
+		set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${TEST})
+		set(CMAKE_SCRIPT ${TEST_DIR}/${TEST})
+		set(GDB_SCRIPT ${TEST_DIR}/break_before_persist)
+		foreach(case RANGE 4)
+			math(EXPR IGNORE "${case} + 1")
+			math(EXPR PERSIST "${case} + 2")
+			configure_file("${GDB_SCRIPT}.gdb.in" "${GDB_SCRIPT}_${PERSIST}.gdb" @ONLY)
+			configure_file("${CMAKE_SCRIPT}.cmake.in" "${CMAKE_SCRIPT}_${case}.cmake" @ONLY)
+			add_test_generic(NAME ${TEST} CASE ${case} TRACERS none)
+		endforeach()
 	else()
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()

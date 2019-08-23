@@ -354,6 +354,13 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 
 		build_test(concurrent_hash_map_pmreorder_multiple_buckets concurrent_hash_map_pmreorder_multiple_buckets/concurrent_hash_map_pmreorder_multiple_buckets.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_multiple_buckets CASE 0 TRACERS none)
+
+		build_test(concurrent_hash_map_pmreorder_break_insert concurrent_hash_map_pmreorder_break_insert/concurrent_hash_map_pmreorder_break_insert.cpp)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_break_insert CASE 0 TRACERS none)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_break_insert CASE 1 TRACERS none)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_break_insert CASE 2 TRACERS none)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_break_insert CASE 3 TRACERS none)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_break_insert CASE 4 TRACERS none)
 	else()
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()

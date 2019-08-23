@@ -140,6 +140,9 @@ function(execute_common expect_success output_file name)
     elseif(${TRACER} STREQUAL drd)
         set(TRACE valgrind --error-exitcode=99 --tool=drd)
         set(ENV{LIBPMEMOBJ_CPP_TRACER_DRD} 1)
+    elseif(${TRACER} STREQUAL gdb)
+        set(TRACE gdb --batch --command=${GDB_BATCH_FILE} --args)
+        set(ENV{LIBPMEMOBJ_CPP_TRACER_GDB} 1)
     elseif(${TRACER} MATCHES "none.*")
         # nothing
     else()
@@ -229,6 +232,8 @@ function(execute_common expect_success output_file name)
         unset(ENV{LIBPMEMOBJ_CPP_TRACER_HELGRIND})
     elseif(${TRACER} STREQUAL drd)
         unset(ENV{LIBPMEMOBJ_CPP_TRACER_DRD})
+    elseif(${TRACER} STREQUAL gdb)
+        unset(ENV{LIBPMEMOBJ_CPP_TRACER_GDB})
     endif()
 
     if(TESTS_USE_FORCED_PMEM)
@@ -333,4 +338,21 @@ function(pmreorder_execute expect_success engine conf_file name)
     execute_common(${expect_success} ${TRACER}_${TESTCASE} ${cmd})
 
     unset(ENV{PMEMOBJ_CONF})
+endfunction()
+
+# Executes test command ${name} under GDB.
+# First argument of the command is a gdb batch file.
+# Second argument of the command is the test command.
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(crash_with_gdb gdb_batch_file name)
+    check_target(${name})
+
+    set(PREV_TRACER ${TRACER})
+    set(TRACER gdb)
+    set(GDB_BATCH_FILE ${gdb_batch_file})
+
+    execute_common(true ${TRACER}_${TESTCASE} ${name} ${ARGN})
+
+    set(TRACER ${PREV_TRACER})
 endfunction()

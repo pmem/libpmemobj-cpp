@@ -188,6 +188,8 @@ function(execute_common expect_success output_file name)
             ERROR_FILE ${BIN_DIR}/${TEST_NAME}.err)
     endif()
 
+    print_logs()
+
     # memcheck and pmemcheck match files should follow name pattern:
     # testname_testcasenr_memcheck/pmemcheck.err.match
     # If they do exist, ignore test result - it will be verified during
@@ -211,12 +213,10 @@ function(execute_common expect_success output_file name)
         endif()
 
         if(res AND expect_success)
-            print_logs()
             message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
         endif()
 
         if(NOT res AND NOT expect_success)
-            print_logs()
             message(FATAL_ERROR "${TRACE} ${name} ${ARGN} unexpectedly succeeded: ${res}")
         endif()
     endif()

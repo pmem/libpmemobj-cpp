@@ -37,6 +37,8 @@
 
 set -e
 
+export PMREORDER_STACKTRACE_DEPTH=20
+
 function cleanup() {
 	find . -name ".coverage" -exec rm {} \;
 	find . -name "coverage.xml" -exec rm {} \;
@@ -141,7 +143,7 @@ if [ "$COVERAGE" == "1" ]; then
 	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
 	upload_codecov tests_gcc_debug
 else
-	PMREORDER_STACKTRACE_DEPTH=20 ctest --output-on-failure --timeout 540
+	ctest --output-on-failure --timeout 540
 fi
 
 cd ..

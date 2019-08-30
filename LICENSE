@@ -1,4 +1,4 @@
-Copyright 2018, Intel Corporation
+Copyright 2018-2019, Intel Corporation
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -32,12 +32,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Everything in this source tree is covered by the previous license
 with the following exceptions:
 
-* master/cpp_html/jquery.js dual licensed under the MIT
-  or GPL Version 2 license (see: http://jquery.org/license)
+* These files:
+  * master/doxygen/jquery.js
+  * v1.5/doxygen/jquery.js
+  * v1.6/doxygen/jquery.js
+  are dual licensed under the MIT or GPL Version 2 license
+  (see: http://jquery.org/license).
 
-* sizzle.js (included in master/cpp_html/jquery.js) released under
-  the MIT, BSD and GPL licenses (see: http://sizzle.com)
+* These files:
+  * sizzle.js (included in master/doxygen/jquery.js)
+  * sizzle.js (included in v1.5/doxygen/jquery.js)
+  * sizzle.js (included in v1.6/doxygen/jquery.js)
+  are released under the MIT, BSD and GPL licenses
+  (see: http://sizzle.com).
 
-* master/cpp_html/search/search.js licensed under the GPL
-
-* master/cpp_html/dynsections.js licensed under the GPL
+* These files:
+  * master/doxygen/search/search.js
+  * v1.5/doxygen/search/search.js
+  * v1.6/doxygen/search/search.js
+  * master/doxygen/dynsections.js
+  * v1.5/doxygen/dynsections.js
+  * v1.6/doxygen/dynsections.js
+  are licensed under the GPL.

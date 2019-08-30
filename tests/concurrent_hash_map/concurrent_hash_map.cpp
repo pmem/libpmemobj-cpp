@@ -42,7 +42,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 
-#include <iterator>
+#include <iostream>
 #include <thread>
 #include <vector>
 
@@ -78,97 +78,363 @@ parallel_exec(size_t concurrency, Function f)
 	}
 }
 
+struct ConcurrentHashMapTestPrimitives {
+private:
+	nvobj::pool<root> &m_pop;
+	nvobj::persistent_ptr<persistent_map_type> map;
+	size_t m_items_number;
+	const size_t rehash_bucket_ratio = 8;
+
+public:
+	ConcurrentHashMapTestPrimitives(nvobj::pool<root> &pop,
+					size_t items_number)
+	    : m_pop(pop), m_items_number(items_number)
+	{
+		map = m_pop.root()->cons;
+		map->initialize();
+	}
+
+	void
+	reinitialize()
+	{
+		size_t buckets = map->bucket_count();
+		map->initialize(true);
+		UT_ASSERT(map->bucket_count() == buckets);
+		UT_ASSERT(map->size() == m_items_number);
+		map->initialize();
+		UT_ASSERT(map->bucket_count() == buckets);
+		UT_ASSERT(map->size() == m_items_number);
+	}
+
+	void
+	check_items_count()
+	{
+		check_items_count(m_items_number);
+	}
+
+	void
+	check_items_count(size_t expected)
+	{
+		UT_ASSERT(map->size() == expected);
+		UT_ASSERT(std::distance(map->begin(), map->end()) ==
+			  int(expected));
+	}
+
+	void
+	clear()
+	{
+		map->clear();
+		UT_ASSERT(map->size() == 0);
+		UT_ASSERT(std::distance(map->begin(), map->end()) == 0);
+	}
+
+	void
+	rehash()
+	{
+		map->rehash(m_items_number * rehash_bucket_ratio);
+		check_items_count();
+	}
+
+	template <typename AccessorType, typename ItemType>
+	void
+	check_item(ItemType i, ItemType j)
+	{
+		AccessorType acc;
+		bool found = map->find(acc, i);
+		UT_ASSERT(found == true);
+		UT_ASSERT(acc->first == i);
+		UT_ASSERT(acc->second == j);
+	}
+	void
+	check_consistency()
+	{
+		check_items_count();
+		rehash();
+		reinitialize();
+	}
+
+	template <typename ItemType>
+	void
+	increment(ItemType i)
+	{
+		/* Do we need update method in cmap api? */
+		persistent_map_type::accessor acc;
+		bool found = map->find(acc, i);
+		UT_ASSERT(found == true);
+		UT_ASSERT(acc->first == i);
+		auto old_val = acc->second;
+		acc->second.get_rw() += 1;
+		m_pop.persist(acc->second);
+		UT_ASSERT(acc->second == (old_val + 1));
+	}
+
+	template <typename ItemType>
+	void
+	erase(ItemType i)
+	{
+		bool res = map->erase(i);
+		UT_ASSERT(res == true);
+	}
+
+	template <typename ItemType>
+	void
+	check_erased(ItemType i)
+	{
+		persistent_map_type::accessor acc;
+		bool found = map->find(acc, i);
+		UT_ASSERT(found == false);
+	}
+
+	template <typename ValueType>
+	void
+	insert(ValueType val)
+	{
+		bool ret = map->insert(val);
+		UT_ASSERT(ret == true);
+	}
+
+	template <typename AccessorType, typename ValueType>
+	void
+	insert(ValueType val)
+	{
+		AccessorType accessor;
+		bool ret = map->insert(accessor, val);
+		UT_ASSERT(ret == true);
+	}
+
+	void
+	insert(std::initializer_list<persistent_map_type::value_type> il)
+	{
+		/* Initializer list insert is void type */
+		map->insert(il);
+		for (auto i : il) {
+			auto key = i.first;
+			UT_ASSERTeq(map->count(key), 1);
+		}
+	}
+
+	void
+	insert(std::vector<persistent_map_type::value_type> v)
+	{
+		/* Iterator insert is void type */
+		map->insert(v.begin(), v.end());
+		for (auto i : v) {
+			auto key = i.first;
+			UT_ASSERTeq(map->count(key), 1);
+		}
+	}
+};
+
 /*
- * insert_and_lookup_test -- (internal) test insert and lookup operations
- * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ * insert_and_lookup_value_type_test -- test insert and lookup
+ * Implements tests for:
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert (const_accessor &result, const value_type &value)
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(accessor &result, const value_type &value)
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(const_accessor &result, value_type &&value)
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(accessor &result, value_type &&value)
+ *  All find()
+ *  Update element
  */
+template <typename InsertAccessor, typename ValueType>
 void
-insert_and_lookup_test(nvobj::pool<root> &pop)
+insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
+				  size_t concurrency = 8,
+				  size_t thread_items = 50)
 {
-	const size_t NUMBER_ITEMS_INSERT = 50;
-
-	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 8;
-
-	size_t TOTAL_ITEMS = NUMBER_ITEMS_INSERT * concurrency;
-
-	auto map = pop.root()->cons;
-
-	UT_ASSERT(map != nullptr);
-
-	map->initialize();
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
-		int begin = thread_id * NUMBER_ITEMS_INSERT;
-		int end = begin + int(NUMBER_ITEMS_INSERT);
-		for (int i = begin; i < end; ++i) {
-			bool ret = map->insert(
-				persistent_map_type::value_type(i, i));
-			UT_ASSERT(ret == true);
-
-			UT_ASSERT(map->count(i) == 1);
-
-			persistent_map_type::accessor acc;
-			bool res = map->find(acc, i);
-			UT_ASSERT(res == true);
-			UT_ASSERT(acc->first == i);
-			UT_ASSERT(acc->second == i);
-			acc->second.get_rw() += 1;
-			pop.persist(acc->second);
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
+		for (int i = begin; i < end; i++) {
+			auto val = ValueType(i, i);
+			test.insert<InsertAccessor>(val);
 		}
-
-		for (int i = begin; i < end; ++i) {
-			persistent_map_type::const_accessor const_acc;
-			bool res = map->find(const_acc, i);
-			UT_ASSERT(res == true);
-			UT_ASSERT(const_acc->first == i);
-			UT_ASSERT(const_acc->second == i + 1);
-		}
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::accessor>(i, i);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::const_accessor>(i,
+									     i);
+		for (int i = begin; i < end; i++)
+			test.increment(i);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::accessor>(i,
+								       i + 1);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::const_accessor>(
+				i, i + 1);
 	});
+	test.check_consistency();
+	test.clear();
+}
 
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
+/*
+ * insert_and_lookup_value_type_test -- test insert and lookup
+ * Implements tests for:
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(const value_type &value)
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(const value_type &value)
+ * All find()
+ * Update element
+ */
+template <typename InsertAccessor, typename ValueType>
+void
+insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+			   size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
 
-	UT_ASSERT(std::distance(map->begin(), map->end()) == int(TOTAL_ITEMS));
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
+		for (int i = begin; i < end; i++) {
+			auto val = ValueType(i);
+			test.insert<InsertAccessor>(val);
+		}
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::accessor>(i, 0);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::const_accessor>(i,
+									     0);
+		for (int i = begin; i < end; i++)
+			test.increment(i);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::accessor>(i, 1);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::const_accessor>(i,
+									     1);
+	});
+	test.check_consistency();
+	test.clear();
+}
 
-	map->rehash(TOTAL_ITEMS * 8);
+/*
+ * insert_and_lookup_value_type_test -- test insert and lookup
+ * Implements tests for:
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(const value_type &value)
+ * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::inserti(value_type &&value)
+ */
+template <typename ValueType>
+void
+insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
+				  size_t concurrency = 8,
+				  size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
 
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
+		for (int i = begin; i < end; i++) {
+			auto val = ValueType(i, i);
+			test.insert(val);
+		}
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::accessor>(i, i);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::const_accessor>(i,
+									     i);
+		for (int i = begin; i < end; i++)
+			test.increment(i);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::accessor>(i,
+								       i + 1);
+		for (int i = begin; i < end; i++)
+			test.check_item<persistent_map_type::const_accessor>(
+				i, i + 1);
+	});
+	test.check_consistency();
+	test.clear();
+}
 
-	UT_ASSERT(std::distance(map->begin(), map->end()) == int(TOTAL_ITEMS));
+/*
+ * insert_and_lookup_initializer_list -- test insert elements using
+ * initializer_list and lookup operations. This tests inserts only two keys, due
+ * to syntax limitations of initializer_list
+ * Implements tests for:
+ * pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	 KeyEqual>::insert(std::initializer_list< value_type > il)
+ */
+void
+insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
+					size_t concurrency = 8)
+{
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives test(pop, concurrency * 2);
 
-	size_t buckets = map->bucket_count();
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		auto k1 =
+			persistent_map_type::value_type(int(thread_id), 0xDEAD);
+		/* User have to avoid collisions manually*/
+		auto k2 = persistent_map_type::value_type(
+			int(concurrency) + int(thread_id), 0xBEEF);
+		test.insert(
+			std::initializer_list<persistent_map_type::value_type>{
+				k1, k2});
+		test.check_item<persistent_map_type::accessor>(k1.first,
+							       k1.second);
+		test.check_item<persistent_map_type::const_accessor>(k2.first,
+								     k2.second);
+	});
+	test.check_consistency();
+	test.clear();
+}
 
-	map->initialize(true);
+/*
+ * insert_and_lookup_iterator_test -- test insert and lookup
+ * Implements tests for:
+ * void pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(I first, I last)
+ */
+void
+insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+				size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
 
-	UT_ASSERT(map->bucket_count() == buckets);
-
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
-
-	map->initialize();
-
-	UT_ASSERT(map->bucket_count() == buckets);
-
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
-
-	map->clear();
-
-	UT_ASSERT(map->size() == 0);
-
-	UT_ASSERT(std::distance(map->begin(), map->end()) == 0);
+	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
+		std::vector<persistent_map_type::value_type> v;
+		for (int i = begin; i < end; ++i) {
+			v.push_back(persistent_map_type::value_type(i, i));
+		}
+		test.insert(v);
+		for (auto i : v)
+			test.check_item<persistent_map_type::accessor>(
+				i.first, i.second);
+	});
+	test.check_consistency();
+	test.clear();
 }
 
 /*
  * insert_and_erase_test -- (internal) test insert and erase operations
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
+
+template <typename InsertAccessor, typename ValueType>
 void
-insert_and_erase_test(nvobj::pool<root> &pop)
+insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+		      size_t thread_items = 50)
 {
-	const size_t NUMBER_ITEMS_INSERT = 50;
+
+	PRINT_TEST_PARAMS;
+
+	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
 
 	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 8;
-
 	auto map = pop.root()->cons;
 
 	UT_ASSERT(map != nullptr);
@@ -176,21 +442,19 @@ insert_and_erase_test(nvobj::pool<root> &pop)
 	map->initialize();
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
-		int begin = thread_id * NUMBER_ITEMS_INSERT;
-		int end = begin + int(NUMBER_ITEMS_INSERT) / 2;
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
 		for (int i = begin; i < end; ++i) {
-			bool res = map->insert(
-				persistent_map_type::value_type(i, i));
-			UT_ASSERT(res == true);
-
-			res = map->erase(i);
-			UT_ASSERT(res == true);
-
-			UT_ASSERT(map->count(i) == 0);
+			ValueType val(i, i);
+			test.insert<InsertAccessor>(val);
+		}
+		for (int i = begin; i < end; ++i) {
+			test.erase(i);
+			test.check_erased(i);
 		}
 	});
-
-	UT_ASSERT(map->size() == 0);
+	test.check_items_count(0);
+	test.clear();
 }
 
 /*
@@ -200,6 +464,8 @@ insert_and_erase_test(nvobj::pool<root> &pop)
 void
 insert_erase_lookup_test(nvobj::pool<root> &pop)
 {
+
+	PRINT_TEST_PARAMS;
 	const size_t NUMBER_ITEMS_INSERT = 50;
 
 	// Adding more concurrency will increase DRD test time
@@ -284,13 +550,46 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	insert_and_lookup_test(pop);
+	size_t concurrency = 8;
 
-	insert_and_erase_test(pop);
+	insert_and_lookup_key_test<persistent_map_type::const_accessor, int>(
+		pop, concurrency);
+
+	insert_and_lookup_key_test<persistent_map_type::accessor, int>(
+		pop, concurrency);
+
+	insert_and_lookup_value_type_test<
+		persistent_map_type::const_accessor,
+		const persistent_map_type::value_type>(pop, concurrency);
+
+	insert_and_lookup_value_type_test<
+		persistent_map_type::accessor,
+		const persistent_map_type::value_type>(pop, concurrency);
+
+	insert_and_lookup_value_type_test<persistent_map_type::const_accessor,
+					  persistent_map_type::value_type>(
+		pop, concurrency);
+
+	insert_and_lookup_value_type_test<persistent_map_type::accessor,
+					  persistent_map_type::value_type>(
+		pop, concurrency);
+
+	insert_and_lookup_value_type_test<persistent_map_type::value_type>(
+		pop, concurrency);
+
+	insert_and_lookup_value_type_test<
+		const persistent_map_type::value_type>(pop, concurrency);
+
+	insert_and_lookup_initializer_list_test(pop, concurrency);
+
+	insert_and_lookup_iterator_test(pop, concurrency);
+
+	insert_and_erase_test<persistent_map_type::accessor,
+			      persistent_map_type::value_type>(pop,
+							       concurrency);
 
 	insert_erase_lookup_test(pop);
 
 	pop.close();
-
 	return 0;
 }

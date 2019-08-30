@@ -551,6 +551,10 @@ main(int argc, char *argv[])
 	}
 
 	size_t concurrency = 8;
+	if (On_drd)
+		concurrency = 2;
+	std::cout << "Running tests for " << concurrency << " threads"
+		  << std::endl;
 
 	insert_and_lookup_key_test<persistent_map_type::const_accessor, int>(
 		pop, concurrency);

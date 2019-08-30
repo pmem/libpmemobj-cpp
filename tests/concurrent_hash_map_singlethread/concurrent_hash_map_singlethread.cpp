@@ -473,7 +473,7 @@ insert_test(nvobj::pool<root> &pop)
  * pmem::obj::concurrent_hash_map<MyLong, MyLong, HeteroHasher >
  */
 void
-hatero_test(nvobj::pool<root> &pop)
+hetero_test(nvobj::pool<root> &pop)
 {
 	typedef persistent_map_hetero_type::value_type value_type;
 	auto &map = pop.root()->map_hetero;
@@ -537,7 +537,7 @@ main(int argc, char *argv[])
 	access_test(pop);
 	swap_test(pop);
 	insert_test(pop);
-	hatero_test(pop);
+	hetero_test(pop);
 
 	pop.close();
 

@@ -2367,7 +2367,7 @@ public:
 						&do_not_allocate_node);
 	}
 	/**
-	 * Insert item (if not already present) and
+	 * Insert item (if not already present) with zeroed value and
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
 	 * @throw std::bad_alloc on allocation failure.
@@ -2383,7 +2383,7 @@ public:
 	}
 
 	/**
-	 * Insert item (if not already present) and
+	 * Insert item (if not already present) with zeroed value and
 	 * acquire a write lock on the item.
 	 * @returns true if item is new.
 	 * @throw std::bad_alloc on allocation failure.

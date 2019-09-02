@@ -2501,7 +2501,8 @@ public:
 
 	/**
 	 * Remove element with corresponding key
-	 * @return true if element was deleted by this call
+	 * @return true if element was deleted by this call, false if there was
+	 * not such element before call
 	 * @throws std::runtime_error in case of PMDK unable to free the memory
 	 */
 	bool
@@ -2519,7 +2520,8 @@ public:
 	 * that its key_equal is transparent, which, together, allows calling
 	 * this function without constructing an instance of Key
 	 *
-	 * @return true if element was deleted by this call
+	 * @return true if element was deleted by this call, false if there was
+	 * not such element before call
 	 * @throws std::runtime_error in case of PMDK unable to free the memory
 	 */
 	template <typename K,

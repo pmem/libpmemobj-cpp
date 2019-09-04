@@ -24,6 +24,7 @@ before_build:
 - cmake . -Bbuild -G "%GENERATOR%"
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_INSTALL_PREFIX=c:/install/libpmemobj-cpp
+        -DTESTS_USE_FORCED_PMEM=ON
 
 build_script:
 - msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%
@@ -38,4 +39,5 @@ test_script:
 - cmake . -G "%GENERATOR%"
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_PREFIX_PATH=c:/install/libpmemobj-cpp
+        -DTESTS_USE_FORCED_PMEM=ON
 - msbuild ALL_BUILD.vcxproj

@@ -38,6 +38,8 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
+#include <libpmemobj++/detail/common.hpp>
+
 #include <iostream>
 
 namespace pmemobj_exp = pmem::obj::experimental;
@@ -78,6 +80,14 @@ test_string_snapshot(pmem::obj::pool<struct root> &pop)
 				    strlen(short_c_str_ctor));
 			UT_ASSERTeq(r->long_str->size(),
 				    strlen(long_c_str_ctor));
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			pmem::detail::conditional_add_to_tx(r->short_str.get());
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

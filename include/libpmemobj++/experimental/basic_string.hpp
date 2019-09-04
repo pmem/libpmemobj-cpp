@@ -2254,6 +2254,11 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
+	/* Mark sso array as initialized */
+#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+	VALGRIND_MAKE_MEM_DEFINED(&sso.data, sizeof(sso.data));
+#endif
+
 	auto size = get_size(std::forward<Args>(args)...);
 
 	if (is_sso_used()) {
@@ -2457,12 +2462,9 @@ template <typename CharT, typename Traits>
 void
 basic_string<CharT, Traits>::snapshot_sso() const
 {
-/*
- * XXX: this can be optimized - only snapshot length() elements.
- */
-#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
-	VALGRIND_MAKE_MEM_DEFINED(&sso.data, sizeof(sso.data));
-#endif
+	/*
+	 * XXX: this can be optimized - only snapshot length() elements.
+	 */
 	sso.data.data();
 };
 

@@ -251,12 +251,12 @@ private:
 	void check_pmem();
 	void check_tx_stage_work();
 	template <typename... Args>
-	void construct(size_type idx, size_type count, Args &&... args);
+	void construct_at_end(size_type count, Args &&... args);
 	template <typename InputIt,
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
 			  InputIt>::type * = nullptr>
-	void construct(size_type idx, InputIt first, InputIt last);
+	void construct_at_end(InputIt first, InputIt last);
 	void dealloc();
 	pool_base get_pool() const noexcept;
 	template <typename InputIt>
@@ -379,7 +379,7 @@ vector<T>::vector(size_type count, const value_type &value)
 	_data = nullptr;
 	_size = 0;
 	alloc(count);
-	construct(0, count, value);
+	construct_at_end(count, value);
 }
 
 /**
@@ -408,7 +408,7 @@ vector<T>::vector(size_type count)
 	_data = nullptr;
 	_size = 0;
 	alloc(count);
-	construct(0, count);
+	construct_at_end(count);
 }
 
 /**
@@ -445,7 +445,7 @@ vector<T>::vector(InputIt first, InputIt last)
 	_data = nullptr;
 	_size = 0;
 	alloc(static_cast<size_type>(std::distance(first, last)));
-	construct(0, first, last);
+	construct_at_end(first, last);
 }
 
 /**
@@ -475,7 +475,7 @@ vector<T>::vector(const vector &other)
 	_data = nullptr;
 	_size = 0;
 	alloc(other.capacity());
-	construct(0, other.cbegin(), other.cend());
+	construct_at_end(other.cbegin(), other.cend());
 }
 
 /**
@@ -688,7 +688,7 @@ vector<T>::assign(size_type count, const_reference value)
 					sizeof(T) * (count - size_old));
 #endif
 
-				construct(size_old, count - size_old, value);
+				construct_at_end(count - size_old, value);
 				/*
 				 * XXX: explicit persist is required here
 				 * because given range wasn't snapshotted and
@@ -706,7 +706,7 @@ vector<T>::assign(size_type count, const_reference value)
 		} else {
 			dealloc();
 			alloc(count);
-			construct(0, count, value);
+			construct_at_end(count, value);
 		}
 	});
 }
@@ -775,7 +775,7 @@ vector<T>::assign(InputIt first, InputIt last)
 			iterator shrink_to = std::copy(first, mid, &_data[0]);
 
 			if (growing) {
-				construct(size_old, mid, last);
+				construct_at_end(mid, last);
 				/*
 				 * XXX: explicit persist is required here
 				 * because given range wasn't snapshotted and
@@ -794,7 +794,7 @@ vector<T>::assign(InputIt first, InputIt last)
 		} else {
 			dealloc();
 			alloc(size_new);
-			construct(0, first, last);
+			construct_at_end(first, last);
 		}
 	});
 }
@@ -1834,7 +1834,7 @@ vector<T>::emplace_back(Args &&... args)
 #endif
 		}
 
-		construct(size(), 1, std::forward<Args>(args)...);
+		construct_at_end(1, std::forward<Args>(args)...);
 		/*
 		 * XXX: explicit persist is required here because given range
 		 * wasn't snapshotted and won't be persisted automatically on tx
@@ -2022,7 +2022,7 @@ vector<T>::resize(size_type count)
 		else {
 			if (_capacity < count)
 				realloc(count);
-			construct(_size, count - _size);
+			construct_at_end(count - _size);
 		}
 	});
 }
@@ -2058,7 +2058,7 @@ vector<T>::resize(size_type count, const value_type &value)
 		else {
 			if (_capacity < count)
 				realloc(count);
-			construct(_size, count - _size, value);
+			construct_at_end(count - _size, value);
 		}
 	});
 }
@@ -2166,10 +2166,9 @@ vector<T>::check_tx_stage_work()
 
 /**
  * Private helper function. Must be called during transaction. Assumes that
- * there is free space for additional elements. Constructs elements at given
- * index in underlying array based on given parameters.
+ * there is free space for additional elements. Constructs elements at
+ * index size() in underlying array based on given parameters.
  *
- * @param[in] idx underyling array index where new elements will be constructed.
  * @param[in] count number of elements to be constructed.
  * @param[in] args variadic template arguments for value_type constructor.
  *
@@ -2186,12 +2185,12 @@ vector<T>::check_tx_stage_work()
 template <typename T>
 template <typename... Args>
 void
-vector<T>::construct(size_type idx, size_type count, Args &&... args)
+vector<T>::construct_at_end(size_type count, Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(_capacity >= count + _size);
 
-	pointer dest = _data.get() + idx;
+	pointer dest = _data.get() + size();
 	const_pointer end = dest + count;
 	for (; dest != end; ++dest)
 		detail::create<value_type, Args...>(
@@ -2202,11 +2201,10 @@ vector<T>::construct(size_type idx, size_type count, Args &&... args)
 /**
  * Private helper function. Must be called during transaction. Assumes that
  * there is free space for additional elements and input arguments satisfy
- * InputIterator requirements. Copies elements at index idx in underlying array
- * with the contents of the range [first, last). This overload participates in
- * overload resolution only if InputIt satisfies InputIterator.
+ * InputIterator requirements. Copies elements at index size() in underlying
+ * array with the contents of the range [first, last). This overload
+ * participates in overload resolution only if InputIt satisfies InputIterator.
  *
- * @param[in] idx underlying array index where new elements will be moved.
  * @param[in] first first iterator.
  * @param[in] last last iterator.
  *
@@ -2227,14 +2225,14 @@ template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::construct(size_type idx, InputIt first, InputIt last)
+vector<T>::construct_at_end(InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	difference_type range_size = std::distance(first, last);
 	assert(range_size >= 0);
 	assert(_capacity >= static_cast<size_type>(range_size) + _size);
 
-	pointer dest = _data.get() + idx;
+	pointer dest = _data.get() + size();
 	_size += static_cast<size_type>(range_size);
 	while (first != last)
 		detail::create<value_type>(dest++, *first++);
@@ -2411,15 +2409,15 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 		alloc(get_recommended_capacity(old_size + count));
 
 		/* Move range before the idx to new array */
-		construct(0, std::make_move_iterator(old_begin),
-			  std::make_move_iterator(old_mid));
+		construct_at_end(std::make_move_iterator(old_begin),
+				 std::make_move_iterator(old_mid));
 
 		/* Insert (first, last) range to the new array */
-		construct(idx, first, last);
+		construct_at_end(first, last);
 
 		/* Move remaining element ot the new array */
-		construct(idx + count, std::make_move_iterator(old_mid),
-			  std::make_move_iterator(old_end));
+		construct_at_end(std::make_move_iterator(old_mid),
+				 std::make_move_iterator(old_end));
 
 		/* destroy and free old data */
 		for (size_type i = 0; i < old_size; ++i)
@@ -2473,8 +2471,8 @@ vector<T>::realloc(size_type capacity_new)
 
 	alloc(capacity_new);
 
-	construct(0, std::make_move_iterator(old_begin),
-		  std::make_move_iterator(old_end));
+	construct_at_end(std::make_move_iterator(old_begin),
+			 std::make_move_iterator(old_end));
 
 	/* destroy and free old data */
 	for (size_type i = 0; i < old_size; ++i)

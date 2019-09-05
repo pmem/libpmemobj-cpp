@@ -159,7 +159,8 @@ cd build
 
 PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 CC=gcc CXX=g++ \
-cmake .. -DCMAKE_BUILD_TYPE=Release \
+cmake .. -DDEVELOPER_MODE=1 \
+			-DCMAKE_BUILD_TYPE=Release \
 			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 			-DTRACE_TESTS=1 \
 			-DCOVERAGE=$COVERAGE \

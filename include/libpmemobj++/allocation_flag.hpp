@@ -98,7 +98,7 @@ struct allocation_flag {
 	bool
 	is_set(const allocation_flag &rhs)
 	{
-		return value & rhs.value;
+		return (value & rhs.value) != 0;
 	}
 
 	allocation_flag
@@ -152,7 +152,7 @@ struct allocation_flag_atomic {
 	bool
 	is_set(const allocation_flag_atomic &rhs)
 	{
-		return value & rhs.value;
+		return (value & rhs.value) != 0;
 	}
 
 	allocation_flag_atomic

@@ -2320,7 +2320,10 @@ public:
 	bool
 	insert(const_accessor &result, value_type &&value)
 	{
-		return generic_move_insert(result, std::move(value));
+		result.release();
+
+		return internal_insert(value.first, &result, false,
+				       std::move(value));
 	}
 
 	/**
@@ -2332,7 +2335,10 @@ public:
 	bool
 	insert(accessor &result, value_type &&value)
 	{
-		return generic_move_insert(result, std::move(value));
+		result.release();
+
+		return internal_insert(value.first, &result, true,
+				       std::move(value));
 	}
 
 	/**
@@ -2343,8 +2349,8 @@ public:
 	bool
 	insert(value_type &&value)
 	{
-		return generic_move_insert(accessor_not_used(),
-					   std::move(value));
+		return internal_insert(value.first, nullptr, false,
+				       std::move(value));
 	}
 
 	/**
@@ -2467,54 +2473,6 @@ protected:
 
 	template <typename K>
 	bool internal_erase(const K &key);
-
-	struct accessor_not_used {
-		void
-		release()
-		{
-		}
-	};
-
-	friend const_accessor *
-	accessor_location(accessor_not_used const &)
-	{
-		return nullptr;
-	}
-
-	friend const_accessor *
-	accessor_location(const_accessor &a)
-	{
-		return &a;
-	}
-
-	friend bool
-	is_write_access_needed(accessor const &)
-	{
-		return true;
-	}
-
-	friend bool
-	is_write_access_needed(const_accessor const &)
-	{
-		return false;
-	}
-
-	friend bool
-	is_write_access_needed(accessor_not_used const &)
-	{
-		return false;
-	}
-
-	template <typename Accessor>
-	bool
-	generic_move_insert(Accessor &&result, value_type &&value)
-	{
-		result.release();
-
-		return internal_insert(value.first, accessor_location(result),
-				       is_write_access_needed(result),
-				       std::move(value));
-	}
 
 	void clear_segment(segment_index_t s);
 

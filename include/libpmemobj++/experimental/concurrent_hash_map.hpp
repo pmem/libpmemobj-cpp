@@ -2680,9 +2680,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::rehash(size_type sz)
 
 	for (; b <= m; ++b) {
 		bucket *bp = get_bucket(b);
-		node_base_ptr_t n = bp->node_list;
 
-		assert(is_valid(n) || n == internal::empty_bucket ||
+		assert(is_valid(bp->node_list) ||
+		       bp->node_list == internal::empty_bucket ||
 		       bp->is_rehashed(std::memory_order_relaxed) == false);
 
 		internal::assert_not_locked(bp->mutex);

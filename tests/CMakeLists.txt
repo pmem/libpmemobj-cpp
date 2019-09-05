@@ -36,7 +36,7 @@ add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp ${CMA
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 if(MSVC_VERSION)
-	add_flag(-W4)
+	add_flag(-W3)
 	add_flag(-bigobj) # fix C1128 raised for some test binaries
 else()
 	add_flag(-Wall)

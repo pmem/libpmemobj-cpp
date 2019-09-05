@@ -28,11 +28,12 @@ before_build:
 
 build_script:
 - msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%
+          /verbosity:minimal
 
 test_script:
 - cd build
 - ctest -C %CONFIGURATION% --output-on-failure
-- msbuild INSTALL.vcxproj
+- msbuild INSTALL.vcxproj /verbosity:minimal
 - cd ..
 # build standalone example
 - cd examples/map_cli
@@ -40,4 +41,4 @@ test_script:
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_PREFIX_PATH=c:/install/libpmemobj-cpp
         -DTESTS_USE_FORCED_PMEM=ON
-- msbuild ALL_BUILD.vcxproj
+- msbuild ALL_BUILD.vcxproj /verbosity:minimal

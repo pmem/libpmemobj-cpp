@@ -259,6 +259,121 @@ private:
 	PMEMrwlock plock;
 };
 
+class shared_mutex_scoped_lock {
+	using rw_mutex_type = pmem::obj::shared_mutex;
+
+public:
+	shared_mutex_scoped_lock(const shared_mutex_scoped_lock &) = delete;
+	shared_mutex_scoped_lock &
+	operator=(const shared_mutex_scoped_lock &) = delete;
+
+	/** Default constructor. Construct lock that has not acquired a mutex.*/
+	shared_mutex_scoped_lock() : mutex(nullptr), is_writer(false)
+	{
+	}
+
+	/** Acquire lock on given mutex. */
+	shared_mutex_scoped_lock(rw_mutex_type &m, bool write = true)
+	    : mutex(nullptr)
+	{
+		acquire(m, write);
+	}
+
+	/** Release lock (if lock is held). */
+	~shared_mutex_scoped_lock()
+	{
+		if (mutex)
+			release();
+	}
+
+	/** Acquire lock on given mutex. */
+	void
+	acquire(rw_mutex_type &m, bool write = true)
+	{
+		is_writer = write;
+		mutex = &m;
+		if (write)
+			mutex->lock();
+		else
+			mutex->lock_shared();
+	}
+
+	/**
+	 * Upgrade reader to become a writer.
+	 * This method is added for compatibility with tbb::spin_rw_mutex which
+	 * supports upgrade operation.
+	 *
+	 * @returns Always return false because persistent shared mutex cannot
+	 * be upgraded without releasing and re-acquiring the lock
+	 */
+	bool
+	upgrade_to_writer()
+	{
+		assert(!is_writer);
+		mutex->unlock_shared();
+		is_writer = true;
+		mutex->lock();
+		return false;
+	}
+
+	/**
+	 * Release lock.
+	 */
+	void
+	release()
+	{
+		assert(mutex);
+		rw_mutex_type *m = mutex;
+		mutex = nullptr;
+		if (is_writer) {
+			m->unlock();
+		} else {
+			m->unlock_shared();
+		}
+	}
+
+	/**
+	 * Downgrade writer to become a reader.
+	 * This method is added for compatibility with tbb::spin_rw_mutex which
+	 * supports downgrade operation.
+	 * @returns false.
+	 */
+	bool
+	downgrade_to_reader()
+	{
+		assert(is_writer);
+		return false;
+	}
+
+	/**
+	 * Try acquire lock on given mutex.
+	 *
+	 */
+	bool
+	try_acquire(rw_mutex_type &m, bool write = true)
+	{
+		assert(!mutex);
+		bool result;
+		is_writer = write;
+		result = write ? m.try_lock() : m.try_lock_shared();
+		if (result)
+			mutex = &m;
+		return result;
+	}
+
+protected:
+	/**
+	 * The pointer to the current mutex that is held, or NULL if no mutex is
+	 * held.
+	 */
+	rw_mutex_type *mutex;
+	/**
+	 * If mutex!=NULL, then is_writer is true if holding a writer lock,
+	 * false if holding a reader lock. Not defined if not holding a lock.
+	 */
+	bool is_writer;
+}; /* class shared_mutex_scoped_lock */
+
 } /* namespace obj */
 
 } /* namespace pmem */

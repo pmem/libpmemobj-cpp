@@ -242,6 +242,13 @@ if (ENABLE_VECTOR)
 	add_test_generic(NAME temp_value TRACERS none pmemcheck memcheck)
 
 	build_test(vector_assign_exceptions_length vector_assign_exceptions_length/vector_assign_exceptions_length.cpp)
+
+	# array-bounds warning is expected
+	check_cxx_compiler_flag(-Wno-array-bounds wno_array_bounds_flag)
+	if (wno_array_bounds_flag)
+		target_compile_options(vector_assign_exceptions_length PUBLIC -Wno-array-bounds)
+	endif()
+
 	add_test_generic(NAME vector_assign_exceptions_length TRACERS none memcheck pmemcheck)
 
 	build_test(vector_assign_exceptions_oom vector_assign_exceptions_oom/vector_assign_exceptions_oom.cpp)

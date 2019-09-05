@@ -1356,8 +1356,7 @@ public: /* workaround */
 			my_bucket = acc.get();
 			my_node = static_cast<node *>(
 				my_bucket->node_list.get(my_map->my_pool_uuid));
-
-			if (!hash_map_base::is_valid(my_node)) {
+			if (!my_node) {
 				advance_to_next_bucket();
 			}
 		}
@@ -1392,7 +1391,7 @@ public:
 	/** Indirection (dereference). */
 	reference operator*() const
 	{
-		assert(hash_map_base::is_valid(my_node));
+		assert(my_node);
 		return my_node->item;
 	}
 
@@ -1466,7 +1465,7 @@ private:
 			bucket_accessor acc(my_map, k);
 			my_bucket = acc.get();
 
-			if (hash_map_base::is_valid(my_bucket->node_list)) {
+			if (my_bucket->node_list) {
 				my_node = static_cast<node *>(
 					my_bucket->node_list.get(
 						my_map->my_pool_uuid));

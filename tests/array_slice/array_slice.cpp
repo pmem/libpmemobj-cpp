@@ -588,7 +588,7 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	Is_pmemcheck_enabled = std::stoi(argv[2]);
+	Is_pmemcheck_enabled = static_cast<bool>(std::stoi(argv[2]));
 
 	auto path = argv[1];
 	auto pop = pmem::obj::pool<root>::create(

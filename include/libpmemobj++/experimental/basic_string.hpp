@@ -2152,7 +2152,7 @@ template <typename CharT, typename Traits>
 bool
 basic_string<CharT, Traits>::is_sso_used() const
 {
-	return sso._size & _sso_mask;
+	return static_cast<bool>(sso._size & _sso_mask);
 }
 
 template <typename CharT, typename Traits>

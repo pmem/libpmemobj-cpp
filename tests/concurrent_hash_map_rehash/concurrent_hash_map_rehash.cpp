@@ -78,7 +78,7 @@ insert_erase_lookup_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	std::vector<std::thread> threads;
 	threads.reserve(concurrency);

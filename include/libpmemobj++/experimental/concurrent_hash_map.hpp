@@ -1895,26 +1895,6 @@ protected:
 		pop.persist(b_new->rehashed);
 	}
 
-	struct call_clear_on_leave {
-		concurrent_hash_map *my_ch_map;
-		call_clear_on_leave(concurrent_hash_map *a_ch_map)
-		    : my_ch_map(a_ch_map)
-		{
-		}
-
-		void
-		dismiss()
-		{
-			my_ch_map = 0;
-		}
-
-		~call_clear_on_leave()
-		{
-			if (my_ch_map)
-				my_ch_map->clear();
-		}
-	};
-
 public:
 	class accessor;
 	/**

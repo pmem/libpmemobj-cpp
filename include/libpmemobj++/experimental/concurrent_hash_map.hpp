@@ -2094,7 +2094,7 @@ public:
 	 * Not thread safe.
 	 */
 	void
-	initialize(bool graceful_shutdown = false)
+	runtime_initialize(bool graceful_shutdown = false)
 	{
 		if (!graceful_shutdown) {
 			auto actual_size =

@@ -510,6 +510,49 @@ hatero_test(nvobj::pool<root> &pop)
 		UT_ASSERTeq(map->count(i), 0);
 	}
 }
+
+/*
+ * iterator_test -- (internal) test iterators
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+iterator_test(nvobj::pool<root> &pop)
+{
+	auto &map = pop.root()->map1;
+	tx_alloc_wrapper<persistent_map_type>(pop, map);
+
+	{
+		persistent_map_type::iterator i = map->begin();
+		persistent_map_type::iterator j = map->end();
+		UT_ASSERT(std::distance(i, j) == 0);
+		UT_ASSERT(i == j);
+	}
+	{
+		persistent_map_type::const_iterator i = map->begin();
+		persistent_map_type::const_iterator j = map->end();
+		UT_ASSERT(std::distance(i, j) == 0);
+		UT_ASSERT(i == j);
+	}
+	{
+		persistent_map_type::const_iterator i =
+			const_cast<std::add_const<decltype(map)>::type>(map)
+				->begin();
+		persistent_map_type::const_iterator j =
+			const_cast<std::add_const<decltype(map)>::type>(map)
+				->end();
+		UT_ASSERT(std::distance(i, j) == 0);
+		UT_ASSERT(i == j);
+		UT_ASSERT(i == map->end());
+	}
+	{
+		persistent_map_type::iterator i;
+		persistent_map_type::const_iterator j;
+		(void)i;
+		(void)j;
+	}
+
+	pmem::detail::destroy<persistent_map_type>(*map);
+}
 }
 
 int
@@ -538,6 +581,7 @@ main(int argc, char *argv[])
 	swap_test(pop);
 	insert_test(pop);
 	hatero_test(pop);
+	iterator_test(pop);
 
 	pop.close();
 

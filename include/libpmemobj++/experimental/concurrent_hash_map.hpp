@@ -1365,9 +1365,7 @@ public: /* workaround */
 
 public:
 	/** Construct undefined iterator. */
-	hash_map_iterator() : my_map(), my_index(), my_bucket(), my_node()
-	{
-	}
+	hash_map_iterator() = default;
 
 	/** Copy constructor. */
 	hash_map_iterator(const hash_map_iterator &other)
@@ -1388,6 +1386,8 @@ public:
 	      my_node(other.my_node)
 	{
 	}
+
+	hash_map_iterator &operator=(const hash_map_iterator &it) = default;
 
 	/** Indirection (dereference). */
 	reference operator*() const
@@ -1426,16 +1426,16 @@ public:
 
 private:
 	/** Concurrent_hash_map over which we are iterating. */
-	map_ptr my_map;
+	map_ptr my_map = nullptr;
 
 	/** Bucket index for current item. */
-	size_t my_index;
+	size_t my_index = 0;
 
 	/** Pointer to bucket. */
-	bucket *my_bucket;
+	bucket *my_bucket = nullptr;
 
 	/** Pointer to node that has current item. */
-	node *my_node;
+	node *my_node = nullptr;
 
 	class bucket_accessor {
 	public:

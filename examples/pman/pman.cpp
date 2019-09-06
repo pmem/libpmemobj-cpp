@@ -940,7 +940,7 @@ state::print_game_over()
 	mvprintw(y + 13, x, "       Your final score is %u         ",
 		 (unsigned)board->score);
 	if (board->score == highscore)
-		mvprintw(y + 14, x, "       YOU BET YOUR BEST SCORE!       ");
+		mvprintw(y + 14, x, "    YOU'VE BEATEN YOUR BEST SCORE!    ");
 	mvprintw(y + 16, x, "          Press 'q' to quit           ");
 	mvprintw(y + 17, x, "         Press 'r' to resume          ");
 }

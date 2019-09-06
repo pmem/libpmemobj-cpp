@@ -135,40 +135,6 @@ assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
 }
 
 /**
- * This wrapper for std::atomic<T> allows to initialize volatile atomic fields
- * with custom initializer
- */
-template <typename T, typename InitFunctor>
-class atomic_wrapper {
-public:
-	using value_type = T;
-	using atomic_type = std::atomic<value_type>;
-	using init_type = InitFunctor;
-
-	atomic_wrapper() noexcept
-	{
-	}
-
-	atomic_wrapper(const value_type &val) noexcept : my_atomic(val)
-	{
-	}
-
-	template <typename... Args>
-	atomic_wrapper(Args &&... args)
-	    : my_atomic(init_type()(std::forward<Args>(args)...))
-	{
-	}
-
-	operator atomic_type &() noexcept
-	{
-		return my_atomic;
-	}
-
-private:
-	atomic_type my_atomic;
-};
-
-/**
  * Wrapper around PMDK allocator
  * @throw std::bad_alloc on allocation failure.
  */
@@ -872,18 +838,6 @@ public:
 	/** Block pointers table type. */
 	using blocks_table_t = segment_ptr_t[block_table_size];
 
-	class calculate_mask {
-	public:
-		hashcode_t
-		operator()(const hash_map_base *map_base) const
-		{
-			return map_base->calculate_mask();
-		}
-	}; /* class mask_initializer */
-
-	/** Type of my_mask field */
-	using mask_type = v<atomic_wrapper<hashcode_t, calculate_mask>>;
-
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
@@ -891,8 +845,8 @@ public:
 	p<uint64_t> my_pool_uuid;
 
 	/** Hash mask = sum of allocated segment sizes - 1. */
-	/* my_mask always restored on restart. */
-	mask_type my_mask;
+	/* my_mask always restored on restart in runtime_initialize() method. */
+	std::atomic<hashcode_t> my_mask;
 
 	/**
 	 * Segment pointers table. Also prevents false sharing between my_mask
@@ -903,13 +857,16 @@ public:
 	/* It must be in separate cache line from my_mask due to performance
 	 * effects */
 	/** Size of container in stored items. */
-	p<std::atomic<size_type>> my_size;
+	std::atomic<size_type> my_size;
 
 	/** Zero segment. */
 	bucket my_embedded_segment[embedded_buckets];
 
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
+
+	/** Holds information whether last shutdown was dirty */
+	p<bool> dirty_shutdown = false;
 
 	/** @return true if @arg ptr is valid pointer. */
 	static bool
@@ -935,13 +892,13 @@ public:
 	const std::atomic<hashcode_t> &
 	mask() const noexcept
 	{
-		return const_cast<mask_type &>(my_mask).get(this);
+		return const_cast<decltype(my_mask) &>(my_mask);
 	}
 
 	std::atomic<hashcode_t> &
 	mask() noexcept
 	{
-		return my_mask.get(this);
+		return my_mask;
 	}
 
 	/** Const segment facade type */
@@ -964,7 +921,12 @@ public:
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
 
-		my_size.get_rw() = 0;
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_size, sizeof(my_size));
+		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_mask, sizeof(my_mask));
+#endif
+
+		my_size = 0;
 		PMEMoid oid = pmemobj_oid(this);
 
 		assert(!OID_IS_NULL(oid));
@@ -981,8 +943,6 @@ public:
 			segment_facade_t seg(my_table, i);
 			mark_rehashed<false>(pop, seg);
 		}
-
-		assert(mask() == embedded_buckets - 1);
 	}
 
 	/**
@@ -1005,14 +965,6 @@ public:
 			++segment;
 		}
 		return m;
-	}
-
-	void
-	restore_size(size_type actual_size)
-	{
-		my_size.get_rw().store(actual_size, std::memory_order_relaxed);
-		pool_base pop = get_pool_base();
-		pop.persist(my_size);
 	}
 
 	/**
@@ -1195,8 +1147,7 @@ public:
 
 		/* prefix form is to enforce allocation after the first item
 		 * inserted */
-		size_t sz = ++(my_size.get_rw());
-		pop.persist(&my_size, sizeof(my_size));
+		size_t sz = ++my_size;
 
 		b->tmp_node.raw_ptr()->off = 0;
 		pop.persist(&(b->tmp_node.raw().off),
@@ -1250,7 +1201,7 @@ public:
 
 		--buckets;
 
-		bool is_initial = (my_size.get_ro() == 0);
+		bool is_initial = my_size == 0;
 
 		for (size_type m = mask(); buckets > m; m = mask())
 			enable_segment(
@@ -1275,10 +1226,8 @@ public:
 				this->mask(), std::memory_order_relaxed);
 
 			/* Swap my_size */
-			this->my_size.get_rw() =
-				table.my_size.get_rw().exchange(
-					this->my_size.get_ro(),
-					std::memory_order_relaxed);
+			this->my_size = table.my_size.exchange(
+				this->my_size, std::memory_order_relaxed);
 
 			for (size_type i = 0; i < embedded_buckets; ++i)
 				this->my_embedded_segment[i].node_list.swap(
@@ -2089,23 +2038,49 @@ public:
 	}
 
 	/**
-	 * Intialize persistent concurrent hash map after process restart.
-	 * Should be called everytime after process restart.
+	 * Initialize persistent concurrent hash map after process restart.
+	 *
+	 * MUST be called everytime after process restart.
 	 * Not thread safe.
 	 */
 	void
-	initialize(bool graceful_shutdown = false)
+	runtime_initialize()
 	{
-		if (!graceful_shutdown) {
+		/* my_mask is always recalculated */
+		my_mask.store(calculate_mask(), std::memory_order_relaxed);
+
+		if (dirty_shutdown) {
 			auto actual_size =
 				std::distance(this->begin(), this->end());
 			assert(actual_size >= 0);
-			this->restore_size(size_type(actual_size));
+			my_size.store(static_cast<size_type>(actual_size),
+				      std::memory_order_relaxed);
 		} else {
 			assert(this->size() ==
-			       size_type(std::distance(this->begin(),
-						       this->end())));
+			       static_cast<size_type>(std::distance(
+				       this->begin(), this->end())));
+
+			auto pop = get_pool_base();
+
+			dirty_shutdown = true;
+			pop.persist(dirty_shutdown);
 		}
+	}
+
+	/**
+	 * Gracefully finishes concurrent_hash_map operation.
+	 *
+	 * Not thread safe.
+	 */
+	void
+	runtime_finalize()
+	{
+		auto pop = get_pool_base();
+
+		pop.persist(&my_size, sizeof(my_size));
+
+		dirty_shutdown = false;
+		pop.persist(dirty_shutdown);
 	}
 
 	/**
@@ -2214,7 +2189,7 @@ public:
 	size_type
 	size() const
 	{
-		return my_size.get_ro();
+		return my_size;
 	}
 
 	/**
@@ -2223,7 +2198,7 @@ public:
 	bool
 	empty() const
 	{
-		return my_size.get_ro() == 0;
+		return my_size == 0;
 	}
 
 	/**
@@ -2614,6 +2589,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::lookup(
 	void (*allocate_node)(pool_base &, persistent_ptr<node> &, const void *,
 			      const node_base_ptr_t &))
 {
+	/* Assert no operation is performed when dirty flag is cleared */
+	assert(dirty_shutdown);
 	assert(!result || !result->my_node);
 
 	bool return_value = false;
@@ -2777,8 +2754,7 @@ search:
 		transaction::commit();
 	}
 
-	--(my_size.get_rw());
-	pop.persist(my_size);
+	--my_size;
 }
 
 	return true;
@@ -2846,7 +2822,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::clear()
 
 		transaction::manual tx(pop);
 
-		my_size.get_rw() = 0;
+		my_size = 0;
 		segment_index_t s = segment_traits_t::segment_index_of(m);
 
 		assert(s + 1 == block_table_size ||
@@ -2888,7 +2864,7 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_copy(
 	const concurrent_hash_map &source)
 {
-	reserve(source.my_size.get_ro());
+	reserve(source.my_size);
 	internal_copy(source.begin(), source.end());
 }
 

@@ -208,6 +208,8 @@ ctor_test(nvobj::pool<root> &pop)
 	auto &map2 = pop.root()->map2;
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1, size_t(10));
+	map1->runtime_initialize();
+
 	UT_ASSERT(map1->bucket_count() >= 10);
 	UT_ASSERT(map1->empty());
 
@@ -217,6 +219,7 @@ ctor_test(nvobj::pool<root> &pop)
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, map1->begin(),
 					      map1->end());
+	map2->runtime_initialize();
 
 	UT_ASSERT(!map2->empty());
 	UT_ASSERT(map1->size() == map2->size());
@@ -225,6 +228,7 @@ ctor_test(nvobj::pool<root> &pop)
 
 	pmem::detail::destroy<persistent_map_type>(*map2);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, *map1);
+	map2->runtime_initialize();
 
 	UT_ASSERT(map1->size() == map2->size());
 
@@ -232,6 +236,7 @@ ctor_test(nvobj::pool<root> &pop)
 
 	pmem::detail::destroy<persistent_map_type>(*map2);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, std::move(*map1));
+	map2->runtime_initialize();
 
 	verify_elements(*map2, 300);
 
@@ -240,6 +245,7 @@ ctor_test(nvobj::pool<root> &pop)
 		pop, map2,
 		std::initializer_list<value_type>{value_type(0, 0),
 						  value_type(1, 1)});
+	map2->runtime_initialize();
 
 	verify_elements(*map2, 2);
 
@@ -259,6 +265,9 @@ assignment_test(nvobj::pool<root> &pop)
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2);
+
+	map1->runtime_initialize();
+	map2->runtime_initialize();
 
 	UT_ASSERT(map1->empty());
 
@@ -317,6 +326,9 @@ swap_test(nvobj::pool<root> &pop)
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2);
 
+	map1->runtime_initialize();
+	map2->runtime_initialize();
+
 	for (int i = 0; i < 50; i++) {
 		UT_ASSERT(map1->insert(value_type(i, i)) == true);
 	}
@@ -343,6 +355,8 @@ access_test(nvobj::pool<root> &pop)
 	auto &map1 = pop.root()->map1;
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
+
+	map1->runtime_initialize();
 
 	for (int i = 0; i < 100; i++) {
 		UT_ASSERT(map1->insert(value_type(i, i)) == true);
@@ -383,6 +397,8 @@ insert_test(nvobj::pool<root> &pop)
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
 
+	map1->runtime_initialize();
+
 	{
 		typename persistent_map_type::accessor accessor;
 		UT_ASSERTeq(map1->insert(accessor, value_type(1, 1)), true);
@@ -400,6 +416,8 @@ insert_test(nvobj::pool<root> &pop)
 	}
 
 	tx_alloc_wrapper<persistent_map_move_type>(pop, map_move);
+
+	map_move->runtime_initialize();
 
 	{
 		typename persistent_map_move_type::accessor accessor;
@@ -479,6 +497,8 @@ hatero_test(nvobj::pool<root> &pop)
 	auto &map = pop.root()->map_hetero;
 
 	tx_alloc_wrapper<persistent_map_hetero_type>(pop, map);
+
+	map->runtime_initialize();
 
 	for (long i = 0; i < 100; ++i) {
 		map->insert(value_type(i, i));

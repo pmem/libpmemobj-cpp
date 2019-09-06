@@ -102,7 +102,7 @@ void
 test_init(nvobj::pool<root> &pop)
 {
 	auto persistent_map = pop.root()->cons;
-	persistent_map->initialize();
+	persistent_map->runtime_initialize();
 
 	for (int i = 0; i < len_elements / 2; i++)
 		persistent_map->insert(value_type(elements[i], elements[i]));
@@ -154,7 +154,7 @@ void
 test_insert_erase(nvobj::pool<root> &pop)
 {
 	auto persistent_map = pop.root()->cons;
-	persistent_map->initialize();
+	persistent_map->runtime_initialize();
 
 	auto size = static_cast<typename persistent_map_type::difference_type>(
 		persistent_map->size());
@@ -170,7 +170,7 @@ void
 check_consistency(nvobj::pool<root> &pop)
 {
 	auto persistent_map = pop.root()->cons;
-	persistent_map->initialize();
+	persistent_map->runtime_initialize();
 
 	auto size = static_cast<typename persistent_map_type::difference_type>(
 		persistent_map->size());

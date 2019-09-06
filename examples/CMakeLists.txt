@@ -86,10 +86,17 @@ add_check_whitespace(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*pp)
 add_cppstyle(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
 add_check_whitespace(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
 
+add_cppstyle(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
+add_check_whitespace(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
+
+add_cppstyle(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simplekv_rebuild/*.*pp)
+add_check_whitespace(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simplekv_rebuild/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 	add_executable(example-${name} ${srcs})
+	target_link_libraries(example-${name} ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 endfunction()
 
 if(PKG_CONFIG_FOUND)
@@ -110,12 +117,15 @@ else()
 endif()
 
 add_example(queue queue/queue.cpp)
-target_link_libraries(example-queue ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_example(simplekv simplekv/simplekv.cpp)
+
+add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)
 
 if(CURSES_FOUND)
 	add_example(pman pman/pman.cpp)
 	target_include_directories(example-pman PUBLIC ${CURSES_INCLUDE_DIR})
-	target_link_libraries(example-pman ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})
+	target_link_libraries(example-pman ${CURSES_LIBRARIES})
 else()
 	message(WARNING "ncurses not found - pman won't be build")
 endif()
@@ -126,7 +136,7 @@ if(SFML_FOUND)
 			pmpong/GameView.cpp pmpong/MainGame.cpp pmpong/MenuView.cpp pmpong/Paddle.cpp
 			pmpong/PongGameStatus.cpp pmpong/Pool.cpp)
 	target_include_directories(example-pmpong PUBLIC ${SFML_INCLUDE_DIR})
-	target_link_libraries(example-pmpong ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${SFML_LIBRARIES})
+	target_link_libraries(example-pmpong ${SFML_LIBRARIES})
 
 	if(NOT WIN32)
 		find_program(FCLIST NAMES fc-list)
@@ -148,16 +158,14 @@ endif()
 if(CURSES_FOUND)
 	add_example(panaconda panaconda/panaconda.cpp)
 	target_include_directories(example-panaconda PUBLIC ${CURSES_INCLUDE_DIR})
-	target_link_libraries(example-panaconda ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})
+	target_link_libraries(example-panaconda ${CURSES_LIBRARIES})
 else()
 	message(WARNING "ncurses not found - panaconda won't be build")
 endif()
 
 add_example(map_cli map_cli/map_cli.cpp)
-target_link_libraries(example-map_cli ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 add_example(array array/array.cpp)
-target_link_libraries(example-array ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 if(PMEMVLT_PRESENT)
 	add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)

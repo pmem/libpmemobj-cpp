@@ -96,7 +96,7 @@ insert_and_lookup_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * NUMBER_ITEMS_INSERT;
@@ -138,13 +138,13 @@ insert_and_lookup_test(nvobj::pool<root> &pop)
 
 	size_t buckets = map->bucket_count();
 
-	map->initialize(true);
+	map->runtime_initialize();
 
 	UT_ASSERT(map->bucket_count() == buckets);
 
 	UT_ASSERT(map->size() == TOTAL_ITEMS);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	UT_ASSERT(map->bucket_count() == buckets);
 
@@ -173,7 +173,7 @@ insert_and_erase_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * NUMBER_ITEMS_INSERT;
@@ -209,7 +209,7 @@ insert_erase_lookup_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	std::vector<std::thread> threads;
 	threads.reserve(concurrency);

@@ -37,10 +37,19 @@ add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 if(MSVC_VERSION)
 	add_flag(-W3)
-	add_flag(-bigobj) # fix C1128 raised for some test binaries
+
+	# disable warning C4996 - disable checking iterators
+	add_flag(-D_SCL_SECURE_NO_WARNINGS)
+
+	# disable warning C4996 - disable deprecation of getenv and strcpy functions
+	add_flag(-D_CRT_SECURE_NO_WARNINGS)
+
+	# fix C1128 raised for some test binaries
+	add_flag(-bigobj)
 else()
 	add_flag(-Wall)
 endif()
+
 add_flag(-Wpointer-arith)
 add_flag(-Wunused-macros)
 add_flag(-Wsign-conversion)

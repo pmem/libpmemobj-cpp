@@ -135,40 +135,6 @@ assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
 }
 
 /**
- * This wrapper for std::atomic<T> allows to initialize volatile atomic fields
- * with custom initializer
- */
-template <typename T, typename InitFunctor>
-class atomic_wrapper {
-public:
-	using value_type = T;
-	using atomic_type = std::atomic<value_type>;
-	using init_type = InitFunctor;
-
-	atomic_wrapper() noexcept
-	{
-	}
-
-	atomic_wrapper(const value_type &val) noexcept : my_atomic(val)
-	{
-	}
-
-	template <typename... Args>
-	atomic_wrapper(Args &&... args)
-	    : my_atomic(init_type()(std::forward<Args>(args)...))
-	{
-	}
-
-	operator atomic_type &() noexcept
-	{
-		return my_atomic;
-	}
-
-private:
-	atomic_type my_atomic;
-};
-
-/**
  * Wrapper around PMDK allocator
  * @throw std::bad_alloc on allocation failure.
  */
@@ -872,27 +838,19 @@ public:
 	/** Block pointers table type. */
 	using blocks_table_t = segment_ptr_t[block_table_size];
 
-	class calculate_mask {
-	public:
-		hashcode_t
-		operator()(const hash_map_base *map_base) const
-		{
-			return map_base->calculate_mask();
-		}
-	}; /* class mask_initializer */
-
-	/** Type of my_mask field */
-	using mask_type = v<atomic_wrapper<hashcode_t, calculate_mask>>;
-
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
 	/** ID of persistent memory pool where hash map resides. */
 	p<uint64_t> my_pool_uuid;
 
+	/** In future, my_mask can be implemented using v<> (8 bytes
+	 * overhead) */
+	std::aligned_storage<sizeof(size_t), sizeof(size_t)>::type
+		my_mask_reserved;
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
-	mask_type my_mask;
+	std::atomic<hashcode_t> my_mask;
 
 	/**
 	 * Segment pointers table. Also prevents false sharing between my_mask
@@ -935,13 +893,13 @@ public:
 	const std::atomic<hashcode_t> &
 	mask() const noexcept
 	{
-		return const_cast<mask_type &>(my_mask).get(this);
+		return const_cast<decltype(my_mask) &>(my_mask);
 	}
 
 	std::atomic<hashcode_t> &
 	mask() noexcept
 	{
-		return my_mask.get(this);
+		return my_mask;
 	}
 
 	/** Const segment facade type */
@@ -981,8 +939,6 @@ public:
 			segment_facade_t seg(my_table, i);
 			mark_rehashed<false>(pop, seg);
 		}
-
-		assert(mask() == embedded_buckets - 1);
 	}
 
 	/**
@@ -995,6 +951,7 @@ public:
 		VALGRIND_HG_DISABLE_CHECKING(&my_size, sizeof(my_size));
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
+
 		hashcode_t m = embedded_buckets - 1;
 
 		const_segment_facade_t segment(
@@ -2090,12 +2047,19 @@ public:
 
 	/**
 	 * Intialize persistent concurrent hash map after process restart.
-	 * Should be called everytime after process restart.
+	 * MUST be called everytime after process restart.
 	 * Not thread safe.
 	 */
 	void
 	runtime_initialize(bool graceful_shutdown = false)
 	{
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_mask, sizeof(my_mask));
+#endif
+
+		/* my_mask is always recalculated */
+		my_mask.store(calculate_mask(), std::memory_order_relaxed);
+
 		if (!graceful_shutdown) {
 			auto actual_size =
 				std::distance(this->begin(), this->end());

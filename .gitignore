@@ -1,0 +1,13 @@
+.*
+!.gitignore
+!.gitattributes
+!.clang-format
+!.travis.yml
+!.mailmap
+!.version
+build/
+*~
+*.swp
+~*
+tags
+include/libpmemobj++/version.hpp

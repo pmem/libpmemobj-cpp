@@ -357,6 +357,9 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_singlethread concurrent_hash_map_singlethread/concurrent_hash_map_singlethread.cpp)
 	add_test_generic(NAME concurrent_hash_map_singlethread TRACERS none memcheck pmemcheck)
 
+	build_test(concurrent_hash_map_layout concurrent_hash_map_layout/concurrent_hash_map_layout.cpp)
+	add_test_generic(NAME concurrent_hash_map_layout TRACERS none)
+
 	if(NOT TBB_FOUND)
 		message(WARNING "Skipping concurrent_hash_map_tbb test because Intel TBB library was not found")
 	else()

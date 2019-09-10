@@ -93,180 +93,207 @@ mkdir $INSTALL_DIR
 ###############################################################################
 # BUILD tests_clang_debug_cpp17 llvm
 ###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 START$(tput sgr 0)\n"
-mkdir build
-cd build
+function tests_clang_debug_cpp17() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 START$(tput sgr 0)\n"
+	mkdir build
+	cd build
 
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-CC=clang CXX=clang++ \
-cmake .. -DDEVELOPER_MODE=1 \
-			-DCMAKE_BUILD_TYPE=Debug \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DCXX_STANDARD=17 \
-			-DTESTS_USE_VALGRIND=0 \
-			-DTEST_DIR=/mnt/pmem \
-			-DTESTS_USE_FORCED_PMEM=1
+	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	CC=clang CXX=clang++ \
+	cmake .. -DDEVELOPER_MODE=1 \
+				-DCMAKE_BUILD_TYPE=Debug \
+				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+				-DTRACE_TESTS=1 \
+				-DCOVERAGE=$COVERAGE \
+				-DCXX_STANDARD=17 \
+				-DTESTS_USE_VALGRIND=0 \
+				-DTEST_DIR=/mnt/pmem \
+				-DTESTS_USE_FORCED_PMEM=1
 
-make -j2
-ctest --output-on-failure --timeout 540
-if [ "$COVERAGE" == "1" ]; then
-	upload_codecov tests_clang_debug_cpp17
-fi
+	make -j2
+	ctest --output-on-failure --timeout 540
+	if [ "$COVERAGE" == "1" ]; then
+		upload_codecov tests_clang_debug_cpp17
+	fi
 
-cd ..
-rm -r build
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 END$(tput sgr 0)\n\n"
-
+	cd ..
+	rm -r build
+	printf "$(tput setaf 1)$(tput setab 7)BUILD tests_clang_debug_cpp17 END$(tput sgr 0)\n\n"
+}
 ###############################################################################
 # BUILD tests_gcc_debug
 ###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug START$(tput sgr 0)\n"
-mkdir build
-cd build
+function build_gcc_debug() {
+	mkdir build
+	cd build
 
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-CC=gcc CXX=g++ \
-cmake .. -DDEVELOPER_MODE=1 \
-			-DCMAKE_BUILD_TYPE=Debug \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DTESTS_USE_VALGRIND=1 \
-			-DTEST_DIR=/mnt/pmem \
-			-DTESTS_USE_FORCED_PMEM=1
+	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	CC=gcc CXX=g++ \
+	cmake .. -DDEVELOPER_MODE=1 \
+				-DCMAKE_BUILD_TYPE=Debug \
+				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+				-DTRACE_TESTS=1 \
+				-DCOVERAGE=$COVERAGE \
+				-DTESTS_USE_VALGRIND=1 \
+				-DTEST_DIR=/mnt/pmem \
+				-DTESTS_USE_FORCED_PMEM=1
 
-make -j2
-if [ "$COVERAGE" == "1" ]; then
-	# valgrind reports error when used with code coverage
+	make -j2
+}
+
+function tests_gcc_debug_no_valgrind() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+	build_gcc_debug
 	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
-	upload_codecov tests_gcc_debug
-else
-	ctest --output-on-failure --timeout 540
-fi
+	if [ "$COVERAGE" == "1" ]; then
+		# valgrind reports error when used with code coverage
+		upload_codecov tests_gcc_debug
+	fi
+	cd ..
+	rm -r build
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 
-cd ..
-rm -r build
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_debug END$(tput sgr 0)\n\n"
+}
 
+function tests_gcc_debug_valgrind() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+	build_gcc_debug
+	ctest -E "_none" --timeout 540
+	cd ..
+	rm -r build
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
 ###############################################################################
 # BUILD tests_gcc_release_cpp17_no_valgrind
 ###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_valgrind START$(tput sgr 0)\n"
-VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc")
-sudo_password mv $VALGRIND_PC_PATH tmp_valgrind_pc
-mkdir build
-cd build
+function tests_gcc_release_cpp17_no_valgrind() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+	VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc")
+	sudo_password mv $VALGRIND_PC_PATH tmp_valgrind_pc
+	mkdir build
+	cd build
 
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-CC=gcc CXX=g++ \
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DCXX_STANDARD=17 \
-			-DTESTS_USE_VALGRIND=1 \
-			-DTEST_DIR=/mnt/pmem \
-			-DBUILD_EXAMPLES=0 \
-			-DTESTS_USE_FORCED_PMEM=1
+	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	CC=gcc CXX=g++ \
+	cmake .. -DCMAKE_BUILD_TYPE=Release \
+				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+				-DTRACE_TESTS=1 \
+				-DCOVERAGE=$COVERAGE \
+				-DCXX_STANDARD=17 \
+				-DTESTS_USE_VALGRIND=1 \
+				-DTEST_DIR=/mnt/pmem \
+				-DBUILD_EXAMPLES=0 \
+				-DTESTS_USE_FORCED_PMEM=1
 
-make -j2
-ctest --output-on-failure --timeout 540
-if [ "$COVERAGE" == "1" ]; then
-	upload_codecov tests_gcc_release_cpp17_no_valgrind
-fi
+	make -j2
+	ctest --output-on-failure --timeout 540
+	if [ "$COVERAGE" == "1" ]; then
+		upload_codecov tests_gcc_release_cpp17_no_valgrind
+	fi
 
-cd ..
-rm -r build
-sudo_password mv tmp_valgrind_pc $VALGRIND_PC_PATH
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_gcc_release_cpp17_no_valgrind END$(tput sgr 0)\n\n"
-
+	cd ..
+	rm -r build
+	sudo_password mv tmp_valgrind_pc $VALGRIND_PC_PATH
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
 ###############################################################################
 # BUILD tests_package
 ###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_package START$(tput sgr 0)\n"
-mkdir build
-cd build
+function tests_package() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+	mkdir build
+	cd build
 
-if [ $PACKAGE_MANAGER = "deb" ]; then
-	sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
-	sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
-elif [ $PACKAGE_MANAGER = "rpm" ]; then
-	sudo_password rpm -i /opt/pmdk-pkg/libpmem-*.rpm
-	sudo_password rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
-fi
+	if [ $PACKAGE_MANAGER = "deb" ]; then
+		sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
+		sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
+	elif [ $PACKAGE_MANAGER = "rpm" ]; then
+		sudo_password rpm -i /opt/pmdk-pkg/libpmem-*.rpm
+		sudo_password rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
+	fi
 
-CC=gcc CXX=g++ \
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
-		-DTESTS_USE_VALGRIND=0 \
-		-DCPACK_GENERATOR=$PACKAGE_MANAGER
+	CC=gcc CXX=g++ \
+	cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
+			-DTESTS_USE_VALGRIND=0 \
+			-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
-make -j2
-ctest --output-on-failure --timeout 540
+	make -j2
+	ctest --output-on-failure --timeout 540
 
-make package
+	make package
 
-# Make sure there is no libpmemobj++ currently installed
-echo "---------------------------- Error expected! ------------------------------"
-compile_example_standalone map_cli && exit 1
-echo "---------------------------------------------------------------------------"
+	# Make sure there is no libpmemobj++ currently installed
+	echo "---------------------------- Error expected! ------------------------------"
+	compile_example_standalone map_cli && exit 1
+	echo "---------------------------------------------------------------------------"
 
-if [ $PACKAGE_MANAGER = "deb" ]; then
-	sudo_password dpkg -i libpmemobj++*.deb
-elif [ $PACKAGE_MANAGER = "rpm" ]; then
-	sudo_password rpm -i libpmemobj++*.rpm
-fi
+	if [ $PACKAGE_MANAGER = "deb" ]; then
+		sudo_password dpkg -i libpmemobj++*.deb
+	elif [ $PACKAGE_MANAGER = "rpm" ]; then
+		sudo_password rpm -i libpmemobj++*.rpm
+	fi
 
-cd ..
-rm -rf build
+	cd ..
+	rm -rf build
 
-# Verify installed package
-compile_example_standalone map_cli
+	# Verify installed package
+	compile_example_standalone map_cli
 
-# Remove pkg-config and force cmake to use find_package while compiling example
-if [ $PACKAGE_MANAGER = "deb" ]; then
-	sudo_password dpkg -r --force-all pkg-config
-elif [ $PACKAGE_MANAGER = "rpm" ]; then
-	sudo_password rpm -e --nodeps pkgconf
-fi
+	# Remove pkg-config and force cmake to use find_package while compiling example
+	if [ $PACKAGE_MANAGER = "deb" ]; then
+		sudo_password dpkg -r --force-all pkg-config
+	elif [ $PACKAGE_MANAGER = "rpm" ]; then
+		sudo_password rpm -e --nodeps pkgconf
+	fi
 
-# Verify installed package using find_package
-compile_example_standalone map_cli
+	# Verify installed package using find_package
+	compile_example_standalone map_cli
 
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_package END$(tput sgr 0)\n\n"
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
 
 ###############################################################################
 # BUILD test findLIBPMEMOBJ.cmake
 ###############################################################################
-printf "\n$(tput setaf 1)$(tput setab 7)BUILD tests_findLIBPMEMOBJ.cmake START$(tput sgr 0)\n"
-mkdir build
-cd build
+function tests_findLIBPMEMOBJ_cmake()
+{
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+	mkdir build
+	cd build
 
-CC=gcc CXX=g++ \
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-			-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-			-DTRACE_TESTS=1 \
-			-DCOVERAGE=$COVERAGE \
-			-DCXX_STANDARD=17
+	CC=gcc CXX=g++ \
+	cmake .. -DCMAKE_BUILD_TYPE=Release \
+				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+				-DTRACE_TESTS=1 \
+				-DCOVERAGE=$COVERAGE \
+				-DCXX_STANDARD=17
 
-make -j2
-
-cd ..
-rm -r build
-printf "$(tput setaf 1)$(tput setab 7)BUILD tests_findLIBPMEMOBJ.cmake END$(tput sgr 0)\n\n"
-
-rm -r $INSTALL_DIR
-
-# Trigger auto doc update on master
-if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
-	echo "Running auto doc update"
-
-	mkdir doc_update
-	cd doc_update
-
-	$SCRIPTSDIR/run-doc-update.sh
+	make -j2
 
 	cd ..
-	rm -rf doc_update
-fi
+	rm -r build
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
+
+
+#Run build steps passed as script arguments
+build_steps=$@
+for build in $build_steps
+do
+	$build
+done
+	rm -r $INSTALL_DIR
+
+	# Trigger auto doc update on master
+	if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
+		echo "Running auto doc update"
+
+		mkdir doc_update
+		cd doc_update
+
+		$SCRIPTSDIR/run-doc-update.sh
+
+		cd ..
+		rm -rf doc_update
+	fi
+

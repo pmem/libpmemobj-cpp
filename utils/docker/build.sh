@@ -79,7 +79,15 @@ containerName=libpmemobj-cpp-${OS}-${OS_VER}
 if [[ "$command" == "" ]]; then
 	case $TYPE in
 		normal)
-			command="./run-build.sh";
+			builds=(tests_clang_debug_cpp17
+				tests_gcc_release_cpp17_no_valgrind
+				tests_package
+				test_findLIBPMEMOBJ_cmake)
+			command="./run-build.sh ${builds[@]}";
+			;;
+		valgrind)
+			builds=(tests_gcc_debug)
+			command="./run-build.sh ${builds[@]}";
 			;;
 		coverity)
 			command="./run-coverity.sh";

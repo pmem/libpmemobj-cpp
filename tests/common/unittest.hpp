@@ -114,6 +114,15 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 	return ret;
 }
 
+#ifdef _WIN32
+#define __PRETTY_FUNCTION__ __func__
+#endif
+#define PRINT_TEST_PARAMS                                                      \
+	do {                                                                   \
+		std::cout << "TEST: " << __PRETTY_FUNCTION__ << "\n"           \
+			  << std::endl;                                        \
+	} while (0)
+
 #define STAT(path, st) ut_stat(__FILE__, __LINE__, __func__, path, st)
 
 /* assert a condition is true at runtime */

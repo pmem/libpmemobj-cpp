@@ -111,7 +111,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 				-DTESTS_USE_FORCED_PMEM=1
 
 	make -j2
-	ctest --output-on-failure --timeout 540
+	ctest --output-on-failure -E "_pmreorder"  --timeout 540
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_clang_debug_cpp17
 	fi
@@ -144,7 +144,7 @@ function build_gcc_debug() {
 function tests_gcc_debug_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck" --timeout 540
+	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 540
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_gcc_debug
 	fi
@@ -157,6 +157,7 @@ function tests_gcc_debug_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
 	ctest -E "_none" --timeout 540
+	ctest -R "_pmreorder" --timeout 540
 	cd ..
 	rm -r build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"

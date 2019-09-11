@@ -754,7 +754,7 @@ public:
 		mutex_t mutex;
 
 		/** Atomic flag to indicate if bucket rehashed */
-		p<std::atomic<bool>> rehashed;
+		p<std::atomic<uint64_t>> rehashed;
 
 		/** List of the nodes stored in the bucket. */
 		node_base_ptr_t node_list;

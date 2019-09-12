@@ -345,6 +345,9 @@ if (ENABLE_STRING)
 endif()
 
 if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
+	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
+	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
+
 	build_test(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
 	add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
 

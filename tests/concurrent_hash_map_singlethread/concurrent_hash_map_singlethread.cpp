@@ -215,33 +215,9 @@ ctor_test(nvobj::pool<root> &pop)
 		UT_ASSERT(map1->insert(value_type(i, i)) == true);
 	}
 
-	tx_alloc_wrapper<persistent_map_type>(pop, map2, map1->begin(),
-					      map1->end());
-
-	UT_ASSERT(!map2->empty());
-	UT_ASSERT(map1->size() == map2->size());
-
-	verify_elements(*map2, 300);
-
-	pmem::detail::destroy<persistent_map_type>(*map2);
-	tx_alloc_wrapper<persistent_map_type>(pop, map2, *map1);
-
-	UT_ASSERT(map1->size() == map2->size());
-
-	verify_elements(*map2, 300);
-
-	pmem::detail::destroy<persistent_map_type>(*map2);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, std::move(*map1));
 
 	verify_elements(*map2, 300);
-
-	pmem::detail::destroy<persistent_map_type>(*map2);
-	tx_alloc_wrapper<persistent_map_type>(
-		pop, map2,
-		std::initializer_list<value_type>{value_type(0, 0),
-						  value_type(1, 1)});
-
-	verify_elements(*map2, 2);
 
 	pmem::detail::destroy<persistent_map_type>(*map1);
 	pmem::detail::destroy<persistent_map_type>(*map2);

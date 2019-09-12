@@ -98,6 +98,15 @@ class concurrent_hash_map;
 /** @cond INTERNAL */
 namespace internal
 {
+/* Helper method which throws an exception when called in a tx */
+void
+check_outside_tx()
+{
+	if (pmemobj_tx_stage() != TX_STAGE_NONE)
+		throw pmem::transaction_scope_error(
+			"Function called inside transaction scope.");
+}
+
 template <typename Hash>
 using transparent_key_equal = typename Hash::transparent_key_equal;
 
@@ -1261,6 +1270,8 @@ public: /* workaround */
 	hash_map_iterator(map_ptr map, size_t index)
 	    : my_map(map), my_index(index), my_bucket(nullptr), my_node(nullptr)
 	{
+		internal::check_outside_tx();
+
 		if (my_index <= my_map->mask()) {
 			bucket_accessor acc(my_map, my_index);
 			my_bucket = acc.get();
@@ -1299,23 +1310,41 @@ public:
 
 	hash_map_iterator &operator=(const hash_map_iterator &it) = default;
 
-	/** Indirection (dereference). */
+	/**
+	 * Indirection (dereference).
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction.
+	 */
 	reference operator*() const
 	{
+		internal::check_outside_tx();
+
 		assert(hash_map_base::is_valid(my_node));
 		return my_node->item;
 	}
 
-	/** Member access. */
+	/**
+	 * Member access.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
 	pointer operator->() const
 	{
+		internal::check_outside_tx();
+
 		return &operator*();
 	}
 
-	/** Prefix increment. */
+	/**
+	 * Prefix increment.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction.
+	 */
 	hash_map_iterator &
 	operator++()
 	{
+		internal::check_outside_tx();
+
 		my_node = static_cast<node *>(
 			my_node->next.get((my_map->my_pool_uuid)));
 
@@ -1325,7 +1354,11 @@ public:
 		return *this;
 	}
 
-	/** Postfix increment. */
+	/**
+	 * Postfix increment.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
 	hash_map_iterator
 	operator++(int)
 	{
@@ -1409,7 +1442,6 @@ operator!=(const hash_map_iterator<Container, M> &i,
 {
 	return i.my_node != j.my_node || i.my_map != j.my_map;
 }
-
 } /* namespace internal */
 /** @endcond */
 
@@ -1809,10 +1841,15 @@ public:
 		}
 
 		/**
-		 * Create empty result
+		 * Create empty result.
+		 *
+		 * Cannot be used in a transaction.
 		 */
 		const_accessor() : my_node(OID_NULL)
 		{
+			if (pmemobj_tx_stage() != TX_STAGE_NONE)
+				throw pmem::transaction_scope_error(
+					"Function called inside transaction scope.");
 		}
 
 		/**
@@ -1880,19 +1917,6 @@ public:
 	}
 
 	/**
-	 * Copy constructor
-	 */
-	concurrent_hash_map(const concurrent_hash_map &table)
-	    : internal::hash_map_base()
-	{
-		runtime_initialize(true);
-
-		reserve(table.size());
-
-		internal_copy(table);
-	}
-
-	/**
 	 * Move constructor
 	 */
 	concurrent_hash_map(concurrent_hash_map &&table)
@@ -1901,31 +1925,6 @@ public:
 		runtime_initialize(true);
 
 		swap(table);
-	}
-
-	/**
-	 * Construction table with copying iteration range
-	 */
-	template <typename I>
-	concurrent_hash_map(I first, I last)
-	{
-		runtime_initialize(true);
-
-		reserve(static_cast<size_type>(std::distance(first, last)));
-
-		internal_copy(first, last);
-	}
-
-	/**
-	 * Construct table with initializer list
-	 */
-	concurrent_hash_map(std::initializer_list<value_type> il)
-	{
-		runtime_initialize(true);
-
-		reserve(il.size());
-
-		internal_copy(il.begin(), il.end());
 	}
 
 	/**
@@ -1959,10 +1958,14 @@ public:
 	 * Assignment
 	 * @throws std::runtime_error in case of PMDK transaction failure
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	concurrent_hash_map &
 	operator=(const concurrent_hash_map &table)
 	{
+		internal::check_outside_tx();
+
 		if (this != &table) {
 			clear();
 			internal_copy(table);
@@ -1975,10 +1978,14 @@ public:
 	 * Assignment
 	 * @throws std::runtime_error in case of PMDK transaction failure
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	concurrent_hash_map &
 	operator=(std::initializer_list<value_type> il)
 	{
+		internal::check_outside_tx();
+
 		clear();
 
 		reserve(il.size());
@@ -1993,6 +2000,8 @@ public:
 	 * Useful to optimize performance before or after concurrent
 	 * operations.
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	void rehash(size_type n = 0);
 
@@ -2018,6 +2027,8 @@ public:
 	/**
 	 * @returns an iterator to the beginning
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	iterator
 	begin()
@@ -2028,6 +2039,8 @@ public:
 	/**
 	 * @returns an iterator to the end
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	iterator
 	end()
@@ -2038,6 +2051,8 @@ public:
 	/**
 	 * @returns an iterator to the beginning
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	const_iterator
 	begin() const
@@ -2048,6 +2063,8 @@ public:
 	/**
 	 * @returns an iterator to the end
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	const_iterator
 	end() const
@@ -2102,10 +2119,14 @@ public:
 
 	/**
 	 * @return count of items (0 or 1)
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	size_type
 	count(const Key &key) const
 	{
+		internal::check_outside_tx();
+
 		return const_cast<concurrent_hash_map *>(this)->internal_find(
 			key, nullptr, false);
 	}
@@ -2118,6 +2139,8 @@ public:
 	 * this function without constructing an instance of Key
 	 *
 	 * @return count of items (0 or 1)
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
@@ -2126,6 +2149,8 @@ public:
 	size_type
 	count(const K &key) const
 	{
+		internal::check_outside_tx();
+
 		return const_cast<concurrent_hash_map *>(this)->internal_find(
 			key, nullptr, false);
 	}
@@ -2133,10 +2158,14 @@ public:
 	/**
 	 * Find item and acquire a read lock on the item.
 	 * @return true if item is found, false otherwise.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	find(const_accessor &result, const Key &key) const
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return const_cast<concurrent_hash_map *>(this)->internal_find(
@@ -2153,6 +2182,8 @@ public:
 	 * this function without constructing an instance of Key
 	 *
 	 * @return true if item is found, false otherwise.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
@@ -2161,6 +2192,8 @@ public:
 	bool
 	find(const_accessor &result, const K &key) const
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return const_cast<concurrent_hash_map *>(this)->internal_find(
@@ -2170,10 +2203,14 @@ public:
 	/**
 	 * Find item and acquire a write lock on the item.
 	 * @return true if item is found, false otherwise.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	find(accessor &result, const Key &key)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_find(key, &result, true);
@@ -2189,6 +2226,8 @@ public:
 	 * this function without constructing an instance of Key
 	 *
 	 * @return true if item is found, false otherwise.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
@@ -2197,6 +2236,8 @@ public:
 	bool
 	find(accessor &result, const K &key)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_find(key, &result, true);
@@ -2206,10 +2247,13 @@ public:
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(const_accessor &result, const Key &key)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_insert(key, &result, false, key);
@@ -2220,10 +2264,13 @@ public:
 	 * acquire a write lock on the item.
 	 * @returns true if item is new.
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(accessor &result, const Key &key)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_insert(key, &result, true, key);
@@ -2234,10 +2281,13 @@ public:
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(const_accessor &result, const value_type &value)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_insert(value.first, &result, false, value);
@@ -2247,10 +2297,14 @@ public:
 	 * Insert item by copying if there is no such key present already and
 	 * acquire a write lock on the item.
 	 * @return true if item is new.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(accessor &result, const value_type &value)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_insert(value.first, &result, true, value);
@@ -2259,10 +2313,14 @@ public:
 	/**
 	 * Insert item by copying if there is no such key present already
 	 * @return true if item is inserted.
+	 *
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(const value_type &value)
 	{
+		internal::check_outside_tx();
+
 		return internal_insert(value.first, nullptr, false, value);
 	}
 
@@ -2271,10 +2329,13 @@ public:
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(const_accessor &result, value_type &&value)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_insert(value.first, &result, false,
@@ -2286,10 +2347,13 @@ public:
 	 * acquire a write lock on the item.
 	 * @return true if item is new.
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(accessor &result, value_type &&value)
 	{
+		internal::check_outside_tx();
+
 		result.release();
 
 		return internal_insert(value.first, &result, true,
@@ -2300,10 +2364,13 @@ public:
 	 * Insert item by copying if there is no such key present already
 	 * @return true if item is inserted.
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	insert(value_type &&value)
 	{
+		internal::check_outside_tx();
+
 		return internal_insert(value.first, nullptr, false,
 				       std::move(value));
 	}
@@ -2311,11 +2378,14 @@ public:
 	/**
 	 * Insert range [first, last)
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename I>
 	void
 	insert(I first, I last)
 	{
+		internal::check_outside_tx();
+
 		for (; first != last; ++first)
 			insert(*first);
 	}
@@ -2323,10 +2393,13 @@ public:
 	/**
 	 * Insert initializer list
 	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	void
 	insert(std::initializer_list<value_type> il)
 	{
+		internal::check_outside_tx();
+
 		insert(il.begin(), il.end());
 	}
 
@@ -2334,10 +2407,13 @@ public:
 	 * Remove element with corresponding key
 	 * @return true if element was deleted by this call
 	 * @throws std::runtime_error in case of PMDK unable to free the memory
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
 	erase(const Key &key)
 	{
+		internal::check_outside_tx();
+
 		return internal_erase(key);
 	}
 
@@ -2352,6 +2428,7 @@ public:
 	 *
 	 * @return true if element was deleted by this call
 	 * @throws std::runtime_error in case of PMDK unable to free the memory
+	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
@@ -2360,6 +2437,8 @@ public:
 	bool
 	erase(const K &key)
 	{
+		internal::check_outside_tx();
+
 		return internal_erase(key);
 	}
 
@@ -2643,6 +2722,8 @@ template <typename Key, typename T, typename Hash, typename KeyEqual>
 void
 concurrent_hash_map<Key, T, Hash, KeyEqual>::rehash(size_type sz)
 {
+	internal::check_outside_tx();
+
 	reserve(sz);
 	hashcode_t m = mask();
 

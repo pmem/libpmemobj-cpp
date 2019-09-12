@@ -1260,7 +1260,7 @@ public:
 
 	/**
 	 * Swap hash_map_base
-	 * @throws std::runtime_error in case of PMDK transaction failed
+	 * @throws std::transaction_error in case of PMDK transaction failed
 	 */
 	void
 	internal_swap(hash_map_base &table)
@@ -2125,8 +2125,13 @@ public:
 
 	/**
 	 * Assignment
-	 * @throws std::runtime_error in case of PMDK transaction failure
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating new memory
+	 * failed.
+	 * @throw pmem::transaction_free_error when freeing old underlying array
+	 * failed.
+	 * @throw rethrows constructor exception.
 	 *
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
@@ -2145,8 +2150,13 @@ public:
 
 	/**
 	 * Assignment
-	 * @throws std::runtime_error in case of PMDK transaction failure
 	 * Not thread safe.
+	 *
+	 * @throw pmem::transaction_alloc_error when allocating new memory
+	 * failed.
+	 * @throw pmem::transaction_free_error when freeing old underlying array
+	 * failed.
+	 * @throw rethrows constructor exception.
 	 *
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
@@ -2176,8 +2186,9 @@ public:
 
 	/**
 	 * Clear hash map content
-	 * @throws std::runtime_error in case of PMDK transaction failure
 	 * Not thread safe.
+	 *
+	 * @throws pmem::transaction_error in case of PMDK transaction failure
 	 */
 	void clear();
 
@@ -2427,7 +2438,7 @@ public:
 	 * Insert item (if not already present) and
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2446,7 +2457,7 @@ public:
 	 * Insert item (if not already present) and
 	 * acquire a write lock on the item.
 	 * @returns true if item is new.
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2465,7 +2476,7 @@ public:
 	 * Insert item by copying if there is no such key present already and
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2519,7 +2530,7 @@ public:
 	 * Insert item by copying if there is no such key present already and
 	 * acquire a read lock on the item.
 	 * @return true if item is new.
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2534,7 +2545,7 @@ public:
 	 * Insert item by copying if there is no such key present already and
 	 * acquire a write lock on the item.
 	 * @return true if item is new.
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2548,7 +2559,7 @@ public:
 	/**
 	 * Insert item by copying if there is no such key present already
 	 * @return true if item is inserted.
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2562,7 +2573,7 @@ public:
 
 	/**
 	 * Insert range [first, last)
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename I>
@@ -2577,7 +2588,7 @@ public:
 
 	/**
 	 * Insert initializer list
-	 * @throw std::bad_alloc on allocation failure.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	void
@@ -2590,8 +2601,10 @@ public:
 
 	/**
 	 * Remove element with corresponding key
+	 *
 	 * @return true if element was deleted by this call
-	 * @throws std::runtime_error in case of PMDK unable to free the memory
+	 * @throws pmem::transaction_free_error in case of PMDK unable to free
+	 * the memory
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	bool
@@ -2612,7 +2625,8 @@ public:
 	 * this function without constructing an instance of Key
 	 *
 	 * @return true if element was deleted by this call
-	 * @throws std::runtime_error in case of PMDK unable to free the memory
+	 * @throws pmem::transaction_free_error in case of PMDK unable to free
+	 * the memory
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	template <typename K,

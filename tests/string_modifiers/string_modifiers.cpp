@@ -44,6 +44,20 @@ struct root {
 };
 
 /**
+ * Check if access method can be called out of transaction scope
+ */
+void
+check_access_out_of_tx(const S &s)
+{
+	try {
+		char buf[50];
+		s.copy(buf, 5, 0);
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+/**
  * Checks if string's state is reverted when transaction aborts.
  */
 void
@@ -105,6 +119,179 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const S &expected)
 		assert_tx_abort(pop, s, [&] { s.append(100, 'a'); });
 		verify_string(s, expected);
 
+		assert_tx_abort(pop, s, [&] { s.append("ABCDEF"); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.append("ABCDEF", 3); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.append({'a', 'b', 'c'}); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.push_back('a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.pop_back(); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s += "12345"; });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s += 'a'; });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s += {'a', 'b', 'c'}; });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(0, 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(5, 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.size(), 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(0, "12345"); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(5, "12345"); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.size(), "12345"); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(0, "12345", 3); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.cbegin(), 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.cbegin() + 3, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.cend(), 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.cbegin(), 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.insert(s.cbegin() + 3, 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.cend(), 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.insert(s.cbegin(), {'a', 'b', 'c'});
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.insert(s.cbegin() + 3, {'a', 'b', 'c'});
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.insert(s.cend(), {'a', 'b', 'c'});
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cend(), "12345", 3);
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cbegin() + 3, "12345", 3);
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cend(), s.cend(), "12345", 3);
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cend(), "12345");
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cbegin() + 3, "12345");
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cend(), s.cend(), "12345");
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(0, 3, 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(3, s.size(), 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(s.size(), s.size(), 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cend(), 5, 'a');
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cbegin() + 3, 5, 'a');
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(s.cend(), s.cend(), 5, 'a'); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(0, 3, "12345"); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(3, s.size(), "12345"); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.size(), s.size(), "12345");
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(0, 3, "12345", 3); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(3, s.size(), "12345", 3); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.size(), s.size(), "12345", 3);
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cend(), {'a', 'b', 'c'});
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cbegin() + 3, {'a', 'b', 'c'});
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cend(), s.cend(), {'a', 'b', 'c'});
+		});
+		verify_string(s, expected);
+
 		nvobj::transaction::run(pop, [&] {
 			r->str = nvobj::make_persistent<S>("ABCDEF");
 		});
@@ -124,17 +311,93 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const S &expected)
 				[&] { s.append(str.begin(), str.end()); });
 		verify_string(s, expected);
 
+		assert_tx_abort(pop, s, [&] { s += str; });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(0, str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(5, str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.size(), str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(0, str, 0); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(5, str, 0); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.insert(s.size(), str, 0); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.insert(s.cbegin(), str.cbegin(), str.cend());
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.insert(s.cbegin() + 3, str.cbegin(), str.cend());
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.insert(s.cend(), str.cbegin(), str.cend());
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(0, 3, str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(5, 3, str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(s.size(), 3, str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(s.cbegin(), s.cend(), str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cbegin() + 3, str);
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(s.cend(), s.cend(), str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(0, 3, str); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.replace(3, 5, str, 0); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.replace(5, s.size(), str, 0); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cend(), str.cbegin(),
+				  str.cend());
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cbegin(), s.cbegin() + 3, str.cbegin(),
+				  str.cend());
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.replace(s.cend(), s.cend(), str.cbegin(), str.cend());
+		});
+		verify_string(s, expected);
+
 		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<S>(r->str); });
-
-		assert_tx_abort(pop, s, [&] { s.append("ABCDEF"); });
-		verify_string(s, expected);
-
-		assert_tx_abort(pop, s, [&] { s.append("ABCDEF", 3); });
-		verify_string(s, expected);
-
-		assert_tx_abort(pop, s, [&] { s.append({'a', 'b', 'c'}); });
-		verify_string(s, expected);
 
 		nvobj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<S>(r->s); });
@@ -170,6 +433,8 @@ main(int argc, char *argv[])
 
 	check_tx_abort(pop, *r->s1);
 	check_tx_abort(pop, *r->s2);
+	check_access_out_of_tx(*r->s1);
+	check_access_out_of_tx(*r->s2);
 
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<S>(r->s1);

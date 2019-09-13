@@ -202,6 +202,20 @@ public:
 		UT_ASSERT(ret == true);
 	}
 
+	template <typename ItemType>
+	void
+	insert_or_increment(ItemType i, ItemType j)
+	{
+		persistent_map_type::accessor acc;
+		bool ret =
+			map->insert(acc, persistent_map_type::value_type(i, j));
+		if (!ret) {
+			/* Update needs to be persisted by the user */
+			nvobj::transaction::run(
+				m_pop, [&] { acc->second.get_rw()++; });
+		}
+	}
+
 	void
 	insert(std::initializer_list<persistent_map_type::value_type> il)
 	{
@@ -420,6 +434,36 @@ insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 }
 
 /*
+ * insert_mt_test -- test insert for small number of elements
+ * Implements tests for:
+ * void pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ *	KeyEqual>::insert(I first, I last)
+ */
+void
+insert_mt_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+	       size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+
+	ConcurrentHashMapTestPrimitives test(pop, thread_items);
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		for (int i = 0; i < int(thread_items); i++) {
+			test.insert_or_increment(i, 1);
+		}
+	});
+	for (int i = 0; i < int(thread_items); i++) {
+		test.check_item<persistent_map_type::const_accessor>(
+			i, (int)concurrency);
+	}
+	test.check_consistency();
+	for (int i = 0; i < int(thread_items); i++) {
+		test.check_item<persistent_map_type::accessor>(
+			i, (int)concurrency);
+	}
+	test.clear();
+}
+
+/*
  * insert_and_erase_test -- (internal) test insert and erase operations
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
@@ -591,6 +635,8 @@ main(int argc, char *argv[])
 	insert_and_erase_test<persistent_map_type::accessor,
 			      persistent_map_type::value_type>(pop,
 							       concurrency);
+
+	insert_mt_test(pop, concurrency);
 
 	insert_erase_lookup_test(pop);
 

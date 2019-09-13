@@ -333,4 +333,63 @@ struct move_insertable {
 	}
 };
 
+struct CompoundType {
+	int counter = 0;
+
+	/* If counter holds this value it means object was
+	 * initialized */
+	static constexpr int INITIALIZED = 999999999;
+
+	CompoundType(int c)
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = c;
+	}
+
+	CompoundType()
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = INITIALIZED;
+	}
+
+	CompoundType(CompoundType &&rhs)
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = rhs.counter;
+	}
+
+	CompoundType(const CompoundType &rhs)
+	{
+		UT_ASSERT(counter != INITIALIZED);
+		counter = rhs.counter;
+	}
+
+	~CompoundType()
+	{
+		counter = 0;
+	}
+
+	CompoundType &
+	operator=(CompoundType &&rhs)
+	{
+		UT_ASSERT(counter == INITIALIZED);
+		counter = rhs.counter;
+		return *this;
+	}
+
+	CompoundType &
+	operator=(const CompoundType &rhs)
+	{
+		UT_ASSERT(counter == INITIALIZED);
+		counter = rhs.counter;
+		return *this;
+	}
+
+	bool
+	operator==(const CompoundType &rhs)
+	{
+		return counter == rhs.counter;
+	}
+};
+
 #endif /* HELPER_CLASSES_HPP */

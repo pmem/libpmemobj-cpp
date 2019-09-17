@@ -925,7 +925,8 @@ vector<T>::at(size_type n)
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
 
-	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
+	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)],
+				      1, POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[static_cast<difference_type>(n)];
 }
@@ -985,7 +986,8 @@ vector<T>::const_at(size_type n) const
 template <typename T>
 typename vector<T>::reference vector<T>::operator[](size_type n)
 {
-	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
+	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)],
+				      1, POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[static_cast<difference_type>(n)];
 }
@@ -1015,7 +1017,8 @@ template <typename T>
 typename vector<T>::reference
 vector<T>::front()
 {
-	detail::conditional_add_to_tx(&_data[0]);
+	detail::conditional_add_to_tx(&_data[0], 1,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[0];
 }
@@ -1059,7 +1062,8 @@ typename vector<T>::reference
 vector<T>::back()
 {
 	detail::conditional_add_to_tx(
-		&_data[static_cast<difference_type>(size() - 1)]);
+		&_data[static_cast<difference_type>(size() - 1)], 1,
+		POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[static_cast<difference_type>(size() - 1)];
 }
@@ -1309,7 +1313,8 @@ vector<T>::range(size_type start, size_type n)
 	if (start + n > size())
 		throw std::out_of_range("vector::range");
 
-	detail::conditional_add_to_tx(cdata() + start, n);
+	detail::conditional_add_to_tx(cdata() + start, n,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return {_data.get() + start, _data.get() + start + n};
 }
@@ -2542,7 +2547,8 @@ void
 vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
 {
 	detail::conditional_add_to_tx(_data.get() + idx_first,
-				      idx_last - idx_first);
+				      idx_last - idx_first,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 }
 
 /**

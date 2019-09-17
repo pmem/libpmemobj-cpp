@@ -168,19 +168,6 @@ private:
 	atomic_type my_atomic;
 };
 
-/**
- * Wrapper around PMDK allocator
- * @throw std::bad_alloc on allocation failure.
- */
-template <typename T, typename U, typename... Args>
-void
-make_persistent_object(pool_base &pop, persistent_ptr<U> &ptr, Args &&... args)
-{
-	transaction::manual tx(pop);
-	ptr = make_persistent<T>(std::forward<Args>(args)...);
-	transaction::commit();
-}
-
 #if !LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 class shared_mutex_scoped_lock {
 	using rw_mutex_type = pmem::obj::shared_mutex;
@@ -781,9 +768,6 @@ public:
 	/** Node base pointer. */
 	using node_base_ptr_t = detail::persistent_pool_ptr<node_base>;
 
-	/** tmp node pointer. */
-	using tmp_node_ptr_t = persistent_ptr<node_base>;
-
 	/** Bucket type. */
 	struct bucket {
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
@@ -809,11 +793,8 @@ public:
 		/** List of the nodes stored in the bucket. */
 		node_base_ptr_t node_list;
 
-		/** Pointer used to allocate new node. */
-		tmp_node_ptr_t tmp_node;
-
 		/** Default constructor */
-		bucket() : node_list(empty_bucket), tmp_node(nullptr)
+		bucket() : node_list(empty_bucket)
 		{
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 			VALGRIND_HG_DISABLE_CHECKING(&rehashed,
@@ -1042,20 +1023,6 @@ public:
 	}
 
 	/**
-	 * Add new node pointed by @arg b->tmp_node to bucket @arg b
-	 */
-	void
-	add_to_bucket(bucket *b, pool_base &pop)
-	{
-		assert(b->is_rehashed(std::memory_order_relaxed) == true);
-		assert(is_valid(b->tmp_node));
-		assert(b->tmp_node->next == b->node_list);
-
-		b->node_list = b->tmp_node; /* bucket is locked */
-		pop.persist(&(b->node_list), sizeof(b->node_list));
-	}
-
-	/**
 	 * Enable new segment in the hashmap
 	 */
 	void
@@ -1166,41 +1133,27 @@ public:
 	}
 
 	/**
-	 * Correct bucket state after crash.
-	 */
-	void
-	correct_bucket(bucket *b)
-	{
-		pool_base pop = get_pool_base();
-
-		if (is_valid(b->tmp_node)) {
-			if (b->tmp_node->next == b->node_list) {
-				insert_new_node(pop, b);
-			} else {
-				b->tmp_node.raw_ptr()->off = 0;
-				pop.persist(&(b->tmp_node.raw().off),
-					    sizeof(b->tmp_node.raw().off));
-			}
-		}
-	}
-
-	/**
 	 * Insert a node.
 	 * @return new size.
 	 */
+
+	template <typename Node, typename... Args>
 	size_type
-	insert_new_node(pool_base &pop, bucket *b)
+	insert_new_node(bucket *b, detail::persistent_pool_ptr<Node> &new_node,
+			Args &&... args)
 	{
-		add_to_bucket(b, pop);
+		pool_base pop = get_pool_base();
+
+		pmem::obj::transaction::run(pop, [&] {
+			new_node = pmem::obj::make_persistent<Node>(
+				b->node_list, std::forward<Args>(args)...);
+			b->node_list = new_node; /* bucket is locked */
+		});
 
 		/* prefix form is to enforce allocation after the first item
 		 * inserted */
 		size_t sz = ++(my_size.get_rw());
 		pop.persist(&my_size, sizeof(my_size));
-
-		b->tmp_node.raw_ptr()->off = 0;
-		pop.persist(&(b->tmp_node.raw().off),
-			    sizeof(b->tmp_node.raw().off));
 
 		return sz;
 	}
@@ -1442,7 +1395,6 @@ private:
 		bucket_accessor(map_ptr m, size_t index)
 		{
 			my_bucket = m->get_bucket(index);
-			const_cast<map_type *>(m)->correct_bucket(my_bucket);
 		}
 
 		bucket *
@@ -1540,41 +1492,29 @@ protected:
 	struct node : public node_base {
 		value_type item;
 
-		node(const Key &key, const node_base_ptr_t &_next = OID_NULL)
+		node(const node_base_ptr_t &_next, const Key &key)
 		    : node_base(_next), item(key, T())
 		{
 		}
 
-		node(const Key &key, const T &t,
-		     const node_base_ptr_t &_next = OID_NULL)
+		node(const node_base_ptr_t &_next, const Key &key, const T &t)
 		    : node_base(_next), item(key, t)
 		{
 		}
 
-		node(const Key &key, T &&t, node_base_ptr_t &&_next = OID_NULL)
-		    : node_base(std::move(_next)), item(key, std::move(t))
-		{
-		}
-
-		node(value_type &&i, node_base_ptr_t &&_next = OID_NULL)
-		    : node_base(std::move(_next)), item(std::move(i))
-		{
-		}
-
-		node(value_type &&i, const node_base_ptr_t &_next = OID_NULL)
+		node(const node_base_ptr_t &_next, value_type &&i)
 		    : node_base(_next), item(std::move(i))
 		{
 		}
 
 		template <typename... Args>
-		node(Args &&... args, node_base_ptr_t &&_next = OID_NULL)
+		node(node_base_ptr_t &&_next, Args &&... args)
 		    : node_base(std::forward<node_base_ptr_t>(_next)),
 		      item(std::forward<Args>(args)...)
 		{
 		}
 
-		node(const value_type &i,
-		     const node_base_ptr_t &_next = OID_NULL)
+		node(const node_base_ptr_t &_next, const value_type &i)
 		    : node_base(_next), item(i)
 		{
 		}
@@ -1590,53 +1530,11 @@ protected:
 				.get_persistent_ptr(my_pool_uuid));
 	}
 
-	static void
-	allocate_node_copy_construct(pool_base &pop,
-				     persistent_ptr<node> &node_ptr,
-				     const void *param,
-				     const node_base_ptr_t &next = OID_NULL)
-	{
-		const value_type *v = static_cast<const value_type *>(param);
-		internal::make_persistent_object<node>(pop, node_ptr, *v, next);
-	}
-
-	static void
-	allocate_node_move_construct(pool_base &pop,
-				     persistent_ptr<node> &node_ptr,
-				     const void *param,
-				     const node_base_ptr_t &next = OID_NULL)
-	{
-		const value_type *v = static_cast<const value_type *>(param);
-		internal::make_persistent_object<node>(
-			pop, node_ptr, std::move(*const_cast<value_type *>(v)),
-			next);
-	}
-
-	static void
-	allocate_node_default_construct(pool_base &pop,
-					persistent_ptr<node> &node_ptr,
-					const void *param,
-					const node_base_ptr_t &next = OID_NULL)
-	{
-		const Key &key = *static_cast<const Key *>(param);
-		internal::make_persistent_object<node>(pop, node_ptr, key,
-						       next);
-	}
-
-	static void
-	do_not_allocate_node(pool_base &, persistent_ptr<node> &node_ptr,
-			     const void *,
-			     const node_base_ptr_t &next = OID_NULL)
-	{
-		assert(false);
-	}
-
 	template <typename K>
 	persistent_node_ptr_t
 	search_bucket(const K &key, bucket *b) const
 	{
 		assert(b->is_rehashed(std::memory_order_relaxed));
-		assert(!is_valid(b->tmp_node));
 
 		persistent_node_ptr_t n =
 			detail::static_persistent_pool_pointer_cast<node>(
@@ -1659,6 +1557,11 @@ protected:
 		bucket *my_b;
 
 	public:
+		bucket_accessor()
+		{
+			my_b = nullptr;
+		}
+
 		bucket_accessor(concurrent_hash_map *base, const hashcode_t h,
 				bool writer = false)
 		{
@@ -1686,15 +1589,6 @@ protected:
 				}
 			} else {
 				bucket::scoped_t::acquire(my_b->mutex, writer);
-			}
-
-			if (is_valid(my_b->tmp_node)) {
-				/* The condition is true only when insert
-				 * operation was interupted on previous run */
-				if (!this->is_writer())
-					this->upgrade_to_writer();
-				assert(this->is_writer());
-				base->correct_bucket(my_b);
 			}
 
 			assert(my_b->is_rehashed(std::memory_order_relaxed));
@@ -1756,8 +1650,6 @@ protected:
 				/* recursive rehashing */
 				base->rehash_bucket<true>(my_b, h);
 			}
-
-			base->correct_bucket(my_b);
 
 			assert(my_b->is_rehashed(std::memory_order_relaxed));
 		}
@@ -2239,10 +2131,8 @@ public:
 	size_type
 	count(const Key &key) const
 	{
-		return const_cast<concurrent_hash_map *>(this)
-			->lookup</*insert*/ false>(key, nullptr, nullptr,
-						   /*write=*/false,
-						   &do_not_allocate_node);
+		return const_cast<concurrent_hash_map *>(this)->internal_find(
+			key, nullptr, false);
 	}
 
 	/**
@@ -2261,10 +2151,8 @@ public:
 	size_type
 	count(const K &key) const
 	{
-		return const_cast<concurrent_hash_map *>(this)
-			->lookup</*insert*/ false>(key, nullptr, nullptr,
-						   /*write=*/false,
-						   &do_not_allocate_node);
+		return const_cast<concurrent_hash_map *>(this)->internal_find(
+			key, nullptr, false);
 	}
 
 	/**
@@ -2276,10 +2164,8 @@ public:
 	{
 		result.release();
 
-		return const_cast<concurrent_hash_map *>(this)
-			->lookup</*insert*/ false>(key, nullptr, &result,
-						   /*write=*/false,
-						   &do_not_allocate_node);
+		return const_cast<concurrent_hash_map *>(this)->internal_find(
+			key, &result, false);
 	}
 
 	/**
@@ -2302,10 +2188,8 @@ public:
 	{
 		result.release();
 
-		return const_cast<concurrent_hash_map *>(this)
-			->lookup</*insert*/ false>(key, nullptr, &result,
-						   /*write=*/false,
-						   &do_not_allocate_node);
+		return const_cast<concurrent_hash_map *>(this)->internal_find(
+			key, &result, false);
 	}
 
 	/**
@@ -2317,9 +2201,7 @@ public:
 	{
 		result.release();
 
-		return lookup</*insert*/ false>(key, nullptr, &result,
-						/*write*/ true,
-						&do_not_allocate_node);
+		return internal_find(key, &result, true);
 	}
 
 	/**
@@ -2342,9 +2224,7 @@ public:
 	{
 		result.release();
 
-		return lookup</*insert*/ false>(key, nullptr, &result,
-						/*write*/ true,
-						&do_not_allocate_node);
+		return internal_find(key, &result, true);
 	}
 	/**
 	 * Insert item (if not already present) and
@@ -2357,9 +2237,7 @@ public:
 	{
 		result.release();
 
-		return lookup</*insert*/ true>(
-			key, &key, &result,
-			/*write=*/false, &allocate_node_default_construct);
+		return internal_insert(key, &result, false, key);
 	}
 
 	/**
@@ -2373,9 +2251,7 @@ public:
 	{
 		result.release();
 
-		return lookup</*insert*/ true>(
-			key, &key, &result,
-			/*write=*/true, &allocate_node_default_construct);
+		return internal_insert(key, &result, true, key);
 	}
 
 	/**
@@ -2389,9 +2265,7 @@ public:
 	{
 		result.release();
 
-		return lookup</*insert*/ true>(value.first, &value, &result,
-					       /*write=*/false,
-					       &allocate_node_copy_construct);
+		return internal_insert(value.first, &result, false, value);
 	}
 
 	/**
@@ -2404,9 +2278,7 @@ public:
 	{
 		result.release();
 
-		return lookup</*insert*/ true>(value.first, &value, &result,
-					       /*write=*/true,
-					       &allocate_node_copy_construct);
+		return internal_insert(value.first, &result, true, value);
 	}
 
 	/**
@@ -2416,9 +2288,7 @@ public:
 	bool
 	insert(const value_type &value)
 	{
-		return lookup</*insert*/ true>(value.first, &value, nullptr,
-					       /*write=*/false,
-					       &allocate_node_copy_construct);
+		return internal_insert(value.first, nullptr, false, value);
 	}
 
 	/**
@@ -2430,7 +2300,10 @@ public:
 	bool
 	insert(const_accessor &result, value_type &&value)
 	{
-		return generic_move_insert(result, std::move(value));
+		result.release();
+
+		return internal_insert(value.first, &result, false,
+				       std::move(value));
 	}
 
 	/**
@@ -2442,7 +2315,10 @@ public:
 	bool
 	insert(accessor &result, value_type &&value)
 	{
-		return generic_move_insert(result, std::move(value));
+		result.release();
+
+		return internal_insert(value.first, &result, true,
+				       std::move(value));
 	}
 
 	/**
@@ -2453,8 +2329,8 @@ public:
 	bool
 	insert(value_type &&value)
 	{
-		return generic_move_insert(accessor_not_used(),
-					   std::move(value));
+		return internal_insert(value.first, nullptr, false,
+				       std::move(value));
 	}
 
 	/**
@@ -2513,66 +2389,70 @@ public:
 	}
 
 protected:
-	/**
-	 * Insert or find item and optionally acquire a lock on the item.
+	/*
+	 * Try to acquire the mutex for read or write.
+	 *
+	 * If acquiring succeeds returns true, otherwise retries for few times.
+	 * If acquiring fails after all attempts returns false.
 	 */
-	template <bool OpInsert, typename K>
-	bool lookup(const K &key, const void *param, const_accessor *result,
-		    bool write,
-		    void (*allocate_node)(pool_base &, persistent_ptr<node> &,
-					  const void *,
-					  const node_base_ptr_t &));
+	bool try_acquire_item(const_accessor *result, node_base::mutex_t &mutex,
+			      bool write);
+
+	template <typename K>
+	bool internal_find(const K &key, const_accessor *result, bool write);
+
+	template <typename K, typename... Args>
+	bool internal_insert(const K &key, const_accessor *result, bool write,
+			     Args &&... args);
+
+	/* Obtain pointer to node and lock bucket */
+	template <bool Bucket_rw_lock, typename K>
+	persistent_node_ptr_t
+	get_node(const K &key, const hashcode_t h, hashcode_t &m,
+		 bucket_accessor *b)
+	{
+#ifndef NDEBUG
+		if (b && b->get())
+			internal::assert_not_locked(b->get()->mutex);
+#endif
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&my_mask);
+#endif
+
+		while (true) {
+			/* get bucket and acquire the lock */
+			b->acquire(this, h & m);
+
+			/* find a node */
+			auto n = search_bucket(key, b->get());
+
+			if (!n) {
+				if (Bucket_rw_lock && !b->is_writer() &&
+				    !b->upgrade_to_writer()) {
+					/* Rerun search_list, in case another
+					 * thread inserted the item during the
+					 * upgrade. */
+					n = search_bucket(key, b->get());
+					if (is_valid(n)) {
+						/* unfortunately, it did */
+						b->downgrade_to_reader();
+						return n;
+					}
+				}
+
+				if (check_mask_race(h, m)) {
+					b->release();
+					continue;
+				}
+			}
+
+			return n;
+		}
+	}
 
 	template <typename K>
 	bool internal_erase(const K &key);
-
-	struct accessor_not_used {
-		void
-		release()
-		{
-		}
-	};
-
-	friend const_accessor *
-	accessor_location(accessor_not_used const &)
-	{
-		return nullptr;
-	}
-
-	friend const_accessor *
-	accessor_location(const_accessor &a)
-	{
-		return &a;
-	}
-
-	friend bool
-	is_write_access_needed(accessor const &)
-	{
-		return true;
-	}
-
-	friend bool
-	is_write_access_needed(const_accessor const &)
-	{
-		return false;
-	}
-
-	friend bool
-	is_write_access_needed(accessor_not_used const &)
-	{
-		return false;
-	}
-
-	template <typename Accessor>
-	bool
-	generic_move_insert(Accessor &&result, value_type &&value)
-	{
-		result.release();
-		return lookup</*insert*/ true>(value.first, &value,
-					       accessor_location(result),
-					       is_write_access_needed(result),
-					       &allocate_node_move_construct);
-	}
 
 	void clear_segment(segment_index_t s);
 
@@ -2587,110 +2467,122 @@ protected:
 }; // class concurrent_hash_map
 
 template <typename Key, typename T, typename Hash, typename KeyEqual>
-template <bool OpInsert, typename K>
 bool
-concurrent_hash_map<Key, T, Hash, KeyEqual>::lookup(
-	const K &key, const void *param, const_accessor *result, bool write,
-	void (*allocate_node)(pool_base &, persistent_ptr<node> &, const void *,
-			      const node_base_ptr_t &))
+concurrent_hash_map<Key, T, Hash, KeyEqual>::try_acquire_item(
+	const_accessor *result, node_base::mutex_t &mutex, bool write)
+{
+	/* acquire the item */
+	if (!result->try_acquire(mutex, write)) {
+		for (detail::atomic_backoff backoff(true);;) {
+			if (result->try_acquire(mutex, write))
+				break;
+
+			if (!backoff.bounded_pause())
+				return false;
+		}
+	}
+
+	return true;
+}
+
+template <typename Key, typename T, typename Hash, typename KeyEqual>
+template <typename K>
+bool
+concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_find(
+	const K &key, const_accessor *result, bool write)
 {
 	assert(!result || !result->my_node);
 
-	bool return_value = false;
-	hashcode_t const h = hasher{}(key);
 	hashcode_t m = mask().load(std::memory_order_acquire);
-#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_AFTER(&my_mask);
-#endif
-	persistent_node_ptr_t n;
-	size_type sz = 0;
-
-restart : { /* lock scope */
 	assert((m & (m + 1)) == 0);
 
-	return_value = false;
+	hashcode_t const h = hasher{}(key);
 
-	/* get bucket */
-	bucket_accessor b(this, h & m);
+	persistent_node_ptr_t node;
 
-	/* find a node */
-	n = search_bucket(key, b.get());
+	while (true) {
+		bucket_accessor b;
+		node = get_node<false>(key, h, m, &b);
 
-	if (OpInsert) {
-		/* [opt] insert a key */
-		if (!n) {
-			if (!b.is_writer() && !b.upgrade_to_writer()) {
-				/* Rerun search_list, in case another thread
-				 * inserted the item during the upgrade. */
-				n = search_bucket(key, b.get());
-				if (is_valid(n)) {
-					/* unfortunately, it did */
-					b.downgrade_to_reader();
-					goto exists;
-				}
-			}
-
-			if (check_mask_race(h, m))
-				goto restart; /* b.release() is done in ~b(). */
-
-			assert(!is_valid(b->tmp_node));
-
-			/* insert and set flag to grow the container */
-			pool_base pop = get_pool_base();
-
-			allocate_node(pop,
-				      reinterpret_cast<persistent_ptr<node> &>(
-					      b->tmp_node),
-				      param, b->node_list);
-
-			n = b->tmp_node;
-			sz = insert_new_node(pop, b.get());
-			return_value = true;
-		}
-	} else { /* find or count */
-		if (!n) {
-			if (check_mask_race(h, m))
-				goto restart; /* b.release() is done in ~b(). */
+		if (!node)
 			return false;
+
+		/* No need to acquire the item or item acquired */
+		if (!result ||
+		    try_acquire_item(result, node.get(my_pool_uuid)->mutex,
+				     write))
+			break;
+
+		/* the wait takes really long, restart the
+		 * operation */
+		b.release();
+
+		std::this_thread::yield();
+
+		m = mask().load(std::memory_order_acquire);
+	}
+
+	if (result) {
+		result->my_node = node.get_persistent_ptr(my_pool_uuid);
+		result->my_hash = h;
+	}
+
+	check_growth(m, 0);
+
+	return true;
+}
+
+template <typename Key, typename T, typename Hash, typename KeyEqual>
+template <typename K, typename... Args>
+bool
+concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_insert(
+	const K &key, const_accessor *result, bool write, Args &&... args)
+{
+	assert(!result || !result->my_node);
+
+	hashcode_t m = mask().load(std::memory_order_acquire);
+	assert((m & (m + 1)) == 0);
+
+	hashcode_t const h = hasher{}(key);
+
+	persistent_node_ptr_t node;
+	size_t new_size = 0;
+	bool inserted = false;
+
+	while (true) {
+		bucket_accessor b;
+		node = get_node<true>(key, h, m, &b);
+
+		if (!node) {
+			/* insert and set flag to grow the container */
+			new_size = insert_new_node(b.get(), node,
+						   std::forward<Args>(args)...);
+			inserted = true;
 		}
 
-		return_value = true;
+		/* No need to acquire the item or item acquired */
+		if (!result ||
+		    try_acquire_item(result, node.get(my_pool_uuid)->mutex,
+				     write))
+			break;
+
+		/* the wait takes really long, restart the
+		 * operation */
+		b.release();
+
+		std::this_thread::yield();
+
+		m = mask().load(std::memory_order_acquire);
 	}
-exists:
-	if (!result)
-		goto check_growth;
 
-	/* acquire the item */
-	if (!result->try_acquire(n.get(my_pool_uuid)->mutex, write)) {
-		for (detail::atomic_backoff backoff(true);;) {
-			if (result->try_acquire(n.get(my_pool_uuid)->mutex,
-						write))
-				break;
-
-			if (!backoff.bounded_pause()) {
-				/* the wait takes really long, restart the
-				 * operation */
-				b.release();
-
-				assert(!OpInsert || !return_value);
-
-				std::this_thread::yield();
-
-				m = mask().load(std::memory_order_acquire);
-
-				goto restart;
-			}
-		}
+	if (result) {
+		result->my_node = node.get_persistent_ptr(my_pool_uuid);
+		result->my_hash = h;
 	}
-} /* lock scope */
 
-	result->my_node = n.get_persistent_ptr(my_pool_uuid);
-	result->my_hash = h;
-check_growth:
-	/* [opt] grow the container */
-	check_growth(m, sz);
+	check_growth(m, new_size);
 
-	return return_value;
+	return inserted;
 }
 
 template <typename Key, typename T, typename Hash, typename KeyEqual>
@@ -2737,7 +2629,7 @@ search:
 	{
 		transaction::manual tx(pop);
 
-		tmp_node_ptr_t del = n(my_pool_uuid);
+		persistent_ptr<node_base> del = n(my_pool_uuid);
 
 		*p = del->next;
 
@@ -2878,7 +2770,6 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_copy(I first, I last)
 {
 	hashcode_t m = mask();
-	pool_base pop = get_pool_base();
 
 	for (; first != last; ++first) {
 		hashcode_t h = hasher{}(first->first);
@@ -2886,12 +2777,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_copy(I first, I last)
 
 		assert(b->is_rehashed(std::memory_order_relaxed));
 
-		allocate_node_copy_construct(
-			pop,
-			reinterpret_cast<persistent_ptr<node> &>(b->tmp_node),
-			&(*first), b->node_list);
-
-		insert_new_node(pop, b);
+		detail::persistent_pool_ptr<node> p;
+		insert_new_node(b, p, *first);
 	}
 }
 

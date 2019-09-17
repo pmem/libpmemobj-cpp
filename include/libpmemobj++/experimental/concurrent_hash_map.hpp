@@ -89,8 +89,6 @@ namespace obj
 namespace experimental
 {
 
-using namespace pmem::obj;
-
 #if !LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 class shared_mutex_scoped_lock {
 	using rw_mutex_type = pmem::obj::shared_mutex;

@@ -1497,7 +1497,7 @@ segment_vector<T, Segment, Policy>::at(size_type n)
 	if (n >= size())
 		throw std::out_of_range("segment_vector::at");
 
-	detail::conditional_add_to_tx(&get(n));
+	detail::conditional_add_to_tx(&get(n), 1, POBJ_XADD_ASSUME_INITIALIZED);
 
 	return get(n);
 }
@@ -1559,7 +1559,8 @@ typename segment_vector<T, Segment, Policy>::reference
 {
 	reference element = get(n);
 
-	detail::conditional_add_to_tx(&element);
+	detail::conditional_add_to_tx(&element, 1,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return element;
 }
@@ -1590,7 +1591,8 @@ template <typename T, typename Segment, typename Policy>
 typename segment_vector<T, Segment, Policy>::reference
 segment_vector<T, Segment, Policy>::front()
 {
-	detail::conditional_add_to_tx(&_data[0][0]);
+	detail::conditional_add_to_tx(&_data[0][0], 1,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[0][0];
 }
@@ -1635,7 +1637,8 @@ segment_vector<T, Segment, Policy>::back()
 {
 	reference element = get(size() - 1);
 
-	detail::conditional_add_to_tx(&element);
+	detail::conditional_add_to_tx(&element, 1,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return element;
 }
@@ -2848,11 +2851,13 @@ segment_vector<T, Segment, Policy>::snapshot_data(size_type first,
 	size_type count = policy::segment_top(segment + 1) - first;
 
 	while (segment != end) {
-		detail::conditional_add_to_tx(&cget(first), count);
+		detail::conditional_add_to_tx(&cget(first), count,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		first = policy::segment_top(++segment);
 		count = policy::segment_size(segment);
 	}
-	detail::conditional_add_to_tx(&cget(first), last - first);
+	detail::conditional_add_to_tx(&cget(first), last - first,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 }
 
 /**

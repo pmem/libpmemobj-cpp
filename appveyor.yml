@@ -1,5 +1,5 @@
 version: 1.4.{build}
-os: Visual Studio 2015
+os: Visual Studio 2017
 platform: x64
 
 environment:
@@ -24,18 +24,21 @@ before_build:
 - cmake . -Bbuild -G "%GENERATOR%"
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_INSTALL_PREFIX=c:/install/libpmemobj-cpp
+        -DTESTS_USE_FORCED_PMEM=ON
 
 build_script:
 - msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%
+          /verbosity:minimal
 
 test_script:
 - cd build
 - ctest -C %CONFIGURATION% --output-on-failure --timeout 540
-- msbuild INSTALL.vcxproj
+- msbuild INSTALL.vcxproj /verbosity:minimal
 - cd ..
 # build standalone example
 - cd examples/map_cli
 - cmake . -G "%GENERATOR%"
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_PREFIX_PATH=c:/install/libpmemobj-cpp
-- msbuild ALL_BUILD.vcxproj
+        -DTESTS_USE_FORCED_PMEM=ON
+- msbuild ALL_BUILD.vcxproj /verbosity:minimal

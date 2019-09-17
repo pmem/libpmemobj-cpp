@@ -42,6 +42,10 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 
+#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
+#include "tbb/spin_rw_mutex.h"
+#endif
+
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -55,9 +59,17 @@ namespace nvobj = pmem::obj;
 namespace
 {
 
+#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
+typedef nvobj::experimental::concurrent_hash_map<
+	nvobj::p<int>, nvobj::p<int>, std::hash<nvobj::p<int>>,
+	std::equal_to<nvobj::p<int>>,
+	pmem::obj::experimental::v<tbb::spin_rw_mutex>,
+	tbb::spin_rw_mutex::scoped_lock>
+	persistent_map_type;
+#else
 typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type;
-
+#endif
 struct root {
 	nvobj::persistent_ptr<persistent_map_type> cons;
 };

@@ -892,27 +892,6 @@ public:
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
 
-	/** @return true if @arg ptr is valid pointer. */
-	static bool
-	is_valid(void *ptr)
-	{
-		return reinterpret_cast<uintptr_t>(ptr) > uintptr_t(63);
-	}
-
-	template <typename U>
-	static bool
-	is_valid(const detail::persistent_pool_ptr<U> &ptr)
-	{
-		return ptr.raw() > uint64_t(63);
-	}
-
-	template <typename U>
-	static bool
-	is_valid(const persistent_ptr<U> &ptr)
-	{
-		return ptr.raw().off > uint64_t(63);
-	}
-
 	const std::atomic<hashcode_t> &
 	mask() const noexcept
 	{
@@ -1310,7 +1289,7 @@ public: /* workaround */
 			my_node = static_cast<node *>(
 				my_bucket->node_list.get(my_map->my_pool_uuid));
 
-			if (!hash_map_base::is_valid(my_node)) {
+			if (!my_node) {
 				advance_to_next_bucket();
 			}
 		}
@@ -1345,7 +1324,7 @@ public:
 	/** Indirection (dereference). */
 	reference operator*() const
 	{
-		assert(hash_map_base::is_valid(my_node));
+		assert(my_node);
 		return my_node->item;
 	}
 
@@ -1418,7 +1397,7 @@ private:
 			bucket_accessor acc(my_map, k);
 			my_bucket = acc.get();
 
-			if (hash_map_base::is_valid(my_bucket->node_list)) {
+			if (my_bucket->node_list) {
 				my_node = static_cast<node *>(
 					my_bucket->node_list.get(
 						my_map->my_pool_uuid));
@@ -1540,7 +1519,7 @@ protected:
 			detail::static_persistent_pool_pointer_cast<node>(
 				b->node_list);
 
-		while (is_valid(n) &&
+		while (n &&
 		       !key_equal{}(key, n.get(my_pool_uuid)->item.first)) {
 			n = detail::static_persistent_pool_pointer_cast<node>(
 				n.get(my_pool_uuid)->next);
@@ -1732,7 +1711,7 @@ protected:
 		assert((mask & (mask + 1)) == 0 && (h & mask) == h);
 	restart:
 		for (node_base_ptr_t *p_old = &(b_old->node_list), n = *p_old;
-		     is_valid(n); n = *p_old) {
+		     n; n = *p_old) {
 			hashcode_t c = get_hash_code(n);
 #ifndef NDEBUG
 			hashcode_t bmask = h & (mask >> 1);
@@ -2434,7 +2413,7 @@ protected:
 					 * thread inserted the item during the
 					 * upgrade. */
 					n = search_bucket(key, b->get());
-					if (is_valid(n)) {
+					if (n) {
 						/* unfortunately, it did */
 						b->downgrade_to_reader();
 						return n;
@@ -2604,7 +2583,7 @@ search:
 	node_base_ptr_t *p = &b->node_list;
 	n = *p;
 
-	while (is_valid(n) &&
+	while (n &&
 	       !key_equal{}(key,
 			    detail::static_persistent_pool_pointer_cast<node>(
 				    n)(my_pool_uuid)
@@ -2680,9 +2659,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::rehash(size_type sz)
 
 	for (; b <= m; ++b) {
 		bucket *bp = get_bucket(b);
-
-		assert(is_valid(bp->node_list) ||
-		       bp->node_list == internal::empty_bucket ||
+		assert(bp->node_list ||
 		       bp->is_rehashed(std::memory_order_relaxed) == false);
 
 		internal::assert_not_locked(bp->mutex);
@@ -2706,7 +2683,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::clear()
 		bucket *bp = get_bucket(b);
 		node_base_ptr_t n = bp->node_list;
 
-		assert(is_valid(n) || n == internal::empty_bucket ||
+		assert(n || n == internal::empty_bucket ||
 		       bp->is_rehashed(std::memory_order_relaxed) == false);
 
 		internal::assert_not_locked(bp->mutex);
@@ -2744,7 +2721,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::clear_segment(segment_index_t s)
 
 	size_type sz = segment.size();
 	for (segment_index_t i = 0; i < sz; ++i) {
-		for (node_base_ptr_t n = segment[i].node_list; is_valid(n);
+		for (node_base_ptr_t n = segment[i].node_list; n;
 		     n = segment[i].node_list) {
 			segment[i].node_list = n(my_pool_uuid)->next;
 			delete_node(n);

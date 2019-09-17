@@ -91,83 +91,6 @@ namespace experimental
 
 using namespace pmem::obj;
 
-template <typename Key, typename T, typename Hash = std::hash<Key>,
-	  typename KeyEqual = std::equal_to<Key>>
-class concurrent_hash_map;
-
-/** @cond INTERNAL */
-namespace internal
-{
-template <typename Hash>
-using transparent_key_equal = typename Hash::transparent_key_equal;
-
-template <typename Hash>
-using has_transparent_key_equal = detail::supports<Hash, transparent_key_equal>;
-
-template <typename Hash, typename Pred,
-	  bool = has_transparent_key_equal<Hash>::value>
-struct key_equal_type {
-	using type = typename Hash::transparent_key_equal;
-};
-
-template <typename Hash, typename Pred>
-struct key_equal_type<Hash, Pred, false> {
-	using type = Pred;
-};
-
-template <typename Mutex>
-void
-assert_not_locked(Mutex &mtx)
-{
-#ifndef NDEBUG
-	assert(mtx.try_lock());
-	mtx.unlock();
-#else
-	(void)mtx;
-#endif
-}
-
-template <typename Mutex>
-void
-assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
-{
-	assert_not_locked<Mutex>(mtx.get());
-}
-
-/**
- * This wrapper for std::atomic<T> allows to initialize volatile atomic fields
- * with custom initializer
- */
-template <typename T, typename InitFunctor>
-class atomic_wrapper {
-public:
-	using value_type = T;
-	using atomic_type = std::atomic<value_type>;
-	using init_type = InitFunctor;
-
-	atomic_wrapper() noexcept
-	{
-	}
-
-	atomic_wrapper(const value_type &val) noexcept : my_atomic(val)
-	{
-	}
-
-	template <typename... Args>
-	atomic_wrapper(Args &&... args)
-	    : my_atomic(init_type()(std::forward<Args>(args)...))
-	{
-	}
-
-	operator atomic_type &() noexcept
-	{
-		return my_atomic;
-	}
-
-private:
-	atomic_type my_atomic;
-};
-
 #if !LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 class shared_mutex_scoped_lock {
 	using rw_mutex_type = pmem::obj::shared_mutex;
@@ -285,6 +208,83 @@ protected:
 }; /* class shared_mutex_scoped_lock */
 #endif
 
+template <typename Key, typename T, typename Hash = std::hash<Key>,
+	  typename KeyEqual = std::equal_to<Key>>
+class concurrent_hash_map;
+
+/** @cond INTERNAL */
+namespace internal
+{
+template <typename Hash>
+using transparent_key_equal = typename Hash::transparent_key_equal;
+
+template <typename Hash>
+using has_transparent_key_equal = detail::supports<Hash, transparent_key_equal>;
+
+template <typename Hash, typename Pred,
+	  bool = has_transparent_key_equal<Hash>::value>
+struct key_equal_type {
+	using type = typename Hash::transparent_key_equal;
+};
+
+template <typename Hash, typename Pred>
+struct key_equal_type<Hash, Pred, false> {
+	using type = Pred;
+};
+
+template <typename Mutex>
+void
+assert_not_locked(Mutex &mtx)
+{
+#ifndef NDEBUG
+	assert(mtx.try_lock());
+	mtx.unlock();
+#else
+	(void)mtx;
+#endif
+}
+
+template <typename Mutex>
+void
+assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
+{
+	assert_not_locked<Mutex>(mtx.get());
+}
+
+/**
+ * This wrapper for std::atomic<T> allows to initialize volatile atomic fields
+ * with custom initializer
+ */
+template <typename T, typename InitFunctor>
+class atomic_wrapper {
+public:
+	using value_type = T;
+	using atomic_type = std::atomic<value_type>;
+	using init_type = InitFunctor;
+
+	atomic_wrapper() noexcept
+	{
+	}
+
+	atomic_wrapper(const value_type &val) noexcept : my_atomic(val)
+	{
+	}
+
+	template <typename... Args>
+	atomic_wrapper(Args &&... args)
+	    : my_atomic(init_type()(std::forward<Args>(args)...))
+	{
+	}
+
+	operator atomic_type &() noexcept
+	{
+		return my_atomic;
+	}
+
+private:
+	atomic_type my_atomic;
+};
+
 struct hash_map_node_base {
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 	/** Mutex type. */
@@ -297,7 +297,7 @@ struct hash_map_node_base {
 	using mutex_t = pmem::obj::shared_mutex;
 
 	/** Scoped lock type for mutex. */
-	using scoped_t = shared_mutex_scoped_lock;
+	using scoped_t = pmem::obj::experimental::shared_mutex_scoped_lock;
 #endif
 
 	/** Persistent pointer type for next. */
@@ -781,7 +781,8 @@ public:
 		using mutex_t = pmem::obj::shared_mutex;
 
 		/** Scoped lock type for mutex. */
-		using scoped_t = shared_mutex_scoped_lock;
+		using scoped_t =
+			pmem::obj::experimental::shared_mutex_scoped_lock;
 #endif
 
 		/** Bucket mutex. */

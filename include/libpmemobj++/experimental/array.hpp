@@ -151,7 +151,8 @@ struct array {
 			return *this;
 
 		transaction::run(pop, [&] {
-			detail::conditional_add_to_tx(this);
+			detail::conditional_add_to_tx(
+				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			std::copy(other.cbegin(), other.cend(), _get_data());
 		});
 
@@ -181,8 +182,10 @@ struct array {
 			return *this;
 
 		transaction::run(pop, [&] {
-			detail::conditional_add_to_tx(this);
-			detail::conditional_add_to_tx(&other);
+			detail::conditional_add_to_tx(
+				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
+			detail::conditional_add_to_tx(
+				&other, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			std::move(other._get_data(), other._get_data() + size(),
 				  _get_data());
 		});
@@ -203,7 +206,8 @@ struct array {
 		if (n >= N)
 			throw std::out_of_range("array::at");
 
-		detail::conditional_add_to_tx(_get_data() + n);
+		detail::conditional_add_to_tx(_get_data() + n, 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 
 		return _get_data()[n];
 	}
@@ -245,7 +249,8 @@ struct array {
 	 */
 	reference operator[](size_type n)
 	{
-		detail::conditional_add_to_tx(_get_data() + n);
+		detail::conditional_add_to_tx(_get_data() + n, 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 
 		return _get_data()[n];
 	}
@@ -269,7 +274,8 @@ struct array {
 	T *
 	data()
 	{
-		detail::conditional_add_to_tx(this);
+		detail::conditional_add_to_tx(this, 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return _get_data();
 	}
 
@@ -420,7 +426,8 @@ struct array {
 	reference
 	front()
 	{
-		detail::conditional_add_to_tx(_get_data());
+		detail::conditional_add_to_tx(_get_data(), 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return _get_data()[0];
 	}
 
@@ -433,7 +440,8 @@ struct array {
 	reference
 	back()
 	{
-		detail::conditional_add_to_tx(&_get_data()[size() - 1]);
+		detail::conditional_add_to_tx(&_get_data()[size() - 1], 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return _get_data()[size() - 1];
 	}
 
@@ -490,7 +498,8 @@ struct array {
 		if (start + n > N)
 			throw std::out_of_range("array::range");
 
-		detail::conditional_add_to_tx(_get_data() + start, n);
+		detail::conditional_add_to_tx(_get_data() + start, n,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 
 		return {_get_data() + start, _get_data() + start + n};
 	}
@@ -610,7 +619,8 @@ struct array {
 		auto pop = _get_pool();
 
 		transaction::run(pop, [&] {
-			detail::conditional_add_to_tx(this);
+			detail::conditional_add_to_tx(
+				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			std::fill(_get_data(), _get_data() + size(), value);
 		});
 	}
@@ -636,8 +646,10 @@ struct array {
 			return;
 
 		transaction::run(pop, [&] {
-			detail::conditional_add_to_tx(this);
-			detail::conditional_add_to_tx(&other);
+			detail::conditional_add_to_tx(
+				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
+			detail::conditional_add_to_tx(
+				&other, 1, POBJ_XADD_ASSUME_INITIALIZED);
 
 			std::swap_ranges(_get_data(), _get_data() + size(),
 					 other._get_data());

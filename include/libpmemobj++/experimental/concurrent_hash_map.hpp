@@ -89,8 +89,6 @@ namespace obj
 namespace experimental
 {
 
-using namespace pmem::obj;
-
 template <typename Key, typename T, typename Hash = std::hash<Key>,
 	  typename KeyEqual = std::equal_to<Key>>
 class concurrent_hash_map;

@@ -48,6 +48,10 @@ test(nvobj::pool<struct root> &pop, const S &s1, typename S::size_type pos1,
 	s.replace(first, last, n2, c);
 	UT_ASSERT(s == expected);
 	typename S::size_type rlen = n2;
+
+	(void)old_size;
+	(void)xlen;
+	(void)rlen;
 	assert(s.size() == old_size - xlen + rlen);
 
 	nvobj::transaction::run(pop,

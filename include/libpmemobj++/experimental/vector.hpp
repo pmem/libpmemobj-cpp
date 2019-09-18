@@ -264,7 +264,7 @@ private:
 	void realloc(size_type size);
 	size_type get_recommended_capacity(size_type at_least) const;
 	void shrink(size_type size_new);
-	void snapshot_data(size_type idx_first, size_type idx_last);
+	void add_data_to_tx(size_type idx_first, size_type num);
 	template <typename InputIt>
 	void construct_or_assign(size_type idx, InputIt first, InputIt last);
 	void move_elements_backward(pointer first, pointer last,
@@ -666,7 +666,7 @@ vector<T>::assign(size_type count, const_reference value)
 			 * elements destructors, or append more new elements.
 			 */
 			size_type size_old = _size;
-			snapshot_data(0, size_old);
+			add_data_to_tx(0, size_old);
 
 			std::fill_n(
 				&_data[0],
@@ -749,7 +749,7 @@ vector<T>::assign(InputIt first, InputIt last)
 			 * elements destructors, or append more new elements.
 			 */
 			size_type size_old = _size;
-			snapshot_data(0, size_old);
+			add_data_to_tx(0, size_old);
 
 			InputIt mid = last;
 			bool growing = size_new > size_old;
@@ -1107,7 +1107,7 @@ template <typename T>
 typename vector<T>::value_type *
 vector<T>::data()
 {
-	snapshot_data(0, _size);
+	add_data_to_tx(0, _size);
 
 	return _data.get();
 }
@@ -1919,7 +1919,7 @@ vector<T>::erase(const_iterator first, const_iterator last)
 		 * XXX: future optimization: no need to snapshot trivial types,
 		 * if idx + count = _size
 		 */
-		snapshot_data(idx, _size);
+		add_data_to_tx(idx, _size - idx);
 
 		pointer move_begin =
 			&_data[static_cast<difference_type>(idx + count)];
@@ -2388,7 +2388,7 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 #if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
 		VALGRIND_MAKE_MEM_DEFINED(end, sizeof(T) * count);
 #endif
-		snapshot_data(idx, size() + count);
+		add_data_to_tx(idx, size() - idx + count);
 
 		/* Make a gap for new elements */
 		move_elements_backward(begin, end, dest);
@@ -2400,7 +2400,7 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 		 * XXX: future optimization: we don't have to snapshot data
 		 * which we will not overwrite
 		 */
-		snapshot_data(0, _size);
+		add_data_to_tx(0, _size);
 
 		auto old_data = _data;
 		auto old_size = _size;
@@ -2462,7 +2462,7 @@ vector<T>::realloc(size_type capacity_new)
 	 * XXX: future optimization: we don't have to snapshot data
 	 * which we will not overwrite
 	 */
-	snapshot_data(0, _size);
+	add_data_to_tx(0, _size);
 
 	auto old_data = _data;
 	auto old_size = _size;
@@ -2525,7 +2525,7 @@ vector<T>::shrink(size_type size_new)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
 
-	snapshot_data(size_new, _size);
+	add_data_to_tx(size_new, _size - size_new);
 
 	for (size_type i = size_new; i < _size; ++i)
 		detail::destroy<value_type>(
@@ -2535,19 +2535,18 @@ vector<T>::shrink(size_type size_new)
 
 /**
  * Private helper function. Takes a “snapshot” of data in range
- * [&_data[idx_first], &_data[idx_last])
+ * [&_data[idx_first], &_data[idx_first + num])
  *
  * @param[in] idx_first first index.
- * @param[in] idx_last last index.
+ * @param[in] num number of elements to snapshot.
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename T>
 void
-vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
+vector<T>::add_data_to_tx(size_type idx_first, size_type num)
 {
-	detail::conditional_add_to_tx(_data.get() + idx_first,
-				      idx_last - idx_first,
+	detail::conditional_add_to_tx(_data.get() + idx_first, num,
 				      POBJ_XADD_ASSUME_INITIALIZED);
 }
 

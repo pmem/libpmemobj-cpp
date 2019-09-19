@@ -3683,7 +3683,7 @@ basic_string<CharT, Traits>::sso_data() const
 }
 
 /**
- * Participate in overload resulution only if T is convertible to size_type.
+ * Participate in overload resolution only if T is convertible to size_type.
  * Call basic_string &erase(size_type index, size_type count = npos) if enabled.
  */
 template <typename CharT, typename Traits>
@@ -3695,7 +3695,7 @@ basic_string<CharT, Traits>::erase(T param)
 }
 
 /**
- * Participate in overload resulution only if T is not convertible to size_type.
+ * Participate in overload resolution only if T is not convertible to size_type.
  * Call iterator erase(const_iterator pos) if enabled.
  */
 template <typename CharT, typename Traits>
@@ -3707,7 +3707,7 @@ basic_string<CharT, Traits>::erase(T param)
 }
 
 /**
- * Participate in overload resulution only if T is convertible to size_type.
+ * Participate in overload resolution only if T is convertible to size_type.
  * Call basic_string &insert(size_type index, size_type count, CharT ch) if
  * enabled.
  */
@@ -3720,7 +3720,7 @@ basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
 }
 
 /**
- * Participate in overload resulution only if T is not convertible to size_type.
+ * Participate in overload resolution only if T is not convertible to size_type.
  * Call iterator insert(const_iterator pos, size_type count, CharT ch) if
  * enabled.
  */

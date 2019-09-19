@@ -91,17 +91,17 @@ public:
 	    : m_pop(pop), m_items_number(items_number)
 	{
 		map = m_pop.root()->cons;
-		map->initialize();
+		map->runtime_initialize();
 	}
 
 	void
 	reinitialize()
 	{
 		size_t buckets = map->bucket_count();
-		map->initialize(true);
+		map->runtime_initialize(true);
 		UT_ASSERT(map->bucket_count() == buckets);
 		UT_ASSERT(map->size() == m_items_number);
-		map->initialize();
+		map->runtime_initialize();
 		UT_ASSERT(map->bucket_count() == buckets);
 		UT_ASSERT(map->size() == m_items_number);
 	}
@@ -483,7 +483,7 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * thread_items;
@@ -519,7 +519,7 @@ insert_erase_lookup_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	std::vector<std::thread> threads;
 	threads.reserve(concurrency);

@@ -116,7 +116,7 @@ rehash_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	run_inserts(pop, 0, 100);
 

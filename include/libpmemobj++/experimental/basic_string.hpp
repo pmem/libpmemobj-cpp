@@ -2142,7 +2142,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
 	auto index = static_cast<size_type>(std::distance(cbegin(), pos));
 
 	transaction::run(pop, [&] {
-		if (new_size <= sso_capacity) {
+		if (is_sso_used() && new_size <= sso_capacity) {
 			auto len = sz - index;
 
 			snapshot_sso();
@@ -2212,7 +2212,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
 	auto index = static_cast<size_type>(std::distance(cbegin(), pos));
 
 	transaction::run(pop, [&] {
-		if (new_size <= sso_capacity) {
+		if (is_sso_used() && new_size <= sso_capacity) {
 			auto len = sz - index;
 
 			snapshot_sso();

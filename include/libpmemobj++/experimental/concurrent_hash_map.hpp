@@ -175,24 +175,6 @@ public:
 	}
 
 	/**
-	 * Upgrade reader to become a writer.
-	 * This method is added for compatibility with tbb::spin_rw_mutex which
-	 * supports upgrade operation.
-	 *
-	 * @returns Always return false because persistent shared mutex cannot
-	 * be upgraded without releasing and re-acquiring the lock
-	 */
-	bool
-	upgrade_to_writer()
-	{
-		assert(!is_writer);
-		mutex->unlock_shared();
-		is_writer = true;
-		mutex->lock();
-		return false;
-	}
-
-	/**
 	 * Release lock.
 	 */
 	void
@@ -206,19 +188,6 @@ public:
 		} else {
 			m->unlock_shared();
 		}
-	}
-
-	/**
-	 * Downgrade writer to become a reader.
-	 * This method is added for compatibility with tbb::spin_rw_mutex which
-	 * supports downgrade operation.
-	 * @returns false.
-	 */
-	bool
-	downgrade_to_reader()
-	{
-		assert(is_writer);
-		return false;
 	}
 
 	/**
@@ -1624,18 +1593,6 @@ protected:
 		}
 
 		/**
-		 * This method is added for consistency with bucket_accessor
-		 * class
-		 *
-		 * @return Always returns true
-		 */
-		bool
-		upgrade_to_writer() const
-		{
-			return true;
-		}
-
-		/**
 		 * Get bucket pointer
 		 * @return pointer to the bucket
 		 */
@@ -1681,13 +1638,12 @@ protected:
 		/* get parent mask from the topmost bit */
 		hashcode_t mask = (1u << detail::Log2(h)) - 1;
 		assert((h & mask) < h);
-		bool writer = false;
-		accessor_type b_old(this, h & mask, writer);
+		accessor_type b_old(this, h & mask, true);
 
 		/* get full mask for new bucket */
 		mask = (mask << 1) | 1;
 		assert((mask & (mask + 1)) == 0 && (h & mask) == h);
-	restart:
+
 		for (node_base_ptr_t *p_old = &(b_old->node_list), n = *p_old;
 		     is_valid(n); n = *p_old) {
 			hashcode_t c = get_hash_code(n);
@@ -1702,13 +1658,6 @@ protected:
 #endif
 
 			if ((c & mask) == h) {
-				if (!b_old.is_writer() &&
-				    !b_old.upgrade_to_writer()) {
-					goto restart;
-					/* node ptr can be invalid due to
-					 * concurrent erase */
-				}
-
 				if (restore_after_crash) {
 					while (*p_new != nullptr &&
 					       (mask & get_hash_code(*p_new)) ==
@@ -2397,25 +2346,12 @@ protected:
 
 		while (true) {
 			/* get bucket and acquire the lock */
-			b->acquire(this, h & m);
+			b->acquire(this, h & m, Bucket_rw_lock);
 
 			/* find a node */
 			auto n = search_bucket(key, b->get());
 
 			if (!n) {
-				if (Bucket_rw_lock && !b->is_writer() &&
-				    !b->upgrade_to_writer()) {
-					/* Rerun search_list, in case another
-					 * thread inserted the item during the
-					 * upgrade. */
-					n = search_bucket(key, b->get());
-					if (is_valid(n)) {
-						/* unfortunately, it did */
-						b->downgrade_to_reader();
-						return n;
-					}
-				}
-
 				if (check_mask_race(h, m)) {
 					b->release();
 					continue;
@@ -2573,9 +2509,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_erase(const K &key)
 restart : {
 	/* lock scope */
 	/* get bucket */
-	bucket_accessor b(this, h & m);
+	bucket_accessor b(this, h & m, true);
 
-search:
 	node_base_ptr_t *p = &b->node_list;
 	n = *p;
 
@@ -2594,11 +2529,6 @@ search:
 			goto restart;
 
 		return false;
-	} else if (!b.is_writer() && !b.upgrade_to_writer()) {
-		if (check_mask_race(h, m)) /* contended upgrade, check mask */
-			goto restart;
-
-		goto search;
 	}
 
 	{

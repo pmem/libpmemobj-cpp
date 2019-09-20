@@ -219,7 +219,11 @@ function tests_package() {
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 			-DTESTS_USE_VALGRIND=0 \
-			-DCPACK_GENERATOR=$PACKAGE_MANAGER
+			-DCPACK_GENERATOR=$PACKAGE_MANAGER \
+			-DENABLE_ARRAY=0 \
+			-DENABLE_VECTOR=0 \
+			-DENABLE_STRING=0 \
+			-DENABLE_CONCURRENT_HASHMAP=0
 
 	make -j2
 	ctest --output-on-failure --timeout 540
@@ -270,7 +274,11 @@ function tests_findLIBPMEMOBJ_cmake()
 				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 				-DTRACE_TESTS=1 \
 				-DCOVERAGE=$COVERAGE \
-				-DCXX_STANDARD=17
+				-DCXX_STANDARD=17 \
+				-DENABLE_ARRAY=0 \
+				-DENABLE_VECTOR=0 \
+				-DENABLE_STRING=0 \
+				-DENABLE_CONCURRENT_HASHMAP=0
 
 	make -j2
 

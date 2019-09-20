@@ -40,21 +40,31 @@ namespace pmem_exp = nvobj::experimental;
 using S = pmem_exp::string;
 
 struct root {
-	nvobj::persistent_ptr<S> s, s1, s2, str;
+	nvobj::persistent_ptr<S> s, s1, str;
 };
 
 /**
  * Check if access method can be called out of transaction scope
  */
 void
-check_access_out_of_tx(const S &s)
+check_access_out_of_tx(nvobj::pool<root> &pop, const char *str)
 {
+	auto r = pop.root();
+
+	nvobj::transaction::run(
+		pop, [&] { r->s1 = nvobj::make_persistent<S>(str); });
+
+	auto &s = *r->s1;
+
 	try {
 		char buf[50];
 		s.copy(buf, 5, 0);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+
+	nvobj::transaction::run(pop,
+				[&] { nvobj::delete_persistent<S>(r->s1); });
 }
 
 /**
@@ -87,16 +97,24 @@ verify_string(const S &s, const S &expected)
 }
 
 void
-check_tx_abort(pmem::obj::pool<struct root> &pop, const S &expected)
+check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
+	       bool truncate = false)
 {
 	auto r = pop.root();
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->s = nvobj::make_persistent<S>(expected);
+			r->s = nvobj::make_persistent<S>(str);
+			r->s1 = nvobj::make_persistent<S>(str);
 		});
 
 		auto &s = *r->s;
+		auto &expected = *r->s1;
+
+		if (truncate) {
+			s = "01234567890";
+			expected = "01234567890";
+		}
 
 		assert_tx_abort(pop, s, [&] { s.erase(); });
 		verify_string(s, expected);
@@ -395,15 +413,14 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const S &expected)
 			s.replace(s.cend(), s.cend(), str.cbegin(), str.cend());
 		});
 		verify_string(s, expected);
-
-		nvobj::transaction::run(
-			pop, [&] { nvobj::delete_persistent<S>(r->str); });
-
-		nvobj::transaction::run(
-			pop, [&] { nvobj::delete_persistent<S>(r->s); });
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<S>(r->s);
+		nvobj::delete_persistent<S>(r->s1);
+	});
 }
 
 int
@@ -420,26 +437,25 @@ main(int argc, char *argv[])
 	auto pop = nvobj::pool<root>::create(
 		path, "StringTest", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
-	auto r = pop.root();
+	check_access_out_of_tx(pop, "0123456789");
+	check_access_out_of_tx(pop,
+			       "0123456789012345678901234567890123456789"
+			       "0123456789012345678901234567890123456789"
+			       "0123456789012345678901234567890123456789"
+			       "0123456789");
 
-	nvobj::transaction::run(pop, [&] {
-		r->s1 = nvobj::make_persistent<S>("0123456789");
-		r->s2 = nvobj::make_persistent<S>(
-			"0123456789012345678901234567890123456789"
-			"0123456789012345678901234567890123456789"
-			"0123456789012345678901234567890123456789"
-			"0123456789");
-	});
-
-	check_tx_abort(pop, *r->s1);
-	check_tx_abort(pop, *r->s2);
-	check_access_out_of_tx(*r->s1);
-	check_access_out_of_tx(*r->s2);
-
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<S>(r->s1);
-		nvobj::delete_persistent<S>(r->s2);
-	});
+	check_tx_abort(pop, "0123456789");
+	check_tx_abort(pop,
+		       "0123456789012345678901234567890123456789"
+		       "0123456789012345678901234567890123456789"
+		       "0123456789012345678901234567890123456789"
+		       "0123456789");
+	check_tx_abort(pop,
+		       "0123456789012345678901234567890123456789"
+		       "0123456789012345678901234567890123456789"
+		       "0123456789012345678901234567890123456789"
+		       "0123456789",
+		       true);
 
 	pop.close();
 

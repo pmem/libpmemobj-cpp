@@ -108,6 +108,8 @@ main(int argc, char *argv[])
 	static_assert(sizeof(persistent_map_type::value_type) == 16, "");
 
 	hashmap_test<persistent_map_type, 16>::check_layout(pop);
+	hashmap_test<persistent_map_type, 16>::check_layout_different_version(
+		pop);
 
 	static_assert(
 		std::is_standard_layout<persistent_map_type_string>::value, "");

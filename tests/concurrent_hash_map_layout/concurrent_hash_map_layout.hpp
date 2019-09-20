@@ -66,7 +66,7 @@ struct hashmap_test : public MapType {
 	{
 		ASSERT_ALIGNED_BEGIN(T, t);
 		ASSERT_ALIGNED_FIELD(T, t, my_pool_uuid);
-		ASSERT_ALIGNED_FIELD(T, t, version);
+		ASSERT_ALIGNED_FIELD(T, t, layout_features);
 		ASSERT_ALIGNED_FIELD(T, t, my_mask_reserved);
 		ASSERT_ALIGNED_FIELD(T, t, my_mask);
 		ASSERT_ALIGNED_FIELD(T, t, padding1);
@@ -145,6 +145,37 @@ struct hashmap_test : public MapType {
 			nvobj::delete_persistent<hashmap_test>(map);
 			nvobj::delete_persistent<typename hashmap_test::bucket>(bucket);
 			nvobj::delete_persistent<typename hashmap_test::node>(node);
+		});
+	}
+
+	static void
+	check_layout_different_version(nvobj::pool_base &pop)
+	{
+		pmem::obj::persistent_ptr<hashmap_test> map;
+		pmem::obj::transaction::run(pop, [&] {
+			map = nvobj::make_persistent<hashmap_test>();
+		});
+
+		map->layout_features.incompat = static_cast<uint32_t>(-1);
+
+		try {
+			map->runtime_initialize(true);
+			UT_ASSERT(0);
+		} catch (pmem::layout_error &) {
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			map->runtime_initialize(false);
+			UT_ASSERT(0);
+		} catch (pmem::layout_error &) {
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		pmem::obj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<hashmap_test>(map);
 		});
 	}
 };

@@ -38,10 +38,10 @@ set -e
 
 git clone https://github.com/pmem/pmdk
 cd pmdk
-# stable-1.6: common: fix typo
-git checkout d526eb00eade98ff1caa283751c2d2dc9cf276fb
+# test: fix memcheck.log.match in obj_tx_add_range(_direct) tests; Sep 20 2019
+git checkout d3830af0b06a5739c43028d2aaa1b4d0c4d19400
 
-sudo make EXTRA_CFLAGS="-DUSE_COW_ENV" -j2 install prefix=/opt/pmdk
+sudo make -j2 install prefix=/opt/pmdk
 
 sudo mkdir /opt/pmdk-pkg
 

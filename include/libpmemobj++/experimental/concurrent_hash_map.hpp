@@ -728,6 +728,7 @@ public:
 	struct bucket {
 		using mutex_t = MutexType;
 		using scoped_t = ScopedLockType;
+
 		/** Bucket mutex. */
 		mutex_t mutex;
 
@@ -736,6 +737,9 @@ public:
 
 		/** List of the nodes stored in the bucket. */
 		node_base_ptr_t node_list;
+
+		/** Reserved for future use */
+		std::aligned_storage<8, 8>::type reserved;
 
 		/** Default constructor */
 		bucket() : node_list(nullptr)
@@ -800,16 +804,25 @@ public:
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
+	/* --------------------------------------------------------- */
+
 	/** ID of persistent memory pool where hash map resides. */
 	p<uint64_t> my_pool_uuid;
+
+	/** Specifies version of a hashmap, used to check compatibility */
+	p<uint64_t> version;
 
 	/** In future, my_mask can be implemented using v<> (8 bytes
 	 * overhead) */
 	std::aligned_storage<sizeof(size_t), sizeof(size_t)>::type
 		my_mask_reserved;
+
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
 	std::atomic<hashcode_t> my_mask;
+
+	/** Padding to the end of cacheline */
+	std::aligned_storage<32, 8>::type padding1;
 
 	/**
 	 * Segment pointers table. Also prevents false sharing between my_mask
@@ -822,11 +835,19 @@ public:
 	/** Size of container in stored items. */
 	p<std::atomic<size_type>> my_size;
 
-	/** Zero segment. */
-	bucket my_embedded_segment[embedded_buckets];
+	/** Padding to the end of cacheline */
+	std::aligned_storage<24, 8>::type padding2;
+
+	/** Reserved for future use */
+	std::aligned_storage<64, 8>::type reserved;
 
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
+
+	/** Zero segment. */
+	bucket my_embedded_segment[embedded_buckets];
+
+	/* --------------------------------------------------------- */
 
 	const std::atomic<hashcode_t> &
 	mask() const noexcept

@@ -1,5 +1,5 @@
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,7 +37,10 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(FindThreads)
 
-find_package(PkgConfig QUIET)
+if(NOT WIN32)
+	find_package(PkgConfig QUIET)
+endif()
+
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
 

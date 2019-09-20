@@ -78,7 +78,7 @@ struct hashmap_test : public persistent_map_type {
 	{
 		ASSERT_ALIGNED_BEGIN(T, t);
 		ASSERT_ALIGNED_FIELD(T, t, my_pool_uuid);
-		ASSERT_ALIGNED_FIELD(T, t, version);
+		ASSERT_ALIGNED_FIELD(T, t, layout_features);
 		ASSERT_ALIGNED_FIELD(T, t, my_mask_reserved);
 		ASSERT_ALIGNED_FIELD(T, t, my_mask);
 		ASSERT_ALIGNED_FIELD(T, t, padding1);
@@ -151,6 +151,43 @@ struct hashmap_test : public persistent_map_type {
 		// ASSERT_ALIGNED_CHECK(persistent_map_type::node);
 		static_assert(sizeof(persistent_map_type::node) == NODE_SIZE,
 			      "");
+
+		pmem::obj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<hashmap_test>(map);
+			nvobj::delete_persistent<hashmap_test::bucket>(bucket);
+			nvobj::delete_persistent<hashmap_test::node>(node);
+		});
+	}
+
+	static void
+	check_layout_different_version(nvobj::pool<root> &pop)
+	{
+		pmem::obj::persistent_ptr<hashmap_test> map;
+		pmem::obj::transaction::run(pop, [&] {
+			map = nvobj::make_persistent<hashmap_test>();
+		});
+
+		map->layout_features.incompat = static_cast<uint32_t>(-1);
+
+		try {
+			map->runtime_initialize(true);
+			UT_ASSERT(0);
+		} catch (pmem::layout_error &) {
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		try {
+			map->runtime_initialize(false);
+			UT_ASSERT(0);
+		} catch (pmem::layout_error &) {
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+
+		pmem::obj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<hashmap_test>(map);
+		});
 	}
 };
 
@@ -177,6 +214,7 @@ main(int argc, char *argv[])
 	static_assert(std::is_standard_layout<persistent_map_type>::value, "");
 
 	hashmap_test::check_layout(pop);
+	hashmap_test::check_layout_different_version(pop);
 
 	pop.close();
 

@@ -825,13 +825,23 @@ public:
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
+	/** Compat and incompat features of a layout */
+	struct features {
+		uint32_t compat;
+		uint32_t incompat;
+	};
+
+	/** Features supported by this header */
+	static constexpr features header_features = {0, 0};
+
 	/* --------------------------------------------------------- */
 
 	/** ID of persistent memory pool where hash map resides. */
 	p<uint64_t> my_pool_uuid;
 
-	/** Specifies version of a hashmap, used to check compatibility */
-	p<uint64_t> version;
+	/** Specifies features of a hashmap, used to check compatibility between
+	 * header and the data */
+	features layout_features = (features)header_features;
 
 	/** In future, my_mask can be implemented using v<> (8 bytes
 	 * overhead) */
@@ -1776,6 +1786,17 @@ protected:
 		pop.persist(b_new->rehashed);
 	}
 
+	void
+	check_features()
+	{
+		if (layout_features.incompat != header_features.incompat)
+			throw pmem::layout_error(
+				"expected incompat flags: " +
+				std::to_string(header_features.incompat) +
+				", got: " +
+				std::to_string(layout_features.incompat));
+	}
+
 public:
 	class accessor;
 	/**
@@ -1958,10 +1979,15 @@ public:
 	 * Intialize persistent concurrent hash map after process restart.
 	 * MUST be called everytime after process restart.
 	 * Not thread safe.
+	 *
+	 * @throw pmem::layout_error if hashmap was created using incompatible
+	 * version of libpmemobj-cpp
 	 */
 	void
 	runtime_initialize(bool graceful_shutdown = false)
 	{
+		check_features();
+
 #if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_mask, sizeof(my_mask));
 #endif

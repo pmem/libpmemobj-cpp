@@ -85,14 +85,17 @@ if [[ "$command" == "" ]]; then
 		else
 			builds=(tests_gcc_debug_no_valgrind
 				tests_clang_debug_cpp17_no_valgrind
-				tests_gcc_release_cpp17_no_valgrind
-				tests_package
-				tests_findLIBPMEMOBJ_cmake)
+				tests_gcc_release_cpp17_no_valgrind)
 		fi
 		command="./run-build.sh ${builds[@]}";
 		;;
 	valgrind)
 		builds=(tests_gcc_debug_valgrind)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	package)
+		builds=(tests_package
+			tests_findLIBPMEMOBJ_cmake)
 		command="./run-build.sh ${builds[@]}";
 		;;
 	coverity)

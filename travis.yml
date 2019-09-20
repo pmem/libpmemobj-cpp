@@ -14,6 +14,7 @@ env:
     - TYPE=normal OS=ubuntu OS_VER=19.04 COVERAGE=1
     - TYPE=valgrind OS=ubuntu OS_VER=19.04
     - TYPE=coverity OS=ubuntu OS_VER=19.04
+    - TYPE=package OS=ubuntu OS_VER=19.04
 
 before_install:
   - echo $TRAVIS_COMMIT_RANGE

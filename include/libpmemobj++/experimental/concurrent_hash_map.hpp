@@ -2384,11 +2384,11 @@ protected:
 	template <bool Bucket_rw_lock, typename K>
 	persistent_node_ptr_t
 	get_node(const K &key, const hashcode_t h, hashcode_t &m,
-		 bucket_accessor *b)
+		 bucket_accessor &b)
 	{
 #ifndef NDEBUG
-		if (b && b->get())
-			internal::assert_not_locked(b->get()->mutex);
+		if (b.get())
+			internal::assert_not_locked(b.get()->mutex);
 #endif
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
@@ -2397,27 +2397,27 @@ protected:
 
 		while (true) {
 			/* get bucket and acquire the lock */
-			b->acquire(this, h & m);
+			b.acquire(this, h & m);
 
 			/* find a node */
-			auto n = search_bucket(key, b->get());
+			auto n = search_bucket(key, b.get());
 
 			if (!n) {
-				if (Bucket_rw_lock && !b->is_writer() &&
-				    !b->upgrade_to_writer()) {
+				if (Bucket_rw_lock && !b.is_writer() &&
+				    !b.upgrade_to_writer()) {
 					/* Rerun search_list, in case another
 					 * thread inserted the item during the
 					 * upgrade. */
-					n = search_bucket(key, b->get());
+					n = search_bucket(key, b.get());
 					if (is_valid(n)) {
 						/* unfortunately, it did */
-						b->downgrade_to_reader();
+						b.downgrade_to_reader();
 						return n;
 					}
 				}
 
 				if (check_mask_race(h, m)) {
-					b->release();
+					b.release();
 					continue;
 				}
 			}
@@ -2477,7 +2477,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_find(
 
 	while (true) {
 		bucket_accessor b;
-		node = get_node<false>(key, h, m, &b);
+		node = get_node<false>(key, h, m, b);
 
 		if (!node)
 			return false;
@@ -2526,7 +2526,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual>::internal_insert(
 
 	while (true) {
 		bucket_accessor b;
-		node = get_node<true>(key, h, m, &b);
+		node = get_node<true>(key, h, m, b);
 
 		if (!node) {
 			/* insert and set flag to grow the container */

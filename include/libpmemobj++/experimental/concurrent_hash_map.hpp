@@ -835,7 +835,7 @@ public:
 
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
-	std::atomic<hashcode_t> my_mask;
+	p<std::atomic<hashcode_t>> my_mask;
 
 	/** Padding to the end of cacheline */
 	std::aligned_storage<32, 8>::type padding1;
@@ -868,13 +868,13 @@ public:
 	const std::atomic<hashcode_t> &
 	mask() const noexcept
 	{
-		return const_cast<decltype(my_mask) &>(my_mask);
+		return my_mask.get_ro();
 	}
 
 	std::atomic<hashcode_t> &
 	mask() noexcept
 	{
-		return my_mask;
+		return my_mask.get_rw();
 	}
 
 	/** Const segment facade type */
@@ -1943,7 +1943,7 @@ public:
 	{
 		runtime_initialize(true);
 
-		internal_swap(table);
+		swap(table);
 	}
 
 	/**
@@ -2007,14 +2007,11 @@ public:
 	 * failed.
 	 * @throw pmem::transaction_free_error when freeing old underlying array
 	 * failed.
-	 * @throw pmem::transaction_scope_error if called inside transaction
 	 * @throw rethrows constructor exception.
 	 */
 	concurrent_hash_map &
 	operator=(const concurrent_hash_map &table)
 	{
-		internal::check_outside_tx();
-
 		if (this != &table) {
 			clear();
 			internal_copy(table);
@@ -2032,14 +2029,11 @@ public:
 	 * failed.
 	 * @throw pmem::transaction_free_error when freeing old underlying array
 	 * failed.
-	 * @throw pmem::transaction_scope_error if called inside transaction
 	 * @throw rethrows constructor exception.
 	 */
 	concurrent_hash_map &
 	operator=(std::initializer_list<value_type> il)
 	{
-		internal::check_outside_tx();
-
 		clear();
 
 		reserve(il.size());
@@ -2159,8 +2153,6 @@ public:
 
 	/**
 	 * Swap two instances. Iterators are invalidated. Not thread safe.
-	 *
-	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
 	void swap(concurrent_hash_map &table);
 
@@ -2787,8 +2779,6 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::swap(
 	concurrent_hash_map<Key, T, Hash, KeyEqual, mutex_t, scoped_t> &table)
 {
-	internal::check_outside_tx();
-
 	internal_swap(table);
 }
 
@@ -2852,10 +2842,10 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 			clear_segment(s);
 		} while (s-- > 0);
 
+		mask().store(embedded_buckets - 1, std::memory_order_relaxed);
+
 		transaction::commit();
 	}
-
-	mask().store(this->embedded_buckets - 1, std::memory_order_relaxed);
 }
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,

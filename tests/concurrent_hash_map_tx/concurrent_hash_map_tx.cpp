@@ -85,14 +85,9 @@ test_tx_exception(nvobj::pool<root> &pop)
 {
 	pmem::obj::transaction::run(pop, [&] {
 		pop.root()->map = nvobj::make_persistent<persistent_map_type>();
-		pop.root()->map2 = nvobj::make_persistent<persistent_map_type>(
-			std::initializer_list<persistent_map_type::value_type>{
-				persistent_map_type::value_type{0, 0},
-				persistent_map_type::value_type{1, 1}});
 	});
 
 	auto map = pop.root()->map;
-	auto map2 = pop.root()->map2;
 
 	map->runtime_initialize();
 
@@ -166,12 +161,6 @@ test_tx_exception(nvobj::pool<root> &pop)
 		assert_tx_exception([&] { (void)map->erase(0); });
 
 		assert_tx_exception([&] { map->rehash(); });
-
-		assert_tx_exception([&] { map->swap(*map2); });
-
-		assert_tx_exception([&] { *map = {{0, 0}, {1, 1}}; });
-
-		assert_tx_exception([&] { *map = *map2; });
 	});
 
 	persistent_map_type::value_type val(0, 0);
@@ -187,7 +176,6 @@ test_tx_exception(nvobj::pool<root> &pop)
 
 	pmem::obj::transaction::run(pop, [&] {
 		pmem::obj::delete_persistent<persistent_map_type>(map);
-		pmem::obj::delete_persistent<persistent_map_type>(map2);
 	});
 }
 
@@ -238,6 +226,68 @@ test_tx_singlethread(nvobj::pool<root> &pop)
 		map2->insert(persistent_map_type::value_type(i, i + 1));
 	}
 
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->swap(*map2);
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	verify_elements(pop, number_of_inserts);
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			*map = *map2;
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	auto bucket_count = map->bucket_count();
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->clear();
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(bucket_count, map->bucket_count());
+	verify_elements(pop, number_of_inserts);
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->clear();
+			*map = {{0, 0}};
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(bucket_count, map->bucket_count());
+	verify_elements(pop, number_of_inserts);
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			*map = {{0, 0}, {1, 1}};
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(bucket_count, map->bucket_count());
 	verify_elements(pop, number_of_inserts);
 
 	try {
@@ -252,6 +302,20 @@ test_tx_singlethread(nvobj::pool<root> &pop)
 		UT_FATALexc(e);
 	}
 
+	UT_ASSERTeq(bucket_count, map->bucket_count());
+	verify_elements(pop, number_of_inserts);
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			pmem::obj::delete_persistent<persistent_map_type>(map);
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(bucket_count, map->bucket_count());
 	verify_elements(pop, number_of_inserts);
 
 	auto test_value = 10;

@@ -357,7 +357,7 @@ private:
 	void check_pmem() const;
 	void check_tx_stage_work() const;
 	void check_pmem_tx() const;
-	void snapshot_sso() const;
+	void add_sso_to_tx(size_type first, size_type num) const;
 	size_type get_sso_size() const;
 	void enable_sso();
 	void disable_sso();
@@ -1538,22 +1538,8 @@ basic_string<CharT, Traits>::append(size_type count, CharT ch)
 							sz),
 					count, ch);
 			} else {
-				/*
-				 * XXX: There is no necessity to snapshot
-				 * uninitialized data. However, we need
-				 * libpmemobj support for that, because right
-				 * now pmemcheck will report an error
-				 * (uninitialized part of data not added to tx).
-				 *
-				 * XXX: future optimization: we don't have to
-				 * snapshot data which we will not overwrite. We
-				 * should snapshot terminating null character
-				 * only.
-				 */
-				snapshot_sso();
-				auto dest =
-					sso_data().range(sz, count + 1).begin();
-				traits_type::assign(dest, count, ch);
+				add_sso_to_tx(sz, count + 1);
+				traits_type::assign(&sso_data()[sz], count, ch);
 
 				set_sso_size(new_size);
 				sso_data()[new_size] = value_type('\0');
@@ -1742,16 +1728,8 @@ basic_string<CharT, Traits>::append(InputIt first, InputIt last)
 							sz),
 					str.begin(), str.end());
 			} else {
-				/*
-				 * XXX: future optimization: we don't have to
-				 * snapshot data which we will not overwrite. We
-				 * should snapshot terminating null character
-				 * only.
-				 */
-				snapshot_sso();
-				auto dest =
-					sso_data().range(sz, count + 1).begin();
-				std::copy(first, last, dest);
+				add_sso_to_tx(sz, count + 1);
+				std::copy(first, last, &sso_data()[sz]);
 
 				set_sso_size(new_size);
 				sso_data()[new_size] = value_type('\0');
@@ -2151,14 +2129,11 @@ basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
 		if (is_sso_used() && new_size <= sso_capacity) {
 			auto len = sz - index;
 
-			snapshot_sso();
-			auto dest = sso_data()
-					    .range(index, len + count + 1)
-					    .begin();
+			add_sso_to_tx(index, len + count + 1);
 
-			traits_type::move(&sso_data()[index + count], dest,
-					  len);
-			traits_type::assign(dest, count, ch);
+			traits_type::move(&sso_data()[index + count],
+					  &sso_data()[index], len);
+			traits_type::assign(&sso_data()[index], count, ch);
 
 			set_sso_size(new_size);
 			sso_data()[new_size] = value_type('\0');
@@ -2223,14 +2198,11 @@ basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
 		if (is_sso_used() && new_size <= sso_capacity) {
 			auto len = sz - index;
 
-			snapshot_sso();
-			auto dest = sso_data()
-					    .range(index, len + count + 1)
-					    .begin();
+			add_sso_to_tx(index, len + count + 1);
 
-			traits_type::move(&sso_data()[index + count], dest,
-					  len);
-			std::copy(first, last, dest);
+			traits_type::move(&sso_data()[index + count],
+					  &sso_data()[index], len);
+			std::copy(first, last, &sso_data()[index]);
 
 			set_sso_size(new_size);
 			sso_data()[new_size] = value_type('\0');
@@ -2443,14 +2415,12 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
 
 	transaction::run(pop, [&] {
 		if (is_sso_used() && new_size <= sso_capacity) {
-			snapshot_sso();
-			auto dest = sso_data()
-					    .range(index, new_size - index + 1)
-					    .begin();
+			add_sso_to_tx(index, new_size - index + 1);
+
 			traits_type::move(&sso_data()[index + count2],
 					  &sso_data()[index + count],
 					  sz - index - count);
-			std::copy(first2, last2, dest);
+			std::copy(first2, last2, &sso_data()[index]);
 			set_sso_size(new_size);
 			sso_data()[new_size] = value_type('\0');
 		} else {
@@ -2659,14 +2629,12 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
 
 	transaction::run(pop, [&] {
 		if (is_sso_used() && new_size <= sso_capacity) {
-			snapshot_sso();
-			auto dest = sso_data()
-					    .range(index, new_size - index + 1)
-					    .begin();
+			add_sso_to_tx(index, new_size - index + 1);
+
 			traits_type::move(&sso_data()[index + count2],
 					  &sso_data()[index + count],
 					  sz - index - count);
-			traits_type::assign(dest, count2, ch);
+			traits_type::assign(&sso_data()[index], count2, ch);
 			set_sso_size(new_size);
 			sso_data()[new_size] = value_type('\0');
 		} else {
@@ -3233,7 +3201,8 @@ basic_string<CharT, Traits>::destroy_data()
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
 	if (is_sso_used()) {
-		snapshot_sso();
+		// XXX: should we add all 32 to tx (part with no_snapshot?)
+		detail::conditional_add_to_tx(&sso_data());
 		/* sso.data destructor does not have to be called */
 	} else {
 		non_sso_data().free_data();
@@ -3526,16 +3495,25 @@ basic_string<CharT, Traits>::check_pmem_tx() const
  */
 template <typename CharT, typename Traits>
 void
-basic_string<CharT, Traits>::snapshot_sso() const
+basic_string<CharT, Traits>::add_sso_to_tx(size_type idx_first,
+					   size_type num) const
 {
-/*
- * XXX: this can be optimized - only snapshot length() elements.
- */
-#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
-	VALGRIND_MAKE_MEM_DEFINED(&sso_data(), sizeof(sso_data()));
-#endif
-	sso_data().data();
-};
+	assert(idx_first + num <= sso_capacity + 1);
+	assert(is_sso_used());
+
+	auto initialized_num = get_sso_size() + 1 - idx_first;
+
+	/* Snapshot elements in range [idx_first, sso_size + 1 (null)) */
+	detail::conditional_add_to_tx(&sso_data()._data[0] + idx_first,
+				      (std::min)(initialized_num, num));
+
+	if (num > initialized_num) {
+		/* Elements after sso_size + 1 do not have to be snapshotted */
+		detail::conditional_add_to_tx(
+			&sso_data()._data[0] + get_sso_size() + 1,
+			num - initialized_num, POBJ_XADD_NO_SNAPSHOT);
+	}
+}
 
 /**
  * Return size of sso string.

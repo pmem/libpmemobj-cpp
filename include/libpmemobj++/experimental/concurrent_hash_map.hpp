@@ -2376,11 +2376,6 @@ protected:
 	get_node(const K &key, const hashcode_t h, hashcode_t &m,
 		 bucket_accessor *b)
 	{
-#ifndef NDEBUG
-		if (b && b->get())
-			internal::assert_not_locked(b->get()->mutex);
-#endif
-
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 		ANNOTATE_HAPPENS_AFTER(&this->my_mask);
 #endif

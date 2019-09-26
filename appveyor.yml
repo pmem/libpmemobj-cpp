@@ -7,11 +7,19 @@ environment:
   GENERATOR: "Visual Studio 14 2015 Win64"
 
 install:
+- ps: >-
+    Get-Content c:/tools/vcpkg/ports/pmdk/portfile.cmake |
+    %{$_ -replace "REPO pmem/pmdk","REPO ldorau/pmdk" } |
+    %{$_ -replace "REF 1.6","REF 1.7" } |
+    %{$_ -replace "f66e4edf1937d51abfa7c087b65a64109cd3d2a8d9587d6c4fc28a1003d67ec1f35a0011c9a9d0bfe76ad7227be83e86582f8405c988eac828d8ae5d0a399483", "980833839bc30a40704066d41af4533d4d07ee8b5619df4923575cd7fc0ddf3a6240d6d18986ebc4ba8fa5a61eef28405d8db98cd7b553970682937914a651eb"} |
+    Out-File -Encoding UTF8 c:/tools/vcpkg/ports/pmdk/portfile2.cmake;
+    Copy-Item -Path c:/tools/vcpkg/ports/pmdk/portfile2.cmake -Destination c:/tools/vcpkg/ports/pmdk/portfile.cmake;
+- vcpkg update
 - vcpkg install pmdk:x64-windows
 - vcpkg install sfml:x64-windows
 - vcpkg integrate install
 
-cache: c:\tools\vcpkg\installed
+# cache: c:\tools\vcpkg\installed
 
 configuration:
 - Debug

@@ -2493,8 +2493,6 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		result->my_hash = h;
 	}
 
-	check_growth(m, 0);
-
 	return true;
 }
 

@@ -1408,15 +1408,17 @@ basic_string<CharT, Traits>::erase(size_type index, size_type count)
 	if (is_sso_used()) {
 		transaction::run(pop, [&] {
 			auto move_len = sz - index - count;
-
-			auto dest =
-				sso_data().range(index, move_len + 1).begin();
-
-			traits_type::move(dest, &*last, move_len);
-
 			auto new_size = sz - count;
+
+			auto range = sso_data().range(index, move_len + 1);
+
+			traits_type::move(range.begin(), &*last, move_len);
+
 			set_sso_size(new_size);
-			sso_data()[new_size] = value_type('\0');
+
+			assert(range.end() - 1 ==
+			       &sso_data()._data[index + move_len]);
+			*(range.end() - 1) = value_type('\0');
 		});
 	} else {
 		non_sso_data().erase(first, last);
@@ -1539,10 +1541,12 @@ basic_string<CharT, Traits>::append(size_type count, CharT ch)
 					count, ch);
 			} else {
 				add_sso_to_tx(sz, count + 1);
-				traits_type::assign(&sso_data()[sz], count, ch);
+				traits_type::assign(&sso_data()._data[sz],
+						    count, ch);
 
+				assert(new_size == sz + count);
 				set_sso_size(new_size);
-				sso_data()[new_size] = value_type('\0');
+				sso_data()._data[new_size] = value_type('\0');
 			}
 		});
 	} else {
@@ -1729,10 +1733,11 @@ basic_string<CharT, Traits>::append(InputIt first, InputIt last)
 					str.begin(), str.end());
 			} else {
 				add_sso_to_tx(sz, count + 1);
-				std::copy(first, last, &sso_data()[sz]);
+				std::copy(first, last, &sso_data()._data[sz]);
 
+				assert(new_size == sz + count);
 				set_sso_size(new_size);
-				sso_data()[new_size] = value_type('\0');
+				sso_data()._data[new_size] = value_type('\0');
 			}
 		});
 	} else {
@@ -2131,12 +2136,14 @@ basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
 
 			add_sso_to_tx(index, len + count + 1);
 
-			traits_type::move(&sso_data()[index + count],
-					  &sso_data()[index], len);
-			traits_type::assign(&sso_data()[index], count, ch);
+			traits_type::move(&sso_data()._data[index + count],
+					  &sso_data()._data[index], len);
+			traits_type::assign(&sso_data()._data[index], count,
+					    ch);
 
+			assert(new_size == index + len + count);
 			set_sso_size(new_size);
-			sso_data()[new_size] = value_type('\0');
+			sso_data()._data[new_size] = value_type('\0');
 		} else {
 			if (is_sso_used())
 				sso_to_large(new_size);
@@ -2200,12 +2207,13 @@ basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
 
 			add_sso_to_tx(index, len + count + 1);
 
-			traits_type::move(&sso_data()[index + count],
-					  &sso_data()[index], len);
-			std::copy(first, last, &sso_data()[index]);
+			traits_type::move(&sso_data()._data[index + count],
+					  &sso_data()._data[index], len);
+			std::copy(first, last, &sso_data()._data[index]);
 
+			assert(new_size == index + len + count);
 			set_sso_size(new_size);
-			sso_data()[new_size] = value_type('\0');
+			sso_data()._data[new_size] = value_type('\0');
 		} else {
 			if (is_sso_used()) {
 				/* 1) Cache C-style string in case of
@@ -2417,12 +2425,14 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
 		if (is_sso_used() && new_size <= sso_capacity) {
 			add_sso_to_tx(index, new_size - index + 1);
 
-			traits_type::move(&sso_data()[index + count2],
-					  &sso_data()[index + count],
+			assert(count2 < new_size + 1);
+			traits_type::move(&sso_data()._data[index + count2],
+					  &sso_data()._data[index + count],
 					  sz - index - count);
-			std::copy(first2, last2, &sso_data()[index]);
+			std::copy(first2, last2, &sso_data()._data[index]);
+
 			set_sso_size(new_size);
-			sso_data()[new_size] = value_type('\0');
+			sso_data()._data[new_size] = value_type('\0');
 		} else {
 			/* 1) Cache C-style string in case of
 			 * self-replace, because it will be destroyed
@@ -2631,12 +2641,15 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
 		if (is_sso_used() && new_size <= sso_capacity) {
 			add_sso_to_tx(index, new_size - index + 1);
 
-			traits_type::move(&sso_data()[index + count2],
-					  &sso_data()[index + count],
+			assert(count2 < new_size + 1);
+			traits_type::move(&sso_data()._data[index + count2],
+					  &sso_data()._data[index + count],
 					  sz - index - count);
-			traits_type::assign(&sso_data()[index], count2, ch);
+			traits_type::assign(&sso_data()._data[index], count2,
+					    ch);
+
 			set_sso_size(new_size);
-			sso_data()[new_size] = value_type('\0');
+			sso_data()._data[new_size] = value_type('\0');
 		} else {
 			if (is_sso_used()) {
 				sso_to_large(new_size);
@@ -3352,9 +3365,9 @@ basic_string<CharT, Traits>::assign_sso_data(InputIt first, InputIt last)
 	assert(size <= sso_capacity);
 
 	add_sso_to_tx(0, size + 1);
-	std::copy(first, last, &sso_data()[0]);
+	std::copy(first, last, &sso_data()._data[0]);
 
-	sso_data()[size] = value_type('\0');
+	sso_data()._data[size] = value_type('\0');
 
 	return &sso_data()[0];
 }
@@ -3370,9 +3383,9 @@ basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
 	assert(count <= sso_capacity);
 
 	add_sso_to_tx(0, count + 1);
-	traits_type::assign(&sso_data()[0], count, ch);
+	traits_type::assign(&sso_data()._data[0], count, ch);
 
-	sso_data()[count] = value_type('\0');
+	sso_data()._data[count] = value_type('\0');
 
 	return &sso_data()[0];
 }

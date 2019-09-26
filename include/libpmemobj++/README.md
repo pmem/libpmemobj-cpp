@@ -35,7 +35,7 @@ not stored in persistent memory, therefore their value will _not_ always be
 consistent across subsequent executions or compilations of user applications.
 
 If you find any issues or have suggestion about these bindings please file an
-issue in https://github.com/pmem/issues. There are also blog articles in
+issue in https://github.com/pmem/libpmemobj-cpp/issues. There are also blog articles in
 http://pmem.io/blog/ which you might find helpful.
 
 Have fun!
@@ -45,7 +45,7 @@ The PMDK team
 The C++ bindings require a C++11 compliant compiler, therefore the minimal
 versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the
 pmem::obj::transaction::automatic class requires C++17, so
-you need a more recent version for this to be available(GCC 6.1/Clang 3.7).
+you need a more recent version for this to be available (GCC 6.1/Clang 3.7).
 It is recommended to use these or newer versions of GCC or Clang.
 
 ### Standard notice ###

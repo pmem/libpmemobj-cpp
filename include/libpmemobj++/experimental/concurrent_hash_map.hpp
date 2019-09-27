@@ -1401,6 +1401,43 @@ operator!=(const hash_map_iterator<Container, M> &i,
 
 /**
  * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
+ * The implementation is based on a concurrent hash table algorithm
+ * (https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf) where elements
+ * assigned to buckets based on a hash code are calculated from a key.
+ * In addition to concurrent find, insert, and erase operations, the algorithm
+ * employs resizing and on-demand per-bucket rehashing. The hash table consists
+ * of an array of buckets, and each bucket consists of a list of nodes and a
+ * read-write lock to control concurrent access by multiple threads.
+ *
+ * Each time, the pool with concurrent_hash_map is being opened, the
+ * concurrent_hash_map requires runtime_initialize() to be called (in order to
+ * recalculate mask and restore the size).
+ *
+ * find(), insert(), erase() (and all overloads) are guaranteed to be
+ * thread-safe
+ *
+ * - The find operation might change the hash map state by rehashing the bucket.
+ *	Therefore, data consistency must be maintained while performing a find
+ *	request. The find operation works by first calculating the hash value
+ *	for a target key and acquires read lock for the corresponding bucket.
+ *	The read lock guarantees there is no concurrent modifications to the
+ *	bucket while we are reading it. Inside the bucket, the find operation
+ *	performs a linear search through the list of nodes.
+ * - The insert operation consists of the following steps:
+ *	1)	Allocate the new node and assign a pointer to the new node to
+ *		persistent thread-local storage.
+ *	2)	Calculate the hash value of the new node and find the
+ *		corresponding bucket.
+ *	3)	Acquire the write lock to the bucket.
+ *	4)	Insert the new node to the bucket by linking it to the list of
+ *		nodes.  Because only one pointer has to be updated,
+ *		a transaction is not needed.
+ * - The erase implementation acquires the write lock for the required bucket
+ *	and using a transaction, removes the corresponding node from the list of
+ *	nodes within that bucket.
+ *
+ * The typical usage example would be:
+ * @snippet doc_snippets/concurrent_hash_map.cpp concurrent_hash_map_example
  */
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>

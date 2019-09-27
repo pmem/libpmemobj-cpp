@@ -68,7 +68,8 @@ namespace experimental
  *
  * The implementation is NOT complete.
  */
-template <typename CharT, typename Traits = std::char_traits<CharT>>
+template <typename CharT, typename Traits = std::char_traits<CharT>,
+	  template <typename> typename PersistentPtrType = persistent_ptr>
 class basic_string {
 public:
 	/* Member types */
@@ -281,7 +282,7 @@ public:
 
 private:
 	using sso_type = array<value_type, sso_capacity + 1>;
-	using non_sso_type = vector<value_type>;
+	using non_sso_type = vector<value_type, PersistentPtrType>;
 
 	/**
 	 * This union holds sso data inside of an array and non sso data inside
@@ -364,11 +365,16 @@ private:
 	void set_sso_size(size_type new_size);
 	void sso_to_large(size_t new_capacity);
 	void large_to_sso();
-	typename basic_string<CharT, Traits>::non_sso_type &non_sso_data();
-	typename basic_string<CharT, Traits>::sso_type &sso_data();
-	const typename basic_string<CharT, Traits>::non_sso_type &
+	typename basic_string<CharT, Traits, PersistentPtrType>::non_sso_type &
+	non_sso_data();
+	typename basic_string<CharT, Traits, PersistentPtrType>::sso_type &
+	sso_data();
+	const typename basic_string<CharT, Traits,
+				    PersistentPtrType>::non_sso_type &
 	non_sso_data() const;
-	const typename basic_string<CharT, Traits>::sso_type &sso_data() const;
+	const typename basic_string<CharT, Traits, PersistentPtrType>::sso_type
+		&
+		sso_data() const;
 };
 
 /**
@@ -380,8 +386,8 @@ private:
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string()
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string()
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -404,8 +410,8 @@ basic_string<CharT, Traits>::basic_string()
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(size_type count, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(size_type count, CharT ch)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -431,9 +437,9 @@ basic_string<CharT, Traits>::basic_string(size_type count, CharT ch)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(const basic_string &other,
-					  size_type pos, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(const basic_string &other,
+					     size_type pos, size_type count)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -469,9 +475,9 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other,
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
-					  size_type pos, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(
+	const std::basic_string<CharT> &other, size_type pos, size_type count)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -504,8 +510,8 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(const CharT *s, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(const CharT *s, size_type count)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -527,8 +533,8 @@ basic_string<CharT, Traits>::basic_string(const CharT *s, size_type count)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(const CharT *s)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -555,9 +561,9 @@ basic_string<CharT, Traits>::basic_string(const CharT *s)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-basic_string<CharT, Traits>::basic_string(InputIt first, InputIt last)
+basic_string<CharT, Traits, P>::basic_string(InputIt first, InputIt last)
 {
 	auto len = std::distance(first, last);
 	assert(len >= 0);
@@ -583,8 +589,8 @@ basic_string<CharT, Traits>::basic_string(InputIt first, InputIt last)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(const basic_string &other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(const basic_string &other)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -608,8 +614,9 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(
+	const std::basic_string<CharT> &other)
     : basic_string(other.cbegin(), other.cend())
 {
 }
@@ -628,8 +635,8 @@ basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(basic_string &&other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(basic_string &&other)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -655,8 +662,8 @@ basic_string<CharT, Traits>::basic_string(basic_string &&other)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::basic_string(std::initializer_list<CharT> ilist)
 {
 	check_pmem_tx();
 	sso._size = 0;
@@ -670,8 +677,8 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
  *
  * XXX: implement free_data()
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits>::~basic_string()
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P>::~basic_string()
 {
 	if (!is_sso_used())
 		detail::destroy<non_sso_type>(non_sso_data());
@@ -686,9 +693,9 @@ basic_string<CharT, Traits>::~basic_string()
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator=(const basic_string &other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator=(const basic_string &other)
 {
 	return assign(other);
 }
@@ -703,9 +710,9 @@ basic_string<CharT, Traits>::operator=(const basic_string &other)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator=(const std::basic_string<CharT> &other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator=(const std::basic_string<CharT> &other)
 {
 	return assign(other);
 }
@@ -719,9 +726,9 @@ basic_string<CharT, Traits>::operator=(const std::basic_string<CharT> &other)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator=(basic_string &&other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator=(basic_string &&other)
 {
 	return assign(std::move(other));
 }
@@ -734,9 +741,9 @@ basic_string<CharT, Traits>::operator=(basic_string &&other)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator=(const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator=(const CharT *s)
 {
 	return assign(s);
 }
@@ -749,9 +756,9 @@ basic_string<CharT, Traits>::operator=(const CharT *s)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator=(CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator=(CharT ch)
 {
 	return assign(1, ch);
 }
@@ -765,9 +772,9 @@ basic_string<CharT, Traits>::operator=(CharT ch)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator=(std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator=(std::initializer_list<CharT> ilist)
 {
 	return assign(ilist);
 }
@@ -782,9 +789,9 @@ basic_string<CharT, Traits>::operator=(std::initializer_list<CharT> ilist)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(size_type count, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(size_type count, CharT ch)
 {
 	auto pop = get_pool();
 
@@ -802,9 +809,9 @@ basic_string<CharT, Traits>::assign(size_type count, CharT ch)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(const basic_string &other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(const basic_string &other)
 {
 	if (&other == this)
 		return *this;
@@ -827,9 +834,9 @@ basic_string<CharT, Traits>::assign(const basic_string &other)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(const std::basic_string<CharT> &other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(const std::basic_string<CharT> &other)
 {
 	return assign(other.cbegin(), other.cend());
 }
@@ -846,10 +853,10 @@ basic_string<CharT, Traits>::assign(const std::basic_string<CharT> &other)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(const basic_string &other, size_type pos,
-				    size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(const basic_string &other, size_type pos,
+				       size_type count)
 {
 	if (pos > other.size())
 		throw std::out_of_range("Index out of range.");
@@ -882,10 +889,10 @@ basic_string<CharT, Traits>::assign(const basic_string &other, size_type pos,
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(const std::basic_string<CharT> &other,
-				    size_type pos, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(const std::basic_string<CharT> &other,
+				       size_type pos, size_type count)
 {
 	if (pos > other.size())
 		throw std::out_of_range("Index out of range.");
@@ -906,9 +913,9 @@ basic_string<CharT, Traits>::assign(const std::basic_string<CharT> &other,
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(const CharT *s, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(const CharT *s, size_type count)
 {
 	auto pop = get_pool();
 
@@ -925,9 +932,9 @@ basic_string<CharT, Traits>::assign(const CharT *s, size_type count)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(const CharT *s)
 {
 	auto pop = get_pool();
 
@@ -949,10 +956,10 @@ basic_string<CharT, Traits>::assign(const CharT *s)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(InputIt first, InputIt last)
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(InputIt first, InputIt last)
 {
 	auto pop = get_pool();
 
@@ -970,9 +977,9 @@ basic_string<CharT, Traits>::assign(InputIt first, InputIt last)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(basic_string &&other)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(basic_string &&other)
 {
 	if (&other == this)
 		return *this;
@@ -998,9 +1005,9 @@ basic_string<CharT, Traits>::assign(basic_string &&other)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying storage in transaction failed.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::assign(std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::assign(std::initializer_list<CharT> ilist)
 {
 	return assign(ilist.begin(), ilist.end());
 }
@@ -1010,9 +1017,9 @@ basic_string<CharT, Traits>::assign(std::initializer_list<CharT> ilist)
  *
  * @return an iterator pointing to the first element in the string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::begin()
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::begin()
 {
 	return is_sso_used() ? iterator(&*sso_data().begin())
 			     : iterator(&*non_sso_data().begin());
@@ -1023,9 +1030,9 @@ basic_string<CharT, Traits>::begin()
  *
  * @return const iterator pointing to the first element in the string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_iterator
-basic_string<CharT, Traits>::begin() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_iterator
+basic_string<CharT, Traits, P>::begin() const noexcept
 {
 	return cbegin();
 }
@@ -1035,9 +1042,9 @@ basic_string<CharT, Traits>::begin() const noexcept
  *
  * @return const iterator pointing to the first element in the string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_iterator
-basic_string<CharT, Traits>::cbegin() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_iterator
+basic_string<CharT, Traits, P>::cbegin() const noexcept
 {
 	return is_sso_used() ? const_iterator(&*sso_data().cbegin())
 			     : const_iterator(&*non_sso_data().cbegin());
@@ -1048,9 +1055,9 @@ basic_string<CharT, Traits>::cbegin() const noexcept
  *
  * @return iterator referring to the past-the-end element in the string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::end()
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::end()
 {
 	return begin() + static_cast<difference_type>(size());
 }
@@ -1061,9 +1068,9 @@ basic_string<CharT, Traits>::end()
  * @return const_iterator referring to the past-the-end element in the
  * string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_iterator
-basic_string<CharT, Traits>::end() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_iterator
+basic_string<CharT, Traits, P>::end() const noexcept
 {
 	return cbegin() + static_cast<difference_type>(size());
 }
@@ -1074,9 +1081,9 @@ basic_string<CharT, Traits>::end() const noexcept
  * @return const_iterator referring to the past-the-end element in the
  * string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_iterator
-basic_string<CharT, Traits>::cend() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_iterator
+basic_string<CharT, Traits, P>::cend() const noexcept
 {
 	return cbegin() + static_cast<difference_type>(size());
 }
@@ -1087,9 +1094,9 @@ basic_string<CharT, Traits>::cend() const noexcept
  * @return a reverse iterator pointing to the last element in
  * non-reversed string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::reverse_iterator
-basic_string<CharT, Traits>::rbegin()
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::reverse_iterator
+basic_string<CharT, Traits, P>::rbegin()
 {
 	return reverse_iterator(end());
 }
@@ -1100,9 +1107,9 @@ basic_string<CharT, Traits>::rbegin()
  * @return a const reverse iterator pointing to the last element in
  * non-reversed string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reverse_iterator
-basic_string<CharT, Traits>::rbegin() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reverse_iterator
+basic_string<CharT, Traits, P>::rbegin() const noexcept
 {
 	return crbegin();
 }
@@ -1113,9 +1120,9 @@ basic_string<CharT, Traits>::rbegin() const noexcept
  * @return a const reverse iterator pointing to the last element in
  * non-reversed string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reverse_iterator
-basic_string<CharT, Traits>::crbegin() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reverse_iterator
+basic_string<CharT, Traits, P>::crbegin() const noexcept
 {
 	return const_reverse_iterator(cend());
 }
@@ -1126,9 +1133,9 @@ basic_string<CharT, Traits>::crbegin() const noexcept
  * @return reverse iterator referring to character preceding first
  * character in the non-reversed string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::reverse_iterator
-basic_string<CharT, Traits>::rend()
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::reverse_iterator
+basic_string<CharT, Traits, P>::rend()
 {
 	return reverse_iterator(begin());
 }
@@ -1139,9 +1146,9 @@ basic_string<CharT, Traits>::rend()
  * @return const reverse iterator referring to character preceding
  * first character in the non-reversed string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reverse_iterator
-basic_string<CharT, Traits>::rend() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reverse_iterator
+basic_string<CharT, Traits, P>::rend() const noexcept
 {
 	return crend();
 }
@@ -1152,9 +1159,9 @@ basic_string<CharT, Traits>::rend() const noexcept
  * @return const reverse iterator referring to character preceding
  * first character in the non-reversed string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reverse_iterator
-basic_string<CharT, Traits>::crend() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reverse_iterator
+basic_string<CharT, Traits, P>::crend() const noexcept
 {
 	return const_reverse_iterator(cbegin());
 }
@@ -1172,9 +1179,9 @@ basic_string<CharT, Traits>::crend() const noexcept
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::reference
-basic_string<CharT, Traits>::at(size_type n)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::reference
+basic_string<CharT, Traits, P>::at(size_type n)
 {
 	if (n >= size())
 		throw std::out_of_range("string::at");
@@ -1192,9 +1199,9 @@ basic_string<CharT, Traits>::at(size_type n)
  * @throw std::out_of_range if n is not within the range of the
  * container.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reference
-basic_string<CharT, Traits>::at(size_type n) const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reference
+basic_string<CharT, Traits, P>::at(size_type n) const
 {
 	return const_at(n);
 }
@@ -1212,9 +1219,9 @@ basic_string<CharT, Traits>::at(size_type n) const
  * @throw std::out_of_range if n is not within the range of the
  * container.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reference
-basic_string<CharT, Traits>::const_at(size_type n) const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reference
+basic_string<CharT, Traits, P>::const_at(size_type n) const
 {
 	if (n >= size())
 		throw std::out_of_range("string::const_at");
@@ -1235,9 +1242,9 @@ basic_string<CharT, Traits>::const_at(size_type n) const
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::reference basic_string<CharT, Traits>::
-operator[](size_type n)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::reference
+	basic_string<CharT, Traits, P>::operator[](size_type n)
 {
 	return is_sso_used() ? sso_data()[n] : non_sso_data()[n];
 }
@@ -1249,9 +1256,9 @@ operator[](size_type n)
  *
  * @return const_reference to element number n in underlying array.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::const_reference
-	basic_string<CharT, Traits>::operator[](size_type n) const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::const_reference
+	basic_string<CharT, Traits, P>::operator[](size_type n) const
 {
 	return is_sso_used() ? sso_data()[n] : non_sso_data()[n];
 }
@@ -1265,9 +1272,9 @@ typename basic_string<CharT, Traits>::const_reference
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 CharT &
-basic_string<CharT, Traits>::front()
+basic_string<CharT, Traits, P>::front()
 {
 	return (*this)[0];
 }
@@ -1277,9 +1284,9 @@ basic_string<CharT, Traits>::front()
  *
  * @return const reference to first element in string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT &
-basic_string<CharT, Traits>::front() const
+basic_string<CharT, Traits, P>::front() const
 {
 	return cfront();
 }
@@ -1292,9 +1299,9 @@ basic_string<CharT, Traits>::front() const
  *
  * @return const reference to first element in string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT &
-basic_string<CharT, Traits>::cfront() const
+basic_string<CharT, Traits, P>::cfront() const
 {
 	return static_cast<const basic_string &>(*this)[0];
 }
@@ -1308,9 +1315,9 @@ basic_string<CharT, Traits>::cfront() const
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 CharT &
-basic_string<CharT, Traits>::back()
+basic_string<CharT, Traits, P>::back()
 {
 	return (*this)[size() - 1];
 }
@@ -1320,9 +1327,9 @@ basic_string<CharT, Traits>::back()
  *
  * @return const reference to last element in string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT &
-basic_string<CharT, Traits>::back() const
+basic_string<CharT, Traits, P>::back() const
 {
 	return cback();
 }
@@ -1335,9 +1342,9 @@ basic_string<CharT, Traits>::back() const
  *
  * @return const reference to last element in string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT &
-basic_string<CharT, Traits>::cback() const
+basic_string<CharT, Traits, P>::cback() const
 {
 	return static_cast<const basic_string &>(*this)[size() - 1];
 }
@@ -1345,9 +1352,9 @@ basic_string<CharT, Traits>::cback() const
 /**
  * @return number of CharT elements in the string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::size() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::size() const noexcept
 {
 	if (is_sso_used())
 		return get_sso_size();
@@ -1363,9 +1370,9 @@ basic_string<CharT, Traits>::size() const noexcept
  * @throw transaction_error when adding data to the
  * transaction failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 CharT *
-basic_string<CharT, Traits>::data()
+basic_string<CharT, Traits, P>::data()
 {
 	return is_sso_used() ? sso_data().range(0, get_sso_size() + 1).begin()
 			     : non_sso_data().data();
@@ -1389,9 +1396,9 @@ basic_string<CharT, Traits>::data()
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::erase(size_type index, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::erase(size_type index, size_type count)
 {
 	auto sz = size();
 
@@ -1441,9 +1448,9 @@ basic_string<CharT, Traits>::erase(size_type index, size_type count)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::erase(const_iterator pos)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::erase(const_iterator pos)
 {
 	return erase(pos, pos + 1);
 }
@@ -1466,9 +1473,9 @@ basic_string<CharT, Traits>::erase(const_iterator pos)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::erase(const_iterator first, const_iterator last)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::erase(const_iterator first, const_iterator last)
 {
 	size_type index =
 		static_cast<size_type>(std::distance(cbegin(), first));
@@ -1489,9 +1496,9 @@ basic_string<CharT, Traits>::erase(const_iterator first, const_iterator last)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::pop_back()
+basic_string<CharT, Traits, P>::pop_back()
 {
 	erase(size() - 1, 1);
 }
@@ -1515,9 +1522,9 @@ basic_string<CharT, Traits>::pop_back()
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(size_type count, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(size_type count, CharT ch)
 {
 	auto sz = size();
 	auto new_size = sz + count;
@@ -1586,9 +1593,9 @@ basic_string<CharT, Traits>::append(size_type count, CharT ch)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(const basic_string &str)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(const basic_string &str)
 {
 	return append(str.data(), str.size());
 }
@@ -1618,10 +1625,10 @@ basic_string<CharT, Traits>::append(const basic_string &str)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(const basic_string &str, size_type pos,
-				    size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(const basic_string &str, size_type pos,
+				       size_type count)
 {
 	auto sz = str.size();
 
@@ -1654,9 +1661,9 @@ basic_string<CharT, Traits>::append(const basic_string &str, size_type pos,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(const CharT *s, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(const CharT *s, size_type count)
 {
 	return append(s, s + count);
 }
@@ -1680,9 +1687,9 @@ basic_string<CharT, Traits>::append(const CharT *s, size_type count)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(const CharT *s)
 {
 	return append(s, traits_type::length(s));
 }
@@ -1708,10 +1715,10 @@ basic_string<CharT, Traits>::append(const CharT *s)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(InputIt first, InputIt last)
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(InputIt first, InputIt last)
 {
 	auto sz = size();
 	auto count = static_cast<size_type>(std::distance(first, last));
@@ -1784,9 +1791,9 @@ basic_string<CharT, Traits>::append(InputIt first, InputIt last)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::append(std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::append(std::initializer_list<CharT> ilist)
 {
 	return append(ilist.begin(), ilist.end());
 }
@@ -1807,9 +1814,9 @@ basic_string<CharT, Traits>::append(std::initializer_list<CharT> ilist)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::push_back(CharT ch)
+basic_string<CharT, Traits, P>::push_back(CharT ch)
 {
 	append(static_cast<size_type>(1), ch);
 }
@@ -1832,9 +1839,9 @@ basic_string<CharT, Traits>::push_back(CharT ch)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator+=(const basic_string &str)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator+=(const basic_string &str)
 {
 	return append(str);
 }
@@ -1858,9 +1865,9 @@ basic_string<CharT, Traits>::operator+=(const basic_string &str)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator+=(const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator+=(const CharT *s)
 {
 	return append(s);
 }
@@ -1881,9 +1888,9 @@ basic_string<CharT, Traits>::operator+=(const CharT *s)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator+=(CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator+=(CharT ch)
 {
 	push_back(ch);
 
@@ -1908,9 +1915,9 @@ basic_string<CharT, Traits>::operator+=(CharT ch)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::operator+=(std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::operator+=(std::initializer_list<CharT> ilist)
 {
 	return append(ilist);
 }
@@ -1936,9 +1943,10 @@ basic_string<CharT, Traits>::operator+=(std::initializer_list<CharT> ilist)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::insert(size_type index, size_type count, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::insert(size_type index, size_type count,
+				       CharT ch)
 {
 	if (index > size())
 		throw std::out_of_range("Index out of range.");
@@ -1971,9 +1979,9 @@ basic_string<CharT, Traits>::insert(size_type index, size_type count, CharT ch)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::insert(size_type index, const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::insert(size_type index, const CharT *s)
 {
 	return insert(index, s, traits_type::length(s));
 }
@@ -1999,10 +2007,10 @@ basic_string<CharT, Traits>::insert(size_type index, const CharT *s)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::insert(size_type index, const CharT *s,
-				    size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::insert(size_type index, const CharT *s,
+				       size_type count)
 {
 	if (index > size())
 		throw std::out_of_range("Index out of range.");
@@ -2034,9 +2042,9 @@ basic_string<CharT, Traits>::insert(size_type index, const CharT *s,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::insert(size_type index, const basic_string &str)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::insert(size_type index, const basic_string &str)
 {
 	return insert(index, str.data(), str.size());
 }
@@ -2063,10 +2071,11 @@ basic_string<CharT, Traits>::insert(size_type index, const basic_string &str)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::insert(size_type index1, const basic_string &str,
-				    size_type index2, size_type count)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::insert(size_type index1,
+				       const basic_string &str,
+				       size_type index2, size_type count)
 {
 	auto sz = str.size();
 
@@ -2100,9 +2109,9 @@ basic_string<CharT, Traits>::insert(size_type index1, const basic_string &str,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::insert(const_iterator pos, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::insert(const_iterator pos, CharT ch)
 {
 	return insert(pos, 1, ch);
 }
@@ -2131,10 +2140,10 @@ basic_string<CharT, Traits>::insert(const_iterator pos, CharT ch)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
-				    CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::insert(const_iterator pos, size_type count,
+				       CharT ch)
 {
 	auto sz = size();
 
@@ -2200,11 +2209,11 @@ basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
-				    InputIt last)
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::insert(const_iterator pos, InputIt first,
+				       InputIt last)
 {
 	auto sz = size();
 
@@ -2288,10 +2297,10 @@ basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::insert(const_iterator pos,
-				    std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::insert(const_iterator pos,
+				       std::initializer_list<CharT> ilist)
 {
 	return insert(pos, ilist.begin(), ilist.end());
 }
@@ -2318,10 +2327,10 @@ basic_string<CharT, Traits>::insert(const_iterator pos,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(size_type index, size_type count,
-				     const basic_string &str)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(size_type index, size_type count,
+					const basic_string &str)
 {
 	return replace(index, count, str.data(), str.size());
 }
@@ -2346,10 +2355,11 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
-				     const basic_string &str)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(const_iterator first,
+					const_iterator last,
+					const basic_string &str)
 {
 	return replace(first, last, str.data(), str.data() + str.size());
 }
@@ -2380,11 +2390,11 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(size_type index, size_type count,
-				     const basic_string &str, size_type index2,
-				     size_type count2)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(size_type index, size_type count,
+					const basic_string &str,
+					size_type index2, size_type count2)
 {
 	auto sz = str.size();
 
@@ -2421,11 +2431,12 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
-				     InputIt first2, InputIt last2)
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(const_iterator first,
+					const_iterator last, InputIt first2,
+					InputIt last2)
 {
 	auto sz = size();
 	auto index = static_cast<size_type>(std::distance(cbegin(), first));
@@ -2504,10 +2515,11 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
-				     const CharT *s, size_type count2)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(const_iterator first,
+					const_iterator last, const CharT *s,
+					size_type count2)
 {
 	return replace(first, last, s, s + count2);
 }
@@ -2535,10 +2547,10 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(size_type index, size_type count,
-				     const CharT *s, size_type count2)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(size_type index, size_type count,
+					const CharT *s, size_type count2)
 {
 	if (index > size())
 		throw std::out_of_range("Index out of range.");
@@ -2572,10 +2584,10 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(size_type index, size_type count,
-				     const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(size_type index, size_type count,
+					const CharT *s)
 {
 	return replace(index, count, s, traits_type::length(s));
 }
@@ -2603,10 +2615,10 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(size_type index, size_type count,
-				     size_type count2, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(size_type index, size_type count,
+					size_type count2, CharT ch)
 {
 	if (index > size())
 		throw std::out_of_range("Index out of range.");
@@ -2639,10 +2651,11 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
-				     size_type count2, CharT ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(const_iterator first,
+					const_iterator last, size_type count2,
+					CharT ch)
 {
 	auto sz = size();
 	auto index = static_cast<size_type>(std::distance(cbegin(), first));
@@ -2709,10 +2722,10 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
-				     const CharT *s)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(const_iterator first,
+					const_iterator last, const CharT *s)
 {
 	return replace(first, last, s, traits_type::length(s));
 }
@@ -2739,10 +2752,11 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename CharT, typename Traits>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
-				     std::initializer_list<CharT> ilist)
+template <typename CharT, typename Traits, template <typename> typename P>
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::replace(const_iterator first,
+					const_iterator last,
+					std::initializer_list<CharT> ilist)
 {
 	return replace(first, last, ilist.begin(), ilist.end());
 }
@@ -2760,10 +2774,10 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  *
  * @throw std::out_of_range if index > size().
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::copy(CharT *s, size_type count,
-				  size_type index) const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::copy(CharT *s, size_type count,
+				     size_type index) const
 {
 	auto sz = size();
 
@@ -2794,10 +2808,10 @@ basic_string<CharT, Traits>::copy(CharT *s, size_type count,
  *
  * @throw std::out_of_range is pos > size()
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(size_type pos, size_type count1,
-				     const CharT *s, size_type count2) const
+basic_string<CharT, Traits, P>::compare(size_type pos, size_type count1,
+					const CharT *s, size_type count2) const
 {
 	if (pos > size())
 		throw std::out_of_range("Index out of range.");
@@ -2827,9 +2841,9 @@ basic_string<CharT, Traits>::compare(size_type pos, size_type count1,
  * @return negative value if *this < other in lexicographical order,
  * zero if *this == other and positive value if *this > other.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(const basic_string &other) const
+basic_string<CharT, Traits, P>::compare(const basic_string &other) const
 {
 	return compare(0, size(), other.cdata(), other.size());
 }
@@ -2842,9 +2856,9 @@ basic_string<CharT, Traits>::compare(const basic_string &other) const
  * @return negative value if *this < other in lexicographical order,
  * zero if *this == other and positive value if *this > other.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(
+basic_string<CharT, Traits, P>::compare(
 	const std::basic_string<CharT> &other) const
 {
 	return compare(0, size(), other.data(), other.size());
@@ -2863,10 +2877,10 @@ basic_string<CharT, Traits>::compare(
  *
  * @throw std::out_of_range is pos > size()
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(size_type pos, size_type count,
-				     const basic_string &other) const
+basic_string<CharT, Traits, P>::compare(size_type pos, size_type count,
+					const basic_string &other) const
 {
 	return compare(pos, count, other.cdata(), other.size());
 }
@@ -2885,9 +2899,9 @@ basic_string<CharT, Traits>::compare(size_type pos, size_type count,
  *
  * @throw std::out_of_range is pos > size()
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(
+basic_string<CharT, Traits, P>::compare(
 	size_type pos, size_type count,
 	const std::basic_string<CharT> &other) const
 {
@@ -2912,11 +2926,11 @@ basic_string<CharT, Traits>::compare(
  *
  * @throw std::out_of_range is pos1 > size() or pos2 > other.size()
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(size_type pos1, size_type count1,
-				     const basic_string &other, size_type pos2,
-				     size_type count2) const
+basic_string<CharT, Traits, P>::compare(size_type pos1, size_type count1,
+					const basic_string &other,
+					size_type pos2, size_type count2) const
 {
 	if (pos2 > other.size())
 		throw std::out_of_range("Index out of range.");
@@ -2945,11 +2959,11 @@ basic_string<CharT, Traits>::compare(size_type pos1, size_type count1,
  *
  * @throw std::out_of_range is pos1 > size() or pos2 > other.size()
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(size_type pos1, size_type count1,
-				     const std::basic_string<CharT> &other,
-				     size_type pos2, size_type count2) const
+basic_string<CharT, Traits, P>::compare(size_type pos1, size_type count1,
+					const std::basic_string<CharT> &other,
+					size_type pos2, size_type count2) const
 {
 	if (pos2 > other.size())
 		throw std::out_of_range("Index out of range.");
@@ -2968,9 +2982,9 @@ basic_string<CharT, Traits>::compare(size_type pos1, size_type count1,
  * @return negative value if *this < s in lexicographical order,
  * zero if *this == s and positive value if *this > s.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(const CharT *s) const
+basic_string<CharT, Traits, P>::compare(const CharT *s) const
 {
 	return compare(0, size(), s, traits_type::length(s));
 }
@@ -2988,10 +3002,10 @@ basic_string<CharT, Traits>::compare(const CharT *s) const
  *
  * @throw std::out_of_range is pos > size()
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 int
-basic_string<CharT, Traits>::compare(size_type pos, size_type count,
-				     const CharT *s) const
+basic_string<CharT, Traits, P>::compare(size_type pos, size_type count,
+					const CharT *s) const
 {
 	return compare(pos, count, s, traits_type::length(s));
 }
@@ -2999,9 +3013,9 @@ basic_string<CharT, Traits>::compare(size_type pos, size_type count,
 /**
  * @return const pointer to underlying data.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT *
-basic_string<CharT, Traits>::cdata() const noexcept
+basic_string<CharT, Traits, P>::cdata() const noexcept
 {
 	return is_sso_used() ? sso_data().cdata() : non_sso_data().cdata();
 }
@@ -3009,9 +3023,9 @@ basic_string<CharT, Traits>::cdata() const noexcept
 /**
  * @return pointer to underlying data.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT *
-basic_string<CharT, Traits>::data() const noexcept
+basic_string<CharT, Traits, P>::data() const noexcept
 {
 	return cdata();
 }
@@ -3019,9 +3033,9 @@ basic_string<CharT, Traits>::data() const noexcept
 /**
  * @return pointer to underlying data.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 const CharT *
-basic_string<CharT, Traits>::c_str() const noexcept
+basic_string<CharT, Traits, P>::c_str() const noexcept
 {
 	return cdata();
 }
@@ -3029,9 +3043,9 @@ basic_string<CharT, Traits>::c_str() const noexcept
 /**
  * @return number of CharT elements in the string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::length() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::length() const noexcept
 {
 	return size();
 }
@@ -3039,9 +3053,9 @@ basic_string<CharT, Traits>::length() const noexcept
 /**
  * @return maximum number of elements the string is able to hold.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::max_size() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::max_size() const noexcept
 {
 	return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(CharT) - 1;
 }
@@ -3050,9 +3064,9 @@ basic_string<CharT, Traits>::max_size() const noexcept
  * @return number of characters that can be held in currently allocated
  * storage.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::capacity() const noexcept
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::capacity() const noexcept
 {
 	return is_sso_used() ? sso_capacity : non_sso_data().capacity() - 1;
 }
@@ -3076,9 +3090,9 @@ basic_string<CharT, Traits>::capacity() const noexcept
  * @throw pmem::transaction_free_error when freeing old underlying array
  * failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::resize(size_type count, CharT ch)
+basic_string<CharT, Traits, P>::resize(size_type count, CharT ch)
 {
 	if (count > max_size())
 		throw std::length_error("Count exceeds max size.");
@@ -3118,9 +3132,9 @@ basic_string<CharT, Traits>::resize(size_type count, CharT ch)
  * @throw pmem::transaction_free_error when freeing old underlying array
  * failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::resize(size_type count)
+basic_string<CharT, Traits, P>::resize(size_type count)
 {
 	resize(count, CharT());
 }
@@ -3145,9 +3159,9 @@ basic_string<CharT, Traits>::resize(size_type count)
  * @throw pmem::transaction_free_error when freeing old underlying array
  * failed.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::reserve(size_type new_cap)
+basic_string<CharT, Traits, P>::reserve(size_type new_cap)
 {
 	if (new_cap > max_size())
 		throw std::length_error("New capacity exceeds max size.");
@@ -3177,9 +3191,9 @@ basic_string<CharT, Traits>::reserve(size_type new_cap)
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::shrink_to_fit()
+basic_string<CharT, Traits, P>::shrink_to_fit()
 {
 	if (is_sso_used())
 		return;
@@ -3202,9 +3216,9 @@ basic_string<CharT, Traits>::shrink_to_fit()
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::clear()
+basic_string<CharT, Traits, P>::clear()
 {
 	erase(begin(), end());
 }
@@ -3212,23 +3226,23 @@ basic_string<CharT, Traits>::clear()
 /**
  * @return true if string is empty, false otherwise.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-basic_string<CharT, Traits>::empty() const noexcept
+basic_string<CharT, Traits, P>::empty() const noexcept
 {
 	return size() == 0;
 }
 
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-basic_string<CharT, Traits>::is_sso_used() const
+basic_string<CharT, Traits, P>::is_sso_used() const
 {
 	return (sso._size & _sso_mask) != 0;
 }
 
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::destroy_data()
+basic_string<CharT, Traits, P>::destroy_data()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3247,10 +3261,10 @@ basic_string<CharT, Traits>::destroy_data()
  *
  * Return std::distance(first, last) for pair of iterators.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::get_size(InputIt first, InputIt last) const
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::get_size(InputIt first, InputIt last) const
 {
 	return static_cast<size_type>(std::distance(first, last));
 }
@@ -3261,9 +3275,9 @@ basic_string<CharT, Traits>::get_size(InputIt first, InputIt last) const
  *
  * Return count for (count, value)
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::get_size(size_type count, value_type ch) const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::get_size(size_type count, value_type ch) const
 {
 	return count;
 }
@@ -3274,9 +3288,9 @@ basic_string<CharT, Traits>::get_size(size_type count, value_type ch) const
  *
  * Return size of other basic_string
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::get_size(const basic_string &other) const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::get_size(const basic_string &other) const
 {
 	return other.size();
 }
@@ -3288,10 +3302,10 @@ basic_string<CharT, Traits>::get_size(const basic_string &other) const
  * - InputIt first, InputIt last
  * - basic_string &&
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename... Args>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::replace_content(Args &&... args)
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::replace_content(Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3318,10 +3332,10 @@ basic_string<CharT, Traits>::replace_content(Args &&... args)
  * @pre must be called in transaction scope.
  * @pre memory must be allocated before initialization.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename... Args>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::initialize(Args &&... args)
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::initialize(Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3344,9 +3358,9 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
  *
  * @param[in] capacity bytes to allocate.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::allocate(size_type capacity)
+basic_string<CharT, Traits, P>::allocate(size_type capacity)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3370,10 +3384,10 @@ basic_string<CharT, Traits>::allocate(size_type capacity)
 /**
  * Initialize sso data. Overload for pair of iterators
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_sso_data(InputIt first, InputIt last)
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::assign_sso_data(InputIt first, InputIt last)
 {
 	auto size = static_cast<size_type>(std::distance(first, last));
 
@@ -3391,9 +3405,9 @@ basic_string<CharT, Traits>::assign_sso_data(InputIt first, InputIt last)
 /**
  * Initialize sso data. Overload for (count, value).
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::assign_sso_data(size_type count, value_type ch)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(count <= sso_capacity);
@@ -3409,9 +3423,9 @@ basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
 /**
  * Initialize sso data. Overload for rvalue reference of basic_string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_sso_data(basic_string &&other)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::assign_sso_data(basic_string &&other)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3422,10 +3436,10 @@ basic_string<CharT, Traits>::assign_sso_data(basic_string &&other)
  * Initialize non_sso.data - call constructor of non_sso.data.
  * Overload for pair of iterators.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename InputIt, typename Enable>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_large_data(InputIt first, InputIt last)
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::assign_large_data(InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3442,9 +3456,10 @@ basic_string<CharT, Traits>::assign_large_data(InputIt first, InputIt last)
  * Initialize non_sso.data - call constructor of non_sso.data.
  * Overload for (count, value).
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_large_data(size_type count, value_type ch)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::assign_large_data(size_type count,
+						  value_type ch)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3459,9 +3474,9 @@ basic_string<CharT, Traits>::assign_large_data(size_type count, value_type ch)
  * Initialize non_sso.data - call constructor of non_sso.data.
  * Overload for rvalue reference of basic_string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_large_data(basic_string &&other)
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::pointer
+basic_string<CharT, Traits, P>::assign_large_data(basic_string &&other)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -3476,9 +3491,9 @@ basic_string<CharT, Traits>::assign_large_data(basic_string &&other)
 /**
  * Return pool_base instance and assert that object is on pmem.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 pool_base
-basic_string<CharT, Traits>::get_pool() const
+basic_string<CharT, Traits, P>::get_pool() const
 {
 	auto pop = pmemobj_pool_by_ptr(this);
 	assert(pop != nullptr);
@@ -3489,9 +3504,9 @@ basic_string<CharT, Traits>::get_pool() const
 /**
  * @throw pmem::pool_error if an object is not in persistent memory.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::check_pmem() const
+basic_string<CharT, Traits, P>::check_pmem() const
 {
 	if (pmemobj_pool_by_ptr(this) == nullptr)
 		throw pmem::pool_error("Object is not on pmem.");
@@ -3500,9 +3515,9 @@ basic_string<CharT, Traits>::check_pmem() const
 /**
  * @throw pmem::transaction_scope_error if called outside of a transaction.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::check_tx_stage_work() const
+basic_string<CharT, Traits, P>::check_tx_stage_work() const
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw pmem::transaction_scope_error(
@@ -3513,9 +3528,9 @@ basic_string<CharT, Traits>::check_tx_stage_work() const
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if called outside of a transaction.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::check_pmem_tx() const
+basic_string<CharT, Traits, P>::check_pmem_tx() const
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -3524,9 +3539,9 @@ basic_string<CharT, Traits>::check_pmem_tx() const
 /**
  * Snapshot sso data.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::snapshot_sso() const
+basic_string<CharT, Traits, P>::snapshot_sso() const
 {
 /*
  * XXX: this can be optimized - only snapshot length() elements.
@@ -3540,9 +3555,9 @@ basic_string<CharT, Traits>::snapshot_sso() const
 /**
  * Return size of sso string.
  */
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::size_type
-basic_string<CharT, Traits>::get_sso_size() const
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::size_type
+basic_string<CharT, Traits, P>::get_sso_size() const
 {
 	return sso._size & ~_sso_mask;
 }
@@ -3550,9 +3565,9 @@ basic_string<CharT, Traits>::get_sso_size() const
 /**
  * Enable sso string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::enable_sso()
+basic_string<CharT, Traits, P>::enable_sso()
 {
 	/* temporary size_type must be created to avoid undefined reference
 	 * linker error */
@@ -3562,9 +3577,9 @@ basic_string<CharT, Traits>::enable_sso()
 /**
  * Disable sso string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::disable_sso()
+basic_string<CharT, Traits, P>::disable_sso()
 {
 	sso._size &= ~_sso_mask;
 }
@@ -3572,9 +3587,9 @@ basic_string<CharT, Traits>::disable_sso()
 /**
  * Set size for sso.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::set_sso_size(size_type new_size)
+basic_string<CharT, Traits, P>::set_sso_size(size_type new_size)
 {
 	sso._size = new_size | _sso_mask;
 }
@@ -3590,9 +3605,9 @@ basic_string<CharT, Traits>::set_sso_size(size_type new_size)
  *
  * @param[in] new_capacity capacity of constructed large string.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::sso_to_large(size_t new_capacity)
+basic_string<CharT, Traits, P>::sso_to_large(size_t new_capacity)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(new_capacity > sso_capacity);
@@ -3624,9 +3639,9 @@ basic_string<CharT, Traits>::sso_to_large(size_t new_capacity)
  *
  * @post sso is used.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 void
-basic_string<CharT, Traits>::large_to_sso()
+basic_string<CharT, Traits, P>::large_to_sso()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(!is_sso_used());
@@ -3650,33 +3665,33 @@ basic_string<CharT, Traits>::large_to_sso()
 	assert(is_sso_used());
 };
 
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::non_sso_type &
-basic_string<CharT, Traits>::non_sso_data()
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::non_sso_type &
+basic_string<CharT, Traits, P>::non_sso_data()
 {
 	assert(!is_sso_used());
 	return non_sso._data;
 }
 
-template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::sso_type &
-basic_string<CharT, Traits>::sso_data()
+template <typename CharT, typename Traits, template <typename> typename P>
+typename basic_string<CharT, Traits, P>::sso_type &
+basic_string<CharT, Traits, P>::sso_data()
 {
 	assert(is_sso_used());
 	return sso._data;
 }
 
-template <typename CharT, typename Traits>
-const typename basic_string<CharT, Traits>::non_sso_type &
-basic_string<CharT, Traits>::non_sso_data() const
+template <typename CharT, typename Traits, template <typename> typename P>
+const typename basic_string<CharT, Traits, P>::non_sso_type &
+basic_string<CharT, Traits, P>::non_sso_data() const
 {
 	assert(!is_sso_used());
 	return non_sso._data;
 }
 
-template <typename CharT, typename Traits>
-const typename basic_string<CharT, Traits>::sso_type &
-basic_string<CharT, Traits>::sso_data() const
+template <typename CharT, typename Traits, template <typename> typename P>
+const typename basic_string<CharT, Traits, P>::sso_type &
+basic_string<CharT, Traits, P>::sso_data() const
 {
 	assert(is_sso_used());
 	return sso._data;
@@ -3686,10 +3701,10 @@ basic_string<CharT, Traits>::sso_data() const
  * Participate in overload resolution only if T is convertible to size_type.
  * Call basic_string &erase(size_type index, size_type count = npos) if enabled.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename T, typename Enable>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::erase(T param)
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::erase(T param)
 {
 	return erase(static_cast<size_type>(param));
 }
@@ -3698,10 +3713,10 @@ basic_string<CharT, Traits>::erase(T param)
  * Participate in overload resolution only if T is not convertible to size_type.
  * Call iterator erase(const_iterator pos) if enabled.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename T, typename Enable>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::erase(T param)
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::erase(T param)
 {
 	return erase(static_cast<const_iterator>(param));
 }
@@ -3711,10 +3726,10 @@ basic_string<CharT, Traits>::erase(T param)
  * Call basic_string &insert(size_type index, size_type count, CharT ch) if
  * enabled.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename T, typename Enable>
-basic_string<CharT, Traits> &
-basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
+basic_string<CharT, Traits, P> &
+basic_string<CharT, Traits, P>::insert(T param, size_type count, CharT ch)
 {
 	return insert(static_cast<size_type>(param), count, ch);
 }
@@ -3724,10 +3739,10 @@ basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
  * Call iterator insert(const_iterator pos, size_type count, CharT ch) if
  * enabled.
  */
-template <typename CharT, typename Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 template <typename T, typename Enable>
-typename basic_string<CharT, Traits>::iterator
-basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
+typename basic_string<CharT, Traits, P>::iterator
+basic_string<CharT, Traits, P>::insert(T param, size_type count, CharT ch)
 {
 	return insert(static_cast<const_iterator>(param), count, ch);
 }
@@ -3735,10 +3750,10 @@ basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
 /**
  * Non-member equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator==(const basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+operator==(const basic_string<CharT, Traits, P> &lhs,
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return lhs.compare(rhs) == 0;
 }
@@ -3746,10 +3761,10 @@ operator==(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member not equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator!=(const basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+operator!=(const basic_string<CharT, Traits, P> &lhs,
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return lhs.compare(rhs) != 0;
 }
@@ -3757,10 +3772,10 @@ operator!=(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member less than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<(const basic_string<CharT, Traits> &lhs,
-	  const basic_string<CharT, Traits> &rhs)
+operator<(const basic_string<CharT, Traits, P> &lhs,
+	  const basic_string<CharT, Traits, P> &rhs)
 {
 	return lhs.compare(rhs) < 0;
 }
@@ -3768,10 +3783,10 @@ operator<(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member less or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<=(const basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+operator<=(const basic_string<CharT, Traits, P> &lhs,
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return lhs.compare(rhs) <= 0;
 }
@@ -3779,10 +3794,10 @@ operator<=(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member greater than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>(const basic_string<CharT, Traits> &lhs,
-	  const basic_string<CharT, Traits> &rhs)
+operator>(const basic_string<CharT, Traits, P> &lhs,
+	  const basic_string<CharT, Traits, P> &rhs)
 {
 	return lhs.compare(rhs) > 0;
 }
@@ -3790,10 +3805,10 @@ operator>(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member greater or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>=(const basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+operator>=(const basic_string<CharT, Traits, P> &lhs,
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return lhs.compare(rhs) >= 0;
 }
@@ -3801,9 +3816,9 @@ operator>=(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator==(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
+operator==(const CharT *lhs, const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) == 0;
 }
@@ -3811,9 +3826,9 @@ operator==(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 /**
  * Non-member not equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator!=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
+operator!=(const CharT *lhs, const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) != 0;
 }
@@ -3821,9 +3836,9 @@ operator!=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 /**
  * Non-member less than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
+operator<(const CharT *lhs, const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) > 0;
 }
@@ -3831,9 +3846,9 @@ operator<(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 /**
  * Non-member less or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
+operator<=(const CharT *lhs, const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) >= 0;
 }
@@ -3841,9 +3856,9 @@ operator<=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 /**
  * Non-member greater than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
+operator>(const CharT *lhs, const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) < 0;
 }
@@ -3851,9 +3866,9 @@ operator>(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 /**
  * Non-member greater or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
+operator>=(const CharT *lhs, const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) <= 0;
 }
@@ -3861,9 +3876,9 @@ operator>=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 /**
  * Non-member equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator==(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
+operator==(const basic_string<CharT, Traits, P> &lhs, const CharT *rhs)
 {
 	return lhs.compare(rhs) == 0;
 }
@@ -3871,9 +3886,9 @@ operator==(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 /**
  * Non-member not equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator!=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
+operator!=(const basic_string<CharT, Traits, P> &lhs, const CharT *rhs)
 {
 	return lhs.compare(rhs) != 0;
 }
@@ -3881,9 +3896,9 @@ operator!=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 /**
  * Non-member less than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
+operator<(const basic_string<CharT, Traits, P> &lhs, const CharT *rhs)
 {
 	return lhs.compare(rhs) < 0;
 }
@@ -3891,9 +3906,9 @@ operator<(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 /**
  * Non-member less or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
+operator<=(const basic_string<CharT, Traits, P> &lhs, const CharT *rhs)
 {
 	return lhs.compare(rhs) <= 0;
 }
@@ -3901,9 +3916,9 @@ operator<=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 /**
  * Non-member greater than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
+operator>(const basic_string<CharT, Traits, P> &lhs, const CharT *rhs)
 {
 	return lhs.compare(rhs) > 0;
 }
@@ -3911,9 +3926,9 @@ operator>(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 /**
  * Non-member greater or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
+operator>=(const basic_string<CharT, Traits, P> &lhs, const CharT *rhs)
 {
 	return lhs.compare(rhs) >= 0;
 }
@@ -3921,10 +3936,10 @@ operator>=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 /**
  * Non-member equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
 operator==(const std::basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) == 0;
 }
@@ -3932,10 +3947,10 @@ operator==(const std::basic_string<CharT, Traits> &lhs,
 /**
  * Non-member not equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
 operator!=(const std::basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) != 0;
 }
@@ -3943,10 +3958,10 @@ operator!=(const std::basic_string<CharT, Traits> &lhs,
 /**
  * Non-member less than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
 operator<(const std::basic_string<CharT, Traits> &lhs,
-	  const basic_string<CharT, Traits> &rhs)
+	  const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) > 0;
 }
@@ -3954,10 +3969,10 @@ operator<(const std::basic_string<CharT, Traits> &lhs,
 /**
  * Non-member less or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
 operator<=(const std::basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) >= 0;
 }
@@ -3965,10 +3980,10 @@ operator<=(const std::basic_string<CharT, Traits> &lhs,
 /**
  * Non-member greater than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
 operator>(const std::basic_string<CharT, Traits> &lhs,
-	  const basic_string<CharT, Traits> &rhs)
+	  const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) < 0;
 }
@@ -3976,10 +3991,10 @@ operator>(const std::basic_string<CharT, Traits> &lhs,
 /**
  * Non-member greater or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
 operator>=(const std::basic_string<CharT, Traits> &lhs,
-	   const basic_string<CharT, Traits> &rhs)
+	   const basic_string<CharT, Traits, P> &rhs)
 {
 	return rhs.compare(lhs) <= 0;
 }
@@ -3987,9 +4002,9 @@ operator>=(const std::basic_string<CharT, Traits> &lhs,
 /**
  * Non-member equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator==(const basic_string<CharT, Traits> &lhs,
+operator==(const basic_string<CharT, Traits, P> &lhs,
 	   const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) == 0;
@@ -3998,9 +4013,9 @@ operator==(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member not equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator!=(const basic_string<CharT, Traits> &lhs,
+operator!=(const basic_string<CharT, Traits, P> &lhs,
 	   const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) != 0;
@@ -4009,9 +4024,9 @@ operator!=(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member less than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<(const basic_string<CharT, Traits> &lhs,
+operator<(const basic_string<CharT, Traits, P> &lhs,
 	  const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) < 0;
@@ -4020,9 +4035,9 @@ operator<(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member less or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator<=(const basic_string<CharT, Traits> &lhs,
+operator<=(const basic_string<CharT, Traits, P> &lhs,
 	   const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) <= 0;
@@ -4031,9 +4046,9 @@ operator<=(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member greater than operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>(const basic_string<CharT, Traits> &lhs,
+operator>(const basic_string<CharT, Traits, P> &lhs,
 	  const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) > 0;
@@ -4042,9 +4057,9 @@ operator>(const basic_string<CharT, Traits> &lhs,
 /**
  * Non-member greater or equal operator.
  */
-template <class CharT, class Traits>
+template <typename CharT, typename Traits, template <typename> typename P>
 bool
-operator>=(const basic_string<CharT, Traits> &lhs,
+operator>=(const basic_string<CharT, Traits, P> &lhs,
 	   const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) >= 0;

@@ -68,7 +68,8 @@ namespace experimental
  * pmem::obj::experimental::vector - EXPERIMENTAL persistent container
  * with std::vector compatible interface.
  */
-template <typename T>
+template <typename T,
+	  template <typename> typename PersistentPtrType = persistent_ptr>
 class vector {
 public:
 	/* Member types */
@@ -274,63 +275,63 @@ private:
 	p<size_type> _capacity;
 
 	/* Underlying array */
-	persistent_ptr<T[]> _data;
+	PersistentPtrType<T[]> _data;
 };
 
 /* Non-member swap */
-template <typename T>
-void swap(vector<T> &lhs, vector<T> &rhs);
+template <typename T, template <typename> typename P>
+void swap(vector<T, P> &lhs, vector<T, P> &rhs);
 
 /*
- * Comparison operators between pmem::obj::experimental::vector<T> and
- * pmem::obj::experimental::vector<T>
+ * Comparison operators between pmem::obj::experimental::vector<T, P> and
+ * pmem::obj::experimental::vector<T, P>
  */
-template <typename T>
-bool operator==(const vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator!=(const vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator<(const vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator<=(const vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator>(const vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator>=(const vector<T> &lhs, const vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator==(const vector<T, P> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator!=(const vector<T, P> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator<(const vector<T, P> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator<=(const vector<T, P> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator>(const vector<T, P> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator>=(const vector<T, P> &lhs, const vector<T, P> &rhs);
 
 /*
- * Comparison operators between pmem::obj::experimental::vector<T> and
+ * Comparison operators between pmem::obj::experimental::vector<T, P> and
  * std::vector<T>
  */
-template <typename T>
-bool operator==(const vector<T> &lhs, const std::vector<T> &rhs);
-template <typename T>
-bool operator!=(const vector<T> &lhs, const std::vector<T> &rhs);
-template <typename T>
-bool operator<(const vector<T> &lhs, const std::vector<T> &rhs);
-template <typename T>
-bool operator<=(const vector<T> &lhs, const std::vector<T> &rhs);
-template <typename T>
-bool operator>(const vector<T> &lhs, const std::vector<T> &rhs);
-template <typename T>
-bool operator>=(const vector<T> &lhs, const std::vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator==(const vector<T, P> &lhs, const std::vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator!=(const vector<T, P> &lhs, const std::vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator<(const vector<T, P> &lhs, const std::vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator<=(const vector<T, P> &lhs, const std::vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator>(const vector<T, P> &lhs, const std::vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator>=(const vector<T, P> &lhs, const std::vector<T> &rhs);
 
 /*
  * Comparison operators between std::vector<T> and
- * pmem::obj::experimental::vector<T>
+ * pmem::obj::experimental::vector<T, P>
  */
-template <typename T>
-bool operator==(const std::vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator!=(const std::vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator<(const std::vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator<=(const std::vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator>(const std::vector<T> &lhs, const vector<T> &rhs);
-template <typename T>
-bool operator>=(const std::vector<T> &lhs, const vector<T> &rhs);
+template <typename T, template <typename> typename P>
+bool operator==(const std::vector<T> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator!=(const std::vector<T> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator<(const std::vector<T> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator<=(const std::vector<T> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator>(const std::vector<T> &lhs, const vector<T, P> &rhs);
+template <typename T, template <typename> typename P>
+bool operator>=(const std::vector<T> &lhs, const vector<T, P> &rhs);
 
 /**
  * Default constructor. Constructs an empty container.
@@ -341,8 +342,8 @@ bool operator>=(const std::vector<T> &lhs, const vector<T> &rhs);
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename T>
-vector<T>::vector()
+template <typename T, template <typename> typename P>
+vector<T, P>::vector()
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -370,8 +371,8 @@ vector<T>::vector()
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename T>
-vector<T>::vector(size_type count, const value_type &value)
+template <typename T, template <typename> typename P>
+vector<T, P>::vector(size_type count, const value_type &value)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -399,8 +400,8 @@ vector<T>::vector(size_type count, const value_type &value)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename T>
-vector<T>::vector(size_type count)
+template <typename T, template <typename> typename P>
+vector<T, P>::vector(size_type count)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -433,11 +434,11 @@ vector<T>::vector(size_type count)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
-vector<T>::vector(InputIt first, InputIt last)
+vector<T, P>::vector(InputIt first, InputIt last)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -466,8 +467,8 @@ vector<T>::vector(InputIt first, InputIt last)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename T>
-vector<T>::vector(const vector &other)
+template <typename T, template <typename> typename P>
+vector<T, P>::vector(const vector &other)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -497,8 +498,8 @@ vector<T>::vector(const vector &other)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename T>
-vector<T>::vector(vector &&other)
+template <typename T, template <typename> typename P>
+vector<T, P>::vector(vector &&other)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -527,8 +528,8 @@ vector<T>::vector(vector &&other)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename T>
-vector<T>::vector(std::initializer_list<T> init)
+template <typename T, template <typename> typename P>
+vector<T, P>::vector(std::initializer_list<T> init)
     : vector(init.begin(), init.end())
 {
 }
@@ -551,8 +552,8 @@ vector<T>::vector(std::initializer_list<T> init)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename T>
-vector<T>::vector(const std::vector<T> &other)
+template <typename T, template <typename> typename P>
+vector<T, P>::vector(const std::vector<T> &other)
     : vector(other.cbegin(), other.cend())
 {
 }
@@ -568,9 +569,9 @@ vector<T>::vector(const std::vector<T> &other)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
-vector<T> &
-vector<T>::operator=(const vector &other)
+template <typename T, template <typename> typename P>
+vector<T, P> &
+vector<T, P>::operator=(const vector &other)
 {
 	assign(other);
 
@@ -587,9 +588,9 @@ vector<T>::operator=(const vector &other)
  *
  * @throw pmem::transaction_free_error when freeing underlying array failed.
  */
-template <typename T>
-vector<T> &
-vector<T>::operator=(vector &&other)
+template <typename T, template <typename> typename P>
+vector<T, P> &
+vector<T, P>::operator=(vector &&other)
 {
 	assign(std::move(other));
 
@@ -605,9 +606,9 @@ vector<T>::operator=(vector &&other)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
-vector<T> &
-vector<T>::operator=(std::initializer_list<T> ilist)
+template <typename T, template <typename> typename P>
+vector<T, P> &
+vector<T, P>::operator=(std::initializer_list<T> ilist)
 {
 	assign(ilist.begin(), ilist.end());
 
@@ -626,9 +627,9 @@ vector<T>::operator=(std::initializer_list<T> ilist)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
-vector<T> &
-vector<T>::operator=(const std::vector<T> &other)
+template <typename T, template <typename> typename P>
+vector<T, P> &
+vector<T, P>::operator=(const std::vector<T> &other)
 {
 	assign(other);
 
@@ -651,9 +652,9 @@ vector<T>::operator=(const std::vector<T> &other)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::assign(size_type count, const_reference value)
+vector<T, P>::assign(size_type count, const_reference value)
 {
 	pool_base pb = get_pool();
 
@@ -729,12 +730,12 @@ vector<T>::assign(size_type count, const_reference value)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::assign(InputIt first, InputIt last)
+vector<T, P>::assign(InputIt first, InputIt last)
 {
 	pool_base pb = get_pool();
 
@@ -814,9 +815,9 @@ vector<T>::assign(InputIt first, InputIt last)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::assign(std::initializer_list<T> ilist)
+vector<T, P>::assign(std::initializer_list<T> ilist)
 {
 	assign(ilist.begin(), ilist.end());
 }
@@ -832,9 +833,9 @@ vector<T>::assign(std::initializer_list<T> ilist)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::assign(const vector &other)
+vector<T, P>::assign(const vector &other)
 {
 	if (this != &other)
 		assign(other.cbegin(), other.cend());
@@ -851,9 +852,9 @@ vector<T>::assign(const vector &other)
  *
  * @throw pmem::transaction_free_error when freeing underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::assign(vector &&other)
+vector<T, P>::assign(vector &&other)
 {
 	if (this == &other)
 		return;
@@ -884,9 +885,9 @@ vector<T>::assign(vector &&other)
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::assign(const std::vector<T> &other)
+vector<T, P>::assign(const std::vector<T> &other)
 {
 	assign(other.cbegin(), other.cend());
 }
@@ -900,8 +901,8 @@ vector<T>::assign(const std::vector<T> &other)
  * @throw rethrows destructor exception.
  * @throw transaction_free_error when freeing underlying array failed.
  */
-template <typename T>
-vector<T>::~vector()
+template <typename T, template <typename> typename P>
+vector<T, P>::~vector()
 {
 	free_data();
 }
@@ -918,9 +919,9 @@ vector<T>::~vector()
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
-template <typename T>
-typename vector<T>::reference
-vector<T>::at(size_type n)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::reference
+vector<T, P>::at(size_type n)
 {
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
@@ -939,9 +940,9 @@ vector<T>::at(size_type n)
  *
  * @throw std::out_of_range if n is not within the range of the container.
  */
-template <typename T>
-typename vector<T>::const_reference
-vector<T>::at(size_type n) const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference
+vector<T, P>::at(size_type n) const
 {
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
@@ -961,9 +962,9 @@ vector<T>::at(size_type n) const
  *
  * @throw std::out_of_range if n is not within the range of the container.
  */
-template <typename T>
-typename vector<T>::const_reference
-vector<T>::const_at(size_type n) const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference
+vector<T, P>::const_at(size_type n) const
 {
 	if (n >= _size)
 		throw std::out_of_range("vector::const_at");
@@ -982,8 +983,8 @@ vector<T>::const_at(size_type n) const
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
-template <typename T>
-typename vector<T>::reference vector<T>::operator[](size_type n)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::reference vector<T, P>::operator[](size_type n)
 {
 	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
 
@@ -997,8 +998,9 @@ typename vector<T>::reference vector<T>::operator[](size_type n)
  *
  * @return const_reference to element number n in underlying array.
  */
-template <typename T>
-typename vector<T>::const_reference vector<T>::operator[](size_type n) const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference vector<T, P>::
+operator[](size_type n) const
 {
 	return _data[static_cast<difference_type>(n)];
 }
@@ -1011,9 +1013,9 @@ typename vector<T>::const_reference vector<T>::operator[](size_type n) const
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
-template <typename T>
-typename vector<T>::reference
-vector<T>::front()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::reference
+vector<T, P>::front()
 {
 	detail::conditional_add_to_tx(&_data[0]);
 
@@ -1025,9 +1027,9 @@ vector<T>::front()
  *
  * @return const_reference to first element in underlying array.
  */
-template <typename T>
-typename vector<T>::const_reference
-vector<T>::front() const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference
+vector<T, P>::front() const
 {
 	return _data[0];
 }
@@ -1039,9 +1041,9 @@ vector<T>::front() const
  *
  * @return reference to first element in underlying array.
  */
-template <typename T>
-typename vector<T>::const_reference
-vector<T>::cfront() const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference
+vector<T, P>::cfront() const
 {
 	return _data[0];
 }
@@ -1054,9 +1056,9 @@ vector<T>::cfront() const
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
-template <typename T>
-typename vector<T>::reference
-vector<T>::back()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::reference
+vector<T, P>::back()
 {
 	detail::conditional_add_to_tx(
 		&_data[static_cast<difference_type>(size() - 1)]);
@@ -1069,9 +1071,9 @@ vector<T>::back()
  *
  * @return const_reference to the last element in underlying array.
  */
-template <typename T>
-typename vector<T>::const_reference
-vector<T>::back() const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference
+vector<T, P>::back() const
 {
 	return _data[static_cast<difference_type>(size() - 1)];
 }
@@ -1083,9 +1085,9 @@ vector<T>::back() const
  *
  * @return const_reference to the last element in underlying array.
  */
-template <typename T>
-typename vector<T>::const_reference
-vector<T>::cback() const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reference
+vector<T, P>::cback() const
 {
 	return _data[static_cast<difference_type>(size() - 1)];
 }
@@ -1099,9 +1101,9 @@ vector<T>::cback() const
  * @throw pmem::transaction_error when adding the object to the transaction
  * failed.
  */
-template <typename T>
-typename vector<T>::value_type *
-vector<T>::data()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::value_type *
+vector<T, P>::data()
 {
 	snapshot_data(0, _size);
 
@@ -1113,9 +1115,9 @@ vector<T>::data()
  *
  * @return const_pointer to the underlying data.
  */
-template <typename T>
-const typename vector<T>::value_type *
-vector<T>::data() const noexcept
+template <typename T, template <typename> typename P>
+const typename vector<T, P>::value_type *
+vector<T, P>::data() const noexcept
 {
 	return _data.get();
 }
@@ -1127,9 +1129,9 @@ vector<T>::data() const noexcept
  *
  * @return const_pointer to the underlying data.
  */
-template <typename T>
-const typename vector<T>::value_type *
-vector<T>::cdata() const noexcept
+template <typename T, template <typename> typename P>
+const typename vector<T, P>::value_type *
+vector<T, P>::cdata() const noexcept
 {
 	return _data.get();
 }
@@ -1139,9 +1141,9 @@ vector<T>::cdata() const noexcept
  *
  * @return iterator pointing to the first element in the vector.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::begin()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::begin()
 {
 	return iterator(_data.get());
 }
@@ -1151,9 +1153,9 @@ vector<T>::begin()
  *
  * @return const_iterator pointing to the first element in the vector.
  */
-template <typename T>
-typename vector<T>::const_iterator
-vector<T>::begin() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_iterator
+vector<T, P>::begin() const noexcept
 {
 	return const_iterator(_data.get());
 }
@@ -1165,9 +1167,9 @@ vector<T>::begin() const noexcept
  *
  * @return const_iterator pointing to the first element in the vector.
  */
-template <typename T>
-typename vector<T>::const_iterator
-vector<T>::cbegin() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_iterator
+vector<T, P>::cbegin() const noexcept
 {
 	return const_iterator(_data.get());
 }
@@ -1177,9 +1179,9 @@ vector<T>::cbegin() const noexcept
  *
  * @return iterator referring to the past-the-end element in the vector.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::end()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::end()
 {
 	return iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
 }
@@ -1189,9 +1191,9 @@ vector<T>::end()
  *
  * @return const_iterator referring to the past-the-end element in the vector.
  */
-template <typename T>
-typename vector<T>::const_iterator
-vector<T>::end() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_iterator
+vector<T, P>::end() const noexcept
 {
 	return const_iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
 }
@@ -1203,9 +1205,9 @@ vector<T>::end() const noexcept
  *
  * @return const_iterator referring to the past-the-end element in the vector.
  */
-template <typename T>
-typename vector<T>::const_iterator
-vector<T>::cend() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_iterator
+vector<T, P>::cend() const noexcept
 {
 	return const_iterator(_data.get() + static_cast<std::ptrdiff_t>(_size));
 }
@@ -1215,9 +1217,9 @@ vector<T>::cend() const noexcept
  *
  * @return reverse_iterator pointing to the last element in the vector.
  */
-template <typename T>
-typename vector<T>::reverse_iterator
-vector<T>::rbegin()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::reverse_iterator
+vector<T, P>::rbegin()
 {
 	return reverse_iterator(end());
 }
@@ -1227,9 +1229,9 @@ vector<T>::rbegin()
  *
  * @return const_reverse_iterator pointing to the last element in the vector.
  */
-template <typename T>
-typename vector<T>::const_reverse_iterator
-vector<T>::rbegin() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reverse_iterator
+vector<T, P>::rbegin() const noexcept
 {
 	return const_reverse_iterator(cend());
 }
@@ -1241,9 +1243,9 @@ vector<T>::rbegin() const noexcept
  *
  * @return const_reverse_iterator pointing to the last element in the vector.
  */
-template <typename T>
-typename vector<T>::const_reverse_iterator
-vector<T>::crbegin() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reverse_iterator
+vector<T, P>::crbegin() const noexcept
 {
 	return const_reverse_iterator(cend());
 }
@@ -1254,9 +1256,9 @@ vector<T>::crbegin() const noexcept
  * @return reverse_iterator pointing to the theoretical element preceding the
  * first element in the vector.
  */
-template <typename T>
-typename vector<T>::reverse_iterator
-vector<T>::rend()
+template <typename T, template <typename> typename P>
+typename vector<T, P>::reverse_iterator
+vector<T, P>::rend()
 {
 	return reverse_iterator(begin());
 }
@@ -1267,9 +1269,9 @@ vector<T>::rend()
  * @return const_reverse_iterator pointing to the theoretical element preceding
  * the first element in the vector.
  */
-template <typename T>
-typename vector<T>::const_reverse_iterator
-vector<T>::rend() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reverse_iterator
+vector<T, P>::rend() const noexcept
 {
 	return const_reverse_iterator(cbegin());
 }
@@ -1282,9 +1284,9 @@ vector<T>::rend() const noexcept
  * @return const_reverse_iterator pointing to the theoretical element preceding
  * the first element in the vector.
  */
-template <typename T>
-typename vector<T>::const_reverse_iterator
-vector<T>::crend() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::const_reverse_iterator
+vector<T, P>::crend() const noexcept
 {
 	return const_reverse_iterator(cbegin());
 }
@@ -1302,9 +1304,9 @@ vector<T>::crend() const noexcept
  * vector.
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename T>
-slice<typename vector<T>::pointer>
-vector<T>::range(size_type start, size_type n)
+template <typename T, template <typename> typename P>
+slice<typename vector<T, P>::pointer>
+vector<T, P>::range(size_type start, size_type n)
 {
 	if (start + n > size())
 		throw std::out_of_range("vector::range");
@@ -1329,9 +1331,9 @@ vector<T>::range(size_type start, size_type n)
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 slice<range_snapshotting_iterator<T>>
-vector<T>::range(size_type start, size_type n, size_type snapshot_size)
+vector<T, P>::range(size_type start, size_type n, size_type snapshot_size)
 {
 	if (start + n > size())
 		throw std::out_of_range("vector::range");
@@ -1358,9 +1360,9 @@ vector<T>::range(size_type start, size_type n, size_type snapshot_size)
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.
  */
-template <typename T>
-slice<typename vector<T>::const_iterator>
-vector<T>::range(size_type start, size_type n) const
+template <typename T, template <typename> typename P>
+slice<typename vector<T, P>::const_iterator>
+vector<T, P>::range(size_type start, size_type n) const
 {
 	if (start + n > size())
 		throw std::out_of_range("vector::range");
@@ -1380,9 +1382,9 @@ vector<T>::range(size_type start, size_type n) const
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.
  */
-template <typename T>
-slice<typename vector<T>::const_iterator>
-vector<T>::crange(size_type start, size_type n) const
+template <typename T, template <typename> typename P>
+slice<typename vector<T, P>::const_iterator>
+vector<T, P>::crange(size_type start, size_type n) const
 {
 	if (start + n > size())
 		throw std::out_of_range("vector::crange");
@@ -1396,9 +1398,9 @@ vector<T>::crange(size_type start, size_type n) const
  *
  * @return true if container is empty, false otherwise.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 constexpr bool
-vector<T>::empty() const noexcept
+vector<T, P>::empty() const noexcept
 {
 	return _size == 0;
 }
@@ -1406,9 +1408,9 @@ vector<T>::empty() const noexcept
 /**
  * @return number of elements.
  */
-template <typename T>
-typename vector<T>::size_type
-vector<T>::size() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::size_type
+vector<T, P>::size() const noexcept
 {
 	return _size;
 }
@@ -1417,9 +1419,9 @@ vector<T>::size() const noexcept
  * @return maximum number of elements the container is able to hold due to PMDK
  * limitations.
  */
-template <typename T>
-constexpr typename vector<T>::size_type
-vector<T>::max_size() const noexcept
+template <typename T, template <typename> typename P>
+constexpr typename vector<T, P>::size_type
+vector<T, P>::max_size() const noexcept
 {
 	return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(value_type);
 }
@@ -1442,9 +1444,9 @@ vector<T>::max_size() const noexcept
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::reserve(size_type capacity_new)
+vector<T, P>::reserve(size_type capacity_new)
 {
 	if (capacity_new <= _capacity)
 		return;
@@ -1456,9 +1458,9 @@ vector<T>::reserve(size_type capacity_new)
 /**
  * @return number of elements that can be held in currently allocated storage
  */
-template <typename T>
-typename vector<T>::size_type
-vector<T>::capacity() const noexcept
+template <typename T, template <typename> typename P>
+typename vector<T, P>::size_type
+vector<T, P>::capacity() const noexcept
 {
 	return _capacity;
 }
@@ -1477,9 +1479,9 @@ vector<T>::capacity() const noexcept
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::shrink_to_fit()
+vector<T, P>::shrink_to_fit()
 {
 	size_type capacity_new = size();
 	if (capacity() == capacity_new)
@@ -1497,9 +1499,9 @@ vector<T>::shrink_to_fit()
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::clear()
+vector<T, P>::clear()
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] { shrink(0); });
@@ -1517,9 +1519,9 @@ vector<T>::clear()
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::free_data()
+vector<T, P>::free_data()
 {
 	if (_data == nullptr)
 		return;
@@ -1552,9 +1554,9 @@ vector<T>::free_data()
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::insert(const_iterator pos, const value_type &value)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::insert(const_iterator pos, const value_type &value)
 {
 	return insert(pos, 1, value);
 }
@@ -1583,9 +1585,9 @@ vector<T>::insert(const_iterator pos, const value_type &value)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::insert(const_iterator pos, value_type &&value)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::insert(const_iterator pos, value_type &&value)
 {
 	pool_base pb = get_pool();
 
@@ -1627,9 +1629,10 @@ vector<T>::insert(const_iterator pos, value_type &&value)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::insert(const_iterator pos, size_type count,
+		     const value_type &value)
 {
 	pool_base pb = get_pool();
 
@@ -1678,12 +1681,12 @@ vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
-typename vector<T>::iterator
-vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
+typename vector<T, P>::iterator
+vector<T, P>::insert(const_iterator pos, InputIt first, InputIt last)
 {
 	pool_base pb = get_pool();
 
@@ -1722,9 +1725,10 @@ vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::insert(const_iterator pos, std::initializer_list<value_type> ilist)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::insert(const_iterator pos,
+		     std::initializer_list<value_type> ilist)
 {
 	return insert(pos, ilist.begin(), ilist.end());
 }
@@ -1756,10 +1760,10 @@ vector<T>::insert(const_iterator pos, std::initializer_list<value_type> ilist)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <class... Args>
-typename vector<T>::iterator
-vector<T>::emplace(const_iterator pos, Args &&... args)
+typename vector<T, P>::iterator
+vector<T, P>::emplace(const_iterator pos, Args &&... args)
 {
 	pool_base pb = get_pool();
 
@@ -1806,10 +1810,10 @@ vector<T>::emplace(const_iterator pos, Args &&... args)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <class... Args>
-typename vector<T>::reference
-vector<T>::emplace_back(Args &&... args)
+typename vector<T, P>::reference
+vector<T, P>::emplace_back(Args &&... args)
 {
 	/*
 	 * emplace() cannot be used here, because emplace_back() doesn't require
@@ -1867,9 +1871,9 @@ vector<T>::emplace_back(Args &&... args)
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::erase(const_iterator pos)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::erase(const_iterator pos)
 {
 	return erase(pos, pos + 1);
 }
@@ -1896,9 +1900,9 @@ vector<T>::erase(const_iterator pos)
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
  */
-template <typename T>
-typename vector<T>::iterator
-vector<T>::erase(const_iterator first, const_iterator last)
+template <typename T, template <typename> typename P>
+typename vector<T, P>::iterator
+vector<T, P>::erase(const_iterator first, const_iterator last)
 {
 	size_type idx = static_cast<size_type>(
 		std::distance(const_iterator(&_data[0]), first));
@@ -1944,9 +1948,9 @@ vector<T>::erase(const_iterator first, const_iterator last)
  * @throw rethrows constructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::push_back(const value_type &value)
+vector<T, P>::push_back(const value_type &value)
 {
 	emplace_back(value);
 }
@@ -1967,9 +1971,9 @@ vector<T>::push_back(const value_type &value)
  * @throw rethrows constructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::push_back(value_type &&value)
+vector<T, P>::push_back(value_type &&value)
 {
 	emplace_back(std::move(value));
 }
@@ -1984,9 +1988,9 @@ vector<T>::push_back(value_type &&value)
  * @throw transaction_error when snapshotting failed.
  * @throw rethrows desctructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::pop_back()
+vector<T, P>::pop_back()
 {
 	if (empty())
 		return;
@@ -2011,9 +2015,9 @@ vector<T>::pop_back()
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::resize(size_type count)
+vector<T, P>::resize(size_type count)
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
@@ -2044,9 +2048,9 @@ vector<T>::resize(size_type count)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::resize(size_type count, const value_type &value)
+vector<T, P>::resize(size_type count, const value_type &value)
 {
 	if (_capacity == count)
 		return;
@@ -2066,9 +2070,9 @@ vector<T>::resize(size_type count, const value_type &value)
 /**
  * Exchanges the contents of the container with other transactionally.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::swap(vector &other)
+vector<T, P>::swap(vector &other)
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
@@ -2095,9 +2099,9 @@ vector<T>::swap(vector &other)
  * @throw pmem::transaction_alloc_error when allocating memory for underlying
  * array in transaction failed.
  */
-template <typename T>
+template <typename T, template <typename> typename PersistentPtrType>
 void
-vector<T>::alloc(size_type capacity_new)
+vector<T, PersistentPtrType>::alloc(size_type capacity_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(_data == nullptr);
@@ -2116,7 +2120,7 @@ vector<T>::alloc(size_type capacity_new)
 	 * assign it to _data, because when pmemobj_tx_alloc fails, it aborts
 	 * transaction.
 	 */
-	persistent_ptr<T[]> res =
+	PersistentPtrType<T[]> res =
 		pmemobj_tx_alloc(sizeof(value_type) * capacity_new,
 				 detail::type_num<value_type>());
 
@@ -2140,9 +2144,9 @@ vector<T>::alloc(size_type capacity_new)
  *
  * @throw pool_error if vector doesn't reside on pmem.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::check_pmem()
+vector<T, P>::check_pmem()
 {
 	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pmem::pool_error("Invalid pool handle.");
@@ -2155,9 +2159,9 @@ vector<T>::check_pmem()
  * @throw pmem::transaction_scope_error if current transaction stage is not
  * equal to TX_STAGE_WORK.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::check_tx_stage_work()
+vector<T, P>::check_tx_stage_work()
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw pmem::transaction_scope_error(
@@ -2182,10 +2186,10 @@ vector<T>::check_tx_stage_work()
  *
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename... Args>
 void
-vector<T>::construct_at_end(size_type count, Args &&... args)
+vector<T, P>::construct_at_end(size_type count, Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(_capacity >= count + _size);
@@ -2220,12 +2224,12 @@ vector<T>::construct_at_end(size_type count, Args &&... args)
  *
  * @throw rethrows constructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-vector<T>::construct_at_end(InputIt first, InputIt last)
+vector<T, P>::construct_at_end(InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	difference_type range_size = std::distance(first, last);
@@ -2253,9 +2257,9 @@ vector<T>::construct_at_end(InputIt first, InputIt last)
  * @throw pmem::transaction_free_error when freeing old underlying array
  * failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::dealloc()
+vector<T, P>::dealloc()
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -2277,9 +2281,9 @@ vector<T>::dealloc()
  *
  * @pre underlying array must reside in persistent memory pool.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 pool_base
-vector<T>::get_pool() const noexcept
+vector<T, P>::get_pool() const noexcept
 {
 	auto pop = pmemobj_pool_by_ptr(this);
 	assert(pop != nullptr);
@@ -2293,9 +2297,10 @@ vector<T>::get_pool() const noexcept
  * copy constructor in case destination memory is not initialized
  * or copy assignment operator otherwise.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::move_elements_backward(pointer first, pointer last, pointer d_last)
+vector<T, P>::move_elements_backward(pointer first, pointer last,
+				     pointer d_last)
 {
 	while (first != last && d_last >= cend())
 		detail::create<value_type>(--d_last, std::move(*(--last)));
@@ -2311,10 +2316,10 @@ vector<T>::move_elements_backward(pointer first, pointer last, pointer d_last)
  * copy constructor in case destination memory is not initialized
  * or copy assignment operator otherwise.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename InputIt>
 void
-vector<T>::construct_or_assign(size_type idx, InputIt first, InputIt last)
+vector<T, P>::construct_or_assign(size_type idx, InputIt first, InputIt last)
 {
 	auto count = static_cast<size_type>(std::distance(first, last));
 	auto dest = _data.get() + idx;
@@ -2354,10 +2359,10 @@ vector<T>::construct_or_assign(size_type idx, InputIt first, InputIt last)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 template <typename InputIt>
 void
-vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
+vector<T, P>::internal_insert(size_type idx, InputIt first, InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -2447,9 +2452,9 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::realloc(size_type capacity_new)
+vector<T, P>::realloc(size_type capacity_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -2490,9 +2495,9 @@ vector<T>::realloc(size_type capacity_new)
  *
  * @return recommended new capacity.
  */
-template <typename T>
-typename vector<T>::size_type
-vector<T>::get_recommended_capacity(size_type at_least) const
+template <typename T, template <typename> typename P>
+typename vector<T, P>::size_type
+vector<T, P>::get_recommended_capacity(size_type at_least) const
 {
 	return detail::next_pow_2(at_least);
 }
@@ -2513,9 +2518,9 @@ vector<T>::get_recommended_capacity(size_type at_least) const
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::shrink(size_type size_new)
+vector<T, P>::shrink(size_type size_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
@@ -2537,9 +2542,9 @@ vector<T>::shrink(size_type size_new)
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
+vector<T, P>::snapshot_data(size_type idx_first, size_type idx_last)
 {
 	detail::conditional_add_to_tx(_data.get() + idx_first,
 				      idx_last - idx_first);
@@ -2551,14 +2556,14 @@ vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
  * Checks if containers have the same number of elements and each element in lhs
  * is equal to element in rhs at the same position.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of the containers are equal, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator==(const vector<T> &lhs, const vector<T> &rhs)
+operator==(const vector<T, P> &lhs, const vector<T, P> &rhs)
 {
 	return lhs.size() == rhs.size() &&
 		std::equal(lhs.begin(), lhs.end(), rhs.begin());
@@ -2570,14 +2575,14 @@ operator==(const vector<T> &lhs, const vector<T> &rhs)
  * Checks if containers have the same number of elements and each element in lhs
  * is equal to element in rhs at the same position.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of the containers are not equal, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator!=(const vector<T> &lhs, const vector<T> &rhs)
+operator!=(const vector<T, P> &lhs, const vector<T, P> &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -2586,15 +2591,15 @@ operator!=(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator<(const vector<T> &lhs, const vector<T> &rhs)
+operator<(const vector<T, P> &lhs, const vector<T, P> &rhs)
 {
 	return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
 					    rhs.end());
@@ -2604,15 +2609,15 @@ operator<(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator<=(const vector<T> &lhs, const vector<T> &rhs)
+operator<=(const vector<T, P> &lhs, const vector<T, P> &rhs)
 {
 	return !(rhs < lhs);
 }
@@ -2621,16 +2626,16 @@ operator<=(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
  */
 
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator>(const vector<T> &lhs, const vector<T> &rhs)
+operator>(const vector<T, P> &lhs, const vector<T, P> &rhs)
 {
 	return rhs < lhs;
 }
@@ -2639,15 +2644,15 @@ operator>(const vector<T> &lhs, const vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator>=(const vector<T> &lhs, const vector<T> &rhs)
+operator>=(const vector<T, P> &lhs, const vector<T, P> &rhs)
 {
 	return !(lhs < rhs);
 }
@@ -2658,14 +2663,14 @@ operator>=(const vector<T> &lhs, const vector<T> &rhs)
  * Checks if containers have the same number of elements and each element in lhs
  * is equal to element in rhs at the same position.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator==(const vector<T> &lhs, const std::vector<T> &rhs)
+operator==(const vector<T, P> &lhs, const std::vector<T> &rhs)
 {
 	return lhs.size() == rhs.size() &&
 		std::equal(lhs.begin(), lhs.end(), rhs.begin());
@@ -2677,14 +2682,14 @@ operator==(const vector<T> &lhs, const std::vector<T> &rhs)
  * Checks if containers have the same number of elements and each element in lhs
  * is equal to element in rhs at the same position.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator!=(const vector<T> &lhs, const std::vector<T> &rhs)
+operator!=(const vector<T, P> &lhs, const std::vector<T> &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -2693,15 +2698,15 @@ operator!=(const vector<T> &lhs, const std::vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator<(const vector<T> &lhs, const std::vector<T> &rhs)
+operator<(const vector<T, P> &lhs, const std::vector<T> &rhs)
 {
 	return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
 					    rhs.end());
@@ -2711,15 +2716,15 @@ operator<(const vector<T> &lhs, const std::vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
  * @param[in] rhs second vector of ype std::vector<T>
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator<=(const vector<T> &lhs, const std::vector<T> &rhs)
+operator<=(const vector<T, P> &lhs, const std::vector<T> &rhs)
 {
 	return !(std::lexicographical_compare(rhs.begin(), rhs.end(),
 					      lhs.begin(), lhs.end()));
@@ -2729,16 +2734,16 @@ operator<=(const vector<T> &lhs, const std::vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
  */
 
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator>(const vector<T> &lhs, const std::vector<T> &rhs)
+operator>(const vector<T, P> &lhs, const std::vector<T> &rhs)
 {
 	return !(lhs <= rhs);
 }
@@ -2747,15 +2752,15 @@ operator>(const vector<T> &lhs, const std::vector<T> &rhs)
  * Comparison operator. Compares the contents of two containers
  * lexicographically.
  *
- * @param[in] lhs first vector of type pmem::obj::experimental::vector<T>
+ * @param[in] lhs first vector of type pmem::obj::experimental::vector<T, P>
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator>=(const vector<T> &lhs, const std::vector<T> &rhs)
+operator>=(const vector<T, P> &lhs, const std::vector<T> &rhs)
 {
 	return !(lhs < rhs);
 }
@@ -2767,13 +2772,13 @@ operator>=(const vector<T> &lhs, const std::vector<T> &rhs)
  * is equal to element in rhs at the same position.
  *
  * @param[in] lhs first vector of type std::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of the containers are equal, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator==(const std::vector<T> &lhs, const vector<T> &rhs)
+operator==(const std::vector<T> &lhs, const vector<T, P> &rhs)
 {
 	return rhs == lhs;
 }
@@ -2785,13 +2790,13 @@ operator==(const std::vector<T> &lhs, const vector<T> &rhs)
  * is equal to element in rhs at the same position.
  *
  * @param[in] lhs first vector of type std::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of the containers are not equal, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator!=(const std::vector<T> &lhs, const vector<T> &rhs)
+operator!=(const std::vector<T> &lhs, const vector<T, P> &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -2801,14 +2806,14 @@ operator!=(const std::vector<T> &lhs, const vector<T> &rhs)
  * lexicographically.
  *
  * @param[in] lhs first vector of type std::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator<(const std::vector<T> &lhs, const vector<T> &rhs)
+operator<(const std::vector<T> &lhs, const vector<T, P> &rhs)
 {
 	return rhs > lhs;
 }
@@ -2818,14 +2823,14 @@ operator<(const std::vector<T> &lhs, const vector<T> &rhs)
  * lexicographically.
  *
  * @param[in] lhs first vector of ype std::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator<=(const std::vector<T> &lhs, const vector<T> &rhs)
+operator<=(const std::vector<T> &lhs, const vector<T, P> &rhs)
 {
 	return !(rhs < lhs);
 }
@@ -2835,15 +2840,15 @@ operator<=(const std::vector<T> &lhs, const vector<T> &rhs)
  * lexicographically.
  *
  * @param[in] lhs first vector of type std::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
  */
 
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator>(const std::vector<T> &lhs, const vector<T> &rhs)
+operator>(const std::vector<T> &lhs, const vector<T, P> &rhs)
 {
 	return rhs < lhs;
 }
@@ -2853,14 +2858,14 @@ operator>(const std::vector<T> &lhs, const vector<T> &rhs)
  * lexicographically.
  *
  * @param[in] lhs first vector of type std::vector<T>
- * @param[in] rhs second vector of type pmem::obj::experimental::vector<T>
+ * @param[in] rhs second vector of type pmem::obj::experimental::vector<T, P>
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 bool
-operator>=(const std::vector<T> &lhs, const vector<T> &rhs)
+operator>=(const std::vector<T> &lhs, const vector<T, P> &rhs)
 {
 	return !(lhs < rhs);
 }
@@ -2871,9 +2876,9 @@ operator>=(const std::vector<T> &lhs, const vector<T> &rhs)
  * @param[in] lhs first vector
  * @param[in] rhs second vector
  */
-template <typename T>
+template <typename T, template <typename> typename P>
 void
-swap(vector<T> &lhs, vector<T> &rhs)
+swap(vector<T, P> &lhs, vector<T, P> &rhs)
 {
 	lhs.swap(rhs);
 }

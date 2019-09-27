@@ -606,6 +606,19 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
+	/* Test that scoped_lock traits is working correctly */
+#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
+	UT_ASSERT(pmem::obj::experimental::internal::scoped_lock_traits<
+			  tbb::spin_rw_mutex::scoped_lock>::
+			  initial_rw_state(true) == false);
+#else
+	UT_ASSERT(pmem::obj::experimental::internal::scoped_lock_traits<
+			  pmem::obj::experimental::internal::
+				  shared_mutex_scoped_lock<
+					  pmem::obj::shared_mutex>>::
+			  initial_rw_state(true) == true);
+#endif
+
 	size_t concurrency = 8;
 	if (On_drd)
 		concurrency = 2;

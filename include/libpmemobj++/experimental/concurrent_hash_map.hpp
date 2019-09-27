@@ -1496,6 +1496,20 @@ operator!=(const hash_map_iterator<Container, M> &i,
 
 /**
  * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
+ * The implementation is based on a concurrent hash table algorithm
+ * (https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf) where elements
+ * assigned to buckets based on a hash code are calculated from a key.
+ * In addition to concurrent find, insert, and erase operations, the algorithm
+ * employs resizing and on-demand per-bucket rehashing. The hash table consists
+ * of an array of buckets, and each bucket consists of a list of nodes and a
+ * read-write lock to control concurrent access by multiple threads.
+ *
+ * Each time, the pool with concurrent_hash_map is being opened, the
+ * concurrent_hash_map requires runtime_initialize() to be called (in order to
+ * recalculate mask and restore the size).
+ *
+ * find(), insert(), erase() (and all overloads) are guaranteed to be
+ * thread-safe.
  *
  * MutexType defines type of read write lock used in concurrent_hash_map.
  * ScopedLockType defines a mutex wrapper that provides RAII-style mechanism
@@ -1514,6 +1528,9 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * Implementing all optional methods and supplying is_writer variable can
  * improve performance if MutexType supports efficient upgrading and
  * downgrading operations.
+ *
+ * The typical usage example would be:
+ * @snippet doc_snippets/concurrent_hash_map.cpp concurrent_hash_map_example
  */
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>

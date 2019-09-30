@@ -179,7 +179,9 @@ struct array {
 
 		transaction::run(pop, [&] {
 			detail::conditional_add_to_tx(this);
-			std::copy(other.cbegin(), other.cend(), _get_data());
+			detail::conditional_add_to_tx(&other);
+			std::move(other._get_data(), other._get_data() + size(),
+				  _get_data());
 		});
 
 		return *this;

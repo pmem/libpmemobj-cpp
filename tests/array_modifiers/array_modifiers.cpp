@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "helper_classes.hpp"
 #include "unittest.hpp"
 
 #include <algorithm>
@@ -43,10 +44,14 @@
 namespace pmemobj_exp = pmem::obj::experimental;
 
 using array_type = pmemobj_exp::array<double, 5>;
+using array_move_type = pmemobj_exp::array<move_only, 5>;
 
 struct root {
 	pmem::obj::persistent_ptr<array_type> ptr_a;
 	pmem::obj::persistent_ptr<array_type> ptr_b;
+
+	pmem::obj::persistent_ptr<array_move_type> ptr_c;
+	pmem::obj::persistent_ptr<array_move_type> ptr_d;
 };
 
 void
@@ -58,6 +63,11 @@ test_modifiers(pmem::obj::pool<struct root> &pop)
 		pmem::obj::transaction::run(pop, [&] {
 			r->ptr_a = pmem::obj::make_persistent<array_type>();
 			r->ptr_b = pmem::obj::make_persistent<array_type>();
+
+			r->ptr_c =
+				pmem::obj::make_persistent<array_move_type>();
+			r->ptr_d =
+				pmem::obj::make_persistent<array_move_type>();
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
@@ -84,8 +94,29 @@ test_modifiers(pmem::obj::pool<struct root> &pop)
 
 	try {
 		pmem::obj::transaction::run(pop, [&] {
+			*(r->ptr_c) = std::move(*(r->ptr_d));
+			for (size_t i = 0; i < r->ptr_c->size(); i++)
+				UT_ASSERTeq(r->ptr_d->at(i).value, 0);
+			for (size_t i = 0; i < r->ptr_c->size(); i++)
+				UT_ASSERTeq(r->ptr_c->at(i).value, 1);
+
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	for (size_t i = 0; i < r->ptr_c->size(); i++)
+		UT_ASSERT(r->ptr_d->at(i).value = 1);
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
 			pmem::obj::delete_persistent<array_type>(r->ptr_a);
 			pmem::obj::delete_persistent<array_type>(r->ptr_b);
+
+			pmem::obj::delete_persistent<array_move_type>(r->ptr_c);
+			pmem::obj::delete_persistent<array_move_type>(r->ptr_d);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

@@ -198,6 +198,16 @@ public:
 };
 
 /**
+ * Custom layout error class.
+ *
+ * Thrown when data layout is different than expected by the library.
+ */
+class layout_error : public std::runtime_error {
+public:
+	using std::runtime_error::runtime_error;
+};
+
+/**
  * Custom ctl error class.
  *
  * Thrown on ctl_[get|set|exec] failure.

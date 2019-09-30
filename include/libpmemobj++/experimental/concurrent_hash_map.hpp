@@ -728,11 +728,12 @@ public:
 	struct bucket {
 		using mutex_t = MutexType;
 		using scoped_t = ScopedLockType;
+
 		/** Bucket mutex. */
 		mutex_t mutex;
 
 		/** Atomic flag to indicate if bucket rehashed */
-		p<std::atomic<bool>> rehashed;
+		p<std::atomic<uint64_t>> rehashed;
 
 		/** List of the nodes stored in the bucket. */
 		node_base_ptr_t node_list;
@@ -800,16 +801,35 @@ public:
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
+	/** Compat and incompat features of a layout */
+	struct features {
+		uint32_t compat;
+		uint32_t incompat;
+	};
+
+	/** Features supported by this header */
+	static constexpr features header_features = {0, 0};
+
+	/* --------------------------------------------------------- */
+
 	/** ID of persistent memory pool where hash map resides. */
 	p<uint64_t> my_pool_uuid;
+
+	/** Specifies features of a hashmap, used to check compatibility between
+	 * header and the data */
+	features layout_features = (features)header_features;
 
 	/** In future, my_mask can be implemented using v<> (8 bytes
 	 * overhead) */
 	std::aligned_storage<sizeof(size_t), sizeof(size_t)>::type
 		my_mask_reserved;
+
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
 	std::atomic<hashcode_t> my_mask;
+
+	/** Padding to the end of cacheline */
+	std::aligned_storage<32, 8>::type padding1;
 
 	/**
 	 * Segment pointers table. Also prevents false sharing between my_mask
@@ -822,11 +842,19 @@ public:
 	/** Size of container in stored items. */
 	p<std::atomic<size_type>> my_size;
 
-	/** Zero segment. */
-	bucket my_embedded_segment[embedded_buckets];
+	/** Padding to the end of cacheline */
+	std::aligned_storage<24, 8>::type padding2;
+
+	/** Reserved for future use */
+	std::aligned_storage<64, 8>::type reserved;
 
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
+
+	/** Zero segment. */
+	bucket my_embedded_segment[embedded_buckets];
+
+	/* --------------------------------------------------------- */
 
 	const std::atomic<hashcode_t> &
 	mask() const noexcept
@@ -1424,6 +1452,9 @@ public:
 		typename internal::key_equal_type<Hash, KeyEqual>::type;
 
 protected:
+	using hash_map_base::header_features;
+	using hash_map_base::layout_features;
+
 	friend class const_accessor;
 	struct node;
 
@@ -1738,6 +1769,14 @@ protected:
 		pop.persist(b_new->rehashed);
 	}
 
+	void
+	check_features()
+	{
+		if (layout_features.incompat != header_features.incompat)
+			throw pmem::layout_error(
+				"Incompat flags mismatch, for more details go to: https://pmem.io/pmdk/cpp_obj/ \n");
+	}
+
 public:
 	class accessor;
 	/**
@@ -1920,10 +1959,15 @@ public:
 	 * Intialize persistent concurrent hash map after process restart.
 	 * MUST be called everytime after process restart.
 	 * Not thread safe.
+	 *
+	 * @throw pmem::layout_error if hashmap was created using incompatible
+	 * version of libpmemobj-cpp
 	 */
 	void
 	runtime_initialize(bool graceful_shutdown = false)
 	{
+		check_features();
+
 #if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&this->my_mask,
 						 sizeof(this->my_mask));

@@ -219,6 +219,7 @@ function tests_package() {
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 			-DTESTS_USE_VALGRIND=0 \
+			-DBUILD_EXAMPLES=0 \
 			-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
 	make -j2

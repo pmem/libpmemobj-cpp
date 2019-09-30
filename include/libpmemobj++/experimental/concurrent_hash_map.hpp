@@ -1530,11 +1530,6 @@ protected:
 		bucket *my_b;
 
 	public:
-		bucket_accessor()
-		{
-			my_b = nullptr;
-		}
-
 		bucket_accessor(concurrent_hash_map *base, const hashcode_t h,
 				bool writer = false)
 		{
@@ -2417,17 +2412,9 @@ protected:
 	/* Obtain pointer to node and lock bucket */
 	template <bool Bucket_rw_lock, typename K>
 	persistent_node_ptr_t
-	get_node(const K &key, const hashcode_t h, hashcode_t &m,
-		 bucket_accessor &b)
+	get_node(const K &key, bucket_accessor &b)
 	{
-#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-		ANNOTATE_HAPPENS_AFTER(&this->my_mask);
-#endif
-
 		while (true) {
-			/* get bucket and acquire the lock */
-			b.acquire(this, h & m);
-
 			/* find a node */
 			auto n = search_bucket(key, b.get());
 
@@ -2443,11 +2430,6 @@ protected:
 						b.downgrade_to_reader();
 						return n;
 					}
-				}
-
-				if (check_mask_race(h, m)) {
-					b.release();
-					continue;
 				}
 			}
 
@@ -2504,6 +2486,10 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 	assert(!result || !result->my_node);
 
 	hashcode_t m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
+
 	assert((m & (m + 1)) == 0);
 
 	hashcode_t const h = hasher{}(key);
@@ -2511,11 +2497,19 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 	persistent_node_ptr_t node;
 
 	while (true) {
-		bucket_accessor b;
-		node = get_node<false>(key, h, m, b);
+		/* get bucket and acquire the lock */
+		bucket_accessor b(this, h & m);
+		node = get_node<false>(key, b);
 
-		if (!node)
-			return false;
+		if (!node) {
+			/* Element was possibly relocated, try again */
+			if (check_mask_race(h, m)) {
+				b.release();
+				continue;
+			} else {
+				return false;
+			}
+		}
 
 		/* No need to acquire the item or item acquired */
 		if (!result ||
@@ -2537,8 +2531,6 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		result->my_hash = h;
 	}
 
-	check_growth(m, 0);
-
 	return true;
 }
 
@@ -2555,6 +2547,10 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 	assert(!result || !result->my_node);
 
 	hashcode_t m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
+
 	assert((m & (m + 1)) == 0);
 
 	hashcode_t const h = hasher{}(key);
@@ -2564,10 +2560,19 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 	bool inserted = false;
 
 	while (true) {
-		bucket_accessor b;
-		node = get_node<true>(key, h, m, b);
+		/* get bucket and acquire the lock */
+		bucket_accessor b(this, h & m);
+		node = get_node<true>(key, b);
 
 		if (!node) {
+			/* Element was possibly relocated, try again */
+			if (check_mask_race(h, m)) {
+				b.release();
+				continue;
+			}
+
+			assert(b.is_writer());
+
 			/* insert and set flag to grow the container */
 			new_size = insert_new_node(b.get(), node,
 						   std::forward<Args>(args)...);

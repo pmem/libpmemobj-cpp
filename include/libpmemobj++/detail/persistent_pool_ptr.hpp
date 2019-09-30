@@ -319,7 +319,7 @@ public:
 	 * Swaps two persistent_pool_ptr objects of the same type.
 	 */
 	void
-	swap(persistent_pool_ptr &other) noexcept
+	swap(persistent_pool_ptr &other)
 	{
 		conditional_add_to_tx(this);
 		conditional_add_to_tx(&other);

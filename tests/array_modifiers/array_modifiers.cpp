@@ -122,6 +122,25 @@ test_modifiers(pmem::obj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			r->ptr_d =
+				pmem::obj::make_persistent<array_move_type>();
+			r->ptr_c = pmem::obj::make_persistent<array_move_type>(
+				std::move(*(r->ptr_d)));
+
+			for (size_t i = 0; i < r->ptr_c->size(); i++)
+				UT_ASSERTeq(r->ptr_d->at(i).value, 0);
+			for (size_t i = 0; i < r->ptr_c->size(); i++)
+				UT_ASSERTeq(r->ptr_c->at(i).value, 1);
+
+			pmem::obj::delete_persistent<array_move_type>(r->ptr_c);
+			pmem::obj::delete_persistent<array_move_type>(r->ptr_d);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
 	/*
 	 * All of following tests should fail - calling any array 'modifier'
 	 * on object which is not on pmem should throw exception.

@@ -122,6 +122,9 @@ struct array {
 
 	/**
 	 * Defaulted move constructor.
+	 *
+	 * Performs member-wise move but do NOT add moved-from array to the
+	 * transaction.
 	 */
 	array(array &&) = default;
 

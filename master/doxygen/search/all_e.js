@@ -18,6 +18,7 @@ var searchData=
   ['pexceptions_2ehpp',['pexceptions.hpp',['../pexceptions_8hpp.html',1,'']]],
   ['pext_2ehpp',['pext.hpp',['../pext_8hpp.html',1,'']]],
   ['plock',['plock',['../classpmem_1_1obj_1_1mutex.html#ade977fac648d994377bf07b53fc36415',1,'pmem::obj::mutex::plock()'],['../classpmem_1_1obj_1_1shared__mutex.html#adfc0eb55610e46a9ddc5ea4f64548954',1,'pmem::obj::shared_mutex::plock()'],['../classpmem_1_1obj_1_1timed__mutex.html#ae91f229fda6590917e3c2cbb0a547bca',1,'pmem::obj::timed_mutex::plock()']]],
+  ['pmem',['pmem',['../namespacepmem.html',1,'']]],
   ['pointer',['pointer',['../classpmem_1_1obj_1_1persistent__ptr.html#ad8000c13e9a76ddaae15a8df5344a5ba',1,'pmem::obj::persistent_ptr']]],
   ['pointer_5fto',['pointer_to',['../classpmem_1_1obj_1_1persistent__ptr.html#aff9a32d18e6ccaf34b1c08ca3ddeb473',1,'pmem::obj::persistent_ptr']]],
   ['pool',['pool',['../classpmem_1_1obj_1_1pool.html',1,'pmem::obj::pool&lt; T &gt;'],['../classpmem_1_1obj_1_1pool.html#ae26e5edd74a7fecaa683353fc22fe8b5',1,'pmem::obj::pool::pool() noexcept=default'],['../classpmem_1_1obj_1_1pool.html#aa5473cb18d6e9cd0ab88fc875c611e2b',1,'pmem::obj::pool::pool(const pool &amp;) noexcept=default'],['../classpmem_1_1obj_1_1pool.html#a41b44411aeb6b321e38d7378d5b62ece',1,'pmem::obj::pool::pool(pool &amp;&amp;) noexcept=default'],['../classpmem_1_1obj_1_1pool.html#a7b373fb46d72a5c395194ff71af8ff17',1,'pmem::obj::pool::pool(const pool_base &amp;pb) noexcept'],['../classpmem_1_1obj_1_1pool.html#a71e3d24e46a574a4cc092bdb1af57a3c',1,'pmem::obj::pool::pool(pool_base &amp;&amp;pb) noexcept']]],
@@ -26,6 +27,6 @@ var searchData=
   ['pool_5fby_5fpptr',['pool_by_pptr',['../utils_8hpp.html#a91c6d7a276ccbdfd1eee3f10431aa71f',1,'pmem::obj']]],
   ['pool_5fby_5fvptr',['pool_by_vptr',['../utils_8hpp.html#ac392b8f634101ffeebb3c6838ebe3f8a',1,'pmem::obj']]],
   ['pool_5ferror',['pool_error',['../classpmem_1_1pool__error.html',1,'pmem']]],
-  ['pop_5fback',['pop_back',['../classpmem_1_1obj_1_1experimental_1_1vector.html#a692a2011bfa77c667a8d8b417d9d445c',1,'pmem::obj::experimental::vector']]],
-  ['push_5fback',['push_back',['../classpmem_1_1obj_1_1experimental_1_1vector.html#ae3c2d7d88406a4f968d51a1570c75615',1,'pmem::obj::experimental::vector::push_back(const T &amp;value)'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#a744151a15dde1ad437d09630578275d6',1,'pmem::obj::experimental::vector::push_back(T &amp;&amp;value)']]]
+  ['pop_5fback',['pop_back',['../classpmem_1_1obj_1_1experimental_1_1basic__string.html#a8d659398a61aa62e67af30497d635388',1,'pmem::obj::experimental::basic_string::pop_back()'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#a692a2011bfa77c667a8d8b417d9d445c',1,'pmem::obj::experimental::vector::pop_back()']]],
+  ['push_5fback',['push_back',['../classpmem_1_1obj_1_1experimental_1_1basic__string.html#a65a5e19b05069281877348ddd4db3628',1,'pmem::obj::experimental::basic_string::push_back()'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#ae3c2d7d88406a4f968d51a1570c75615',1,'pmem::obj::experimental::vector::push_back(const T &amp;value)'],['../classpmem_1_1obj_1_1experimental_1_1vector.html#a744151a15dde1ad437d09630578275d6',1,'pmem::obj::experimental::vector::push_back(T &amp;&amp;value)']]]
 ];

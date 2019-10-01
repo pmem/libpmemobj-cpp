@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -125,7 +125,7 @@ $(function() {
 </li>
 <li>clear()
 : <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ab48a06395ce0af510bbea55c0805ce07">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#aa909b3f3973a73c5d29a8a0bad066b08">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#a01ab7fd432b9b54e8d4266bafeb843a0">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a800a206dfb1d76ce938b31d1ce9eed93">pmem::obj::experimental::vector&lt; T &gt;</a>
 </li>
 <li>close()
@@ -138,13 +138,13 @@ $(function() {
 : <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a037abcc78fa96219dc1a24587d628de6">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
 </li>
 <li>concurrent_hash_map()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#a9fb2e6ee9ce5871f792312796a4dc026">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#ac9d6bbe1f875e68c0642ad50f58b05ae">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 </li>
 <li>condition_variable()
 : <a class="el" href="classpmem_1_1obj_1_1condition__variable.html#a4f35240b1f5ab91e74f41a46628d588b">pmem::obj::condition_variable</a>
 </li>
 <li>const_accessor()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ad9ce42e885b65a01a349e01a49508841">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#aef28e9335d3b2180e15d2d8829cda2f4">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor</a>
 </li>
 <li>const_at()
 : <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a9f636840c77790207bb18ccb7f12d271">pmem::obj::experimental::array&lt; T, N &gt;</a>
@@ -152,20 +152,22 @@ $(function() {
 , <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a38fc08c07d12cdacc4426285962f0c21">pmem::obj::experimental::vector&lt; T &gt;</a>
 </li>
 <li>construct()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aa13ccf18ad5c4c53d0cd5578d865ba53">pmem::obj::experimental::vector&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1object__traits.html#ad3d7cc8a0b8ae83717143530b792b5dc">pmem::obj::object_traits&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1object__traits.html#a95742ee582bc789f4811766ae12052d3">pmem::obj::object_traits&lt; T &gt;</a>
 </li>
-<li>construct_range()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ab172bc0cb5958fbcd3a90792e3ff03a7">pmem::obj::experimental::vector&lt; T &gt;</a>
+<li>construct_at_end()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a3fe8967a50707c91717799c70893eaad">pmem::obj::experimental::vector&lt; T &gt;</a>
 </li>
-<li>construct_range_copy()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a53045e6cf37991db138155d3ae84e086">pmem::obj::experimental::vector&lt; T &gt;</a>
+<li>construct_or_assign()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae345f70da0b2a9fa2b01c8999627a7d5">pmem::obj::experimental::vector&lt; T &gt;</a>
 </li>
 <li>contiguous_iterator()
 : <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a95c79ab5a6ee557a94c269153aa50107">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
 </li>
+<li>copy()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ada2cc6b2a19aefdb0ae49fb42e217cb7">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
+</li>
 <li>count()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#a580e70dfca9cfe6af60b78837b7667f5">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#a2a20d6e9e9a1efed7bc3583f0f125d07">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 </li>
 <li>crange()
 : <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ad203a5c2cc81cdb75125c44cf2afb178">pmem::obj::experimental::array&lt; T, N &gt;</a>
@@ -177,8 +179,8 @@ $(function() {
 , <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a0767248672d1dde6231a2edf45e4edad">pmem::obj::experimental::vector&lt; T &gt;</a>
 </li>
 <li>create()
-: <a class="el" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1pool__base.html#ac374be421a551b71579b1143d4ffecbb">pmem::obj::pool_base</a>
+: <a class="el" href="classpmem_1_1obj_1_1pool.html#a32bc51b425f8e25cc03fdc307187566f">pmem::obj::pool&lt; T &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">pmem::obj::pool_base</a>
 </li>
 <li>crend()
 : <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ae40481521e7cca369e37989da830bc66">pmem::obj::experimental::array&lt; T, N &gt;</a>
@@ -189,10 +191,10 @@ $(function() {
 : <a class="el" href="classpmem_1_1obj_1_1pool.html#a7c170c19673a29ace63092d083781330">pmem::obj::pool&lt; T &gt;</a>
 </li>
 <li>ctl_get()
-: <a class="el" href="classpmem_1_1obj_1_1pool.html#ad9909db1249389347b4d81b00a5e3df6">pmem::obj::pool&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1pool.html#a8253223d35089f9736fe37cc1f38ed53">pmem::obj::pool&lt; T &gt;</a>
 </li>
 <li>ctl_set()
-: <a class="el" href="classpmem_1_1obj_1_1pool.html#a3ef9f3fd95a13e5a7361e756471e022b">pmem::obj::pool&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1pool.html#a3f19b41b5e921b5edd0cf46cab20369e">pmem::obj::pool&lt; T &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

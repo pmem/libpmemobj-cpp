@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>pmem</b></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -315,27 +315,24 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:acbef85f137ae5df463a88150f20a8383"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#acbef85f137ae5df463a88150f20a8383">check_tx_stage_work</a> ()</td></tr>
 <tr class="memdesc:acbef85f137ae5df463a88150f20a8383"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#acbef85f137ae5df463a88150f20a8383">More...</a><br /></td></tr>
 <tr class="separator:acbef85f137ae5df463a88150f20a8383"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa13ccf18ad5c4c53d0cd5578d865ba53"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:aa13ccf18ad5c4c53d0cd5578d865ba53"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aa13ccf18ad5c4c53d0cd5578d865ba53">construct</a> (size_type idx, size_type count, Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:aa13ccf18ad5c4c53d0cd5578d865ba53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#aa13ccf18ad5c4c53d0cd5578d865ba53">More...</a><br /></td></tr>
-<tr class="separator:aa13ccf18ad5c4c53d0cd5578d865ba53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab172bc0cb5958fbcd3a90792e3ff03a7"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
-<tr class="memitem:ab172bc0cb5958fbcd3a90792e3ff03a7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ab172bc0cb5958fbcd3a90792e3ff03a7">construct_range</a> (size_type idx, InputIt first, InputIt last)</td></tr>
-<tr class="memdesc:ab172bc0cb5958fbcd3a90792e3ff03a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ab172bc0cb5958fbcd3a90792e3ff03a7">More...</a><br /></td></tr>
-<tr class="separator:ab172bc0cb5958fbcd3a90792e3ff03a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53045e6cf37991db138155d3ae84e086"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
-<tr class="memitem:a53045e6cf37991db138155d3ae84e086"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a53045e6cf37991db138155d3ae84e086">construct_range_copy</a> (size_type idx, InputIt first, InputIt last)</td></tr>
-<tr class="memdesc:a53045e6cf37991db138155d3ae84e086"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a53045e6cf37991db138155d3ae84e086">More...</a><br /></td></tr>
-<tr class="separator:a53045e6cf37991db138155d3ae84e086"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ba47749f325a131514d16c42475c84e"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a6ba47749f325a131514d16c42475c84e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a6ba47749f325a131514d16c42475c84e">construct_at_end</a> (size_type count, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a6ba47749f325a131514d16c42475c84e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a6ba47749f325a131514d16c42475c84e">More...</a><br /></td></tr>
+<tr class="separator:a6ba47749f325a131514d16c42475c84e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fe8967a50707c91717799c70893eaad"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:a3fe8967a50707c91717799c70893eaad"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a3fe8967a50707c91717799c70893eaad">construct_at_end</a> (InputIt first, InputIt last)</td></tr>
+<tr class="memdesc:a3fe8967a50707c91717799c70893eaad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a3fe8967a50707c91717799c70893eaad">More...</a><br /></td></tr>
+<tr class="separator:a3fe8967a50707c91717799c70893eaad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a5a8edfd27ffe6744a36571982c6736"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a2a5a8edfd27ffe6744a36571982c6736">dealloc</a> ()</td></tr>
 <tr class="memdesc:a2a5a8edfd27ffe6744a36571982c6736"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a2a5a8edfd27ffe6744a36571982c6736">More...</a><br /></td></tr>
 <tr class="separator:a2a5a8edfd27ffe6744a36571982c6736"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0f76a5d515a8ddd6c9a0a867752cbbb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ad0f76a5d515a8ddd6c9a0a867752cbbb">get_pool</a> () const noexcept</td></tr>
 <tr class="memdesc:ad0f76a5d515a8ddd6c9a0a867752cbbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ad0f76a5d515a8ddd6c9a0a867752cbbb">More...</a><br /></td></tr>
 <tr class="separator:ad0f76a5d515a8ddd6c9a0a867752cbbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37b5953150fc9a2a3f6547f3ae77d64e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a37b5953150fc9a2a3f6547f3ae77d64e">insert_gap</a> (size_type idx, size_type count)</td></tr>
-<tr class="memdesc:a37b5953150fc9a2a3f6547f3ae77d64e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a37b5953150fc9a2a3f6547f3ae77d64e">More...</a><br /></td></tr>
-<tr class="separator:a37b5953150fc9a2a3f6547f3ae77d64e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade58548d4d1f86cc04690eac3fc58ccb"><td class="memTemplParams" colspan="2">template&lt;typename InputIt &gt; </td></tr>
+<tr class="memitem:ade58548d4d1f86cc04690eac3fc58ccb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ade58548d4d1f86cc04690eac3fc58ccb">internal_insert</a> (size_type idx, InputIt first, InputIt last)</td></tr>
+<tr class="memdesc:ade58548d4d1f86cc04690eac3fc58ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ade58548d4d1f86cc04690eac3fc58ccb">More...</a><br /></td></tr>
+<tr class="separator:ade58548d4d1f86cc04690eac3fc58ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25dcd57e3e0b76697e75f00689a5a44e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a25dcd57e3e0b76697e75f00689a5a44e">realloc</a> (size_type <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size</a>)</td></tr>
 <tr class="memdesc:a25dcd57e3e0b76697e75f00689a5a44e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a25dcd57e3e0b76697e75f00689a5a44e">More...</a><br /></td></tr>
 <tr class="separator:a25dcd57e3e0b76697e75f00689a5a44e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -348,6 +345,13 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:ac77324b7384335ba15f3224061f91666"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ac77324b7384335ba15f3224061f91666">snapshot_data</a> (size_type idx_first, size_type idx_last)</td></tr>
 <tr class="memdesc:ac77324b7384335ba15f3224061f91666"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ac77324b7384335ba15f3224061f91666">More...</a><br /></td></tr>
 <tr class="separator:ac77324b7384335ba15f3224061f91666"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae345f70da0b2a9fa2b01c8999627a7d5"><td class="memTemplParams" colspan="2">template&lt;typename InputIt &gt; </td></tr>
+<tr class="memitem:ae345f70da0b2a9fa2b01c8999627a7d5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae345f70da0b2a9fa2b01c8999627a7d5">construct_or_assign</a> (size_type idx, InputIt first, InputIt last)</td></tr>
+<tr class="memdesc:ae345f70da0b2a9fa2b01c8999627a7d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#ae345f70da0b2a9fa2b01c8999627a7d5">More...</a><br /></td></tr>
+<tr class="separator:ae345f70da0b2a9fa2b01c8999627a7d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0883f327dbe939a96407a4f917ab1546"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a0883f327dbe939a96407a4f917ab1546">move_elements_backward</a> (pointer first, pointer last, pointer d_last)</td></tr>
+<tr class="memdesc:a0883f327dbe939a96407a4f917ab1546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a0883f327dbe939a96407a4f917ab1546">More...</a><br /></td></tr>
+<tr class="separator:a0883f327dbe939a96407a4f917ab1546"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
@@ -1520,8 +1524,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="aa13ccf18ad5c4c53d0cd5578d865ba53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa13ccf18ad5c4c53d0cd5578d865ba53">&#9670;&nbsp;</a></span>construct()</h2>
+<a id="a6ba47749f325a131514d16c42475c84e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ba47749f325a131514d16c42475c84e">&#9670;&nbsp;</a></span>construct_at_end() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1534,14 +1538,8 @@ template&lt;typename... Args&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::construct </td>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::construct_at_end </td>
           <td>(</td>
-          <td class="paramtype">size_type&#160;</td>
-          <td class="paramname"><em>idx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">size_type&#160;</td>
           <td class="paramname"><em>count</em>, </td>
         </tr>
@@ -1565,10 +1563,9 @@ template&lt;typename... Args&gt; </div>
 </div><div class="memdoc">
 
 <p>Private helper function. </p>
-<p>Must be called during transaction. Assumes that there is free space for additional elements. Constructs elements at given index in underlying array based on given parameters.</p>
+<p>Must be called during transaction. Assumes that there is free space for additional elements. Constructs elements at index <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> in underlying array based on given parameters.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>underyling array index where new elements will be constructed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>number of elements to be constructed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>variadic template arguments for value_type constructor.</td></tr>
   </table>
@@ -1591,21 +1588,87 @@ args is valid argument for value_type constructor.</dd></dl>
 
 </div>
 </div>
-<a id="ab172bc0cb5958fbcd3a90792e3ff03a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab172bc0cb5958fbcd3a90792e3ff03a7">&#9670;&nbsp;</a></span>construct_range()</h2>
+<a id="a3fe8967a50707c91717799c70893eaad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fe8967a50707c91717799c70893eaad">&#9670;&nbsp;</a></span>construct_at_end() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
 <div class="memtemplate">
-template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type * &gt; </div>
+template&lt;typename InputIt, typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type * &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::construct_range </td>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::construct_at_end </td>
+          <td>(</td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>last</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>Must be called during transaction. Assumes that there is free space for additional elements and input arguments satisfy InputIterator requirements. Copies elements at index <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> in underlying array with the contents of the range [first, last). This overload participates in overload resolution only if InputIt satisfies InputIterator.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>first iterator. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>last iterator.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope. </dd>
+<dd>
+if initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end.">end()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end.">end()</a> + std::distance(first, last)) must be snapshotted in current transaction. </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> &gt;= std::distance(first, last) + <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> </dd>
+<dd>
+InputIt is InputIterator. </dd>
+<dd>
+InputIt::reference is valid argument for value_type constructor.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> + std::distance(first, last)</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae345f70da0b2a9fa2b01c8999627a7d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae345f70da0b2a9fa2b01c8999627a7d5">&#9670;&nbsp;</a></span>construct_or_assign()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIt &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::construct_or_assign </td>
           <td>(</td>
           <td class="paramtype">size_type&#160;</td>
           <td class="paramname"><em>idx</em>, </td>
@@ -1636,104 +1699,7 @@ template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iter
 </div><div class="memdoc">
 
 <p>Private helper function. </p>
-<p>Must be called during transaction. Assumes that there is free space for additional elements and input arguments satisfy InputIterator requirements. Moves elements at index idx in underlying array with the contents of the range [first, last). This overload participates in overload resolution only if InputIt satisfies InputIterator.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>underyling array index where new elements will be moved. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>first iterator. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>last iterator.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope. </dd>
-<dd>
-if initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end.">end()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end.">end()</a> + std::distance(first, last)) must be snapshotted in current transaction. </dd>
-<dd>
-<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> &gt;= std::distance(first, last) + <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> </dd>
-<dd>
-InputIt is InputIterator. </dd>
-<dd>
-std::move(InputIt::reference) is valid argument for value_type constructor.</dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> + std::distance(first, last)</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a53045e6cf37991db138155d3ae84e086"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53045e6cf37991db138155d3ae84e086">&#9670;&nbsp;</a></span>construct_range_copy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<div class="memtemplate">
-template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iterator&lt; InputIt &gt;::value, InputIt &gt;::type * &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::construct_range_copy </td>
-          <td>(</td>
-          <td class="paramtype">size_type&#160;</td>
-          <td class="paramname"><em>idx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">InputIt&#160;</td>
-          <td class="paramname"><em>first</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">InputIt&#160;</td>
-          <td class="paramname"><em>last</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Private helper function. </p>
-<p>Must be called during transaction. Assumes that there is free space for additional elements and input arguments satisfy InputIterator requirements. Copy-constructs elements before pos in underlying array with the contents of the range [first, last).</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>underyling array index where new elements will be constructed. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>first iterator. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>last iterator.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope. </dd>
-<dd>
-if initialized, range [<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end.">end()</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aac5d32b0060badd059f0ac41eb73bf54" title="Returns an iterator to past the end.">end()</a> + std::distance(first, last)) must be snapshotted in current transaction. </dd>
-<dd>
-<a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">capacity()</a> &gt;= std::distance(first, last) + <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> </dd>
-<dd>
-InputIt is InputIterator. </dd>
-<dd>
-InputIt::reference is valid argument for value_type copy constructor.</dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a47ae5f550e26055428de5c6bfbe103a8">size()</a> + std::distance(first, last)</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>It behaves similarly to std::move_backward but uses either copy constructor in case destination memory is not initialized or copy assignment operator otherwise. </p>
 
 </div>
 </div>
@@ -2643,19 +2609,21 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a37b5953150fc9a2a3f6547f3ae77d64e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37b5953150fc9a2a3f6547f3ae77d64e">&#9670;&nbsp;</a></span>insert_gap()</h2>
+<a id="ade58548d4d1f86cc04690eac3fc58ccb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade58548d4d1f86cc04690eac3fc58ccb">&#9670;&nbsp;</a></span>internal_insert()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T &gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIt &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::insert_gap </td>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::internal_insert </td>
           <td>(</td>
           <td class="paramtype">size_type&#160;</td>
           <td class="paramname"><em>idx</em>, </td>
@@ -2663,8 +2631,14 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_type&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>last</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2680,8 +2654,8 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Private helper function. </p>
-<p>Must be called during transaction. Inserts a gap for count elements starting at index idx. If there is not enough space available, reallocation occurs with new recommended size.</p>
-<p>param[in] idx index number where gap should be made. param[in] count length (expressed in number of elements) of the gap.</p>
+<p>Must be called during transaction. Inserts a gap for count elements starting at index idx. If there is not enough space available, reallocation occurs with new recommended size. Range specified by first, last is then inserted into the gap.</p>
+<p>param[in] idx index number where insert should be made param[in] first iterator to beginning of the range to insert param[in] last iterator to end of the range to insert</p>
 <dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope.</dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd>if there is not enough space for additional gap, capacity changes to <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a927b585f0409efb24076e2e51ad29646" title="Private helper function.">get_recommended_capacity()</a>.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
@@ -2721,6 +2695,53 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>maximum number of elements the container is able to hold due to PMDK limitations. </dd></dl>
+
+</div>
+</div>
+<a id="a0883f327dbe939a96407a4f917ab1546"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0883f327dbe939a96407a4f917ab1546">&#9670;&nbsp;</a></span>move_elements_backward()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector</a>&lt; T &gt;::move_elements_backward </td>
+          <td>(</td>
+          <td class="paramtype">pointer&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">pointer&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">pointer&#160;</td>
+          <td class="paramname"><em>d_last</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private helper function. </p>
+<p>It behaves similarly to std::move_backward but uses either copy constructor in case destination memory is not initialized or copy assignment operator otherwise. </p>
 
 </div>
 </div>

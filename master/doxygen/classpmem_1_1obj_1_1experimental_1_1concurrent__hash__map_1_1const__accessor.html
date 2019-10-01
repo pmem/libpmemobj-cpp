@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor Class Reference</title>
+<title>PMDK C++ bindings: pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>pmem</b></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">concurrent_hash_map</a></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html">const_accessor</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">concurrent_hash_map</a></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html">const_accessor</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -72,7 +72,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor Class Reference</div>  </div>
+<div class="title">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -81,62 +81,91 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="concurrent__hash__map_8hpp_source.html">libpmemobj++/experimental/concurrent_hash_map.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor:</div>
+Inheritance diagram for pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.png" usemap="#pmem::obj::experimental::concurrent_5Fhash_5Fmap_3C_20Key_2C_20T_2C_20Hash_2C_20KeyEqual_20_3E::const_5Faccessor_map" alt=""/>
-  <map id="pmem::obj::experimental::concurrent_5Fhash_5Fmap_3C_20Key_2C_20T_2C_20Hash_2C_20KeyEqual_20_3E::const_5Faccessor_map" name="pmem::obj::experimental::concurrent_5Fhash_5Fmap_3C_20Key_2C_20T_2C_20Hash_2C_20KeyEqual_20_3E::const_5Faccessor_map">
-<area href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html" title="Allows write access to elements and combines data access, locking, and garbage collection." alt="pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::accessor" shape="rect" coords="0,56,533,80"/>
+  <img src="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.png" usemap="#pmem::obj::experimental::concurrent_5Fhash_5Fmap_3C_20Key_2C_20T_2C_20Hash_2C_20KeyEqual_2C_20MutexType_2C_20ScopedLockType_20_3E::const_5Faccessor_map" alt=""/>
+  <map id="pmem::obj::experimental::concurrent_5Fhash_5Fmap_3C_20Key_2C_20T_2C_20Hash_2C_20KeyEqual_2C_20MutexType_2C_20ScopedLockType_20_3E::const_5Faccessor_map" name="pmem::obj::experimental::concurrent_5Fhash_5Fmap_3C_20Key_2C_20T_2C_20Hash_2C_20KeyEqual_2C_20MutexType_2C_20ScopedLockType_20_3E::const_5Faccessor_map">
+<area href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html" title="Allows write access to elements and combines data access, locking, and garbage collection." alt="pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::accessor" shape="rect" coords="0,56,711,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a5e0b99569412be417465b4e74cb80d2d"><td class="memItemLeft" align="right" valign="top"><a id="a5e0b99569412be417465b4e74cb80d2d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a5e0b99569412be417465b4e74cb80d2d">value_type</a> = const typename concurrent_hash_map::value_type</td></tr>
-<tr class="memdesc:a5e0b99569412be417465b4e74cb80d2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of value. <br /></td></tr>
-<tr class="separator:a5e0b99569412be417465b4e74cb80d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fd96701aa4d0ffbb5d731703cefc81d"><td class="memItemLeft" align="right" valign="top"><a id="a6fd96701aa4d0ffbb5d731703cefc81d"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a6fd96701aa4d0ffbb5d731703cefc81d">value_type</a> = const typename concurrent_hash_map::value_type</td></tr>
+<tr class="memdesc:a6fd96701aa4d0ffbb5d731703cefc81d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of value. <br /></td></tr>
+<tr class="separator:a6fd96701aa4d0ffbb5d731703cefc81d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a908c97c96f0fed4351dea8e96e8c1736"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a908c97c96f0fed4351dea8e96e8c1736">empty</a> () const</td></tr>
-<tr class="separator:a908c97c96f0fed4351dea8e96e8c1736"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b2a771d4a7c90f9fc137a477dfc3024"><td class="memItemLeft" align="right" valign="top"><a id="a0b2a771d4a7c90f9fc137a477dfc3024"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a0b2a771d4a7c90f9fc137a477dfc3024">release</a> ()</td></tr>
-<tr class="memdesc:a0b2a771d4a7c90f9fc137a477dfc3024"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release accessor. <br /></td></tr>
-<tr class="separator:a0b2a771d4a7c90f9fc137a477dfc3024"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7db2f65e741c1c53c55b1c3b32398d4"><td class="memItemLeft" align="right" valign="top">const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ae7db2f65e741c1c53c55b1c3b32398d4">operator*</a> () const</td></tr>
-<tr class="separator:ae7db2f65e741c1c53c55b1c3b32398d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9480eb77fddda731d2d360b767739c8"><td class="memItemLeft" align="right" valign="top">const_pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ab9480eb77fddda731d2d360b767739c8">operator-&gt;</a> () const</td></tr>
-<tr class="separator:ab9480eb77fddda731d2d360b767739c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9ce42e885b65a01a349e01a49508841"><td class="memItemLeft" align="right" valign="top"><a id="ad9ce42e885b65a01a349e01a49508841"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ad9ce42e885b65a01a349e01a49508841">const_accessor</a> ()</td></tr>
-<tr class="memdesc:ad9ce42e885b65a01a349e01a49508841"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create empty result. <br /></td></tr>
-<tr class="separator:ad9ce42e885b65a01a349e01a49508841"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8317b37eb4b590fbdb88d6eb3e8193e1"><td class="memItemLeft" align="right" valign="top"><a id="a8317b37eb4b590fbdb88d6eb3e8193e1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a8317b37eb4b590fbdb88d6eb3e8193e1">~const_accessor</a> ()</td></tr>
-<tr class="memdesc:a8317b37eb4b590fbdb88d6eb3e8193e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy result after releasing the underlying reference. <br /></td></tr>
-<tr class="separator:a8317b37eb4b590fbdb88d6eb3e8193e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bc8dc92c7e94a1a483f1bf2bb55f075"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a9bc8dc92c7e94a1a483f1bf2bb55f075">empty</a> () const</td></tr>
+<tr class="separator:a9bc8dc92c7e94a1a483f1bf2bb55f075"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af334b84d41ff1d249c72e5e99b4895d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#af334b84d41ff1d249c72e5e99b4895d3">release</a> ()</td></tr>
+<tr class="memdesc:af334b84d41ff1d249c72e5e99b4895d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release accessor.  <a href="#af334b84d41ff1d249c72e5e99b4895d3">More...</a><br /></td></tr>
+<tr class="separator:af334b84d41ff1d249c72e5e99b4895d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66e2b44b2bc4f44b0dc5117e2b2c5866"><td class="memItemLeft" align="right" valign="top">const_reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a66e2b44b2bc4f44b0dc5117e2b2c5866">operator*</a> () const</td></tr>
+<tr class="separator:a66e2b44b2bc4f44b0dc5117e2b2c5866"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bae54cc8874ad5ab8b4d7d9394c4cd3"><td class="memItemLeft" align="right" valign="top">const_pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a9bae54cc8874ad5ab8b4d7d9394c4cd3">operator-&gt;</a> () const</td></tr>
+<tr class="separator:a9bae54cc8874ad5ab8b4d7d9394c4cd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef28e9335d3b2180e15d2d8829cda2f4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#aef28e9335d3b2180e15d2d8829cda2f4">const_accessor</a> ()</td></tr>
+<tr class="memdesc:aef28e9335d3b2180e15d2d8829cda2f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create empty result.  <a href="#aef28e9335d3b2180e15d2d8829cda2f4">More...</a><br /></td></tr>
+<tr class="separator:aef28e9335d3b2180e15d2d8829cda2f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7785c00b8cd4f5019632bd65cc475723"><td class="memItemLeft" align="right" valign="top"><a id="a7785c00b8cd4f5019632bd65cc475723"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#a7785c00b8cd4f5019632bd65cc475723">~const_accessor</a> ()</td></tr>
+<tr class="memdesc:a7785c00b8cd4f5019632bd65cc475723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy result after releasing the underlying reference. <br /></td></tr>
+<tr class="separator:a7785c00b8cd4f5019632bd65cc475723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename Key, typename T, typename Hash, typename KeyEqual&gt;<br />
-class pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor</h3>
+<div class="textblock"><h3>template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt;<br />
+class pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor</h3>
 
 <p>Combines data access, locking, and garbage collection. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a908c97c96f0fed4351dea8e96e8c1736"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a908c97c96f0fed4351dea8e96e8c1736">&#9670;&nbsp;</a></span>empty()</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aef28e9335d3b2180e15d2d8829cda2f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef28e9335d3b2180e15d2d8829cda2f4">&#9670;&nbsp;</a></span>const_accessor()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::const_accessor::empty </td>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor::const_accessor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create empty result. </p>
+<p>Cannot be used in a transaction. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9bc8dc92c7e94a1a483f1bf2bb55f075"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bc8dc92c7e94a1a483f1bf2bb55f075">&#9670;&nbsp;</a></span>empty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor::empty </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -152,19 +181,19 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; <
 
 </div>
 </div>
-<a id="ae7db2f65e741c1c53c55b1c3b32398d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7db2f65e741c1c53c55b1c3b32398d4">&#9670;&nbsp;</a></span>operator*()</h2>
+<a id="a66e2b44b2bc4f44b0dc5117e2b2c5866"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66e2b44b2bc4f44b0dc5117e2b2c5866">&#9670;&nbsp;</a></span>operator*()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const_reference <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::const_accessor::operator* </td>
+          <td class="memname">const_reference <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor::operator* </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -180,19 +209,19 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; <
 
 </div>
 </div>
-<a id="ab9480eb77fddda731d2d360b767739c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab9480eb77fddda731d2d360b767739c8">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
+<a id="a9bae54cc8874ad5ab8b4d7d9394c4cd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bae54cc8874ad5ab8b4d7d9394c4cd3">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const_pointer <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::const_accessor::operator-&gt; </td>
+          <td class="memname">const_pointer <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor::operator-&gt; </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -205,6 +234,42 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; <
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>pointer to associated value in hash table. </dd></dl>
+
+</div>
+</div>
+<a id="af334b84d41ff1d249c72e5e99b4895d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af334b84d41ff1d249c72e5e99b4895d3">&#9670;&nbsp;</a></span>release()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor::release </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Release accessor. </p>
+<p>Cannot be called inside of a transaction.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called inside tranaction </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -2,7 +2,7 @@ var searchData=
 [
   ['abort',['abort',['../classpmem_1_1obj_1_1transaction.html#a4ff5a4362ea2a82830c7ca06a4358e05',1,'pmem::obj::transaction']]],
   ['accessor',['accessor',['../classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html',1,'pmem::obj::experimental::concurrent_hash_map']]],
-  ['acquire',['acquire',['../classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html#a19b459914019a1f4b429ae25bce255e2',1,'pmem::obj::experimental::concurrent_hash_map::bucket_accessor']]],
+  ['acquire',['acquire',['../classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html#a784c32859dbd3a614f3878bd7a62037a',1,'pmem::obj::experimental::concurrent_hash_map::bucket_accessor']]],
   ['add_5flock',['add_lock',['../classpmem_1_1obj_1_1transaction.html#aa5a605fedbe2a633f2921c2d0e9ccdde',1,'pmem::obj::transaction::add_lock(L &amp;lock, Locks &amp;... locks) noexcept'],['../classpmem_1_1obj_1_1transaction.html#af1b9ef6f5a49231fd2d9ccadc66fa132',1,'pmem::obj::transaction::add_lock() noexcept']]],
   ['alloc',['alloc',['../classpmem_1_1obj_1_1experimental_1_1vector.html#aba4cb6b3d5784b2df452b623b8c6417c',1,'pmem::obj::experimental::vector']]],
   ['allocate',['allocate',['../classpmem_1_1obj_1_1standard__alloc__policy.html#a97ba80d5a80a7f18d689816c334ae3dc',1,'pmem::obj::standard_alloc_policy::allocate()'],['../classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#ab6d4d8a0f1ace432d944275fc6452691',1,'pmem::obj::standard_alloc_policy&lt; void &gt;::allocate()'],['../classpmem_1_1obj_1_1experimental_1_1basic__string.html#a9b3e6cd3ac6395a99501919abe4091b5',1,'pmem::obj::experimental::basic_string::allocate()']]],

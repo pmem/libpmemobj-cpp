@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/specialization.hpp>
-#include <libpmemobj.h>
+#include <libpmemobj/base.h>
 
 /* Windows has a max macro which collides with std::numeric_limits::max */
 #if defined(max) && defined(_WIN32)

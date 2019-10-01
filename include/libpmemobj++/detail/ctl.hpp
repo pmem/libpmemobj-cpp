@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_CTL_HPP
 #define LIBPMEMOBJ_CPP_CTL_HPP
 
-#include <libpmemobj.h>
+#include <libpmemobj/ctl.h>
 #include <string>
 
 #include <cerrno>

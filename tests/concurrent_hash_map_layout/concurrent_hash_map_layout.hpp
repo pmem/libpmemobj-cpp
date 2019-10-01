@@ -122,23 +122,17 @@ struct hashmap_test : public MapType {
 		static_assert(
 			sizeof(typename persistent_map_type::bucket) == BUCKET_SIZE, "");
 
-		// XXX: node is not standard layout because following is not
-		// fulfilled: Has all non-static data members and bit-fields
-		// declared in the same class (either all in the derived or all
-		// in some base)
+		static_assert(std::is_standard_layout<typename persistent_map_type::node>::value,
+		 "");
 
-		// static_assert(std::is_standard_layout<persistent_map_type::node>::value,
-		// "");
-
-		// ASSERT_ALIGNED_BEGIN(persistent_map_type::node);
-		// ASSERT_ALIGNED_FIELD(persistent_map_type::node, next);
-		// ASSERT_ALIGNED_FIELD(persistent_map_type::node, mutex);
-		// ASSERT_ALIGNED_FIELD(persistent_map_type::node, item);
-		// ASSERT_ALIGNED_FIELD(persistent_map_type::node, reserved);
-		// ASSERT_ALIGNED_CHECK(persistent_map_type::node);
+		ASSERT_ALIGNED_BEGIN(typename persistent_map_type::node, *node);
+		ASSERT_ALIGNED_FIELD(typename persistent_map_type::node, *node, next);
+		ASSERT_ALIGNED_FIELD(typename persistent_map_type::node,*node , mutex);
+		ASSERT_ALIGNED_FIELD(typename persistent_map_type::node,*node ,item);
+		ASSERT_ALIGNED_CHECK(typename persistent_map_type::node);
 		static_assert(sizeof(typename persistent_map_type::node) == NODE_SIZE,
 			      "");
-
+		
 		pmem::obj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<hashmap_test>(map);
 			nvobj::delete_persistent<typename hashmap_test::bucket>(bucket);

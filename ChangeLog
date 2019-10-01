@@ -1,3 +1,33 @@
+Wed Oct 02 2019 Szymon Romik <szymon.romik@intel.com>
+
+	* Version 1.8-rc1
+
+	This release introduces new experimental container - persistent
+	segment vector with templated segment policies. It also provides
+	improvements and bug fixes for existing containers.
+
+	Peristent array/vector/string/concurrent_hash_map are no longer inside
+	experimental namespace.
+
+	New features:
+	- experimental persistent segment vector container
+
+	Bug fixes:
+	- fix insert method in persistent vector
+	- fix move assignment operator in peristent array
+
+	Other changes:
+	- extended error messages in exceptions
+	- extended multithreaded tests for concurrent_hash_map
+	- add examples with simplekv using persistent containers
+	- modifiers methods for persistent string
+	- template locks for concurrent_hash_map
+	- add layout versioning for concurrent_hash_map
+
+	Optimizations:
+	- concurrent_hash_map insert method implemented with tx
+	- optimized snapshotting in persistent vector/string
+
 Wed Jun 26 2019 Szymon Romik <szymon.romik@intel.com>
 
 	* Version 1.7

@@ -61,6 +61,7 @@
 #include <mutex>
 #include <thread>
 #include <type_traits>
+#include <utility>
 
 namespace std
 {
@@ -84,8 +85,11 @@ namespace obj
 namespace experimental
 {
 
+namespace internal
+{
+template <typename SharedMutexT>
 class shared_mutex_scoped_lock {
-	using rw_mutex_type = pmem::obj::shared_mutex;
+	using rw_mutex_type = SharedMutexT;
 
 public:
 	shared_mutex_scoped_lock(const shared_mutex_scoped_lock &) = delete;
@@ -124,24 +128,6 @@ public:
 	}
 
 	/**
-	 * Upgrade reader to become a writer.
-	 * This method is added for compatibility with tbb::spin_rw_mutex which
-	 * supports upgrade operation.
-	 *
-	 * @returns Always return false because persistent shared mutex cannot
-	 * be upgraded without releasing and re-acquiring the lock
-	 */
-	bool
-	upgrade_to_writer()
-	{
-		assert(!is_writer);
-		mutex->unlock_shared();
-		is_writer = true;
-		mutex->lock();
-		return false;
-	}
-
-	/**
 	 * Release lock.
 	 */
 	void
@@ -155,19 +141,6 @@ public:
 		} else {
 			m->unlock_shared();
 		}
-	}
-
-	/**
-	 * Downgrade writer to become a reader.
-	 * This method is added for compatibility with tbb::spin_rw_mutex which
-	 * supports downgrade operation.
-	 * @returns false.
-	 */
-	bool
-	downgrade_to_reader()
-	{
-		assert(is_writer);
-		return false;
 	}
 
 	/**
@@ -199,11 +172,89 @@ protected:
 	bool is_writer;
 }; /* class shared_mutex_scoped_lock */
 
+template <typename ScopedLockType>
+using scoped_lock_upgrade_to_writer =
+	decltype(std::declval<ScopedLockType>().upgrade_to_writer());
+
+template <typename ScopedLockType>
+using scoped_lock_has_upgrade_to_writer =
+	detail::supports<ScopedLockType, scoped_lock_upgrade_to_writer>;
+
+template <typename ScopedLockType>
+using scoped_lock_downgrade_to_reader =
+	decltype(std::declval<ScopedLockType>().downgrade_to_reader());
+
+template <typename ScopedLockType>
+using scoped_lock_has_downgrade_to_reader =
+	detail::supports<ScopedLockType, scoped_lock_downgrade_to_reader>;
+
+template <typename ScopedLockType,
+	  bool = scoped_lock_has_upgrade_to_writer<ScopedLockType>::value
+		  &&scoped_lock_has_downgrade_to_reader<ScopedLockType>::value>
+class scoped_lock_traits {
+public:
+	using scope_lock_type = ScopedLockType;
+
+	static bool
+	initial_rw_state(bool write)
+	{
+		/* For upgradeable locks, initial state is always read */
+		return false;
+	}
+
+	static bool
+	upgrade_to_writer(scope_lock_type &lock)
+	{
+		return lock.upgrade_to_writer();
+	}
+
+	static bool
+	downgrade_to_reader(scope_lock_type &lock)
+	{
+		return lock.downgrade_to_reader();
+	}
+};
+
+template <typename ScopedLockType>
+class scoped_lock_traits<ScopedLockType, false> {
+public:
+	using scope_lock_type = ScopedLockType;
+
+	static bool
+	initial_rw_state(bool write)
+	{
+		/* For non-upgradeable locks, we take lock in required mode
+		 * immediately */
+		return write;
+	}
+
+	static bool
+	upgrade_to_writer(scope_lock_type &lock)
+	{
+		/* This overload is for locks which do not support upgrade
+		 * operation. For those locks, upgrade_to_writer should not be
+		 * called when holding a read lock */
+		return true;
+	}
+
+	static bool
+	downgrade_to_reader(scope_lock_type &lock)
+	{
+		/* This overload is for locks which do not support downgrade
+		 * operation. For those locks, downgrade_to_reader should never
+		 * be called */
+		assert(false);
+
+		return false;
+	}
+};
+}
+
 template <typename Key, typename T, typename Hash = std::hash<Key>,
 	  typename KeyEqual = std::equal_to<Key>,
 	  typename MutexType = pmem::obj::shared_mutex,
 	  typename ScopedLockType =
-		  pmem::obj::experimental::shared_mutex_scoped_lock>
+		  internal::shared_mutex_scoped_lock<MutexType>>
 class concurrent_hash_map;
 
 /** @cond INTERNAL */
@@ -1413,6 +1464,24 @@ operator!=(const hash_map_iterator<Container, M> &i,
 
 /**
  * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
+ *
+ * MutexType defines type of read write lock used in concurrent_hash_map.
+ * ScopedLockType defines a mutex wrapper that provides RAII-style mechanism
+ * for owning a mutex. It should implement following methods and constructors:
+ * ScopedLockType()
+ * ScopedLockType(rw_mutex_type &m, bool write = true)
+ * void acquire(rw_mutex_type &m, bool write)
+ * void release()
+ * bool try_acquire(rw_mutex_type &m, bool write)
+ *
+ * and optionally:
+ * bool upgrade_to_writer()
+ * bool downgrade_to_reader()
+ * bool is_writer (variable)
+ *
+ * Implementing all optional methods and supplying is_writer variable can
+ * improve performance if MutexType supports efficient upgrading and
+ * downgrading operations.
  */
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>
@@ -1467,6 +1536,8 @@ public:
 protected:
 	using hash_map_base::header_features;
 	using hash_map_base::layout_features;
+
+	using scoped_lock_traits_type = internal::scoped_lock_traits<scoped_t>;
 
 	friend class const_accessor;
 	struct node;
@@ -1649,18 +1720,6 @@ protected:
 		}
 
 		/**
-		 * This method is added for consistency with bucket_accessor
-		 * class
-		 *
-		 * @return Always returns true
-		 */
-		bool
-		upgrade_to_writer() const
-		{
-			return true;
-		}
-
-		/**
 		 * Get bucket pointer
 		 * @return pointer to the bucket
 		 */
@@ -1696,6 +1755,9 @@ protected:
 		using accessor_type = typename std::conditional<
 			serial, serial_bucket_accessor, bucket_accessor>::type;
 
+		using scoped_lock_traits_type =
+			internal::scoped_lock_traits<accessor_type>;
+
 		/* First two bucket should be always rehashed */
 		assert(h > 1);
 
@@ -1706,8 +1768,9 @@ protected:
 		/* get parent mask from the topmost bit */
 		hashcode_t mask = (1u << detail::Log2(h)) - 1;
 		assert((h & mask) < h);
-		bool writer = false;
-		accessor_type b_old(this, h & mask, writer);
+		accessor_type b_old(
+			this, h & mask,
+			scoped_lock_traits_type::initial_rw_state(true));
 
 		/* get full mask for new bucket */
 		mask = (mask << 1) | 1;
@@ -1728,7 +1791,8 @@ protected:
 
 			if ((c & mask) == h) {
 				if (!b_old.is_writer() &&
-				    !b_old.upgrade_to_writer()) {
+				    !scoped_lock_traits_type::upgrade_to_writer(
+					    b_old)) {
 					goto restart;
 					/* node ptr can be invalid due to
 					 * concurrent erase */
@@ -1870,12 +1934,6 @@ public:
 		}
 
 	protected:
-		bool
-		is_writer()
-		{
-			return node::scoped_t::is_writer;
-		}
-
 		node_ptr_t my_node;
 
 		hashcode_t my_hash;
@@ -2510,27 +2568,26 @@ protected:
 	persistent_node_ptr_t
 	get_node(const K &key, bucket_accessor &b)
 	{
-		while (true) {
-			/* find a node */
-			auto n = search_bucket(key, b.get());
+		/* find a node */
+		auto n = search_bucket(key, b.get());
 
-			if (!n) {
-				if (Bucket_rw_lock && !b.is_writer() &&
-				    !b.upgrade_to_writer()) {
-					/* Rerun search_list, in case another
-					 * thread inserted the item during the
-					 * upgrade. */
-					n = search_bucket(key, b.get());
-					if (n) {
-						/* unfortunately, it did */
-						b.downgrade_to_reader();
-						return n;
-					}
+		if (!n) {
+			if (Bucket_rw_lock && !b.is_writer() &&
+			    !scoped_lock_traits_type::upgrade_to_writer(b)) {
+				/* Rerun search_list, in case another
+				 * thread inserted the item during the
+				 * upgrade. */
+				n = search_bucket(key, b.get());
+				if (n) {
+					/* unfortunately, it did */
+					scoped_lock_traits_type::
+						downgrade_to_reader(b);
+					return n;
 				}
 			}
-
-			return n;
 		}
+
+		return n;
 	}
 
 	template <typename K>
@@ -2594,7 +2651,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 
 	while (true) {
 		/* get bucket and acquire the lock */
-		bucket_accessor b(this, h & m);
+		bucket_accessor b(
+			this, h & m,
+			scoped_lock_traits_type::initial_rw_state(false));
 		node = get_node<false>(key, b);
 
 		if (!node) {
@@ -2657,7 +2716,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 
 	while (true) {
 		/* get bucket and acquire the lock */
-		bucket_accessor b(this, h & m);
+		bucket_accessor b(
+			this, h & m,
+			scoped_lock_traits_type::initial_rw_state(true));
 		node = get_node<true>(key, b);
 
 		if (!node) {
@@ -2666,8 +2727,6 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 				b.release();
 				continue;
 			}
-
-			assert(b.is_writer());
 
 			/* insert and set flag to grow the container */
 			new_size = insert_new_node(b.get(), node,
@@ -2715,7 +2774,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 restart : {
 	/* lock scope */
 	/* get bucket */
-	bucket_accessor b(this, h & m);
+	bucket_accessor b(this, h & m,
+			  scoped_lock_traits_type::initial_rw_state(true));
 
 search:
 	node_base_ptr_t *p = &b->node_list;
@@ -2736,7 +2796,8 @@ search:
 			goto restart;
 
 		return false;
-	} else if (!b.is_writer() && !b.upgrade_to_writer()) {
+	} else if (!b.is_writer() &&
+		   !scoped_lock_traits_type::upgrade_to_writer(b)) {
 		if (check_mask_race(h, m)) /* contended upgrade, check mask */
 			goto restart;
 

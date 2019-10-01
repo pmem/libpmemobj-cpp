@@ -305,42 +305,74 @@ assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
 	assert_not_locked<Mutex>(mtx.get());
 }
 
-template <typename MutexType, typename ScopedLockType>
-struct hash_map_node_base {
+template <typename Key, typename T, typename MutexType, typename ScopedLockType>
+struct hash_map_node {
 	/**Mutex type. */
 	using mutex_t = MutexType;
 
 	/** Scoped lock type for mutex. */
 	using scoped_t = ScopedLockType;
 
+	using value_type = std::pair<const Key, T>;
+
 	/** Persistent pointer type for next. */
-	using node_base_ptr_t = detail::persistent_pool_ptr<
-		hash_map_node_base<mutex_t, scoped_t>>;
+	using node_ptr_t = detail::persistent_pool_ptr<
+		hash_map_node<Key, T, mutex_t, scoped_t>>;
 
 	/** Next node in chain. */
-	node_base_ptr_t next;
+	node_ptr_t next;
 
 	/** Node mutex. */
 	mutex_t mutex;
 
-	hash_map_node_base() : next(OID_NULL)
+	/** Item stored in node */
+	value_type item;
+
+	hash_map_node() : next(OID_NULL)
 	{
 	}
 
-	hash_map_node_base(const node_base_ptr_t &_next) : next(_next)
+	hash_map_node(const node_ptr_t &_next) : next(_next)
 	{
 	}
 
-	hash_map_node_base(node_base_ptr_t &&_next) : next(std::move(_next))
+	hash_map_node(node_ptr_t &&_next) : next(std::move(_next))
+	{
+	}
+
+	hash_map_node(const node_ptr_t &_next, const Key &key)
+	    : next(_next), item(key, T())
+	{
+	}
+
+	hash_map_node(const node_ptr_t &_next, const Key &key, const T &t)
+	    : next(_next), item(key, t)
+	{
+	}
+
+	hash_map_node(const node_ptr_t &_next, value_type &&i)
+	    : next(_next), item(std::move(i))
+	{
+	}
+
+	template <typename... Args>
+	hash_map_node(node_ptr_t &&_next, Args &&... args)
+	    : next(std::forward<node_ptr_t>(_next)),
+	      item(std::forward<Args>(args)...)
+	{
+	}
+
+	hash_map_node(const node_ptr_t &_next, const value_type &i)
+	    : next(_next), item(i)
 	{
 	}
 
 	/** Copy constructor is deleted */
-	hash_map_node_base(const hash_map_node_base &) = delete;
+	hash_map_node(const hash_map_node &) = delete;
 
 	/** Assignment operator is deleted */
-	hash_map_node_base &operator=(const hash_map_node_base &) = delete;
-}; /* struct hash_map_node_base */
+	hash_map_node &operator=(const hash_map_node &) = delete;
+}; /* struct node */
 
 /**
  * The class provides the way to access certain properties of segments
@@ -766,7 +798,7 @@ private:
  * MutexType - type of mutex used by buckets.
  * ScopedLockType - type of scoped lock for mutex.
  */
-template <typename MutexType, typename ScopedLockType>
+template <typename Key, typename T, typename MutexType, typename ScopedLockType>
 class hash_map_base {
 public:
 	using mutex_t = MutexType;
@@ -779,10 +811,10 @@ public:
 	using hashcode_t = size_t;
 
 	/** Node base type. */
-	using node_base = hash_map_node_base<mutex_t, scoped_t>;
+	using node = hash_map_node<Key, T, mutex_t, scoped_t>;
 
 	/** Node base pointer. */
-	using node_base_ptr_t = detail::persistent_pool_ptr<node_base>;
+	using node_ptr_t = detail::persistent_pool_ptr<node>;
 
 	/** Bucket type. */
 	struct bucket {
@@ -796,7 +828,7 @@ public:
 		p<std::atomic<uint64_t>> rehashed;
 
 		/** List of the nodes stored in the bucket. */
-		node_base_ptr_t node_list;
+		node_ptr_t node_list;
 
 		/** Default constructor */
 		bucket() : node_list(nullptr)
@@ -1222,7 +1254,7 @@ public:
 	 * @throws std::transaction_error in case of PMDK transaction failed
 	 */
 	void
-	internal_swap(hash_map_base<mutex_t, scoped_t> &table)
+	internal_swap(hash_map_base<Key, T, mutex_t, scoped_t> &table)
 	{
 		pool_base p = get_pool_base();
 		{
@@ -1486,7 +1518,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>
 class concurrent_hash_map
-    : protected internal::hash_map_base<MutexType, ScopedLockType> {
+    : protected internal::hash_map_base<Key, T, MutexType, ScopedLockType> {
 	template <typename Container, bool is_const>
 	friend class internal::hash_map_iterator;
 
@@ -1496,7 +1528,8 @@ public:
 	/*
 	 * Expicitly use methods and types from template base class
 	 */
-	using hash_map_base = internal::hash_map_base<mutex_t, scoped_t>;
+	using hash_map_base =
+		internal::hash_map_base<Key, T, mutex_t, scoped_t>;
 	using hash_map_base::calculate_mask;
 	using hash_map_base::check_growth;
 	using hash_map_base::check_mask_race;
@@ -1510,16 +1543,16 @@ public:
 	using size_type = typename hash_map_base::size_type;
 	using bucket = typename hash_map_base::bucket;
 	using bucket_lock_type = typename bucket::scoped_t;
-	using node_base = typename hash_map_base::node_base;
-	using node_base_mutex_t = typename node_base::mutex_t;
-	using node_base_ptr_t = typename hash_map_base::node_base_ptr_t;
+	using node = typename hash_map_base::node;
+	using node_mutex_t = typename node::mutex_t;
+	using node_ptr_t = typename hash_map_base::node_ptr_t;
 	using hashcode_t = typename hash_map_base::hashcode_t;
 	using segment_index_t = typename hash_map_base::segment_index_t;
 	using segment_traits_t = typename hash_map_base::segment_traits_t;
 	using segment_facade_t = typename hash_map_base::segment_facade_t;
 	using key_type = Key;
 	using mapped_type = T;
-	using value_type = std::pair<const Key, T>;
+	using value_type = typename node::value_type;
 	using difference_type = ptrdiff_t;
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
@@ -1540,46 +1573,10 @@ protected:
 	using scoped_lock_traits_type = internal::scoped_lock_traits<scoped_t>;
 
 	friend class const_accessor;
-	struct node;
-
-	/**
-	 * Node structure to store Key/Value pair.
-	 */
-	struct node : public node_base {
-		value_type item;
-
-		node(const node_base_ptr_t &_next, const Key &key)
-		    : node_base(_next), item(key, T())
-		{
-		}
-
-		node(const node_base_ptr_t &_next, const Key &key, const T &t)
-		    : node_base(_next), item(key, t)
-		{
-		}
-
-		node(const node_base_ptr_t &_next, value_type &&i)
-		    : node_base(_next), item(std::move(i))
-		{
-		}
-
-		template <typename... Args>
-		node(node_base_ptr_t &&_next, Args &&... args)
-		    : node_base(std::forward<node_base_ptr_t>(_next)),
-		      item(std::forward<Args>(args)...)
-		{
-		}
-
-		node(const node_base_ptr_t &_next, const value_type &i)
-		    : node_base(_next), item(i)
-		{
-		}
-	};
-
 	using persistent_node_ptr_t = detail::persistent_pool_ptr<node>;
 
 	void
-	delete_node(const node_base_ptr_t &n)
+	delete_node(const node_ptr_t &n)
 	{
 		delete_persistent<node>(
 			detail::static_persistent_pool_pointer_cast<node>(n)
@@ -1740,7 +1737,7 @@ protected:
 	};
 
 	hashcode_t
-	get_hash_code(node_base_ptr_t &n)
+	get_hash_code(node_ptr_t &n)
 	{
 		return hasher{}(
 			detail::static_persistent_pool_pointer_cast<node>(n)(
@@ -1762,7 +1759,7 @@ protected:
 		assert(h > 1);
 
 		pool_base pop = get_pool_base();
-		node_base_ptr_t *p_new = &(b_new->node_list);
+		node_ptr_t *p_new = &(b_new->node_list);
 		bool restore_after_crash = *p_new != nullptr;
 
 		/* get parent mask from the topmost bit */
@@ -1776,8 +1773,8 @@ protected:
 		mask = (mask << 1) | 1;
 		assert((mask & (mask + 1)) == 0 && (h & mask) == h);
 	restart:
-		for (node_base_ptr_t *p_old = &(b_old->node_list), n = *p_old;
-		     n; n = *p_old) {
+		for (node_ptr_t *p_old = &(b_old->node_list), n = *p_old; n;
+		     n = *p_old) {
 			hashcode_t c = get_hash_code(n);
 #ifndef NDEBUG
 			hashcode_t bmask = h & (mask >> 1);
@@ -2553,7 +2550,7 @@ protected:
 	 * If acquiring succeeds returns true, otherwise retries for few times.
 	 * If acquiring fails after all attempts returns false.
 	 */
-	bool try_acquire_item(const_accessor *result, node_base_mutex_t &mutex,
+	bool try_acquire_item(const_accessor *result, node_mutex_t &mutex,
 			      bool write);
 
 	template <typename K>
@@ -2610,7 +2607,7 @@ template <typename Key, typename T, typename Hash, typename KeyEqual,
 bool
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		    ScopedLockType>::try_acquire_item(const_accessor *result,
-						      node_base_mutex_t &mutex,
+						      node_mutex_t &mutex,
 						      bool write)
 {
 	/* acquire the item */
@@ -2766,7 +2763,7 @@ bool
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		    ScopedLockType>::internal_erase(const K &key)
 {
-	node_base_ptr_t n;
+	node_ptr_t n;
 	hashcode_t const h = hasher{}(key);
 	hashcode_t m = mask().load(std::memory_order_acquire);
 	pool_base pop = get_pool_base();
@@ -2778,7 +2775,7 @@ restart : {
 			  scoped_lock_traits_type::initial_rw_state(true));
 
 search:
-	node_base_ptr_t *p = &b->node_list;
+	node_ptr_t *p = &b->node_list;
 	n = *p;
 
 	while (n &&
@@ -2807,7 +2804,7 @@ search:
 	{
 		transaction::manual tx(pop);
 
-		persistent_ptr<node_base> del = n(this->my_pool_uuid);
+		persistent_ptr<node> del = n(this->my_pool_uuid);
 
 		*p = del->next;
 
@@ -2921,7 +2918,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 
 	size_type sz = segment.size();
 	for (segment_index_t i = 0; i < sz; ++i) {
-		for (node_base_ptr_t n = segment[i].node_list; n;
+		for (node_ptr_t n = segment[i].node_list; n;
 		     n = segment[i].node_list) {
 			segment[i].node_list = n(this->my_pool_uuid)->next;
 			delete_node(n);

@@ -37,6 +37,7 @@
 
 #include "unittest.hpp"
 
+#include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>

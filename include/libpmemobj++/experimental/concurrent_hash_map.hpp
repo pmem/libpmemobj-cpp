@@ -42,7 +42,6 @@
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 
-#include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/p.hpp>
@@ -286,23 +285,17 @@ struct key_equal_type<Hash, Pred, false> {
 	using type = Pred;
 };
 
-template <typename Mutex>
+template <typename Mutex, typename ScopedLockType>
 void
 assert_not_locked(Mutex &mtx)
 {
 #ifndef NDEBUG
-	assert(mtx.try_lock());
-	mtx.unlock();
+	ScopedLockType scoped_lock;
+	assert(scoped_lock.try_acquire(mtx));
+	scoped_lock.release();
 #else
 	(void)mtx;
 #endif
-}
-
-template <typename Mutex>
-void
-assert_not_locked(pmem::obj::experimental::v<Mutex> &mtx)
-{
-	assert_not_locked<Mutex>(mtx.get());
 }
 
 template <typename Key, typename T, typename MutexType, typename ScopedLockType>
@@ -1044,7 +1037,7 @@ public:
 		for (size_type i = 0; i < segment.size(); ++i) {
 			bucket *b = &(segment[i]);
 
-			assert_not_locked(b->mutex);
+			assert_not_locked<mutex_t, scoped_t>(b->mutex);
 
 			b->set_rehashed(std::memory_order_relaxed);
 		}
@@ -2861,7 +2854,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::rehash(
 	for (; b <= m; ++b) {
 		bucket *bp = get_bucket(b);
 
-		internal::assert_not_locked(bp->mutex);
+		internal::assert_not_locked<mutex_t, scoped_t>(bp->mutex);
 		/* XXX Need to investigate if this statement is needed */
 		if (bp->is_rehashed(std::memory_order_relaxed) == false)
 			rehash_bucket<true>(bp, b);
@@ -2881,7 +2874,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 	/* check consistency */
 	for (segment_index_t b = 0; b <= m; ++b) {
 		bucket *bp = get_bucket(b);
-		internal::assert_not_locked(bp->mutex);
+		internal::assert_not_locked<mutex_t, scoped_t>(bp->mutex);
 	}
 #endif
 

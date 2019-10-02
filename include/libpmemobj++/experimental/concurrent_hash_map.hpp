@@ -85,7 +85,7 @@ namespace obj
 namespace experimental
 {
 
-namespace internal
+namespace concurrent_hash_map_internal
 {
 template <typename SharedMutexT>
 class shared_mutex_scoped_lock {
@@ -253,12 +253,12 @@ public:
 template <typename Key, typename T, typename Hash = std::hash<Key>,
 	  typename KeyEqual = std::equal_to<Key>,
 	  typename MutexType = pmem::obj::shared_mutex,
-	  typename ScopedLockType =
-		  internal::shared_mutex_scoped_lock<MutexType>>
+	  typename ScopedLockType = concurrent_hash_map_internal::
+		  shared_mutex_scoped_lock<MutexType>>
 class concurrent_hash_map;
 
 /** @cond INTERNAL */
-namespace internal
+namespace concurrent_hash_map_internal
 {
 /* Helper method which throws an exception when called in a tx */
 static inline void
@@ -808,7 +808,7 @@ public:
 	using size_type = size_t;
 
 	/** Type of a hash code. */
-	using hashcode_t = size_t;
+	using hashcode_type = size_t;
 
 	/** Node base type. */
 	using node = hash_map_node<Key, T, mutex_t, scoped_t>;
@@ -918,7 +918,7 @@ public:
 
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
-	p<std::atomic<hashcode_t>> my_mask;
+	p<std::atomic<hashcode_type>> my_mask;
 
 	/** Padding to the end of cacheline */
 	std::aligned_storage<32, 8>::type padding1;
@@ -948,13 +948,13 @@ public:
 
 	/* --------------------------------------------------------- */
 
-	const std::atomic<hashcode_t> &
+	const std::atomic<hashcode_type> &
 	mask() const noexcept
 	{
 		return my_mask.get_ro();
 	}
 
-	std::atomic<hashcode_t> &
+	std::atomic<hashcode_type> &
 	mask() noexcept
 	{
 		return my_mask.get_rw();
@@ -1013,7 +1013,7 @@ public:
 		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_mask, sizeof(my_mask));
 #endif
 
-		hashcode_t m = embedded_buckets - 1;
+		hashcode_type m = embedded_buckets - 1;
 
 		const_segment_facade_t segment(
 			my_table, segment_traits_t::embedded_segments);
@@ -1112,7 +1112,7 @@ public:
 	 * @return pointer to the bucket.
 	 */
 	bucket *
-	get_bucket(hashcode_t h) const
+	get_bucket(hashcode_type h) const
 	{
 		segment_index_t s = segment_traits_t::segment_index_of(h);
 
@@ -1129,9 +1129,9 @@ public:
 	 * Check for mask race
 	 */
 	inline bool
-	check_mask_race(hashcode_t h, hashcode_t &m) const
+	check_mask_race(hashcode_type h, hashcode_type &m) const
 	{
-		hashcode_t m_now, m_old = m;
+		hashcode_type m_now, m_old = m;
 
 		m_now = mask().load(std::memory_order_acquire);
 
@@ -1145,8 +1145,8 @@ public:
 	 * Process mask race, check for rehashing collision
 	 */
 	bool
-	check_rehashing_collision(hashcode_t h, hashcode_t m_old,
-				  hashcode_t m) const
+	check_rehashing_collision(hashcode_type h, hashcode_type m_old,
+				  hashcode_type m) const
 	{
 		assert(m_old != m);
 
@@ -1201,7 +1201,7 @@ public:
 	 * @return true if new segment was allocated and false otherwise
 	 */
 	bool
-	check_growth(hashcode_t m, size_type sz)
+	check_growth(hashcode_type m, size_type sz)
 	{
 		if (sz >= m) {
 			segment_index_t new_seg =
@@ -1491,7 +1491,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
 {
 	return i.my_node != j.my_node || i.my_map != j.my_map;
 }
-} /* namespace internal */
+} /* namespace concurrent_hash_map_internal */
 /** @endcond */
 
 /**
@@ -1535,59 +1535,65 @@ operator!=(const hash_map_iterator<Container, M> &i,
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>
 class concurrent_hash_map
-    : protected internal::hash_map_base<Key, T, MutexType, ScopedLockType> {
+    : protected concurrent_hash_map_internal::hash_map_base<Key, T, MutexType,
+							    ScopedLockType> {
 	template <typename Container, bool is_const>
-	friend class internal::hash_map_iterator;
+	friend class concurrent_hash_map_internal::hash_map_iterator;
 
 public:
+	using size_type = typename concurrent_hash_map_internal::hash_map_base<
+		Key, T, MutexType, ScopedLockType>::size_type;
+	using hashcode_type =
+		typename concurrent_hash_map_internal::hash_map_base<
+			Key, T, MutexType, ScopedLockType>::hashcode_type;
+	using key_type = Key;
+	using mapped_type = T;
+	using value_type = typename concurrent_hash_map_internal::hash_map_base<
+		Key, T, MutexType, ScopedLockType>::node::value_type;
+	using difference_type = ptrdiff_t;
+	using pointer = value_type *;
+	using const_pointer = const value_type *;
+	using reference = value_type &;
+	using const_reference = const value_type &;
+	using iterator = concurrent_hash_map_internal::hash_map_iterator<
+		concurrent_hash_map, false>;
+	using const_iterator = concurrent_hash_map_internal::hash_map_iterator<
+		concurrent_hash_map, true>;
+	using hasher = Hash;
+	using key_equal = typename concurrent_hash_map_internal::key_equal_type<
+		Hash, KeyEqual>::type;
+
+protected:
 	using mutex_t = MutexType;
 	using scoped_t = ScopedLockType;
 	/*
-	 * Expicitly use methods and types from template base class
+	 * Explicitly use methods and types from template base class
 	 */
 	using hash_map_base =
-		internal::hash_map_base<Key, T, mutex_t, scoped_t>;
+		concurrent_hash_map_internal::hash_map_base<Key, T, mutex_t,
+							    scoped_t>;
 	using hash_map_base::calculate_mask;
 	using hash_map_base::check_growth;
 	using hash_map_base::check_mask_race;
 	using hash_map_base::embedded_buckets;
 	using hash_map_base::get_bucket;
 	using hash_map_base::get_pool_base;
+	using hash_map_base::header_features;
 	using hash_map_base::insert_new_node;
 	using hash_map_base::internal_swap;
+	using hash_map_base::layout_features;
 	using hash_map_base::mask;
 	using hash_map_base::reserve;
-	using size_type = typename hash_map_base::size_type;
-	using bucket = typename hash_map_base::bucket;
-	using bucket_lock_type = typename bucket::scoped_t;
 	using node = typename hash_map_base::node;
 	using node_mutex_t = typename node::mutex_t;
 	using node_ptr_t = typename hash_map_base::node_ptr_t;
-	using hashcode_t = typename hash_map_base::hashcode_t;
+	using bucket = typename hash_map_base::bucket;
+	using bucket_lock_type = typename bucket::scoped_t;
 	using segment_index_t = typename hash_map_base::segment_index_t;
 	using segment_traits_t = typename hash_map_base::segment_traits_t;
 	using segment_facade_t = typename hash_map_base::segment_facade_t;
-	using key_type = Key;
-	using mapped_type = T;
-	using value_type = typename node::value_type;
-	using difference_type = ptrdiff_t;
-	using pointer = value_type *;
-	using const_pointer = const value_type *;
-	using reference = value_type &;
-	using const_reference = const value_type &;
-	using iterator =
-		internal::hash_map_iterator<concurrent_hash_map, false>;
-	using const_iterator =
-		internal::hash_map_iterator<concurrent_hash_map, true>;
-	using hasher = Hash;
-	using key_equal =
-		typename internal::key_equal_type<Hash, KeyEqual>::type;
-
-protected:
-	using hash_map_base::header_features;
-	using hash_map_base::layout_features;
-
-	using scoped_lock_traits_type = internal::scoped_lock_traits<scoped_t>;
+	using scoped_lock_traits_type =
+		concurrent_hash_map_internal::scoped_lock_traits<scoped_t>;
 
 	friend class const_accessor;
 	using persistent_node_ptr_t = detail::persistent_pool_ptr<node>;
@@ -1628,8 +1634,8 @@ protected:
 		bucket *my_b;
 
 	public:
-		bucket_accessor(concurrent_hash_map *base, const hashcode_t h,
-				bool writer = false)
+		bucket_accessor(concurrent_hash_map *base,
+				const hashcode_type h, bool writer = false)
 		{
 			acquire(base, h, writer);
 		}
@@ -1639,7 +1645,7 @@ protected:
 		 * acquire the lock
 		 */
 		inline void
-		acquire(concurrent_hash_map *base, const hashcode_t h,
+		acquire(concurrent_hash_map *base, const hashcode_type h,
 			bool writer = false)
 		{
 			my_b = base->get_bucket(h);
@@ -1698,7 +1704,8 @@ protected:
 
 	public:
 		serial_bucket_accessor(concurrent_hash_map *base,
-				       const hashcode_t h, bool writer = false)
+				       const hashcode_type h,
+				       bool writer = false)
 		{
 			acquire(base, h, writer);
 		}
@@ -1707,7 +1714,7 @@ protected:
 		 * Find a bucket by masked hashcode, optionally rehash
 		 */
 		inline void
-		acquire(concurrent_hash_map *base, const hashcode_t h,
+		acquire(concurrent_hash_map *base, const hashcode_type h,
 			bool writer = false)
 		{
 			my_b = base->get_bucket(h);
@@ -1753,7 +1760,7 @@ protected:
 		}
 	};
 
-	hashcode_t
+	hashcode_type
 	get_hash_code(node_ptr_t &n)
 	{
 		return hasher{}(
@@ -1764,13 +1771,14 @@ protected:
 
 	template <bool serial>
 	void
-	rehash_bucket(bucket *b_new, const hashcode_t h)
+	rehash_bucket(bucket *b_new, const hashcode_type h)
 	{
 		using accessor_type = typename std::conditional<
 			serial, serial_bucket_accessor, bucket_accessor>::type;
 
 		using scoped_lock_traits_type =
-			internal::scoped_lock_traits<accessor_type>;
+			concurrent_hash_map_internal::scoped_lock_traits<
+				accessor_type>;
 
 		/* First two bucket should be always rehashed */
 		assert(h > 1);
@@ -1780,7 +1788,7 @@ protected:
 		bool restore_after_crash = *p_new != nullptr;
 
 		/* get parent mask from the topmost bit */
-		hashcode_t mask = (1u << detail::Log2(h)) - 1;
+		hashcode_type mask = (1u << detail::Log2(h)) - 1;
 		assert((h & mask) < h);
 		accessor_type b_old(
 			this, h & mask,
@@ -1792,9 +1800,9 @@ protected:
 	restart:
 		for (node_ptr_t *p_old = &(b_old->node_list), n = *p_old; n;
 		     n = *p_old) {
-			hashcode_t c = get_hash_code(n);
+			hashcode_type c = get_hash_code(n);
 #ifndef NDEBUG
-			hashcode_t bmask = h & (mask >> 1);
+			hashcode_type bmask = h & (mask >> 1);
 
 			bmask = bmask == 0
 				? 1 /* minimal mask of parent bucket */
@@ -1902,7 +1910,7 @@ public:
 		void
 		release()
 		{
-			internal::check_outside_tx();
+			concurrent_hash_map_internal::check_outside_tx();
 
 			if (my_node) {
 				node::scoped_t::release();
@@ -1935,7 +1943,7 @@ public:
 		 */
 		const_accessor() : my_node(OID_NULL)
 		{
-			internal::check_outside_tx();
+			concurrent_hash_map_internal::check_outside_tx();
 		}
 
 		/**
@@ -1950,7 +1958,7 @@ public:
 	protected:
 		node_ptr_t my_node;
 
-		hashcode_t my_hash;
+		hashcode_type my_hash;
 	};
 
 	/**
@@ -2240,7 +2248,7 @@ public:
 	size_type
 	count(const Key &key) const
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		return const_cast<concurrent_hash_map *>(this)->internal_find(
 			key, nullptr, false);
@@ -2259,12 +2267,13 @@ public:
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
-			  internal::has_transparent_key_equal<hasher>::value,
+			  concurrent_hash_map_internal::
+				  has_transparent_key_equal<hasher>::value,
 			  K>::type>
 	size_type
 	count(const K &key) const
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		return const_cast<concurrent_hash_map *>(this)->internal_find(
 			key, nullptr, false);
@@ -2279,7 +2288,7 @@ public:
 	bool
 	find(const_accessor &result, const Key &key) const
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2302,12 +2311,13 @@ public:
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
-			  internal::has_transparent_key_equal<hasher>::value,
+			  concurrent_hash_map_internal::
+				  has_transparent_key_equal<hasher>::value,
 			  K>::type>
 	bool
 	find(const_accessor &result, const K &key) const
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2324,7 +2334,7 @@ public:
 	bool
 	find(accessor &result, const Key &key)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2346,12 +2356,13 @@ public:
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
-			  internal::has_transparent_key_equal<hasher>::value,
+			  concurrent_hash_map_internal::
+				  has_transparent_key_equal<hasher>::value,
 			  K>::type>
 	bool
 	find(accessor &result, const K &key)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2367,7 +2378,7 @@ public:
 	bool
 	insert(const_accessor &result, const Key &key)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2384,7 +2395,7 @@ public:
 	bool
 	insert(accessor &result, const Key &key)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2401,7 +2412,7 @@ public:
 	bool
 	insert(const_accessor &result, const value_type &value)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2418,7 +2429,7 @@ public:
 	bool
 	insert(accessor &result, const value_type &value)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2434,7 +2445,7 @@ public:
 	bool
 	insert(const value_type &value)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		return internal_insert(value.first, nullptr, false, value);
 	}
@@ -2449,7 +2460,7 @@ public:
 	bool
 	insert(const_accessor &result, value_type &&value)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2467,7 +2478,7 @@ public:
 	bool
 	insert(accessor &result, value_type &&value)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		result.release();
 
@@ -2484,7 +2495,7 @@ public:
 	bool
 	insert(value_type &&value)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		return internal_insert(value.first, nullptr, false,
 				       std::move(value));
@@ -2499,7 +2510,7 @@ public:
 	void
 	insert(I first, I last)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		for (; first != last; ++first)
 			insert(*first);
@@ -2513,7 +2524,7 @@ public:
 	void
 	insert(std::initializer_list<value_type> il)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		insert(il.begin(), il.end());
 	}
@@ -2529,7 +2540,7 @@ public:
 	bool
 	erase(const Key &key)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		return internal_erase(key);
 	}
@@ -2550,12 +2561,13 @@ public:
 	 */
 	template <typename K,
 		  typename = typename std::enable_if<
-			  internal::has_transparent_key_equal<hasher>::value,
+			  concurrent_hash_map_internal::
+				  has_transparent_key_equal<hasher>::value,
 			  K>::type>
 	bool
 	erase(const K &key)
 	{
-		internal::check_outside_tx();
+		concurrent_hash_map_internal::check_outside_tx();
 
 		return internal_erase(key);
 	}
@@ -2652,14 +2664,14 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 {
 	assert(!result || !result->my_node);
 
-	hashcode_t m = mask().load(std::memory_order_acquire);
+	hashcode_type m = mask().load(std::memory_order_acquire);
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
 #endif
 
 	assert((m & (m + 1)) == 0);
 
-	hashcode_t const h = hasher{}(key);
+	hashcode_type const h = hasher{}(key);
 
 	persistent_node_ptr_t node;
 
@@ -2715,14 +2727,14 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 {
 	assert(!result || !result->my_node);
 
-	hashcode_t m = mask().load(std::memory_order_acquire);
+	hashcode_type m = mask().load(std::memory_order_acquire);
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
 #endif
 
 	assert((m & (m + 1)) == 0);
 
-	hashcode_t const h = hasher{}(key);
+	hashcode_type const h = hasher{}(key);
 
 	persistent_node_ptr_t node;
 	size_t new_size = 0;
@@ -2781,8 +2793,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		    ScopedLockType>::internal_erase(const K &key)
 {
 	node_ptr_t n;
-	hashcode_t const h = hasher{}(key);
-	hashcode_t m = mask().load(std::memory_order_acquire);
+	hashcode_type const h = hasher{}(key);
+	hashcode_type m = mask().load(std::memory_order_acquire);
 	pool_base pop = get_pool_base();
 
 restart : {
@@ -2863,14 +2875,14 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::rehash(
 	size_type sz)
 {
-	internal::check_outside_tx();
+	concurrent_hash_map_internal::check_outside_tx();
 
 	reserve(sz);
-	hashcode_t m = mask();
+	hashcode_type m = mask();
 
 	/* only the last segment should be scanned for rehashing size or first
 	 * index of the last segment */
-	hashcode_t b = (m + 1) >> 1;
+	hashcode_type b = (m + 1) >> 1;
 
 	/* zero or power of 2 */
 	assert((b & (b - 1)) == 0);
@@ -2878,7 +2890,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::rehash(
 	for (; b <= m; ++b) {
 		bucket *bp = get_bucket(b);
 
-		internal::assert_not_locked(bp->mutex);
+		concurrent_hash_map_internal::assert_not_locked(bp->mutex);
 		/* XXX Need to investigate if this statement is needed */
 		if (bp->is_rehashed(std::memory_order_relaxed) == false)
 			rehash_bucket<true>(bp, b);
@@ -2890,7 +2902,7 @@ template <typename Key, typename T, typename Hash, typename KeyEqual,
 void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 {
-	hashcode_t m = mask();
+	hashcode_type m = mask();
 
 	assert((m & (m + 1)) == 0);
 
@@ -2898,7 +2910,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 	/* check consistency */
 	for (segment_index_t b = 0; b <= m; ++b) {
 		bucket *bp = get_bucket(b);
-		internal::assert_not_locked(bp->mutex);
+		concurrent_hash_map_internal::assert_not_locked(bp->mutex);
 	}
 #endif
 
@@ -2963,10 +2975,10 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		    ScopedLockType>::internal_copy(I first, I last)
 {
-	hashcode_t m = mask();
+	hashcode_type m = mask();
 
 	for (; first != last; ++first) {
-		hashcode_t h = hasher{}(first->first);
+		hashcode_type h = hasher{}(first->first);
 		bucket *b = get_bucket(h & m);
 
 		assert(b->is_rehashed(std::memory_order_relaxed));

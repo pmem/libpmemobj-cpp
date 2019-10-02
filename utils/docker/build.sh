@@ -88,7 +88,11 @@ if [[ "$command" == "" ]]; then
 		command="./run-build.sh ${builds[@]}";
 		;;
 	valgrind)
-		builds=(tests_gcc_debug_valgrind)
+		builds=(tests_gcc_debug_valgrind_other)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	memcheck_drd)
+		builds=(tests_gcc_debug_valgrind_memcheck_drd)
 		command="./run-build.sh ${builds[@]}";
 		;;
 	package)

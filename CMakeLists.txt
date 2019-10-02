@@ -277,7 +277,6 @@ configure_file(${CMAKE_SOURCE_DIR}/cmake/libpmemobj++.pc.in
 		${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.pc @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.pc
-	CONFIGURATIONS Release Debug
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 configure_file(

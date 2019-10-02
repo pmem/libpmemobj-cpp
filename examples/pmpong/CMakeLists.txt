@@ -37,7 +37,10 @@ set(CMAKE_CXX_STANDARD 11)
 
 include(FindThreads)
 
-find_package(PkgConfig QUIET)
+if(NOT WIN32)
+	find_package(PkgConfig QUIET)
+endif()
+
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
 

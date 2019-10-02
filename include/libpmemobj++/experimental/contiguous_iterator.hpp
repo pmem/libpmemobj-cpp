@@ -264,7 +264,8 @@ struct range_snapshotting_iterator
 	 */
 	reference operator[](std::size_t n)
 	{
-		detail::conditional_add_to_tx(&this->ptr[n]);
+		detail::conditional_add_to_tx(&this->ptr[n], 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return base_type::operator[](n);
 	}
 
@@ -331,7 +332,8 @@ private:
 		verify_range(range_begin, range_size);
 #endif
 
-		detail::conditional_add_to_tx(range_begin, range_size);
+		detail::conditional_add_to_tx(range_begin, range_size,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 	}
 
 #ifndef NDEBUG
@@ -389,7 +391,8 @@ struct basic_contiguous_iterator
 	 */
 	reference operator*() const
 	{
-		detail::conditional_add_to_tx(this->ptr);
+		detail::conditional_add_to_tx(this->ptr, 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return base_type::operator*();
 	}
 
@@ -399,7 +402,8 @@ struct basic_contiguous_iterator
 	 */
 	pointer operator->() const
 	{
-		detail::conditional_add_to_tx(this->ptr);
+		detail::conditional_add_to_tx(this->ptr, 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return base_type::operator->();
 	}
 
@@ -410,7 +414,8 @@ struct basic_contiguous_iterator
 	 */
 	reference operator[](std::size_t n)
 	{
-		detail::conditional_add_to_tx(&this->ptr[n]);
+		detail::conditional_add_to_tx(&this->ptr[n], 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
 		return base_type::operator[](n);
 	}
 

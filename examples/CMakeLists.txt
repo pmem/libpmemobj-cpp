@@ -116,11 +116,14 @@ else()
 	set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system)
 endif()
 
-add_example(queue queue/queue.cpp)
+if (ENABLE_ARRAY)
+	add_example(queue queue/queue.cpp)
+endif()
 
-add_example(simplekv simplekv/simplekv.cpp)
-
-add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)
+if (ENABLE_VECTOR)
+	add_example(simplekv simplekv/simplekv.cpp)
+	add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)
+endif()
 
 if(CURSES_FOUND)
 	add_example(pman pman/pman.cpp)

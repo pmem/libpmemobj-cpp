@@ -137,10 +137,12 @@ namespace detail
  *
  * @param[in] that pointer to the first object being added to the transaction.
  * @param[in] count number of elements to be added to the transaction.
+ * @param[in] flags is a bitmask of values which are described in libpmemobj
+ * manpage (pmemobj_tx_xadd_range method)
  */
 template <typename T>
 inline void
-conditional_add_to_tx(const T *that, std::size_t count = 1)
+conditional_add_to_tx(const T *that, std::size_t count = 1, uint64_t flags = 0)
 {
 	if (count == 0)
 		return;
@@ -152,7 +154,7 @@ conditional_add_to_tx(const T *that, std::size_t count = 1)
 	if (!pmemobj_pool_by_ptr(that))
 		return;
 
-	if (pmemobj_tx_add_range_direct(that, sizeof(*that) * count)) {
+	if (pmemobj_tx_xadd_range_direct(that, sizeof(*that) * count, flags)) {
 		if (errno == ENOMEM)
 			throw pmem::transaction_out_of_memory(
 				"Could not add object(s) to the transaction.")

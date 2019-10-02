@@ -264,7 +264,7 @@ private:
 	void realloc(size_type size);
 	size_type get_recommended_capacity(size_type at_least) const;
 	void shrink(size_type size_new);
-	void snapshot_data(size_type idx_first, size_type idx_last);
+	void add_data_to_tx(size_type idx_first, size_type num);
 	template <typename InputIt>
 	void construct_or_assign(size_type idx, InputIt first, InputIt last);
 	void move_elements_backward(pointer first, pointer last,
@@ -666,7 +666,7 @@ vector<T>::assign(size_type count, const_reference value)
 			 * elements destructors, or append more new elements.
 			 */
 			size_type size_old = _size;
-			snapshot_data(0, size_old);
+			add_data_to_tx(0, size_old);
 
 			std::fill_n(
 				&_data[0],
@@ -675,31 +675,8 @@ vector<T>::assign(size_type count, const_reference value)
 				value);
 
 			if (count > size_old) {
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
-				/*
-				 * Range of memory:
-				 * [&_data[size_old], &_data[count])
-				 * is undefined, there is no need to snapshot
-				 * and eventually rollback old data.
-				 */
-				VALGRIND_PMC_ADD_TO_TX(
-					&_data[static_cast<difference_type>(
-						size_old)],
-					sizeof(T) * (count - size_old));
-#endif
-
+				add_data_to_tx(size_old, count - size_old);
 				construct_at_end(count - size_old, value);
-				/*
-				 * XXX: explicit persist is required here
-				 * because given range wasn't snapshotted and
-				 * won't be persisted automatically on tx
-				 * commit. This can be changed once we will have
-				 * implemented "uninitialized" flag for
-				 * pmemobj_tx_xadd in libpmemobj.
-				 */
-				pb.persist(&_data[static_cast<difference_type>(
-						   size_old)],
-					   sizeof(T) * (count - size_old));
 			} else {
 				shrink(count);
 			}
@@ -749,24 +726,13 @@ vector<T>::assign(InputIt first, InputIt last)
 			 * elements destructors, or append more new elements.
 			 */
 			size_type size_old = _size;
-			snapshot_data(0, size_old);
+			add_data_to_tx(0, size_old);
 
 			InputIt mid = last;
 			bool growing = size_new > size_old;
 
 			if (growing) {
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
-				/*
-				 * Range of memory:
-				 * [&_data[size_old], &_data[size_new])
-				 * is undefined, there is no need to snapshot
-				 * and eventually rollback old data.
-				 */
-				VALGRIND_PMC_ADD_TO_TX(
-					&_data[static_cast<difference_type>(
-						size_old)],
-					sizeof(T) * (size_new - size_old));
-#endif
+				add_data_to_tx(size_old, size_new - size_old);
 
 				mid = first;
 				std::advance(mid, size_old);
@@ -776,17 +742,6 @@ vector<T>::assign(InputIt first, InputIt last)
 
 			if (growing) {
 				construct_at_end(mid, last);
-				/*
-				 * XXX: explicit persist is required here
-				 * because given range wasn't snapshotted and
-				 * won't be persisted automatically on tx
-				 * commit. This can be changed once we will have
-				 * implemented "uninitialized" flag for
-				 * pmemobj_tx_xadd in libpmemobj.
-				 */
-				pb.persist(&_data[static_cast<difference_type>(
-						   size_old)],
-					   sizeof(T) * (size_new - size_old));
 			} else {
 				shrink(static_cast<size_type>(std::distance(
 					iterator(&_data[0]), shrink_to)));
@@ -925,7 +880,8 @@ vector<T>::at(size_type n)
 	if (n >= _size)
 		throw std::out_of_range("vector::at");
 
-	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
+	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)],
+				      1, POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[static_cast<difference_type>(n)];
 }
@@ -985,7 +941,8 @@ vector<T>::const_at(size_type n) const
 template <typename T>
 typename vector<T>::reference vector<T>::operator[](size_type n)
 {
-	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)]);
+	detail::conditional_add_to_tx(&_data[static_cast<difference_type>(n)],
+				      1, POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[static_cast<difference_type>(n)];
 }
@@ -1015,7 +972,8 @@ template <typename T>
 typename vector<T>::reference
 vector<T>::front()
 {
-	detail::conditional_add_to_tx(&_data[0]);
+	detail::conditional_add_to_tx(&_data[0], 1,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[0];
 }
@@ -1059,7 +1017,8 @@ typename vector<T>::reference
 vector<T>::back()
 {
 	detail::conditional_add_to_tx(
-		&_data[static_cast<difference_type>(size() - 1)]);
+		&_data[static_cast<difference_type>(size() - 1)], 1,
+		POBJ_XADD_ASSUME_INITIALIZED);
 
 	return _data[static_cast<difference_type>(size() - 1)];
 }
@@ -1103,7 +1062,7 @@ template <typename T>
 typename vector<T>::value_type *
 vector<T>::data()
 {
-	snapshot_data(0, _size);
+	add_data_to_tx(0, _size);
 
 	return _data.get();
 }
@@ -1309,7 +1268,8 @@ vector<T>::range(size_type start, size_type n)
 	if (start + n > size())
 		throw std::out_of_range("vector::range");
 
-	detail::conditional_add_to_tx(cdata() + start, n);
+	detail::conditional_add_to_tx(cdata() + start, n,
+				      POBJ_XADD_ASSUME_INITIALIZED);
 
 	return {_data.get() + start, _data.get() + start + n};
 }
@@ -1822,27 +1782,10 @@ vector<T>::emplace_back(Args &&... args)
 		if (_size == _capacity) {
 			realloc(get_recommended_capacity(_size + 1));
 		} else {
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
-			/*
-			 * Range of memory: [&_data[_size], &_data[_size + 1])
-			 * is undefined, there is no need to snapshot and
-			 * eventually rollback old data.
-			 */
-			VALGRIND_PMC_ADD_TO_TX(
-				&_data[static_cast<difference_type>(size())],
-				sizeof(T));
-#endif
+			add_data_to_tx(size(), 1);
 		}
 
 		construct_at_end(1, std::forward<Args>(args)...);
-		/*
-		 * XXX: explicit persist is required here because given range
-		 * wasn't snapshotted and won't be persisted automatically on tx
-		 * commit. This can be changed once we will have implemented
-		 * "uninitialized" flag for pmemobj_tx_xadd in libpmemobj.
-		 */
-		pb.persist(&_data[static_cast<difference_type>(size() - 1)],
-			   sizeof(T));
 	});
 
 	return back();
@@ -1914,7 +1857,7 @@ vector<T>::erase(const_iterator first, const_iterator last)
 		 * XXX: future optimization: no need to snapshot trivial types,
 		 * if idx + count = _size
 		 */
-		snapshot_data(idx, _size);
+		add_data_to_tx(idx, _size - idx);
 
 		pointer move_begin =
 			&_data[static_cast<difference_type>(idx + count)];
@@ -2369,21 +2312,7 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 		pointer begin = &_data[static_cast<difference_type>(idx)];
 		pointer end = &_data[static_cast<difference_type>(size())];
 
-		/*
-		 * XXX: There is no necessity to snapshot uninitialized data, so
-		 * we can optimize it by calling:
-		 * transaction::snapshot<T>(begin, size() - idx).
-		 * However, we need libpmemobj support for that, because right
-		 * now pmemcheck will report an error (uninitialized part of
-		 * data not added to tx).
-		 *
-		 * XXX: future optimization: we don't have to snapshot data
-		 * which we will not overwrite
-		 */
-#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
-		VALGRIND_MAKE_MEM_DEFINED(end, sizeof(T) * count);
-#endif
-		snapshot_data(idx, size() + count);
+		add_data_to_tx(idx, size() - idx + count);
 
 		/* Make a gap for new elements */
 		move_elements_backward(begin, end, dest);
@@ -2393,9 +2322,9 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 	} else {
 		/*
 		 * XXX: future optimization: we don't have to snapshot data
-		 * which we will not overwrite
+		 * which we will copy (only snapshot for move)
 		 */
-		snapshot_data(0, _size);
+		add_data_to_tx(0, _size);
 
 		auto old_data = _data;
 		auto old_size = _size;
@@ -2457,7 +2386,7 @@ vector<T>::realloc(size_type capacity_new)
 	 * XXX: future optimization: we don't have to snapshot data
 	 * which we will not overwrite
 	 */
-	snapshot_data(0, _size);
+	add_data_to_tx(0, _size);
 
 	auto old_data = _data;
 	auto old_size = _size;
@@ -2520,7 +2449,7 @@ vector<T>::shrink(size_type size_new)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
 
-	snapshot_data(size_new, _size);
+	add_data_to_tx(size_new, _size - size_new);
 
 	for (size_type i = size_new; i < _size; ++i)
 		detail::destroy<value_type>(
@@ -2530,19 +2459,38 @@ vector<T>::shrink(size_type size_new)
 
 /**
  * Private helper function. Takes a “snapshot” of data in range
- * [&_data[idx_first], &_data[idx_last])
+ * [&_data[idx_first], &_data[idx_first + num])
  *
  * @param[in] idx_first first index.
- * @param[in] idx_last last index.
+ * @param[in] num number of elements to snapshot.
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename T>
 void
-vector<T>::snapshot_data(size_type idx_first, size_type idx_last)
+vector<T>::add_data_to_tx(size_type idx_first, size_type num)
 {
+	assert(idx_first + num <= capacity());
+
+#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED
+	/* Make sure that only data allocated by this vector is accessed */
+	assert(VALGRIND_CHECK_MEM_IS_ADDRESSABLE(_data.get() + idx_first,
+						 num * sizeof(T)) == 0);
+#endif
+
+	auto initialized_num = size() - idx_first;
+
+	/* Snapshot elements in range [idx_first,size()) */
 	detail::conditional_add_to_tx(_data.get() + idx_first,
-				      idx_last - idx_first);
+				      (std::min)(initialized_num, num),
+				      POBJ_XADD_ASSUME_INITIALIZED);
+
+	if (num > initialized_num) {
+		/* Elements after size() do not have to be snapshotted */
+		detail::conditional_add_to_tx(_data.get() + size(),
+					      num - initialized_num,
+					      POBJ_XADD_NO_SNAPSHOT);
+	}
 }
 
 /**

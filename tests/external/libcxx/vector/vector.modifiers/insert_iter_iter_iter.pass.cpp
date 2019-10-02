@@ -296,8 +296,6 @@ main(int argc, char *argv[])
 		test_support::forward_it<const CompoundType *>(compund_table),
 		test_support::forward_it<const CompoundType *>(compund_table +
 							       5));
-
-	/* XXX: Enable when no_uninit_check is implemented
 	test_insert_with_realloc(pop, r->v3, *(pop.root()->default_str),
 				 pop.root()->string_test_arr->cbegin(),
 				 pop.root()->string_test_arr->cend());
@@ -313,7 +311,6 @@ main(int argc, char *argv[])
 	test_insert_with_reserve3(pop, r->v3, *(pop.root()->default_str),
 				  pop.root()->string_test_arr->cbegin(),
 				  pop.root()->string_test_arr->cend());
-	*/
 
 	pop.close();
 

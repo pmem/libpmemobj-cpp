@@ -38,22 +38,17 @@ set -e
 
 git clone https://github.com/pmem/pmdk
 cd pmdk
-# stable-1.6: common: fix typo
-git checkout d526eb00eade98ff1caa283751c2d2dc9cf276fb
+git checkout 1.7
 
-sudo make EXTRA_CFLAGS="-DUSE_COW_ENV" -j2 install prefix=/opt/pmdk
+sudo make -j2 install prefix=/opt/pmdk
 
 sudo mkdir /opt/pmdk-pkg
+NDCTL_ENABLE=n make BUILD_PACKAGE_CHECK=n -j2 "$1"
 
-# Download and save pmdk-1.4 packages
 if [ "$1" = "dpkg" ]; then
-	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-dpkgs.tar.gz
-	tar -xzf pmdk-1.4-dpkgs.tar.gz
-	sudo mv *.deb /opt/pmdk-pkg/
+	sudo mv dpkg/*.deb /opt/pmdk-pkg/
 elif [ "$1" = "rpm" ]; then
-	wget https://github.com/pmem/pmdk/releases/download/1.4/pmdk-1.4-rpms.tar.gz
-	tar -xzf pmdk-1.4-rpms.tar.gz
-	sudo mv x86_64/*.rpm /opt/pmdk-pkg/
+	sudo mv rpm/x86_64/*.rpm /opt/pmdk-pkg/
 fi
 
 cd ..

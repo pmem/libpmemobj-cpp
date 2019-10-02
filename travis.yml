@@ -15,7 +15,9 @@ env:
     - TYPE=release OS=fedora OS_VER=30
     - TYPE=release OS=ubuntu OS_VER=19.04
     - TYPE=valgrind OS=ubuntu OS_VER=19.04
+    - TYPE=memcheck_drd OS=ubuntu OS_VER=19.04
     - TYPE=coverity OS=ubuntu OS_VER=19.04
+    - TYPE=package OS=ubuntu OS_VER=19.04
 
 before_install:
   - echo $TRAVIS_COMMIT_RANGE

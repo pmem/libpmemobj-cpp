@@ -48,7 +48,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/transaction.hpp>
-#include <libpmemobj.h>
+#include <libpmemobj/base.h>
 
 #include <algorithm>
 #include <cassert>

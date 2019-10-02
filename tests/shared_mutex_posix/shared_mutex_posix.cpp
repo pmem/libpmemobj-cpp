@@ -41,6 +41,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/shared_mutex.hpp>
+#include <libpmemobj/atomic_base.h>
 
 #include <mutex>
 

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['rebind',['rebind',['../classpmem_1_1obj_1_1persistent__ptr.html#a5a5f287d06995fe517000650ee35a2a8',1,'pmem::obj::persistent_ptr']]],
-  ['reference',['reference',['../classpmem_1_1obj_1_1persistent__ptr.html#a7015e71f65550faab67a820744f6bfa1',1,'pmem::obj::persistent_ptr']]]
+  ['persistency_5ftype',['persistency_type',['../classpmem_1_1obj_1_1persistent__ptr.html#a49b743ee332a992f938b2e086e9f182d',1,'pmem::obj::persistent_ptr']]],
+  ['pointer',['pointer',['../classpmem_1_1obj_1_1persistent__ptr.html#ad8000c13e9a76ddaae15a8df5344a5ba',1,'pmem::obj::persistent_ptr']]]
 ];

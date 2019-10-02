@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>pmem</b></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -91,9 +91,8 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ab26e4a679d91d33392e924cb6c500d12">array</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a> &amp;)=default</td></tr>
 <tr class="memdesc:ab26e4a679d91d33392e924cb6c500d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defaulted copy constructor. <br /></td></tr>
 <tr class="separator:ab26e4a679d91d33392e924cb6c500d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e3ff6b4ed3c41385a04915219a6d6e9"><td class="memItemLeft" align="right" valign="top"><a id="a2e3ff6b4ed3c41385a04915219a6d6e9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a2e3ff6b4ed3c41385a04915219a6d6e9">array</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a> &amp;&amp;)=default</td></tr>
-<tr class="memdesc:a2e3ff6b4ed3c41385a04915219a6d6e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defaulted move constructor. <br /></td></tr>
+<tr class="memitem:a2e3ff6b4ed3c41385a04915219a6d6e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a2e3ff6b4ed3c41385a04915219a6d6e9">array</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a> &amp;&amp;)=default</td></tr>
+<tr class="memdesc:a2e3ff6b4ed3c41385a04915219a6d6e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defaulted move constructor.  <a href="#a2e3ff6b4ed3c41385a04915219a6d6e9">More...</a><br /></td></tr>
 <tr class="separator:a2e3ff6b4ed3c41385a04915219a6d6e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bccc2060e31d7542a6474be21fd0505"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a6bccc2060e31d7542a6474be21fd0505">operator=</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a> &amp;other)</td></tr>
 <tr class="memdesc:a6bccc2060e31d7542a6474be21fd0505"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator - perform assignment from other <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html" title="pmem::obj::experimental::array - EXPERIMENTAL persistent container with std::array compatible interfa...">pmem::obj::experimental::array</a>.  <a href="#a6bccc2060e31d7542a6474be21fd0505">More...</a><br /></td></tr>
@@ -264,7 +263,39 @@ struct pmem::obj::experimental::array&lt; T, N &gt;</h3>
 <p>All methods which allow write access to specific element will add it to an active transaction.</p>
 <p>All methods which return non-const pointer to raw data add entire array to a transaction.</p>
 <p>When a non-const iterator is returned it adds part of the array to a transaction while traversing. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a2e3ff6b4ed3c41385a04915219a6d6e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e3ff6b4ed3c41385a04915219a6d6e9">&#9670;&nbsp;</a></span>array()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T, std::size_t N&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">array</a>&lt; T, N &gt; &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Defaulted move constructor. </p>
+<p>Performs member-wise move but do NOT add moved-from array to the transaction. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a79a636fb783adf2bdae0036c9402bf5d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a79a636fb783adf2bdae0036c9402bf5d">&#9670;&nbsp;</a></span>_get_data()</h2>
 

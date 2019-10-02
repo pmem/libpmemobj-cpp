@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['iterator_5fcategory',['iterator_category',['../classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff',1,'pmem::obj::persistent_ptr']]]
+  ['fixed_5fsize_5farray_5fpolicy',['fixed_size_array_policy',['../segment__vector_8hpp.html#a04216eeeee3405876c38dded006feced',1,'pmem::obj::experimental']]]
 ];

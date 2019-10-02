@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>pmem</b></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -164,7 +164,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a4e4ce02d1ea4365b52365d4803410293"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the string with the contents of other using move semantics transactionally.  <a href="#a4e4ce02d1ea4365b52365d4803410293">More...</a><br /></td></tr>
 <tr class="separator:a4e4ce02d1ea4365b52365d4803410293"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac70f97749d40640d52cebf64762a40c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ac70f97749d40640d52cebf64762a40c7">assign</a> (std::initializer_list&lt; CharT &gt; ilist)</td></tr>
-<tr class="memdesc:ac70f97749d40640d52cebf64762a40c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces the contents with those of the initializer list ilist transactionally.  <a href="#ac70f97749d40640d52cebf64762a40c7">More...</a><br /></td></tr>
+<tr class="memdesc:ac70f97749d40640d52cebf64762a40c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">replace_content the contents with those of the initializer list ilist transactionally.  <a href="#ac70f97749d40640d52cebf64762a40c7">More...</a><br /></td></tr>
 <tr class="separator:ac70f97749d40640d52cebf64762a40c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a114ee8aa04b5200d10589ca9d8ace785"><td class="memItemLeft" align="right" valign="top">reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a114ee8aa04b5200d10589ca9d8ace785">at</a> (size_type n)</td></tr>
 <tr class="memdesc:a114ee8aa04b5200d10589ca9d8ace785"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access element at specific index with bounds checking and snapshot it if there is an active transaction.  <a href="#a114ee8aa04b5200d10589ca9d8ace785">More...</a><br /></td></tr>
@@ -199,6 +199,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a37b9e19d268d06cfbdae3d274a99da02"><td class="memItemLeft" align="right" valign="top">const CharT &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a37b9e19d268d06cfbdae3d274a99da02">cback</a> () const</td></tr>
 <tr class="memdesc:a37b9e19d268d06cfbdae3d274a99da02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access last element.  <a href="#a37b9e19d268d06cfbdae3d274a99da02">More...</a><br /></td></tr>
 <tr class="separator:a37b9e19d268d06cfbdae3d274a99da02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19ce85e96d0137d8407f1abe6bb74dd4"><td class="memItemLeft" align="right" valign="top">CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a19ce85e96d0137d8407f1abe6bb74dd4">data</a> ()</td></tr>
+<tr class="separator:a19ce85e96d0137d8407f1abe6bb74dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26afd5f7d0bae52907053cd7bf96cf25"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a26afd5f7d0bae52907053cd7bf96cf25">data</a> () const noexcept</td></tr>
+<tr class="separator:a26afd5f7d0bae52907053cd7bf96cf25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a924a8b0829e7c20a71a322f7507dc966"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a924a8b0829e7c20a71a322f7507dc966">cdata</a> () const noexcept</td></tr>
 <tr class="separator:a924a8b0829e7c20a71a322f7507dc966"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92e9ca34c0b5b017cd5817360930e152"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a92e9ca34c0b5b017cd5817360930e152">c_str</a> () const noexcept</td></tr>
@@ -275,8 +279,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2efe18b1b78afcfaf8b715daa3276a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4a254b366ac8a14024171dafe32336b"><td class="memTemplParams" colspan="2">template&lt;typename T , typename Enable  = typename std::enable_if&lt;			  !std::is_convertible&lt;T, size_type&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:af4a254b366ac8a14024171dafe32336b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#af4a254b366ac8a14024171dafe32336b">erase</a> (T param)</td></tr>
-<tr class="memdesc:af4a254b366ac8a14024171dafe32336b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Participate in overload resulution only if T is not convertible to size_type.  <a href="#af4a254b366ac8a14024171dafe32336b">More...</a><br /></td></tr>
+<tr class="memdesc:af4a254b366ac8a14024171dafe32336b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Participate in overload resolution only if T is not convertible to size_type.  <a href="#af4a254b366ac8a14024171dafe32336b">More...</a><br /></td></tr>
 <tr class="separator:af4a254b366ac8a14024171dafe32336b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d659398a61aa62e67af30497d635388"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a8d659398a61aa62e67af30497d635388">pop_back</a> ()</td></tr>
+<tr class="memdesc:a8d659398a61aa62e67af30497d635388"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove the last character from the string transactionally.  <a href="#a8d659398a61aa62e67af30497d635388">More...</a><br /></td></tr>
+<tr class="separator:a8d659398a61aa62e67af30497d635388"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8dbad2006284b8c56352fb3830223cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ad8dbad2006284b8c56352fb3830223cc">append</a> (size_type count, CharT ch)</td></tr>
 <tr class="memdesc:ad8dbad2006284b8c56352fb3830223cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append count copies of character ch to the string transactionally.  <a href="#ad8dbad2006284b8c56352fb3830223cc">More...</a><br /></td></tr>
 <tr class="separator:ad8dbad2006284b8c56352fb3830223cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -295,6 +302,86 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaf1407ac483de831d458c605ead38a88"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aaf1407ac483de831d458c605ead38a88">append</a> (std::initializer_list&lt; CharT &gt; ilist)</td></tr>
 <tr class="memdesc:aaf1407ac483de831d458c605ead38a88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append characters from the ilist initializer list transactionally.  <a href="#aaf1407ac483de831d458c605ead38a88">More...</a><br /></td></tr>
 <tr class="separator:aaf1407ac483de831d458c605ead38a88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65a5e19b05069281877348ddd4db3628"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a65a5e19b05069281877348ddd4db3628">push_back</a> (CharT ch)</td></tr>
+<tr class="memdesc:a65a5e19b05069281877348ddd4db3628"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append character ch at the end of the string transactionally.  <a href="#a65a5e19b05069281877348ddd4db3628">More...</a><br /></td></tr>
+<tr class="separator:a65a5e19b05069281877348ddd4db3628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1002f2f69f122ed33b569df655d0c91"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ab1002f2f69f122ed33b569df655d0c91">operator+=</a> (const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;str)</td></tr>
+<tr class="memdesc:ab1002f2f69f122ed33b569df655d0c91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append string str transactionally.  <a href="#ab1002f2f69f122ed33b569df655d0c91">More...</a><br /></td></tr>
+<tr class="separator:ab1002f2f69f122ed33b569df655d0c91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ca9d5ff7baa72fe12bf94547095ce01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a5ca9d5ff7baa72fe12bf94547095ce01">operator+=</a> (const CharT *s)</td></tr>
+<tr class="memdesc:a5ca9d5ff7baa72fe12bf94547095ce01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append C-style string transactionally.  <a href="#a5ca9d5ff7baa72fe12bf94547095ce01">More...</a><br /></td></tr>
+<tr class="separator:a5ca9d5ff7baa72fe12bf94547095ce01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0b261819c79a1fc515fda81fe866ae5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#af0b261819c79a1fc515fda81fe866ae5">operator+=</a> (CharT c)</td></tr>
+<tr class="memdesc:af0b261819c79a1fc515fda81fe866ae5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append character ch at the end of the string transactionally.  <a href="#af0b261819c79a1fc515fda81fe866ae5">More...</a><br /></td></tr>
+<tr class="separator:af0b261819c79a1fc515fda81fe866ae5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a067720bf6200336e78a29a8ba385bf84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a067720bf6200336e78a29a8ba385bf84">operator+=</a> (std::initializer_list&lt; CharT &gt; ilist)</td></tr>
+<tr class="memdesc:a067720bf6200336e78a29a8ba385bf84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append characters from the ilist initializer list transactionally.  <a href="#a067720bf6200336e78a29a8ba385bf84">More...</a><br /></td></tr>
+<tr class="separator:a067720bf6200336e78a29a8ba385bf84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8cc08ce035aefdca9c5902ea5daf69c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa8cc08ce035aefdca9c5902ea5daf69c">insert</a> (size_type index, size_type count, CharT ch)</td></tr>
+<tr class="memdesc:aa8cc08ce035aefdca9c5902ea5daf69c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert count copies of ch character at index transactionally.  <a href="#aa8cc08ce035aefdca9c5902ea5daf69c">More...</a><br /></td></tr>
+<tr class="separator:aa8cc08ce035aefdca9c5902ea5daf69c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4219eb8c6db9c309c40076d920a41a9b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a4219eb8c6db9c309c40076d920a41a9b">insert</a> (size_type index, const CharT *s)</td></tr>
+<tr class="memdesc:a4219eb8c6db9c309c40076d920a41a9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert null-terminated C-style string pointed by s of the length determined by the first null character at index transactionally.  <a href="#a4219eb8c6db9c309c40076d920a41a9b">More...</a><br /></td></tr>
+<tr class="separator:a4219eb8c6db9c309c40076d920a41a9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a791f57776354054d380f8cbb5dff8fe1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a791f57776354054d380f8cbb5dff8fe1">insert</a> (size_type index, const CharT *s, size_type count)</td></tr>
+<tr class="memdesc:a791f57776354054d380f8cbb5dff8fe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert characters in the range [s, s+ count) at index transactionally.  <a href="#a791f57776354054d380f8cbb5dff8fe1">More...</a><br /></td></tr>
+<tr class="separator:a791f57776354054d380f8cbb5dff8fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35f24dbfac5cb9144a0bf682b4afe9a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a35f24dbfac5cb9144a0bf682b4afe9a8">insert</a> (size_type index, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;str)</td></tr>
+<tr class="memdesc:a35f24dbfac5cb9144a0bf682b4afe9a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert str string at index transactionally.  <a href="#a35f24dbfac5cb9144a0bf682b4afe9a8">More...</a><br /></td></tr>
+<tr class="separator:a35f24dbfac5cb9144a0bf682b4afe9a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98baa99c0ddef1a7799c103bc71e43b3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a98baa99c0ddef1a7799c103bc71e43b3">insert</a> (size_type index1, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;str, size_type index2, size_type count=npos)</td></tr>
+<tr class="memdesc:a98baa99c0ddef1a7799c103bc71e43b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a str.substr(index2, count) string at index1 transactionally.  <a href="#a98baa99c0ddef1a7799c103bc71e43b3">More...</a><br /></td></tr>
+<tr class="separator:a98baa99c0ddef1a7799c103bc71e43b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2ce3312e00ca19d73f329139fb9dc4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ad2ce3312e00ca19d73f329139fb9dc4c">insert</a> (const_iterator pos, CharT ch)</td></tr>
+<tr class="memdesc:ad2ce3312e00ca19d73f329139fb9dc4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert character ch before the character pointed by pos transactionally.  <a href="#ad2ce3312e00ca19d73f329139fb9dc4c">More...</a><br /></td></tr>
+<tr class="separator:ad2ce3312e00ca19d73f329139fb9dc4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fb62bcf4fc3a19b34f573c948e9c8f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a0fb62bcf4fc3a19b34f573c948e9c8f9">insert</a> (const_iterator pos, size_type count, CharT ch)</td></tr>
+<tr class="memdesc:a0fb62bcf4fc3a19b34f573c948e9c8f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert count copies of character ch before the character pointed by pos transactionally.  <a href="#a0fb62bcf4fc3a19b34f573c948e9c8f9">More...</a><br /></td></tr>
+<tr class="separator:a0fb62bcf4fc3a19b34f573c948e9c8f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d6c82e794b70af46623aeec8d9a5182"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename Enable  = typename pmem::detail::is_input_iterator&lt;			  InputIt&gt;::type&gt; </td></tr>
+<tr class="memitem:a6d6c82e794b70af46623aeec8d9a5182"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a6d6c82e794b70af46623aeec8d9a5182">insert</a> (const_iterator pos, InputIt first, InputIt last)</td></tr>
+<tr class="memdesc:a6d6c82e794b70af46623aeec8d9a5182"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert characters from [first, last) range before the character pointed by pos transactionally.  <a href="#a6d6c82e794b70af46623aeec8d9a5182">More...</a><br /></td></tr>
+<tr class="separator:a6d6c82e794b70af46623aeec8d9a5182"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f03f1c273cd028f6083c4bc45d8b525"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a5f03f1c273cd028f6083c4bc45d8b525">insert</a> (const_iterator pos, std::initializer_list&lt; CharT &gt; ilist)</td></tr>
+<tr class="memdesc:a5f03f1c273cd028f6083c4bc45d8b525"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert characters from initializer list ilist before the character pointed by pos transactionally.  <a href="#a5f03f1c273cd028f6083c4bc45d8b525">More...</a><br /></td></tr>
+<tr class="separator:a5f03f1c273cd028f6083c4bc45d8b525"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a482415e51110c3dda72cfa841be63661"><td class="memTemplParams" colspan="2">template&lt;typename T , typename Enable  = typename std::enable_if&lt;			  !std::is_convertible&lt;T, size_type&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:a482415e51110c3dda72cfa841be63661"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a482415e51110c3dda72cfa841be63661">insert</a> (T param, size_type count, CharT ch)</td></tr>
+<tr class="memdesc:a482415e51110c3dda72cfa841be63661"><td class="mdescLeft">&#160;</td><td class="mdescRight">Participate in overload resolution only if T is not convertible to size_type.  <a href="#a482415e51110c3dda72cfa841be63661">More...</a><br /></td></tr>
+<tr class="separator:a482415e51110c3dda72cfa841be63661"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7adb85bb22cdfe364fd86522715b9cc7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a7adb85bb22cdfe364fd86522715b9cc7">replace</a> (size_type index, size_type count, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;str)</td></tr>
+<tr class="memdesc:a7adb85bb22cdfe364fd86522715b9cc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [index, index + count) with the content of str string transactionally.  <a href="#a7adb85bb22cdfe364fd86522715b9cc7">More...</a><br /></td></tr>
+<tr class="separator:a7adb85bb22cdfe364fd86522715b9cc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa67fec31d082d87e37e4a2cfa1c305cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa67fec31d082d87e37e4a2cfa1c305cf">replace</a> (const_iterator first, const_iterator last, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;str)</td></tr>
+<tr class="memdesc:aa67fec31d082d87e37e4a2cfa1c305cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [first, last) with the content of str string transactionally.  <a href="#aa67fec31d082d87e37e4a2cfa1c305cf">More...</a><br /></td></tr>
+<tr class="separator:aa67fec31d082d87e37e4a2cfa1c305cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ce0713ff9aad5d746cfa900090c3526"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a0ce0713ff9aad5d746cfa900090c3526">replace</a> (size_type index, size_type count, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;str, size_type index2, size_type count2=npos)</td></tr>
+<tr class="memdesc:a0ce0713ff9aad5d746cfa900090c3526"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [index, index + count) with the substring [index2, index2 + count2) of str string transactionally.  <a href="#a0ce0713ff9aad5d746cfa900090c3526">More...</a><br /></td></tr>
+<tr class="separator:a0ce0713ff9aad5d746cfa900090c3526"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee7a7c666edcdb9c703887c5f69700da"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aee7a7c666edcdb9c703887c5f69700da">replace</a> (const_iterator first, const_iterator last, const CharT *s, size_type count2)</td></tr>
+<tr class="memdesc:aee7a7c666edcdb9c703887c5f69700da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [first, last) with the characters in [s, s + count2) range transactionally.  <a href="#aee7a7c666edcdb9c703887c5f69700da">More...</a><br /></td></tr>
+<tr class="separator:aee7a7c666edcdb9c703887c5f69700da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4a7b5a845d5adb851e3ba2da98151f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa4a7b5a845d5adb851e3ba2da98151f1">replace</a> (const_iterator first, const_iterator last, const CharT *s)</td></tr>
+<tr class="memdesc:aa4a7b5a845d5adb851e3ba2da98151f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [first, last) with the characters in [s, s + traits::length(s)) range transactionally.  <a href="#aa4a7b5a845d5adb851e3ba2da98151f1">More...</a><br /></td></tr>
+<tr class="separator:aa4a7b5a845d5adb851e3ba2da98151f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3792d96269991f9bfc6f76e5de38a250"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a3792d96269991f9bfc6f76e5de38a250">replace</a> (size_type index, size_type count, size_type count2, CharT ch)</td></tr>
+<tr class="memdesc:a3792d96269991f9bfc6f76e5de38a250"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [index, index + count) with count2 copies of ch character transactionally.  <a href="#a3792d96269991f9bfc6f76e5de38a250">More...</a><br /></td></tr>
+<tr class="separator:a3792d96269991f9bfc6f76e5de38a250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a2e1246319527843d218f342428a1d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a2a2e1246319527843d218f342428a1d8">replace</a> (const_iterator first, const_iterator last, size_type count2, CharT ch)</td></tr>
+<tr class="memdesc:a2a2e1246319527843d218f342428a1d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [first, last) with count2 copies of ch character transactionally.  <a href="#a2a2e1246319527843d218f342428a1d8">More...</a><br /></td></tr>
+<tr class="separator:a2a2e1246319527843d218f342428a1d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17b0296c73c9a4ccd2bf1b5dd783257f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a17b0296c73c9a4ccd2bf1b5dd783257f">replace</a> (size_type index, size_type count, const CharT *s, size_type count2)</td></tr>
+<tr class="memdesc:a17b0296c73c9a4ccd2bf1b5dd783257f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [index, index + count) with the characters in [s, s + count2) range transactionally.  <a href="#a17b0296c73c9a4ccd2bf1b5dd783257f">More...</a><br /></td></tr>
+<tr class="separator:a17b0296c73c9a4ccd2bf1b5dd783257f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23719386f4d96bb15a61f70b38ad1463"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a23719386f4d96bb15a61f70b38ad1463">replace</a> (size_type index, size_type count, const CharT *s)</td></tr>
+<tr class="memdesc:a23719386f4d96bb15a61f70b38ad1463"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [index, index + count) with the characters in [s, s + traits::length(s)) range transactionally.  <a href="#a23719386f4d96bb15a61f70b38ad1463">More...</a><br /></td></tr>
+<tr class="separator:a23719386f4d96bb15a61f70b38ad1463"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64e3b258bbc3e4516c549e521bac5396"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a64e3b258bbc3e4516c549e521bac5396">replace</a> (const_iterator first, const_iterator last, std::initializer_list&lt; CharT &gt; ilist)</td></tr>
+<tr class="memdesc:a64e3b258bbc3e4516c549e521bac5396"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [first, last) with characters in initializer list ilist transactionally.  <a href="#a64e3b258bbc3e4516c549e521bac5396">More...</a><br /></td></tr>
+<tr class="separator:a64e3b258bbc3e4516c549e521bac5396"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada2cc6b2a19aefdb0ae49fb42e217cb7"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ada2cc6b2a19aefdb0ae49fb42e217cb7">copy</a> (CharT *s, size_type count, size_type index=0) const</td></tr>
+<tr class="memdesc:ada2cc6b2a19aefdb0ae49fb42e217cb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy [index, index + count) substring of *this to C-style string.  <a href="#ada2cc6b2a19aefdb0ae49fb42e217cb7">More...</a><br /></td></tr>
+<tr class="separator:ada2cc6b2a19aefdb0ae49fb42e217cb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a037abcc78fa96219dc1a24587d628de6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a037abcc78fa96219dc1a24587d628de6">compare</a> (const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;other) const</td></tr>
 <tr class="memdesc:a037abcc78fa96219dc1a24587d628de6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compares this string to other.  <a href="#a037abcc78fa96219dc1a24587d628de6">More...</a><br /></td></tr>
 <tr class="separator:a037abcc78fa96219dc1a24587d628de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -330,10 +417,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaeb50bb73a285a1086ba23f7766b36f7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aaeb50bb73a285a1086ba23f7766b36f7">append</a> (InputIt first, InputIt last)</td></tr>
 <tr class="memdesc:aaeb50bb73a285a1086ba23f7766b36f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append characters in the range [first, last) transactionally.  <a href="#aaeb50bb73a285a1086ba23f7766b36f7">More...</a><br /></td></tr>
 <tr class="separator:aaeb50bb73a285a1086ba23f7766b36f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac81a9751029d6d8a80c529e1e977a586"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename Enable &gt; </td></tr>
+<tr class="memitem:ac81a9751029d6d8a80c529e1e977a586"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ac81a9751029d6d8a80c529e1e977a586">replace</a> (const_iterator first, const_iterator last, InputIt first2, InputIt last2)</td></tr>
+<tr class="memdesc:ac81a9751029d6d8a80c529e1e977a586"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace range [first, last) with the characters in [first2, last2) range transactionally.  <a href="#ac81a9751029d6d8a80c529e1e977a586">More...</a><br /></td></tr>
+<tr class="separator:ac81a9751029d6d8a80c529e1e977a586"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bdd408b3929ce784004ccc236c085f8"><td class="memTemplParams" colspan="2">template&lt;typename T , typename Enable &gt; </td></tr>
 <tr class="memitem:a7bdd408b3929ce784004ccc236c085f8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a7bdd408b3929ce784004ccc236c085f8">erase</a> (T param)</td></tr>
-<tr class="memdesc:a7bdd408b3929ce784004ccc236c085f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Participate in overload resulution only if T is convertible to size_type.  <a href="#a7bdd408b3929ce784004ccc236c085f8">More...</a><br /></td></tr>
+<tr class="memdesc:a7bdd408b3929ce784004ccc236c085f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Participate in overload resolution only if T is convertible to size_type.  <a href="#a7bdd408b3929ce784004ccc236c085f8">More...</a><br /></td></tr>
 <tr class="separator:a7bdd408b3929ce784004ccc236c085f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab65fcd6dfc161897f32529f3144edd9f"><td class="memTemplParams" colspan="2">template&lt;typename T , typename Enable &gt; </td></tr>
+<tr class="memitem:ab65fcd6dfc161897f32529f3144edd9f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ab65fcd6dfc161897f32529f3144edd9f">insert</a> (T param, size_type count, CharT ch)</td></tr>
+<tr class="memdesc:ab65fcd6dfc161897f32529f3144edd9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Participate in overload resolution only if T is convertible to size_type.  <a href="#ab65fcd6dfc161897f32529f3144edd9f">More...</a><br /></td></tr>
+<tr class="separator:ab65fcd6dfc161897f32529f3144edd9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -347,10 +442,10 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a78a54981fd56128506298de2317e5b4f"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a78a54981fd56128506298de2317e5b4f">get_size</a> (const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a> &amp;other) const</td></tr>
 <tr class="memdesc:a78a54981fd56128506298de2317e5b4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload of generic get_size method used to calculate size based on provided parameters.  <a href="#a78a54981fd56128506298de2317e5b4f">More...</a><br /></td></tr>
 <tr class="separator:a78a54981fd56128506298de2317e5b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5f3ebbbd4159f48caa7a3cb8de08599"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:ac5f3ebbbd4159f48caa7a3cb8de08599"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ac5f3ebbbd4159f48caa7a3cb8de08599">replace</a> (Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:ac5f3ebbbd4159f48caa7a3cb8de08599"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function which replaces current content based on provided parameters.  <a href="#ac5f3ebbbd4159f48caa7a3cb8de08599">More...</a><br /></td></tr>
-<tr class="separator:ac5f3ebbbd4159f48caa7a3cb8de08599"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a4ec3a9d3097de676a19b090d2eadbc"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a7a4ec3a9d3097de676a19b090d2eadbc"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a7a4ec3a9d3097de676a19b090d2eadbc">replace_content</a> (Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a7a4ec3a9d3097de676a19b090d2eadbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function which replace_content current content based on provided parameters.  <a href="#a7a4ec3a9d3097de676a19b090d2eadbc">More...</a><br /></td></tr>
+<tr class="separator:a7a4ec3a9d3097de676a19b090d2eadbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04af91240ccce74722307c1c8480be1e"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:a04af91240ccce74722307c1c8480be1e"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a04af91240ccce74722307c1c8480be1e">initialize</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:a04af91240ccce74722307c1c8480be1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function which initializes memory based on provided parameters - forwards parameters to initialize function of either non_sso.data or sso.data.  <a href="#a04af91240ccce74722307c1c8480be1e">More...</a><br /></td></tr>
@@ -388,10 +483,10 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:acbe6cb60642353c8b1ced86492d94513"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f220a35a83a3f4d1770b022c7d82043"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a9f220a35a83a3f4d1770b022c7d82043">check_pmem_tx</a> () const</td></tr>
 <tr class="separator:a9f220a35a83a3f4d1770b022c7d82043"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54af95f032a30fdfd1644f4f6219b267"><td class="memItemLeft" align="right" valign="top"><a id="a54af95f032a30fdfd1644f4f6219b267"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a54af95f032a30fdfd1644f4f6219b267">snapshot_sso</a> () const</td></tr>
-<tr class="memdesc:a54af95f032a30fdfd1644f4f6219b267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Snapshot sso data. <br /></td></tr>
-<tr class="separator:a54af95f032a30fdfd1644f4f6219b267"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97bdda99ef278b569dee0ee3bf5aac71"><td class="memItemLeft" align="right" valign="top"><a id="a97bdda99ef278b569dee0ee3bf5aac71"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a97bdda99ef278b569dee0ee3bf5aac71">add_sso_to_tx</a> (size_type first, size_type num) const</td></tr>
+<tr class="memdesc:a97bdda99ef278b569dee0ee3bf5aac71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Snapshot sso data. <br /></td></tr>
+<tr class="separator:a97bdda99ef278b569dee0ee3bf5aac71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e8ed5036d8df793db33592de6a946f7"><td class="memItemLeft" align="right" valign="top"><a id="a6e8ed5036d8df793db33592de6a946f7"></a>
 size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a6e8ed5036d8df793db33592de6a946f7">get_sso_size</a> () const</td></tr>
 <tr class="memdesc:a6e8ed5036d8df793db33592de6a946f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return size of sso string. <br /></td></tr>
@@ -1665,7 +1760,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Replaces the contents with those of the initializer list ilist transactionally. </p>
+<p>replace_content the contents with those of the initializer list ilist transactionally. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ilist</td><td>initializer_list of characters.</td></tr>
@@ -2934,6 +3029,60 @@ template&lt;typename CharT , typename Traits &gt; </div>
 
 </div>
 </div>
+<a id="ada2cc6b2a19aefdb0ae49fb42e217cb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada2cc6b2a19aefdb0ae49fb42e217cb7">&#9670;&nbsp;</a></span>copy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::size_type <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::copy </td>
+          <td>(</td>
+          <td class="paramtype">CharT *&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Copy [index, index + count) substring of *this to C-style string. </p>
+<p>If either count == npos or count exceeds size of *this string then substring [index, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>) is used. Resulting C-style string is not null-terminated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to destination C-style string. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>start of the substring that will be copied.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>number of copied characters.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a550ba03ad47efe24c30fff1b4c2548b7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a550ba03ad47efe24c30fff1b4c2548b7">&#9670;&nbsp;</a></span>crbegin()</h2>
 
@@ -2991,6 +3140,60 @@ template&lt;typename CharT , typename Traits &gt; </div>
 
 <p>Return a const reverse iterator to the end. </p>
 <dl class="section return"><dt>Returns</dt><dd>const reverse iterator referring to character preceding first character in the non-reversed string. </dd></dl>
+
+</div>
+</div>
+<a id="a19ce85e96d0137d8407f1abe6bb74dd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19ce85e96d0137d8407f1abe6bb74dd4">&#9670;&nbsp;</a></span>data() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">CharT * <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">transaction_error</a></td><td>when adding data to the transaction failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a26afd5f7d0bae52907053cd7bf96cf25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26afd5f7d0bae52907053cd7bf96cf25">&#9670;&nbsp;</a></span>data() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const CharT * <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data. </dd></dl>
 
 </div>
 </div>
@@ -3234,7 +3437,7 @@ template&lt;typename T , typename Enable &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Participate in overload resulution only if T is not convertible to size_type. </p>
+<p>Participate in overload resolution only if T is not convertible to size_type. </p>
 <p>Call iterator <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ad94c51bfd094b006063e77603cad10f3" title="Remove character from string at pos position transactionally.">erase(const_iterator pos)</a> if enabled. </p>
 
 </div>
@@ -3259,7 +3462,7 @@ template&lt;typename T , typename Enable &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Participate in overload resulution only if T is convertible to size_type. </p>
+<p>Participate in overload resolution only if T is convertible to size_type. </p>
 <p>Call <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html" title="pmem::obj::experimental::string - EXPERIMENTAL persistent container with std::basic_string compatible...">basic_string</a> &amp;erase(size_type index, size_type count = npos) if enabled. </p>
 
 </div>
@@ -3469,6 +3672,609 @@ memory must be allocated before initialization. </dd></dl>
 
 </div>
 </div>
+<a id="aa8cc08ce035aefdca9c5902ea5daf69c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8cc08ce035aefdca9c5902ea5daf69c">&#9670;&nbsp;</a></span>insert() <span class="overload">[1/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert count copies of ch character at index transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>position at which the content will be inserted </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>number of characters to insert </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to insert</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + count </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4219eb8c6db9c309c40076d920a41a9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4219eb8c6db9c309c40076d920a41a9b">&#9670;&nbsp;</a></span>insert() <span class="overload">[2/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert null-terminated C-style string pointed by s of the length determined by the first null character at index transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>position at which the content will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + traits::length(s). </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a791f57776354054d380f8cbb5dff8fe1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a791f57776354054d380f8cbb5dff8fe1">&#9670;&nbsp;</a></span>insert() <span class="overload">[3/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert characters in the range [s, s+ count) at index transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>position at which the content will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string to insert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>number of characters to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + count </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a35f24dbfac5cb9144a0bf682b4afe9a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35f24dbfac5cb9144a0bf682b4afe9a8">&#9670;&nbsp;</a></span>insert() <span class="overload">[4/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td>
+          <td class="paramname"><em>str</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert str string at index transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>position at which the content will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + str.size() </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a98baa99c0ddef1a7799c103bc71e43b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98baa99c0ddef1a7799c103bc71e43b3">&#9670;&nbsp;</a></span>insert() <span class="overload">[5/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em> = <code>npos</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert a str.substr(index2, count) string at index1 transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index1</td><td>position at which the content will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string to insert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index2</td><td>position of the first character in str to insert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>number of characters to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + std::min(count, str.size() - index2) </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index1 &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> or str.size() &gt; index2. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad2ce3312e00ca19d73f329139fb9dc4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2ce3312e00ca19d73f329139fb9dc4c">&#9670;&nbsp;</a></span>insert() <span class="overload">[6/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert character ch before the character pointed by pos transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>iterator before which the character will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>iterator to the copy of the first inserted character or pos if no characters were inserted.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>pos is valid iterator on *this.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + 1 </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0fb62bcf4fc3a19b34f573c948e9c8f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fb62bcf4fc3a19b34f573c948e9c8f9">&#9670;&nbsp;</a></span>insert() <span class="overload">[7/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert count copies of character ch before the character pointed by pos transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>iterator before which the character will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>number of characters to insert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>iterator to the copy of the first inserted character or pos if no characters were inserted.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>pos is valid iterator on *this.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + count </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6d6c82e794b70af46623aeec8d9a5182"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d6c82e794b70af46623aeec8d9a5182">&#9670;&nbsp;</a></span>insert() <span class="overload">[8/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIt , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>last</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert characters from [first, last) range before the character pointed by pos transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>iterator before which the character will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters to insert. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>iterator to the copy of the first inserted character or pos if no characters were inserted.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>pos is valid iterator on *this.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + std::distance(first, last) </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5f03f1c273cd028f6083c4bc45d8b525"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f03f1c273cd028f6083c4bc45d8b525">&#9670;&nbsp;</a></span>insert() <span class="overload">[9/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::initializer_list&lt; CharT &gt;&#160;</td>
+          <td class="paramname"><em>ilist</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert characters from initializer list ilist before the character pointed by pos transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>iterator before which the character will be inserted. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ilist</td><td>initializer list of characters to insert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>iterator to the copy of the first inserted character or pos if no characters were inserted.</dd></dl>
+<dl class="section pre"><dt>Precondition</dt><dd>pos is valid iterator on *this.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + ilist.size() </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a482415e51110c3dda72cfa841be63661"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a482415e51110c3dda72cfa841be63661">&#9670;&nbsp;</a></span>insert() <span class="overload">[10/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+<div class="memtemplate">
+template&lt;typename T , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>param</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Participate in overload resolution only if T is not convertible to size_type. </p>
+<p>Call iterator <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a0fb62bcf4fc3a19b34f573c948e9c8f9" title="Insert count copies of character ch before the character pointed by pos transactionally.">insert(const_iterator pos, size_type count, CharT ch)</a> if enabled. </p>
+
+</div>
+</div>
+<a id="ab65fcd6dfc161897f32529f3144edd9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab65fcd6dfc161897f32529f3144edd9f">&#9670;&nbsp;</a></span>insert() <span class="overload">[11/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename T , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt;CharT, Traits&gt;&amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>param</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Participate in overload resolution only if T is convertible to size_type. </p>
+<p>Call <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html" title="pmem::obj::experimental::string - EXPERIMENTAL persistent container with std::basic_string compatible...">basic_string</a> &amp;<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa8cc08ce035aefdca9c5902ea5daf69c" title="Insert count copies of ch character at index transactionally.">insert(size_type index, size_type count, CharT ch)</a> if enabled. </p>
+
+</div>
+</div>
 <a id="a14112c493bbcf4cc127095cfc4c6f53e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a14112c493bbcf4cc127095cfc4c6f53e">&#9670;&nbsp;</a></span>large_to_sso()</h2>
 
@@ -3556,6 +4362,170 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>maximum number of elements the string is able to hold. </dd></dl>
+
+</div>
+</div>
+<a id="ab1002f2f69f122ed33b569df655d0c91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1002f2f69f122ed33b569df655d0c91">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td>
+          <td class="paramname"><em>str</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append string str transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string to append.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + str.size() </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5ca9d5ff7baa72fe12bf94547095ce01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ca9d5ff7baa72fe12bf94547095ce01">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append C-style string transactionally. </p>
+<p>Length of the string is determined by the first null character.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string to append.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + traits::length(s). </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af0b261819c79a1fc515fda81fe866ae5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0b261819c79a1fc515fda81fe866ae5">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append character ch at the end of the string transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to append</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + 1 </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new_size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a067720bf6200336e78a29a8ba385bf84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a067720bf6200336e78a29a8ba385bf84">&#9670;&nbsp;</a></span>operator+=() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">std::initializer_list&lt; CharT &gt;&#160;</td>
+          <td class="paramname"><em>ilist</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append characters from the ilist initializer list transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ilist</td><td>initializer list with characters to append from</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + ilist.size() </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -3832,6 +4802,76 @@ template&lt;typename CharT , typename Traits &gt; </div>
 
 </div>
 </div>
+<a id="a8d659398a61aa62e67af30497d635388"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d659398a61aa62e67af30497d635388">&#9670;&nbsp;</a></span>pop_back()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::pop_back </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove the last character from the string transactionally. </p>
+<dl class="section pre"><dt>Precondition</dt><dd>!empty()</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - 1</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a65a5e19b05069281877348ddd4db3628"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65a5e19b05069281877348ddd4db3628">&#9670;&nbsp;</a></span>push_back()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::push_back </td>
+          <td>(</td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append character ch at the end of the string transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to append</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> + 1 </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a0930182af8a2448d010aa603c1495326"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0930182af8a2448d010aa603c1495326">&#9670;&nbsp;</a></span>rbegin() <span class="overload">[1/2]</span></h2>
 
@@ -3936,8 +4976,714 @@ template&lt;typename CharT , typename Traits &gt; </div>
 
 </div>
 </div>
-<a id="ac5f3ebbbd4159f48caa7a3cb8de08599"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5f3ebbbd4159f48caa7a3cb8de08599">&#9670;&nbsp;</a></span>replace()</h2>
+<a id="a7adb85bb22cdfe364fd86522715b9cc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7adb85bb22cdfe364fd86522715b9cc7">&#9670;&nbsp;</a></span>replace() <span class="overload">[1/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td>
+          <td class="paramname"><em>str</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [index, index + count) with the content of str string transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>start of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>that is used for the replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - (std::min)(count, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - index) + str.size() </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa67fec31d082d87e37e4a2cfa1c305cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa67fec31d082d87e37e4a2cfa1c305cf">&#9670;&nbsp;</a></span>replace() <span class="overload">[2/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td>
+          <td class="paramname"><em>str</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [first, last) with the content of str string transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>that that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - std::distance(first, last) + str.size() </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0ce0713ff9aad5d746cfa900090c3526"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ce0713ff9aad5d746cfa900090c3526">&#9670;&nbsp;</a></span>replace() <span class="overload">[3/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count2</em> = <code>npos</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [index, index + count) with the substring [index2, index2 + count2) of str string transactionally. </p>
+<p>If either count2 == npos or count2 exceeds size of str string then substring [index2, str.size()) is used.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>start of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>that is used for the replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">index2</td><td>start of the substring that will be used for replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count2</td><td>length of the substring that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - (std::min)(count, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - index) + (std::min)(count2, str.size() - index2) </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> or index2 &gt; str.size(). </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aee7a7c666edcdb9c703887c5f69700da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee7a7c666edcdb9c703887c5f69700da">&#9670;&nbsp;</a></span>replace() <span class="overload">[4/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [first, last) with the characters in [s, s + count2) range transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string that will be used for replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count2</td><td>number of characters that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - std::distance(first, last) + count2. </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa4a7b5a845d5adb851e3ba2da98151f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4a7b5a845d5adb851e3ba2da98151f1">&#9670;&nbsp;</a></span>replace() <span class="overload">[5/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [first, last) with the characters in [s, s + traits::length(s)) range transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - std::distance(first, last) + traits::length(s). </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a3792d96269991f9bfc6f76e5de38a250"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3792d96269991f9bfc6f76e5de38a250">&#9670;&nbsp;</a></span>replace() <span class="overload">[6/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [index, index + count) with count2 copies of ch character transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>start of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count2</td><td>number of characters that will be used for replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - (std::min)(count, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - index) + count2. </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2a2e1246319527843d218f342428a1d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a2e1246319527843d218f342428a1d8">&#9670;&nbsp;</a></span>replace() <span class="overload">[7/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CharT&#160;</td>
+          <td class="paramname"><em>ch</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [first, last) with count2 copies of ch character transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count2</td><td>number of characters that will be used for replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - std::distance(first, last) + count2. </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a17b0296c73c9a4ccd2bf1b5dd783257f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17b0296c73c9a4ccd2bf1b5dd783257f">&#9670;&nbsp;</a></span>replace() <span class="overload">[8/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [index, index + count) with the characters in [s, s + count2) range transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>start of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string that will be used for replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count2</td><td>number of characters that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - (std::min)(count, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - index) + count2. </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a23719386f4d96bb15a61f70b38ad1463"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23719386f4d96bb15a61f70b38ad1463">&#9670;&nbsp;</a></span>replace() <span class="overload">[9/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const CharT *&#160;</td>
+          <td class="paramname"><em>s</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [index, index + count) with the characters in [s, s + traits::length(s)) range transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>start of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to C-style string that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - (std::min)(count, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - index) + traits::length(s). </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if index &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a>. </td></tr>
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a64e3b258bbc3e4516c549e521bac5396"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64e3b258bbc3e4516c549e521bac5396">&#9670;&nbsp;</a></span>replace() <span class="overload">[10/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::initializer_list&lt; CharT &gt;&#160;</td>
+          <td class="paramname"><em>ilist</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [first, last) with characters in initializer list ilist transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ilist</td><td>initializer list of characters that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - std::distance(first, last) + ilist.size(). </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac81a9751029d6d8a80c529e1e977a586"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac81a9751029d6d8a80c529e1e977a586">&#9670;&nbsp;</a></span>replace() <span class="overload">[11/11]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename InputIt , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt;CharT, Traits&gt;&amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td>(</td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>first</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const_iterator&#160;</td>
+          <td class="paramname"><em>last</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>first2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">InputIt&#160;</td>
+          <td class="paramname"><em>last2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace range [first, last) with the characters in [first2, last2) range transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>begin of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>end of the range of characters that will be replaced. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">first2</td><td>begin of the range of characters that will be used for replacement. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">last2</td><td>end of the range of characters that will be used for replacement.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>*this</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> == <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a10d70fe47d10ff8af64ece41610b0c2c">size()</a> - std::distance(first, last) + std::distance(first2, last2). </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">capacity()</a> == sso_capacity if new size is less than or equal to sso_capacity, or the smallest next power of 2, bigger than new size if it is greater than old capacity, or remains the same if there is enough space to store all new elements.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::length_error</td><td>if new size &gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa41f64c4d254dac34bde1a6e475e5585">max_size()</a>. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7a4ec3a9d3097de676a19b090d2eadbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a4ec3a9d3097de676a19b090d2eadbc">&#9670;&nbsp;</a></span>replace_content()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3950,7 +5696,7 @@ template&lt;typename... Args&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::pointer <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace </td>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt;::pointer <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::replace_content </td>
           <td>(</td>
           <td class="paramtype">Args &amp;&amp;...&#160;</td>
           <td class="paramname"><em>args</em></td><td>)</td>
@@ -3964,7 +5710,7 @@ template&lt;typename... Args&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Generic function which replaces current content based on provided parameters. </p>
+<p>Generic function which replace_content current content based on provided parameters. </p>
 <p>Allowed parameters are:</p><ul>
 <li>size_type count, CharT value</li>
 <li>InputIt first, InputIt last</li>
@@ -4225,38 +5971,6 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <p>If vector is used, it must be manually created and destroyed.</p>
 <p>_size is used to store length in case when SSO is used. It is the same type as first member of data field. This means that it can be safely accessed through both sso (_size variable) and non_sso (as size in a vector) no matter which one is used.</p>
 <p>C++11 §9.2/18 says: If a standard-layout union contains two or more standard-layout structs that share a common initial sequence, and if the standard-layout union object currently contains one of these standard-layout structs, it is permitted to inspect the common initial part of any of them. </p>
-
-</div>
-</div>
-<a id="a89c652d0158c27321e78f21dd449dac7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89c652d0158c27321e78f21dd449dac7">&#9670;&nbsp;</a></span>data</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const CharT * <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string</a>&lt; CharT, Traits &gt;::data</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data.</dd></dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">transaction_error</a></td><td>when adding data to the transaction failed.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>pointer to underlying data. </dd></dl>
 
 </div>
 </div>

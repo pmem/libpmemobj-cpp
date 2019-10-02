@@ -156,7 +156,7 @@ function tests_gcc_debug_no_valgrind() {
 function tests_gcc_debug_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -E "_none" --timeout 540
+	ctest -E "_none" --timeout 700
 	ctest -R "_pmreorder" --timeout 540
 	cd ..
 	rm -r build

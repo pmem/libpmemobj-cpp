@@ -808,7 +808,7 @@ public:
 	using size_type = size_t;
 
 	/** Type of a hash code. */
-	using hashcode_t = size_t;
+	using hashcode_type = size_t;
 
 	/** Node base type. */
 	using node = hash_map_node<Key, T, mutex_t, scoped_t>;
@@ -918,7 +918,7 @@ public:
 
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
-	p<std::atomic<hashcode_t>> my_mask;
+	p<std::atomic<hashcode_type>> my_mask;
 
 	/** Padding to the end of cacheline */
 	std::aligned_storage<32, 8>::type padding1;
@@ -948,13 +948,13 @@ public:
 
 	/* --------------------------------------------------------- */
 
-	const std::atomic<hashcode_t> &
+	const std::atomic<hashcode_type> &
 	mask() const noexcept
 	{
 		return my_mask.get_ro();
 	}
 
-	std::atomic<hashcode_t> &
+	std::atomic<hashcode_type> &
 	mask() noexcept
 	{
 		return my_mask.get_rw();
@@ -1013,7 +1013,7 @@ public:
 		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_mask, sizeof(my_mask));
 #endif
 
-		hashcode_t m = embedded_buckets - 1;
+		hashcode_type m = embedded_buckets - 1;
 
 		const_segment_facade_t segment(
 			my_table, segment_traits_t::embedded_segments);
@@ -1112,7 +1112,7 @@ public:
 	 * @return pointer to the bucket.
 	 */
 	bucket *
-	get_bucket(hashcode_t h) const
+	get_bucket(hashcode_type h) const
 	{
 		segment_index_t s = segment_traits_t::segment_index_of(h);
 
@@ -1129,9 +1129,9 @@ public:
 	 * Check for mask race
 	 */
 	inline bool
-	check_mask_race(hashcode_t h, hashcode_t &m) const
+	check_mask_race(hashcode_type h, hashcode_type &m) const
 	{
-		hashcode_t m_now, m_old = m;
+		hashcode_type m_now, m_old = m;
 
 		m_now = mask().load(std::memory_order_acquire);
 
@@ -1145,8 +1145,8 @@ public:
 	 * Process mask race, check for rehashing collision
 	 */
 	bool
-	check_rehashing_collision(hashcode_t h, hashcode_t m_old,
-				  hashcode_t m) const
+	check_rehashing_collision(hashcode_type h, hashcode_type m_old,
+				  hashcode_type m) const
 	{
 		assert(m_old != m);
 
@@ -1201,7 +1201,7 @@ public:
 	 * @return true if new segment was allocated and false otherwise
 	 */
 	bool
-	check_growth(hashcode_t m, size_type sz)
+	check_growth(hashcode_type m, size_type sz)
 	{
 		if (sz >= m) {
 			segment_index_t new_seg =
@@ -1526,9 +1526,9 @@ public:
 	using size_type =
 		typename internal::hash_map_base<Key, T, MutexType,
 						 ScopedLockType>::size_type;
-	using hashcode_t =
+	using hashcode_type =
 		typename internal::hash_map_base<Key, T, MutexType,
-						 ScopedLockType>::hashcode_t;
+						 ScopedLockType>::hashcode_type;
 	using key_type = Key;
 	using mapped_type = T;
 	using value_type = typename internal::hash_map_base<
@@ -1615,8 +1615,8 @@ protected:
 		bucket *my_b;
 
 	public:
-		bucket_accessor(concurrent_hash_map *base, const hashcode_t h,
-				bool writer = false)
+		bucket_accessor(concurrent_hash_map *base,
+				const hashcode_type h, bool writer = false)
 		{
 			acquire(base, h, writer);
 		}
@@ -1626,7 +1626,7 @@ protected:
 		 * acquire the lock
 		 */
 		inline void
-		acquire(concurrent_hash_map *base, const hashcode_t h,
+		acquire(concurrent_hash_map *base, const hashcode_type h,
 			bool writer = false)
 		{
 			my_b = base->get_bucket(h);
@@ -1685,7 +1685,8 @@ protected:
 
 	public:
 		serial_bucket_accessor(concurrent_hash_map *base,
-				       const hashcode_t h, bool writer = false)
+				       const hashcode_type h,
+				       bool writer = false)
 		{
 			acquire(base, h, writer);
 		}
@@ -1694,7 +1695,7 @@ protected:
 		 * Find a bucket by masked hashcode, optionally rehash
 		 */
 		inline void
-		acquire(concurrent_hash_map *base, const hashcode_t h,
+		acquire(concurrent_hash_map *base, const hashcode_type h,
 			bool writer = false)
 		{
 			my_b = base->get_bucket(h);
@@ -1740,7 +1741,7 @@ protected:
 		}
 	};
 
-	hashcode_t
+	hashcode_type
 	get_hash_code(node_ptr_t &n)
 	{
 		return hasher{}(
@@ -1751,7 +1752,7 @@ protected:
 
 	template <bool serial>
 	void
-	rehash_bucket(bucket *b_new, const hashcode_t h)
+	rehash_bucket(bucket *b_new, const hashcode_type h)
 	{
 		using accessor_type = typename std::conditional<
 			serial, serial_bucket_accessor, bucket_accessor>::type;
@@ -1767,7 +1768,7 @@ protected:
 		bool restore_after_crash = *p_new != nullptr;
 
 		/* get parent mask from the topmost bit */
-		hashcode_t mask = (1u << detail::Log2(h)) - 1;
+		hashcode_type mask = (1u << detail::Log2(h)) - 1;
 		assert((h & mask) < h);
 		accessor_type b_old(
 			this, h & mask,
@@ -1779,9 +1780,9 @@ protected:
 	restart:
 		for (node_ptr_t *p_old = &(b_old->node_list), n = *p_old; n;
 		     n = *p_old) {
-			hashcode_t c = get_hash_code(n);
+			hashcode_type c = get_hash_code(n);
 #ifndef NDEBUG
-			hashcode_t bmask = h & (mask >> 1);
+			hashcode_type bmask = h & (mask >> 1);
 
 			bmask = bmask == 0
 				? 1 /* minimal mask of parent bucket */
@@ -1937,7 +1938,7 @@ public:
 	protected:
 		node_ptr_t my_node;
 
-		hashcode_t my_hash;
+		hashcode_type my_hash;
 	};
 
 	/**
@@ -2639,14 +2640,14 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 {
 	assert(!result || !result->my_node);
 
-	hashcode_t m = mask().load(std::memory_order_acquire);
+	hashcode_type m = mask().load(std::memory_order_acquire);
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
 #endif
 
 	assert((m & (m + 1)) == 0);
 
-	hashcode_t const h = hasher{}(key);
+	hashcode_type const h = hasher{}(key);
 
 	persistent_node_ptr_t node;
 
@@ -2702,14 +2703,14 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 {
 	assert(!result || !result->my_node);
 
-	hashcode_t m = mask().load(std::memory_order_acquire);
+	hashcode_type m = mask().load(std::memory_order_acquire);
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
 #endif
 
 	assert((m & (m + 1)) == 0);
 
-	hashcode_t const h = hasher{}(key);
+	hashcode_type const h = hasher{}(key);
 
 	persistent_node_ptr_t node;
 	size_t new_size = 0;
@@ -2768,8 +2769,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		    ScopedLockType>::internal_erase(const K &key)
 {
 	node_ptr_t n;
-	hashcode_t const h = hasher{}(key);
-	hashcode_t m = mask().load(std::memory_order_acquire);
+	hashcode_type const h = hasher{}(key);
+	hashcode_type m = mask().load(std::memory_order_acquire);
 	pool_base pop = get_pool_base();
 
 restart : {
@@ -2853,11 +2854,11 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::rehash(
 	internal::check_outside_tx();
 
 	reserve(sz);
-	hashcode_t m = mask();
+	hashcode_type m = mask();
 
 	/* only the last segment should be scanned for rehashing size or first
 	 * index of the last segment */
-	hashcode_t b = (m + 1) >> 1;
+	hashcode_type b = (m + 1) >> 1;
 
 	/* zero or power of 2 */
 	assert((b & (b - 1)) == 0);
@@ -2877,7 +2878,7 @@ template <typename Key, typename T, typename Hash, typename KeyEqual,
 void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 {
-	hashcode_t m = mask();
+	hashcode_type m = mask();
 
 	assert((m & (m + 1)) == 0);
 
@@ -2950,10 +2951,10 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		    ScopedLockType>::internal_copy(I first, I last)
 {
-	hashcode_t m = mask();
+	hashcode_type m = mask();
 
 	for (; first != last; ++first) {
-		hashcode_t h = hasher{}(first->first);
+		hashcode_type h = hasher{}(first->first);
 		bucket *b = get_bucket(h & m);
 
 		assert(b->is_rehashed(std::memory_order_relaxed));

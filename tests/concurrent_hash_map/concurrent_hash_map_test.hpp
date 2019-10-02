@@ -31,7 +31,7 @@
  */
 
 /*
- * concurrent_hash_map.cpp -- pmem::obj::concurrent_hash_map test
+ * concurrent_hash_map_test.hpp -- pmem::obj::concurrent_hash_map test
  *
  */
 
@@ -55,9 +55,6 @@
 #define LAYOUT "concurrent_hash_map"
 
 namespace nvobj = pmem::obj;
-
-namespace
-{
 
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 typedef nvobj::experimental::concurrent_hash_map<
@@ -518,14 +515,11 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
 void
-insert_erase_lookup_test(nvobj::pool<root> &pop)
+insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 {
 
 	PRINT_TEST_PARAMS;
 	const size_t NUMBER_ITEMS_INSERT = 50;
-
-	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 4;
 
 	auto map = pop.root()->cons;
 
@@ -579,96 +573,4 @@ insert_erase_lookup_test(nvobj::pool<root> &pop)
 	for (auto &e : *map) {
 		UT_ASSERT(e.first <= e.second);
 	}
-}
-}
-
-int
-main(int argc, char *argv[])
-{
-	START();
-
-	if (argc < 2) {
-		UT_FATAL("usage: %s file-name", argv[0]);
-	}
-
-	const char *path = argv[1];
-
-	nvobj::pool<root> pop;
-
-	try {
-		pop = nvobj::pool<root>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
-		pmem::obj::transaction::run(pop, [&] {
-			pop.root()->cons =
-				nvobj::make_persistent<persistent_map_type>();
-		});
-	} catch (pmem::pool_error &pe) {
-		UT_FATAL("!pool::create: %s %s", pe.what(), path);
-	}
-
-	/* Test that scoped_lock traits is working correctly */
-#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-	UT_ASSERT(pmem::obj::experimental::concurrent_hash_map_internal::
-			  scoped_lock_traits<tbb::spin_rw_mutex::scoped_lock>::
-				  initial_rw_state(true) == false);
-#else
-	UT_ASSERT(
-		pmem::obj::experimental::concurrent_hash_map_internal::
-			scoped_lock_traits<
-				pmem::obj::experimental::
-					concurrent_hash_map_internal::
-						shared_mutex_scoped_lock<
-							pmem::obj::
-								shared_mutex>>::
-				initial_rw_state(true) == true);
-#endif
-
-	size_t concurrency = 8;
-	if (On_drd)
-		concurrency = 2;
-	std::cout << "Running tests for " << concurrency << " threads"
-		  << std::endl;
-
-	insert_and_lookup_key_test<persistent_map_type::const_accessor, int>(
-		pop, concurrency);
-
-	insert_and_lookup_key_test<persistent_map_type::accessor, int>(
-		pop, concurrency);
-
-	insert_and_lookup_value_type_test<
-		persistent_map_type::const_accessor,
-		const persistent_map_type::value_type>(pop, concurrency);
-
-	insert_and_lookup_value_type_test<
-		persistent_map_type::accessor,
-		const persistent_map_type::value_type>(pop, concurrency);
-
-	insert_and_lookup_value_type_test<persistent_map_type::const_accessor,
-					  persistent_map_type::value_type>(
-		pop, concurrency);
-
-	insert_and_lookup_value_type_test<persistent_map_type::accessor,
-					  persistent_map_type::value_type>(
-		pop, concurrency);
-
-	insert_and_lookup_value_type_test<persistent_map_type::value_type>(
-		pop, concurrency);
-
-	insert_and_lookup_value_type_test<
-		const persistent_map_type::value_type>(pop, concurrency);
-
-	insert_and_lookup_initializer_list_test(pop, concurrency);
-
-	insert_and_lookup_iterator_test(pop, concurrency);
-
-	insert_and_erase_test<persistent_map_type::accessor,
-			      persistent_map_type::value_type>(pop,
-							       concurrency);
-
-	insert_mt_test(pop, concurrency);
-
-	insert_erase_lookup_test(pop);
-
-	pop.close();
-	return 0;
 }

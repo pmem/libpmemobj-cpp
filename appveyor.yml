@@ -31,6 +31,10 @@ before_build:
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_INSTALL_PREFIX=c:/install/libpmemobj-cpp
         -DTESTS_USE_FORCED_PMEM=ON
+        -DENABLE_VECTOR=0
+        -DENABLE_STRING=0
+        -DENABLE_CONCURRENT_HASHMAP=0
+        -DENABLE_ARRAY=0
 
 build_script:
 - msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%

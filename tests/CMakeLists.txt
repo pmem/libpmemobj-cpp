@@ -351,8 +351,11 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
-	add_test_generic(NAME concurrent_hash_map TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(concurrent_hash_map_insert_lookup concurrent_hash_map/concurrent_hash_map_insert_lookup.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_lookup TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(concurrent_hash_map_insert_erase concurrent_hash_map/concurrent_hash_map_insert_erase.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_erase TRACERS none memcheck pmemcheck drd helgrind)
 
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash TRACERS none memcheck pmemcheck helgrind)
@@ -369,8 +372,11 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	if(NOT TBB_FOUND)
 		message(WARNING "Skipping concurrent_hash_map_tbb test because Intel TBB library was not found")
 	else()
-		build_test_tbb(concurrent_hash_map_tbb concurrent_hash_map/concurrent_hash_map_tbb.cpp)
-		add_test_generic(NAME concurrent_hash_map_tbb TRACERS none pmemcheck)
+		build_test_tbb(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map/concurrent_hash_map_tbb_insert_lookup.cpp)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none pmemcheck)
+
+		build_test_tbb(concurrent_hash_map_tbb_insert_erase concurrent_hash_map/concurrent_hash_map_tbb_insert_erase.cpp)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase TRACERS none pmemcheck)
 	endif()
 
 	if(PMREORDER_SUPPORTED)

@@ -13,7 +13,7 @@ More information in include/libpmemobj++/README.md
 
 ## Requirements: ##
 - cmake >= 3.3
-- libpmemobj-dev(el) >= 1.4 (http://pmem.io/pmdk/)
+- libpmemobj-dev(el) >= 1.7 (http://pmem.io/pmdk/)
 - compiler with C++11 support
 
 ## On Linux ##

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor Class Reference</title>
+<title>PMDK C++ bindings: pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>pmem</b></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">concurrent_hash_map</a></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html">serial_bucket_accessor</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">concurrent_hash_map</a></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html">serial_bucket_accessor</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -71,7 +71,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor Class Reference</div>  </div>
+<div class="title">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -82,38 +82,35 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa9cf241483a31f95d14a4305e72f50fb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#aa9cf241483a31f95d14a4305e72f50fb">is_writer</a> () const</td></tr>
-<tr class="memdesc:aa9cf241483a31f95d14a4305e72f50fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is added for consistency with <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html" title="Bucket accessor is to find, rehash, acquire a lock, and access a bucket.">bucket_accessor</a> class.  <a href="#aa9cf241483a31f95d14a4305e72f50fb">More...</a><br /></td></tr>
-<tr class="separator:aa9cf241483a31f95d14a4305e72f50fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14b7a26c4d32de7a308d531efe63e5f1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#a14b7a26c4d32de7a308d531efe63e5f1">upgrade_to_writer</a> () const</td></tr>
-<tr class="memdesc:a14b7a26c4d32de7a308d531efe63e5f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is added for consistency with <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html" title="Bucket accessor is to find, rehash, acquire a lock, and access a bucket.">bucket_accessor</a> class.  <a href="#a14b7a26c4d32de7a308d531efe63e5f1">More...</a><br /></td></tr>
-<tr class="separator:a14b7a26c4d32de7a308d531efe63e5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c778679c2bee5b6892d7b176c0dfc1a"><td class="memItemLeft" align="right" valign="top">bucket *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#a8c778679c2bee5b6892d7b176c0dfc1a">get</a> () const</td></tr>
-<tr class="memdesc:a8c778679c2bee5b6892d7b176c0dfc1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get bucket pointer.  <a href="#a8c778679c2bee5b6892d7b176c0dfc1a">More...</a><br /></td></tr>
-<tr class="separator:a8c778679c2bee5b6892d7b176c0dfc1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5eed330ce7791ece206c68cc988e4911"><td class="memItemLeft" align="right" valign="top">bucket *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#a5eed330ce7791ece206c68cc988e4911">operator-&gt;</a> () const</td></tr>
-<tr class="memdesc:a5eed330ce7791ece206c68cc988e4911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overloaded arrow operator.  <a href="#a5eed330ce7791ece206c68cc988e4911">More...</a><br /></td></tr>
-<tr class="separator:a5eed330ce7791ece206c68cc988e4911"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad1391cb4ebcf30838e631ac80410924"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#aad1391cb4ebcf30838e631ac80410924">is_writer</a> () const</td></tr>
+<tr class="memdesc:aad1391cb4ebcf30838e631ac80410924"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method is added for consistency with <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html" title="Bucket accessor is to find, rehash, acquire a lock, and access a bucket.">bucket_accessor</a> class.  <a href="#aad1391cb4ebcf30838e631ac80410924">More...</a><br /></td></tr>
+<tr class="separator:aad1391cb4ebcf30838e631ac80410924"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a334bc7289088aae11a0bc0aee4bc072b"><td class="memItemLeft" align="right" valign="top">bucket *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#a334bc7289088aae11a0bc0aee4bc072b">get</a> () const</td></tr>
+<tr class="memdesc:a334bc7289088aae11a0bc0aee4bc072b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get bucket pointer.  <a href="#a334bc7289088aae11a0bc0aee4bc072b">More...</a><br /></td></tr>
+<tr class="separator:a334bc7289088aae11a0bc0aee4bc072b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab27b59bf9533d1820ee82026c94a0381"><td class="memItemLeft" align="right" valign="top">bucket *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#ab27b59bf9533d1820ee82026c94a0381">operator-&gt;</a> () const</td></tr>
+<tr class="memdesc:ab27b59bf9533d1820ee82026c94a0381"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overloaded arrow operator.  <a href="#ab27b59bf9533d1820ee82026c94a0381">More...</a><br /></td></tr>
+<tr class="separator:ab27b59bf9533d1820ee82026c94a0381"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename Key, typename T, typename Hash, typename KeyEqual&gt;<br />
-class pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor</h3>
+<div class="textblock"><h3>template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt;<br />
+class pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor</h3>
 
 <p>Serial bucket accessor used to access bucket in a serial operations. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8c778679c2bee5b6892d7b176c0dfc1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c778679c2bee5b6892d7b176c0dfc1a">&#9670;&nbsp;</a></span>get()</h2>
+<a id="a334bc7289088aae11a0bc0aee4bc072b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a334bc7289088aae11a0bc0aee4bc072b">&#9670;&nbsp;</a></span>get()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bucket* <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor::get </td>
+          <td class="memname">bucket* <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor::get </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -131,19 +128,19 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; <
 
 </div>
 </div>
-<a id="aa9cf241483a31f95d14a4305e72f50fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9cf241483a31f95d14a4305e72f50fb">&#9670;&nbsp;</a></span>is_writer()</h2>
+<a id="aad1391cb4ebcf30838e631ac80410924"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad1391cb4ebcf30838e631ac80410924">&#9670;&nbsp;</a></span>is_writer()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor::is_writer </td>
+          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor::is_writer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -161,19 +158,19 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; <
 
 </div>
 </div>
-<a id="a5eed330ce7791ece206c68cc988e4911"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5eed330ce7791ece206c68cc988e4911">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
+<a id="ab27b59bf9533d1820ee82026c94a0381"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab27b59bf9533d1820ee82026c94a0381">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
+template&lt;typename Key , typename T , typename Hash , typename KeyEqual , typename MutexType , typename ScopedLockType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bucket* <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor::operator-&gt; </td>
+          <td class="memname">bucket* <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor::operator-&gt; </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -188,36 +185,6 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; <
 
 <p>Overloaded arrow operator. </p>
 <dl class="section return"><dt>Returns</dt><dd>pointer to the underlying bucket </dd></dl>
-
-</div>
-</div>
-<a id="a14b7a26c4d32de7a308d531efe63e5f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14b7a26c4d32de7a308d531efe63e5f1">&#9670;&nbsp;</a></span>upgrade_to_writer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Key , typename T , typename Hash , typename KeyEqual &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html">pmem::obj::experimental::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor::upgrade_to_writer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>This method is added for consistency with <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html" title="Bucket accessor is to find, rehash, acquire a lock, and access a bucket.">bucket_accessor</a> class. </p>
-<dl class="section return"><dt>Returns</dt><dd>Always returns true </dd></dl>
 
 </div>
 </div>

@@ -501,6 +501,149 @@ private:
 	It _it;
 };
 
+/**
+ * Implementation of counting iterator.
+ */
+template <typename Incrementable>
+class counting_it {
+public:
+	using iterator_category = std::random_access_iterator_tag;
+	using value_type = Incrementable;
+	using reference = Incrementable &;
+	using pointer = Incrementable *;
+	using const_reference = const Incrementable &;
+	using const_pointer = const Incrementable *;
+	using difference_type = std::ptrdiff_t;
+	using size_type = std::size_t;
+
+	counting_it()
+	{
+		m_inc = Incrementable{};
+	}
+
+	counting_it(const counting_it &rhs)
+	{
+		m_inc = rhs.m_inc;
+	}
+
+	explicit counting_it(Incrementable x)
+	{
+		m_inc = x;
+	}
+
+	const_reference operator*() const
+	{
+		return m_inc;
+	}
+
+	counting_it &
+	operator++()
+	{
+		++m_inc;
+		return *this;
+	}
+
+	counting_it
+	operator++(int)
+	{
+		auto it = *this;
+		++m_inc;
+		return it;
+	}
+
+	difference_type
+	operator+(counting_it &rhs)
+	{
+		return static_cast<difference_type>(m_inc + rhs.m_inc);
+	}
+
+	counting_it
+	operator+(difference_type forward) const
+	{
+		return counting_it(m_inc + forward);
+	}
+
+	counting_it &
+	operator+=(difference_type n)
+	{
+		m_inc += static_cast<size_t>(n);
+		return *this;
+	}
+
+	counting_it &
+	operator--()
+	{
+		--m_inc;
+		return *this;
+	}
+
+	counting_it
+	operator--(int)
+	{
+		auto it = *this;
+		--m_inc;
+		return it;
+	}
+
+	difference_type
+	operator-(counting_it &rhs)
+	{
+		return static_cast<difference_type>(m_inc - rhs.m_inc);
+	}
+
+	counting_it
+	operator-(difference_type backward) const
+	{
+		return counting_it(m_inc - backward);
+	}
+
+	counting_it &
+	operator-=(difference_type n)
+	{
+		m_inc -= static_cast<size_t>(n);
+		return *this;
+	}
+
+	bool
+	operator==(const counting_it &rhs) const
+	{
+		return m_inc == rhs.m_inc;
+	}
+
+	bool
+	operator!=(const counting_it &rhs) const
+	{
+		return m_inc != rhs.m_inc;
+	}
+
+	bool
+	operator<=(const counting_it &it) const
+	{
+		return m_inc <= it.m_inc;
+	}
+
+	bool
+	operator>=(const counting_it &it) const
+	{
+		return m_inc >= it.m_inc;
+	}
+
+	bool
+	operator<(const counting_it &it) const
+	{
+		return !operator>=(it);
+	}
+
+	bool
+	operator>(const counting_it &it) const
+	{
+		return !operator<=(it);
+	}
+
+private:
+	Incrementable m_inc;
+};
+
 } /* namespace test_common */
 
 #endif /* ITERATORS_COMMON_HPP */

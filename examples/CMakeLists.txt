@@ -175,3 +175,4 @@ add_library(doc_snippets_make_persistent OBJECT doc_snippets/make_persistent.cpp
 add_library(doc_snippets_mutex OBJECT doc_snippets/mutex.cpp)
 add_library(doc_snippets_pool OBJECT doc_snippets/pool.cpp)
 add_library(doc_snippets_transaction OBJECT doc_snippets/transaction.cpp)
+add_library(doc_snippets_concurrent_hash_map OBJECT doc_snippets/concurrent_hash_map.cpp)

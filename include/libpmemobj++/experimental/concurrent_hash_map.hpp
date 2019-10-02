@@ -1522,7 +1522,7 @@ class concurrent_hash_map
 	template <typename Container, bool is_const>
 	friend class internal::hash_map_iterator;
 
-public:
+protected:
 	using mutex_t = MutexType;
 	using scoped_t = ScopedLockType;
 	/*
@@ -1536,20 +1536,24 @@ public:
 	using hash_map_base::embedded_buckets;
 	using hash_map_base::get_bucket;
 	using hash_map_base::get_pool_base;
+	using hash_map_base::header_features;
 	using hash_map_base::insert_new_node;
 	using hash_map_base::internal_swap;
+	using hash_map_base::layout_features;
 	using hash_map_base::mask;
 	using hash_map_base::reserve;
-	using size_type = typename hash_map_base::size_type;
-	using bucket = typename hash_map_base::bucket;
-	using bucket_lock_type = typename bucket::scoped_t;
 	using node = typename hash_map_base::node;
 	using node_mutex_t = typename node::mutex_t;
 	using node_ptr_t = typename hash_map_base::node_ptr_t;
-	using hashcode_t = typename hash_map_base::hashcode_t;
+	using bucket = typename hash_map_base::bucket;
+	using bucket_lock_type = typename bucket::scoped_t;
 	using segment_index_t = typename hash_map_base::segment_index_t;
 	using segment_traits_t = typename hash_map_base::segment_traits_t;
 	using segment_facade_t = typename hash_map_base::segment_facade_t;
+
+public:
+	using size_type = typename hash_map_base::size_type;
+	using hashcode_t = typename hash_map_base::hashcode_t;
 	using key_type = Key;
 	using mapped_type = T;
 	using value_type = typename node::value_type;
@@ -1567,9 +1571,6 @@ public:
 		typename internal::key_equal_type<Hash, KeyEqual>::type;
 
 protected:
-	using hash_map_base::header_features;
-	using hash_map_base::layout_features;
-
 	using scoped_lock_traits_type = internal::scoped_lock_traits<scoped_t>;
 
 	friend class const_accessor;

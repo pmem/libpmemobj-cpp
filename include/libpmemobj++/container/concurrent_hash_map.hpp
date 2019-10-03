@@ -81,8 +81,6 @@ namespace pmem
 {
 namespace obj
 {
-namespace experimental
-{
 
 namespace concurrent_hash_map_internal
 {
@@ -1329,7 +1327,7 @@ public:
 private:
 	template <typename Key, typename T, typename Hash, typename KeyEqual,
 		  typename MutexType, typename ScopedLockType>
-	friend class experimental::concurrent_hash_map;
+	friend class ::pmem::obj::concurrent_hash_map;
 #else
 public: /* workaround */
 #endif
@@ -3035,7 +3033,6 @@ swap(concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType> &a,
 	a.swap(b);
 }
 
-} /* namespace experimental */
 } /* namespace obj */
 } /* namespace pmem */
 

@@ -14,12 +14,12 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = pmem::obj::experimental;
-using S = pmem_exp::string;
+
+using S = pmem::obj::string;
 
 struct root {
 	nvobj::persistent_ptr<S> s1;

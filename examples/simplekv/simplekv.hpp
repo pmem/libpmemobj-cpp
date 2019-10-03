@@ -36,9 +36,9 @@
  */
 
 #include <functional>
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/string.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/string.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
@@ -55,12 +55,10 @@
 template <typename Value, std::size_t N>
 class simple_kv {
 private:
-	using key_type = pmem::obj::experimental::string;
-	using bucket_type = pmem::obj::experimental::vector<
-		std::pair<key_type, std::size_t>>;
-	using bucket_array_type =
-		pmem::obj::experimental::array<bucket_type, N>;
-	using value_vector = pmem::obj::experimental::vector<Value>;
+	using key_type = pmem::obj::string;
+	using bucket_type = pmem::obj::vector<std::pair<key_type, std::size_t>>;
+	using bucket_array_type = pmem::obj::array<bucket_type, N>;
+	using value_vector = pmem::obj::vector<Value>;
 
 	bucket_array_type buckets;
 	value_vector values;

@@ -42,15 +42,15 @@
 #include <limits>
 #include <string>
 
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/detail/contiguous_iterator.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
-#include <libpmemobj++/experimental/slice.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 namespace pmem
@@ -59,14 +59,11 @@ namespace pmem
 namespace obj
 {
 
-namespace experimental
-{
-
 /**
- * pmem::obj::experimental::string - EXPERIMENTAL persistent container
- * with std::basic_string compatible interface.
+ * pmem::obj::string - persistent container with std::basic_string compatible
+ * interface.
  *
- * The implementation is NOT complete.
+ * The implementation is still missing some methods.
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string {
@@ -80,7 +77,7 @@ public:
 	using const_reference = const value_type &;
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
-	using iterator = basic_contiguous_iterator<CharT>;
+	using iterator = pmem::detail::basic_contiguous_iterator<CharT>;
 	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
@@ -4042,8 +4039,6 @@ operator>=(const basic_string<CharT, Traits> &lhs,
 {
 	return lhs.compare(rhs) >= 0;
 }
-
-} /* namespace experimental */
 
 } /* namespace obj */
 

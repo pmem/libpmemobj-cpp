@@ -15,13 +15,13 @@
 #include "helper_classes.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using v_type_1 = pmem_exp::vector<int>;
-using v_type_2 = pmem_exp::vector<failing_reference_operator>;
+
+using v_type_1 = pmem::obj::vector<int>;
+using v_type_2 = pmem::obj::vector<failing_reference_operator>;
 
 struct root {
 	nvobj::persistent_ptr<const v_type_1> v1;

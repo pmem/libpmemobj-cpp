@@ -15,13 +15,13 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 
 int
 main()
 {
 	/**
-	 * Test pmem::obj::experimental::vector destructor
+	 * Test pmem::obj::vector destructor
 	 *
 	 * Expects that destructor is not deleted and noexcept
 	 */

@@ -7,23 +7,21 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 struct Testcase1 {
-	typedef pmem_exp::array<int, 5> C;
+	typedef pmem::obj::array<int, 5> C;
 	C c;
 
 	void
@@ -41,7 +39,7 @@ struct Testcase1 {
 };
 
 struct Testcase2 {
-	typedef pmem_exp::array<int, 0> C;
+	typedef pmem::obj::array<int, 0> C;
 	C c;
 
 	void
@@ -59,7 +57,7 @@ struct Testcase2 {
 };
 
 struct Testcase3 {
-	typedef pmem_exp::array<int, 5> C;
+	typedef pmem::obj::array<int, 5> C;
 	C c;
 
 	void
@@ -75,24 +73,24 @@ struct Testcase3 {
 		UT_ASSERT(!(ii1 != ii2));
 		UT_ASSERT(!(ii1 != cii));
 
-		UT_ASSERT(c.begin() == pmem_exp::begin(c));
-		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
-		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
-		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
-		UT_ASSERT(c.end() == pmem_exp::end(c));
-		UT_ASSERT(c.cend() == pmem_exp::cend(c));
-		UT_ASSERT(c.rend() == pmem_exp::rend(c));
-		UT_ASSERT(c.crend() == pmem_exp::crend(c));
+		UT_ASSERT(c.begin() == pmem::obj::begin(c));
+		UT_ASSERT(c.cbegin() == pmem::obj::cbegin(c));
+		UT_ASSERT(c.rbegin() == pmem::obj::rbegin(c));
+		UT_ASSERT(c.crbegin() == pmem::obj::crbegin(c));
+		UT_ASSERT(c.end() == pmem::obj::end(c));
+		UT_ASSERT(c.cend() == pmem::obj::cend(c));
+		UT_ASSERT(c.rend() == pmem::obj::rend(c));
+		UT_ASSERT(c.crend() == pmem::obj::crend(c));
 
-		UT_ASSERT(pmem_exp::begin(c) != pmem_exp::end(c));
-		UT_ASSERT(pmem_exp::rbegin(c) != pmem_exp::rend(c));
-		UT_ASSERT(pmem_exp::cbegin(c) != pmem_exp::cend(c));
-		UT_ASSERT(pmem_exp::crbegin(c) != pmem_exp::crend(c));
+		UT_ASSERT(pmem::obj::begin(c) != pmem::obj::end(c));
+		UT_ASSERT(pmem::obj::rbegin(c) != pmem::obj::rend(c));
+		UT_ASSERT(pmem::obj::cbegin(c) != pmem::obj::cend(c));
+		UT_ASSERT(pmem::obj::crbegin(c) != pmem::obj::crend(c));
 	}
 };
 
 struct Testcase4 {
-	typedef pmem_exp::array<int, 0> C;
+	typedef pmem::obj::array<int, 0> C;
 	C c;
 
 	void
@@ -121,46 +119,47 @@ struct Testcase4 {
 		UT_ASSERT(cii - ii1 == 0);
 		UT_ASSERT(ii1 - cii == 0);
 
-		UT_ASSERT(c.begin() == pmem_exp::begin(c));
-		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
-		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
-		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
-		UT_ASSERT(c.end() == pmem_exp::end(c));
-		UT_ASSERT(c.cend() == pmem_exp::cend(c));
-		UT_ASSERT(c.rend() == pmem_exp::rend(c));
-		UT_ASSERT(c.crend() == pmem_exp::crend(c));
+		UT_ASSERT(c.begin() == pmem::obj::begin(c));
+		UT_ASSERT(c.cbegin() == pmem::obj::cbegin(c));
+		UT_ASSERT(c.rbegin() == pmem::obj::rbegin(c));
+		UT_ASSERT(c.crbegin() == pmem::obj::crbegin(c));
+		UT_ASSERT(c.end() == pmem::obj::end(c));
+		UT_ASSERT(c.cend() == pmem::obj::cend(c));
+		UT_ASSERT(c.rend() == pmem::obj::rend(c));
+		UT_ASSERT(c.crend() == pmem::obj::crend(c));
 
-		UT_ASSERT(pmem_exp::begin(c) == pmem_exp::end(c));
-		UT_ASSERT(pmem_exp::rbegin(c) == pmem_exp::rend(c));
-		UT_ASSERT(pmem_exp::cbegin(c) == pmem_exp::cend(c));
-		UT_ASSERT(pmem_exp::crbegin(c) == pmem_exp::crend(c));
+		UT_ASSERT(pmem::obj::begin(c) == pmem::obj::end(c));
+		UT_ASSERT(pmem::obj::rbegin(c) == pmem::obj::rend(c));
+		UT_ASSERT(pmem::obj::cbegin(c) == pmem::obj::cend(c));
+		UT_ASSERT(pmem::obj::crbegin(c) == pmem::obj::crend(c));
 	}
 };
 
 struct Testcase5 {
-	typedef pmem_exp::array<int, 5> C;
+	typedef pmem::obj::array<int, 5> C;
 	C c{{0, 1, 2, 3, 4}};
 
 	void
 	run()
 	{
-		UT_ASSERT(c.begin() == pmem_exp::begin(c));
-		UT_ASSERT(c.cbegin() == pmem_exp::cbegin(c));
-		UT_ASSERT(c.end() == pmem_exp::end(c));
-		UT_ASSERT(c.cend() == pmem_exp::cend(c));
-		UT_ASSERT(static_cast<const C &>(c).end() == pmem_exp::cend(c));
+		UT_ASSERT(c.begin() == pmem::obj::begin(c));
+		UT_ASSERT(c.cbegin() == pmem::obj::cbegin(c));
+		UT_ASSERT(c.end() == pmem::obj::end(c));
+		UT_ASSERT(c.cend() == pmem::obj::cend(c));
+		UT_ASSERT(static_cast<const C &>(c).end() ==
+			  pmem::obj::cend(c));
 
-		UT_ASSERT(c.rbegin() == pmem_exp::rbegin(c));
-		UT_ASSERT(c.crbegin() == pmem_exp::crbegin(c));
-		UT_ASSERT(c.rend() == pmem_exp::rend(c));
-		UT_ASSERT(c.crend() == pmem_exp::crend(c));
+		UT_ASSERT(c.rbegin() == pmem::obj::rbegin(c));
+		UT_ASSERT(c.crbegin() == pmem::obj::crbegin(c));
+		UT_ASSERT(c.rend() == pmem::obj::rend(c));
+		UT_ASSERT(c.crend() == pmem::obj::crend(c));
 		UT_ASSERT(static_cast<const C &>(c).rend() ==
-			  pmem_exp::crend(c));
+			  pmem::obj::crend(c));
 
-		UT_ASSERT(pmem_exp::begin(c) != pmem_exp::end(c));
-		UT_ASSERT(pmem_exp::rbegin(c) != pmem_exp::rend(c));
-		UT_ASSERT(pmem_exp::cbegin(c) != pmem_exp::cend(c));
-		UT_ASSERT(pmem_exp::crbegin(c) != pmem_exp::crend(c));
+		UT_ASSERT(pmem::obj::begin(c) != pmem::obj::end(c));
+		UT_ASSERT(pmem::obj::rbegin(c) != pmem::obj::rend(c));
+		UT_ASSERT(pmem::obj::cbegin(c) != pmem::obj::cend(c));
+		UT_ASSERT(pmem::obj::crbegin(c) != pmem::obj::crend(c));
 
 		UT_ASSERT(*c.begin() == 0);
 		UT_ASSERT(*c.rbegin() == 4);
@@ -169,21 +168,22 @@ struct Testcase5 {
 		UT_ASSERT(*(c.end() - 1) == 4);
 		UT_ASSERT(*(c.rend() - 1) == 0);
 
-		UT_ASSERT(*pmem_exp::begin(c) == 0);
-		UT_ASSERT(*(pmem_exp::begin(c) + 1) == 1);
-		UT_ASSERT(*pmem_exp::cbegin(c) == 0);
-		UT_ASSERT(*(pmem_exp::cbegin(c) + 1) == 1);
-		UT_ASSERT(*pmem_exp::rbegin(c) == 4);
-		UT_ASSERT(*pmem_exp::crbegin(c) == 4);
+		UT_ASSERT(*pmem::obj::begin(c) == 0);
+		UT_ASSERT(*(pmem::obj::begin(c) + 1) == 1);
+		UT_ASSERT(*pmem::obj::cbegin(c) == 0);
+		UT_ASSERT(*(pmem::obj::cbegin(c) + 1) == 1);
+		UT_ASSERT(*pmem::obj::rbegin(c) == 4);
+		UT_ASSERT(*pmem::obj::crbegin(c) == 4);
 
-		UT_ASSERT(*pmem_exp::begin(static_cast<const C &>(c)) == 0);
-		UT_ASSERT(*(pmem_exp::begin(static_cast<const C &>(c)) + 1) ==
+		UT_ASSERT(*pmem::obj::begin(static_cast<const C &>(c)) == 0);
+		UT_ASSERT(*(pmem::obj::begin(static_cast<const C &>(c)) + 1) ==
 			  1);
-		UT_ASSERT(*pmem_exp::rbegin(static_cast<const C &>(c)) == 4);
-		UT_ASSERT(*(pmem_exp::rbegin(static_cast<const C &>(c)) + 1) ==
+		UT_ASSERT(*pmem::obj::rbegin(static_cast<const C &>(c)) == 4);
+		UT_ASSERT(*(pmem::obj::rbegin(static_cast<const C &>(c)) + 1) ==
 			  3);
-		UT_ASSERT(*(pmem_exp::end(static_cast<const C &>(c)) - 1) == 4);
-		UT_ASSERT(*(pmem_exp::rend(static_cast<const C &>(c)) - 1) ==
+		UT_ASSERT(*(pmem::obj::end(static_cast<const C &>(c)) - 1) ==
+			  4);
+		UT_ASSERT(*(pmem::obj::rend(static_cast<const C &>(c)) - 1) ==
 			  0);
 	}
 };

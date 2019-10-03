@@ -32,7 +32,7 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
@@ -40,10 +40,10 @@
 struct root {
 };
 
-using char_string = pmem::obj::experimental::basic_string<char>;
-using char16_string = pmem::obj::experimental::basic_string<char16_t>;
-using char32_string = pmem::obj::experimental::basic_string<char32_t>;
-using wchar_string = pmem::obj::experimental::basic_string<wchar_t>;
+using char_string = pmem::obj::basic_string<char>;
+using char16_string = pmem::obj::basic_string<char16_t>;
+using char32_string = pmem::obj::basic_string<char32_t>;
+using wchar_string = pmem::obj::basic_string<wchar_t>;
 
 void
 test_capacity(pmem::obj::pool<root> &pop)

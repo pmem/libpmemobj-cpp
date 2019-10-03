@@ -15,9 +15,9 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 
@@ -37,7 +37,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::vector default constructor.
  *
  * First case: call default constructor in three different ways and check if
  * new container is empty. Expect no exception is thrown.

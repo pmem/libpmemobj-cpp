@@ -46,7 +46,7 @@
 #include <future>
 #include <iostream>
 
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "persistent_concurrent_hash_map"
 
@@ -55,7 +55,7 @@ namespace nvobj = pmem::obj;
 namespace
 {
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type;
 
 typedef persistent_map_type::value_type value_type;

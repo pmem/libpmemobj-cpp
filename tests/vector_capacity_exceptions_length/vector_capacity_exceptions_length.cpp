@@ -33,7 +33,7 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
@@ -45,7 +45,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector reserve() method
+ * Test pmem::obj::vector reserve() method
  *
  * Increase capacity of the vector to value greater than max_size()
  * Expect std::length_error exception is thrown

@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -15,9 +15,7 @@
 #include "unittest.hpp"
 #include <cstddef>
 
-#include <libpmemobj++/experimental/array.hpp>
-
-namespace pmem_exp = pmem::obj::experimental;
+#include <libpmemobj++/container/array.hpp>
 
 template <class T, size_t Size>
 struct MyArray {
@@ -29,7 +27,7 @@ void
 test()
 {
 	typedef T CArrayT[Size];
-	typedef pmem_exp::array<T, Size> ArrayT;
+	typedef pmem::obj::array<T, Size> ArrayT;
 	typedef MyArray<T, Size> MyArrayT;
 	static_assert(sizeof(ArrayT) == sizeof(CArrayT), "");
 	static_assert(sizeof(ArrayT) == sizeof(MyArrayT), "");
@@ -40,7 +38,7 @@ template <class T>
 void
 test_zero_sized()
 {
-	typedef pmem_exp::array<T, 0> ArrayT;
+	typedef pmem::obj::array<T, 0> ArrayT;
 	static_assert(sizeof(ArrayT) == sizeof(T), "");
 }
 

@@ -15,16 +15,15 @@
 #include "helper_classes.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using vector_type = pmem_exp::vector<int>;
-using vector_type2 = pmem_exp::vector<emplace_constructible<int>>;
+using vector_type = pmem::obj::vector<int>;
+using vector_type2 = pmem::obj::vector<emplace_constructible<int>>;
 using vector_type3 =
-	pmem_exp::vector<emplace_constructible_and_move_insertable<int>>;
+	pmem::obj::vector<emplace_constructible_and_move_insertable<int>>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> test1;
@@ -66,7 +65,7 @@ basic_test(nvobj::pool<struct root> &pop, Iterator first, Iterator last)
 }
 
 /**
- * Test pmem::obj::experimental::vector range constructor
+ * Test pmem::obj::vector range constructor
  *
  * Constructs container with elements within [first, last) range pointed by
  * iterators of following categories: Input, Forward, Bidirectional, Random
@@ -91,7 +90,7 @@ basic_test_cases(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector range constructor
+ * Test pmem::obj::vector range constructor
  *
  * Constructs container with elements within [first, last) range pointed by
  * iterators

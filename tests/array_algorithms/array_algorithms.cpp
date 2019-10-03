@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,26 +35,24 @@
 #include <algorithm>
 #include <iterator>
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmemobj_exp = pmem::obj::experimental;
-
 struct TestSort {
 #ifdef NO_GCC_AGGREGATE_INITIALIZATION_BUG
-	pmemobj_exp::array<double, 10> c = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+	pmem::obj::array<double, 10> c = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 #else
-	pmemobj_exp::array<double, 10> c = {{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}};
+	pmem::obj::array<double, 10> c = {{10, 9, 8, 7, 6, 5, 4, 3, 2, 1}};
 #endif
 	void
 	sort_single_element_snapshot()
 	{
 		std::sort(c.begin(), c.end());
 
-		pmemobj_exp::array<double, 10> expected = {1, 2, 3, 4, 5,
-							   6, 7, 8, 9, 10};
+		pmem::obj::array<double, 10> expected = {1, 2, 3, 4, 5,
+							 6, 7, 8, 9, 10};
 
 		UT_ASSERT(c == expected);
 	}
@@ -66,8 +64,8 @@ struct TestSort {
 
 		std::sort(slice.begin(), slice.end());
 
-		pmemobj_exp::array<double, 10> expected = {1, 2, 3, 4, 5,
-							   6, 7, 8, 9, 10};
+		pmem::obj::array<double, 10> expected = {1, 2, 3, 4, 5,
+							 6, 7, 8, 9, 10};
 
 		UT_ASSERT(c == expected);
 	}
@@ -98,8 +96,8 @@ test_sort_single_element(pmem::obj::pool<struct root> &pop)
 			UT_ASSERT(0);
 		});
 	} catch (pmem::manual_tx_abort &) {
-		pmemobj_exp::array<double, 10> expected = {10, 9, 8, 7, 6,
-							   5,  4, 3, 2, 1};
+		pmem::obj::array<double, 10> expected = {10, 9, 8, 7, 6,
+							 5,  4, 3, 2, 1};
 		UT_ASSERT(r->test_sort->c == expected);
 	} catch (...) {
 		UT_ASSERT(0);
@@ -135,8 +133,8 @@ test_sort_range(pmem::obj::pool<struct root> &pop)
 			UT_ASSERT(0);
 		});
 	} catch (pmem::manual_tx_abort &) {
-		pmemobj_exp::array<double, 10> expected = {10, 9, 8, 7, 6,
-							   5,  4, 3, 2, 1};
+		pmem::obj::array<double, 10> expected = {10, 9, 8, 7, 6,
+							 5,  4, 3, 2, 1};
 		UT_ASSERT(r->test_sort->c == expected);
 	} catch (...) {
 		UT_ASSERT(0);

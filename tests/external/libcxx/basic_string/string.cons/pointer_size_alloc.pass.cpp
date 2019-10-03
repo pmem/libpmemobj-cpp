@@ -14,30 +14,29 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
 struct root {
-	nvobj::persistent_ptr<pmem_exp::string> s1;
+	nvobj::persistent_ptr<pmem::obj::string> s1;
 };
 
 template <class charT>
 void
 test(const charT *s, unsigned n, pmem::obj::pool<root> &pop)
 {
-	typedef pmem_exp::basic_string<charT, std::char_traits<charT>> S;
+	typedef pmem::obj::basic_string<charT, std::char_traits<charT>> S;
 	typedef typename S::traits_type T;
 
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->s1 = nvobj::make_persistent<pmem_exp::string>(s, n);
+		r->s1 = nvobj::make_persistent<pmem::obj::string>(s, n);
 	});
 
 	auto &s2 = *r->s1;
@@ -50,11 +49,11 @@ test(const charT *s, unsigned n, pmem::obj::pool<root> &pop)
 		UT_ASSERT(s2.c_str() == s2.data());
 		UT_ASSERT(s2.c_str() == s2.cdata());
 		UT_ASSERT(s2.c_str() ==
-			  static_cast<const pmem_exp::string &>(s2).data());
+			  static_cast<const pmem::obj::string &>(s2).data());
 	});
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<pmem_exp::string>(r->s1);
+		nvobj::delete_persistent<pmem::obj::string>(r->s1);
 	});
 }
 

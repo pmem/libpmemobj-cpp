@@ -34,15 +34,13 @@
 
 #include <iterator>
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmemobj_exp = pmem::obj::experimental;
-
 struct Test1 {
-	pmemobj_exp::array<double, 100> c;
+	pmem::obj::array<double, 100> c;
 
 	void
 	iterator_pass()
@@ -75,7 +73,7 @@ struct Test1 {
 };
 
 struct Test2 {
-	pmemobj_exp::array<double, 100> c;
+	pmem::obj::array<double, 100> c;
 
 	void
 	reverse_iterator_pass()
@@ -93,7 +91,7 @@ struct Test2 {
 };
 
 struct Test3 {
-	using C = pmemobj_exp::array<double, 100>;
+	using C = pmem::obj::array<double, 100>;
 	C c;
 
 	void

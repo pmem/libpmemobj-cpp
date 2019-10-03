@@ -14,18 +14,17 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
 struct testcase1 {
-	pmem_exp::string s = {'a', 'b', 'c'};
-	pmem_exp::string s_long = {
+	pmem::obj::string s = {'a', 'b', 'c'};
+	pmem::obj::string s_long = {
 		'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '1', '2',
 		'3', '4', '5', '6', '7', '8', '9', '0', '1', '2', '3', '4',
 		'5', '6', '7', '8', '9', '0', '1', '2', '3', '4', '5', '6',
@@ -36,7 +35,7 @@ struct testcase1 {
 	void
 	run()
 	{
-		using T = typename pmem_exp::string::traits_type;
+		using T = typename pmem::obj::string::traits_type;
 		UT_ASSERT(s == "abc");
 		UT_ASSERT(
 			s_long ==

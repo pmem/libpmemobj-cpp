@@ -39,9 +39,9 @@
 
 #include <array>
 #include <functional>
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/string.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/string.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
@@ -138,9 +138,9 @@ public:
  */
 template <typename Value, std::size_t N>
 struct simple_kv_persistent {
-	using key_type = pmem::obj::experimental::string;
-	using value_vector = pmem::obj::experimental::vector<Value>;
-	using key_vector = pmem::obj::experimental::vector<key_type>;
+	using key_type = pmem::obj::string;
+	using value_vector = pmem::obj::vector<Value>;
+	using key_vector = pmem::obj::vector<key_type>;
 
 	/* values and keys are stored in separate vectors to optimize
 	 * snapshotting. If they were stored as a pair in single vector

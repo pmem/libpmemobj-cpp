@@ -14,17 +14,16 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
-using T = pmem_exp::string;
-using W = pmem_exp::wstring;
+using T = pmem::obj::string;
+using W = pmem::obj::wstring;
 
 struct root {
 	nvobj::persistent_ptr<T> s;

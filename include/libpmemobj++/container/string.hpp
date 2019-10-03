@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_STRING_HPP
 #define LIBPMEMOBJ_CPP_STRING_HPP
 
-#include <libpmemobj++/experimental/basic_string.hpp>
+#include <libpmemobj++/container/basic_string.hpp>
 
 namespace pmem
 {
@@ -46,15 +46,10 @@ namespace pmem
 namespace obj
 {
 
-namespace experimental
-{
-
 using string = basic_string<char>;
 using wstring = basic_string<wchar_t>;
 using u16string = basic_string<char16_t>;
 using u32string = basic_string<char32_t>;
-
-} /* namespace experimental */
 
 } /* namespace obj */
 

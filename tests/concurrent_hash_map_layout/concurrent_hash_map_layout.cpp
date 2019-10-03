@@ -47,38 +47,35 @@
 #include <vector>
 
 #include "concurrent_hash_map_layout.hpp"
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 
 namespace nvobj = pmem::obj;
 
 /**
- * Specialization of pmem::obj::experimental::string
+ * Specialization of pmem::obj::string
  */
 namespace std
 {
 template <>
-struct hash<pmem::obj::experimental::string> {
+struct hash<pmem::obj::string> {
 	size_t
-	operator()(const pmem::obj::experimental::string &x) const
+	operator()(const pmem::obj::string &x) const
 	{
 		return hash<const char *>()(x.c_str());
 	}
 };
 } /* namespace std */
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<long long>,
-						 nvobj::p<long long>>
+typedef nvobj::concurrent_hash_map<nvobj::p<long long>, nvobj::p<long long>>
 	persistent_map_type;
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::experimental::string,
-						 nvobj::experimental::string>
+typedef nvobj::concurrent_hash_map<nvobj::string, nvobj::string>
 	persistent_map_type_string;
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::experimental::string,
-						 nvobj::p<long long>>
+typedef nvobj::concurrent_hash_map<nvobj::string, nvobj::p<long long>>
 	persistent_map_type_mixed;
 
 struct root {

@@ -51,21 +51,21 @@
 #include <thread>
 #include <vector>
 
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 
 namespace nvobj = pmem::obj;
 
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-typedef nvobj::experimental::concurrent_hash_map<
+typedef nvobj::concurrent_hash_map<
 	nvobj::p<int>, nvobj::p<int>, std::hash<nvobj::p<int>>,
 	std::equal_to<nvobj::p<int>>,
 	pmem::obj::experimental::v<tbb::spin_rw_mutex>,
 	tbb::spin_rw_mutex::scoped_lock>
 	persistent_map_type;
 #else
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type;
 #endif
 struct root {
@@ -252,13 +252,13 @@ public:
 /*
  * insert_and_lookup_value_type_test -- test insert and lookup
  * Implements tests for:
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert (const_accessor &result, const value_type &value)
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(accessor &result, const value_type &value)
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(const_accessor &result, value_type &&value)
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(accessor &result, value_type &&value)
  *  All find()
  *  Update element
@@ -300,9 +300,9 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 /*
  * insert_and_lookup_value_type_test -- test insert and lookup
  * Implements tests for:
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(const value_type &value)
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(const value_type &value)
  * All find()
  * Update element
@@ -342,9 +342,9 @@ insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 /*
  * insert_and_lookup_value_type_test -- test insert and lookup
  * Implements tests for:
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(const value_type &value)
- * bool pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * bool pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::inserti(value_type &&value)
  */
 template <typename ValueType>
@@ -386,7 +386,7 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
  * initializer_list and lookup operations. This tests inserts only two keys, due
  * to syntax limitations of initializer_list
  * Implements tests for:
- * pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	 KeyEqual>::insert(std::initializer_list< value_type > il)
  */
 void
@@ -417,7 +417,7 @@ insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
 /*
  * insert_and_lookup_iterator_test -- test insert and lookup
  * Implements tests for:
- * void pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * void pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(I first, I last)
  */
 void
@@ -446,7 +446,7 @@ insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 /*
  * insert_mt_test -- test insert for small number of elements
  * Implements tests for:
- * void pmem::obj::experimental::concurrent_hash_map< Key, T, Hash,
+ * void pmem::obj::concurrent_hash_map< Key, T, Hash,
  *	KeyEqual>::insert(I first, I last)
  */
 void

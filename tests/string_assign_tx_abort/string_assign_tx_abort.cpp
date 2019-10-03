@@ -32,16 +32,16 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using S = pmem_exp::string;
-using WS = pmem_exp::wstring;
-using W16 = pmem_exp::basic_string<char16_t>;
+
+using S = pmem::obj::string;
+using WS = pmem::obj::wstring;
+using W16 = pmem::obj::basic_string<char16_t>;
 
 struct root {
 	nvobj::persistent_ptr<S> s;
@@ -51,7 +51,7 @@ struct root {
 
 template <typename CharT>
 void
-check_string(nvobj::persistent_ptr<pmem_exp::basic_string<CharT>> &ptr,
+check_string(nvobj::persistent_ptr<pmem::obj::basic_string<CharT>> &ptr,
 	     size_t count, CharT value)
 {
 	UT_ASSERTeq(ptr->size(), count);
@@ -78,7 +78,7 @@ assert_tx_abort(pmem::obj::pool<struct root> &pop, std::function<void(void)> f)
 }
 
 /**
- * Test pmem::obj::experimental::string assign() methods and operator=.
+ * Test pmem::obj::string assign() methods and operator=.
  *
  * Checks if string's state is reverted when transaction aborts.
  */
@@ -86,9 +86,9 @@ template <std::size_t InitialSize, std::size_t TestSize, typename CharT,
 	  typename StringType>
 void
 test(nvobj::pool<struct root> &pop,
-     nvobj::persistent_ptr<pmem_exp::basic_string<CharT>> &ptr)
+     nvobj::persistent_ptr<pmem::obj::basic_string<CharT>> &ptr)
 {
-	using string_type = pmem_exp::basic_string<CharT>;
+	using string_type = pmem::obj::basic_string<CharT>;
 
 	/* assign() - fill version */
 	check_string(ptr, InitialSize, static_cast<CharT>('a'));

@@ -44,7 +44,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector capacity methods
+ * Test pmem::obj::vector capacity methods
  *
  * Checks if vector's state is reverted when transaction aborts.
  * Methods under test:

@@ -16,7 +16,7 @@
 #include "unittest.hpp"
 
 #include <iterator>
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <type_traits>
 
 template <typename T>
@@ -77,7 +77,7 @@ main()
 	test<int>();
 	test<int *>();
 
-	using C = pmem::obj::experimental::vector<int>;
+	using C = pmem::obj::vector<int>;
 	static_assert(std::is_same<C::reference, int &>::value, "");
 	static_assert(std::is_same<C::const_reference, const int &>::value, "");
 

@@ -33,7 +33,7 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -65,7 +65,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector default destructor.
+ * Test pmem::obj::vector default destructor.
  *
  * Call default destructor out of transaction scope.
  * Expects vector is empty and no exception is thrown.

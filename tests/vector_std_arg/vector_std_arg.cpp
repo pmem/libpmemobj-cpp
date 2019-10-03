@@ -38,7 +38,6 @@
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 using pmem_vec = container_t<int>;
 using std_vec = std::vector<int>;

@@ -15,7 +15,7 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
@@ -27,7 +27,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector fill constructor
+ * Test pmem::obj::vector fill constructor
  *
  * Constructs container with n copies of elements with custom value.
  * Validates container's size and its elements. Expects no exception is thrown.

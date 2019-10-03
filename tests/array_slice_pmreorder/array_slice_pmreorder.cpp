@@ -31,14 +31,14 @@
  */
 
 /*
- * array_slice_pmreorder.cpp -- pmem::obj::experimental::array test under
+ * array_slice_pmreorder.cpp -- pmem::obj::array test under
  * pmreorder
  *
  */
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -62,7 +62,7 @@ struct Data {
 		}
 	}
 
-	nvobj::experimental::array<int, 5> array = {{1, 2, 3, 4, 5}};
+	nvobj::array<int, 5> array = {{1, 2, 3, 4, 5}};
 };
 
 struct root {

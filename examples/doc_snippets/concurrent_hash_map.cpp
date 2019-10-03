@@ -36,7 +36,7 @@
 
 //! [concurrent_hash_map_example]
 #include <iostream>
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -46,7 +46,7 @@ using namespace pmem::obj;
 
 // In this example we will be using concurrent_hash_map with p<int> type for
 // both keys and values
-using hashmap_type = experimental::concurrent_hash_map<p<int>, p<int>>;
+using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
 

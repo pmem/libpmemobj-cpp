@@ -15,11 +15,11 @@
 #include "../throwing_iterator.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = pmem::obj::experimental;
-using C = pmem_exp::string;
+
+using C = pmem::obj::string;
 
 struct root {
 	nvobj::persistent_ptr<C> s, a_copy, s_short, s_long, s_extra_long;

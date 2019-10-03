@@ -45,7 +45,7 @@
 #include <pmemcheck.h>
 #include <vector>
 
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "persistent_concurrent_hash_map"
 
@@ -62,8 +62,7 @@ struct identity_hash {
 	}
 };
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>,
-						 identity_hash>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>, identity_hash>
 	persistent_map_type;
 
 typedef persistent_map_type::value_type value_type;

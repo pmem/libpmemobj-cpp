@@ -32,11 +32,11 @@
 
 /**
  * @file
- * Iterators for pmem::obj::array
+ * Iterators for contiguous persistent containers.
  */
 
-#ifndef LIBPMEMOBJ_CPP_ARRAY_ITERATOR_HPP
-#define LIBPMEMOBJ_CPP_ARRAY_ITERATOR_HPP
+#ifndef LIBPMEMOBJ_CPP_CONTIGUOUS_ITERATOR_HPP
+#define LIBPMEMOBJ_CPP_CONTIGUOUS_ITERATOR_HPP
 
 #include <algorithm>
 #include <cassert>
@@ -47,10 +47,7 @@
 namespace pmem
 {
 
-namespace obj
-{
-
-namespace experimental
+namespace detail
 {
 
 /**
@@ -429,10 +426,8 @@ struct basic_contiguous_iterator
 	}
 };
 
-} /* namespace experimental */
-
-} /* namespace obj */
+} /* namespace detail */
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_CPP_ARRAY_ITERATOR_HPP */
+#endif /* LIBPMEMOBJ_CPP_CONTIGUOUS_ITERATOR_HPP */

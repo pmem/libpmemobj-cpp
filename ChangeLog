@@ -1,6 +1,6 @@
 Thu Oct 03 2019 Szymon Romik <szymon.romik@intel.com>
 
-	* Version 1.8-rc1
+	* Version 1.8
 
 	This release moves persistent array/vector/string/concurrent_hash_map
 	out from experimental namespace and directory. It means that

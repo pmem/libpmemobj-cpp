@@ -31,8 +31,8 @@
  */
 
 /*
- * concurrent_hash_map_tbb.cpp -- pmem::obj::concurrent_hash_map test with
- * Intel TBB RW mutex
+ * concurrent_hash_map_tbb_insert_lookup.cpp -- pmem::obj::concurrent_hash_map
+ *                                              test with Intel TBB RW mutex
  *
  */
 

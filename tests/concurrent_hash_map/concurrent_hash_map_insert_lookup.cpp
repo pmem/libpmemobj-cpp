@@ -31,7 +31,7 @@
  */
 
 /*
- * concurrent_hash_map.cpp -- pmem::obj::concurrent_hash_map test
+ * concurrent_hash_map_insert_lookup.cpp -- pmem::obj::concurrent_hash_map test
  *
  */
 

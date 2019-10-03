@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.8-rc1</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -75,8 +75,8 @@ $(function() {
 , <a class="el" href="classpmem_1_1obj_1_1pool__base.html#a04efe7474a98116eea017c4d0933cf44">pmem::obj::pool_base</a>
 </li>
 <li>operator const T *()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html#a7a19cfd3bb4f247f072744c5e9a758d0">pmem::obj::experimental::basic_contiguous_iterator&lt; T &gt;</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1range__snapshotting__iterator.html#a2dbae07f805a7269ca586eb235dc522a">pmem::obj::experimental::range_snapshotting_iterator&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html#aee464a61ebaab9d18aebf3a3b9328d97">pmem::detail::basic_contiguous_iterator&lt; T &gt;</a>
+, <a class="el" href="structpmem_1_1detail_1_1range__snapshotting__iterator.html#a874fe9e79d72970573019baf8bbd9f63">pmem::detail::range_snapshotting_iterator&lt; T &gt;</a>
 </li>
 <li>operator persistent_ptr&lt; void &gt;()
 : <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a6eceeb630b864b49d68bb184c0253331">pmem::obj::persistent_ptr&lt; T &gt;</a>
@@ -90,71 +90,100 @@ $(function() {
 <li>operator T&amp;()
 : <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a120dfff82d94acb45cf17f116bf5353b">pmem::obj::experimental::v&lt; T &gt;</a>
 </li>
+<li>operator!=()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a9e748ee196d993f29d7100633e051dc2">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
+</li>
 <li>operator*()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html#a6394ac4a85c980d38e173d455c2057f0">pmem::obj::experimental::basic_contiguous_iterator&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html#a6a042c168f2d00ba799f3d1b56a2f3d5">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::accessor</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ae7db2f65e741c1c53c55b1c3b32398d4">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a9362e943b129dc480c4283c3300e8cba">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html#aac0372b292eb0def5b1a948cb3b8a1ea">pmem::detail::basic_contiguous_iterator&lt; T &gt;</a>
+, <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#aa1c244952163a57e150801d83d2047a4">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1accessor.html#aaf6c82df7459fc3f0d65e2f4638b9bcd">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::accessor</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html#aefce716101eef9ce351234aada0e42e5">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a8424463e6d9c58e5d71d7f796e611d55">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a55bb784984c1e92e028d0d568e7db3ae">pmem::obj::persistent_ptr&lt; T &gt;</a>
 </li>
 <li>operator+()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#aee7e9da001296091fc5908836b924a1d">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a4dbcb3f32a1ad6c9e7339a4793d7bae0">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a1185add620fd5903484280a2c42b7a3c">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 </li>
 <li>operator++()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#adf34fc0f7d11787f06a3181e1306dd0f">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#aeff2add485032026191c46811267a718">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#ae8c5df718f0831c1ef5f8d6f04d74966">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#abc70b76fe385715c59d72e12420b6070">pmem::obj::persistent_ptr&lt; T &gt;</a>
 </li>
 <li>operator+=()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#ada5e3a227c8f0081c66b76ba13f5808c">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a355b2b4ab43443d9dffb1f253fb34e16">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a1635a71aa2470b02e9e950f7b7ebee6b">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a89ac732233fdbb00ba685f0cb4bcb708">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a57e03767491d6a3d3d7ce5fae7a8bb6c">pmem::obj::persistent_ptr&lt; T &gt;</a>
 </li>
 <li>operator-()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a3d235a09dde106f247dbde80b1495886">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a343fe18a44d37ed67713ae7a480a8270">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#ac7e5bde1d87279384a436d08a793780a">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 </li>
 <li>operator--()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a64b2f1500609eea344e46a9a1d225908">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a7f69b7d64fdfc5d48e6e3110a1cb7f46">pmem::obj::persistent_ptr&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a5874c403e790aa58639e652cd33e35f7">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a170c10848d4868919d6a634a691a8ba2">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a4d0a128d4b126684827fa624a4f4d602">pmem::obj::persistent_ptr&lt; T &gt;</a>
 </li>
 <li>operator-=()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a44563c5489a1c41d353ef1a3d130096c">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#ad08c2587348651d5e7b45b98ec49e677">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a922b0001657314979bb6c328dacb3d82">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a7cc718501518e2bbb567dcc12d501c44">pmem::obj::persistent_ptr&lt; T &gt;</a>
 </li>
 <li>operator-&gt;()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html#addb39684b20cb1f95d4e19586cca3bab">pmem::obj::experimental::basic_contiguous_iterator&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html#a56a7325a100a4ee2e4fa47a079d47cde">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::accessor</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1bucket__accessor.html#a85a58de43603b92a63c3ddc38f88432c">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::bucket_accessor</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ab9480eb77fddda731d2d360b767739c8">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#a5eed330ce7791ece206c68cc988e4911">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::serial_bucket_accessor</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#ada6fc6e303074bbde09db70059e858b4">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html#a62de194d15da5343be9a5858358c3d73">pmem::detail::basic_contiguous_iterator&lt; T &gt;</a>
+, <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a88a3cd7a7219972f1c8af33c0f0fd21b">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1accessor.html#a0b521bd321486ca4e5cfe514ace51312">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::accessor</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1bucket__accessor.html#ac5f9c53554b7af68a067d58a7f44e582">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::bucket_accessor</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html#af70a1641ad90c88f8b33180aabb8a1ee">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#a0dcad231842a178ebcebaf7cdeb52033">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::serial_bucket_accessor</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#acd0c768c68d904c58dba1f772ec16c3f">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a60126ca2fe1952c22d85ba73ea05575a">pmem::obj::persistent_ptr&lt; T &gt;</a>
+</li>
+<li>operator&lt;()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a6faebed1438ffc878ecc5156f47f6be4">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
+</li>
+<li>operator&lt;=()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a4e07a191f63422f3acfaf800d1c6654b">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 </li>
 <li>operator=()
 : <a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#afa6dd0a4e77944d005c98c25971d79f1">pmem::detail::persistent_ptr_base&lt; T &gt;</a>
+, <a class="el" href="structpmem_1_1obj_1_1array.html#a426b848717acf59ee40470444233e84a">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#af0c917521b02d15c7eb501b9294a6fb4">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a43cef0fd273e35db65f8247a851792df">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1condition__variable.html#a07acd157f367291badab5680f71a3893">pmem::obj::condition_variable</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a6bccc2060e31d7542a6474be21fd0505">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae25e9887350ba1e523c037e4299613f0">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#ac54769c26765ef7913ff392b2817c378">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1slice.html#a0ea6c5139a4163168d796dcf260e94ca">pmem::obj::experimental::slice&lt; Iterator &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a5f63c286ad436f16866ef0db2f64805c">pmem::obj::experimental::v&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ac250db331475486029225fb5ffda95b9">pmem::obj::experimental::vector&lt; T &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#abf92b0a7b874e8c5e038b0777c9ba06d">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a90ad8ec78f4680d01a28859f2b897f7c">pmem::obj::experimental::v&lt; T &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1mutex.html#a93353da939094c1ee4e233f9436216a8">pmem::obj::mutex</a>
 , <a class="el" href="classpmem_1_1obj_1_1p.html#abf0f15d59364aaf2835293bf3fe708a1">pmem::obj::p&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1pool.html#ad0621e8ce454f924858b65e27866c69a">pmem::obj::pool&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1pool__base.html#a4b836832707ca8fabb30f26b59faa237">pmem::obj::pool_base</a>
+, <a class="el" href="classpmem_1_1obj_1_1pool.html#a5143f7a1d95c97781de03e9062fc85cc">pmem::obj::pool&lt; T &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1pool__base.html#ae29efc00622ae7f7d764286fa43808ac">pmem::obj::pool_base</a>
 , <a class="el" href="classpmem_1_1obj_1_1shared__mutex.html#a3445df31fc547e28bd229cd47a41359a">pmem::obj::shared_mutex</a>
+, <a class="el" href="classpmem_1_1obj_1_1slice.html#a003146b9d147f21511f4cb156ae402ee">pmem::obj::slice&lt; Iterator &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1timed__mutex.html#adee493d5b3680aea15476c0ff3a2ad3a">pmem::obj::timed_mutex</a>
-, <a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic.html#aac1e33306f26e4de4f3ceb8bd6f7ce5f">pmem::obj::transaction::automatic</a>
+, <a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic.html#acd503a62360d78005ca44b52b8cb4856">pmem::obj::transaction::automatic</a>
 , <a class="el" href="classpmem_1_1obj_1_1transaction_1_1manual.html#a5fb1351128906d51a3905d38dabade65">pmem::obj::transaction::manual</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#ab12325a5e296f4278cc459d1a8d71df9">pmem::obj::vector&lt; T &gt;</a>
+</li>
+<li>operator==()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a649a5b1b348e8556aeee7d1c4c52840e">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
+</li>
+<li>operator&gt;()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a4feabcbc0d45b6dbc1331b272dce7c22">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
+</li>
+<li>operator&gt;=()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html#a8864ad8f4f1144359e1133a24caa3e04">pmem::obj::experimental::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>
 </li>
 <li>operator[]()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#aa932271866762acd8428e1e3714093c6">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html#af4e4cdd28768d9c19c4569f4aa9fb5cf">pmem::obj::experimental::basic_contiguous_iterator&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a13a43584f35e464b753766f263b98f6a">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#aab75a5ebd486d49bc68349aa04c7242d">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
-, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1range__snapshotting__iterator.html#a05d8527e9e7f365db7c2aa3b707bc208">pmem::obj::experimental::range_snapshotting_iterator&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1slice.html#ac62d2997c9fbf344052aa03bc7709442">pmem::obj::experimental::slice&lt; Iterator &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ae1f0ffcc2e74974015ed9741b1430227">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html#a366144d569937693bc3ce5bde4ba8188">pmem::detail::basic_contiguous_iterator&lt; T &gt;</a>
+, <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a6b6cab05aa3a2ba91745a1fdcf95c9d9">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+, <a class="el" href="structpmem_1_1detail_1_1range__snapshotting__iterator.html#a70980ac80d1b5022c509c00097dcfaee">pmem::detail::range_snapshotting_iterator&lt; T &gt;</a>
+, <a class="el" href="structpmem_1_1obj_1_1array.html#a716e4393bb517a71a115bd1443952e83">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a680327f5518121e281d7f417eded0be9">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#af366fda3e3fd4597768f3823a4cc200a">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a90ab81005cbc26bbb5fd796cacb5f809">pmem::obj::persistent_ptr&lt; T &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1slice.html#ae210dd66292f9a8309a999b0c2316c99">pmem::obj::slice&lt; Iterator &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a2bc5102c3ec8e831baa797b588e43de2">pmem::obj::vector&lt; T &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

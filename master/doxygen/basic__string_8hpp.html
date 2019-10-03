@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: libpmemobj++/experimental/basic_string.hpp File Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/container/basic_string.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.8-rc1</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,12 +63,13 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_55fd483c9ae557ee09ad95ebc247273e.html">experimental</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_83ecae25392e6e33dc533801e27668b5.html">container</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">basic_string.hpp File Reference</div>  </div>
@@ -80,177 +81,183 @@ $(function() {
 <div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;<a class="el" href="array_8hpp_source.html">libpmemobj++/container/array.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="contiguous__iterator_8hpp_source.html">libpmemobj++/container/detail/contiguous_iterator.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="vector_8hpp_source.html">libpmemobj++/container/vector.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="iterator__traits_8hpp_source.html">libpmemobj++/detail/iterator_traits.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="life_8hpp_source.html">libpmemobj++/detail/life.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="array_8hpp_source.html">libpmemobj++/experimental/array.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="contiguous__iterator_8hpp_source.html">libpmemobj++/experimental/contiguous_iterator.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/experimental/slice.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="vector_8hpp_source.html">libpmemobj++/experimental/vector.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="persistent__ptr_8hpp_source.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pext_8hpp_source.html">libpmemobj++/pext.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/slice.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="transaction_8hpp_source.html">libpmemobj++/transaction.hpp</a>&gt;</code><br />
 </div>
 <p><a href="basic__string_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">pmem::obj::experimental::string - EXPERIMENTAL persistent container with std::basic_string compatible interface.  <a href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string&lt; CharT, Traits &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">pmem::obj::string - persistent container with std::basic_string compatible interface.  <a href="classpmem_1_1obj_1_1basic__string.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab0afd53dc750bdec7fdfc3c72cdb5f1c"><td class="memTemplParams" colspan="2"><a id="ab0afd53dc750bdec7fdfc3c72cdb5f1c"></a>
+<tr class="memitem:ac6e43fb15bab3cba6438a0cd3595a817"><td class="memTemplParams" colspan="2"><a id="ac6e43fb15bab3cba6438a0cd3595a817"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ab0afd53dc750bdec7fdfc3c72cdb5f1c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ab0afd53dc750bdec7fdfc3c72cdb5f1c">pmem::obj::experimental::operator==</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ab0afd53dc750bdec7fdfc3c72cdb5f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
-<tr class="separator:ab0afd53dc750bdec7fdfc3c72cdb5f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2021c4e64627bbd009d5d66cb96efae0"><td class="memTemplParams" colspan="2"><a id="a2021c4e64627bbd009d5d66cb96efae0"></a>
+<tr class="memitem:ac6e43fb15bab3cba6438a0cd3595a817"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ac6e43fb15bab3cba6438a0cd3595a817">pmem::obj::operator==</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ac6e43fb15bab3cba6438a0cd3595a817"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
+<tr class="separator:ac6e43fb15bab3cba6438a0cd3595a817"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a788b19ef1a40e669c1766c4026bee6c8"><td class="memTemplParams" colspan="2"><a id="a788b19ef1a40e669c1766c4026bee6c8"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a2021c4e64627bbd009d5d66cb96efae0"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a2021c4e64627bbd009d5d66cb96efae0">pmem::obj::experimental::operator!=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a2021c4e64627bbd009d5d66cb96efae0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
-<tr class="separator:a2021c4e64627bbd009d5d66cb96efae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa909ba6632c9e57a4cf0f84f0d8d44f3"><td class="memTemplParams" colspan="2"><a id="aa909ba6632c9e57a4cf0f84f0d8d44f3"></a>
+<tr class="memitem:a788b19ef1a40e669c1766c4026bee6c8"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a788b19ef1a40e669c1766c4026bee6c8">pmem::obj::operator!=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a788b19ef1a40e669c1766c4026bee6c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
+<tr class="separator:a788b19ef1a40e669c1766c4026bee6c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf5ba3863c032e58b8c9ec9a42b4d31b"><td class="memTemplParams" colspan="2"><a id="acf5ba3863c032e58b8c9ec9a42b4d31b"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:aa909ba6632c9e57a4cf0f84f0d8d44f3"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aa909ba6632c9e57a4cf0f84f0d8d44f3">pmem::obj::experimental::operator&lt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aa909ba6632c9e57a4cf0f84f0d8d44f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
-<tr class="separator:aa909ba6632c9e57a4cf0f84f0d8d44f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3d7027e3db966d0dca5f603ae20fad5"><td class="memTemplParams" colspan="2"><a id="ab3d7027e3db966d0dca5f603ae20fad5"></a>
+<tr class="memitem:acf5ba3863c032e58b8c9ec9a42b4d31b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#acf5ba3863c032e58b8c9ec9a42b4d31b">pmem::obj::operator&lt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:acf5ba3863c032e58b8c9ec9a42b4d31b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
+<tr class="separator:acf5ba3863c032e58b8c9ec9a42b4d31b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae573d72e424893168ee8abd73f2db0d8"><td class="memTemplParams" colspan="2"><a id="ae573d72e424893168ee8abd73f2db0d8"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ab3d7027e3db966d0dca5f603ae20fad5"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ab3d7027e3db966d0dca5f603ae20fad5">pmem::obj::experimental::operator&lt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ab3d7027e3db966d0dca5f603ae20fad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
-<tr class="separator:ab3d7027e3db966d0dca5f603ae20fad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeed8411cbd3050af2fa3239e7925b9b2"><td class="memTemplParams" colspan="2"><a id="aeed8411cbd3050af2fa3239e7925b9b2"></a>
+<tr class="memitem:ae573d72e424893168ee8abd73f2db0d8"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ae573d72e424893168ee8abd73f2db0d8">pmem::obj::operator&lt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ae573d72e424893168ee8abd73f2db0d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
+<tr class="separator:ae573d72e424893168ee8abd73f2db0d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3db54f0ec67da3714bbe86dd052921f"><td class="memTemplParams" colspan="2"><a id="aa3db54f0ec67da3714bbe86dd052921f"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:aeed8411cbd3050af2fa3239e7925b9b2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aeed8411cbd3050af2fa3239e7925b9b2">pmem::obj::experimental::operator&gt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aeed8411cbd3050af2fa3239e7925b9b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
-<tr class="separator:aeed8411cbd3050af2fa3239e7925b9b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3a878472db0294c0e04244645294f16"><td class="memTemplParams" colspan="2"><a id="ae3a878472db0294c0e04244645294f16"></a>
+<tr class="memitem:aa3db54f0ec67da3714bbe86dd052921f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aa3db54f0ec67da3714bbe86dd052921f">pmem::obj::operator&gt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:aa3db54f0ec67da3714bbe86dd052921f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
+<tr class="separator:aa3db54f0ec67da3714bbe86dd052921f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a233fbe47a6216bf2d2fe87b13b203194"><td class="memTemplParams" colspan="2"><a id="a233fbe47a6216bf2d2fe87b13b203194"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ae3a878472db0294c0e04244645294f16"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ae3a878472db0294c0e04244645294f16">pmem::obj::experimental::operator&gt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ae3a878472db0294c0e04244645294f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
-<tr class="separator:ae3a878472db0294c0e04244645294f16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15b7c3617953e8403b1505c11fd31ab9"><td class="memTemplParams" colspan="2"><a id="a15b7c3617953e8403b1505c11fd31ab9"></a>
+<tr class="memitem:a233fbe47a6216bf2d2fe87b13b203194"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a233fbe47a6216bf2d2fe87b13b203194">pmem::obj::operator&gt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a233fbe47a6216bf2d2fe87b13b203194"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
+<tr class="separator:a233fbe47a6216bf2d2fe87b13b203194"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab67b9906991892884efe135f1d447b4e"><td class="memTemplParams" colspan="2"><a id="ab67b9906991892884efe135f1d447b4e"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a15b7c3617953e8403b1505c11fd31ab9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a15b7c3617953e8403b1505c11fd31ab9">pmem::obj::experimental::operator==</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a15b7c3617953e8403b1505c11fd31ab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
-<tr class="separator:a15b7c3617953e8403b1505c11fd31ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8aa111b4600db30412149eac2c8a75fa"><td class="memTemplParams" colspan="2"><a id="a8aa111b4600db30412149eac2c8a75fa"></a>
+<tr class="memitem:ab67b9906991892884efe135f1d447b4e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ab67b9906991892884efe135f1d447b4e">pmem::obj::operator==</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ab67b9906991892884efe135f1d447b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
+<tr class="separator:ab67b9906991892884efe135f1d447b4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c9a3046d2940c9c6c3c1a07f5901649"><td class="memTemplParams" colspan="2"><a id="a2c9a3046d2940c9c6c3c1a07f5901649"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a8aa111b4600db30412149eac2c8a75fa"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a8aa111b4600db30412149eac2c8a75fa">pmem::obj::experimental::operator!=</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a8aa111b4600db30412149eac2c8a75fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
-<tr class="separator:a8aa111b4600db30412149eac2c8a75fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ac433d315b8a7a7bff2c69ef59751e8"><td class="memTemplParams" colspan="2"><a id="a5ac433d315b8a7a7bff2c69ef59751e8"></a>
+<tr class="memitem:a2c9a3046d2940c9c6c3c1a07f5901649"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a2c9a3046d2940c9c6c3c1a07f5901649">pmem::obj::operator!=</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a2c9a3046d2940c9c6c3c1a07f5901649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
+<tr class="separator:a2c9a3046d2940c9c6c3c1a07f5901649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41f2456d0e8bfce1a0ddf11e4484fb36"><td class="memTemplParams" colspan="2"><a id="a41f2456d0e8bfce1a0ddf11e4484fb36"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a5ac433d315b8a7a7bff2c69ef59751e8"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a5ac433d315b8a7a7bff2c69ef59751e8">pmem::obj::experimental::operator&lt;</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a5ac433d315b8a7a7bff2c69ef59751e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
-<tr class="separator:a5ac433d315b8a7a7bff2c69ef59751e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63b7a37d7de297d54d9362bf8ab3ed73"><td class="memTemplParams" colspan="2"><a id="a63b7a37d7de297d54d9362bf8ab3ed73"></a>
+<tr class="memitem:a41f2456d0e8bfce1a0ddf11e4484fb36"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a41f2456d0e8bfce1a0ddf11e4484fb36">pmem::obj::operator&lt;</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a41f2456d0e8bfce1a0ddf11e4484fb36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
+<tr class="separator:a41f2456d0e8bfce1a0ddf11e4484fb36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cd9feb3dbcd1ff16c6cf21b95de00d5"><td class="memTemplParams" colspan="2"><a id="a6cd9feb3dbcd1ff16c6cf21b95de00d5"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a63b7a37d7de297d54d9362bf8ab3ed73"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a63b7a37d7de297d54d9362bf8ab3ed73">pmem::obj::experimental::operator&lt;=</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a63b7a37d7de297d54d9362bf8ab3ed73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
-<tr class="separator:a63b7a37d7de297d54d9362bf8ab3ed73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4430067b6b897d8951707f3e55c2cf4"><td class="memTemplParams" colspan="2"><a id="af4430067b6b897d8951707f3e55c2cf4"></a>
+<tr class="memitem:a6cd9feb3dbcd1ff16c6cf21b95de00d5"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a6cd9feb3dbcd1ff16c6cf21b95de00d5">pmem::obj::operator&lt;=</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a6cd9feb3dbcd1ff16c6cf21b95de00d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
+<tr class="separator:a6cd9feb3dbcd1ff16c6cf21b95de00d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf98a20a136c1cf27ee3fd726ff993a5"><td class="memTemplParams" colspan="2"><a id="abf98a20a136c1cf27ee3fd726ff993a5"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:af4430067b6b897d8951707f3e55c2cf4"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#af4430067b6b897d8951707f3e55c2cf4">pmem::obj::experimental::operator&gt;</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:af4430067b6b897d8951707f3e55c2cf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
-<tr class="separator:af4430067b6b897d8951707f3e55c2cf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae73f2729e692e904993c582e007ef257"><td class="memTemplParams" colspan="2"><a id="ae73f2729e692e904993c582e007ef257"></a>
+<tr class="memitem:abf98a20a136c1cf27ee3fd726ff993a5"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#abf98a20a136c1cf27ee3fd726ff993a5">pmem::obj::operator&gt;</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:abf98a20a136c1cf27ee3fd726ff993a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
+<tr class="separator:abf98a20a136c1cf27ee3fd726ff993a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af09fb8515eda84d2a01aeb1b777b80c3"><td class="memTemplParams" colspan="2"><a id="af09fb8515eda84d2a01aeb1b777b80c3"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ae73f2729e692e904993c582e007ef257"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ae73f2729e692e904993c582e007ef257">pmem::obj::experimental::operator&gt;=</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ae73f2729e692e904993c582e007ef257"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
-<tr class="separator:ae73f2729e692e904993c582e007ef257"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab06ac9fda978e355839dd9888db0cd6d"><td class="memTemplParams" colspan="2"><a id="ab06ac9fda978e355839dd9888db0cd6d"></a>
+<tr class="memitem:af09fb8515eda84d2a01aeb1b777b80c3"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#af09fb8515eda84d2a01aeb1b777b80c3">pmem::obj::operator&gt;=</a> (const CharT *lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:af09fb8515eda84d2a01aeb1b777b80c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
+<tr class="separator:af09fb8515eda84d2a01aeb1b777b80c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafcf96d678bdb77b19c6148f97f16fc4"><td class="memTemplParams" colspan="2"><a id="aafcf96d678bdb77b19c6148f97f16fc4"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ab06ac9fda978e355839dd9888db0cd6d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ab06ac9fda978e355839dd9888db0cd6d">pmem::obj::experimental::operator==</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
-<tr class="memdesc:ab06ac9fda978e355839dd9888db0cd6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
-<tr class="separator:ab06ac9fda978e355839dd9888db0cd6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad71677d5191d723e7d598ef8dfdc7ee6"><td class="memTemplParams" colspan="2"><a id="ad71677d5191d723e7d598ef8dfdc7ee6"></a>
+<tr class="memitem:aafcf96d678bdb77b19c6148f97f16fc4"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aafcf96d678bdb77b19c6148f97f16fc4">pmem::obj::operator==</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
+<tr class="memdesc:aafcf96d678bdb77b19c6148f97f16fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
+<tr class="separator:aafcf96d678bdb77b19c6148f97f16fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72c6417f3631c78d50f25d2d63046fec"><td class="memTemplParams" colspan="2"><a id="a72c6417f3631c78d50f25d2d63046fec"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ad71677d5191d723e7d598ef8dfdc7ee6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ad71677d5191d723e7d598ef8dfdc7ee6">pmem::obj::experimental::operator!=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
-<tr class="memdesc:ad71677d5191d723e7d598ef8dfdc7ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
-<tr class="separator:ad71677d5191d723e7d598ef8dfdc7ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adca0bc006ef8a8bff0a9bc13fdacafbf"><td class="memTemplParams" colspan="2"><a id="adca0bc006ef8a8bff0a9bc13fdacafbf"></a>
+<tr class="memitem:a72c6417f3631c78d50f25d2d63046fec"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a72c6417f3631c78d50f25d2d63046fec">pmem::obj::operator!=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
+<tr class="memdesc:a72c6417f3631c78d50f25d2d63046fec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
+<tr class="separator:a72c6417f3631c78d50f25d2d63046fec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3566f4c14cf3713bf3c8965a96bd82d"><td class="memTemplParams" colspan="2"><a id="aa3566f4c14cf3713bf3c8965a96bd82d"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:adca0bc006ef8a8bff0a9bc13fdacafbf"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#adca0bc006ef8a8bff0a9bc13fdacafbf">pmem::obj::experimental::operator&lt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
-<tr class="memdesc:adca0bc006ef8a8bff0a9bc13fdacafbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
-<tr class="separator:adca0bc006ef8a8bff0a9bc13fdacafbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa85018c58a7cd152ab50d035e866a4e7"><td class="memTemplParams" colspan="2"><a id="aa85018c58a7cd152ab50d035e866a4e7"></a>
+<tr class="memitem:aa3566f4c14cf3713bf3c8965a96bd82d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aa3566f4c14cf3713bf3c8965a96bd82d">pmem::obj::operator&lt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
+<tr class="memdesc:aa3566f4c14cf3713bf3c8965a96bd82d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
+<tr class="separator:aa3566f4c14cf3713bf3c8965a96bd82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92d274540fc63af0edaba1636b765079"><td class="memTemplParams" colspan="2"><a id="a92d274540fc63af0edaba1636b765079"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:aa85018c58a7cd152ab50d035e866a4e7"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aa85018c58a7cd152ab50d035e866a4e7">pmem::obj::experimental::operator&lt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
-<tr class="memdesc:aa85018c58a7cd152ab50d035e866a4e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
-<tr class="separator:aa85018c58a7cd152ab50d035e866a4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac38637403f765798b2f04ea8301e4b74"><td class="memTemplParams" colspan="2"><a id="ac38637403f765798b2f04ea8301e4b74"></a>
+<tr class="memitem:a92d274540fc63af0edaba1636b765079"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a92d274540fc63af0edaba1636b765079">pmem::obj::operator&lt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
+<tr class="memdesc:a92d274540fc63af0edaba1636b765079"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
+<tr class="separator:a92d274540fc63af0edaba1636b765079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49187a75fed040c273f6291c7fb8395c"><td class="memTemplParams" colspan="2"><a id="a49187a75fed040c273f6291c7fb8395c"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ac38637403f765798b2f04ea8301e4b74"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ac38637403f765798b2f04ea8301e4b74">pmem::obj::experimental::operator&gt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
-<tr class="memdesc:ac38637403f765798b2f04ea8301e4b74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
-<tr class="separator:ac38637403f765798b2f04ea8301e4b74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77249c2ae890b0b9930bd0cf38dfa74b"><td class="memTemplParams" colspan="2"><a id="a77249c2ae890b0b9930bd0cf38dfa74b"></a>
+<tr class="memitem:a49187a75fed040c273f6291c7fb8395c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a49187a75fed040c273f6291c7fb8395c">pmem::obj::operator&gt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
+<tr class="memdesc:a49187a75fed040c273f6291c7fb8395c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
+<tr class="separator:a49187a75fed040c273f6291c7fb8395c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0abfc5bd5419ac1188e680bc7f061ced"><td class="memTemplParams" colspan="2"><a id="a0abfc5bd5419ac1188e680bc7f061ced"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a77249c2ae890b0b9930bd0cf38dfa74b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a77249c2ae890b0b9930bd0cf38dfa74b">pmem::obj::experimental::operator&gt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
-<tr class="memdesc:a77249c2ae890b0b9930bd0cf38dfa74b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
-<tr class="separator:a77249c2ae890b0b9930bd0cf38dfa74b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa519a21192825a9e0b8958c80d3136be"><td class="memTemplParams" colspan="2"><a id="aa519a21192825a9e0b8958c80d3136be"></a>
+<tr class="memitem:a0abfc5bd5419ac1188e680bc7f061ced"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a0abfc5bd5419ac1188e680bc7f061ced">pmem::obj::operator&gt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const CharT *rhs)</td></tr>
+<tr class="memdesc:a0abfc5bd5419ac1188e680bc7f061ced"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
+<tr class="separator:a0abfc5bd5419ac1188e680bc7f061ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7f1341420df86c6f8da77b683f1d142"><td class="memTemplParams" colspan="2"><a id="ab7f1341420df86c6f8da77b683f1d142"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:aa519a21192825a9e0b8958c80d3136be"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aa519a21192825a9e0b8958c80d3136be">pmem::obj::experimental::operator==</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aa519a21192825a9e0b8958c80d3136be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
-<tr class="separator:aa519a21192825a9e0b8958c80d3136be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63945763552ad6276c0e54ffb3f14ea5"><td class="memTemplParams" colspan="2"><a id="a63945763552ad6276c0e54ffb3f14ea5"></a>
+<tr class="memitem:ab7f1341420df86c6f8da77b683f1d142"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ab7f1341420df86c6f8da77b683f1d142">pmem::obj::operator==</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ab7f1341420df86c6f8da77b683f1d142"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
+<tr class="separator:ab7f1341420df86c6f8da77b683f1d142"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00bc5a2b4411833a1d5194a4b71e47a1"><td class="memTemplParams" colspan="2"><a id="a00bc5a2b4411833a1d5194a4b71e47a1"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a63945763552ad6276c0e54ffb3f14ea5"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a63945763552ad6276c0e54ffb3f14ea5">pmem::obj::experimental::operator!=</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a63945763552ad6276c0e54ffb3f14ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
-<tr class="separator:a63945763552ad6276c0e54ffb3f14ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab43ce71ebf241912693eb4ba1d96b0df"><td class="memTemplParams" colspan="2"><a id="ab43ce71ebf241912693eb4ba1d96b0df"></a>
+<tr class="memitem:a00bc5a2b4411833a1d5194a4b71e47a1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a00bc5a2b4411833a1d5194a4b71e47a1">pmem::obj::operator!=</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a00bc5a2b4411833a1d5194a4b71e47a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
+<tr class="separator:a00bc5a2b4411833a1d5194a4b71e47a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a319d96ef6cd913b6119af477fee82050"><td class="memTemplParams" colspan="2"><a id="a319d96ef6cd913b6119af477fee82050"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ab43ce71ebf241912693eb4ba1d96b0df"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ab43ce71ebf241912693eb4ba1d96b0df">pmem::obj::experimental::operator&lt;</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ab43ce71ebf241912693eb4ba1d96b0df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
-<tr class="separator:ab43ce71ebf241912693eb4ba1d96b0df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a6d0b8c24c70b7c91d0c07c9164df68"><td class="memTemplParams" colspan="2"><a id="a2a6d0b8c24c70b7c91d0c07c9164df68"></a>
+<tr class="memitem:a319d96ef6cd913b6119af477fee82050"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a319d96ef6cd913b6119af477fee82050">pmem::obj::operator&lt;</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a319d96ef6cd913b6119af477fee82050"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
+<tr class="separator:a319d96ef6cd913b6119af477fee82050"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad090e6512aa2fa77b4b9e2fd6f7bb648"><td class="memTemplParams" colspan="2"><a id="ad090e6512aa2fa77b4b9e2fd6f7bb648"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a2a6d0b8c24c70b7c91d0c07c9164df68"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a2a6d0b8c24c70b7c91d0c07c9164df68">pmem::obj::experimental::operator&lt;=</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a2a6d0b8c24c70b7c91d0c07c9164df68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
-<tr class="separator:a2a6d0b8c24c70b7c91d0c07c9164df68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb91ba5d08b2a616e43f53acfb3ad203"><td class="memTemplParams" colspan="2"><a id="afb91ba5d08b2a616e43f53acfb3ad203"></a>
+<tr class="memitem:ad090e6512aa2fa77b4b9e2fd6f7bb648"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ad090e6512aa2fa77b4b9e2fd6f7bb648">pmem::obj::operator&lt;=</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ad090e6512aa2fa77b4b9e2fd6f7bb648"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
+<tr class="separator:ad090e6512aa2fa77b4b9e2fd6f7bb648"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6271a6f69c801e53a37155ae4917df97"><td class="memTemplParams" colspan="2"><a id="a6271a6f69c801e53a37155ae4917df97"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:afb91ba5d08b2a616e43f53acfb3ad203"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#afb91ba5d08b2a616e43f53acfb3ad203">pmem::obj::experimental::operator&gt;</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:afb91ba5d08b2a616e43f53acfb3ad203"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
-<tr class="separator:afb91ba5d08b2a616e43f53acfb3ad203"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa32d9cff24f9dfb0c19e091d72773280"><td class="memTemplParams" colspan="2"><a id="aa32d9cff24f9dfb0c19e091d72773280"></a>
+<tr class="memitem:a6271a6f69c801e53a37155ae4917df97"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a6271a6f69c801e53a37155ae4917df97">pmem::obj::operator&gt;</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a6271a6f69c801e53a37155ae4917df97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
+<tr class="separator:a6271a6f69c801e53a37155ae4917df97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade658a471dc5c46e32587a8768649a4a"><td class="memTemplParams" colspan="2"><a id="ade658a471dc5c46e32587a8768649a4a"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:aa32d9cff24f9dfb0c19e091d72773280"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#aa32d9cff24f9dfb0c19e091d72773280">pmem::obj::experimental::operator&gt;=</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aa32d9cff24f9dfb0c19e091d72773280"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
-<tr class="separator:aa32d9cff24f9dfb0c19e091d72773280"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a138dbb510bf982eb9cd713cf0b395e72"><td class="memTemplParams" colspan="2"><a id="a138dbb510bf982eb9cd713cf0b395e72"></a>
+<tr class="memitem:ade658a471dc5c46e32587a8768649a4a"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ade658a471dc5c46e32587a8768649a4a">pmem::obj::operator&gt;=</a> (const std::basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ade658a471dc5c46e32587a8768649a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
+<tr class="separator:ade658a471dc5c46e32587a8768649a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dd8e0d8518f74ab21ec2bb9dd670abf"><td class="memTemplParams" colspan="2"><a id="a5dd8e0d8518f74ab21ec2bb9dd670abf"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a138dbb510bf982eb9cd713cf0b395e72"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a138dbb510bf982eb9cd713cf0b395e72">pmem::obj::experimental::operator==</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a138dbb510bf982eb9cd713cf0b395e72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
-<tr class="separator:a138dbb510bf982eb9cd713cf0b395e72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf1b0c799055bf7745f733214670c642"><td class="memTemplParams" colspan="2"><a id="acf1b0c799055bf7745f733214670c642"></a>
+<tr class="memitem:a5dd8e0d8518f74ab21ec2bb9dd670abf"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a5dd8e0d8518f74ab21ec2bb9dd670abf">pmem::obj::operator==</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5dd8e0d8518f74ab21ec2bb9dd670abf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
+<tr class="separator:a5dd8e0d8518f74ab21ec2bb9dd670abf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae96d050c246ff7d524cfbb7f1b5fd1f6"><td class="memTemplParams" colspan="2"><a id="ae96d050c246ff7d524cfbb7f1b5fd1f6"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:acf1b0c799055bf7745f733214670c642"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#acf1b0c799055bf7745f733214670c642">pmem::obj::experimental::operator!=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:acf1b0c799055bf7745f733214670c642"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
-<tr class="separator:acf1b0c799055bf7745f733214670c642"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ef83104a91d6a6cbb16ef27eb2eab74"><td class="memTemplParams" colspan="2"><a id="a3ef83104a91d6a6cbb16ef27eb2eab74"></a>
+<tr class="memitem:ae96d050c246ff7d524cfbb7f1b5fd1f6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ae96d050c246ff7d524cfbb7f1b5fd1f6">pmem::obj::operator!=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ae96d050c246ff7d524cfbb7f1b5fd1f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not equal operator. <br /></td></tr>
+<tr class="separator:ae96d050c246ff7d524cfbb7f1b5fd1f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e5bf9165eda29e065f6001d3427c00f"><td class="memTemplParams" colspan="2"><a id="a5e5bf9165eda29e065f6001d3427c00f"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a3ef83104a91d6a6cbb16ef27eb2eab74"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a3ef83104a91d6a6cbb16ef27eb2eab74">pmem::obj::experimental::operator&lt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a3ef83104a91d6a6cbb16ef27eb2eab74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
-<tr class="separator:a3ef83104a91d6a6cbb16ef27eb2eab74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80476a89e29c9b5dfb4da5066783d83b"><td class="memTemplParams" colspan="2"><a id="a80476a89e29c9b5dfb4da5066783d83b"></a>
+<tr class="memitem:a5e5bf9165eda29e065f6001d3427c00f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a5e5bf9165eda29e065f6001d3427c00f">pmem::obj::operator&lt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5e5bf9165eda29e065f6001d3427c00f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
+<tr class="separator:a5e5bf9165eda29e065f6001d3427c00f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c3bd8b1d698933d71daecab48ef5fc1"><td class="memTemplParams" colspan="2"><a id="a7c3bd8b1d698933d71daecab48ef5fc1"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:a80476a89e29c9b5dfb4da5066783d83b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a80476a89e29c9b5dfb4da5066783d83b">pmem::obj::experimental::operator&lt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a80476a89e29c9b5dfb4da5066783d83b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
-<tr class="separator:a80476a89e29c9b5dfb4da5066783d83b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3654ceec492b7bc746f9c2c43d0eea4"><td class="memTemplParams" colspan="2"><a id="ad3654ceec492b7bc746f9c2c43d0eea4"></a>
+<tr class="memitem:a7c3bd8b1d698933d71daecab48ef5fc1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a7c3bd8b1d698933d71daecab48ef5fc1">pmem::obj::operator&lt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a7c3bd8b1d698933d71daecab48ef5fc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
+<tr class="separator:a7c3bd8b1d698933d71daecab48ef5fc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25e5ded10ff323f16976f3ee6d280046"><td class="memTemplParams" colspan="2"><a id="a25e5ded10ff323f16976f3ee6d280046"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ad3654ceec492b7bc746f9c2c43d0eea4"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ad3654ceec492b7bc746f9c2c43d0eea4">pmem::obj::experimental::operator&gt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ad3654ceec492b7bc746f9c2c43d0eea4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
-<tr class="separator:ad3654ceec492b7bc746f9c2c43d0eea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac09d45f02e9531750d2485ec5bf12a8b"><td class="memTemplParams" colspan="2"><a id="ac09d45f02e9531750d2485ec5bf12a8b"></a>
+<tr class="memitem:a25e5ded10ff323f16976f3ee6d280046"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a25e5ded10ff323f16976f3ee6d280046">pmem::obj::operator&gt;</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a25e5ded10ff323f16976f3ee6d280046"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
+<tr class="separator:a25e5ded10ff323f16976f3ee6d280046"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aeb2483da8ca1c8b3636d4b7d1c101f"><td class="memTemplParams" colspan="2"><a id="a9aeb2483da8ca1c8b3636d4b7d1c101f"></a>
 template&lt;class CharT , class Traits &gt; </td></tr>
-<tr class="memitem:ac09d45f02e9531750d2485ec5bf12a8b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#ac09d45f02e9531750d2485ec5bf12a8b">pmem::obj::experimental::operator&gt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ac09d45f02e9531750d2485ec5bf12a8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
-<tr class="separator:ac09d45f02e9531750d2485ec5bf12a8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9aeb2483da8ca1c8b3636d4b7d1c101f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="basic__string_8hpp.html#a9aeb2483da8ca1c8b3636d4b7d1c101f">pmem::obj::operator&gt;=</a> (const basic_string&lt; CharT, Traits &gt; &amp;lhs, const std::basic_string&lt; CharT, Traits &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a9aeb2483da8ca1c8b3636d4b7d1c101f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
+<tr class="separator:a9aeb2483da8ca1c8b3636d4b7d1c101f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>String container with std::basic_string compatible interface. </p>

@@ -12,6 +12,7 @@ var searchData=
   ['transaction_5falloc_5ferror',['transaction_alloc_error',['../classpmem_1_1transaction__alloc__error.html',1,'pmem']]],
   ['transaction_5ferror',['transaction_error',['../classpmem_1_1transaction__error.html',1,'pmem']]],
   ['transaction_5ffree_5ferror',['transaction_free_error',['../classpmem_1_1transaction__free__error.html',1,'pmem']]],
+  ['transaction_5fout_5fof_5fmemory',['transaction_out_of_memory',['../classpmem_1_1transaction__out__of__memory.html',1,'pmem']]],
   ['transaction_5fscope_5ferror',['transaction_scope_error',['../classpmem_1_1transaction__scope__error.html',1,'pmem']]],
   ['try_5flock',['try_lock',['../classpmem_1_1obj_1_1mutex.html#ac5200a1d71568e37cf177142c2de6578',1,'pmem::obj::mutex::try_lock()'],['../classpmem_1_1obj_1_1shared__mutex.html#af144d333c724830c62d8a337021a5e48',1,'pmem::obj::shared_mutex::try_lock()'],['../classpmem_1_1obj_1_1timed__mutex.html#ac4e729766548fb54c3597a0532b42a5a',1,'pmem::obj::timed_mutex::try_lock()']]],
   ['try_5flock_5ffor',['try_lock_for',['../classpmem_1_1obj_1_1timed__mutex.html#addfc0dcd69f92ecbc76239ef6fefe5ee',1,'pmem::obj::timed_mutex']]],

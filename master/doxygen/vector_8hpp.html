@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: libpmemobj++/experimental/vector.hpp File Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/container/vector.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,12 +63,13 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_55fd483c9ae557ee09ad95ebc247273e.html">experimental</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_83ecae25392e6e33dc533801e27668b5.html">container</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">vector.hpp File Reference</div>  </div>
@@ -77,17 +78,17 @@ $(function() {
 
 <p>Vector container with std::vector compatible interface.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="contiguous__iterator_8hpp_source.html">libpmemobj++/container/detail/contiguous_iterator.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="iterator__traits_8hpp_source.html">libpmemobj++/detail/iterator_traits.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="life_8hpp_source.html">libpmemobj++/detail/life.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="temp__value_8hpp_source.html">libpmemobj++/detail/temp_value.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="contiguous__iterator_8hpp_source.html">libpmemobj++/experimental/contiguous_iterator.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/experimental/slice.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="make__persistent_8hpp_source.html">libpmemobj++/make_persistent.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="persistent__ptr_8hpp_source.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pext_8hpp_source.html">libpmemobj++/pext.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/slice.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="transaction_8hpp_source.html">libpmemobj++/transaction.hpp</a>&gt;</code><br />
-<code>#include &lt;libpmemobj.h&gt;</code><br />
+<code>#include &lt;libpmemobj/base.h&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
@@ -97,94 +98,100 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">pmem::obj::experimental::vector&lt; T &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html" title="pmem::obj::experimental::vector - EXPERIMENTAL persistent container with std::vector compatible inter...">pmem::obj::experimental::vector</a> - EXPERIMENTAL persistent container with std::vector compatible interface.  <a href="classpmem_1_1obj_1_1experimental_1_1vector.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1vector.html" title="pmem::obj::vector - persistent container with std::vector compatible interface.">pmem::obj::vector</a> - persistent container with std::vector compatible interface.  <a href="classpmem_1_1obj_1_1vector.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac02561466fa616865e6354f57db0f839"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ac02561466fa616865e6354f57db0f839"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#ac02561466fa616865e6354f57db0f839">pmem::obj::experimental::swap</a> (vector&lt; T &gt; &amp;lhs, vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ac02561466fa616865e6354f57db0f839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swaps the contents of lhs and rhs.  <a href="vector_8hpp.html#ac02561466fa616865e6354f57db0f839">More...</a><br /></td></tr>
-<tr class="separator:ac02561466fa616865e6354f57db0f839"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d0d3fdc3caba2757ea4d7ad85ae91bf"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a2d0d3fdc3caba2757ea4d7ad85ae91bf"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a2d0d3fdc3caba2757ea4d7ad85ae91bf">pmem::obj::experimental::operator==</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a2d0d3fdc3caba2757ea4d7ad85ae91bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a2d0d3fdc3caba2757ea4d7ad85ae91bf">More...</a><br /></td></tr>
-<tr class="separator:a2d0d3fdc3caba2757ea4d7ad85ae91bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb7454e6a3bc84ea277bbbd30ba51af4"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:acb7454e6a3bc84ea277bbbd30ba51af4"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#acb7454e6a3bc84ea277bbbd30ba51af4">pmem::obj::experimental::operator!=</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:acb7454e6a3bc84ea277bbbd30ba51af4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#acb7454e6a3bc84ea277bbbd30ba51af4">More...</a><br /></td></tr>
-<tr class="separator:acb7454e6a3bc84ea277bbbd30ba51af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10d7b544762cd35a548ca08990d4717e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a10d7b544762cd35a548ca08990d4717e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a10d7b544762cd35a548ca08990d4717e">pmem::obj::experimental::operator&lt;</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a10d7b544762cd35a548ca08990d4717e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a10d7b544762cd35a548ca08990d4717e">More...</a><br /></td></tr>
-<tr class="separator:a10d7b544762cd35a548ca08990d4717e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23914bb688eb783d5ad9cd60f9471dd2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a23914bb688eb783d5ad9cd60f9471dd2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a23914bb688eb783d5ad9cd60f9471dd2">pmem::obj::experimental::operator&lt;=</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a23914bb688eb783d5ad9cd60f9471dd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a23914bb688eb783d5ad9cd60f9471dd2">More...</a><br /></td></tr>
-<tr class="separator:a23914bb688eb783d5ad9cd60f9471dd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c765e5c7a677c9e608ce0cda49533d1"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a5c765e5c7a677c9e608ce0cda49533d1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a5c765e5c7a677c9e608ce0cda49533d1">pmem::obj::experimental::operator&gt;</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a5c765e5c7a677c9e608ce0cda49533d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a5c765e5c7a677c9e608ce0cda49533d1">More...</a><br /></td></tr>
-<tr class="separator:a5c765e5c7a677c9e608ce0cda49533d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43f2a71c26e59a530b9d01bb409831ca"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a43f2a71c26e59a530b9d01bb409831ca"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a43f2a71c26e59a530b9d01bb409831ca">pmem::obj::experimental::operator&gt;=</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a43f2a71c26e59a530b9d01bb409831ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a43f2a71c26e59a530b9d01bb409831ca">More...</a><br /></td></tr>
-<tr class="separator:a43f2a71c26e59a530b9d01bb409831ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad859e03b43b2092aef42913f33ef054b"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ad859e03b43b2092aef42913f33ef054b"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#ad859e03b43b2092aef42913f33ef054b">pmem::obj::experimental::operator==</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ad859e03b43b2092aef42913f33ef054b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#ad859e03b43b2092aef42913f33ef054b">More...</a><br /></td></tr>
-<tr class="separator:ad859e03b43b2092aef42913f33ef054b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6afdc40138c8b072b8d7b51ae623810c"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a6afdc40138c8b072b8d7b51ae623810c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a6afdc40138c8b072b8d7b51ae623810c">pmem::obj::experimental::operator!=</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a6afdc40138c8b072b8d7b51ae623810c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a6afdc40138c8b072b8d7b51ae623810c">More...</a><br /></td></tr>
-<tr class="separator:a6afdc40138c8b072b8d7b51ae623810c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8785672b63437356c65ac3f8d8827c16"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a8785672b63437356c65ac3f8d8827c16"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a8785672b63437356c65ac3f8d8827c16">pmem::obj::experimental::operator&lt;</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a8785672b63437356c65ac3f8d8827c16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a8785672b63437356c65ac3f8d8827c16">More...</a><br /></td></tr>
-<tr class="separator:a8785672b63437356c65ac3f8d8827c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3f39f817275bb1f7748eae251d7590f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:aa3f39f817275bb1f7748eae251d7590f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#aa3f39f817275bb1f7748eae251d7590f">pmem::obj::experimental::operator&lt;=</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aa3f39f817275bb1f7748eae251d7590f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#aa3f39f817275bb1f7748eae251d7590f">More...</a><br /></td></tr>
-<tr class="separator:aa3f39f817275bb1f7748eae251d7590f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40ebbdd95605db955b0e097cb130f7bc"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a40ebbdd95605db955b0e097cb130f7bc"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a40ebbdd95605db955b0e097cb130f7bc">pmem::obj::experimental::operator&gt;</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a40ebbdd95605db955b0e097cb130f7bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a40ebbdd95605db955b0e097cb130f7bc">More...</a><br /></td></tr>
-<tr class="separator:a40ebbdd95605db955b0e097cb130f7bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b5383119fc77099cec6f3b3b69d5645"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a0b5383119fc77099cec6f3b3b69d5645"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a0b5383119fc77099cec6f3b3b69d5645">pmem::obj::experimental::operator&gt;=</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a0b5383119fc77099cec6f3b3b69d5645"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a0b5383119fc77099cec6f3b3b69d5645">More...</a><br /></td></tr>
-<tr class="separator:a0b5383119fc77099cec6f3b3b69d5645"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26ef32f672a53d0c936c8c37f0e7afb2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a26ef32f672a53d0c936c8c37f0e7afb2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a26ef32f672a53d0c936c8c37f0e7afb2">pmem::obj::experimental::operator==</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a26ef32f672a53d0c936c8c37f0e7afb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a26ef32f672a53d0c936c8c37f0e7afb2">More...</a><br /></td></tr>
-<tr class="separator:a26ef32f672a53d0c936c8c37f0e7afb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f047ad4f08ea7704dd27f5417c1c874"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a9f047ad4f08ea7704dd27f5417c1c874"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a9f047ad4f08ea7704dd27f5417c1c874">pmem::obj::experimental::operator!=</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a9f047ad4f08ea7704dd27f5417c1c874"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a9f047ad4f08ea7704dd27f5417c1c874">More...</a><br /></td></tr>
-<tr class="separator:a9f047ad4f08ea7704dd27f5417c1c874"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5281ed8cb70df4b0cf8c7cde253aa42"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ae5281ed8cb70df4b0cf8c7cde253aa42"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#ae5281ed8cb70df4b0cf8c7cde253aa42">pmem::obj::experimental::operator&lt;</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ae5281ed8cb70df4b0cf8c7cde253aa42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#ae5281ed8cb70df4b0cf8c7cde253aa42">More...</a><br /></td></tr>
-<tr class="separator:ae5281ed8cb70df4b0cf8c7cde253aa42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a249fa1f37daf3a5828cba19572b35e61"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a249fa1f37daf3a5828cba19572b35e61"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a249fa1f37daf3a5828cba19572b35e61">pmem::obj::experimental::operator&lt;=</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a249fa1f37daf3a5828cba19572b35e61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a249fa1f37daf3a5828cba19572b35e61">More...</a><br /></td></tr>
-<tr class="separator:a249fa1f37daf3a5828cba19572b35e61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fc71ea8dd7ce983db50fd5bd1442f33"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a6fc71ea8dd7ce983db50fd5bd1442f33"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a6fc71ea8dd7ce983db50fd5bd1442f33">pmem::obj::experimental::operator&gt;</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a6fc71ea8dd7ce983db50fd5bd1442f33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a6fc71ea8dd7ce983db50fd5bd1442f33">More...</a><br /></td></tr>
-<tr class="separator:a6fc71ea8dd7ce983db50fd5bd1442f33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57249877a6af567ae0b1fda09514b9e2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a57249877a6af567ae0b1fda09514b9e2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a57249877a6af567ae0b1fda09514b9e2">pmem::obj::experimental::operator&gt;=</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a57249877a6af567ae0b1fda09514b9e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a57249877a6af567ae0b1fda09514b9e2">More...</a><br /></td></tr>
-<tr class="separator:a57249877a6af567ae0b1fda09514b9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46a6c5333f2e9859d6f152f1dc8f1832"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a46a6c5333f2e9859d6f152f1dc8f1832"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a46a6c5333f2e9859d6f152f1dc8f1832">pmem::obj::swap</a> (vector&lt; T &gt; &amp;lhs, vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a46a6c5333f2e9859d6f152f1dc8f1832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swaps the contents of lhs and rhs.  <a href="vector_8hpp.html#a46a6c5333f2e9859d6f152f1dc8f1832">More...</a><br /></td></tr>
+<tr class="separator:a46a6c5333f2e9859d6f152f1dc8f1832"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae7ea0da2be2d117a026e3fa58a3369d"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aae7ea0da2be2d117a026e3fa58a3369d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#aae7ea0da2be2d117a026e3fa58a3369d">pmem::obj::operator==</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:aae7ea0da2be2d117a026e3fa58a3369d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#aae7ea0da2be2d117a026e3fa58a3369d">More...</a><br /></td></tr>
+<tr class="separator:aae7ea0da2be2d117a026e3fa58a3369d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a399b4199506661eccff459a7a878f3d9"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a399b4199506661eccff459a7a878f3d9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a399b4199506661eccff459a7a878f3d9">pmem::obj::operator!=</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a399b4199506661eccff459a7a878f3d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a399b4199506661eccff459a7a878f3d9">More...</a><br /></td></tr>
+<tr class="separator:a399b4199506661eccff459a7a878f3d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec4bbcff4664436e0341275606b24314"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aec4bbcff4664436e0341275606b24314"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#aec4bbcff4664436e0341275606b24314">pmem::obj::operator&lt;</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:aec4bbcff4664436e0341275606b24314"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#aec4bbcff4664436e0341275606b24314">More...</a><br /></td></tr>
+<tr class="separator:aec4bbcff4664436e0341275606b24314"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6442bae353bd3aab4417d4db85995b07"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a6442bae353bd3aab4417d4db85995b07"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a6442bae353bd3aab4417d4db85995b07">pmem::obj::operator&lt;=</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a6442bae353bd3aab4417d4db85995b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a6442bae353bd3aab4417d4db85995b07">More...</a><br /></td></tr>
+<tr class="separator:a6442bae353bd3aab4417d4db85995b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e824a963007146618891278f455c6df"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a2e824a963007146618891278f455c6df"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a2e824a963007146618891278f455c6df">pmem::obj::operator&gt;</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a2e824a963007146618891278f455c6df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a2e824a963007146618891278f455c6df">More...</a><br /></td></tr>
+<tr class="separator:a2e824a963007146618891278f455c6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d0311022343df6a9d6630d0025e99c1"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a4d0311022343df6a9d6630d0025e99c1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a4d0311022343df6a9d6630d0025e99c1">pmem::obj::operator&gt;=</a> (const vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a4d0311022343df6a9d6630d0025e99c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a4d0311022343df6a9d6630d0025e99c1">More...</a><br /></td></tr>
+<tr class="separator:a4d0311022343df6a9d6630d0025e99c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef8f8bc8ee773cf3ba486df604a98504"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aef8f8bc8ee773cf3ba486df604a98504"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#aef8f8bc8ee773cf3ba486df604a98504">pmem::obj::operator==</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:aef8f8bc8ee773cf3ba486df604a98504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#aef8f8bc8ee773cf3ba486df604a98504">More...</a><br /></td></tr>
+<tr class="separator:aef8f8bc8ee773cf3ba486df604a98504"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fcbd0d2822d3f235950b044d0da6ac2"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a1fcbd0d2822d3f235950b044d0da6ac2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a1fcbd0d2822d3f235950b044d0da6ac2">pmem::obj::operator!=</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a1fcbd0d2822d3f235950b044d0da6ac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a1fcbd0d2822d3f235950b044d0da6ac2">More...</a><br /></td></tr>
+<tr class="separator:a1fcbd0d2822d3f235950b044d0da6ac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bc8b97b7a1b71404a4da7907cc0a695"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a6bc8b97b7a1b71404a4da7907cc0a695"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a6bc8b97b7a1b71404a4da7907cc0a695">pmem::obj::operator&lt;</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a6bc8b97b7a1b71404a4da7907cc0a695"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a6bc8b97b7a1b71404a4da7907cc0a695">More...</a><br /></td></tr>
+<tr class="separator:a6bc8b97b7a1b71404a4da7907cc0a695"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4403e4fdd376acf1404d225856a6109f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a4403e4fdd376acf1404d225856a6109f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a4403e4fdd376acf1404d225856a6109f">pmem::obj::operator&lt;=</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a4403e4fdd376acf1404d225856a6109f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a4403e4fdd376acf1404d225856a6109f">More...</a><br /></td></tr>
+<tr class="separator:a4403e4fdd376acf1404d225856a6109f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bfc1cf4bc0871a89bc16487bd6a8484"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a5bfc1cf4bc0871a89bc16487bd6a8484"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a5bfc1cf4bc0871a89bc16487bd6a8484">pmem::obj::operator&gt;</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5bfc1cf4bc0871a89bc16487bd6a8484"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a5bfc1cf4bc0871a89bc16487bd6a8484">More...</a><br /></td></tr>
+<tr class="separator:a5bfc1cf4bc0871a89bc16487bd6a8484"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29cc30f96742b912f5c70bffcd87fe5a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a29cc30f96742b912f5c70bffcd87fe5a"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a29cc30f96742b912f5c70bffcd87fe5a">pmem::obj::operator&gt;=</a> (const vector&lt; T &gt; &amp;lhs, const std::vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a29cc30f96742b912f5c70bffcd87fe5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a29cc30f96742b912f5c70bffcd87fe5a">More...</a><br /></td></tr>
+<tr class="separator:a29cc30f96742b912f5c70bffcd87fe5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fa7985535467845be5c2e4605bab72e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a5fa7985535467845be5c2e4605bab72e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a5fa7985535467845be5c2e4605bab72e">pmem::obj::operator==</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5fa7985535467845be5c2e4605bab72e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a5fa7985535467845be5c2e4605bab72e">More...</a><br /></td></tr>
+<tr class="separator:a5fa7985535467845be5c2e4605bab72e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a659d49015c82ef1dc044e2142224269d"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a659d49015c82ef1dc044e2142224269d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a659d49015c82ef1dc044e2142224269d">pmem::obj::operator!=</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a659d49015c82ef1dc044e2142224269d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a659d49015c82ef1dc044e2142224269d">More...</a><br /></td></tr>
+<tr class="separator:a659d49015c82ef1dc044e2142224269d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dcb348e953ea0a5b1ed1a3f5c29d2dd"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a0dcb348e953ea0a5b1ed1a3f5c29d2dd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a0dcb348e953ea0a5b1ed1a3f5c29d2dd">pmem::obj::operator&lt;</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a0dcb348e953ea0a5b1ed1a3f5c29d2dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a0dcb348e953ea0a5b1ed1a3f5c29d2dd">More...</a><br /></td></tr>
+<tr class="separator:a0dcb348e953ea0a5b1ed1a3f5c29d2dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6137a8d89c6046241b600ab14a63b6de"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a6137a8d89c6046241b600ab14a63b6de"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a6137a8d89c6046241b600ab14a63b6de">pmem::obj::operator&lt;=</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a6137a8d89c6046241b600ab14a63b6de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a6137a8d89c6046241b600ab14a63b6de">More...</a><br /></td></tr>
+<tr class="separator:a6137a8d89c6046241b600ab14a63b6de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6ea4849c06b3f401ac3673ded5a3227"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ad6ea4849c06b3f401ac3673ded5a3227"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#ad6ea4849c06b3f401ac3673ded5a3227">pmem::obj::operator&gt;</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ad6ea4849c06b3f401ac3673ded5a3227"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#ad6ea4849c06b3f401ac3673ded5a3227">More...</a><br /></td></tr>
+<tr class="separator:ad6ea4849c06b3f401ac3673ded5a3227"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a963062a2970d5133a82fa906f0b7eddd"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a963062a2970d5133a82fa906f0b7eddd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="vector_8hpp.html#a963062a2970d5133a82fa906f0b7eddd">pmem::obj::operator&gt;=</a> (const std::vector&lt; T &gt; &amp;lhs, const vector&lt; T &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a963062a2970d5133a82fa906f0b7eddd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparison operator.  <a href="vector_8hpp.html#a963062a2970d5133a82fa906f0b7eddd">More...</a><br /></td></tr>
+<tr class="separator:a963062a2970d5133a82fa906f0b7eddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Vector container with std::vector compatible interface. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="file_acb7454e6a3bc84ea277bbbd30ba51af4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_acb7454e6a3bc84ea277bbbd30ba51af4">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[1/3]</span></h2>
+<a id="file_a399b4199506661eccff459a7a878f3d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a399b4199506661eccff459a7a878f3d9">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -192,15 +199,15 @@ Functions</h2></td></tr>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator!= </td>
+          <td class="memname">bool pmem::obj::operator!= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -216,8 +223,8 @@ template&lt;typename T &gt; </div>
 <p>Checks if containers have the same number of elements and each element in lhs is equal to element in rhs at the same position.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -225,8 +232,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a6afdc40138c8b072b8d7b51ae623810c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a6afdc40138c8b072b8d7b51ae623810c">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[2/3]</span></h2>
+<a id="file_a1fcbd0d2822d3f235950b044d0da6ac2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a1fcbd0d2822d3f235950b044d0da6ac2">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -234,9 +241,9 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator!= </td>
+          <td class="memname">bool pmem::obj::operator!= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
@@ -258,7 +265,7 @@ template&lt;typename T &gt; </div>
 <p>Checks if containers have the same number of elements and each element in lhs is equal to element in rhs at the same position.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type std::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
@@ -267,8 +274,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a9f047ad4f08ea7704dd27f5417c1c874"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a9f047ad4f08ea7704dd27f5417c1c874">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[3/3]</span></h2>
+<a id="file_a659d49015c82ef1dc044e2142224269d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a659d49015c82ef1dc044e2142224269d">&#9670;&nbsp;</a></span>operator!=() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,7 +283,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator!= </td>
+          <td class="memname">bool pmem::obj::operator!= </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
@@ -284,7 +291,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -301,7 +308,7 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type std::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -309,8 +316,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a10d7b544762cd35a548ca08990d4717e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a10d7b544762cd35a548ca08990d4717e">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[1/3]</span></h2>
+<a id="file_aec4bbcff4664436e0341275606b24314"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_aec4bbcff4664436e0341275606b24314">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -318,15 +325,15 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&lt; </td>
+          <td class="memname">bool pmem::obj::operator&lt; </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -341,8 +348,8 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -350,8 +357,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a8785672b63437356c65ac3f8d8827c16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a8785672b63437356c65ac3f8d8827c16">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[2/3]</span></h2>
+<a id="file_a6bc8b97b7a1b71404a4da7907cc0a695"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a6bc8b97b7a1b71404a4da7907cc0a695">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -359,9 +366,9 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&lt; </td>
+          <td class="memname">bool pmem::obj::operator&lt; </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
@@ -382,7 +389,7 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type std::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
@@ -391,8 +398,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_ae5281ed8cb70df4b0cf8c7cde253aa42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_ae5281ed8cb70df4b0cf8c7cde253aa42">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[3/3]</span></h2>
+<a id="file_a0dcb348e953ea0a5b1ed1a3f5c29d2dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a0dcb348e953ea0a5b1ed1a3f5c29d2dd">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -400,7 +407,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&lt; </td>
+          <td class="memname">bool pmem::obj::operator&lt; </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
@@ -408,7 +415,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -424,7 +431,7 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type std::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -432,8 +439,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a23914bb688eb783d5ad9cd60f9471dd2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a23914bb688eb783d5ad9cd60f9471dd2">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[1/3]</span></h2>
+<a id="file_a6442bae353bd3aab4417d4db85995b07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a6442bae353bd3aab4417d4db85995b07">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -441,15 +448,15 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&lt;= </td>
+          <td class="memname">bool pmem::obj::operator&lt;= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -464,8 +471,8 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -473,8 +480,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_aa3f39f817275bb1f7748eae251d7590f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_aa3f39f817275bb1f7748eae251d7590f">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[2/3]</span></h2>
+<a id="file_a4403e4fdd376acf1404d225856a6109f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a4403e4fdd376acf1404d225856a6109f">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -482,9 +489,9 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&lt;= </td>
+          <td class="memname">bool pmem::obj::operator&lt;= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
@@ -505,7 +512,7 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of ype std::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
@@ -514,8 +521,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a249fa1f37daf3a5828cba19572b35e61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a249fa1f37daf3a5828cba19572b35e61">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[3/3]</span></h2>
+<a id="file_a6137a8d89c6046241b600ab14a63b6de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a6137a8d89c6046241b600ab14a63b6de">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -523,7 +530,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&lt;= </td>
+          <td class="memname">bool pmem::obj::operator&lt;= </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
@@ -531,7 +538,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -547,7 +554,7 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of ype std::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -555,8 +562,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a2d0d3fdc3caba2757ea4d7ad85ae91bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a2d0d3fdc3caba2757ea4d7ad85ae91bf">&#9670;&nbsp;</a></span>operator==() <span class="overload">[1/3]</span></h2>
+<a id="file_aae7ea0da2be2d117a026e3fa58a3369d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_aae7ea0da2be2d117a026e3fa58a3369d">&#9670;&nbsp;</a></span>operator==() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -564,15 +571,15 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator== </td>
+          <td class="memname">bool pmem::obj::operator== </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -588,8 +595,8 @@ template&lt;typename T &gt; </div>
 <p>Checks if containers have the same number of elements and each element in lhs is equal to element in rhs at the same position.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -597,8 +604,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_ad859e03b43b2092aef42913f33ef054b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_ad859e03b43b2092aef42913f33ef054b">&#9670;&nbsp;</a></span>operator==() <span class="overload">[2/3]</span></h2>
+<a id="file_aef8f8bc8ee773cf3ba486df604a98504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_aef8f8bc8ee773cf3ba486df604a98504">&#9670;&nbsp;</a></span>operator==() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -606,9 +613,9 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator== </td>
+          <td class="memname">bool pmem::obj::operator== </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
@@ -630,7 +637,7 @@ template&lt;typename T &gt; </div>
 <p>Checks if containers have the same number of elements and each element in lhs is equal to element in rhs at the same position.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type std::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
@@ -639,8 +646,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a26ef32f672a53d0c936c8c37f0e7afb2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a26ef32f672a53d0c936c8c37f0e7afb2">&#9670;&nbsp;</a></span>operator==() <span class="overload">[3/3]</span></h2>
+<a id="file_a5fa7985535467845be5c2e4605bab72e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a5fa7985535467845be5c2e4605bab72e">&#9670;&nbsp;</a></span>operator==() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -648,7 +655,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator== </td>
+          <td class="memname">bool pmem::obj::operator== </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
@@ -656,7 +663,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -673,7 +680,7 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type std::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -681,8 +688,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a5c765e5c7a677c9e608ce0cda49533d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a5c765e5c7a677c9e608ce0cda49533d1">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[1/3]</span></h2>
+<a id="file_a2e824a963007146618891278f455c6df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a2e824a963007146618891278f455c6df">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -690,15 +697,15 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&gt; </td>
+          <td class="memname">bool pmem::obj::operator&gt; </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -713,8 +720,8 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -722,8 +729,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a40ebbdd95605db955b0e097cb130f7bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a40ebbdd95605db955b0e097cb130f7bc">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[2/3]</span></h2>
+<a id="file_a5bfc1cf4bc0871a89bc16487bd6a8484"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a5bfc1cf4bc0871a89bc16487bd6a8484">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -731,9 +738,9 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&gt; </td>
+          <td class="memname">bool pmem::obj::operator&gt; </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
@@ -754,7 +761,7 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type std::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
@@ -763,8 +770,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a6fc71ea8dd7ce983db50fd5bd1442f33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a6fc71ea8dd7ce983db50fd5bd1442f33">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[3/3]</span></h2>
+<a id="file_ad6ea4849c06b3f401ac3673ded5a3227"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_ad6ea4849c06b3f401ac3673ded5a3227">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -772,7 +779,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&gt; </td>
+          <td class="memname">bool pmem::obj::operator&gt; </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
@@ -780,7 +787,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -796,7 +803,7 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type std::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -804,8 +811,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a43f2a71c26e59a530b9d01bb409831ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a43f2a71c26e59a530b9d01bb409831ca">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[1/3]</span></h2>
+<a id="file_a4d0311022343df6a9d6630d0025e99c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a4d0311022343df6a9d6630d0025e99c1">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -813,15 +820,15 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&gt;= </td>
+          <td class="memname">bool pmem::obj::operator&gt;= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -836,8 +843,8 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -845,8 +852,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a0b5383119fc77099cec6f3b3b69d5645"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a0b5383119fc77099cec6f3b3b69d5645">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[2/3]</span></h2>
+<a id="file_a29cc30f96742b912f5c70bffcd87fe5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a29cc30f96742b912f5c70bffcd87fe5a">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -854,9 +861,9 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&gt;= </td>
+          <td class="memname">bool pmem::obj::operator&gt;= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
@@ -877,7 +884,7 @@ template&lt;typename T &gt; </div>
 <p>Compares the contents of two containers lexicographically.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::experimental::vector&lt;T&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type pmem::obj::vector&lt;T&gt; </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type std::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
@@ -886,8 +893,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_a57249877a6af567ae0b1fda09514b9e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_a57249877a6af567ae0b1fda09514b9e2">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[3/3]</span></h2>
+<a id="file_a963062a2970d5133a82fa906f0b7eddd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a963062a2970d5133a82fa906f0b7eddd">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -895,7 +902,7 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool pmem::obj::experimental::operator&gt;= </td>
+          <td class="memname">bool pmem::obj::operator&gt;= </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
@@ -903,7 +910,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>
@@ -919,7 +926,7 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first vector of type std::vector&lt;T&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::experimental::vector&lt;T&gt;</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second vector of type pmem::obj::vector&lt;T&gt;</td></tr>
   </table>
   </dd>
 </dl>
@@ -927,8 +934,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="file_ac02561466fa616865e6354f57db0f839"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#file_ac02561466fa616865e6354f57db0f839">&#9670;&nbsp;</a></span>swap()</h2>
+<a id="file_a46a6c5333f2e9859d6f152f1dc8f1832"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#file_a46a6c5333f2e9859d6f152f1dc8f1832">&#9670;&nbsp;</a></span>swap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -936,15 +943,15 @@ template&lt;typename T &gt; </div>
 template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void pmem::obj::experimental::swap </td>
+          <td class="memname">void pmem::obj::swap </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>lhs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a>&lt; T &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em>&#160;</td>
         </tr>
         <tr>

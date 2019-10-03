@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: libpmemobj++/experimental/contiguous_iterator.hpp File Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/container/detail/contiguous_iterator.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.7</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,18 +63,19 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_55fd483c9ae557ee09ad95ebc247273e.html">experimental</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_83ecae25392e6e33dc533801e27668b5.html">container</a></li><li class="navelem"><a class="el" href="dir_48c2a0b445b2b5e8afb8cbb18acb3322.html">detail</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
 <div class="title">contiguous_iterator.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Iterators for pmem::obj::array.  
+<p>Iterators for contiguous persistent containers.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
@@ -85,18 +86,24 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for iterators which satisfies RandomAccessIterator and operate on contiguous memory.  <a href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for iterators which satisfies RandomAccessIterator and operate on contiguous memory.  <a href="structpmem_1_1detail_1_1contiguous__iterator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1range__snapshotting__iterator.html">pmem::obj::experimental::range_snapshotting_iterator&lt; T &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-const iterator which adds elements to a transaction in a bulk.  <a href="structpmem_1_1obj_1_1experimental_1_1range__snapshotting__iterator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1range__snapshotting__iterator.html">pmem::detail::range_snapshotting_iterator&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-const iterator which adds elements to a transaction in a bulk.  <a href="structpmem_1_1detail_1_1range__snapshotting__iterator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html">pmem::obj::experimental::basic_contiguous_iterator&lt; T &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default non-const iterator which adds element to a transaction on every access.  <a href="structpmem_1_1obj_1_1experimental_1_1basic__contiguous__iterator.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html">pmem::detail::basic_contiguous_iterator&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default non-const iterator which adds element to a transaction on every access.  <a href="structpmem_1_1detail_1_1basic__contiguous__iterator.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Iterators for pmem::obj::array. </p>
+<div class="textblock"><p>Iterators for contiguous persistent containers. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

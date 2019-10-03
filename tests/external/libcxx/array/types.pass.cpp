@@ -16,7 +16,7 @@
 #include <iterator>
 
 #include <libpmemobj++/container/array.hpp>
-#include <libpmemobj++/contiguous_iterator.hpp>
+#include <libpmemobj++/container/detail/contiguous_iterator.hpp>
 
 template <class C>
 void
@@ -71,8 +71,8 @@ main()
 			"");
 		static_assert(
 			(std::is_same<C::iterator,
-				      pmem::obj::basic_contiguous_iterator<T>>::
-				 value),
+				      pmem::detail::basic_contiguous_iterator<
+					      T>>::value),
 			"");
 		static_assert(
 			(std::is_same<C::const_iterator, const T *>::value),
@@ -122,8 +122,8 @@ main()
 			"");
 		static_assert(
 			(std::is_same<C::iterator,
-				      pmem::obj::basic_contiguous_iterator<T>>::
-				 value),
+				      pmem::detail::basic_contiguous_iterator<
+					      T>>::value),
 			"");
 		static_assert(
 			(std::is_same<C::const_iterator, const T *>::value),

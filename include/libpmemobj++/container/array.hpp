@@ -41,7 +41,7 @@
 #include <algorithm>
 #include <functional>
 
-#include <libpmemobj++/contiguous_iterator.hpp>
+#include <libpmemobj++/container/detail/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
@@ -96,12 +96,14 @@ struct array {
 	using const_pointer = const value_type *;
 	using reference = value_type &;
 	using const_reference = const value_type &;
-	using iterator = basic_contiguous_iterator<T>;
+	using iterator = pmem::detail::basic_contiguous_iterator<T>;
 	using const_iterator = const_pointer;
 	using size_type = std::size_t;
 	using difference_type = std::ptrdiff_t;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using range_snapshotting_iterator =
+		pmem::detail::range_snapshotting_iterator<T>;
 
 	/* Underlying array */
 	typename standard_array_traits<T, N>::type _data;
@@ -516,7 +518,7 @@ struct array {
 	 * @throw std::out_of_range if any element of the range would be
 	 *	outside of the array.
 	 */
-	slice<range_snapshotting_iterator<T>>
+	slice<range_snapshotting_iterator>
 	range(size_type start, size_type n, size_type snapshot_size)
 	{
 		if (start + n > N)
@@ -525,12 +527,12 @@ struct array {
 		if (snapshot_size > n)
 			snapshot_size = n;
 
-		return {range_snapshotting_iterator<T>(_get_data() + start,
-						       _get_data() + start, n,
-						       snapshot_size),
-			range_snapshotting_iterator<T>(_get_data() + start + n,
-						       _get_data() + start, n,
-						       snapshot_size)};
+		return {range_snapshotting_iterator(_get_data() + start,
+						    _get_data() + start, n,
+						    snapshot_size),
+			range_snapshotting_iterator(_get_data() + start + n,
+						    _get_data() + start, n,
+						    snapshot_size)};
 	}
 
 	/**

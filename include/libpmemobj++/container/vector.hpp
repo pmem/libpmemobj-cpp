@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_VECTOR_HPP
 #define LIBPMEMOBJ_CPP_VECTOR_HPP
 
-#include <libpmemobj++/contiguous_iterator.hpp>
+#include <libpmemobj++/container/detail/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
@@ -76,10 +76,12 @@ public:
 	using const_reference = const value_type &;
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
-	using iterator = basic_contiguous_iterator<T>;
+	using iterator = pmem::detail::basic_contiguous_iterator<T>;
 	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using range_snapshotting_iterator =
+		pmem::detail::range_snapshotting_iterator<T>;
 
 	/* Constructors */
 	vector();
@@ -148,8 +150,8 @@ public:
 
 	/* Range */
 	slice<pointer> range(size_type start, size_type n);
-	slice<range_snapshotting_iterator<T>>
-	range(size_type start, size_type n, size_type snapshot_size);
+	slice<range_snapshotting_iterator> range(size_type start, size_type n,
+						 size_type snapshot_size);
 	slice<const_iterator> range(size_type start, size_type n) const;
 	slice<const_iterator> crange(size_type start, size_type n) const;
 
@@ -1287,7 +1289,7 @@ vector<T>::range(size_type start, size_type n)
  * vector.
  */
 template <typename T>
-slice<range_snapshotting_iterator<T>>
+slice<typename vector<T>::range_snapshotting_iterator>
 vector<T>::range(size_type start, size_type n, size_type snapshot_size)
 {
 	if (start + n > size())
@@ -1296,12 +1298,12 @@ vector<T>::range(size_type start, size_type n, size_type snapshot_size)
 	if (snapshot_size > n)
 		snapshot_size = n;
 
-	return {range_snapshotting_iterator<T>(_data.get() + start,
-					       _data.get() + start, n,
-					       snapshot_size),
-		range_snapshotting_iterator<T>(_data.get() + start + n,
-					       _data.get() + start, n,
-					       snapshot_size)};
+	return {range_snapshotting_iterator(_data.get() + start,
+					    _data.get() + start, n,
+					    snapshot_size),
+		range_snapshotting_iterator(_data.get() + start + n,
+					    _data.get() + start, n,
+					    snapshot_size)};
 }
 
 /**

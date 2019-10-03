@@ -40,7 +40,6 @@
 
 #include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/container/vector.hpp>
-#include <libpmemobj++/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/detail/temp_value.hpp>

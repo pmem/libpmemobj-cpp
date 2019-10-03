@@ -43,8 +43,8 @@
 #include <string>
 
 #include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/detail/contiguous_iterator.hpp>
 #include <libpmemobj++/container/vector.hpp>
-#include <libpmemobj++/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
@@ -77,7 +77,7 @@ public:
 	using const_reference = const value_type &;
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
-	using iterator = basic_contiguous_iterator<CharT>;
+	using iterator = pmem::detail::basic_contiguous_iterator<CharT>;
 	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;

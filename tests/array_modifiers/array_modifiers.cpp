@@ -109,7 +109,7 @@ test_modifiers(pmem::obj::pool<struct root> &pop)
 	}
 
 	for (size_t i = 0; i < r->ptr_c->size(); i++)
-		UT_ASSERT(r->ptr_d->at(i).value = 1);
+		UT_ASSERT(r->ptr_d->at(i).value == 1);
 
 	try {
 		pmem::obj::transaction::run(pop, [&] {

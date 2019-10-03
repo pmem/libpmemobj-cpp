@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.8-rc1</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -67,66 +67,75 @@ $(function() {
 
 <h3><a id="index_c"></a>- c -</h3><ul>
 <li>c_str()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a92e9ca34c0b5b017cd5817360930e152">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#ad1038c13c40f765ffa5bc0c5c2e84022">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 </li>
 <li>calculate_offset()
 : <a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a12c15a4fd373be79ac6ef488fff9efd4">pmem::detail::persistent_ptr_base&lt; T &gt;</a>
 </li>
 <li>capacity()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ae688b8f07ddcd5314de694e4ef91dad8">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a48c6f34cabfe6535991feacf04745536">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#ae579458f6caf92ca83d48eeff93bf3fa">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#a0bb6477882ec4c5230d825c830ffcb39">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>cback()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ab71d7703fc6a59d71060e7d111dbe4d3">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a37b9e19d268d06cfbdae3d274a99da02">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#af19e208064355c8176eeffa1c832cdd5">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#ac67bb83968cbc9695a089395e7fc9704">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#abad2221a890162c2800f9ad18a4fc73b">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#ad64c49fdb240d0a5c9cb19eed4e51b86">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a8d1090c7dcddaca07ef372c9ab170d10">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>cbegin()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ace46cae7d3329adf991c7eafb84c37df">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a5b8faca84731379e1ff9c794643b2e33">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aae52abd4d3c066bf755b78f4b781c1d8">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#acaf04c0662f3650186fa5fdca513d66d">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a1ed8ce907973d6029035681f45b04003">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#ac08f625f46a070404ca723bf190bc3e2">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#ae9f16e0436f7e0cc544e8ff527b9e0ef">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>cdata()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a47f60e4390221dd69fea8b5178259dec">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a924a8b0829e7c20a71a322f7507dc966">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a8a3543940ea0b583b71e96ec3a89c68a">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#ae4aecb064fd60523a48df60e0ead6e1b">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#aab727616a876744677b68abf42f094dc">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a02eb66a0e2085ae2ba0ce4de642d3098">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>cend()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#af5b372d2e25056536c24e3e32f840449">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#aa8f708491eb1ba92834e12a25b3b273f">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ac1f050f7fabb39ec5918fbc1fb3604ba">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#ac87ec25db6ebc63fd3c0326d1a6716af">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a8e3720baed749477c92847a289644f53">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#ae4724e2fdea0801330357d7937952fce">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#af5cb03a3d494208fc7ae191c5bb971f4">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>cfront()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#aa1f739cbf03253c3323f132de1e88bec">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#adb2e2613e5b2cb491cddd071bc7d3b39">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#abbfb83c8e3bda44858a6923319e880e6">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#aca1f5fa3388f1ac5330ff60dc7b18b37">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a9d32dc2b1fdf2e2ff7929568d394ef4f">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#a1d4b397e6a5e8d0bbfbf2061825963e4">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a8907b71886e0963da5d02e11ca441847">pmem::obj::vector&lt; T &gt;</a>
+</li>
+<li>cget()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#abf76d23f5cd0d18e0e67361e1e5f29a6">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
 </li>
 <li>change_by()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a66303cc3e5f25790c76206a4eab4f92c">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#a1dd21c82cf2b82b15026ea81749d864c">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
 </li>
 <li>check()
 : <a class="el" href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">pmem::obj::pool&lt; T &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">pmem::obj::pool_base</a>
 </li>
 <li>check_pmem()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a8e98e3724230ea38be1c64a5d37fcd23">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a24b54e4cef456536308f006ed113c2cc">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#ad735e4576fa7dab0275a09987873279e">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a34cc26119ef2776a7dffaad11a40e59c">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>check_pmem_tx()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a9f220a35a83a3f4d1770b022c7d82043">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#aa242672bcbeb99e011c60d88424b6260">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 </li>
 <li>check_tx_stage_work()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#acbe6cb60642353c8b1ced86492d94513">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#acbef85f137ae5df463a88150f20a8383">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a0f3d896f0db95e905e12f1634d5b3fcd">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a464640743ea3d63e25b95b4ba0069935">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>class_id()
 : <a class="el" href="structpmem_1_1obj_1_1allocation__flag.html#aef867e974b294cc3252859f96418b56f">pmem::obj::allocation_flag</a>
 , <a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0153d17964d8107837ce53d714ffb89d">pmem::obj::allocation_flag_atomic</a>
 </li>
 <li>clear()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ab48a06395ce0af510bbea55c0805ce07">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#aa909b3f3973a73c5d29a8a0bad066b08">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a800a206dfb1d76ce938b31d1ce9eed93">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a0d5d61e34fbfe9984a9fe7fd2b573201">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a595cebdbdb8c398fc1819810c0c1fb6d">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#a4e92edee229546b73c1ca76610669b9d">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a8d980eda16cad9f535ea754d3b032308">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>close()
 : <a class="el" href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6">pmem::obj::pool_base</a>
@@ -135,59 +144,69 @@ $(function() {
 : <a class="el" href="classpmem_1_1obj_1_1transaction.html#a378c803f81ae0f6756fe9e9ab21ec1c9">pmem::obj::transaction</a>
 </li>
 <li>compare()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a037abcc78fa96219dc1a24587d628de6">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a5f5911bed5ff97b64397fd8f3b824183">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 </li>
 <li>concurrent_hash_map()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#a9fb2e6ee9ce5871f792312796a4dc026">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#af320249891ddc52c45458b2902c086bb">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 </li>
 <li>condition_variable()
 : <a class="el" href="classpmem_1_1obj_1_1condition__variable.html#a4f35240b1f5ab91e74f41a46628d588b">pmem::obj::condition_variable</a>
 </li>
 <li>const_accessor()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html#ad9ce42e885b65a01a349e01a49508841">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor</a>
+: <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html#aad14d1bd137430d4429b132d4ec64258">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::const_accessor</a>
 </li>
 <li>const_at()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a9f636840c77790207bb18ccb7f12d271">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#ab6347729401d23409ae8e3c20cbbdfa4">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a38fc08c07d12cdacc4426285962f0c21">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#ab9dda2ebf8db9e533241bed222d127c2">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#acf6f6b5cc36d461f24487bfe801ed88a">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#ad6b7121adc40b2ef30f839b94fe1402c">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a22d864cbcda96aa86259aa293bba7a9a">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>construct()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#aa13ccf18ad5c4c53d0cd5578d865ba53">pmem::obj::experimental::vector&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1object__traits.html#a95742ee582bc789f4811766ae12052d3">pmem::obj::object_traits&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#aac874ea75a0c2a49745808b8008cb5f1">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1object__traits.html#ad3d7cc8a0b8ae83717143530b792b5dc">pmem::obj::object_traits&lt; T &gt;</a>
+</li>
+<li>construct_at_end()
+: <a class="el" href="classpmem_1_1obj_1_1vector.html#aa0cabaa95c459cc05696ea3da853a6a6">pmem::obj::vector&lt; T &gt;</a>
+</li>
+<li>construct_or_assign()
+: <a class="el" href="classpmem_1_1obj_1_1vector.html#a936e8a3568833e5758b437ffd48a654d">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>construct_range()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#ab172bc0cb5958fbcd3a90792e3ff03a7">pmem::obj::experimental::vector&lt; T &gt;</a>
-</li>
-<li>construct_range_copy()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a53045e6cf37991db138155d3ae84e086">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#a8fbe460d9caa3400e49b123976daf151">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
 </li>
 <li>contiguous_iterator()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1contiguous__iterator.html#a95c79ab5a6ee557a94c269153aa50107">pmem::obj::experimental::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+: <a class="el" href="structpmem_1_1detail_1_1contiguous__iterator.html#ae100437b8269ba3e8f211343b4dd0fff">pmem::detail::contiguous_iterator&lt; Iterator, Reference, Pointer &gt;</a>
+</li>
+<li>copy()
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a4f27fa861b8d054876a05f69f83b590d">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 </li>
 <li>count()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map.html#a580e70dfca9cfe6af60b78837b7667f5">pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a45e39fc5b4319660dea3626685276e78">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html#acac793b83518ebfb42b91bb1ae4f9826">pmem::obj::transaction::automatic::uncaught_exception_counter</a>
 </li>
 <li>crange()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ad203a5c2cc81cdb75125c44cf2afb178">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#acc45054fc2e7a562155b3c9d246f3604">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#a18013082cf8f420cda84e42bd1606314">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#ab40f71614ee6d98be4a953459a14a106">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a3b3cd8767f646f9c9c7c511a914e20a4">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>crbegin()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#a8d4b8a0336cd255d4b9d0feb25442f7b">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a550ba03ad47efe24c30fff1b4c2548b7">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a0767248672d1dde6231a2edf45e4edad">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#a935f0fb3f623918c6888f6a0c9876b69">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a222a552af97953948ac8f5202730132a">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#ae584019852b1064a4ed00a3254928aa1">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a65e70790fcad53666d5bb1b47ba62e59">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>create()
 : <a class="el" href="classpmem_1_1obj_1_1pool.html#a32bc51b425f8e25cc03fdc307187566f">pmem::obj::pool&lt; T &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">pmem::obj::pool_base</a>
+, <a class="el" href="classpmem_1_1obj_1_1pool__base.html#ac374be421a551b71579b1143d4ffecbb">pmem::obj::pool_base</a>
 </li>
 <li>crend()
-: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html#ae40481521e7cca369e37989da830bc66">pmem::obj::experimental::array&lt; T, N &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__string.html#a2d27e932b80a8f6572055fdbca5fa368">pmem::obj::experimental::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1vector.html#a9669cf45a5270311bbd00c3da4cd0c41">pmem::obj::experimental::vector&lt; T &gt;</a>
+: <a class="el" href="structpmem_1_1obj_1_1array.html#a32a84cb93bc35f9a89bd944ed31ced0e">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string.html#acaf510a9ace6686cbd758e742ecbd640">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#a69ec0148c834513cd313e17d4170a9b6">pmem::obj::experimental::segment_vector&lt; T, Segment, Policy &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a17c49134553103572a9192985bf9dc70">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>ctl_exec()
-: <a class="el" href="classpmem_1_1obj_1_1pool.html#a7c170c19673a29ace63092d083781330">pmem::obj::pool&lt; T &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1pool.html#af453acceffd968ca68108e3475a7cfdc">pmem::obj::pool&lt; T &gt;</a>
 </li>
 <li>ctl_get()
 : <a class="el" href="classpmem_1_1obj_1_1pool.html#a8253223d35089f9736fe37cc1f38ed53">pmem::obj::pool&lt; T &gt;</a>

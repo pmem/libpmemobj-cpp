@@ -48,7 +48,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector comparison operators.
+ * Test pmem::obj::vector comparison operators.
  *
  * Compares elements in two vector vector_types using following operators:
  * ==, !=, <, <=, >, >=.

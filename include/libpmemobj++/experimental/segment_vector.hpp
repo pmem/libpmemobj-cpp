@@ -661,7 +661,7 @@ public:
 template <typename SegmentType>
 using exponential_size_array_policy =
 	segment_vector_internal::exponential_size_policy<
-		pmem::obj::experimental::array<SegmentType, 64>>;
+		pmem::obj::array<SegmentType, 64>>;
 
 /**
  * XXX: In case of array of segments with fixed segments size we can allocate as
@@ -669,16 +669,16 @@ using exponential_size_array_policy =
  */
 template <typename SegmentType, size_t SegmentSize>
 using fixed_size_array_policy = segment_vector_internal::fixed_size_policy<
-	pmem::obj::experimental::array<SegmentType, 255>, SegmentSize>;
+	pmem::obj::array<SegmentType, 255>, SegmentSize>;
 
 template <typename SegmentType, size_t SegmentSize>
 using fixed_size_vector_policy = segment_vector_internal::fixed_size_policy<
-	pmem::obj::experimental::vector<SegmentType>, SegmentSize>;
+	pmem::obj::vector<SegmentType>, SegmentSize>;
 
 template <typename SegmentType>
 using exponential_size_vector_policy =
 	segment_vector_internal::exponential_size_policy<
-		pmem::obj::experimental::vector<SegmentType>>;
+		pmem::obj::vector<SegmentType>>;
 
 /**
  * Segment table is a data type with a vector-like interface
@@ -706,7 +706,7 @@ using exponential_size_vector_policy =
  * Segment template represents segment type.
  * Policy template represents Segments storing type and managing methods.
  */
-template <typename T, typename Segment = pmem::obj::experimental::vector<T>,
+template <typename T, typename Segment = pmem::obj::vector<T>,
 	  typename Policy = exponential_size_array_policy<Segment>>
 class segment_vector {
 public:

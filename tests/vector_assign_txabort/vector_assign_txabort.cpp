@@ -58,7 +58,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector assign() methods
+ * Test pmem::obj::vector assign() methods
  *
  * Checks if vector's state is reverted when transaction aborts.
  * Methods under test:

@@ -21,8 +21,8 @@
 #include <libpmemobj++/transaction.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = pmem::obj::experimental;
-using C = pmem_exp::string;
+
+using C = pmem::obj::string;
 
 struct root {
 	nvobj::persistent_ptr<C> s;

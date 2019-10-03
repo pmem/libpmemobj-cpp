@@ -18,8 +18,6 @@
 #include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/contiguous_iterator.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 template <class C>
 void
 test_iterators()
@@ -66,15 +64,15 @@ main()
 
 	{
 		typedef double T;
-		typedef pmem_exp::array<T, 10> C;
+		typedef pmem::obj::array<T, 10> C;
 		static_assert((std::is_same<C::reference, T &>::value), "");
 		static_assert(
 			(std::is_same<C::const_reference, const T &>::value),
 			"");
 		static_assert(
-			(std::is_same<
-				C::iterator,
-				pmem_exp::basic_contiguous_iterator<T>>::value),
+			(std::is_same<C::iterator,
+				      pmem::obj::basic_contiguous_iterator<T>>::
+				 value),
 			"");
 		static_assert(
 			(std::is_same<C::const_iterator, const T *>::value),
@@ -117,15 +115,15 @@ main()
 	}
 	{
 		typedef int *T;
-		typedef pmem_exp::array<T, 0> C;
+		typedef pmem::obj::array<T, 0> C;
 		static_assert((std::is_same<C::reference, T &>::value), "");
 		static_assert(
 			(std::is_same<C::const_reference, const T &>::value),
 			"");
 		static_assert(
-			(std::is_same<
-				C::iterator,
-				pmem_exp::basic_contiguous_iterator<T>>::value),
+			(std::is_same<C::iterator,
+				      pmem::obj::basic_contiguous_iterator<T>>::
+				 value),
 			"");
 		static_assert(
 			(std::is_same<C::const_iterator, const T *>::value),

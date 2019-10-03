@@ -46,7 +46,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector reserve() method
+ * Test pmem::obj::vector reserve() method
  *
  * Increase capacity of the vector to value greater than pool size
  * Expect pmem::transaction_allor_error exception is thrown

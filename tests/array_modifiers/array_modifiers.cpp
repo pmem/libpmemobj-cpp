@@ -42,11 +42,9 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmemobj_exp = pmem::obj::experimental;
-
-using array_type = pmemobj_exp::array<double, 5>;
-using array_move_type = pmemobj_exp::array<move_only, 5>;
-using array_str = pmemobj_exp::array<pmemobj_exp::string, 10>;
+using array_type = pmem::obj::array<double, 5>;
+using array_move_type = pmem::obj::array<move_only, 5>;
+using array_str = pmem::obj::array<pmem::obj::string, 10>;
 
 struct root {
 	pmem::obj::persistent_ptr<array_type> ptr_a;

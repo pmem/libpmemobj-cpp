@@ -20,8 +20,6 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 struct NoDefault {
 	NoDefault(int)
 	{
@@ -30,7 +28,7 @@ struct NoDefault {
 
 struct Testcase1 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	C c = {{1.1, 2.2, 3.3}};
 	C c2 = c;
 	C c3, c4;
@@ -50,7 +48,7 @@ struct Testcase1 {
 
 struct Testcase2 {
 	typedef double T;
-	typedef pmem_exp::array<const T, 3> C;
+	typedef pmem::obj::array<const T, 3> C;
 	C c = {{1.1, 2.2, 3.3}};
 	C c2 = c;
 
@@ -64,7 +62,7 @@ struct Testcase2 {
 
 struct Testcase3 {
 	typedef double T;
-	typedef pmem_exp::array<T, 0> C;
+	typedef pmem::obj::array<T, 0> C;
 	C c = {{}};
 	C c2 = c;
 	void
@@ -80,7 +78,7 @@ struct Testcase4 {
 	// const arrays of size 0 should disable the implicit copy
 	// assignment operator.
 	typedef double T;
-	typedef pmem_exp::array<const T, 0> C;
+	typedef pmem::obj::array<const T, 0> C;
 	C c = {{}};
 	C c2 = c;
 
@@ -94,7 +92,7 @@ struct Testcase4 {
 
 struct Testcase5 {
 	typedef NoDefault T;
-	typedef pmem_exp::array<T, 0> C;
+	typedef pmem::obj::array<T, 0> C;
 	C c = {{}};
 	C c2 = c;
 
@@ -109,7 +107,7 @@ struct Testcase5 {
 
 struct Testcase6 {
 	typedef NoDefault T;
-	typedef pmem_exp::array<const T, 0> C;
+	typedef pmem::obj::array<const T, 0> C;
 	C c = {{}};
 	C c2 = c;
 	void

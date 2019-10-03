@@ -50,7 +50,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector range constructor.
+ * Test pmem::obj::vector range constructor.
  *
  * Call range constructor to exceed available memory of the pool. Expect
  * pmem:transaction_alloc_error exception is thrown.
@@ -79,7 +79,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop,
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * default values.
  *
  * Call fill constructor to exceed available memory of the pool. Expect
@@ -121,7 +121,7 @@ test_size_ctor(nvobj::pool<struct root> &pop,
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * custom values.
  *
  * Call fill constructor to exceed available memory of the pool.

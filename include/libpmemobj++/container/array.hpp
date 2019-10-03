@@ -55,14 +55,10 @@ namespace pmem
 namespace obj
 {
 
-namespace experimental
-{
-
 /**
- * pmem::obj::experimental::array - EXPERIMENTAL persistent container
- * with std::array compatible interface.
+ * pmem::obj::array - persistent container with std::array compatible interface.
  *
- * pmem::obj::experimental::array can only be stored on pmem. Creating array on
+ * pmem::obj::array can only be stored on pmem. Creating array on
  * stack will result with "pool_error" exception.
  *
  * All methods which allow write access to specific element will add it to an
@@ -130,7 +126,7 @@ struct array {
 
 	/**
 	 * Copy assignment operator - perform assignment from other
-	 * pmem::obj::experimental::array.
+	 * pmem::obj::array.
 	 *
 	 * This function creates a transaction internally.
 	 *
@@ -161,7 +157,7 @@ struct array {
 
 	/**
 	 * Move assignment operator - perform move assignment from other
-	 * pmem::obj::experimental::array.
+	 * pmem::obj::array.
 	 *
 	 * This function creates a transaction internally.
 	 *
@@ -791,8 +787,8 @@ operator<=(const array<T, N> &lhs, const array<T, N> &rhs)
  * Non-member cbegin.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_iterator
-cbegin(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_iterator
+cbegin(const pmem::obj::array<T, N> &a)
 {
 	return a.cbegin();
 }
@@ -801,8 +797,8 @@ cbegin(const pmem::obj::experimental::array<T, N> &a)
  * Non-member cend.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_iterator
-cend(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_iterator
+cend(const pmem::obj::array<T, N> &a)
 {
 	return a.cend();
 }
@@ -811,8 +807,8 @@ cend(const pmem::obj::experimental::array<T, N> &a)
  * Non-member crbegin.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_reverse_iterator
-crbegin(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_reverse_iterator
+crbegin(const pmem::obj::array<T, N> &a)
 {
 	return a.crbegin();
 }
@@ -821,8 +817,8 @@ crbegin(const pmem::obj::experimental::array<T, N> &a)
  * Non-member crend.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_reverse_iterator
-crend(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_reverse_iterator
+crend(const pmem::obj::array<T, N> &a)
 {
 	return a.crend();
 }
@@ -831,8 +827,8 @@ crend(const pmem::obj::experimental::array<T, N> &a)
  * Non-member begin.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::iterator
-begin(pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::iterator
+begin(pmem::obj::array<T, N> &a)
 {
 	return a.begin();
 }
@@ -841,8 +837,8 @@ begin(pmem::obj::experimental::array<T, N> &a)
  * Non-member begin.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_iterator
-begin(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_iterator
+begin(const pmem::obj::array<T, N> &a)
 {
 	return a.begin();
 }
@@ -851,8 +847,8 @@ begin(const pmem::obj::experimental::array<T, N> &a)
  * Non-member end.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::iterator
-end(pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::iterator
+end(pmem::obj::array<T, N> &a)
 {
 	return a.end();
 }
@@ -861,8 +857,8 @@ end(pmem::obj::experimental::array<T, N> &a)
  * Non-member end.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_iterator
-end(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_iterator
+end(const pmem::obj::array<T, N> &a)
 {
 	return a.end();
 }
@@ -871,8 +867,8 @@ end(const pmem::obj::experimental::array<T, N> &a)
  * Non-member rbegin.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::reverse_iterator
-rbegin(pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::reverse_iterator
+rbegin(pmem::obj::array<T, N> &a)
 {
 	return a.rbegin();
 }
@@ -881,8 +877,8 @@ rbegin(pmem::obj::experimental::array<T, N> &a)
  * Non-member rbegin.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_reverse_iterator
-rbegin(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_reverse_iterator
+rbegin(const pmem::obj::array<T, N> &a)
 {
 	return a.rbegin();
 }
@@ -891,8 +887,8 @@ rbegin(const pmem::obj::experimental::array<T, N> &a)
  * Non-member rend.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::reverse_iterator
-rend(pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::reverse_iterator
+rend(pmem::obj::array<T, N> &a)
 {
 	return a.rend();
 }
@@ -901,8 +897,8 @@ rend(pmem::obj::experimental::array<T, N> &a)
  * Non-member rend.
  */
 template <typename T, std::size_t N>
-typename pmem::obj::experimental::array<T, N>::const_reverse_iterator
-rend(const pmem::obj::experimental::array<T, N> &a)
+typename pmem::obj::array<T, N>::const_reverse_iterator
+rend(const pmem::obj::array<T, N> &a)
 {
 	return a.rend();
 }
@@ -912,8 +908,7 @@ rend(const pmem::obj::experimental::array<T, N> &a)
  */
 template <typename T, size_t N>
 inline void
-swap(pmem::obj::experimental::array<T, N> &lhs,
-     pmem::obj::experimental::array<T, N> &rhs)
+swap(pmem::obj::array<T, N> &lhs, pmem::obj::array<T, N> &rhs)
 {
 	lhs.swap(rhs);
 }
@@ -923,7 +918,7 @@ swap(pmem::obj::experimental::array<T, N> &lhs,
  */
 template <size_t I, typename T, size_t N>
 T &
-get(pmem::obj::experimental::array<T, N> &a)
+get(pmem::obj::array<T, N> &a)
 {
 	static_assert(I < N,
 		      "Index out of bounds in std::get<> (pmem::obj::array)");
@@ -935,7 +930,7 @@ get(pmem::obj::experimental::array<T, N> &a)
  */
 template <size_t I, typename T, size_t N>
 T &&
-get(pmem::obj::experimental::array<T, N> &&a)
+get(pmem::obj::array<T, N> &&a)
 {
 	static_assert(I < N,
 		      "Index out of bounds in std::get<> (pmem::obj::array)");
@@ -947,7 +942,7 @@ get(pmem::obj::experimental::array<T, N> &&a)
  */
 template <size_t I, typename T, size_t N>
 const T &
-get(const pmem::obj::experimental::array<T, N> &a) noexcept
+get(const pmem::obj::array<T, N> &a) noexcept
 {
 	static_assert(I < N,
 		      "Index out of bounds in std::get<> (pmem::obj::array)");
@@ -959,14 +954,12 @@ get(const pmem::obj::experimental::array<T, N> &a) noexcept
  */
 template <size_t I, typename T, size_t N>
 const T &&
-get(const pmem::obj::experimental::array<T, N> &&a) noexcept
+get(const pmem::obj::array<T, N> &&a) noexcept
 {
 	static_assert(I < N,
 		      "Index out of bounds in std::get<> (pmem::obj::array)");
 	return std::move(a.at(I));
 }
-
-} /* namespace experimental */
 
 } /* namespace obj */
 

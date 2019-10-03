@@ -31,7 +31,7 @@
  */
 
 /*
- * array_slice_pmreorder.cpp -- pmem::obj::experimental::array test under
+ * array_slice_pmreorder.cpp -- pmem::obj::array test under
  * pmreorder
  *
  */
@@ -62,7 +62,7 @@ struct Data {
 		}
 	}
 
-	nvobj::experimental::array<int, 5> array = {{1, 2, 3, 4, 5}};
+	nvobj::array<int, 5> array = {{1, 2, 3, 4, 5}};
 };
 
 struct root {

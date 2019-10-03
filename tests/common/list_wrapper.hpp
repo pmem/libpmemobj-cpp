@@ -41,7 +41,7 @@
 #include <libpmemobj++/container/vector.hpp>
 
 template <typename T>
-using container_t = pmem::obj::experimental::vector<T>;
+using container_t = pmem::obj::vector<T>;
 
 template <typename T>
 struct container_representation_t {
@@ -77,7 +77,7 @@ struct container_representation_t {
 	typename container_t<T>::size_type segments_used;
 
 	/* Underlying segments */
-	pexp::vector<T> ptr[255];
+	pmem::obj::vector<T> ptr[255];
 };
 
 template <typename T>
@@ -105,15 +105,15 @@ expected_sizeof()
 namespace pexp = pmem::obj::experimental;
 template <typename T>
 using container_t = pexp::segment_vector<
-	T, pexp::vector<T>,
-	pexp::exponential_size_vector_policy<pexp::vector<T>>>;
+	T, pmem::obj::vector<T>,
+	pexp::exponential_size_vector_policy<pmem::obj::vector<T>>>;
 
 template <typename T>
 struct container_representation_t {
 	typename container_t<T>::size_type segments_used;
 
 	/* Underlying segments */
-	pexp::vector<pexp::vector<T>> ptr;
+	pmem::obj::vector<pmem::obj::vector<T>> ptr;
 };
 
 template <typename T>
@@ -141,15 +141,15 @@ expected_sizeof()
 namespace pexp = pmem::obj::experimental;
 template <typename T>
 using container_t = pexp::segment_vector<
-	T, pexp::vector<T>,
-	pexp::fixed_size_array_policy<pexp::vector<T>, 100>>;
+	T, pmem::obj::vector<T>,
+	pexp::fixed_size_array_policy<pmem::obj::vector<T>, 100>>;
 
 template <typename T>
 struct container_representation_t {
 	typename container_t<T>::size_type segments_used;
 
 	/* Underlying segments */
-	pexp::vector<T> ptr[255];
+	pmem::obj::vector<T> ptr[255];
 };
 
 template <typename T>
@@ -175,15 +175,15 @@ expected_sizeof()
 namespace pexp = pmem::obj::experimental;
 template <typename T>
 using container_t = pexp::segment_vector<
-	T, pexp::vector<T>,
-	pexp::fixed_size_vector_policy<pexp::vector<T>, 100>>;
+	T, pmem::obj::vector<T>,
+	pexp::fixed_size_vector_policy<pmem::obj::vector<T>, 100>>;
 
 template <typename T>
 struct container_representation_t {
 	typename container_t<T>::size_type segments_used;
 
 	/* Underlying segments */
-	pexp::vector<pexp::vector<T>> ptr;
+	pmem::obj::vector<pmem::obj::vector<T>> ptr;
 };
 
 template <typename T>
@@ -209,15 +209,15 @@ expected_sizeof()
 namespace pexp = pmem::obj::experimental;
 template <typename T>
 using container_t = pexp::segment_vector<
-	T, pexp::vector<T>,
-	pexp::fixed_size_array_policy<pexp::vector<T>, 20000>>;
+	T, pmem::obj::vector<T>,
+	pexp::fixed_size_array_policy<pmem::obj::vector<T>, 20000>>;
 
 template <typename T>
 struct container_representation_t {
 	typename container_t<T>::size_type segments_used;
 
 	/* Underlying segments */
-	pexp::vector<T> ptr[255];
+	pmem::obj::vector<T> ptr[255];
 };
 
 template <typename T>
@@ -243,15 +243,15 @@ expected_sizeof()
 namespace pexp = pmem::obj::experimental;
 template <typename T>
 using container_t = pexp::segment_vector<
-	T, pexp::vector<T>,
-	pexp::fixed_size_vector_policy<pexp::vector<T>, 15000>>;
+	T, pmem::obj::vector<T>,
+	pexp::fixed_size_vector_policy<pmem::obj::vector<T>, 15000>>;
 
 template <typename T>
 struct container_representation_t {
 	typename container_t<T>::size_type segments_used;
 
 	/* Underlying segments */
-	pexp::vector<pexp::vector<T>> ptr;
+	pmem::obj::vector<pmem::obj::vector<T>> ptr;
 };
 
 template <typename T>

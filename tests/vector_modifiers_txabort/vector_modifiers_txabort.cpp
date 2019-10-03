@@ -73,7 +73,7 @@ check_range(It start, It end, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector modifiers
+ * Test pmem::obj::vector modifiers
  *
  * Checks if vector's state is reverted when transaction aborts.
  * Methods under test:

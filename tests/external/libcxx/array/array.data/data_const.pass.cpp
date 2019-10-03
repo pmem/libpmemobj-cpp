@@ -21,11 +21,9 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 struct Testcase1 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	const C c = {{1, 2, 3.5}};
 	C cc = {{1, 2, 3.5}};
 
@@ -49,7 +47,7 @@ struct Testcase1 {
 
 struct Testcase2 {
 	typedef std::max_align_t T;
-	typedef pmem_exp::array<T, 0> C;
+	typedef pmem::obj::array<T, 0> C;
 	const C c = {{}};
 	C cc = {{}};
 

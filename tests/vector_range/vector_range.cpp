@@ -39,7 +39,6 @@
 #include <libpmemobj++/transaction.hpp>
 
 namespace pmemobj = pmem::obj;
-namespace pmemobj_exp = pmemobj::experimental;
 
 using vec_type = container_t<int>;
 
@@ -96,7 +95,7 @@ main(int argc, char *argv[])
 
 	try {
 		pmemobj::transaction::run(pop, [&] {
-			pmemobj_exp::slice<vec_type::const_iterator> slice =
+			pmem::obj::slice<vec_type::const_iterator> slice =
 				const_pmem_vec.range(0,
 						     10); /* should not throw */
 			(void)slice;
@@ -147,7 +146,7 @@ main(int argc, char *argv[])
 	exception_thrown = false;
 	try {
 		pmemobj::transaction::run(pop, [&] {
-			pmemobj_exp::slice<vec_type::const_iterator> slice =
+			pmem::obj::slice<vec_type::const_iterator> slice =
 				const_pmem_vec.range(0, 11); /* should throw */
 			(void)slice;
 		});
@@ -191,7 +190,7 @@ main(int argc, char *argv[])
 			UT_ASSERTeq(&pmem_vec.front(), &*slice3.begin());
 			UT_ASSERTeq(&pmem_vec.front() + 10, &*slice3.end());
 
-			pmemobj_exp::slice<vec_type::const_iterator> slice4 =
+			pmem::obj::slice<vec_type::const_iterator> slice4 =
 				const_pmem_vec.range(0, 3);
 
 			UT_ASSERTeq(&const_pmem_vec.front(), slice4.begin());

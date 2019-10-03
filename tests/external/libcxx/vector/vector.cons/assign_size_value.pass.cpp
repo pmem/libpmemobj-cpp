@@ -34,7 +34,7 @@ is6(int x)
 }
 
 /**
- * Test pmem::obj::experimental::vector fill version of assign method
+ * Test pmem::obj::vector fill version of assign method
  *
  * Replaces vector's contents with count copies of given value
  * Validates size and elements of the vector.

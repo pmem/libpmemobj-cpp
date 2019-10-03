@@ -40,7 +40,7 @@ namespace nvobj = pmem::obj;
 using vector_type = container_t<int>;
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::vector default constructor.
  *
  * Call default constructor out of transaction scope.
  * Expect pmem:transaction_scope_error exception is thrown.
@@ -68,7 +68,7 @@ test_default_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector range constructor.
+ * Test pmem::obj::vector range constructor.
  *
  * Call range constructor out of transaction scope.
  * Expect pmem:transaction_scope_error exception is thrown.
@@ -100,7 +100,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * default values.
  *
  * Call fill constructor out of transaction scope.
@@ -130,7 +130,7 @@ test_size_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * custom values.
  *
  * Call fill constructor out of transaction scope.
@@ -160,7 +160,7 @@ test_size_value_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector copy constructor.
+ * Test pmem::obj::vector copy constructor.
  *
  * Call copy constructor out of transaction scope.
  * Expect pmem:transaction_scope_error exception is thrown.
@@ -207,7 +207,7 @@ test_copy_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector initializer list constructor.
+ * Test pmem::obj::vector initializer list constructor.
  *
  * Call initializer list constructor out of transaction scope.
  * Expect pmem:transaction_scope_error exception is thrown.
@@ -236,7 +236,7 @@ test_initializer_list_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector move constructor.
+ * Test pmem::obj::vector move constructor.
  *
  * Call move constructor out of transaction scope.
  * Expect pmem:transaction_scope_error exception is thrown.

@@ -45,7 +45,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector move constructor.
+ * Test pmem::obj::vector move constructor.
  *
  * Checks if vector state is reverted when transaction aborts
  */

@@ -36,7 +36,6 @@
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 using C = container_t<int>;
 
@@ -45,7 +44,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector modifiers
+ * Test pmem::obj::vector modifiers
  *
  * Increase size of the vector to value greater than pool size
  * Methods under test:

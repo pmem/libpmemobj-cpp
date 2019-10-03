@@ -16,8 +16,6 @@
 
 #include <libpmemobj++/container/array.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 template <int Dummy>
 struct NoCompare {
 };
@@ -30,7 +28,7 @@ main()
 	int result = 0;
 	{
 		typedef NoCompare<0> T;
-		typedef pmem_exp::array<T, 3> C;
+		typedef pmem::obj::array<T, 3> C;
 		C c1 = {{}};
 		// expected-error@algorithm:* 2 {{invalid operands to binary
 		// expression}}

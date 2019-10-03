@@ -17,8 +17,8 @@
 #include <libpmemobj++/container/string.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = pmem::obj::experimental;
-using S = pmem_exp::string;
+
+using S = pmem::obj::string;
 
 struct root {
 	nvobj::persistent_ptr<S> s_arr[4];

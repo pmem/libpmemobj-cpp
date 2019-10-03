@@ -18,11 +18,10 @@
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 class A;
 
-using C = pmem_exp::vector<A>;
+using C = pmem::obj::vector<A>;
 
 struct root {
 	nvobj::persistent_ptr<C> c;

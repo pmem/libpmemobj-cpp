@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,11 +48,8 @@ namespace pmem
 namespace obj
 {
 
-namespace experimental
-{
-
 /**
- * pmem::obj::experimental::slice - provides interface to access
+ * pmem::obj::slice - provides interface to access
  * sequence of objects.
  */
 template <typename Iterator>
@@ -158,8 +155,6 @@ public:
 private:
 	iterator it_begin, it_end;
 };
-
-} /* namespace experimental */
 
 } /* namespace obj */
 

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.8-rc1</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -68,7 +68,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
 <div class="title">persistent_ptr_base.hpp File Reference</div>  </div>
 </div><!--header-->
@@ -80,7 +81,7 @@ $(function() {
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="specialization_8hpp_source.html">libpmemobj++/detail/specialization.hpp</a>&gt;</code><br />
-<code>#include &lt;libpmemobj.h&gt;</code><br />
+<code>#include &lt;libpmemobj/base.h&gt;</code><br />
 </div>
 <p><a href="persistent__ptr__base_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -88,6 +89,12 @@ $(function() {
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">pmem::detail::persistent_ptr_base&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent_ptr base class.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

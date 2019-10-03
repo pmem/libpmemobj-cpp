@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: libpmemobj++/experimental/array.hpp File Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/container/array.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.2.0</span>
+   &#160;<span id="projectnumber">1.8-rc1</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,12 +63,13 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_55fd483c9ae557ee09ad95ebc247273e.html">experimental</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_83ecae25392e6e33dc533801e27668b5.html">container</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">array.hpp File Reference</div>  </div>
@@ -79,139 +80,145 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;<a class="el" href="contiguous__iterator_8hpp_source.html">libpmemobj++/container/detail/contiguous_iterator.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="contiguous__iterator_8hpp_source.html">libpmemobj++/experimental/contiguous_iterator.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/experimental/slice.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="persistent__ptr_8hpp_source.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pext_8hpp_source.html">libpmemobj++/pext.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/slice.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="transaction_8hpp_source.html">libpmemobj++/transaction.hpp</a>&gt;</code><br />
-<code>#include &lt;libpmemobj.h&gt;</code><br />
+<code>#include &lt;libpmemobj/base.h&gt;</code><br />
 </div>
 <p><a href="array_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array&lt; T, N &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html" title="pmem::obj::experimental::array - EXPERIMENTAL persistent container with std::array compatible interfa...">pmem::obj::experimental::array</a> - EXPERIMENTAL persistent container with std::array compatible interface.  <a href="structpmem_1_1obj_1_1experimental_1_1array.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array&lt; T, N &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structpmem_1_1obj_1_1array.html" title="pmem::obj::array - persistent container with std::array compatible interface.">pmem::obj::array</a> - persistent container with std::array compatible interface.  <a href="structpmem_1_1obj_1_1array.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab6e904e76e263bb32bed4fbebcfa8cf4"><td class="memTemplParams" colspan="2"><a id="ab6e904e76e263bb32bed4fbebcfa8cf4"></a>
+<tr class="memitem:aac08cf50c8772b14d24d58987550ff44"><td class="memTemplParams" colspan="2"><a id="aac08cf50c8772b14d24d58987550ff44"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:ab6e904e76e263bb32bed4fbebcfa8cf4"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ab6e904e76e263bb32bed4fbebcfa8cf4">pmem::obj::experimental::operator==</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ab6e904e76e263bb32bed4fbebcfa8cf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
-<tr class="separator:ab6e904e76e263bb32bed4fbebcfa8cf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19d9a4b842eadca95d85ac95a12f4e39"><td class="memTemplParams" colspan="2"><a id="a19d9a4b842eadca95d85ac95a12f4e39"></a>
+<tr class="memitem:aac08cf50c8772b14d24d58987550ff44"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aac08cf50c8772b14d24d58987550ff44">pmem::obj::operator==</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:aac08cf50c8772b14d24d58987550ff44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member equal operator. <br /></td></tr>
+<tr class="separator:aac08cf50c8772b14d24d58987550ff44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a8fe61f5f4e399c0643640d9de2608d"><td class="memTemplParams" colspan="2"><a id="a7a8fe61f5f4e399c0643640d9de2608d"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a19d9a4b842eadca95d85ac95a12f4e39"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a19d9a4b842eadca95d85ac95a12f4e39">pmem::obj::experimental::operator!=</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a19d9a4b842eadca95d85ac95a12f4e39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not-equal operator. <br /></td></tr>
-<tr class="separator:a19d9a4b842eadca95d85ac95a12f4e39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1c6356af016c9b93cffb8f2a34cf431"><td class="memTemplParams" colspan="2"><a id="aa1c6356af016c9b93cffb8f2a34cf431"></a>
+<tr class="memitem:a7a8fe61f5f4e399c0643640d9de2608d"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a7a8fe61f5f4e399c0643640d9de2608d">pmem::obj::operator!=</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a7a8fe61f5f4e399c0643640d9de2608d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member not-equal operator. <br /></td></tr>
+<tr class="separator:a7a8fe61f5f4e399c0643640d9de2608d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32224cd97024c3031b0751af854ddd9c"><td class="memTemplParams" colspan="2"><a id="a32224cd97024c3031b0751af854ddd9c"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:aa1c6356af016c9b93cffb8f2a34cf431"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aa1c6356af016c9b93cffb8f2a34cf431">pmem::obj::experimental::operator&lt;</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aa1c6356af016c9b93cffb8f2a34cf431"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
-<tr class="separator:aa1c6356af016c9b93cffb8f2a34cf431"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a528551ca26b9b770818554790c1eb516"><td class="memTemplParams" colspan="2"><a id="a528551ca26b9b770818554790c1eb516"></a>
+<tr class="memitem:a32224cd97024c3031b0751af854ddd9c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">pmem::obj::operator&lt;</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a32224cd97024c3031b0751af854ddd9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less than operator. <br /></td></tr>
+<tr class="separator:a32224cd97024c3031b0751af854ddd9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad501de98b6764d3ff1e877c5d9291ad8"><td class="memTemplParams" colspan="2"><a id="ad501de98b6764d3ff1e877c5d9291ad8"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a528551ca26b9b770818554790c1eb516"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a528551ca26b9b770818554790c1eb516">pmem::obj::experimental::operator&gt;</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a528551ca26b9b770818554790c1eb516"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
-<tr class="separator:a528551ca26b9b770818554790c1eb516"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0b21635e8624af7d3fee229caa19f74"><td class="memTemplParams" colspan="2"><a id="aa0b21635e8624af7d3fee229caa19f74"></a>
+<tr class="memitem:ad501de98b6764d3ff1e877c5d9291ad8"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">pmem::obj::operator&gt;</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:ad501de98b6764d3ff1e877c5d9291ad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater than operator. <br /></td></tr>
+<tr class="separator:ad501de98b6764d3ff1e877c5d9291ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5034348e46ff8ebddb366634118bd6b5"><td class="memTemplParams" colspan="2"><a id="a5034348e46ff8ebddb366634118bd6b5"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:aa0b21635e8624af7d3fee229caa19f74"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aa0b21635e8624af7d3fee229caa19f74">pmem::obj::experimental::operator&gt;=</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:aa0b21635e8624af7d3fee229caa19f74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
-<tr class="separator:aa0b21635e8624af7d3fee229caa19f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90a7749927c5ac49707bd49fd9e8a8a6"><td class="memTemplParams" colspan="2"><a id="a90a7749927c5ac49707bd49fd9e8a8a6"></a>
+<tr class="memitem:a5034348e46ff8ebddb366634118bd6b5"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">pmem::obj::operator&gt;=</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5034348e46ff8ebddb366634118bd6b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member greater or equal operator. <br /></td></tr>
+<tr class="separator:a5034348e46ff8ebddb366634118bd6b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d2c5f33d7ca7366bc34eef6d4a22039"><td class="memTemplParams" colspan="2"><a id="a0d2c5f33d7ca7366bc34eef6d4a22039"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a90a7749927c5ac49707bd49fd9e8a8a6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a90a7749927c5ac49707bd49fd9e8a8a6">pmem::obj::experimental::operator&lt;=</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a90a7749927c5ac49707bd49fd9e8a8a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
-<tr class="separator:a90a7749927c5ac49707bd49fd9e8a8a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab641fa1ffd7a8c7ad1610ef052349921"><td class="memTemplParams" colspan="2"><a id="ab641fa1ffd7a8c7ad1610ef052349921"></a>
+<tr class="memitem:a0d2c5f33d7ca7366bc34eef6d4a22039"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">pmem::obj::operator&lt;=</a> (const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a0d2c5f33d7ca7366bc34eef6d4a22039"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member less or equal operator. <br /></td></tr>
+<tr class="separator:a0d2c5f33d7ca7366bc34eef6d4a22039"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fd06001cc9db20b93349064c3ef9062"><td class="memTemplParams" colspan="2"><a id="a5fd06001cc9db20b93349064c3ef9062"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:ab641fa1ffd7a8c7ad1610ef052349921"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ab641fa1ffd7a8c7ad1610ef052349921">pmem::obj::experimental::cbegin</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:ab641fa1ffd7a8c7ad1610ef052349921"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member cbegin. <br /></td></tr>
-<tr class="separator:ab641fa1ffd7a8c7ad1610ef052349921"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7164f77c691f97fdde08604cc449129d"><td class="memTemplParams" colspan="2"><a id="a7164f77c691f97fdde08604cc449129d"></a>
+<tr class="memitem:a5fd06001cc9db20b93349064c3ef9062"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a5fd06001cc9db20b93349064c3ef9062">pmem::obj::cbegin</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a5fd06001cc9db20b93349064c3ef9062"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member cbegin. <br /></td></tr>
+<tr class="separator:a5fd06001cc9db20b93349064c3ef9062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedf7cd43eb534c9b5760f018d726a132"><td class="memTemplParams" colspan="2"><a id="aedf7cd43eb534c9b5760f018d726a132"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a7164f77c691f97fdde08604cc449129d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a7164f77c691f97fdde08604cc449129d">pmem::obj::experimental::cend</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:a7164f77c691f97fdde08604cc449129d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member cend. <br /></td></tr>
-<tr class="separator:a7164f77c691f97fdde08604cc449129d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef229947d2be819f398d609168f4b82d"><td class="memTemplParams" colspan="2"><a id="aef229947d2be819f398d609168f4b82d"></a>
+<tr class="memitem:aedf7cd43eb534c9b5760f018d726a132"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aedf7cd43eb534c9b5760f018d726a132">pmem::obj::cend</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:aedf7cd43eb534c9b5760f018d726a132"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member cend. <br /></td></tr>
+<tr class="separator:aedf7cd43eb534c9b5760f018d726a132"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fd534d44eedaf5e8d85524dd65193e1"><td class="memTemplParams" colspan="2"><a id="a6fd534d44eedaf5e8d85524dd65193e1"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:aef229947d2be819f398d609168f4b82d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aef229947d2be819f398d609168f4b82d">pmem::obj::experimental::crbegin</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:aef229947d2be819f398d609168f4b82d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member crbegin. <br /></td></tr>
-<tr class="separator:aef229947d2be819f398d609168f4b82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dd93fbd74e6231b2c51d3cfed540823"><td class="memTemplParams" colspan="2"><a id="a5dd93fbd74e6231b2c51d3cfed540823"></a>
+<tr class="memitem:a6fd534d44eedaf5e8d85524dd65193e1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a6fd534d44eedaf5e8d85524dd65193e1">pmem::obj::crbegin</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a6fd534d44eedaf5e8d85524dd65193e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member crbegin. <br /></td></tr>
+<tr class="separator:a6fd534d44eedaf5e8d85524dd65193e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67ead02f7b910ae03948365676f92a02"><td class="memTemplParams" colspan="2"><a id="a67ead02f7b910ae03948365676f92a02"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a5dd93fbd74e6231b2c51d3cfed540823"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a5dd93fbd74e6231b2c51d3cfed540823">pmem::obj::experimental::crend</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:a5dd93fbd74e6231b2c51d3cfed540823"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member crend. <br /></td></tr>
-<tr class="separator:a5dd93fbd74e6231b2c51d3cfed540823"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad806dbb16c66eb3055bd249dbd675726"><td class="memTemplParams" colspan="2"><a id="ad806dbb16c66eb3055bd249dbd675726"></a>
+<tr class="memitem:a67ead02f7b910ae03948365676f92a02"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a67ead02f7b910ae03948365676f92a02">pmem::obj::crend</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a67ead02f7b910ae03948365676f92a02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member crend. <br /></td></tr>
+<tr class="separator:a67ead02f7b910ae03948365676f92a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7b865184397a869c6c3961222774c35"><td class="memTemplParams" colspan="2"><a id="af7b865184397a869c6c3961222774c35"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:ad806dbb16c66eb3055bd249dbd675726"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ad806dbb16c66eb3055bd249dbd675726">pmem::obj::experimental::begin</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:ad806dbb16c66eb3055bd249dbd675726"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member begin. <br /></td></tr>
-<tr class="separator:ad806dbb16c66eb3055bd249dbd675726"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77a1ec85fb09226e1abda98f76cca657"><td class="memTemplParams" colspan="2"><a id="a77a1ec85fb09226e1abda98f76cca657"></a>
+<tr class="memitem:af7b865184397a869c6c3961222774c35"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#af7b865184397a869c6c3961222774c35">pmem::obj::begin</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:af7b865184397a869c6c3961222774c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member begin. <br /></td></tr>
+<tr class="separator:af7b865184397a869c6c3961222774c35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5567bc686fa11774603c27a816fccd8"><td class="memTemplParams" colspan="2"><a id="ab5567bc686fa11774603c27a816fccd8"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a77a1ec85fb09226e1abda98f76cca657"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a77a1ec85fb09226e1abda98f76cca657">pmem::obj::experimental::begin</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:a77a1ec85fb09226e1abda98f76cca657"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member begin. <br /></td></tr>
-<tr class="separator:a77a1ec85fb09226e1abda98f76cca657"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51fbfe71ad89d817a95b324aac1d4a1b"><td class="memTemplParams" colspan="2"><a id="a51fbfe71ad89d817a95b324aac1d4a1b"></a>
+<tr class="memitem:ab5567bc686fa11774603c27a816fccd8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ab5567bc686fa11774603c27a816fccd8">pmem::obj::begin</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:ab5567bc686fa11774603c27a816fccd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member begin. <br /></td></tr>
+<tr class="separator:ab5567bc686fa11774603c27a816fccd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c9a19e08dff0b1cba582993afd16b83"><td class="memTemplParams" colspan="2"><a id="a8c9a19e08dff0b1cba582993afd16b83"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a51fbfe71ad89d817a95b324aac1d4a1b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a51fbfe71ad89d817a95b324aac1d4a1b">pmem::obj::experimental::end</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:a51fbfe71ad89d817a95b324aac1d4a1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member end. <br /></td></tr>
-<tr class="separator:a51fbfe71ad89d817a95b324aac1d4a1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3a5f82e3dbd631dfcbe23a23fac8dab"><td class="memTemplParams" colspan="2"><a id="ac3a5f82e3dbd631dfcbe23a23fac8dab"></a>
+<tr class="memitem:a8c9a19e08dff0b1cba582993afd16b83"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83">pmem::obj::end</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a8c9a19e08dff0b1cba582993afd16b83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member end. <br /></td></tr>
+<tr class="separator:a8c9a19e08dff0b1cba582993afd16b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a058a2cefe2a5b3488476d1180eea7e7c"><td class="memTemplParams" colspan="2"><a id="a058a2cefe2a5b3488476d1180eea7e7c"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:ac3a5f82e3dbd631dfcbe23a23fac8dab"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ac3a5f82e3dbd631dfcbe23a23fac8dab">pmem::obj::experimental::end</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:ac3a5f82e3dbd631dfcbe23a23fac8dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member end. <br /></td></tr>
-<tr class="separator:ac3a5f82e3dbd631dfcbe23a23fac8dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed093b452dba011d27ad9c0a5cd6f800"><td class="memTemplParams" colspan="2"><a id="aed093b452dba011d27ad9c0a5cd6f800"></a>
+<tr class="memitem:a058a2cefe2a5b3488476d1180eea7e7c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a058a2cefe2a5b3488476d1180eea7e7c">pmem::obj::end</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a058a2cefe2a5b3488476d1180eea7e7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member end. <br /></td></tr>
+<tr class="separator:a058a2cefe2a5b3488476d1180eea7e7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a292785df0f9b6877dd20b9794c83b7e4"><td class="memTemplParams" colspan="2"><a id="a292785df0f9b6877dd20b9794c83b7e4"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:aed093b452dba011d27ad9c0a5cd6f800"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aed093b452dba011d27ad9c0a5cd6f800">pmem::obj::experimental::rbegin</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:aed093b452dba011d27ad9c0a5cd6f800"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rbegin. <br /></td></tr>
-<tr class="separator:aed093b452dba011d27ad9c0a5cd6f800"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedfcb8530c7b9c2d861ad47b77a84579"><td class="memTemplParams" colspan="2"><a id="aedfcb8530c7b9c2d861ad47b77a84579"></a>
+<tr class="memitem:a292785df0f9b6877dd20b9794c83b7e4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a292785df0f9b6877dd20b9794c83b7e4">pmem::obj::rbegin</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a292785df0f9b6877dd20b9794c83b7e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rbegin. <br /></td></tr>
+<tr class="separator:a292785df0f9b6877dd20b9794c83b7e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58c54b7cf593489018de3f219043c897"><td class="memTemplParams" colspan="2"><a id="a58c54b7cf593489018de3f219043c897"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:aedfcb8530c7b9c2d861ad47b77a84579"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aedfcb8530c7b9c2d861ad47b77a84579">pmem::obj::experimental::rbegin</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:aedfcb8530c7b9c2d861ad47b77a84579"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rbegin. <br /></td></tr>
-<tr class="separator:aedfcb8530c7b9c2d861ad47b77a84579"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64f056adbaaa6b384ee86a2ae0b43bdf"><td class="memTemplParams" colspan="2"><a id="a64f056adbaaa6b384ee86a2ae0b43bdf"></a>
+<tr class="memitem:a58c54b7cf593489018de3f219043c897"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a58c54b7cf593489018de3f219043c897">pmem::obj::rbegin</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a58c54b7cf593489018de3f219043c897"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rbegin. <br /></td></tr>
+<tr class="separator:a58c54b7cf593489018de3f219043c897"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec2a3a635eec0365bb9e007e178f77da"><td class="memTemplParams" colspan="2"><a id="aec2a3a635eec0365bb9e007e178f77da"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a64f056adbaaa6b384ee86a2ae0b43bdf"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a64f056adbaaa6b384ee86a2ae0b43bdf">pmem::obj::experimental::rend</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:a64f056adbaaa6b384ee86a2ae0b43bdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rend. <br /></td></tr>
-<tr class="separator:a64f056adbaaa6b384ee86a2ae0b43bdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a895a62d81e15687523c99fd072748ebf"><td class="memTemplParams" colspan="2"><a id="a895a62d81e15687523c99fd072748ebf"></a>
+<tr class="memitem:aec2a3a635eec0365bb9e007e178f77da"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aec2a3a635eec0365bb9e007e178f77da">pmem::obj::rend</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:aec2a3a635eec0365bb9e007e178f77da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rend. <br /></td></tr>
+<tr class="separator:aec2a3a635eec0365bb9e007e178f77da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a625151123a73e7fbb8ed00defc20f0d2"><td class="memTemplParams" colspan="2"><a id="a625151123a73e7fbb8ed00defc20f0d2"></a>
 template&lt;typename T , std::size_t N&gt; </td></tr>
-<tr class="memitem:a895a62d81e15687523c99fd072748ebf"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a895a62d81e15687523c99fd072748ebf">pmem::obj::experimental::rend</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:a895a62d81e15687523c99fd072748ebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rend. <br /></td></tr>
-<tr class="separator:a895a62d81e15687523c99fd072748ebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada0c97d1e420854ae808e6eac915aca7"><td class="memTemplParams" colspan="2"><a id="ada0c97d1e420854ae808e6eac915aca7"></a>
+<tr class="memitem:a625151123a73e7fbb8ed00defc20f0d2"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt;::const_reverse_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a625151123a73e7fbb8ed00defc20f0d2">pmem::obj::rend</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:a625151123a73e7fbb8ed00defc20f0d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member rend. <br /></td></tr>
+<tr class="separator:a625151123a73e7fbb8ed00defc20f0d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af36a1b526d5d5c81d35f02557c3b8e24"><td class="memTemplParams" colspan="2"><a id="af36a1b526d5d5c81d35f02557c3b8e24"></a>
 template&lt;typename T , size_t N&gt; </td></tr>
-<tr class="memitem:ada0c97d1e420854ae808e6eac915aca7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ada0c97d1e420854ae808e6eac915aca7">pmem::obj::experimental::swap</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;lhs, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:ada0c97d1e420854ae808e6eac915aca7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap function. <br /></td></tr>
-<tr class="separator:ada0c97d1e420854ae808e6eac915aca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae404c63195e95a828c9e9e4f7abdcc1a"><td class="memTemplParams" colspan="2"><a id="ae404c63195e95a828c9e9e4f7abdcc1a"></a>
+<tr class="memitem:af36a1b526d5d5c81d35f02557c3b8e24"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#af36a1b526d5d5c81d35f02557c3b8e24">pmem::obj::swap</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;lhs, <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:af36a1b526d5d5c81d35f02557c3b8e24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap function. <br /></td></tr>
+<tr class="separator:af36a1b526d5d5c81d35f02557c3b8e24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa33ff9be3b0cc1bce22b7524b9252077"><td class="memTemplParams" colspan="2"><a id="aa33ff9be3b0cc1bce22b7524b9252077"></a>
 template&lt;size_t I, typename T , size_t N&gt; </td></tr>
-<tr class="memitem:ae404c63195e95a828c9e9e4f7abdcc1a"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ae404c63195e95a828c9e9e4f7abdcc1a">pmem::obj::experimental::get</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a)</td></tr>
-<tr class="memdesc:ae404c63195e95a828c9e9e4f7abdcc1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
-<tr class="separator:ae404c63195e95a828c9e9e4f7abdcc1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a711b660e0692a4b87668c5aec99260e2"><td class="memTemplParams" colspan="2"><a id="a711b660e0692a4b87668c5aec99260e2"></a>
+<tr class="memitem:aa33ff9be3b0cc1bce22b7524b9252077"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#aa33ff9be3b0cc1bce22b7524b9252077">pmem::obj::get</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a)</td></tr>
+<tr class="memdesc:aa33ff9be3b0cc1bce22b7524b9252077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
+<tr class="separator:aa33ff9be3b0cc1bce22b7524b9252077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42ebb82db8ea2b7b0a49473a7f1be1a9"><td class="memTemplParams" colspan="2"><a id="a42ebb82db8ea2b7b0a49473a7f1be1a9"></a>
 template&lt;size_t I, typename T , size_t N&gt; </td></tr>
-<tr class="memitem:a711b660e0692a4b87668c5aec99260e2"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a711b660e0692a4b87668c5aec99260e2">pmem::obj::experimental::get</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;&amp;a)</td></tr>
-<tr class="memdesc:a711b660e0692a4b87668c5aec99260e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
-<tr class="separator:a711b660e0692a4b87668c5aec99260e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e2270d5c35c98948c976df77cc5c629"><td class="memTemplParams" colspan="2"><a id="a8e2270d5c35c98948c976df77cc5c629"></a>
+<tr class="memitem:a42ebb82db8ea2b7b0a49473a7f1be1a9"><td class="memTemplItemLeft" align="right" valign="top">T &amp;&amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a42ebb82db8ea2b7b0a49473a7f1be1a9">pmem::obj::get</a> (<a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;&amp;a)</td></tr>
+<tr class="memdesc:a42ebb82db8ea2b7b0a49473a7f1be1a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
+<tr class="separator:a42ebb82db8ea2b7b0a49473a7f1be1a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1916fc624ea2edbab5b2371dd4b8e07"><td class="memTemplParams" colspan="2"><a id="ad1916fc624ea2edbab5b2371dd4b8e07"></a>
 template&lt;size_t I, typename T , size_t N&gt; </td></tr>
-<tr class="memitem:a8e2270d5c35c98948c976df77cc5c629"><td class="memTemplItemLeft" align="right" valign="top">const T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a8e2270d5c35c98948c976df77cc5c629">pmem::obj::experimental::get</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;a) noexcept</td></tr>
-<tr class="memdesc:a8e2270d5c35c98948c976df77cc5c629"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
-<tr class="separator:a8e2270d5c35c98948c976df77cc5c629"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8787bc6da0d8e0dc77bbc2c33795277e"><td class="memTemplParams" colspan="2"><a id="a8787bc6da0d8e0dc77bbc2c33795277e"></a>
+<tr class="memitem:ad1916fc624ea2edbab5b2371dd4b8e07"><td class="memTemplItemLeft" align="right" valign="top">const T &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#ad1916fc624ea2edbab5b2371dd4b8e07">pmem::obj::get</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;a) noexcept</td></tr>
+<tr class="memdesc:ad1916fc624ea2edbab5b2371dd4b8e07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
+<tr class="separator:ad1916fc624ea2edbab5b2371dd4b8e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a610a8e6300edb2dae899a7b5c36aef6b"><td class="memTemplParams" colspan="2"><a id="a610a8e6300edb2dae899a7b5c36aef6b"></a>
 template&lt;size_t I, typename T , size_t N&gt; </td></tr>
-<tr class="memitem:a8787bc6da0d8e0dc77bbc2c33795277e"><td class="memTemplItemLeft" align="right" valign="top">const T &amp;&amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a8787bc6da0d8e0dc77bbc2c33795277e">pmem::obj::experimental::get</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1array.html">pmem::obj::experimental::array</a>&lt; T, N &gt; &amp;&amp;a) noexcept</td></tr>
-<tr class="memdesc:a8787bc6da0d8e0dc77bbc2c33795277e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
-<tr class="separator:a8787bc6da0d8e0dc77bbc2c33795277e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a610a8e6300edb2dae899a7b5c36aef6b"><td class="memTemplItemLeft" align="right" valign="top">const T &amp;&amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="array_8hpp.html#a610a8e6300edb2dae899a7b5c36aef6b">pmem::obj::get</a> (const <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a>&lt; T, N &gt; &amp;&amp;a) noexcept</td></tr>
+<tr class="memdesc:a610a8e6300edb2dae899a7b5c36aef6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member get function. <br /></td></tr>
+<tr class="separator:a610a8e6300edb2dae899a7b5c36aef6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Array container with std::array compatible interface. </p>

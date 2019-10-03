@@ -4,7 +4,7 @@ Thu Oct 03 2019 Szymon Romik <szymon.romik@intel.com>
 
 	This release moves persistent array/vector/string/concurrent_hash_map
 	out from experimental namespace and directory. It means that
-	abovementioned containers are guaranteed to have stabilized API and
+	abovementioned containers are guaranteed to have stable API and on-media
 	layout. They are placed now in include/libpmemobj++/container/ directory
 	and pmem::obj namespace.
 
@@ -16,7 +16,7 @@ Thu Oct 03 2019 Szymon Romik <szymon.romik@intel.com>
 
 	Bug fixes:
 	- fixed insert method in persistent vector
-	- fixed move assignment operator in peristent array
+	- fixed move assignment operator in persistent array
 
 	Other changes:
 	- extended error messages in exceptions

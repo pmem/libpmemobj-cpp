@@ -217,7 +217,7 @@ segment_iterator<Container, is_const>::operator++(int)
 }
 
 /**
- * Random acess incrementing.
+ * Random access incrementing.
  *
  * @return incremented segment_iterator.
  */
@@ -229,7 +229,7 @@ segment_iterator<Container, is_const>::operator+(difference_type idx) const
 }
 
 /**
- * Random acess incrementing with assignment.
+ * Random access incrementing with assignment.
  *
  * @return incremented segment_iterator.
  */
@@ -269,7 +269,7 @@ segment_iterator<Container, is_const>::operator--(int)
 }
 
 /**
- * Random acess decrementing.
+ * Random access decrementing.
  *
  * @return decremented segment_iterator.
  */
@@ -281,7 +281,7 @@ segment_iterator<Container, is_const>::operator-(difference_type idx) const
 }
 
 /**
- * Random acess decrementing with assignment.
+ * Random access decrementing with assignment.
  *
  * @return decremented segment_iterator.
  */
@@ -324,7 +324,7 @@ operator-(const segment_iterator<Container, C> &rhs)
 /**
  * Equality operator.
  *
- * @param[in] segment_iterator<Container, C> to compare with.
+ * @param[in] rhs segment_iterator<Container, C> to compare with.
  *
  * @return true if rhs is equal to current iterator, false otherwise.
  */
@@ -340,7 +340,7 @@ operator==(const segment_iterator<Container, C> &rhs)
 /**
  * Not equal operator.
  *
- * @param[in] segment_iterator<Container, C> to compare with.
+ * @param[in] rhs segment_iterator<Container, C> to compare with.
  *
  * @return true if rhs is not equal to current iterator, false
  * otherwise.
@@ -357,7 +357,7 @@ operator!=(const segment_iterator<Container, C> &rhs)
 /**
  * Less operator.
  *
- * @param[in] segment_iterator<Container, C> to compare with.
+ * @param[in] rhs segment_iterator<Container, C> to compare with.
  *
  * @return true if current index less than rhs index, false otherwise.
  *
@@ -379,7 +379,7 @@ operator<(const segment_iterator<Container, C> &rhs)
 /**
  * Greater operator.
  *
- * @param[in] segment_iterator<Container, C> to compare with.
+ * @param[in] rhs segment_iterator<Container, C> to compare with.
  *
  * @return true if current index greater than rhs index, false
  * otherwise.
@@ -402,7 +402,7 @@ operator>(const segment_iterator<Container, C> &rhs)
 /**
  * Less or equal operator.
  *
- * @param[in] segment_iterator<Container, C> to compare with.
+ * @param[in] rhs segment_iterator<Container, C> to compare with.
  *
  * @return true if current index less or equal to rhs index, false
  * otherwise.
@@ -425,7 +425,7 @@ operator<=(const segment_iterator<Container, C> &rhs)
 /**
  * Greater or equal operator.
  *
- * @param[in] segment_iterator<Container, C> to compare with.
+ * @param[in] rhs segment_iterator<Container, C> to compare with.
  *
  * @return true if current index greater or equal to rhs index, false
  * otherwise.
@@ -754,7 +754,7 @@ public:
 	segment_vector &operator=(const std::vector<T> &other);
 
 	/* Assign methods */
-	void assign(size_type count, const T &value);
+	void assign(size_type count, const_reference value);
 	template <typename InputIt,
 		  typename std::enable_if<
 			  detail::is_input_iterator<InputIt>::value,
@@ -2830,10 +2830,10 @@ segment_vector<T, Segment, Policy>::get_pool() const noexcept
 
 /**
  * Private helper function. Takes a “snapshot” of data in range
- * [this[idx_first], this[idx_last])
+ * [this[first], this[last])
  *
- * @param[in] idx_first first index.
- * @param[in] idx_last last index.
+ * @param[in] first first index.
+ * @param[in] last last index.
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */

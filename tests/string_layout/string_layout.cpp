@@ -32,7 +32,7 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>

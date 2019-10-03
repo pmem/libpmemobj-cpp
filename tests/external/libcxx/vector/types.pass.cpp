@@ -16,7 +16,7 @@
 #include "unittest.hpp"
 
 #include <iterator>
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <type_traits>
 
 template <typename T>

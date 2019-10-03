@@ -38,7 +38,7 @@
 /* if defined persistent vector */
 #ifdef VECTOR
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 
 template <typename T>
 using container_t = pmem::obj::experimental::vector<T>;

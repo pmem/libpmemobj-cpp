@@ -36,7 +36,7 @@
 
 //! [concurrent_hash_map_example]
 #include <iostream>
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>

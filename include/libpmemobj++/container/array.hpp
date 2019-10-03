@@ -41,11 +41,11 @@
 #include <algorithm>
 #include <functional>
 
+#include <libpmemobj++/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
-#include <libpmemobj++/experimental/slice.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj/base.h>
 

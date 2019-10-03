@@ -38,15 +38,15 @@
 #ifndef LIBPMEMOBJ_CPP_VECTOR_HPP
 #define LIBPMEMOBJ_CPP_VECTOR_HPP
 
+#include <libpmemobj++/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/detail/temp_value.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
-#include <libpmemobj++/experimental/slice.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj/base.h>
 

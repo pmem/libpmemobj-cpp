@@ -15,7 +15,7 @@
 #include "unittest.hpp"
 
 #include <array>
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>

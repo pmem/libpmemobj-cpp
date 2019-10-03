@@ -38,13 +38,13 @@
 #ifndef LIBPMEMOBJ_SEGMENT_VECTOR_HPP
 #define LIBPMEMOBJ_SEGMENT_VECTOR_HPP
 
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/vector.hpp>
+#include <libpmemobj++/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
 #include <libpmemobj++/detail/temp_value.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>

@@ -39,9 +39,9 @@
 
 #include <array>
 #include <functional>
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/string.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/string.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>

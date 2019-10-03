@@ -33,9 +33,9 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/slice.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 namespace pmemobj = pmem::obj;

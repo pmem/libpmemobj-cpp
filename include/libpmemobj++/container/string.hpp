@@ -38,7 +38,7 @@
 #ifndef LIBPMEMOBJ_CPP_STRING_HPP
 #define LIBPMEMOBJ_CPP_STRING_HPP
 
-#include <libpmemobj++/experimental/basic_string.hpp>
+#include <libpmemobj++/container/basic_string.hpp>
 
 namespace pmem
 {

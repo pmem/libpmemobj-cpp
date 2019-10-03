@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -15,8 +15,8 @@
 #include "unittest.hpp"
 #include <iterator>
 
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/contiguous_iterator.hpp>
 
 namespace pmem_exp = pmem::obj::experimental;
 

@@ -14,7 +14,7 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 namespace pmem_exp = pmem::obj::experimental;
 

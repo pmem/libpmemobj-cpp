@@ -47,8 +47,8 @@
 #include <vector>
 
 #include "concurrent_hash_map_layout.hpp"
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 

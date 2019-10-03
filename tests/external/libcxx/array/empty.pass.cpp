@@ -7,14 +7,14 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>

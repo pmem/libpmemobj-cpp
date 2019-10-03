@@ -33,7 +33,7 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pool.hpp>

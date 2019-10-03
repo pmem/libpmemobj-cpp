@@ -51,7 +51,7 @@
 #include <thread>
 #include <vector>
 
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 

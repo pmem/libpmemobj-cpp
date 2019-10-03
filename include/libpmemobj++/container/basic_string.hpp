@@ -42,15 +42,15 @@
 #include <limits>
 #include <string>
 
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/vector.hpp>
+#include <libpmemobj++/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
-#include <libpmemobj++/experimental/slice.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 namespace pmem

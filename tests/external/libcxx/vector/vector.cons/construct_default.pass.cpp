@@ -15,9 +15,9 @@
 #include "list_wrapper.hpp"
 #include "unittest.hpp"
 
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 

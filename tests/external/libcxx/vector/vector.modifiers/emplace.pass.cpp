@@ -14,7 +14,7 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;

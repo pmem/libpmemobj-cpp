@@ -16,13 +16,11 @@
 
 #include <libpmemobj++/container/string.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 int
 main()
 {
 	{
-		typedef pmem_exp::string C;
+		typedef pmem::obj::string C;
 		static_assert(std::is_nothrow_destructible<C>::value, "");
 	}
 }

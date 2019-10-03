@@ -20,10 +20,9 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
-using string_type = pmem_exp::string;
+using string_type = pmem::obj::string;
 
 struct root {
 	nvobj::persistent_ptr<string_type> s1;

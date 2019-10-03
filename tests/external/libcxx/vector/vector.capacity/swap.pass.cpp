@@ -20,7 +20,6 @@
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 using C = container_t<int>;
 

@@ -59,14 +59,11 @@ namespace pmem
 namespace obj
 {
 
-namespace experimental
-{
-
 /**
- * pmem::obj::experimental::string - EXPERIMENTAL persistent container
- * with std::basic_string compatible interface.
+ * pmem::obj::string - persistent container with std::basic_string compatible
+ * interface.
  *
- * The implementation is NOT complete.
+ * The implementation is still missing some methods.
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string {
@@ -4042,8 +4039,6 @@ operator>=(const basic_string<CharT, Traits> &lhs,
 {
 	return lhs.compare(rhs) >= 0;
 }
-
-} /* namespace experimental */
 
 } /* namespace obj */
 

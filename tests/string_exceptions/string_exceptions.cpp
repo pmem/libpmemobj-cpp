@@ -40,9 +40,7 @@
 
 #include <iostream>
 
-namespace pmemobj_exp = pmem::obj::experimental;
-
-using string_type = pmemobj_exp::string;
+using string_type = pmem::obj::string;
 
 struct pmem_string_struct {
 	pmem_string_struct() : str("abcdefgh"), other("abc")

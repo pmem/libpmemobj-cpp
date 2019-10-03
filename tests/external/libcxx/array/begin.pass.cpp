@@ -20,11 +20,9 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 struct Testcase1 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	C c = {{1, 2, 3.5}};
 
 	void
@@ -46,7 +44,7 @@ struct Testcase2 {
 		}
 	};
 	typedef NoDefault T;
-	typedef pmem_exp::array<T, 0> C;
+	typedef pmem::obj::array<T, 0> C;
 	C c = {{}};
 
 	void

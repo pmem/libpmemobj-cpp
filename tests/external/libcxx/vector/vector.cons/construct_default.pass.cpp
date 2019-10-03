@@ -37,7 +37,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::vector default constructor.
  *
  * First case: call default constructor in three different ways and check if
  * new container is empty. Expect no exception is thrown.

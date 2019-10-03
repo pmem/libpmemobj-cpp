@@ -64,19 +64,15 @@ main(int argc, char *argv[])
 
 	/* Test that scoped_lock traits is working correctly */
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-	UT_ASSERT(pmem::obj::experimental::concurrent_hash_map_internal::
-			  scoped_lock_traits<tbb::spin_rw_mutex::scoped_lock>::
-				  initial_rw_state(true) == false);
+	UT_ASSERT(pmem::obj::concurrent_hash_map_internal::scoped_lock_traits<
+			  tbb::spin_rw_mutex::scoped_lock>::
+			  initial_rw_state(true) == false);
 #else
-	UT_ASSERT(
-		pmem::obj::experimental::concurrent_hash_map_internal::
-			scoped_lock_traits<
-				pmem::obj::experimental::
-					concurrent_hash_map_internal::
-						shared_mutex_scoped_lock<
-							pmem::obj::
-								shared_mutex>>::
-				initial_rw_state(true) == true);
+	UT_ASSERT(pmem::obj::concurrent_hash_map_internal::scoped_lock_traits<
+			  pmem::obj::concurrent_hash_map_internal::
+				  shared_mutex_scoped_lock<
+					  pmem::obj::shared_mutex>>::
+			  initial_rw_state(true) == true);
 #endif
 
 	size_t concurrency = 8;

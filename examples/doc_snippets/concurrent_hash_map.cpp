@@ -46,7 +46,7 @@ using namespace pmem::obj;
 
 // In this example we will be using concurrent_hash_map with p<int> type for
 // both keys and values
-using hashmap_type = experimental::concurrent_hash_map<p<int>, p<int>>;
+using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
 

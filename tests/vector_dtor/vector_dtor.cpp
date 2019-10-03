@@ -65,7 +65,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector default destructor.
+ * Test pmem::obj::vector default destructor.
  *
  * Call default destructor out of transaction scope.
  * Expects vector is empty and no exception is thrown.

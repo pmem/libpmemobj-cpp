@@ -20,8 +20,6 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 template <class C>
 void
 test_contiguous(const C &c)
@@ -33,7 +31,7 @@ test_contiguous(const C &c)
 
 struct Testcase1 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	C c;
 
 	void

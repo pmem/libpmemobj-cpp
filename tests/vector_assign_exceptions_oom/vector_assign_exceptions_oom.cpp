@@ -59,7 +59,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector assign() method
+ * Test pmem::obj::vector assign() method
  *
  * Replace content of the vector with content greater than pool size
  * Expect pmem::transaction_allor_error exception is thrown

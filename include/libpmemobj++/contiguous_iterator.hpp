@@ -50,9 +50,6 @@ namespace pmem
 namespace obj
 {
 
-namespace experimental
-{
-
 /**
  * Base class for iterators which satisfies RandomAccessIterator
  * and operate on contiguous memory.
@@ -428,8 +425,6 @@ struct basic_contiguous_iterator
 		std::swap(lhs.ptr, rhs.ptr);
 	}
 };
-
-} /* namespace experimental */
 
 } /* namespace obj */
 

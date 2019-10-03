@@ -40,9 +40,7 @@
 
 #include <iostream>
 
-namespace pmemobj_exp = pmem::obj::experimental;
-
-using string_type = pmemobj_exp::string;
+using string_type = pmem::obj::string;
 
 struct root {
 	pmem::obj::persistent_ptr<string_type> short_str;

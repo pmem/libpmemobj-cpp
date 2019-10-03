@@ -23,18 +23,17 @@
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 struct Throws;
 
 struct root {
 	nvobj::persistent_ptr<container_t<int>> v1;
 	nvobj::persistent_ptr<container_t<CompoundType>> v2;
-	nvobj::persistent_ptr<container_t<pmem_exp::string>> v3;
+	nvobj::persistent_ptr<container_t<pmem::obj::string>> v3;
 
-	nvobj::persistent_ptr<pmem_exp::array<pmem_exp::string, 5>>
+	nvobj::persistent_ptr<pmem::obj::array<pmem::obj::string, 5>>
 		string_test_arr;
-	nvobj::persistent_ptr<pmem_exp::string> default_str;
+	nvobj::persistent_ptr<pmem::obj::string> default_str;
 };
 
 template <typename C, typename Iterator, typename DefaultValueT>
@@ -216,7 +215,7 @@ main(int argc, char *argv[])
 	try {
 		nvobj::transaction::run(pop, [&] {
 			pop.root()->string_test_arr = nvobj::make_persistent<
-				pmem_exp::array<pmem_exp::string, 5>>();
+				pmem::obj::array<pmem::obj::string, 5>>();
 
 			(*pop.root()->string_test_arr)[0] = "1";
 			(*pop.root()->string_test_arr)[1] = "2";
@@ -225,7 +224,7 @@ main(int argc, char *argv[])
 			(*pop.root()->string_test_arr)[4] = "5";
 
 			pop.root()->default_str =
-				nvobj::make_persistent<pmem_exp::string>("0");
+				nvobj::make_persistent<pmem::obj::string>("0");
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

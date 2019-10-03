@@ -60,7 +60,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector assign() methods
+ * Test pmem::obj::vector assign() methods
  *
  * Replace content of the vector with content greater than max_size()
  * Expect std::length_error exception is thrown

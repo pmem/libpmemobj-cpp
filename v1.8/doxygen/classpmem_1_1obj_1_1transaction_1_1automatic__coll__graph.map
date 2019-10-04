@@ -1,0 +1,4 @@
+<map id="pmem::obj::transaction::automatic" name="pmem::obj::transaction::automatic">
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1transaction_1_1manual.html" title="C++ manual scope transaction class. " alt="" coords="5,5,160,47"/>
+<area shape="rect" id="node3" href="$classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html" title="Internal class for counting active exceptions. " alt="" coords="5,71,160,127"/>
+</map>

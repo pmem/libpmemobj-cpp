@@ -1,0 +1,17 @@
+<map id="libpmemobj++/detail/persistent_ptr_base.hpp" name="libpmemobj++/detail/persistent_ptr_base.hpp">
+<area shape="rect" id="node2" href="$persistent__ptr_8hpp.html" title="Persistent smart pointer. " alt="" coords="673,95,839,136"/>
+<area shape="rect" id="node3" href="$allocator_8hpp.html" title="Persistent memory aware allocator. " alt="" coords="59,199,242,225"/>
+<area shape="rect" id="node4" href="$check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent. " alt="" coords="267,184,413,240"/>
+<area shape="rect" id="node7" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="473,556,655,597"/>
+<area shape="rect" id="node8" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface. " alt="" coords="746,645,929,687"/>
+<area shape="rect" id="node10" href="$concurrent__hash__map_8hpp_source.html" title="libpmemobj++/experimental\l/concurrent_hash_map.hpp" alt="" coords="439,467,622,508"/>
+<area shape="rect" id="node14" href="$persistent__pool__ptr_8hpp_source.html" title="libpmemobj++/detail\l/persistent_pool_ptr.hpp" alt="" coords="587,288,749,329"/>
+<area shape="rect" id="node15" href="$array_8hpp.html" title="Array container with std::array compatible interface. " alt="" coords="875,556,1058,597"/>
+<area shape="rect" id="node16" href="$utils_8hpp.html" title="Libpmemobj C++ utils. " alt="" coords="925,199,1083,225"/>
+<area shape="rect" id="node5" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects. " alt="" coords="53,385,283,411"/>
+<area shape="rect" id="node11" href="$make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays. " alt="" coords="27,288,231,329"/>
+<area shape="rect" id="node12" href="$make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays. " alt="" coords="307,288,511,329"/>
+<area shape="rect" id="node13" href="$make__persistent__atomic_8hpp.html" title="Persistent_ptr atomic allocation functions for objects. " alt="" coords="307,377,511,419"/>
+<area shape="rect" id="node6" href="$temp__value_8hpp.html" title="temp_value template class for caching objects. " alt="" coords="117,467,256,508"/>
+<area shape="rect" id="node9" href="$string_8hpp.html" title="String typedefs for common character types. " alt="" coords="746,735,929,776"/>
+</map>

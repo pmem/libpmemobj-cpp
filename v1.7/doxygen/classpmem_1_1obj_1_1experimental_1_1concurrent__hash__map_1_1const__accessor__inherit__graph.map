@@ -1,0 +1,3 @@
+<map id="pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor" name="pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::const_accessor">
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1accessor.html" title="Allows write access to elements and combines data access, locking, and garbage collection. " alt="" coords="5,124,181,195"/>
+</map>

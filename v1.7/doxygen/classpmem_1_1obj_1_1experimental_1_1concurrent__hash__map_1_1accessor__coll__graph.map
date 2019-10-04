@@ -1,0 +1,5 @@
+<map id="pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::accessor" name="pmem::obj::experimental::concurrent_hash_map&lt; Key, T, Hash, KeyEqual &gt;::accessor">
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1experimental_1_1concurrent__hash__map_1_1const__accessor.html" title="Combines data access, locking, and garbage collection. " alt="" coords="471,5,647,76"/>
+<area shape="rect" id="node3" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="pmem::obj::persistent\l_ptr\&lt; node \&gt;" alt="" coords="217,20,365,61"/>
+<area shape="rect" id="node4" href="$classpmem_1_1detail_1_1persistent__ptr__base.html" title="Persistent_ptr base class. " alt="" coords="5,20,168,61"/>
+</map>

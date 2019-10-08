@@ -384,6 +384,18 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_layout concurrent_hash_map_layout/concurrent_hash_map_layout.cpp)
 	add_test_generic(NAME concurrent_hash_map_layout TRACERS none)
 
+	build_test(concurrent_hash_map_rehash_break concurrent_hash_map_rehash_break/concurrent_hash_map_rehash_break.cpp)
+
+	if(NOT WIN32)
+		# add 2 concurrent_hash_map_rehash_break tests
+		set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map_rehash_break)
+		set(CMAKE_SCRIPT ${TEST_DIR}/concurrent_hash_map_rehash_break)
+		foreach(TESTCASE RANGE 1)
+			configure_file("${CMAKE_SCRIPT}.cmake.in" "${CMAKE_SCRIPT}_${TESTCASE}.cmake" @ONLY)
+			add_test_generic(NAME concurrent_hash_map_rehash_break CASE ${TESTCASE} TRACERS none)
+		endforeach()
+	endif()
+
 	if(NOT TBB_FOUND)
 		message(WARNING "Skipping concurrent_hash_map_tbb test because Intel TBB library was not found")
 	else()

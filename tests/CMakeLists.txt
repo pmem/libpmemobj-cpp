@@ -328,6 +328,9 @@ if (ENABLE_STRING)
 	build_test(string_access string_access/string_access.cpp)
 	add_test_generic(NAME string_access TRACERS none memcheck pmemcheck)
 
+	build_test(string_npos string_npos/string_npos.cpp string_npos/string_npos_other_translation_unit.cpp)
+	add_test_generic(NAME string_npos TRACERS none)
+
 	build_test(string_capacity string_capacity/string_capacity.cpp)
 	add_test_generic(NAME string_capacity TRACERS none memcheck pmemcheck)
 

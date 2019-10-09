@@ -274,9 +274,7 @@ public:
 		    size_type count2) const;
 
 	/* Special value. The exact meaning depends on the context. */
-	enum : size_type {
-		npos = static_cast<size_type>(-1)
-	};
+	enum : size_type { npos = static_cast<size_type>(-1) };
 
 private:
 	using sso_type = array<value_type, sso_capacity + 1>;

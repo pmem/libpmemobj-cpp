@@ -9,15 +9,13 @@ services:
 
 env:
   matrix:
-    - TYPE=debug OS=fedora OS_VER=30 PUSH_IMAGE=1 AUTO_DOC_UPDATE=1
-    - TYPE=debug OS=ubuntu OS_VER=19.04 PUSH_IMAGE=1
-    - TYPE=debug OS=ubuntu OS_VER=19.04 COVERAGE=1
-    - TYPE=release OS=fedora OS_VER=30
-    - TYPE=release OS=ubuntu OS_VER=19.04
-    - TYPE=valgrind OS=ubuntu OS_VER=19.04
-    - TYPE=memcheck_drd OS=ubuntu OS_VER=19.04
-    - TYPE=coverity OS=ubuntu OS_VER=19.04
-    - TYPE=package OS=ubuntu OS_VER=19.04
+    - TYPE=debug OS=debian OS_VER=testing
+    - TYPE=debug OS=debian OS_VER=testing COVERAGE=1
+    - TYPE=release OS=debian OS_VER=testing PUSH_IMAGE=1
+    - TYPE=valgrind OS=debian OS_VER=testing
+    - TYPE=memcheck_drd OS=debian OS_VER=testing
+    - TYPE=coverity OS=debian OS_VER=testing
+    - TYPE=package OS=debian OS_VER=testing
 
 before_install:
   - echo $TRAVIS_COMMIT_RANGE

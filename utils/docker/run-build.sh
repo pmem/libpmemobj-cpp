@@ -73,7 +73,7 @@ function compile_example_standalone() {
 		return 1
 	fi
 
-	make
+	make -j$(nproc)
 	cd -
 }
 
@@ -110,7 +110,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 				-DTEST_DIR=/mnt/pmem \
 				-DTESTS_USE_FORCED_PMEM=1
 
-	make -j2
+	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder"  --timeout 540
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_clang_debug_cpp17
@@ -138,7 +138,7 @@ function build_gcc_debug() {
 				-DTEST_DIR=/mnt/pmem \
 				-DTESTS_USE_FORCED_PMEM=1
 
-	make -j2
+	make -j$(nproc)
 }
 
 ###############################################################################
@@ -207,7 +207,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 				-DBUILD_EXAMPLES=0 \
 				-DTESTS_USE_FORCED_PMEM=1
 
-	make -j2
+	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_gcc_release_cpp17_no_valgrind
@@ -241,10 +241,10 @@ function tests_package() {
 			-DBUILD_EXAMPLES=0 \
 			-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
-	make -j2
+	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
 
-	make package
+	make -j$(nproc) package
 
 	# Make sure there is no libpmemobj++ currently installed
 	echo "---------------------------- Error expected! ------------------------------"
@@ -293,7 +293,7 @@ function tests_findLIBPMEMOBJ_cmake()
 				-DCOVERAGE=$COVERAGE \
 				-DCXX_STANDARD=17
 
-	make -j2
+	make -j$(nproc)
 
 	cd ..
 	rm -r build

@@ -1125,6 +1125,9 @@ public:
 		hashcode_type m_now, m_old = m;
 
 		m_now = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
 
 		if (m_old != m_now)
 			return check_rehashing_collision(h, m_old, m = m_now);
@@ -2696,6 +2699,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		std::this_thread::yield();
 
 		m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
 	}
 
 	if (result) {
@@ -2764,6 +2770,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		std::this_thread::yield();
 
 		m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
 	}
 
 	if (result) {
@@ -2786,6 +2795,10 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 	node_ptr_t n;
 	hashcode_type const h = hasher{}(key);
 	hashcode_type m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
+
 	pool_base pop = get_pool_base();
 
 restart : {

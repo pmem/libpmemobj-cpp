@@ -81,6 +81,13 @@ function sudo_password() {
 	echo $USERPASS | sudo -Sk $*
 }
 
+# used for finding other version of clang, for example clang-9 or clang++-9
+function find_binary() {
+	NAME=$1
+	which $NAME 2>/dev/null || \
+		find /usr -iname $NAME | grep -e "bin/$NAME" | head -n1 | xargs
+}
+
 sudo_password mkdir /mnt/pmem
 sudo_password chmod 0777 /mnt/pmem
 sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
@@ -99,7 +106,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	cd build
 
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
-	CC=clang CXX=clang++ \
+	CC=$(find_binary clang) CXX=$(find_binary clang++) \
 	cmake .. -DDEVELOPER_MODE=1 \
 				-DCMAKE_BUILD_TYPE=Debug \
 				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \

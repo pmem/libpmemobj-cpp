@@ -108,6 +108,7 @@ base_dir=utils/docker/$images_dir_name
 
 # Check if committed file modifications require the Docker image to be rebuilt
 for file in $files; do
+	continue
 	# Check if modified files are relevant to the current build
 	if [[ $file =~ ^($base_dir)\/Dockerfile\.($OS)-($OS_VER)$ ]] \
 		|| [[ $file =~ ^($base_dir)\/.*\.sh$ ]]

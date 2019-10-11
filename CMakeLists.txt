@@ -126,6 +126,16 @@ if (PERL_VERSION_STRING VERSION_LESS 5.16)
 	message(FATAL_ERROR "Too old Perl (<5.16)")
 endif()
 
+# some tests and examples require clang >= v8.0
+set(CLANG_MINIMUM_REQUIRED "8.0")
+find_program(CLANG8 NAMES clang clang-8)
+if(CLANG8)
+	get_program_version(${CLANG8} CLANG_VERSION)
+	if(CLANG_VERSION VERSION_LESS CLANG_MINIMUM_REQUIRED)
+		unset(CLANG8 CACHE)
+	endif()
+endif()
+
 if(BUILD_TESTS OR BUILD_EXAMPLES)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(LIBPMEMOBJ REQUIRED libpmemobj>=${LIBPMEMOBJ_REQUIRED_VERSION})

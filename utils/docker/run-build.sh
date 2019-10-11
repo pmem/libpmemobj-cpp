@@ -147,7 +147,7 @@ function build_gcc_debug() {
 function tests_gcc_debug_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 540
+	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 540 --output-on-failure
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_gcc_debug
 	fi
@@ -162,7 +162,7 @@ function tests_gcc_debug_no_valgrind() {
 function tests_gcc_debug_valgrind_memcheck_drd() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -R "_memcheck|_drd" --timeout 700
+	ctest -R "_memcheck|_drd" --timeout 700 --output-on-failure
 	cd ..
 	rm -r build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -174,8 +174,8 @@ function tests_gcc_debug_valgrind_memcheck_drd() {
 function tests_gcc_debug_valgrind_other() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -E "_none|_memcheck|_drd" --timeout 540
-	ctest -R "_pmreorder" --timeout 540
+	ctest -E "_none|_memcheck|_drd" --timeout 540 --output-on-failure
+	ctest -R "_pmreorder" --timeout 540 --output-on-failure
 	cd ..
 	rm -r build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"

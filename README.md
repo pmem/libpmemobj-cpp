@@ -16,6 +16,10 @@ More information in include/libpmemobj++/README.md
 - cmake >= 3.3
 - libpmemobj-dev(el) >= 1.7 (http://pmem.io/pmdk/)
 - compiler with C++11 support
+- for testing and development:
+	- valgrind-devel (at best with [pmemcheck support](https://github.com/pmem/valgrind))
+	- clang format 8.0
+	- perl
 
 ## On Linux ##
 

@@ -126,6 +126,19 @@ if (PERL_VERSION_STRING VERSION_LESS 5.16)
 	message(FATAL_ERROR "Too old Perl (<5.16)")
 endif()
 
+# Some tests and examples require clang >= 8.0
+# because of the following bug:
+# https://bugs.llvm.org/show_bug.cgi?id=28280
+# which is fixed in clang v8.0.
+set(CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG "8.0")
+find_program(CLANG NAMES clang)
+if(CLANG)
+	get_program_version(${CLANG} CLANG_VERSION)
+	if(CLANG_VERSION VERSION_LESS CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG)
+		set(CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT 1)
+	endif()
+endif()
+
 if(BUILD_TESTS OR BUILD_EXAMPLES)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(LIBPMEMOBJ REQUIRED libpmemobj>=${LIBPMEMOBJ_REQUIRED_VERSION})

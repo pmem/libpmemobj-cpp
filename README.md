@@ -3,6 +3,7 @@ libpmemobj-cpp
 
 [![Build Status](https://travis-ci.org/pmem/libpmemobj-cpp.svg?branch=master)](https://travis-ci.org/pmem/libpmemobj-cpp)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/pmem/libpmemobj-cpp?branch/master?svg=true&pr=false)](https://ci.appveyor.com/project/pmem/libpmemobj-cpp/branch/master)
+[![libpmemobj-cpp version](https://img.shields.io/github/tag/pmem/libpmemobj-cpp.svg)](https://github.com/pmem/libpmemobj-cpp/releases/latest)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15911/badge.svg)](https://scan.coverity.com/projects/pmem-libpmemobj-cpp)
 [![Coverage Status](https://codecov.io/github/pmem/libpmemobj-cpp/coverage.svg?branch=master)](https://codecov.io/gh/pmem/libpmemobj-cpp/branch/master)
 
@@ -15,6 +16,10 @@ More information in include/libpmemobj++/README.md
 - cmake >= 3.3
 - libpmemobj-dev(el) >= 1.7 (http://pmem.io/pmdk/)
 - compiler with C++11 support
+- for testing and development:
+	- valgrind-devel (at best with [pmemcheck support](https://github.com/pmem/valgrind))
+	- clang format 8.0
+	- perl
 
 ## On Linux ##
 

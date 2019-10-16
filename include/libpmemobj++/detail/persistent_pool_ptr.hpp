@@ -45,9 +45,6 @@ namespace pmem
 namespace detail
 {
 
-using namespace pmem;
-using namespace pmem::obj;
-
 template <typename T>
 class persistent_pool_ptr {
 	template <typename Y>
@@ -123,7 +120,7 @@ public:
 	template <typename Y,
 		  typename = typename std::enable_if<
 			  std::is_convertible<Y *, T *>::value>::type>
-	persistent_pool_ptr(const persistent_ptr<Y> &r) noexcept
+	persistent_pool_ptr(const pmem::obj::persistent_ptr<Y> &r) noexcept
 	    : off(r.raw().off)
 	{
 		verify_type();
@@ -144,7 +141,7 @@ public:
 	 *
 	 * @param r Persistent pointer to the same type.
 	 */
-	persistent_pool_ptr(const persistent_ptr<T> &r) noexcept
+	persistent_pool_ptr(const pmem::obj::persistent_ptr<T> &r) noexcept
 	    : off(r.raw().off)
 	{
 		verify_type();
@@ -209,7 +206,7 @@ public:
 	 *	transaction failed.
 	 */
 	persistent_pool_ptr &
-	operator=(const persistent_ptr<T> &r)
+	operator=(const pmem::obj::persistent_ptr<T> &r)
 	{
 		conditional_add_to_tx(this);
 		this->off = r.raw().off;
@@ -273,7 +270,7 @@ public:
 		  typename = typename std::enable_if<
 			  std::is_convertible<Y *, T *>::value>::type>
 	persistent_pool_ptr &
-	operator=(const persistent_ptr<Y> &r)
+	operator=(const pmem::obj::persistent_ptr<Y> &r)
 	{
 		conditional_add_to_tx(this);
 		this->off = r.raw().off;
@@ -308,11 +305,11 @@ public:
 	 *
 	 * @return a direct pointer to the object.
 	 */
-	persistent_ptr<T>
+	pmem::obj::persistent_ptr<T>
 	get_persistent_ptr(uint64_t pool_uuid) const noexcept
 	{
 		PMEMoid oid = {pool_uuid, this->off};
-		return persistent_ptr<T>(oid);
+		return pmem::obj::persistent_ptr<T>(oid);
 	}
 
 	/**

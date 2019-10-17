@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * concurrent_hash_map_insert_erase.cpp -- pmem::obj::concurrent_hash_map test
- *
- */
-
-#include "concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
+
+#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+
+template <typename T>
+using container_type = pmem::obj::experimental::enumerable_thread_specific<T>;
 
 int
 main(int argc, char *argv[])
@@ -44,50 +43,15 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 2) {
-		UT_FATAL("usage: %s file-name", argv[0]);
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
 	}
 
-	const char *path = argv[1];
+	static_assert(sizeof(container_type<int>) == 2200);
+	static_assert(sizeof(container_type<char>) == 2200);
+	static_assert(sizeof(container_type<container_type<int>>) == 2200);
 
-	nvobj::pool<root> pop;
+	static_assert(std::is_standard_layout<container_type<char>>::value, "");
 
-	try {
-		pop = nvobj::pool<root>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
-		pmem::obj::transaction::run(pop, [&] {
-			pop.root()->cons =
-				nvobj::make_persistent<persistent_map_type>();
-		});
-	} catch (pmem::pool_error &pe) {
-		UT_FATAL("!pool::create: %s %s", pe.what(), path);
-	}
-
-	/* Test that scoped_lock traits is working correctly */
-#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-	UT_ASSERT(pmem::detail::scoped_lock_traits<
-			  tbb::spin_rw_mutex::scoped_lock>::
-			  initial_rw_state(true) == false);
-#else
-	UT_ASSERT(pmem::detail::scoped_lock_traits<
-			  pmem::detail::shared_mutex_scoped_lock<
-				  pmem::obj::shared_mutex>>::
-			  initial_rw_state(true) == true);
-#endif
-
-	size_t concurrency = 8;
-	if (On_drd)
-		concurrency = 2;
-	std::cout << "Running tests for " << concurrency << " threads"
-		  << std::endl;
-
-	insert_and_erase_test<persistent_map_type::accessor,
-			      persistent_map_type::value_type>(pop,
-							       concurrency);
-
-	insert_mt_test(pop, concurrency);
-
-	insert_erase_lookup_test(pop, concurrency);
-
-	pop.close();
 	return 0;
 }

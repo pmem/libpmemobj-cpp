@@ -83,6 +83,7 @@ option(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE "enable testing of pmem::obj::experim
 option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and exponential_size_policy" OFF)
 option(ENABLE_SEGMENT_VECTOR_ARRAY_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and fixed_size_policy" OFF)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
+option(ENABLE_ENUMERABLE_THREAD_SPECIFIC "enable installation and testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
@@ -246,7 +247,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "contiguous_iterator.hpp" EXCLUDE
 	PATTERN "slice.hpp" EXCLUDE
 	PATTERN "concurrent_hash_map.hpp" EXCLUDE
-	PATTERN "segment_vector.hpp" EXCLUDE)
+	PATTERN "segment_vector.hpp" EXCLUDE
+	PATTERN "enumerable_thread_specific.hpp" EXCLUDE)
 
 if (ENABLE_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
@@ -272,6 +274,10 @@ endif()
 
 if (ENABLE_SEGMENT_VECTOR)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "segment_vector.hpp")
+endif()
+
+if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
 endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples

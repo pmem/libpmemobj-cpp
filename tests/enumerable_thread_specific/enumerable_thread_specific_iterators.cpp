@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * concurrent_hash_map_insert_erase.cpp -- pmem::obj::concurrent_hash_map test
- *
- */
-
-#include "concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
+
+#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+
+#include <thread>
+
+namespace nvobj = pmem::obj;
+namespace pexp = pmem::obj::experimental;
+
+using container_type = pexp::enumerable_thread_specific<size_t>;
+
+struct root {
+	nvobj::persistent_ptr<container_type> pptr;
+};
+
+template <typename Function>
+void
+parallel_exec(size_t concurrency, Function f)
+{
+	std::vector<std::thread> threads;
+	threads.reserve(concurrency);
+
+	for (size_t i = 0; i < concurrency; ++i) {
+		threads.emplace_back(f, i);
+	}
+
+	for (auto &t : threads) {
+		t.join();
+	}
+}
+
+void
+test(nvobj::pool<struct root> &pop)
+{
+	// Adding more concurrency will increase DRD test time
+	const size_t concurrency = 16;
+
+	auto tls = pop.root()->pptr;
+
+	UT_ASSERT(tls != nullptr);
+
+	parallel_exec(concurrency,
+		      [&](size_t thread_index) { tls->local() = 99; });
+
+	UT_ASSERT(tls->size() == concurrency);
+
+	container_type &ref = *tls;
+	for (auto &e : ref) {
+		UT_ASSERT(e == 99);
+	}
+}
 
 int
 main(int argc, char *argv[])
@@ -44,50 +88,32 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 2) {
-		UT_FATAL("usage: %s file-name", argv[0]);
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
 	}
 
-	const char *path = argv[1];
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "TLSTest: enumerable_thread_specific_access",
+		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
-	nvobj::pool<root> pop;
+	auto r = pop.root();
 
 	try {
-		pop = nvobj::pool<root>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
-		pmem::obj::transaction::run(pop, [&] {
-			pop.root()->cons =
-				nvobj::make_persistent<persistent_map_type>();
+		nvobj::transaction::run(pop, [&] {
+			r->pptr = nvobj::make_persistent<container_type>();
 		});
-	} catch (pmem::pool_error &pe) {
-		UT_FATAL("!pool::create: %s %s", pe.what(), path);
+
+		test(pop);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_type>(r->pptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
 	}
 
-	/* Test that scoped_lock traits is working correctly */
-#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-	UT_ASSERT(pmem::detail::scoped_lock_traits<
-			  tbb::spin_rw_mutex::scoped_lock>::
-			  initial_rw_state(true) == false);
-#else
-	UT_ASSERT(pmem::detail::scoped_lock_traits<
-			  pmem::detail::shared_mutex_scoped_lock<
-				  pmem::obj::shared_mutex>>::
-			  initial_rw_state(true) == true);
-#endif
-
-	size_t concurrency = 8;
-	if (On_drd)
-		concurrency = 2;
-	std::cout << "Running tests for " << concurrency << " threads"
-		  << std::endl;
-
-	insert_and_erase_test<persistent_map_type::accessor,
-			      persistent_map_type::value_type>(pop,
-							       concurrency);
-
-	insert_mt_test(pop, concurrency);
-
-	insert_erase_lookup_test(pop, concurrency);
-
 	pop.close();
+
 	return 0;
 }

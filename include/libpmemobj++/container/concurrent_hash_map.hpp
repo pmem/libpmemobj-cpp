@@ -40,6 +40,7 @@
 
 #include <libpmemobj++/detail/atomic_backoff.hpp>
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/lock_traits.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 
 #include <libpmemobj++/make_persistent.hpp>
@@ -82,176 +83,11 @@ namespace pmem
 namespace obj
 {
 
-namespace concurrent_hash_map_internal
-{
-template <typename SharedMutexT>
-class shared_mutex_scoped_lock {
-	using rw_mutex_type = SharedMutexT;
-
-public:
-	shared_mutex_scoped_lock(const shared_mutex_scoped_lock &) = delete;
-	shared_mutex_scoped_lock &
-	operator=(const shared_mutex_scoped_lock &) = delete;
-
-	/** Default constructor. Construct lock that has not acquired a mutex.*/
-	shared_mutex_scoped_lock() : mutex(nullptr), is_writer(false)
-	{
-	}
-
-	/** Acquire lock on given mutex. */
-	shared_mutex_scoped_lock(rw_mutex_type &m, bool write = true)
-	    : mutex(nullptr)
-	{
-		acquire(m, write);
-	}
-
-	/** Release lock (if lock is held). */
-	~shared_mutex_scoped_lock()
-	{
-		if (mutex)
-			release();
-	}
-
-	/** Acquire lock on given mutex. */
-	void
-	acquire(rw_mutex_type &m, bool write = true)
-	{
-		is_writer = write;
-		mutex = &m;
-		if (write)
-			mutex->lock();
-		else
-			mutex->lock_shared();
-	}
-
-	/**
-	 * Release lock.
-	 */
-	void
-	release()
-	{
-		assert(mutex);
-		rw_mutex_type *m = mutex;
-		mutex = nullptr;
-		if (is_writer) {
-			m->unlock();
-		} else {
-			m->unlock_shared();
-		}
-	}
-
-	/**
-	 * Try acquire lock on given mutex.
-	 *
-	 */
-	bool
-	try_acquire(rw_mutex_type &m, bool write = true)
-	{
-		assert(!mutex);
-		bool result;
-		is_writer = write;
-		result = write ? m.try_lock() : m.try_lock_shared();
-		if (result)
-			mutex = &m;
-		return result;
-	}
-
-protected:
-	/**
-	 * The pointer to the current mutex that is held, or NULL if no mutex is
-	 * held.
-	 */
-	rw_mutex_type *mutex;
-	/**
-	 * If mutex!=NULL, then is_writer is true if holding a writer lock,
-	 * false if holding a reader lock. Not defined if not holding a lock.
-	 */
-	bool is_writer;
-}; /* class shared_mutex_scoped_lock */
-
-template <typename ScopedLockType>
-using scoped_lock_upgrade_to_writer =
-	decltype(std::declval<ScopedLockType>().upgrade_to_writer());
-
-template <typename ScopedLockType>
-using scoped_lock_has_upgrade_to_writer =
-	detail::supports<ScopedLockType, scoped_lock_upgrade_to_writer>;
-
-template <typename ScopedLockType>
-using scoped_lock_downgrade_to_reader =
-	decltype(std::declval<ScopedLockType>().downgrade_to_reader());
-
-template <typename ScopedLockType>
-using scoped_lock_has_downgrade_to_reader =
-	detail::supports<ScopedLockType, scoped_lock_downgrade_to_reader>;
-
-template <typename ScopedLockType,
-	  bool = scoped_lock_has_upgrade_to_writer<ScopedLockType>::value
-		  &&scoped_lock_has_downgrade_to_reader<ScopedLockType>::value>
-class scoped_lock_traits {
-public:
-	using scope_lock_type = ScopedLockType;
-
-	static bool
-	initial_rw_state(bool write)
-	{
-		/* For upgradeable locks, initial state is always read */
-		return false;
-	}
-
-	static bool
-	upgrade_to_writer(scope_lock_type &lock)
-	{
-		return lock.upgrade_to_writer();
-	}
-
-	static bool
-	downgrade_to_reader(scope_lock_type &lock)
-	{
-		return lock.downgrade_to_reader();
-	}
-};
-
-template <typename ScopedLockType>
-class scoped_lock_traits<ScopedLockType, false> {
-public:
-	using scope_lock_type = ScopedLockType;
-
-	static bool
-	initial_rw_state(bool write)
-	{
-		/* For non-upgradeable locks, we take lock in required mode
-		 * immediately */
-		return write;
-	}
-
-	static bool
-	upgrade_to_writer(scope_lock_type &lock)
-	{
-		/* This overload is for locks which do not support upgrade
-		 * operation. For those locks, upgrade_to_writer should not be
-		 * called when holding a read lock */
-		return true;
-	}
-
-	static bool
-	downgrade_to_reader(scope_lock_type &lock)
-	{
-		/* This overload is for locks which do not support downgrade
-		 * operation. For those locks, downgrade_to_reader should never
-		 * be called */
-		assert(false);
-
-		return false;
-	}
-};
-}
-
 template <typename Key, typename T, typename Hash = std::hash<Key>,
 	  typename KeyEqual = std::equal_to<Key>,
 	  typename MutexType = pmem::obj::shared_mutex,
-	  typename ScopedLockType = concurrent_hash_map_internal::
-		  shared_mutex_scoped_lock<MutexType>>
+	  typename ScopedLockType =
+		  pmem::detail::shared_mutex_scoped_lock<MutexType>>
 class concurrent_hash_map;
 
 /** @cond INTERNAL */
@@ -1584,7 +1420,7 @@ protected:
 	using segment_traits_t = typename hash_map_base::segment_traits_t;
 	using segment_facade_t = typename hash_map_base::segment_facade_t;
 	using scoped_lock_traits_type =
-		concurrent_hash_map_internal::scoped_lock_traits<scoped_t>;
+		pmem::detail::scoped_lock_traits<scoped_t>;
 
 	friend class const_accessor;
 	using persistent_node_ptr_t = detail::persistent_pool_ptr<node>;
@@ -1658,6 +1494,13 @@ protected:
 			assert(my_b->is_rehashed(std::memory_order_relaxed));
 		}
 
+		bool
+		upgrade_to_writer()
+		{
+			return pmem::detail::scoped_lock_traits<
+				bucket_lock_type>::upgrade_to_writer(*this);
+		}
+
 		/**
 		 * Check whether bucket is locked for write
 		 */
@@ -1719,6 +1562,18 @@ protected:
 			assert(my_b->is_rehashed(std::memory_order_relaxed));
 		}
 
+		bool
+		upgrade_to_writer()
+		{
+			return true;
+		}
+
+		bool
+		downgrade_to_reader()
+		{
+			return true;
+		}
+
 		/**
 		 * This method is added for consistency with bucket_accessor
 		 * class
@@ -1768,8 +1623,7 @@ protected:
 			serial, serial_bucket_accessor, bucket_accessor>::type;
 
 		using scoped_lock_traits_type =
-			concurrent_hash_map_internal::scoped_lock_traits<
-				accessor_type>;
+			pmem::detail::scoped_lock_traits<accessor_type>;
 
 		/* First two bucket should be always rehashed */
 		assert(h > 1);
@@ -1804,8 +1658,7 @@ protected:
 
 			if ((c & mask) == h) {
 				if (!b_old.is_writer() &&
-				    !scoped_lock_traits_type::upgrade_to_writer(
-					    b_old)) {
+				    !b_old.upgrade_to_writer()) {
 					goto restart;
 					/* node ptr can be invalid due to
 					 * concurrent erase */

@@ -693,4 +693,18 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_layout TRACERS none)
 endif()
 
+if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
+	build_test(enumerable_thread_specific_access enumerable_thread_specific/enumerable_thread_specific_access.cpp)
+	add_test_generic(NAME enumerable_thread_specific_access TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(enumerable_thread_specific_size enumerable_thread_specific/enumerable_thread_specific_size.cpp)
+	add_test_generic(NAME enumerable_thread_specific_size TRACERS none memcheck pmemcheck drd helgrind)
+
+	# build_test_tbb(enumerable_thread_specific_tbb_access enumerable_thread_specific/enumerable_thread_specific_tbb_access.cpp)
+	# add_test_generic(NAME enumerable_thread_specific_tbb_access TRACERS none memcheck pmemcheck)
+
+	build_test_tbb(enumerable_thread_specific_iterators enumerable_thread_specific/enumerable_thread_specific_iterators.cpp)
+	add_test_generic(NAME enumerable_thread_specific_iterators TRACERS none memcheck pmemcheck drd helgrind)
+endif()
+
 add_subdirectory(external)

@@ -86,10 +86,6 @@ RUN ./install-valgrind.sh
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh dpkg
 
-# Add links to clang-9
-RUN ln -s /usr/lib/llvm-9/bin/clang /usr/bin/clang
-RUN ln -s /usr/lib/llvm-9/bin/clang++ /usr/bin/clang++
-
 # Add user
 ENV USER user
 ENV USERPASS pass

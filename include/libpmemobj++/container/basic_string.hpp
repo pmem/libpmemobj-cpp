@@ -2856,17 +2856,15 @@ basic_string<CharT, Traits>::find(const CharT *s, size_type pos,
 		return pos;
 
 	while (pos + count <= sz) {
-		if (traits_type::find(data() + pos, sz - pos, s[0])) {
-			if (traits_type::compare(data() + pos, s, count) == 0) {
-				return pos;
-			} else {
-				++pos;
-			}
-		} else {
+		auto found = traits_type::find(data() + pos, sz - pos, s[0]);
+		if (!found)
 			return npos;
+		pos = static_cast<size_type>(std::distance(data(), found));
+		if (traits_type::compare(found, s, count) == 0) {
+			return pos;
 		}
+		++pos;
 	}
-
 	return npos;
 }
 

@@ -35,7 +35,7 @@
  *
  */
 
-#include "concurrent_hash_map_test.hpp"
+#include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
 
 int

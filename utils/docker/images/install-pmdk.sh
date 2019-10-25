@@ -36,9 +36,12 @@
 
 set -e
 
+# stable-1.7: Merge pull request #4057 from ldorau/Add-BuildRequires-fdupes-to-spec-for-opensuse, 25.10.2019
+PMDK_VERSION="bfec2ca71b20ac4b56e1d7be9f51aa875d7c5efc"
+
 git clone https://github.com/pmem/pmdk
 cd pmdk
-git checkout 1.7
+git checkout $PMDK_VERSION
 
 sudo make -j2 install prefix=/opt/pmdk
 

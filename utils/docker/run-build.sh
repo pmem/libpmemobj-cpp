@@ -267,7 +267,8 @@ function tests_package() {
 	if [ $PACKAGE_MANAGER = "deb" ]; then
 		sudo_password dpkg -r --force-all pkg-config
 	elif [ $PACKAGE_MANAGER = "rpm" ]; then
-		sudo_password rpm -e --nodeps pkgconf
+		# most rpm based OSes use the 'pkgconf' name, only openSUSE uses 'pkg-config'
+		sudo_password rpm -e --nodeps pkgconf || sudo_password rpm -e --nodeps pkg-config
 	fi
 
 	# Verify installed package using find_package

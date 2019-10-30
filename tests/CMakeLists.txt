@@ -352,10 +352,16 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_insert_lookup concurrent_hash_map/concurrent_hash_map_insert_lookup.cpp)
-	add_test_generic(NAME concurrent_hash_map_insert_lookup TRACERS none memcheck pmemcheck drd helgrind)
+	add_test_generic(NAME concurrent_hash_map_insert_lookup TRACERS none memcheck pmemcheck helgrind)
 
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map/concurrent_hash_map_insert_erase.cpp)
-	add_test_generic(NAME concurrent_hash_map_insert_erase TRACERS none memcheck pmemcheck drd helgrind)
+	add_test_generic(NAME concurrent_hash_map_insert_erase TRACERS none memcheck pmemcheck helgrind)
+
+	if (TESTS_LONG)
+		add_test_generic(NAME concurrent_hash_map_insert_lookup TRACERS drd)
+
+		add_test_generic(NAME concurrent_hash_map_insert_erase TRACERS drd)
+	endif()
 
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash TRACERS none memcheck pmemcheck helgrind)

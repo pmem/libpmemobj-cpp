@@ -51,7 +51,7 @@ sudo make -j$(nproc) install prefix=/opt/pmdk
 [ "$PACKAGE_MANAGER" == "" ] && exit 0
 
 sudo mkdir /opt/pmdk-pkg
-NDCTL_ENABLE=n make -j$(nproc) BUILD_PACKAGE_CHECK=n "$PACKAGE_MANAGER"
+make -j$(nproc) BUILD_PACKAGE_CHECK=n "$PACKAGE_MANAGER"
 
 if [ "$PACKAGE_MANAGER" = "dpkg" ]; then
 	sudo mv dpkg/*.deb /opt/pmdk-pkg/

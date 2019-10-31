@@ -82,7 +82,7 @@ RUN dnf update -y \
 
 # Install libndctl
 COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh fedora
+RUN ./install-libndctl.sh centos
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh

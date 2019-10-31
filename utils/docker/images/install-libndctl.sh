@@ -76,9 +76,21 @@ rm -rf $RPMDIR
 
 else
 
+echo "==== set OS-specific options ===="
+OS_SPECIFIC=""
+LIBDIR=/usr/lib
+case $(echo $OS | cut -d'-' -f1) in
+	centos|opensuse)
+		LIBDIR=/usr/lib64
+		;;
+	archlinux)
+		OS_SPECIFIC="--disable-dependency-tracking"
+		;;
+esac
+
 echo "==== build ndctl ===="
 ./autogen.sh
-./configure
+./configure --libdir=$LIBDIR $OS_SPECIFIC
 make -j$(nproc)
 
 echo "==== install ndctl ===="

@@ -57,6 +57,7 @@ RUN zypper install -y \
 	gcc \
 	gdb \
 	git \
+	keyutils-devel \
 	libjson-c-devel \
 	libkmod-devel \
 	libtool \

@@ -57,6 +57,7 @@ RUN dnf update -y \
 	gdb \
 	git \
 	json-c-devel \
+	keyutils-libs-devel \
 	kmod-devel \
 	libtool \
 	libudev-devel \

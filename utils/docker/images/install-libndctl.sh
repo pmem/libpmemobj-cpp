@@ -41,7 +41,7 @@ OS=$1
 echo "==== clone ndctl repo ===="
 git clone https://github.com/pmem/ndctl.git
 cd ndctl
-git checkout tags/v60.1
+git checkout tags/v64.1
 
 if [ "$OS" = "fedora" ]; then
 
@@ -59,11 +59,6 @@ echo "==== build ndctl ===="
 ./autogen.sh
 ./configure
 make -j$(nproc)
-
-echo "==== update ndctl.spec ===="
-# XXX: pre-process ndctl.spec to remove dependency on libpmem
-# To be removed once ndctl v60 is available.
-sed -i -e "/pkgconfig(libpmem)/d" -e "s/--with-libpmem//g" $SPEC
 
 echo "==== build ndctl packages ===="
 rpmbuild -ba $SPEC

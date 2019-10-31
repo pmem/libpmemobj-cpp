@@ -890,9 +890,6 @@ public:
 		uint32_t incompat;
 	};
 
-	/** Features supported by this header */
-	static constexpr features header_features = {0, 0};
-
 	/* --------------------------------------------------------- */
 
 	/** ID of persistent memory pool where hash map resides. */
@@ -900,7 +897,7 @@ public:
 
 	/** Specifies features of a hashmap, used to check compatibility between
 	 * header and the data */
-	features layout_features = (features)header_features;
+	features layout_features;
 
 	/** In future, my_mask can be implemented using v<> (8 bytes
 	 * overhead) */
@@ -939,6 +936,13 @@ public:
 
 	/* --------------------------------------------------------- */
 
+	/** Features supported by this header */
+	static constexpr features
+	header_features()
+	{
+		return {0, 0};
+	}
+
 	const std::atomic<hashcode_type> &
 	mask() const noexcept
 	{
@@ -970,6 +974,7 @@ public:
 		VALGRIND_HG_DISABLE_CHECKING(&my_size, sizeof(my_size));
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
+		layout_features = header_features();
 
 		my_size.get_rw() = 0;
 		PMEMoid oid = pmemobj_oid(this);
@@ -1125,6 +1130,9 @@ public:
 		hashcode_type m_now, m_old = m;
 
 		m_now = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
 
 		if (m_old != m_now)
 			return check_rehashing_collision(h, m_old, m = m_now);
@@ -1857,7 +1865,7 @@ protected:
 	void
 	check_features()
 	{
-		if (layout_features.incompat != header_features.incompat)
+		if (layout_features.incompat != header_features().incompat)
 			throw pmem::layout_error(
 				"Incompat flags mismatch, for more details go to: https://pmem.io/pmdk/cpp_obj/ \n");
 	}
@@ -2696,6 +2704,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		std::this_thread::yield();
 
 		m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
 	}
 
 	if (result) {
@@ -2764,6 +2775,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 		std::this_thread::yield();
 
 		m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
 	}
 
 	if (result) {
@@ -2786,6 +2800,10 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 	node_ptr_t n;
 	hashcode_type const h = hasher{}(key);
 	hashcode_type m = mask().load(std::memory_order_acquire);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
+
 	pool_base pop = get_pool_base();
 
 restart : {

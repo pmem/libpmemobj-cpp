@@ -73,7 +73,7 @@ function compile_example_standalone() {
 		return 1
 	fi
 
-	make
+	make -j$(nproc)
 	cd -
 }
 
@@ -110,7 +110,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 				-DTEST_DIR=/mnt/pmem \
 				-DTESTS_USE_FORCED_PMEM=1
 
-	make -j2
+	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder"  --timeout 540
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_clang_debug_cpp17
@@ -138,7 +138,7 @@ function build_gcc_debug() {
 				-DTEST_DIR=/mnt/pmem \
 				-DTESTS_USE_FORCED_PMEM=1
 
-	make -j2
+	make -j$(nproc)
 }
 
 ###############################################################################
@@ -147,7 +147,7 @@ function build_gcc_debug() {
 function tests_gcc_debug_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 540
+	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 540 --output-on-failure
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_gcc_debug
 	fi
@@ -162,7 +162,7 @@ function tests_gcc_debug_no_valgrind() {
 function tests_gcc_debug_valgrind_memcheck_drd() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -R "_memcheck|_drd" --timeout 700
+	ctest -R "_memcheck|_drd" --timeout 700 --output-on-failure
 	cd ..
 	rm -r build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -174,8 +174,8 @@ function tests_gcc_debug_valgrind_memcheck_drd() {
 function tests_gcc_debug_valgrind_other() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug
-	ctest -E "_none|_memcheck|_drd" --timeout 540
-	ctest -R "_pmreorder" --timeout 540
+	ctest -E "_none|_memcheck|_drd" --timeout 540 --output-on-failure
+	ctest -R "_pmreorder" --timeout 540 --output-on-failure
 	cd ..
 	rm -r build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -207,7 +207,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 				-DBUILD_EXAMPLES=0 \
 				-DTESTS_USE_FORCED_PMEM=1
 
-	make -j2
+	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_gcc_release_cpp17_no_valgrind
@@ -231,8 +231,7 @@ function tests_package() {
 		sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
 		sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
 	elif [ $PACKAGE_MANAGER = "rpm" ]; then
-		sudo_password rpm -i /opt/pmdk-pkg/libpmem-*.rpm
-		sudo_password rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
+		sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
 	fi
 
 	CC=gcc CXX=g++ \
@@ -241,10 +240,10 @@ function tests_package() {
 			-DBUILD_EXAMPLES=0 \
 			-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
-	make -j2
+	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
 
-	make package
+	make -j$(nproc) package
 
 	# Make sure there is no libpmemobj++ currently installed
 	echo "---------------------------- Error expected! ------------------------------"
@@ -267,7 +266,8 @@ function tests_package() {
 	if [ $PACKAGE_MANAGER = "deb" ]; then
 		sudo_password dpkg -r --force-all pkg-config
 	elif [ $PACKAGE_MANAGER = "rpm" ]; then
-		sudo_password rpm -e --nodeps pkgconf
+		# most rpm based OSes use the 'pkgconf' name, only openSUSE uses 'pkg-config'
+		sudo_password rpm -e --nodeps pkgconf || sudo_password rpm -e --nodeps pkg-config
 	fi
 
 	# Verify installed package using find_package
@@ -293,7 +293,7 @@ function tests_findLIBPMEMOBJ_cmake()
 				-DCOVERAGE=$COVERAGE \
 				-DCXX_STANDARD=17
 
-	make -j2
+	make -j$(nproc)
 
 	cd ..
 	rm -r build

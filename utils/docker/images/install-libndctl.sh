@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@ git archive --format=tar --prefix="ndctl-${VERSION}/" HEAD | gzip > "$RPMDIR/SOU
 echo "==== build ndctl ===="
 ./autogen.sh
 ./configure
-make
+make -j$(nproc)
 
 echo "==== update ndctl.spec ===="
 # XXX: pre-process ndctl.spec to remove dependency on libpmem
@@ -79,10 +79,10 @@ else
 echo "==== build ndctl ===="
 ./autogen.sh
 ./configure
-make
+make -j$(nproc)
 
 echo "==== install ndctl ===="
-make install
+make -j$(nproc) install
 
 echo "==== cleanup ===="
 

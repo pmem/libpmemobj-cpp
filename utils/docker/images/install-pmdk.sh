@@ -43,10 +43,10 @@ git clone https://github.com/pmem/pmdk
 cd pmdk
 git checkout $PMDK_VERSION
 
-sudo make -j2 install prefix=/opt/pmdk
+sudo make -j$(nproc) install prefix=/opt/pmdk
 
 sudo mkdir /opt/pmdk-pkg
-NDCTL_ENABLE=n make BUILD_PACKAGE_CHECK=n -j2 "$1"
+NDCTL_ENABLE=n make -j$(nproc) BUILD_PACKAGE_CHECK=n "$1"
 
 if [ "$1" = "dpkg" ]; then
 	sudo mv dpkg/*.deb /opt/pmdk-pkg/

@@ -78,7 +78,11 @@ else
 
 echo "==== build ndctl ===="
 ./autogen.sh
-./configure
+if [ "$OS" = "archlinux-base" ]; then
+	./configure --disable-dependency-tracking
+else
+	./configure
+fi
 make -j$(nproc)
 
 echo "==== install ndctl ===="

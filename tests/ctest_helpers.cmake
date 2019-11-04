@@ -151,6 +151,11 @@ function(build_test name)
 endfunction()
 
 function(build_test_tbb name)
+	# Make sure that TBB will not add its include directory
+	# to gcc's CXX_INCLUDES flag with the '-isystem' option,
+	# what can cause compilation errors, but the '-I' option
+	# will be used instead.
+	set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
 	build_test(${name} ${ARGN})
 	target_link_libraries(${name} ${TBB_LIBRARIES})
 endfunction()

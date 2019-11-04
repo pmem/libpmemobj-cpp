@@ -90,9 +90,9 @@ RUN ./install-pmdk.sh rpm
 
 # Add user
 ENV USER user
-ENV USERPASS p1a2s3s4
+ENV USERPASS pass
 RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
+RUN echo "$USER:$USERPASS" | chpasswd
 RUN gpasswd wheel -a $USER
 USER $USER
 

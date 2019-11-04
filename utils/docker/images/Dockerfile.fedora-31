@@ -30,51 +30,52 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
+# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
-FROM ubuntu:19.04
-MAINTAINER marcin.slusarz@intel.com
+FROM fedora:31
+MAINTAINER szymon.romik@intel.com
 
-ENV DEBIAN_FRONTEND noninteractive
-
-# Update the Apt cache and install basic tools
-RUN apt-get update \
- && apt-get install -y software-properties-common \
+# Install basic tools
+RUN dnf update -y \
+ && dnf install -y \
 	asciidoc \
 	autoconf \
+	automake \
+	bash-completion \
 	clang \
-	clang-format \
 	cmake \
-	curl \
-	debhelper \
-	devscripts \
+	daxctl-devel \
 	doxygen \
 	gcc \
 	gdb \
 	git \
-	graphviz \
-	libdaxctl-dev \
-	libjson-c-dev \
-	libkmod-dev \
-	libncurses5-dev \
-	libndctl-dev \
-	libsfml-dev \
-	libtbb-dev \
-	libtext-diff-perl \
-	libudev-dev \
-	libunwind-dev \
-	llvm \
-	pkg-config \
-	ruby \
+	hub \
+	json-c-devel \
+	kmod-devel \
+	libtool \
+	libudev-devel \
+	libunwind-devel \
+	libuuid-devel \
+	make \
+	man \
+	ncurses-devel \
+	ndctl-devel \
+	open-sans-fonts \
+	perl-Text-Diff \
+	rpm-build \
+	rpm-build-libs \
+	rpmdevtools \
+	SFML-devel \
 	sudo \
-	tzdata \
-	uuid-dev \
+	tar \
+	tbb-devel \
 	wget \
-	whois \
- && rm -rf /var/lib/apt/lists/*
+	which \
+	xmlto \
+ && dnf clean all
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
@@ -82,16 +83,19 @@ RUN ./install-valgrind.sh
 
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh dpkg
+RUN ./install-pmdk.sh rpm
 
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
+RUN useradd -m $USER
+RUN echo "$USER:$USERPASS" | chpasswd
+RUN gpasswd wheel -a $USER
 USER $USER
 
 # Set required environment variables
-ENV OS ubuntu
-ENV OS_VER 19.04
-ENV PACKAGE_MANAGER deb
+ENV OS fedora
+ENV OS_VER 31
+ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
+

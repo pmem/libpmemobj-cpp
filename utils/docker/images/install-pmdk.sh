@@ -36,6 +36,8 @@
 
 set -e
 
+PACKAGE_MANAGER=$1
+
 # stable-1.7: Merge pull request #4057 from ldorau/Add-BuildRequires-fdupes-to-spec-for-opensuse, 25.10.2019
 PMDK_VERSION="bfec2ca71b20ac4b56e1d7be9f51aa875d7c5efc"
 
@@ -45,12 +47,15 @@ git checkout $PMDK_VERSION
 
 sudo make -j$(nproc) install prefix=/opt/pmdk
 
-sudo mkdir /opt/pmdk-pkg
-NDCTL_ENABLE=n make -j$(nproc) BUILD_PACKAGE_CHECK=n "$1"
+# Do not create nor test any packages if PACKAGE_MANAGER is not set.
+[ "$PACKAGE_MANAGER" == "" ] && exit 0
 
-if [ "$1" = "dpkg" ]; then
+sudo mkdir /opt/pmdk-pkg
+NDCTL_ENABLE=n make -j$(nproc) BUILD_PACKAGE_CHECK=n "$PACKAGE_MANAGER"
+
+if [ "$PACKAGE_MANAGER" = "dpkg" ]; then
 	sudo mv dpkg/*.deb /opt/pmdk-pkg/
-elif [ "$1" = "rpm" ]; then
+elif [ "$PACKAGE_MANAGER" = "rpm" ]; then
 	sudo mv rpm/x86_64/*.rpm /opt/pmdk-pkg/
 fi
 

@@ -108,7 +108,7 @@ RUN gpasswd wheel -a $USER
 USER $USER
 
 # Set required environment variables
-ENV OS opensuse/tumbleweed
+ENV OS opensuse-tumbleweed
 ENV OS_VER latest
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1

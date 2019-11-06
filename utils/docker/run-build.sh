@@ -189,7 +189,8 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	# It is a test of the build system: move valgrind to other location and build with
 	# TESTS_USE_VALGRIND=1. Expected behaviour is to get tests with suffix
 	# _SKIPPED_BECAUSE_OF_MISSING_VALGRIND
-	VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc")
+	VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc" 2>/dev/null || true)
+	[ "$VALGRIND_PC_PATH" == "" ] && echo "Error: cannot find 'valgrind.pc' file" && exit 1
 	sudo_password mv $VALGRIND_PC_PATH tmp_valgrind_pc
 	mkdir build
 	cd build

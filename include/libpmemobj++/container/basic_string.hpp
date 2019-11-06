@@ -2967,30 +2967,13 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::rfind(const CharT *s, size_type pos,
 				   size_type count) const
 {
-	auto sz = size();
-
-	if (traits_type::length(s) == 0 || count == 0) {
-		if (pos > sz)
-			return sz;
-		else
-			return pos;
-	}
-
-	pos = std::min(pos, sz);
-
-	if (pos < sz)
-		++pos;
-
-	while (pos > 0) {
-		if (rfind(s[0], --pos) != npos) {
-			if (traits_type::compare(data() + pos, s, count) == 0) {
+	if (count <= size()) {
+		pos = (std::min)(size() - count, pos);
+		do {
+			if (traits_type::compare(data() + pos, s, count) == 0)
 				return pos;
-			}
-		} else {
-			return npos;
-		}
+		} while (pos-- > 0);
 	}
-
 	return npos;
 }
 

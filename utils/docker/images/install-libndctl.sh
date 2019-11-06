@@ -57,7 +57,7 @@ git archive --format=tar --prefix="ndctl-${VERSION}/" HEAD | gzip > "$RPMDIR/SOU
 
 echo "==== build ndctl ===="
 ./autogen.sh
-./configure
+./configure --disable-docs
 make -j$(nproc)
 
 echo "==== update ndctl.spec ===="
@@ -79,9 +79,9 @@ else
 echo "==== build ndctl ===="
 ./autogen.sh
 if [ "$OS" = "archlinux-base" ]; then
-	./configure --disable-dependency-tracking
+	./configure --disable-docs --disable-dependency-tracking
 else
-	./configure
+	./configure --disable-docs
 fi
 make -j$(nproc)
 

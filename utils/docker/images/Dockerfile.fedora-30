@@ -47,6 +47,7 @@ RUN dnf update -y \
 	bash-completion \
 	clang \
 	cmake \
+	daxctl-devel \
 	doxygen \
 	gcc \
 	gdb \
@@ -61,6 +62,7 @@ RUN dnf update -y \
 	make \
 	man \
 	ncurses-devel \
+	ndctl-devel \
 	open-sans-fonts \
 	passwd \
 	perl-Text-Diff \
@@ -75,10 +77,6 @@ RUN dnf update -y \
 	which \
 	xmlto \
  && dnf clean all
-
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh fedora
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh

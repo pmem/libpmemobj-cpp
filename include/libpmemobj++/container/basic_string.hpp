@@ -2947,44 +2947,31 @@ basic_string<CharT, Traits>::rfind(const basic_string &str, size_type pos) const
 
 /**
  * Finds the last substring equal to the range [s, s+count).
- * This range can include null characters.
+ * This range can include null characters. Search begins at pos, i.e. the found
+ * substring must not begin in a position following pos. If npos or any value
+ * not smaller than size()-1 is passed as pos, whole string will be searched.
  *
  * @param[in] s pointer to a character string to search for
  * @param[in] pos position at which to start the search
  * @param[in] count length of substring to search for
  *
  * @return Position (as offset from start of the string) of the first character
- * of the found substring or npos if no such substring is found
+ * of the found substring or npos if no such substring is found. If searching
+ * for an empty string retrurns pos unless pos is greater than size of string.
+ * In such case returns size of string.
  */
 template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::rfind(const CharT *s, size_type pos,
 				   size_type count) const
 {
-	auto sz = size();
-
-	if (traits_type::length(s) == 0 || count == 0) {
-		if (pos > sz)
-			return sz;
-		else
-			return pos;
-	}
-
-	pos = std::min(pos, sz);
-
-	if (pos < sz)
-		++pos;
-
-	while (pos > 0) {
-		if (rfind(s[0], --pos) != npos) {
-			if (traits_type::compare(data() + pos, s, count) == 0) {
+	if (count <= size()) {
+		pos = std::min(size() - count, pos);
+		do {
+			if (traits_type::compare(data() + pos, s, count) == 0)
 				return pos;
-			}
-		} else {
-			return npos;
-		}
+		} while (pos-- > 0);
 	}
-
 	return npos;
 }
 

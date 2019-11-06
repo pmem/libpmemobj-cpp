@@ -56,9 +56,11 @@ RUN apt-get update \
 	gdb \
 	git \
 	graphviz \
+	libdaxctl-dev \
 	libjson-c-dev \
 	libkmod-dev \
 	libncurses5-dev \
+	libndctl-dev \
 	libsfml-dev \
 	libtbb-dev \
 	libtext-diff-perl \
@@ -73,10 +75,6 @@ RUN apt-get update \
 	wget \
 	whois \
  && rm -rf /var/lib/apt/lists/*
-
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh

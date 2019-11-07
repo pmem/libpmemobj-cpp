@@ -49,6 +49,7 @@ using namespace pmem::obj;
 using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
+const bool remove_hashmap = true;
 
 // This is basic example and we only need to use concurrent_hash_map. Hence we
 // will correlate memory pool root object with single instance of persistent
@@ -134,6 +135,17 @@ main(int argc, char *argv[])
 	// hence the function is being called only after thread execution has
 	// completed.
 	map.clear();
+
+	// If hash map is to be removed, free_data() method should be called
+	// first. Otherwise, if deallocating internal hash map metadata in
+	// a destructor fail program might terminate.
+	if (remove_hashmap) {
+		map.free_data();
+
+		transaction::run(pop, [&] {
+			delete_persistent<hashmap_type>(pop.root()->pptr);
+		});
+	}
 
 	pop.close();
 

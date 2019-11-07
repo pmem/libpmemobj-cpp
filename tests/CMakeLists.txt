@@ -382,11 +382,16 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	# possible deadlock situation but that could only happen in case of wrong API usage.
 	build_test(concurrent_hash_map_deadlock concurrent_hash_map_deadlock/concurrent_hash_map_deadlock.cpp)
 	add_test_generic(NAME concurrent_hash_map_deadlock CASE 0 TRACERS none drd memcheck pmemcheck)
+	
+	build_test(concurrent_hash_map_insert_reopen concurrent_hash_map_insert_reopen/concurrent_hash_map_insert_reopen.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck)
 
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
 		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind)
 
 		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS helgrind)
+
+		add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS drd helgrind)
 
 		if (TESTS_LONG)
 			add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS drd)

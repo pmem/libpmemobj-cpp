@@ -52,6 +52,8 @@
 #include <libpmemobj++/detail/persistent_pool_ptr.hpp>
 #include <libpmemobj++/shared_mutex.hpp>
 
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
+
 #include <atomic>
 #include <cassert>
 #include <functional>
@@ -885,6 +887,16 @@ public:
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
+	/** Data specific for every thread using concurrent_hash_map */
+	struct tls_data_t {
+		p<size_t> size_diff;
+		std::aligned_storage<56, 8> padding;
+	};
+
+	using tls_t = detail::enumerable_thread_specific<tls_data_t>;
+
+	enum feature_flags : uint32_t { FEATURE_CONSISTENT_SIZE = 1 };
+
 	/** Compat and incompat features of a layout */
 	struct features {
 		p<uint32_t> compat;
@@ -921,13 +933,23 @@ public:
 	/* It must be in separate cache line from my_mask due to performance
 	 * effects */
 	/** Size of container in stored items. */
-	p<std::atomic<size_type>> my_size;
+	std::atomic<size_type> my_size;
 
 	/** Padding to the end of cacheline */
 	std::aligned_storage<24, 8>::type padding2;
 
+	/** Thread specific data */
+	persistent_ptr<tls_t> tls_ptr;
+
+	/**
+	 * This variable holds real size after hash_map is initialized.
+	 * It holds real value of size only after initialization (before any
+	 * insert/remove).
+	 */
+	p<size_t> on_init_size;
+
 	/** Reserved for future use */
-	std::aligned_storage<64, 8>::type reserved;
+	std::aligned_storage<40, 8>::type reserved;
 
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
@@ -941,7 +963,7 @@ public:
 	static constexpr features
 	header_features()
 	{
-		return {0, 0};
+		return {FEATURE_CONSISTENT_SIZE, 0};
 	}
 
 	const std::atomic<hashcode_type> &
@@ -954,6 +976,53 @@ public:
 	mask() noexcept
 	{
 		return my_mask.get_rw();
+	}
+
+	size_t
+	size() const
+	{
+		return my_size.load(std::memory_order_relaxed);
+	}
+
+	/**
+	 * Returns reference to a variable (specific for current thread) which
+	 * value is the total number of elements inserted minus total number of
+	 * elements erased.
+	 */
+	p<size_t> &
+	thread_size_diff()
+	{
+		assert(this->tls_ptr != nullptr);
+
+		/*
+		 * This is only true when called from singlethreaded methods
+		 * like swap() or operator=. In that case it's safe to directly
+		 * modify on_init_size.
+		 */
+		if (pmemobj_tx_stage() == TX_STAGE_WORK)
+			return on_init_size;
+
+		return tls_ptr->local().size_diff;
+	}
+
+	/** Process any information which was saved to tls and clears tls */
+	void
+	tls_restore()
+	{
+		assert(this->tls_ptr != nullptr);
+
+		pool_base pop = pool_base{pmemobj_pool_by_ptr(this)};
+
+		size_t last_run_size = 0;
+		for (auto &data : *tls_ptr)
+			last_run_size += data.size_diff;
+
+		transaction::run(pop, [&] {
+			on_init_size += last_run_size;
+			tls_ptr->clear();
+		});
+
+		this->my_size = on_init_size;
 	}
 
 	/** Const segment facade type */
@@ -972,12 +1041,10 @@ public:
 			"std::atomic should have the same layout as underlying integral type");
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-		VALGRIND_HG_DISABLE_CHECKING(&my_size, sizeof(my_size));
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
 		layout_features = header_features();
 
-		my_size.get_rw() = 0;
 		PMEMoid oid = pmemobj_oid(this);
 
 		assert(!OID_IS_NULL(oid));
@@ -994,6 +1061,29 @@ public:
 			segment_facade_t seg(my_table, i);
 			mark_rehashed<false>(pop, seg);
 		}
+
+		on_init_size = 0;
+
+		this->tls_ptr = make_persistent<tls_t>();
+	}
+
+	/*
+	 * Should be called before concurrent_hash_map destructor is called.
+	 * Otherwise, program can terminate if an exception occurs wile freeing
+	 * memory inside dtor.
+	 */
+	void
+	free_tls()
+	{
+		auto pop = get_pool_base();
+
+		if ((layout_features.compat & FEATURE_CONSISTENT_SIZE) &&
+		    tls_ptr) {
+			transaction::run(pop, [&] {
+				delete_persistent<tls_t>(tls_ptr);
+				tls_ptr = nullptr;
+			});
+		}
 	}
 
 	/**
@@ -1007,6 +1097,7 @@ public:
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
 #if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_size, sizeof(my_size));
 		VALGRIND_PMC_REMOVE_PMEM_MAPPING(&my_mask, sizeof(my_mask));
 #endif
 
@@ -1021,14 +1112,6 @@ public:
 		}
 
 		mask().store(m, std::memory_order_relaxed);
-	}
-
-	void
-	restore_size(size_type actual_size)
-	{
-		my_size.get_rw().store(actual_size, std::memory_order_relaxed);
-		pool_base pop = get_pool_base();
-		pop.persist(my_size);
 	}
 
 	/**
@@ -1182,18 +1265,19 @@ public:
 	{
 		pool_base pop = get_pool_base();
 
+		auto &size_diff = this->thread_size_diff();
+
 		pmem::obj::transaction::run(pop, [&] {
 			new_node = pmem::obj::make_persistent<Node>(
 				b->node_list, std::forward<Args>(args)...);
 			b->node_list = new_node; /* bucket is locked */
+
+			/* Increment per-thread size diff */
+			++size_diff;
 		});
 
-		/* prefix form is to enforce allocation after the first item
-		 * inserted */
-		size_t sz = ++(my_size.get_rw());
-		pop.persist(&my_size, sizeof(my_size));
-
-		return sz;
+		/* Increment volatile size */
+		return ++(this->my_size);
 	}
 
 	/**
@@ -1241,7 +1325,7 @@ public:
 
 		--buckets;
 
-		bool is_initial = (my_size.get_ro() == 0);
+		bool is_initial = this->size() == 0;
 
 		for (size_type m = mask(); buckets > m; m = mask())
 			enable_segment(
@@ -1265,11 +1349,8 @@ public:
 			this->mask() = table.mask().exchange(
 				this->mask(), std::memory_order_relaxed);
 
-			/* Swap my_size */
-			this->my_size.get_rw() =
-				table.my_size.get_rw().exchange(
-					this->my_size.get_ro(),
-					std::memory_order_relaxed);
+			/* Swap consistent size */
+			std::swap(this->tls_ptr, table.tls_ptr);
 
 			for (size_type i = 0; i < embedded_buckets; ++i)
 				this->my_embedded_segment[i].node_list.swap(
@@ -1281,6 +1362,10 @@ public:
 
 			transaction::commit();
 		}
+
+		/* Swap volatile size */
+		this->my_size = table.my_size.exchange(
+			this->my_size, std::memory_order_relaxed);
 	}
 
 	/**
@@ -1584,6 +1669,7 @@ protected:
 	using hash_map_base::check_growth;
 	using hash_map_base::check_mask_race;
 	using hash_map_base::embedded_buckets;
+	using hash_map_base::FEATURE_CONSISTENT_SIZE;
 	using hash_map_base::get_bucket;
 	using hash_map_base::get_pool_base;
 	using hash_map_base::header_features;
@@ -1592,6 +1678,7 @@ protected:
 	using hash_map_base::layout_features;
 	using hash_map_base::mask;
 	using hash_map_base::reserve;
+	using tls_t = typename hash_map_base::tls_t;
 	using node = typename hash_map_base::node;
 	using node_mutex_t = typename node::mutex_t;
 	using node_ptr_t = typename hash_map_base::node_ptr_t;
@@ -1863,7 +1950,7 @@ protected:
 	}
 
 	void
-	check_features()
+	check_incompat_features()
 	{
 		if (layout_features.incompat != header_features().incompat)
 			throw pmem::layout_error(
@@ -2061,20 +2148,36 @@ public:
 	void
 	runtime_initialize(bool graceful_shutdown = false)
 	{
-		check_features();
+		check_incompat_features();
 
 		calculate_mask();
 
-		if (!graceful_shutdown) {
+		/*
+		 * Handle case where hash_map was created without
+		 * FEATURE_CONSISTENT_SIZE.
+		 */
+		if (!(layout_features.compat & FEATURE_CONSISTENT_SIZE)) {
 			auto actual_size =
 				std::distance(this->begin(), this->end());
 			assert(actual_size >= 0);
-			this->restore_size(size_type(actual_size));
+
+			this->on_init_size = static_cast<size_t>(actual_size);
+			this->my_size = static_cast<size_t>(actual_size);
+
+			auto pop = get_pool_base();
+			transaction::run(pop, [&] {
+				this->tls_ptr = make_persistent<tls_t>();
+
+				layout_features.compat |=
+					FEATURE_CONSISTENT_SIZE;
+			});
 		} else {
-			assert(this->size() ==
-			       size_type(std::distance(this->begin(),
-						       this->end())));
+			assert(this->tls_ptr != nullptr);
+			this->tls_restore();
 		}
+
+		assert(this->size() ==
+		       size_type(std::distance(this->begin(), this->end())));
 	}
 
 	/**
@@ -2140,12 +2243,35 @@ public:
 	 */
 	void clear();
 
+	/*
+	 * Should be called before concurrent_hash_map destructor is called.
+	 * Otherwise, program can terminate if an exception occurs wile freeing
+	 * memory inside dtor.
+	 *
+	 * Hash map can NOT be used after free_data() was called (unless this
+	 * was done in a transaction and transaction aborted).
+	 *
+	 * @throw std::transaction_error in case of PMDK transaction failure
+	 * @throw pmem::transaction_free_error when freeing underlying memory
+	 * failed.
+	 */
+	void
+	free_data()
+	{
+		auto pop = get_pool_base();
+
+		transaction::run(pop, [&] {
+			clear();
+			this->free_tls();
+		});
+	}
+
 	/**
 	 * Clear table and destroy it.
 	 */
 	~concurrent_hash_map()
 	{
-		clear();
+		free_data();
 	}
 
 	//------------------------------------------------------------------------
@@ -2200,7 +2326,7 @@ public:
 	size_type
 	size() const
 	{
-		return this->my_size.get_ro();
+		return hash_map_base::size();
 	}
 
 	/**
@@ -2209,7 +2335,7 @@ public:
 	bool
 	empty() const
 	{
-		return this->my_size.get_ro() == 0;
+		return this->size() == 0;
 	}
 
 	/**
@@ -2859,14 +2985,17 @@ search:
 		}
 	}
 
+	auto &size_diff = this->thread_size_diff();
+
 	/* Only one thread can delete it due to write lock on the bucket */
 	transaction::run(pop, [&] {
 		*p = del->next;
 		delete_node(del);
+
+		--size_diff;
 	});
 
-	--(this->my_size.get_rw());
-	pop.persist(this->my_size);
+	--(this->my_size);
 }
 
 	return true;
@@ -2935,7 +3064,11 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 
 		transaction::manual tx(pop);
 
-		this->my_size.get_rw() = 0;
+		assert(this->tls_ptr != nullptr);
+		this->tls_ptr->clear();
+
+		this->on_init_size = 0;
+
 		segment_index_t s = segment_traits_t::segment_index_of(m);
 
 		assert(s + 1 == this->block_table_size ||
@@ -2949,6 +3082,8 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 
 		transaction::commit();
 	}
+
+	this->my_size = 0;
 }
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,
@@ -2980,7 +3115,9 @@ void
 concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::
 	internal_copy(const concurrent_hash_map &source)
 {
-	reserve(source.my_size.get_ro());
+	auto pop = get_pool_base();
+
+	reserve(source.size());
 	internal_copy(source.begin(), source.end());
 }
 

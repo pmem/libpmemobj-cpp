@@ -395,11 +395,18 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_deadlock CASE 0 TRACERS none drd memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
+	build_test(concurrent_hash_map_insert_reopen concurrent_hash_map_insert_reopen/concurrent_hash_map_insert_reopen.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
 		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind
 				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS helgrind
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+
+		add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS drd helgrind
 				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 		if (TESTS_LONG)

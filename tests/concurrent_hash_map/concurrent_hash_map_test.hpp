@@ -343,6 +343,70 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 }
 
 /*
+ * insert_erase_count_test -- (internal) test insert and erase operations
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+insert_erase_count_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+		      size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+
+	ConcurrentHashMapTestPrimitives<root, persistent_map_type> test(
+		pop, pop.root()->cons, concurrency * thread_items);
+
+	// Adding more concurrency will increase DRD test time
+	auto map = pop.root()->cons;
+
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	size_t n_erased = 0;
+
+	parallel_exec(2, [&](size_t thread_id) {
+		if (thread_id == 0) {
+			for (int i = 0; i < int(concurrency * thread_items);
+				++i) {
+				persistent_map_type::value_type val(i, i);
+				test.insert(val);
+			}
+		} else {
+			for (int i = int(concurrency * thread_items - 1);
+				i >= 0; i--) {
+				auto ret = map->erase(i);
+				n_erased += (size_t)ret;
+			}
+		}
+	});
+
+	map->runtime_initialize();
+
+	test.check_items_count(concurrency * thread_items - n_erased);
+	test.clear();
+
+	for (int i = 0; i < int(concurrency * thread_items); ++i) {
+		persistent_map_type::value_type val(i, i);
+		test.insert(val);
+	}
+
+	test.check_items_count(concurrency * thread_items);
+
+	/* Use non-main thread */
+	parallel_exec(1, [&](size_t thread_id) {
+		for (int i = 0; i < int(concurrency * thread_items); ++i) {
+			test.erase(i);
+		}
+	});
+
+	test.check_items_count(0);
+
+	map->runtime_initialize();
+
+	test.check_items_count(0);
+}
+
+/*
  * insert_and_erase_test -- (internal) test insert and erase operations
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */

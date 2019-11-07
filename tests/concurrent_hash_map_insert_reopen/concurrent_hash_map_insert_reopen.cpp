@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,12 +31,79 @@
  */
 
 /*
- * concurrent_hash_map_insert_erase.cpp -- pmem::obj::concurrent_hash_map test
+ * concurrent_hash_map_insert_reopen.cpp -- pmem::obj::concurrent_hash_map test
  *
  */
 
 #include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
+
+/*
+ * insert_reopen_test -- (internal) test insert operations and verify
+ * consistency after reopen
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+insert_reopen_test(nvobj::pool<root> &pop, std::string path,
+		   size_t concurrency = 4)
+{
+	PRINT_TEST_PARAMS;
+
+	size_t thread_items = 50;
+
+	{
+		ConcurrentHashMapTestPrimitives<root, persistent_map_type> test(
+			pop, pop.root()->cons, thread_items * concurrency);
+
+		auto map = pop.root()->cons;
+
+		UT_ASSERT(map != nullptr);
+
+		map->runtime_initialize();
+
+		parallel_exec(concurrency, [&](size_t thread_id) {
+			int begin = thread_id * thread_items;
+			int end = begin + int(thread_items);
+			for (int i = begin; i < end; ++i) {
+				persistent_map_type::value_type val(i, i);
+				test.insert<persistent_map_type::accessor>(val);
+			}
+		});
+
+		test.check_items_count();
+
+		pop.close();
+	}
+
+	{
+		size_t already_inserted_num = concurrency * thread_items;
+
+		pop = nvobj::pool<root>::open(path, LAYOUT);
+
+		ConcurrentHashMapTestPrimitives<root, persistent_map_type> test(
+			pop, pop.root()->cons, thread_items * concurrency);
+
+		auto map = pop.root()->cons;
+
+		UT_ASSERT(map != nullptr);
+
+		map->runtime_initialize();
+
+		test.check_items_count();
+
+		parallel_exec(concurrency, [&](size_t thread_id) {
+			int begin = thread_id * thread_items;
+			int end = begin + int(thread_items);
+			for (int i = begin; i < end; ++i) {
+				persistent_map_type::value_type val(
+					i + int(already_inserted_num), i);
+				test.insert<persistent_map_type::accessor>(val);
+			}
+		});
+
+		test.check_items_count(already_inserted_num * 2);
+	}
+}
 
 int
 main(int argc, char *argv[])
@@ -62,34 +129,13 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	/* Test that scoped_lock traits is working correctly */
-#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-	UT_ASSERT(pmem::obj::concurrent_hash_map_internal::scoped_lock_traits<
-			  tbb::spin_rw_mutex::scoped_lock>::
-			  initial_rw_state(true) == false);
-#else
-	UT_ASSERT(pmem::obj::concurrent_hash_map_internal::scoped_lock_traits<
-			  pmem::obj::concurrent_hash_map_internal::
-				  shared_mutex_scoped_lock<
-					  pmem::obj::shared_mutex>>::
-			  initial_rw_state(true) == true);
-#endif
-
 	size_t concurrency = 8;
 	if (On_drd)
 		concurrency = 2;
 	std::cout << "Running tests for " << concurrency << " threads"
 		  << std::endl;
 
-	insert_and_erase_test<persistent_map_type::accessor,
-			      persistent_map_type::value_type>(pop,
-							       concurrency);
-
-	insert_erase_count_test(pop, concurrency);
-
-	insert_mt_test(pop, concurrency);
-
-	insert_erase_lookup_test(pop, concurrency);
+	insert_reopen_test(pop, path, concurrency);
 
 	pop.close();
 	return 0;

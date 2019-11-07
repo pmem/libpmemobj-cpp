@@ -75,6 +75,7 @@ struct hashmap_test : public MapType {
 		ASSERT_ALIGNED_FIELD(T, t, my_size);
 		ASSERT_ALIGNED_FIELD(T, t, padding2);
 		ASSERT_OFFSET_CHECKPOINT(T, 16 * CACHELINE_SIZE);
+		ASSERT_ALIGNED_FIELD(T, t, consistent_size_ptr);
 		ASSERT_ALIGNED_FIELD(T, t, reserved);
 		ASSERT_OFFSET_CHECKPOINT(T, 17 * CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, my_segment_enable_mutex);

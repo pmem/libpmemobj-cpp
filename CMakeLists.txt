@@ -84,6 +84,10 @@ option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experi
 option(ENABLE_SEGMENT_VECTOR_ARRAY_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and fixed_size_policy" OFF)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 
+# Do not treat include directories from the interfaces
+# of consumed Imported Targets as SYSTEM by default.
+set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
+
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
 

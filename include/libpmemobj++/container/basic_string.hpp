@@ -3011,16 +3011,7 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::rfind(CharT ch, size_type pos) const noexcept
 {
-	auto sz = size();
-	pos = (std::min)(pos, sz);
-
-	if (pos < sz)
-		++pos;
-
-	for (const CharT *c = data() + pos; c != data();)
-		if (traits_type::eq(*--c, ch))
-			return static_cast<size_type>(std::distance(data(), c));
-	return npos;
+	return rfind(&ch, pos, 1);
 }
 
 /**

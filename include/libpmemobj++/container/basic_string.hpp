@@ -3168,14 +3168,7 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_first_not_of(CharT ch, size_type pos) const
 	noexcept
 {
-	if (pos >= size())
-		return npos;
-
-	for (auto it = begin() + pos; it != end(); ++it)
-		if (!traits_type::eq(*it, ch))
-			return static_cast<size_type>(
-				std::distance(begin(), it));
-	return npos;
+	return find_first_not_of(&ch, pos, 1);
 }
 
 /**
@@ -3352,18 +3345,7 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_last_not_of(CharT ch, size_type pos) const
 	noexcept
 {
-	auto sz = size();
-
-	pos = (std::min)(sz, pos);
-
-	if (pos < sz)
-		++pos;
-
-	for (auto it = begin() + pos; it != begin();)
-		if (!traits_type::eq(*--it, ch))
-			return static_cast<size_type>(
-				std::distance(begin(), it));
-	return npos;
+	return find_last_not_of(&ch, pos, 1);
 }
 
 /**

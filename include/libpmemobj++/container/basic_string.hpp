@@ -2918,14 +2918,7 @@ template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find(CharT ch, size_type pos) const noexcept
 {
-	if (pos > size())
-		return npos;
-
-	auto ptr = traits_type::find(data() + pos, size() - pos, ch);
-
-	if (ptr)
-		return static_cast<size_type>(std::distance(data(), ptr));
-	return npos;
+	return find(&ch, pos, 1);
 }
 
 /**

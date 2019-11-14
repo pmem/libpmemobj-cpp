@@ -39,6 +39,7 @@
 #define LIBPMEMOBJ_CPP_BASIC_STRING_HPP
 
 #include <algorithm>
+#include <iterator>
 #include <limits>
 #include <string>
 

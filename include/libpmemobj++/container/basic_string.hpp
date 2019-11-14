@@ -3205,18 +3205,14 @@ basic_string<CharT, Traits>::find_last_of(const CharT *s, size_type pos,
 	if (sz == 0 || count == 0)
 		return npos;
 
-	pos = (std::min)(sz, pos);
-
-	if (pos < sz)
-		++pos;
-
-	for (auto it = begin() + pos; it != begin();) {
-		--it;
+	auto it = begin() + (std::min)(sz, pos);
+	do {
 		for (const CharT *c = s; c != s + count; ++c)
 			if (traits_type::eq(*it, *c))
 				return static_cast<size_type>(
 					std::distance(begin(), it));
-	}
+
+	} while ( it-- > begin());
 	return npos;
 }
 

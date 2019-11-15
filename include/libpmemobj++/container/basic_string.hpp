@@ -1233,8 +1233,8 @@ basic_string<CharT, Traits>::const_at(size_type n) const
  * transaction failed.
  */
 template <typename CharT, typename Traits>
-typename basic_string<CharT, Traits>::reference basic_string<CharT, Traits>::
-operator[](size_type n)
+typename basic_string<CharT, Traits>::reference
+	basic_string<CharT, Traits>::operator[](size_type n)
 {
 	return is_sso_used() ? sso_data()[n] : non_sso_data()[n];
 }

@@ -3199,20 +3199,22 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_last_of(const CharT *s, size_type pos,
 					  size_type count) const
 {
-	auto sz = size();
-
-	if (sz == 0 || count == 0)
+	if (size() == 0 || count == 0)
 		return npos;
 
-	auto it = cbegin() + (std::min)(sz, pos);
-	do {
-		for (const CharT *c = s; c != s + count; ++c)
-			if (traits_type::eq(*it, *c))
-				return static_cast<size_type>(
-					std::distance(cbegin(), it));
-
-	} while ( it-- > begin());
-	return npos;
+	bool not_found = true;
+	size_type last_of = 0;
+	for (const CharT *c = s; c != s + count; ++c) {
+		size_type found = rfind(*c, pos);
+		if (found != npos) {
+			not_found = false;
+			if (found > last_of)
+				last_of = found;
+		}
+	}
+	if (not_found)
+		return npos;
+	return last_of;
 }
 
 /**

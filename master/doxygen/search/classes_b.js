@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['scoped_5flock',['scoped_lock',['../classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific__internal_1_1scoped__lock.html',1,'pmem::obj::experimental::enumerable_thread_specific_internal']]],
   ['segment_5fiterator',['segment_iterator',['../classpmem_1_1obj_1_1experimental_1_1segment__vector__internal_1_1segment__iterator.html',1,'pmem::obj::experimental::segment_vector_internal']]],
   ['segment_5fvector',['segment_vector',['../classpmem_1_1obj_1_1experimental_1_1segment__vector.html',1,'pmem::obj::experimental']]],
   ['serial_5fbucket_5faccessor',['serial_bucket_accessor',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html',1,'pmem::obj::concurrent_hash_map']]],

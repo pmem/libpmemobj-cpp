@@ -6,6 +6,7 @@ var searchData=
   ['_7econcurrent_5fhash_5fmap',['~concurrent_hash_map',['../classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9',1,'pmem::obj::concurrent_hash_map']]],
   ['_7econdition_5fvariable',['~condition_variable',['../classpmem_1_1obj_1_1condition__variable.html#a02c1d8e61ca3913f79257ff09094c694',1,'pmem::obj::condition_variable']]],
   ['_7econst_5faccessor',['~const_accessor',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html#ae8b5d43b109e412cbc70a8823788d3d9',1,'pmem::obj::concurrent_hash_map::const_accessor']]],
+  ['_7eenumerable_5fthread_5fspecific',['~enumerable_thread_specific',['../classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html#a95ba6217a675b7d098bdc15117c2d739',1,'pmem::obj::experimental::enumerable_thread_specific']]],
   ['_7emanual',['~manual',['../classpmem_1_1obj_1_1transaction_1_1manual.html#ad6789a8d572bd59085dc357557719a6c',1,'pmem::obj::transaction::manual']]],
   ['_7emutex',['~mutex',['../classpmem_1_1obj_1_1mutex.html#a9b52382afaf080173640963d2598eb1e',1,'pmem::obj::mutex']]],
   ['_7eobject_5ftraits',['~object_traits',['../classpmem_1_1obj_1_1object__traits.html#ac0f6bc922bc6c4b3d83e9f91053ca850',1,'pmem::obj::object_traits::~object_traits()'],['../classpmem_1_1obj_1_1object__traits_3_01void_01_4.html#aaa173f0f52eea896d3b97910e0e89290',1,'pmem::obj::object_traits&lt; void &gt;::~object_traits()']]],

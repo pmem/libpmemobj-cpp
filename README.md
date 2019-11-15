@@ -18,7 +18,7 @@ More information in include/libpmemobj++/README.md
 - compiler with C++11 support
 - for testing and development:
 	- valgrind-devel (at best with [pmemcheck support](https://github.com/pmem/valgrind))
-	- clang format 8.0
+	- clang format 9.0
 	- perl
 
 ## On Linux ##

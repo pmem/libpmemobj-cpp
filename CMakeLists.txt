@@ -188,16 +188,15 @@ add_custom_target(tests)
 
 if(DEVELOPER_MODE)
 	add_flag(-Werror) # XXX: WX for windows
-	find_program(CLANG_FORMAT NAMES clang-format clang-format-8.0)
-	set(CLANG_FORMAT_REQUIRED "8.0")
+	find_program(CLANG_FORMAT NAMES clang-format clang-format-9.0)
+	set(CLANG_FORMAT_REQUIRED "9.0")
 	if(CLANG_FORMAT)
 		get_program_version(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
 		if(NOT (CLANG_FORMAT_VERSION VERSION_EQUAL CLANG_FORMAT_REQUIRED))
-			message(WARNING "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
-			unset(CLANG_FORMAT CACHE)
+			message(FATAL_ERROR "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
 		endif()
 	else()
-		message(WARNING "clang-format not found - C++ sources will not be checked (needed version: ${CLANG_FORMAT_REQUIRED})")
+		message(WARNING "clang-format not found - C++ sources will not be checked (required version: ${CLANG_FORMAT_REQUIRED})")
 	endif()
 
 	execute_process(COMMAND ${PERL_EXECUTABLE} -MText::Diff -e ""

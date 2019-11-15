@@ -3037,15 +3037,13 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_first_of(const CharT *s, size_type pos,
 					   size_type count) const
 {
-	if (pos >= size() || count == 0)
-		return npos;
-
-	for (auto it = cbegin() + pos; it != cend(); ++it)
-		for (const CharT *c = s; c != s + count; ++c)
-			if (traits_type::eq(*it, *c))
-				return static_cast<size_type>(
-					std::distance(begin(), it));
-	return npos;
+	size_type first_of = npos;
+	for (const CharT *c = s; c != s + count; ++c) {
+		size_type found = find(*c, pos);
+		if (found != npos && found < first_of)
+			first_of = found;
+	}
+	return first_of;
 }
 
 /**

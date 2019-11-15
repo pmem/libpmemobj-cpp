@@ -5,6 +5,7 @@ var searchData=
   ['length',['length',['../classpmem_1_1obj_1_1basic__string.html#a49f8407184c7b0f27cb68af66ca390a9',1,'pmem::obj::basic_string']]],
   ['libpmemobj_5fcpp_5fmax_5fstack_5falloc_5fsize',['LIBPMEMOBJ_CPP_MAX_STACK_ALLOC_SIZE',['../temp__value_8hpp.html#ae1a51b02f908d55b9f2f7b685deaffa6',1,'temp_value.hpp']]],
   ['life_2ehpp',['life.hpp',['../life_8hpp.html',1,'']]],
+  ['local',['local',['../classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html#a14c68ef7ec80827700ff2d7f34e244bb',1,'pmem::obj::experimental::enumerable_thread_specific::local()'],['../classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html#a32a3089fe708da633f789f4fdfab0dfe',1,'pmem::obj::experimental::enumerable_thread_specific::local(bool &amp;exists)']]],
   ['lock',['lock',['../classpmem_1_1obj_1_1mutex.html#a9ab48609b752c0b963f3ad2bacd50c86',1,'pmem::obj::mutex::lock()'],['../classpmem_1_1obj_1_1shared__mutex.html#aef1d143b637eec7e679d420e98a2f458',1,'pmem::obj::shared_mutex::lock()'],['../classpmem_1_1obj_1_1timed__mutex.html#a17f544211bcf905cd600295e4e47b757',1,'pmem::obj::timed_mutex::lock()']]],
   ['lock_5ferror',['lock_error',['../classpmem_1_1lock__error.html',1,'pmem']]],
   ['lock_5fshared',['lock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#a016982730a6f61cd2acf53af986cdf03',1,'pmem::obj::shared_mutex']]],

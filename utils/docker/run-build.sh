@@ -101,14 +101,14 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 	CC=clang CXX=clang++ \
 	cmake .. -DDEVELOPER_MODE=1 \
-				-DCMAKE_BUILD_TYPE=Debug \
-				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-				-DTRACE_TESTS=1 \
-				-DCOVERAGE=$COVERAGE \
-				-DCXX_STANDARD=17 \
-				-DTESTS_USE_VALGRIND=0 \
-				-DTEST_DIR=/mnt/pmem \
-				-DTESTS_USE_FORCED_PMEM=1
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DTRACE_TESTS=1 \
+		-DCOVERAGE=$COVERAGE \
+		-DCXX_STANDARD=17 \
+		-DTESTS_USE_VALGRIND=0 \
+		-DTEST_DIR=/mnt/pmem \
+		-DTESTS_USE_FORCED_PMEM=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder"  --timeout 540
@@ -130,13 +130,13 @@ function build_gcc_debug() {
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
-				-DCMAKE_BUILD_TYPE=Debug \
-				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-				-DTRACE_TESTS=1 \
-				-DCOVERAGE=$COVERAGE \
-				-DTESTS_USE_VALGRIND=1 \
-				-DTEST_DIR=/mnt/pmem \
-				-DTESTS_USE_FORCED_PMEM=1
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DTRACE_TESTS=1 \
+		-DCOVERAGE=$COVERAGE \
+		-DTESTS_USE_VALGRIND=1 \
+		-DTEST_DIR=/mnt/pmem \
+		-DTESTS_USE_FORCED_PMEM=1
 
 	make -j$(nproc)
 }
@@ -198,15 +198,15 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
-				-DCMAKE_BUILD_TYPE=Release \
-				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-				-DTRACE_TESTS=1 \
-				-DCOVERAGE=$COVERAGE \
-				-DCXX_STANDARD=17 \
-				-DTESTS_USE_VALGRIND=1 \
-				-DTEST_DIR=/mnt/pmem \
-				-DBUILD_EXAMPLES=0 \
-				-DTESTS_USE_FORCED_PMEM=1
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DTRACE_TESTS=1 \
+		-DCOVERAGE=$COVERAGE \
+		-DCXX_STANDARD=17 \
+		-DTESTS_USE_VALGRIND=1 \
+		-DTEST_DIR=/mnt/pmem \
+		-DBUILD_EXAMPLES=0 \
+		-DTESTS_USE_FORCED_PMEM=1
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
@@ -237,9 +237,9 @@ function tests_package() {
 
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
-			-DTESTS_USE_VALGRIND=0 \
-			-DBUILD_EXAMPLES=0 \
-			-DCPACK_GENERATOR=$PACKAGE_MANAGER
+		-DTESTS_USE_VALGRIND=0 \
+		-DBUILD_EXAMPLES=0 \
+		-DCPACK_GENERATOR=$PACKAGE_MANAGER
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
@@ -288,11 +288,11 @@ function tests_findLIBPMEMOBJ_cmake()
 
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_BUILD_TYPE=Release \
-				-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
-				-DTRACE_TESTS=1 \
-				-DBUILD_EXAMPLES=0 \
-				-DCOVERAGE=$COVERAGE \
-				-DCXX_STANDARD=17
+		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DTRACE_TESTS=1 \
+		-DBUILD_EXAMPLES=0 \
+		-DCOVERAGE=$COVERAGE \
+		-DCXX_STANDARD=17
 
 	make -j$(nproc)
 

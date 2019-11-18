@@ -141,7 +141,7 @@ docker run --privileged=true --name=$containerName -ti \
 	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
 	--env COVERAGE=$COVERAGE \
-	--env CLANG_FORMAT=clang-format-3.8 \
+	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON} \
 	--env TZ='Europe/Warsaw' \
 	-v $HOST_WORKDIR:$WORKDIR \
 	-v /etc/localtime:/etc/localtime \

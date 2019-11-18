@@ -3294,17 +3294,14 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_last_not_of(const CharT *s, size_type pos,
 					      size_type count) const
 {
-	auto sz = size();
+	if (size() > 0) {
+		pos = (std::min)(pos, size() - 1);
+		do {
+			if (!traits_type::find(s, count, *(cdata() + pos)))
+				return pos;
 
-	pos = (std::min)(sz, pos);
-
-	if (pos < sz)
-		++pos;
-
-	for (auto it = begin() + pos; it != begin();)
-		if (!traits_type::find(s, count, *--it))
-			return static_cast<size_type>(
-				std::distance(begin(), it));
+		} while (pos-- > 0);
+	}
 	return npos;
 }
 

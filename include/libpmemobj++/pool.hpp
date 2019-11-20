@@ -44,6 +44,7 @@
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/ctl.hpp>
+#include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/pool_base.h>
@@ -53,6 +54,7 @@ namespace pmem
 
 namespace obj
 {
+
 template <typename T>
 class persistent_ptr;
 
@@ -263,6 +265,14 @@ public:
 	}
 #endif
 
+	void
+	runtime_cleanup()
+	{
+		auto root = pmemobj_root(this->pop, 0);
+
+		experimental::v2::clear_from_pool(root.pool_uuid_lo);
+	}
+
 	/**
 	 * Closes the pool.
 	 *
@@ -273,6 +283,8 @@ public:
 	{
 		if (this->pop == nullptr)
 			throw std::logic_error("Pool already closed");
+
+		runtime_cleanup();
 
 		pmemobj_close(this->pop);
 		this->pop = nullptr;

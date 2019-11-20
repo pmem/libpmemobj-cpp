@@ -34,7 +34,7 @@ $ make install
 #### When developing: ####
 ```sh
 $ ...
-$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEVELOPER_MODE=1
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEVELOPER_MODE=1 -DCHECK_CPP_STYLE=1
 $ ...
 $ ctest --output-on-failure
 ```

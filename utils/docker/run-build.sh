@@ -37,6 +37,8 @@
 
 set -e
 
+CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
+
 export PMREORDER_STACKTRACE_DEPTH=20
 
 function cleanup() {
@@ -101,6 +103,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 	CC=clang CXX=clang++ \
 	cmake .. -DDEVELOPER_MODE=1 \
+		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 		-DTRACE_TESTS=1 \
@@ -130,6 +133,7 @@ function build_gcc_debug() {
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
+		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 		-DTRACE_TESTS=1 \
@@ -198,6 +202,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
+		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 		-DTRACE_TESTS=1 \

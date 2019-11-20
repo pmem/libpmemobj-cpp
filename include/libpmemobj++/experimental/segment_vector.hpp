@@ -662,14 +662,6 @@ using exponential_size_array_policy =
 	segment_vector_internal::exponential_size_policy<
 		pmem::obj::array<SegmentType, 64>>;
 
-/**
- * XXX: In case of array of segments with fixed segments size we can allocate as
- * much memory as we want, but for tests to pass we need to limit the array size
- */
-template <typename SegmentType, size_t SegmentSize>
-using fixed_size_array_policy = segment_vector_internal::fixed_size_policy<
-	pmem::obj::array<SegmentType, 255>, SegmentSize>;
-
 template <typename SegmentType, size_t SegmentSize>
 using fixed_size_vector_policy = segment_vector_internal::fixed_size_policy<
 	pmem::obj::vector<SegmentType>, SegmentSize>;

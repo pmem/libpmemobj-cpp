@@ -82,7 +82,6 @@ option(ENABLE_CONCURRENT_HASHMAP "enable installation and testing of pmem::obj::
 option(ENABLE_SEGMENT_VECTOR "enable installation of pmem::obj::experimental::segment_vector" ON)
 option(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and exponential_size_policy" ON)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and exponential_size_policy" OFF)
-option(ENABLE_SEGMENT_VECTOR_ARRAY_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and fixed_size_policy" OFF)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(ENABLE_ENUMERABLE_THREAD_SPECIFIC "enable installation and testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 

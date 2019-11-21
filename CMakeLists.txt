@@ -69,6 +69,7 @@ option(BUILD_TESTS "build tests" ON)
 option(BUILD_DOC "build documentation" ON)
 option(COVERAGE "run coverage test" OFF)
 option(DEVELOPER_MODE "enable developer checks" OFF)
+option(CHECK_CPP_STYLE "check code style of C++ sources" OFF)
 option(TRACE_TESTS "more verbose test outputs" OFF)
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
@@ -186,20 +187,21 @@ add_dependencies(check-whitespace check-whitespace-main)
 
 add_custom_target(tests)
 
-if(DEVELOPER_MODE)
-	add_flag(-Werror) # XXX: WX for windows
-	find_program(CLANG_FORMAT NAMES clang-format clang-format-8.0)
-	set(CLANG_FORMAT_REQUIRED "8.0")
+if(CHECK_CPP_STYLE)
+	find_program(CLANG_FORMAT NAMES clang-format clang-format-9.0)
+	set(CLANG_FORMAT_REQUIRED "9.0")
 	if(CLANG_FORMAT)
 		get_program_version(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
 		if(NOT (CLANG_FORMAT_VERSION VERSION_EQUAL CLANG_FORMAT_REQUIRED))
-			message(WARNING "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
-			unset(CLANG_FORMAT CACHE)
+			message(FATAL_ERROR "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
 		endif()
 	else()
-		message(WARNING "clang-format not found - C++ sources will not be checked (needed version: ${CLANG_FORMAT_REQUIRED})")
+		message(WARNING "clang-format not found - C++ sources will not be checked (required version: ${CLANG_FORMAT_REQUIRED})")
 	endif()
+endif()
 
+if(DEVELOPER_MODE)
+	add_flag(-Werror) # XXX: WX for windows
 	execute_process(COMMAND ${PERL_EXECUTABLE} -MText::Diff -e ""
 			ERROR_QUIET
 			RESULT_VARIABLE PERL_TEXT_DIFF_STATUS)

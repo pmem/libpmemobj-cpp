@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,8 +117,8 @@ persistent_ptr_example()
 	// typical usage schemes
 	transaction::run(pop, [&] {
 		proot.comp = make_persistent<compound_type>(); // allocation
-		proot.comp->set_some_variable(12);	     // call function
-		proot.comp->some_other_variable = 2.3;	 // set variable
+		proot.comp->set_some_variable(12);	       // call function
+		proot.comp->some_other_variable = 2.3;	       // set variable
 	});
 
 	// reading from the persistent_ptr

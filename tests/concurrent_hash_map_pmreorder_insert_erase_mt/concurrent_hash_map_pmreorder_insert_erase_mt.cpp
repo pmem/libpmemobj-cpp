@@ -66,9 +66,9 @@ struct root {
 };
 
 static constexpr int elements[] = {
-	1,       /* bucket #1 */
-	2,       /* bucket #2 */
-	3,       /* bucket #3 */
+	1,	 /* bucket #1 */
+	2,	 /* bucket #2 */
+	3,	 /* bucket #3 */
 	2 + 255, /* bucket #1 */
 	3 + 255, /* bucket #2 */
 	4 + 255, /* bucket #3 */

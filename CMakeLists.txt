@@ -46,6 +46,7 @@ if (VERSION_PRERELEASE)
 endif()
 
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.7)
+set(LIBPMEM_REQUIRED_VERSION 1.7)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
@@ -67,14 +68,20 @@ include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
 option(BUILD_EXAMPLES "build examples" ON)
 option(BUILD_TESTS "build tests" ON)
 option(BUILD_DOC "build documentation" ON)
+
 option(COVERAGE "run coverage test" OFF)
 option(DEVELOPER_MODE "enable developer checks" OFF)
 option(CHECK_CPP_STYLE "check code style of C++ sources" OFF)
-option(TRACE_TESTS "more verbose test outputs" OFF)
+
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
+
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1" OFF)
 option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
+option(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND "enable concurrent_hash_map tests with drd and helgrind (can only be run on PMEM)." OFF)
+option(TESTS_LONG "enable long running tests" OFF)
+option(TRACE_TESTS "more verbose test outputs" OFF)
+
 option(ENABLE_ARRAY "enable installation and testing of pmem::obj::array" ON)
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::vector" ON)
 option(ENABLE_STRING "enable installation and testing of pmem::obj::string (depends on ENABLE_VECTOR)" ON)
@@ -132,11 +139,26 @@ if (PERL_VERSION_STRING VERSION_LESS 5.16)
 	message(FATAL_ERROR "Too old Perl (<5.16)")
 endif()
 
+# Some tests and examples require clang >= 8.0
+# because of the following bug:
+# https://bugs.llvm.org/show_bug.cgi?id=28280
+# which is fixed in clang v8.0.
+set(CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG "8.0")
+find_program(CLANG NAMES clang)
+if(CLANG)
+	get_program_version(${CLANG} CLANG_VERSION)
+	if(CLANG_VERSION VERSION_LESS CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG)
+		set(CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT 1)
+	endif()
+endif()
+
 if(BUILD_TESTS OR BUILD_EXAMPLES)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(LIBPMEMOBJ REQUIRED libpmemobj>=${LIBPMEMOBJ_REQUIRED_VERSION})
+		pkg_check_modules(LIBPMEM REQUIRED libpmem>=${LIBPMEM_REQUIRED_VERSION})
 	else()
 		find_package(LIBPMEMOBJ REQUIRED ${LIBPMEMOBJ_REQUIRED_VERSION})
+		find_package(LIBPMEM REQUIRED ${LIBPMEM_REQUIRED_VERSION})
 	endif()
 
 	if (LIBPMEMOBJ_VERSION)

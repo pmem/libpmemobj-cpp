@@ -122,7 +122,11 @@ endif()
 
 if (ENABLE_VECTOR)
 	add_example(simplekv simplekv/simplekv.cpp)
-	add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)
+	if(NOT CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT)
+		add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)
+	else()
+		message(WARNING "skipping simplekv_rebuild example - it requires clang >= ${CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG}")
+	endif()
 endif()
 
 if(CURSES_FOUND)

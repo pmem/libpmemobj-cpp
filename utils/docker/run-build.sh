@@ -140,7 +140,8 @@ function build_gcc_debug() {
 		-DCOVERAGE=$COVERAGE \
 		-DTESTS_USE_VALGRIND=1 \
 		-DTEST_DIR=/mnt/pmem \
-		-DTESTS_USE_FORCED_PMEM=1
+		-DTESTS_USE_FORCED_PMEM=1 \
+		-DTESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND=1
 
 	make -j$(nproc)
 }

@@ -47,9 +47,9 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	static_assert(sizeof(container_type<int>) == 2200, "");
-	static_assert(sizeof(container_type<char>) == 2200, "");
-	static_assert(sizeof(container_type<container_type<int>>) == 2200, "");
+	static_assert(sizeof(container_type<int>) == 2192, "");
+	static_assert(sizeof(container_type<char>) == 2192, "");
+	static_assert(sizeof(container_type<container_type<int>>) == 2192, "");
 
 	static_assert(std::is_standard_layout<container_type<char>>::value, "");
 

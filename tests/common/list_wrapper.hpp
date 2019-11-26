@@ -66,9 +66,9 @@ expected_sizeof()
 /* if defined segment vector with default args */
 #elif defined SEGMENT_VECTOR_ARRAY_EXPSIZE
 
-#include <libpmemobj++/experimental/segment_vector.hpp>
+#include <libpmemobj++/container/segment_vector.hpp>
 
-namespace pexp = pmem::obj::experimental;
+namespace pexp = pmem::obj;
 template <typename T>
 using container_t = pexp::segment_vector<T>;
 
@@ -100,9 +100,9 @@ expected_sizeof()
 /* if defined segment vector with vector storage & exponential size*/
 #elif defined SEGMENT_VECTOR_VECTOR_EXPSIZE
 
-#include <libpmemobj++/experimental/segment_vector.hpp>
+#include <libpmemobj++/container/segment_vector.hpp>
 
-namespace pexp = pmem::obj::experimental;
+namespace pexp = pmem::obj;
 template <typename T>
 using container_t = pexp::segment_vector<
 	T, pmem::obj::vector<T>,
@@ -136,9 +136,9 @@ expected_sizeof()
 /* if defined segment vector with fixed segmentation and vector storage */
 #elif defined SEGMENT_VECTOR_VECTOR_FIXEDSIZE
 
-#include <libpmemobj++/experimental/segment_vector.hpp>
+#include <libpmemobj++/container/segment_vector.hpp>
 
-namespace pexp = pmem::obj::experimental;
+namespace pexp = pmem::obj;
 template <typename T>
 using container_t = pexp::segment_vector<
 	T, pmem::obj::vector<T>,
@@ -170,9 +170,9 @@ expected_sizeof()
 /* if defined segment vector with fixed large segments and vector storage */
 #elif defined SEGMENT_VECTOR_VECTOR_FIXEDSIZE_EXT
 
-#include <libpmemobj++/experimental/segment_vector.hpp>
+#include <libpmemobj++/container/segment_vector.hpp>
 
-namespace pexp = pmem::obj::experimental;
+namespace pexp = pmem::obj;
 template <typename T>
 using container_t = pexp::segment_vector<
 	T, pmem::obj::vector<T>,

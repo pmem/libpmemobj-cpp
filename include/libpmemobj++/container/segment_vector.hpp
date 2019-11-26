@@ -55,8 +55,6 @@ namespace pmem
 {
 namespace obj
 {
-namespace experimental
-{
 
 namespace segment_vector_internal
 {
@@ -3321,7 +3319,6 @@ operator>=(const std::vector<T> &lhs,
 	return !(lhs < rhs);
 }
 
-} /* namespace experimental */
 } /* namespace obj */
 } /* namespace pmem */
 

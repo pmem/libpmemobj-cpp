@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,7 @@
  */
 
 /*
- * concurrent_hash_map_insert_erase.cpp -- pmem::obj::concurrent_hash_map test
- *
+ * concurrent_hash_map_emplace.cpp -- pmem::obj::concurrent_hash_map test
  */
 
 #include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
@@ -49,14 +48,14 @@ main(int argc, char *argv[])
 
 	const char *path = argv[1];
 
-	nvobj::pool<root<persistent_map_type>> pop;
+	nvobj::pool<root<string_persistent_map_type>> pop;
 
 	try {
-		pop = nvobj::pool<root<persistent_map_type>>::create(
+		pop = nvobj::pool<root<string_persistent_map_type>>::create(
 			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
 		pmem::obj::transaction::run(pop, [&] {
-			pop.root()->cons =
-				nvobj::make_persistent<persistent_map_type>();
+			pop.root()->cons = nvobj::make_persistent<
+				string_persistent_map_type>();
 		});
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
@@ -81,16 +80,12 @@ main(int argc, char *argv[])
 	std::cout << "Running tests for " << concurrency << " threads"
 		  << std::endl;
 
-	insert_and_erase_test<persistent_map_type::accessor,
-			      persistent_map_type::value_type>(pop,
-							       concurrency);
-
-	insert_mt_test(pop, concurrency);
-
-	insert_erase_lookup_test(pop, concurrency);
+	emplace_test(pop, concurrency);
+	emplace_piecewise_test(pop, concurrency);
 
 	pmem::obj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<persistent_map_type>(pop.root()->cons);
+		nvobj::delete_persistent<string_persistent_map_type>(
+			pop.root()->cons);
 	});
 
 	pop.close();

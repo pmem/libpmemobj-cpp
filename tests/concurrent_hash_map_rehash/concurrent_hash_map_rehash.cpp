@@ -281,6 +281,12 @@ main(int argc, char *argv[])
 	insert_erase_lookup_test(pop);
 	insert_erase_lookup_test_str(pop);
 
+	pmem::obj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<persistent_map_type>(pop.root()->cons);
+		nvobj::delete_persistent<persistent_map_type_str>(
+			pop.root()->cons_str);
+	});
+
 	pop.close();
 
 	return 0;

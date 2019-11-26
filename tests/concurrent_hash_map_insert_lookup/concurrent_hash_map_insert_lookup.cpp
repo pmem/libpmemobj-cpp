@@ -49,10 +49,10 @@ main(int argc, char *argv[])
 
 	const char *path = argv[1];
 
-	nvobj::pool<root> pop;
+	nvobj::pool<root<persistent_map_type>> pop;
 
 	try {
-		pop = nvobj::pool<root>::create(
+		pop = nvobj::pool<root<persistent_map_type>>::create(
 			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
 		pmem::obj::transaction::run(pop, [&] {
 			pop.root()->cons =
@@ -112,6 +112,10 @@ main(int argc, char *argv[])
 	insert_and_lookup_initializer_list_test(pop, concurrency);
 
 	insert_and_lookup_iterator_test(pop, concurrency);
+
+	pmem::obj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<persistent_map_type>(pop.root()->cons);
+	});
 
 	pop.close();
 	return 0;

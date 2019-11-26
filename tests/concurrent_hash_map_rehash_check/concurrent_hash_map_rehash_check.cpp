@@ -161,6 +161,10 @@ main(int argc, char *argv[])
 
 	rehash_test(pop);
 
+	pmem::obj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<persistent_map_type>(pop.root()->cons);
+	});
+
 	pop.close();
 
 	return 0;

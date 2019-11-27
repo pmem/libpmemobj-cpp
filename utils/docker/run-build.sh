@@ -41,6 +41,8 @@ CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 
 export PMREORDER_STACKTRACE_DEPTH=20
 
+./prepare-for-build.sh
+
 function cleanup() {
 	find . -name ".coverage" -exec rm {} \;
 	find . -name "coverage.xml" -exec rm {} \;

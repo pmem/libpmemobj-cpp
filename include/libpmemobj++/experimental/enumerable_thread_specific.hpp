@@ -274,9 +274,9 @@ template <typename T, template <typename...> typename Map, typename Mutex,
 	  typename Storage>
 enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
 	enumerable_thread_specific &other)
+    : _storage(other._storage)
 {
 	_map.get(other._map.get());
-	_storage = other._storage;
 }
 
 /**
@@ -291,9 +291,9 @@ template <typename T, template <typename...> typename Map, typename Mutex,
 	  typename Storage>
 enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
 	enumerable_thread_specific &&other)
+    : _storage(std::move(other._storage))
 {
 	_map.get(std::move(other._map.get()));
-	_storage = std::move(other._storage);
 }
 
 /**

@@ -101,8 +101,7 @@ struct check_members_order {
 		vector_representation representation;
 	};
 };
-#elif defined(SEGMENT_VECTOR_VECTOR_FIXEDSIZE) ||                              \
-	defined(SEGMENT_VECTOR_ARRAY_FIXEDSIZE)
+#elif defined(SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 struct check_members_order {
 	check_members_order() : vector()
 	{

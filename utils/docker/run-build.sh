@@ -244,7 +244,8 @@ function tests_package() {
 	cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
 		-DTESTS_USE_VALGRIND=0 \
 		-DBUILD_EXAMPLES=0 \
-		-DCPACK_GENERATOR=$PACKAGE_MANAGER
+		-DCPACK_GENERATOR=$PACKAGE_MANAGER \
+		-DTESTS_USE_FORCED_PMEM=1
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout 540
@@ -297,7 +298,8 @@ function tests_findLIBPMEMOBJ_cmake()
 		-DTRACE_TESTS=1 \
 		-DBUILD_EXAMPLES=0 \
 		-DCOVERAGE=$COVERAGE \
-		-DCXX_STANDARD=17
+		-DCXX_STANDARD=17 \
+		-DTESTS_USE_FORCED_PMEM=1
 
 	make -j$(nproc)
 

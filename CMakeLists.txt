@@ -155,6 +155,14 @@ if(BUILD_TESTS OR BUILD_EXAMPLES)
 		find_package(LIBPMEM REQUIRED ${LIBPMEM_REQUIRED_VERSION})
 	endif()
 
+	if(NOT LIBPMEM_FOUND)
+		message(FATAL_ERROR "libpmem NOT found (set the LIBPMEM_INC_DIR and LIBPMEM_LIB_DIR environment variables to point the location)")
+	endif()
+
+	if(NOT LIBPMEMOBJ_FOUND)
+		message(FATAL_ERROR "libpmemobj NOT found (set the LIBPMEMOBJ_INC_DIR and LIBPMEMOBJ_LIB_DIR environment variables to point the location)")
+	endif()
+
 	if (LIBPMEMOBJ_VERSION)
 		string(REGEX REPLACE "\\+git.*" "" LIBPMEMOBJ_VERSION_SHORT ${LIBPMEMOBJ_VERSION})
 		string(REGEX REPLACE "-rc.*" "" LIBPMEMOBJ_VERSION_SHORT ${LIBPMEMOBJ_VERSION_SHORT})

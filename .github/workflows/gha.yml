@@ -30,7 +30,7 @@ jobs:
                  "N=6 OS=ubuntu OS_VER=19.10 TYPE=memcheck_drd",
                  "N=7 OS=ubuntu OS_VER=19.10 TYPE=package",
                  "N=8 OS=fedora OS_VER=31    TYPE=package",
-                 "N=9 OS=ubuntu OS_VER=19.10 COVERAGE=1 TYPE=debug",
+                 "N=9 OS=ubuntu OS_VER=19.10 TYPE=coverage",
                 "N=10 OS=ubuntu OS_VER=19.10 TYPE=coverity"]
     steps:
        - name: Clone the git repo

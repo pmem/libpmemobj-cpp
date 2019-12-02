@@ -175,9 +175,8 @@ segment_iterator<Container, is_const>::segment_iterator(table_ptr tab,
 template <typename Container, bool is_const>
 segment_iterator<Container, is_const>::segment_iterator(
 	const segment_iterator &other)
+    : table(other.table), index(other.index)
 {
-	table = other.table;
-	index = other.index;
 }
 
 /** Copy constructor for const iterator from non-const iterator. */

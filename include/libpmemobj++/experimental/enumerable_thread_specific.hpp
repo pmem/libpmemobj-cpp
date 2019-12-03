@@ -132,7 +132,7 @@ private:
  *    void clear()
  * @pre Storage must support iterators.
  */
-template <typename T, template <typename...> typename Map = std::unordered_map,
+template <typename T, template <typename...> class Map = std::unordered_map,
 	  typename Mutex = pmem::obj::shared_mutex,
 	  typename Storage = segment_vector<T>>
 class enumerable_thread_specific {
@@ -242,7 +242,7 @@ private:
  *
  * @post empty() == true.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 template <typename Handler>
 void
@@ -257,7 +257,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::initialize(Handler handler)
 /**
  * Dafault constructor.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific()
 {
@@ -270,7 +270,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific()
  *
  * @post size() == other.size().
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
 	enumerable_thread_specific &other)
@@ -287,7 +287,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
  * @post size() == other.size().
  * @post other.empty() == true.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
 	enumerable_thread_specific &&other)
@@ -299,7 +299,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
 /**
  * Dafault destructor.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 enumerable_thread_specific<T, Map, Mutex,
 			   Storage>::~enumerable_thread_specific()
@@ -315,7 +315,7 @@ enumerable_thread_specific<T, Map, Mutex,
  *
  * @return reference to value for the current thread.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::reference
 enumerable_thread_specific<T, Map, Mutex, Storage>::local()
@@ -332,7 +332,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::local()
  *
  * @return reference to value for the current thread.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::reference
 enumerable_thread_specific<T, Map, Mutex, Storage>::local(bool &exists)
@@ -369,7 +369,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::local(bool &exists)
  *
  * @return value_type of map_type, that indexing the added item of storage.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::map_value_type
 enumerable_thread_specific<T, Map, Mutex, Storage>::storage_emplace()
@@ -386,7 +386,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::storage_emplace()
  *
  * @post empty() == true.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 void
 enumerable_thread_specific<T, Map, Mutex, Storage>::clear()
@@ -400,7 +400,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::clear()
  *
  * @return number of elements in container.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::size_type
 enumerable_thread_specific<T, Map, Mutex, Storage>::size() const
@@ -413,7 +413,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::size() const
  *
  * @return true if container is empty, false overwise.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 bool
 enumerable_thread_specific<T, Map, Mutex, Storage>::empty() const
@@ -426,7 +426,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::empty() const
  *
  * @return iterator to the first element in the container.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::iterator
 enumerable_thread_specific<T, Map, Mutex, Storage>::begin()
@@ -439,7 +439,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::begin()
  *
  * @return iterator to the after last element in the container.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::iterator
 enumerable_thread_specific<T, Map, Mutex, Storage>::end()
@@ -452,7 +452,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::end()
  *
  * @return const_iterator to the first element in the container.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::const_iterator
 enumerable_thread_specific<T, Map, Mutex, Storage>::begin() const
@@ -465,7 +465,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::begin() const
  *
  * @return const_iterator to the after last element in the container.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::const_iterator
 enumerable_thread_specific<T, Map, Mutex, Storage>::end() const
@@ -480,7 +480,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::end() const
  *
  * @return reference to pool_base object where enumerable_thread_local resides.
  */
-template <typename T, template <typename...> typename Map, typename Mutex,
+template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
 pool_base
 enumerable_thread_specific<T, Map, Mutex, Storage>::get_pool() const noexcept

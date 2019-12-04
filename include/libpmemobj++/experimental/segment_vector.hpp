@@ -2671,6 +2671,8 @@ segment_vector<T, Segment, Policy>::construct(size_type idx, size_type count,
 		size_type segment = policy::get_segment(i);
 		_data[segment].emplace_back(std::forward<Args>(args)...);
 	}
+
+	assert(segment_capacity_validation());
 }
 
 /**
@@ -2720,6 +2722,8 @@ segment_vector<T, Segment, Policy>::construct_range(size_type idx,
 		size_type segment = policy::get_segment(i);
 		_data[segment].emplace_back(*first);
 	}
+
+	assert(segment_capacity_validation());
 }
 
 /**
@@ -2801,6 +2805,8 @@ segment_vector<T, Segment, Policy>::shrink(size_type size_new)
 	}
 	size_type residue = policy::index_in_segment(size_new);
 	_data[end].erase(_data[end].cbegin() + residue, _data[end].cend());
+
+	assert(segment_capacity_validation());
 }
 
 /**

@@ -586,7 +586,7 @@ public:
 	}
 
 	difference_type
-	operator-(counting_it &rhs)
+	operator-(const counting_it &rhs) const
 	{
 		return static_cast<difference_type>(m_inc - rhs.m_inc);
 	}

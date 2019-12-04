@@ -1784,7 +1784,17 @@ protected:
 
 		pool_base pop = get_pool_base();
 		node_ptr_t *p_new = &(b_new->node_list);
-		bool restore_after_crash = *p_new != nullptr;
+
+		/* This condition is only true when there was a failure just
+		 * before setting rehashed flag */
+		if (*p_new != nullptr) {
+			assert(!b_new->is_rehashed(std::memory_order_relaxed));
+
+			b_new->set_rehashed(std::memory_order_relaxed);
+			pop.persist(b_new->rehashed);
+
+			return;
+		}
 
 		/* get parent mask from the topmost bit */
 		hashcode_type mask = (1u << detail::Log2(h)) - 1;
@@ -1793,69 +1803,50 @@ protected:
 			this, h & mask,
 			scoped_lock_traits_type::initial_rw_state(true));
 
-		/* get full mask for new bucket */
-		mask = (mask << 1) | 1;
-		assert((mask & (mask + 1)) == 0 && (h & mask) == h);
-	restart:
-		for (node_ptr_t *p_old = &(b_old->node_list), n = *p_old; n;
-		     n = *p_old) {
-			hashcode_type c = get_hash_code(n);
+		pmem::obj::transaction::run(pop, [&] {
+			/* get full mask for new bucket */
+			mask = (mask << 1) | 1;
+			assert((mask & (mask + 1)) == 0 && (h & mask) == h);
+
+		restart:
+			for (node_ptr_t *p_old = &(b_old->node_list),
+					n = *p_old;
+			     n; n = *p_old) {
+				hashcode_type c = get_hash_code(n);
 #ifndef NDEBUG
-			hashcode_type bmask = h & (mask >> 1);
+				hashcode_type bmask = h & (mask >> 1);
 
-			bmask = bmask == 0
-				? 1 /* minimal mask of parent bucket */
-				: (1u << (detail::Log2(bmask) + 1)) - 1;
+				bmask = bmask == 0
+					? 1 /* minimal mask of parent bucket */
+					: (1u << (detail::Log2(bmask) + 1)) - 1;
 
-			assert((c & bmask) == (h & bmask));
+				assert((c & bmask) == (h & bmask));
 #endif
 
-			if ((c & mask) == h) {
-				if (!b_old.is_writer() &&
-				    !scoped_lock_traits_type::upgrade_to_writer(
-					    b_old)) {
-					goto restart;
-					/* node ptr can be invalid due to
-					 * concurrent erase */
-				}
-
-				if (restore_after_crash) {
-					while (*p_new != nullptr &&
-					       (mask & get_hash_code(*p_new)) ==
-						       h &&
-					       *p_new != n) {
-						p_new = &(
-							(*p_new)(
-								this->my_pool_uuid)
-								->next);
+				if ((c & mask) == h) {
+					if (!b_old.is_writer() &&
+					    !scoped_lock_traits_type::
+						    upgrade_to_writer(b_old)) {
+						goto restart;
+						/* node ptr can be invalid due
+						 * to concurrent erase */
 					}
 
-					restore_after_crash = false;
+					/* Add to new b_new */
+					*p_new = n;
+
+					/* exclude from b_old */
+					*p_old = n(this->my_pool_uuid)->next;
+
+					p_new = &(n(this->my_pool_uuid)->next);
+				} else {
+					/* iterate to next item */
+					p_old = &(n(this->my_pool_uuid)->next);
 				}
-
-				/* Add to new b_new */
-				*p_new = n;
-				pop.persist(p_new, sizeof(*p_new));
-
-				/* exclude from b_old */
-				*p_old = n(this->my_pool_uuid)->next;
-				pop.persist(p_old, sizeof(*p_old));
-
-				p_new = &(n(this->my_pool_uuid)->next);
-			} else {
-				/* iterate to next item */
-				p_old = &(n(this->my_pool_uuid)->next);
 			}
-		}
 
-		if (restore_after_crash) {
-			while (*p_new != nullptr &&
-			       (mask & get_hash_code(*p_new)) == h)
-				p_new = &((*p_new)(this->my_pool_uuid)->next);
-		}
-
-		*p_new = nullptr;
-		pop.persist(p_new, sizeof(*p_new));
+			*p_new = nullptr;
+		});
 
 		/* mark rehashed */
 		b_new->set_rehashed(std::memory_order_release);

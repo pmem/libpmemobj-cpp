@@ -249,7 +249,7 @@ struct range_snapshotting_iterator
 	/**
 	 * Conversion operator to const T*.
 	 */
-	operator const T *()
+	operator const T *() const
 	{
 		return this->ptr;
 	}
@@ -377,7 +377,7 @@ struct basic_contiguous_iterator
 	/**
 	 * Conversion operator to const T*.
 	 */
-	operator const T *()
+	operator const T *() const
 	{
 		return this->ptr;
 	}

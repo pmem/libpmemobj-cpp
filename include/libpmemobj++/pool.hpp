@@ -303,7 +303,8 @@ public:
 	}
 
 	/**
-	 * Performs persist operation on a given persistent object.
+	 * Performs persist operation on a given persistent pointer.
+	 * Persist is not performed on the object referenced by this pointer.
 	 *
 	 * @param[in] ptr Persistent pointer to object
 	 */

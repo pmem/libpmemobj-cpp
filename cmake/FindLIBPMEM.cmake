@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,19 +29,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-find_path(LIBPMEMOBJ_INCLUDE_DIR libpmemobj.h)
-find_library(LIBPMEMOBJ_LIBRARY NAMES pmemobj libpmemobj)
+find_path(LIBPMEM_INCLUDE_DIR libpmem.h)
+find_library(LIBPMEM_LIBRARY NAMES pmem libpmem)
 
-set(LIBPMEMOBJ_LIBRARIES ${LIBPMEMOBJ_LIBRARY})
-set(LIBPMEMOBJ_INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIR})
+set(LIBPMEM_LIBRARIES ${LIBPMEM_LIBRARY})
+set(LIBPMEM_INCLUDE_DIRS ${LIBPMEM_INCLUDE_DIR})
 
-set(MSG_NOT_FOUND "libpmemobj NOT found (set CMAKE_PREFIX_PATH to point the location)")
-if(NOT (LIBPMEMOBJ_INCLUDE_DIR AND LIBPMEMOBJ_LIBRARY))
-	if(LIBPMEMOBJ_FIND_REQUIRED)
+set(MSG_NOT_FOUND "libpmem NOT found (set CMAKE_PREFIX_PATH to point the location)")
+if(NOT (LIBPMEM_INCLUDE_DIR AND LIBPMEM_LIBRARY))
+	if(LIBPMEM_FIND_REQUIRED)
 		message(FATAL_ERROR ${MSG_NOT_FOUND})
 	else()
 		message(WARNING ${MSG_NOT_FOUND})
 	endif()
 endif()
 
-mark_as_advanced(LIBPMEMOBJ_LIBRARY LIBPMEMOBJ_INCLUDE_DIR)
+mark_as_advanced(LIBPMEM_LIBRARY LIBPMEM_INCLUDE_DIR)

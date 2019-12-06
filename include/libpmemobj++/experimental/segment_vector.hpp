@@ -1281,12 +1281,22 @@ segment_vector<T, Segment, Policy>::assign(size_type count,
 		else if (count < size())
 			shrink(count);
 
-		size_type end = policy::get_segment(count - 1);
-		for (size_type i = 0; i < end; ++i)
-			_data[i].assign(policy::segment_size(i), value);
-		_data[end].assign(count - policy::segment_top(end), value);
+		/**
+		 * using vector policy user may call assign with zero count and
+		 * in that case we can't call assign of uninitialized vector,
+		 * also we must set segments_used to zero instead of "end + 1"
+		 */
+		if (count == 0) {
+			_segments_used = 0;
+		} else {
+			size_type end = policy::get_segment(count - 1);
+			for (size_type i = 0; i < end; ++i)
+				_data[i].assign(policy::segment_size(i), value);
+			_data[end].assign(count - policy::segment_top(end),
+					  value);
 
-		_segments_used = end + 1;
+			_segments_used = end + 1;
+		}
 	});
 	assert(segment_capacity_validation());
 }
@@ -1331,18 +1341,28 @@ segment_vector<T, Segment, Policy>::assign(InputIt first, InputIt last)
 		else if (count < size())
 			shrink(count);
 
-		difference_type num;
-		size_type end = policy::get_segment(count - 1);
-		for (size_type i = 0; i < end; ++i) {
-			size_type size = policy::segment_size(i);
-			num = static_cast<difference_type>(size);
-			_data[i].assign(first, std::next(first, num));
-			std::advance(first, num);
-		}
-		num = static_cast<difference_type>(std::distance(first, last));
-		_data[end].assign(first, std::next(first, num));
+		/**
+		 * using vector policy user may call assign with zero count and
+		 * in that case we can't call assign of uninitialized vector,
+		 * also we must set segments_used to zero instead of "end + 1"
+		 */
+		if (count == 0) {
+			_segments_used = 0;
+		} else {
+			difference_type num;
+			size_type end = policy::get_segment(count - 1);
+			for (size_type i = 0; i < end; ++i) {
+				size_type size = policy::segment_size(i);
+				num = static_cast<difference_type>(size);
+				_data[i].assign(first, std::next(first, num));
+				std::advance(first, num);
+			}
+			num = static_cast<difference_type>(
+				std::distance(first, last));
+			_data[end].assign(first, std::next(first, num));
 
-		_segments_used = end + 1;
+			_segments_used = end + 1;
+		}
 	});
 	assert(segment_capacity_validation());
 }
@@ -1982,7 +2002,7 @@ void
 segment_vector<T, Segment, Policy>::shrink_to_fit()
 {
 	size_type new_last = policy::get_segment(size() - 1);
-	if (_segments_used - 1 == new_last)
+	if (empty() || _segments_used - 1 == new_last)
 		return;
 
 	pool_base pb = get_pool();
@@ -2666,7 +2686,7 @@ segment_vector<T, Segment, Policy>::construct(size_type idx, size_type count,
 					      Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	assert(_segments_used - 1 >= policy::get_segment(size() + count - 1));
+	assert(capacity() >= size() + count);
 
 	for (size_type i = idx; i < idx + count; ++i) {
 		size_type segment = policy::get_segment(i);
@@ -2714,8 +2734,7 @@ segment_vector<T, Segment, Policy>::construct_range(size_type idx,
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	size_type count = static_cast<size_type>(std::distance(first, last));
-	assert(count >= 0);
-	assert(_segments_used - 1 >= policy::get_segment(size() + count - 1));
+	assert(capacity() >= size() + count);
 
 	for (size_type i = idx; i < idx + count; ++i, ++first) {
 		size_type segment = policy::get_segment(i);
@@ -2749,6 +2768,8 @@ void
 segment_vector<T, Segment, Policy>::insert_gap(size_type idx, size_type count)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	if (count == 0)
+		return;
 
 	size_type _size = size();
 
@@ -2792,6 +2813,9 @@ segment_vector<T, Segment, Policy>::shrink(size_type size_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= size());
+
+	if (empty())
+		return;
 
 	snapshot_data(size_new, size());
 

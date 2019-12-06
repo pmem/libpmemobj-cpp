@@ -131,7 +131,7 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="separator:a62614e17c84a28ec0fce3e1a65c90dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a439567476fb60bdd5b0687f3587f9415"><td class="memTemplParams" colspan="2">template&lt;typename Y &gt; </td></tr>
 <tr class="memitem:a439567476fb60bdd5b0687f3587f9415"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1pool__base.html#a439567476fb60bdd5b0687f3587f9415">persist</a> (const <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; Y &gt; &amp;ptr) noexcept</td></tr>
-<tr class="memdesc:a439567476fb60bdd5b0687f3587f9415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs persist operation on a given persistent object.  <a href="#a439567476fb60bdd5b0687f3587f9415">More...</a><br /></td></tr>
+<tr class="memdesc:a439567476fb60bdd5b0687f3587f9415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs persist operation on a given persistent pointer.  <a href="#a439567476fb60bdd5b0687f3587f9415">More...</a><br /></td></tr>
 <tr class="separator:a439567476fb60bdd5b0687f3587f9415"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e93abc89e36875a923cbeef1c29575c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1pool__base.html#a1e93abc89e36875a923cbeef1c29575c">flush</a> (const void *addr, size_t len) noexcept</td></tr>
 <tr class="memdesc:a1e93abc89e36875a923cbeef1c29575c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs flush operation on a given chunk of memory.  <a href="#a1e93abc89e36875a923cbeef1c29575c">More...</a><br /></td></tr>
@@ -941,7 +941,8 @@ template&lt;typename Y &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Performs persist operation on a given persistent object. </p>
+<p>Performs persist operation on a given persistent pointer. </p>
+<p>Persist is not performed on the object referenced by this pointer.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Persistent pointer to object </td></tr>

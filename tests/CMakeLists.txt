@@ -327,6 +327,9 @@ if (ENABLE_VECTOR)
 	build_test_ext(NAME vector_range SRC_FILES vector_range/vector_range.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_range TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME vector_parameters SRC_FILES vector_parameters/vector_parameters.cpp BUILD_OPTIONS -DVECTOR)
+	add_test_generic(NAME vector_parameters TRACERS none memcheck pmemcheck)
+
 	build_test_ext(NAME vector_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_layout TRACERS none)
 endif()
@@ -512,6 +515,9 @@ if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	build_test_ext(NAME segment_vector_array_expsize_std_arg SRC_FILES vector_std_arg/vector_std_arg.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_std_arg TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME segment_vector_array_expsize_parameters SRC_FILES vector_parameters/vector_parameters.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_parameters TRACERS none memcheck pmemcheck)
+
 	build_test_ext(NAME segment_vector_array_expsize_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_layout TRACERS none)
 endif()
@@ -582,6 +588,9 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	build_test_ext(NAME segment_vector_vector_expsize_std_arg SRC_FILES vector_std_arg/vector_std_arg.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_std_arg TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME segment_vector_vector_expsize_parameters SRC_FILES vector_parameters/vector_parameters.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_parameters TRACERS none memcheck pmemcheck)
+
 	build_test_ext(NAME segment_vector_vector_expsize_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_layout TRACERS none)
 endif()
@@ -651,6 +660,9 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 
 	build_test_ext(NAME segment_vector_vector_fixedsize_std_arg SRC_FILES vector_std_arg/vector_std_arg.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_std_arg TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_parameters SRC_FILES vector_parameters/vector_parameters.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_parameters TRACERS none memcheck pmemcheck)
 
 	build_test_ext(NAME segment_vector_vector_fixedsize_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_layout TRACERS none)

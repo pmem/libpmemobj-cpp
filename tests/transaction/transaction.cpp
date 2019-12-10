@@ -931,6 +931,188 @@ test_tx_snapshot(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 }
+
+void
+tx_with_callbacks(int &cb_oncommit_called, int &cb_onabort_called,
+		  int &cb_finally_called, int &cb_work_called)
+{
+	nvobj::transaction::register_callback(nvobj::transaction::stage::work,
+					      [&] { cb_work_called++; });
+
+	nvobj::transaction::register_callback(
+		nvobj::transaction::stage::oncommit, [&] {
+			UT_ASSERT(cb_work_called == 2);
+			cb_oncommit_called++;
+		});
+
+	nvobj::transaction::register_callback(nvobj::transaction::stage::work,
+					      [&] { cb_work_called++; });
+
+	nvobj::transaction::register_callback(
+		nvobj::transaction::stage::onabort,
+		[&] { cb_onabort_called++; });
+
+	nvobj::transaction::register_callback(
+		nvobj::transaction::stage::finally,
+		[&] { cb_finally_called++; });
+
+	UT_ASSERT(cb_work_called == 0);
+	UT_ASSERT(cb_oncommit_called == 0);
+	UT_ASSERT(cb_onabort_called == 0);
+	UT_ASSERT(cb_finally_called == 0);
+}
+
+void
+test_tx_callback(nvobj::pool<root> &pop)
+{
+	int cb_oncommit_called = 0;
+	int cb_onabort_called = 0;
+	int cb_finally_called = 0;
+	int cb_work_called = 0;
+
+	try {
+		tx_with_callbacks(cb_oncommit_called, cb_onabort_called,
+				  cb_finally_called, cb_work_called);
+
+		UT_ASSERT(0);
+	} catch (pmem::transaction_scope_error &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			tx_with_callbacks(cb_oncommit_called, cb_onabort_called,
+					  cb_finally_called, cb_work_called);
+		});
+
+		UT_ASSERTeq(cb_work_called, 2);
+		UT_ASSERTeq(cb_oncommit_called, 1);
+		UT_ASSERTeq(cb_onabort_called, 0);
+		UT_ASSERTeq(cb_finally_called, 1);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	cb_oncommit_called = 0;
+	cb_onabort_called = 0;
+	cb_finally_called = 0;
+	cb_work_called = 0;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			tx_with_callbacks(cb_oncommit_called, cb_onabort_called,
+					  cb_finally_called, cb_work_called);
+
+			nvobj::transaction::abort(0);
+		});
+
+		UT_ASSERT(0);
+	} catch (pmem::manual_tx_abort &) {
+		UT_ASSERTeq(cb_work_called, 0);
+		UT_ASSERTeq(cb_oncommit_called, 0);
+		UT_ASSERTeq(cb_onabort_called, 1);
+		UT_ASSERTeq(cb_finally_called, 1);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+void
+test_tx_callback_nested(nvobj::pool<root> &pop)
+{
+	int cb_oncommit_called = 0;
+	int cb_onabort_called = 0;
+	int cb_finally_called = 0;
+	int cb_work_called = 0;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::transaction::run(pop, [&] {
+				tx_with_callbacks(
+					cb_oncommit_called, cb_onabort_called,
+					cb_finally_called, cb_work_called);
+			});
+
+			UT_ASSERTeq(cb_work_called, 0);
+			UT_ASSERTeq(cb_oncommit_called, 0);
+			UT_ASSERTeq(cb_onabort_called, 0);
+			UT_ASSERTeq(cb_finally_called, 0);
+		});
+
+		UT_ASSERTeq(cb_work_called, 2);
+		UT_ASSERTeq(cb_oncommit_called, 1);
+		UT_ASSERTeq(cb_onabort_called, 0);
+		UT_ASSERTeq(cb_finally_called, 1);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
+
+template <typename T>
+void
+test_tx_callback_scope(nvobj::pool<root> &pop, std::function<void()> commit)
+{
+	int cb_oncommit_called = 0;
+	int cb_onabort_called = 0;
+	int cb_finally_called = 0;
+	int cb_work_called = 0;
+
+	try {
+		{
+			T to(pop);
+
+			tx_with_callbacks(cb_oncommit_called, cb_onabort_called,
+					  cb_finally_called, cb_work_called);
+
+			commit();
+
+			if (std::is_same<T,
+					 nvobj::transaction::manual>::value) {
+				UT_ASSERTeq(cb_work_called, 2);
+				UT_ASSERTeq(cb_oncommit_called, 1);
+			} else {
+				UT_ASSERTeq(cb_work_called, 0);
+				UT_ASSERTeq(cb_oncommit_called, 0);
+			}
+
+			UT_ASSERTeq(cb_onabort_called, 0);
+			UT_ASSERTeq(cb_finally_called, 0);
+		}
+
+		UT_ASSERTeq(cb_work_called, 2);
+		UT_ASSERTeq(cb_oncommit_called, 1);
+		UT_ASSERTeq(cb_onabort_called, 0);
+		UT_ASSERTeq(cb_finally_called, 1);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	cb_oncommit_called = 0;
+	cb_onabort_called = 0;
+	cb_finally_called = 0;
+	cb_work_called = 0;
+
+	try {
+		{
+			T to(pop);
+
+			tx_with_callbacks(cb_oncommit_called, cb_onabort_called,
+					  cb_finally_called, cb_work_called);
+
+			nvobj::transaction::abort(0);
+
+			UT_ASSERT(0);
+		}
+	} catch (pmem::manual_tx_abort &) {
+		UT_ASSERTeq(cb_work_called, 0);
+		UT_ASSERTeq(cb_oncommit_called, 0);
+		UT_ASSERTeq(cb_onabort_called, 1);
+		UT_ASSERTeq(cb_finally_called, 1);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
 }
 
 int
@@ -967,6 +1149,11 @@ main(int argc, char *argv[])
 	test_tx_automatic_destructor_throw(pop);
 
 	test_tx_snapshot(pop);
+
+	test_tx_callback(pop);
+	test_tx_callback_nested(pop);
+	test_tx_callback_scope<nvobj::transaction::manual>(pop, real_commit);
+	test_tx_callback_scope<nvobj::transaction::automatic>(pop, fake_commit);
 
 	pop.close();
 

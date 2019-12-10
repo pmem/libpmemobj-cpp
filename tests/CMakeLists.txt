@@ -422,9 +422,6 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 		build_test(concurrent_hash_map_pmreorder_multiple_buckets concurrent_hash_map_pmreorder_multiple_buckets/concurrent_hash_map_pmreorder_multiple_buckets.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_multiple_buckets CASE 0 TRACERS none)
 
-		build_test(concurrent_hash_map_pmreorder_insert_erase_mt concurrent_hash_map_pmreorder_insert_erase_mt/concurrent_hash_map_pmreorder_insert_erase_mt.cpp)
-		add_test_generic(NAME concurrent_hash_map_pmreorder_insert_erase_mt CASE 0 TRACERS none)
-
 		build_test(concurrent_hash_map_pmreorder_erase concurrent_hash_map_pmreorder_erase/concurrent_hash_map_pmreorder_erase.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_erase CASE 0 TRACERS none)
 

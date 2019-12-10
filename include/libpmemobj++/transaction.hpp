@@ -68,6 +68,10 @@ namespace obj
  * This class also exposes a closure-like transaction API, which is the
  * preferred way of handling transactions.
  *
+ * This API should NOT be mixed with C transactions API. One issue is that
+ * C++ callbacks registered using transaction::register_callback() would not
+ * be called if C++ transaction is created inside C transaction.
+ *
  * The typical usage example would be:
  * @snippet doc_snippets/transaction.cpp general_tx_example
  */

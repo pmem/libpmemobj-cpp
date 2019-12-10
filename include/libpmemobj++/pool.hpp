@@ -431,6 +431,10 @@ protected:
  * for operations on pmemobj pools. The template parameter defines the
  * type of the root object within the pool. The typical usage example would be:
  * @snippet doc_snippets/pool.cpp pool_example
+ *
+ * This API should not be mixed with C API. For example explicitly calling
+ * pmemobj_set_user_data(pop) on pool which is handled by C++ pool object
+ * is undefined behaviour.
  */
 template <typename T>
 class pool : public pool_base {

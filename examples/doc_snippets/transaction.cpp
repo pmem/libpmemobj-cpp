@@ -206,3 +206,53 @@ automatic_tx_example()
 	return transaction::error();
 }
 //! [automatic_tx_example]
+
+//! [tx_callback_example]
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/mutex.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pext.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/shared_mutex.hpp>
+#include <libpmemobj++/transaction.hpp>
+
+using namespace pmem::obj;
+
+void
+tx_callback_example()
+{
+	// pool root structure
+	struct root {
+		p<int> count;
+	};
+
+	// create a pmemobj pool
+	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
+
+	bool cb_called = false;
+	auto internal_tx_function = [&] {
+		// callbacks can be registered even in inner transaction bu
+		// will be called when outer transaction ends
+		transaction::run(pop, [&] {
+			transaction::register_callback(
+				transaction::stage::oncommit,
+				[&] { cb_called = true; });
+		});
+
+		// cb_called is false here if internal_tx_function is called
+		// inside another transaction
+	};
+
+	try {
+		transaction::run(pop, [&] { internal_tx_function(); });
+
+		// cb_called == true if transaction ended succesfully
+	} catch (pmem::transaction_error &) {
+		// an internal transaction error occurred, tx aborted
+		// reacquire locks if necessary
+	} catch (...) {
+		// some other exception thrown, tx aborted
+		// reacquire locks if necessary
+	}
+}
+//! [tx_callback_example]

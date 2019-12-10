@@ -164,7 +164,7 @@ build_test(shared_mutex_posix shared_mutex_posix/shared_mutex_posix.cpp)
 add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
 
 build_test(transaction transaction/transaction.cpp)
-add_test_generic(NAME transaction TRACERS none pmemcheck)
+add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
 
 if(WIN32)
 	build_test(pool_win pool_win/pool_win.cpp)

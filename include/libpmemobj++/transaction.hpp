@@ -38,8 +38,10 @@
 #ifndef LIBPMEMOBJ_CPP_TRANSACTION_HPP
 #define LIBPMEMOBJ_CPP_TRANSACTION_HPP
 
+#include <array>
 #include <functional>
 #include <string>
+#include <vector>
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/pexceptions.hpp>
@@ -107,8 +109,19 @@ public:
 		template <typename... L>
 		manual(obj::pool_base &pop, L &... locks)
 		{
-			if (pmemobj_tx_begin(pop.handle(), nullptr,
-					     TX_PARAM_NONE) != 0)
+			int ret = 0;
+
+			if (pmemobj_tx_stage() == TX_STAGE_NONE) {
+				ret = pmemobj_tx_begin(
+					pop.handle(), nullptr, TX_PARAM_CB,
+					transaction::c_callback,
+					&callbacks_map(), TX_PARAM_NONE);
+			} else {
+				ret = pmemobj_tx_begin(pop.handle(), nullptr,
+						       TX_PARAM_NONE);
+			}
+
+			if (ret != 0)
 				throw pmem::transaction_error(
 					"failed to start transaction")
 					.with_pmemobj_errormsg();
@@ -402,8 +415,19 @@ public:
 	static void
 	run(pool_base &pool, std::function<void()> tx, Locks &... locks)
 	{
-		if (pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE) !=
-		    0)
+		int ret = 0;
+
+		if (pmemobj_tx_stage() == TX_STAGE_NONE) {
+			ret = pmemobj_tx_begin(pool.handle(), nullptr,
+					       TX_PARAM_CB,
+					       transaction::c_callback,
+					       &callbacks_map(), TX_PARAM_NONE);
+		} else {
+			ret = pmemobj_tx_begin(pool.handle(), nullptr,
+					       TX_PARAM_NONE);
+		}
+
+		if (ret != 0)
 			throw pmem::transaction_error(
 				"failed to start transaction")
 				.with_pmemobj_errormsg();
@@ -498,6 +522,39 @@ public:
 		}
 	}
 
+	/**
+	 * Possible stages of a transaction, for every stage one or more
+	 * callbacks can be registered.
+	 */
+	enum class stage {
+		none = TX_STAGE_NONE, /* no transaction in this thread */
+		work = TX_STAGE_WORK, /* transaction in progress */
+		oncommit = TX_STAGE_ONCOMMIT, /* successfully committed */
+		onabort = TX_STAGE_ONABORT,   /* tx_begin failed or transaction
+						 aborted */
+		finally = TX_STAGE_FINALLY,   /* ready for cleanup */
+	};
+
+	/**
+	 * Registers callback to be called on specified stage for the
+	 * transaction. In case of nested transactions those callbacks
+	 * are called when the outer most transaction enters a specified stage.
+	 *
+	 * @pre this function must be called during transaction.
+	 *
+	 * @throw transaction_scope_error when called outside of a transaction
+	 * scope
+	 */
+	static void
+	register_callback(stage stg, std::function<void()> cb)
+	{
+		if (pmemobj_tx_stage() != TX_STAGE_WORK)
+			throw pmem::transaction_scope_error(
+				"register_callback must be called during a transaction");
+
+		callbacks_map()[static_cast<size_t>(stg)].push_back(cb);
+	}
+
 private:
 	/**
 	 * Recursively add locks to the active transaction.
@@ -531,6 +588,38 @@ private:
 	add_lock() noexcept
 	{
 		return 0;
+	}
+
+	using callbacks_list_type = std::vector<std::function<void()>>;
+	using callbacks_map_type =
+		std::array<callbacks_list_type, MAX_TX_STAGE>;
+
+	/**
+	 * Returns hashmap mapping tx stage to list of callbacks
+	 */
+	static callbacks_map_type &
+	callbacks_map()
+	{
+		static thread_local callbacks_map_type callbacks;
+		return callbacks;
+	}
+
+	static void
+	c_callback(PMEMobjpool *pop, enum pobj_tx_stage obj_stage, void *arg)
+	{
+		auto &map = *static_cast<callbacks_map_type *>(arg);
+
+		for (auto &cb : map[obj_stage])
+			cb();
+
+		/*
+		 * Callback for TX_STAGE_NONE is called as last so we can
+		 * clear all callbacks here
+		 */
+		if (obj_stage == TX_STAGE_NONE) {
+			for (auto &cb_list : map)
+				cb_list.clear();
+		}
 	}
 };
 

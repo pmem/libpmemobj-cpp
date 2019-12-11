@@ -6,93 +6,129 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// size_type find_last_not_of(charT c, size_type pos = npos) const;
+#include <libpmemobj++/container/string.hpp>
 
-#include <string>
-#include <cassert>
+namespace nvobj = pmem::obj;
 
-#include "min_allocator.h"
+using C = nvobj::string;
+
+struct root {
+	nvobj::persistent_ptr<C> s_arr[22];
+};
 
 template <class S>
 void
-test(const S& s, typename S::value_type c, typename S::size_type pos,
+test(const S &s, typename S::value_type c, typename S::size_type pos,
      typename S::size_type x)
 {
-    assert(s.find_last_not_of(c, pos) == x);
-    if (x != S::npos)
-        assert(x <= pos && x < s.size());
+	UT_ASSERT(s.find_last_not_of(c, pos) == x);
+	if (x != S::npos)
+		UT_ASSERT(x <= pos && x < s.size());
 }
 
 template <class S>
 void
-test(const S& s, typename S::value_type c, typename S::size_type x)
+test(const S &s, typename S::value_type c, typename S::size_type x)
 {
-    assert(s.find_last_not_of(c) == x);
-    if (x != S::npos)
-        assert(x < s.size());
+	UT_ASSERT(s.find_last_not_of(c) == x);
+	if (x != S::npos)
+		UT_ASSERT(x < s.size());
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S(""), 'i', 0, S::npos);
-    test(S(""), 'i', 1, S::npos);
-    test(S("kitcj"), 'i', 0, 0);
-    test(S("qkamf"), 'i', 1, 1);
-    test(S("nhmko"), 'i', 2, 2);
-    test(S("tpsaf"), 'i', 4, 4);
-    test(S("lahfb"), 'i', 5, 4);
-    test(S("irkhs"), 'i', 6, 4);
-    test(S("gmfhdaipsr"), 'i', 0, 0);
-    test(S("kantesmpgj"), 'i', 1, 1);
-    test(S("odaftiegpm"), 'i', 5, 4);
-    test(S("oknlrstdpi"), 'i', 9, 8);
-    test(S("eolhfgpjqk"), 'i', 10, 9);
-    test(S("pcdrofikas"), 'i', 11, 9);
-    test(S("nbatdlmekrgcfqsophij"), 'i', 0, 0);
-    test(S("bnrpehidofmqtcksjgla"), 'i', 1, 1);
-    test(S("jdmciepkaqgotsrfnhlb"), 'i', 10, 10);
-    test(S("jtdaefblsokrmhpgcnqi"), 'i', 19, 18);
-    test(S("hkbgspofltajcnedqmri"), 'i', 20, 18);
-    test(S("oselktgbcapndfjihrmq"), 'i', 21, 19);
+	START();
 
-    test(S(""), 'i', S::npos);
-    test(S("csope"), 'i', 4);
-    test(S("gfsmthlkon"), 'i', 9);
-    test(S("laenfsbridchgotmkqpj"), 'i', 19);
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(""), 'i', 0, S::npos);
-    test(S(""), 'i', 1, S::npos);
-    test(S("kitcj"), 'i', 0, 0);
-    test(S("qkamf"), 'i', 1, 1);
-    test(S("nhmko"), 'i', 2, 2);
-    test(S("tpsaf"), 'i', 4, 4);
-    test(S("lahfb"), 'i', 5, 4);
-    test(S("irkhs"), 'i', 6, 4);
-    test(S("gmfhdaipsr"), 'i', 0, 0);
-    test(S("kantesmpgj"), 'i', 1, 1);
-    test(S("odaftiegpm"), 'i', 5, 4);
-    test(S("oknlrstdpi"), 'i', 9, 8);
-    test(S("eolhfgpjqk"), 'i', 10, 9);
-    test(S("pcdrofikas"), 'i', 11, 9);
-    test(S("nbatdlmekrgcfqsophij"), 'i', 0, 0);
-    test(S("bnrpehidofmqtcksjgla"), 'i', 1, 1);
-    test(S("jdmciepkaqgotsrfnhlb"), 'i', 10, 10);
-    test(S("jtdaefblsokrmhpgcnqi"), 'i', 19, 18);
-    test(S("hkbgspofltajcnedqmri"), 'i', 20, 18);
-    test(S("oselktgbcapndfjihrmq"), 'i', 21, 19);
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
 
-    test(S(""), 'i', S::npos);
-    test(S("csope"), 'i', 4);
-    test(S("gfsmthlkon"), 'i', 9);
-    test(S("laenfsbridchgotmkqpj"), 'i', 19);
-    }
-#endif
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto &s_arr = pop.root()->s_arr;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			s_arr[0] = nvobj::make_persistent<C>("");
+			s_arr[1] = nvobj::make_persistent<C>(
+				"bnrpehidofmqtcksjgla");
+			s_arr[2] = nvobj::make_persistent<C>("csope");
+			s_arr[3] = nvobj::make_persistent<C>("eolhfgpjqk");
+			s_arr[4] = nvobj::make_persistent<C>("gfsmthlkon");
+			s_arr[5] = nvobj::make_persistent<C>("gmfhdaipsr");
+			s_arr[6] = nvobj::make_persistent<C>(
+				"hkbgspofltajcnedqmri");
+			s_arr[7] = nvobj::make_persistent<C>("irkhs");
+			s_arr[8] = nvobj::make_persistent<C>(
+				"jdmciepkaqgotsrfnhlb");
+			s_arr[9] = nvobj::make_persistent<C>(
+				"jtdaefblsokrmhpgcnqi");
+			s_arr[10] = nvobj::make_persistent<C>("kantesmpgj");
+			s_arr[11] = nvobj::make_persistent<C>("kitcj");
+			s_arr[12] = nvobj::make_persistent<C>(
+				"laenfsbridchgotmkqpj");
+			s_arr[13] = nvobj::make_persistent<C>("lahfb");
+			s_arr[14] = nvobj::make_persistent<C>(
+				"nbatdlmekrgcfqsophij");
+			s_arr[15] = nvobj::make_persistent<C>("nhmko");
+			s_arr[16] = nvobj::make_persistent<C>("odaftiegpm");
+			s_arr[17] = nvobj::make_persistent<C>("oknlrstdpi");
+			s_arr[18] = nvobj::make_persistent<C>(
+				"oselktgbcapndfjihrmq");
+			s_arr[19] = nvobj::make_persistent<C>("pcdrofikas");
+			s_arr[20] = nvobj::make_persistent<C>("qkamf");
+			s_arr[21] = nvobj::make_persistent<C>("tpsaf");
+		});
+
+		test(*s_arr[0], 'i', 0, C::npos);
+		test(*s_arr[0], 'i', 1, C::npos);
+		test(*s_arr[11], 'i', 0, 0);
+		test(*s_arr[20], 'i', 1, 1);
+		test(*s_arr[15], 'i', 2, 2);
+		test(*s_arr[21], 'i', 4, 4);
+		test(*s_arr[13], 'i', 5, 4);
+		test(*s_arr[7], 'i', 6, 4);
+		test(*s_arr[5], 'i', 0, 0);
+		test(*s_arr[10], 'i', 1, 1);
+		test(*s_arr[16], 'i', 5, 4);
+		test(*s_arr[17], 'i', 9, 8);
+		test(*s_arr[3], 'i', 10, 9);
+		test(*s_arr[19], 'i', 11, 9);
+		test(*s_arr[14], 'i', 0, 0);
+		test(*s_arr[1], 'i', 1, 1);
+		test(*s_arr[8], 'i', 10, 10);
+		test(*s_arr[9], 'i', 19, 18);
+		test(*s_arr[6], 'i', 20, 18);
+		test(*s_arr[18], 'i', 21, 19);
+
+		test(*s_arr[0], 'i', C::npos);
+		test(*s_arr[2], 'i', 4);
+		test(*s_arr[4], 'i', 9);
+		test(*s_arr[12], 'i', 19);
+		;
+
+		nvobj::transaction::run(pop, [&] {
+			for (unsigned i = 0; i < 22; ++i) {
+				nvobj::delete_persistent<C>(s_arr[i]);
+			}
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

@@ -6,93 +6,104 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// size_type find(charT c, size_type pos = 0) const;
+#include <libpmemobj++/container/string.hpp>
 
-#include <string>
-#include <cassert>
+namespace nvobj = pmem::obj;
 
-#include "min_allocator.h"
+using C = nvobj::string;
+
+struct root {
+	nvobj::persistent_ptr<C> s_arr[4];
+};
 
 template <class S>
 void
-test(const S& s, typename S::value_type c, typename S::size_type pos,
+test(const S &s, typename S::value_type c, typename S::size_type pos,
      typename S::size_type x)
 {
-    assert(s.find(c, pos) == x);
-    if (x != S::npos)
-        assert(pos <= x && x + 1 <= s.size());
+	UT_ASSERT(s.find(c, pos) == x);
+	if (x != S::npos)
+		UT_ASSERT(pos <= x && x + 1 <= s.size());
 }
 
 template <class S>
 void
-test(const S& s, typename S::value_type c, typename S::size_type x)
+test(const S &s, typename S::value_type c, typename S::size_type x)
 {
-    assert(s.find(c) == x);
-    if (x != S::npos)
-        assert(0 <= x && x + 1 <= s.size());
+	UT_ASSERT(s.find(c) == x);
+	if (x != S::npos)
+		UT_ASSERT(0 <= x && x + 1 <= s.size());
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S(""), 'c', 0, S::npos);
-    test(S(""), 'c', 1, S::npos);
-    test(S("abcde"), 'c', 0, 2);
-    test(S("abcde"), 'c', 1, 2);
-    test(S("abcde"), 'c', 2, 2);
-    test(S("abcde"), 'c', 4, S::npos);
-    test(S("abcde"), 'c', 5, S::npos);
-    test(S("abcde"), 'c', 6, S::npos);
-    test(S("abcdeabcde"), 'c', 0, 2);
-    test(S("abcdeabcde"), 'c', 1, 2);
-    test(S("abcdeabcde"), 'c', 5, 7);
-    test(S("abcdeabcde"), 'c', 9, S::npos);
-    test(S("abcdeabcde"), 'c', 10, S::npos);
-    test(S("abcdeabcde"), 'c', 11, S::npos);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 0, 2);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 1, 2);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 10, 12);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 19, S::npos);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 20, S::npos);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 21, S::npos);
+	START();
 
-    test(S(""), 'c', S::npos);
-    test(S("abcde"), 'c', 2);
-    test(S("abcdeabcde"), 'c', 2);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 2);
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(""), 'c', 0, S::npos);
-    test(S(""), 'c', 1, S::npos);
-    test(S("abcde"), 'c', 0, 2);
-    test(S("abcde"), 'c', 1, 2);
-    test(S("abcde"), 'c', 2, 2);
-    test(S("abcde"), 'c', 4, S::npos);
-    test(S("abcde"), 'c', 5, S::npos);
-    test(S("abcde"), 'c', 6, S::npos);
-    test(S("abcdeabcde"), 'c', 0, 2);
-    test(S("abcdeabcde"), 'c', 1, 2);
-    test(S("abcdeabcde"), 'c', 5, 7);
-    test(S("abcdeabcde"), 'c', 9, S::npos);
-    test(S("abcdeabcde"), 'c', 10, S::npos);
-    test(S("abcdeabcde"), 'c', 11, S::npos);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 0, 2);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 1, 2);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 10, 12);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 19, S::npos);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 20, S::npos);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 21, S::npos);
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
 
-    test(S(""), 'c', S::npos);
-    test(S("abcde"), 'c', 2);
-    test(S("abcdeabcde"), 'c', 2);
-    test(S("abcdeabcdeabcdeabcde"), 'c', 2);
-    }
-#endif
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto &s_arr = pop.root()->s_arr;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			s_arr[0] = nvobj::make_persistent<C>("");
+			s_arr[1] = nvobj::make_persistent<C>("abcde");
+			s_arr[2] = nvobj::make_persistent<C>("abcdeabcde");
+			s_arr[3] = nvobj::make_persistent<C>(
+				"abcdeabcdeabcdeabcde");
+		});
+
+		test(*s_arr[0], 'c', 0, C::npos);
+		test(*s_arr[0], 'c', 1, C::npos);
+		test(*s_arr[1], 'c', 0, 2);
+		test(*s_arr[1], 'c', 1, 2);
+		test(*s_arr[1], 'c', 2, 2);
+		test(*s_arr[1], 'c', 4, C::npos);
+		test(*s_arr[1], 'c', 5, C::npos);
+		test(*s_arr[1], 'c', 6, C::npos);
+		test(*s_arr[2], 'c', 0, 2);
+		test(*s_arr[2], 'c', 1, 2);
+		test(*s_arr[2], 'c', 5, 7);
+		test(*s_arr[2], 'c', 9, C::npos);
+		test(*s_arr[2], 'c', 10, C::npos);
+		test(*s_arr[2], 'c', 11, C::npos);
+		test(*s_arr[3], 'c', 0, 2);
+		test(*s_arr[3], 'c', 1, 2);
+		test(*s_arr[3], 'c', 10, 12);
+		test(*s_arr[3], 'c', 19, C::npos);
+		test(*s_arr[3], 'c', 20, C::npos);
+		test(*s_arr[3], 'c', 21, C::npos);
+
+		test(*s_arr[0], 'c', C::npos);
+		test(*s_arr[1], 'c', 2);
+		test(*s_arr[2], 'c', 2);
+		test(*s_arr[3], 'c', 2);
+
+		nvobj::transaction::run(pop, [&] {
+			for (unsigned i = 0; i < 4; ++i) {
+				nvobj::delete_persistent<C>(s_arr[i]);
+			}
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

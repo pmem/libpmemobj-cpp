@@ -800,6 +800,7 @@ template&lt;typename T , typename Segment , typename Policy &gt; </div>
   </table>
   </dd>
 </dl>
+<p>using vector policy user may call assign with zero count and in that case we can't call assign of uninitialized vector</p>
 
 </div>
 </div>
@@ -856,6 +857,7 @@ template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iter
   </table>
   </dd>
 </dl>
+<p>using vector policy user may call assign with zero count and in that case we can't call assign of uninitialized vector</p>
 
 </div>
 </div>

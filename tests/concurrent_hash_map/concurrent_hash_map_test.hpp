@@ -164,6 +164,20 @@ public:
 		reinitialize();
 	}
 
+	void
+	check_consistency(size_t expected)
+	{
+		check_items_count(expected);
+		rehash();
+		reinitialize();
+	}
+
+	void
+	defrag()
+	{
+		map->defrag();
+	}
+
 	template <typename ItemType>
 	void
 	increment(ItemType i)
@@ -295,6 +309,8 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 				i, i + 1);
 	});
 	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -336,6 +352,8 @@ insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 			test.check_item<persistent_map_type::const_accessor>(i,
 									     1);
 	});
+	test.check_consistency();
+	test.defrag();
 	test.check_consistency();
 	test.clear();
 }
@@ -379,6 +397,8 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 				i, i + 1);
 	});
 	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -412,6 +432,8 @@ insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
 								     k2.second);
 	});
 	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -440,6 +462,8 @@ insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 			test.check_item<persistent_map_type::accessor>(
 				i.first, i.second);
 	});
+	test.check_consistency();
+	test.defrag();
 	test.check_consistency();
 	test.clear();
 }
@@ -471,6 +495,9 @@ insert_mt_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 		test.check_item<persistent_map_type::accessor>(
 			i, (int)concurrency);
 	}
+	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -509,6 +536,8 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 		}
 	});
 	test.check_items_count(0);
+	test.defrag();
+	test.check_consistency(0);
 	test.clear();
 }
 
@@ -571,6 +600,8 @@ insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 	for (auto &t : threads) {
 		t.join();
 	}
+
+	map->defrag();
 
 	for (auto &e : *map) {
 		UT_ASSERT(e.first <= e.second);

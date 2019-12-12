@@ -146,6 +146,7 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
 	--env COVERAGE=$COVERAGE \
 	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON} \
+	--env TESTS_LONG=${TESTS_LONG:-OFF} \
 	--env CI_RUN=$CI_RUN \
 	--env TZ='Europe/Warsaw' \
 	-v $HOST_WORKDIR:$WORKDIR \

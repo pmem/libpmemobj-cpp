@@ -352,6 +352,8 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::local(bool &exists)
 		return _storage[(*it).second];
 	}
 
+	/* always releasing a mutex, but no need to search through map because
+	 * no other thread has the same id and can insert such key */
 	lock.upgrade_to_writer();
 
 	/* checking if thread id is not presented in map */

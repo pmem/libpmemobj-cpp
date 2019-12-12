@@ -216,6 +216,9 @@ else()
 	skip_test("make_persistent_array" "SKIPPED_BECAUSE_OF_CLANG_TEMPLATE_BUG")
 endif()
 
+build_test(pool_cleanup pool_cleanup/pool_cleanup.cpp)
+add_test_generic(NAME pool_cleanup TRACERS none pmemcheck memcheck drd helgrind CASE 0)
+
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(NAME iterator_traits TRACERS none)
 

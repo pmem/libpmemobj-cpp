@@ -39,6 +39,7 @@
 #define LIBPMEMOBJ_CPP_POOL_HPP
 
 #include <cstddef>
+#include <functional>
 #include <string>
 #include <sys/stat.h>
 
@@ -263,6 +264,15 @@ public:
 	}
 #endif
 
+	/* XXX:
+	 * Only one callback or list? If list should we clear it after close()?
+	 */
+	static void
+	register_on_close_callback(std::function<void(size_t)> cb)
+	{
+		on_close_callback() = cb;
+	}
+
 	/**
 	 * Closes the pool.
 	 *
@@ -273,6 +283,9 @@ public:
 	{
 		if (this->pop == nullptr)
 			throw std::logic_error("Pool already closed");
+
+		auto root = pmemobj_root(this->pop, 0);
+		on_close_callback()(root.pool_uuid_lo);
 
 		pmemobj_close(this->pop);
 		this->pop = nullptr;
@@ -422,6 +435,17 @@ protected:
 	/* Default create mode */
 	static const int DEFAULT_MODE = S_IWRITE | S_IREAD;
 #endif
+
+private:
+	static std::function<void(size_t)> &
+	on_close_callback()
+	{
+		static std::function<void(size_t)> cb = [](size_t) {
+			/* nop */
+		};
+
+		return cb;
+	}
 };
 
 /**

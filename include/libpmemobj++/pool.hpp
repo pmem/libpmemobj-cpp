@@ -39,11 +39,17 @@
 #define LIBPMEMOBJ_CPP_POOL_HPP
 
 #include <cstddef>
+#include <functional>
+#include <mutex>
 #include <string>
 #include <sys/stat.h>
+#include <typeindex>
+#include <unordered_map>
+#include <vector>
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/ctl.hpp>
+#include <libpmemobj++/detail/pool_data.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/pool_base.h>
@@ -133,6 +139,8 @@ public:
 			throw pmem::pool_error("Failed opening pool")
 				.with_pmemobj_errormsg();
 
+		pmemobj_set_user_data(pop, new detail::pool_data);
+
 		return pool_base(pop);
 	}
 
@@ -166,6 +174,8 @@ public:
 		if (pop == nullptr)
 			throw pmem::pool_error("Failed creating pool")
 				.with_pmemobj_errormsg();
+
+		pmemobj_set_user_data(pop, new detail::pool_data);
 
 		return pool_base(pop);
 	}
@@ -212,6 +222,8 @@ public:
 			throw pmem::pool_error("Failed opening pool")
 				.with_pmemobj_errormsg();
 
+		pmemobj_set_user_data(pop, new detail::pool_data);
+
 		return pool_base(pop);
 	}
 
@@ -241,6 +253,8 @@ public:
 		if (pop == nullptr)
 			throw pmem::pool_error("Failed creating pool")
 				.with_pmemobj_errormsg();
+
+		pmemobj_set_user_data(pop, new detail::pool_data);
 
 		return pool_base(pop);
 	}
@@ -273,6 +287,14 @@ public:
 	{
 		if (this->pop == nullptr)
 			throw std::logic_error("Pool already closed");
+
+		auto *user_data = static_cast<detail::pool_data *>(
+			pmemobj_get_user_data(this->pop));
+
+		if (user_data->initialized.load())
+			user_data->cleanup();
+
+		delete user_data;
 
 		pmemobj_close(this->pop);
 		this->pop = nullptr;

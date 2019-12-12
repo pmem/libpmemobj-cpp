@@ -160,7 +160,7 @@ segment_iterator<Container, is_const>::segment_iterator() noexcept
 }
 
 /**
- * Segment_itarator constructor. Constructs iterator with given
+ * Segment_iterator constructor. Constructs iterator with given
  * container and index to position in it.
  */
 template <typename Container, bool is_const>
@@ -171,7 +171,7 @@ segment_iterator<Container, is_const>::segment_iterator(table_ptr tab,
 }
 
 /**
- * Segment_itarator copy constructor.
+ * Segment_iterator copy constructor.
  * Constructs iterator based on other.
  */
 template <typename Container, bool is_const>
@@ -517,7 +517,7 @@ public:
 	/**
 	 * @param[in] index - index of element in segment_vector
 	 *
-	 * @return index of segment where element should locate
+	 * @return index of segment where element should be located
 	 */
 	static size_type
 	get_segment(size_type index)
@@ -547,7 +547,7 @@ public:
 	/**
 	 * @param[in] index - index of element in segment_vector
 	 *
-	 * @return index in segment where it should locate
+	 * @return index in segment where it should be located
 	 */
 	static size_type
 	index_in_segment(size_type index)
@@ -595,7 +595,7 @@ public:
 	/**
 	 * @param[in] index - index of element in segment_vector
 	 *
-	 * @return index of segment where element should locate
+	 * @return index of segment where element should be located
 	 */
 	static size_type
 	get_segment(size_type index)
@@ -625,7 +625,7 @@ public:
 	/**
 	 * @param[in] index - index of element in segment_vector
 	 *
-	 * @return index in segment where it should locate
+	 * @return index in segment where it should be located
 	 */
 	static size_type
 	index_in_segment(size_type index)
@@ -847,7 +847,7 @@ private:
 	const_reference cget(size_type n) const;
 	bool segment_capacity_validation() const;
 
-	/* Number of segments that currently enabled */
+	/* Number of segments that are currently enabled */
 	p<size_type> _segments_used = 0;
 	/* Segments storage */
 	segment_vector_type _data;
@@ -2612,8 +2612,7 @@ segment_vector<T, Segment, Policy>::swap(segment_vector &other)
 
 /**
  * Private helper method. Increases capacity.
- * Allocs new segments if segment where new_capacity located greater
- * than segment where located capacity().
+ * Allocs new segments if new_capacity is greater than current capacity.
  *
  * @pre must be called in transaction scope
  *
@@ -2689,6 +2688,8 @@ segment_vector<T, Segment, Policy>::construct(size_type idx, size_type count,
 		size_type segment = policy::get_segment(i);
 		_data[segment].emplace_back(std::forward<Args>(args)...);
 	}
+
+	assert(segment_capacity_validation());
 }
 
 /**
@@ -2699,7 +2700,7 @@ segment_vector<T, Segment, Policy>::construct(size_type idx, size_type count,
  * This overload participates in overload resolution only if InputIt
  * satisfies InputIterator.
  *
- * @param[in] idx underyling array index where new elements will be
+ * @param[in] idx underlying array index where new elements will be
  * constructed.
  * @param[in] first first iterator.
  * @param[in] last last iterator.
@@ -2737,6 +2738,8 @@ segment_vector<T, Segment, Policy>::construct_range(size_type idx,
 		size_type segment = policy::get_segment(i);
 		_data[segment].emplace_back(*first);
 	}
+
+	assert(segment_capacity_validation());
 }
 
 /**
@@ -2823,6 +2826,8 @@ segment_vector<T, Segment, Policy>::shrink(size_type size_new)
 	}
 	size_type residue = policy::index_in_segment(size_new);
 	_data[end].erase(_data[end].cbegin() + residue, _data[end].cend());
+
+	assert(segment_capacity_validation());
 }
 
 /**
@@ -3021,7 +3026,7 @@ operator<(const segment_vector<T, Segment, Policy> &lhs,
  *
  * @param[in] lhs is pmem::obj::experimental::segment_vector<T, Policy,
  * SPolicy>.
- * @param[in] rhs is pmem::obj::experime ntal::segment_vector<T,
+ * @param[in] rhs is pmem::obj::experimental::segment_vector<T,
  * Policy>.
  *
  * @return true if contents of lhs are lexicographically lesser than or

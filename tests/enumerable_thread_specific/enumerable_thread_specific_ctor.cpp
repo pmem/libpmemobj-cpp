@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,50 +51,6 @@ struct root {
 	nvobj::persistent_ptr<container_type> pptr3;
 };
 
-void
-copy_ctor_test(nvobj::pool<struct root> &pop,
-	       nvobj::persistent_ptr<container_type> &copy_from,
-	       nvobj::persistent_ptr<container_type> &copy_to)
-{
-	UT_ASSERT(copy_to == nullptr);
-	// Checking copy ctor
-	nvobj::transaction::run(pop, [&] {
-		copy_to = nvobj::make_persistent<container_type>(*copy_from);
-	});
-	UT_ASSERT(copy_from->size() == concurrency);
-	UT_ASSERT(copy_to->size() == concurrency);
-
-	std::set<size_t> checker;
-	for (auto &e : *copy_to) {
-		UT_ASSERT(checker.emplace(e).second);
-	}
-	for (auto &e : *copy_from) {
-		UT_ASSERT(!checker.emplace(e).second);
-	}
-	UT_ASSERT(checker.size() == concurrency);
-}
-
-void
-move_ctor_test(nvobj::pool<struct root> &pop,
-	       nvobj::persistent_ptr<container_type> &move_from,
-	       nvobj::persistent_ptr<container_type> &move_to)
-{
-	UT_ASSERT(move_to == nullptr);
-	// Checking move ctor
-	nvobj::transaction::run(pop, [&] {
-		move_to = nvobj::make_persistent<container_type>(
-			std::move(*move_from));
-	});
-	UT_ASSERT(move_from->empty());
-	UT_ASSERT(move_to->size() == concurrency);
-
-	std::set<size_t> checker;
-	for (auto &e : *move_to) {
-		UT_ASSERT(checker.emplace(e).second);
-	}
-	UT_ASSERT(checker.size() == concurrency);
-}
-
 int
 main(int argc, char *argv[])
 {
@@ -120,9 +76,6 @@ main(int argc, char *argv[])
 		parallel_exec(concurrency, [&](size_t thread_index) {
 			r->pptr1->local() = thread_index;
 		});
-
-		copy_ctor_test(pop, r->pptr1, r->pptr2);
-		move_ctor_test(pop, r->pptr1, r->pptr3);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container_type>(r->pptr1);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ test(nvobj::pool<struct root> &pop)
 	parallel_exec(concurrency,
 		      [&](size_t thread_index) { tls->local() = 99; });
 
-	UT_ASSERT(tls->size() == concurrency);
+	UT_ASSERT(tls->size() <= concurrency);
 
 	container_type &ref = *tls;
 	for (auto &e : ref) {

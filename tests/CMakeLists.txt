@@ -691,9 +691,8 @@ if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
 	build_test(enumerable_thread_specific_layout enumerable_thread_specific/enumerable_thread_specific_layout.cpp)
 	add_test_generic(NAME enumerable_thread_specific_layout TRACERS none)
 
-	# XXX: reopening pool in one process mustn't increase pool id to enable this test
-	# build_test(enumerable_thread_specific_initialize enumerable_thread_specific/enumerable_thread_specific_initialize.cpp)
-	# add_test_generic(NAME enumerable_thread_specific_initialize TRACERS none memcheck pmemcheck)
+	build_test(enumerable_thread_specific_initialize enumerable_thread_specific/enumerable_thread_specific_initialize.cpp)
+	add_test_generic(NAME enumerable_thread_specific_initialize TRACERS none memcheck pmemcheck)
 
 	build_test(enumerable_thread_specific_ctor enumerable_thread_specific/enumerable_thread_specific_ctor.cpp)
 	add_test_generic(NAME enumerable_thread_specific_ctor TRACERS none memcheck pmemcheck)

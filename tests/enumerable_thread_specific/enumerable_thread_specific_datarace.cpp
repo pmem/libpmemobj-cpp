@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,8 @@
 
 #include <unordered_map>
 
+static std::size_t counter = 0;
+
 /**
  * wrapper around std::unordered_map to count elements and test if
  * storage.size() equal map.size() to avoid dataraces
@@ -49,9 +51,15 @@ public:
 	using map_type = typename std::unordered_map<Key, T, Hash>;
 	using iterator = typename map_type::iterator;
 	using const_iterator = typename map_type::const_iterator;
+	using value_type = typename map_type::value_type;
 
 	Map()
 	{
+	}
+
+	~Map()
+	{
+		counter = 0;
 	}
 
 	const_iterator
@@ -61,9 +69,9 @@ public:
 	}
 
 	const_iterator
-	cend()
+	end()
 	{
-		return _map.cend();
+		return _map.end();
 	}
 
 	void
@@ -73,13 +81,11 @@ public:
 		_map.clear();
 	}
 
-	reference operator[](const Key &key)
+	void
+	insert(const value_type &value)
 	{
-		++counter;
-		return _map[key];
+		_map.insert(value);
 	}
-
-	static std::size_t counter;
 
 private:
 	std::unordered_map<Key, T, Hash> _map;
@@ -97,9 +103,6 @@ struct root {
 	nvobj::persistent_ptr<container_type> pptr;
 };
 
-template <>
-std::size_t map_type::counter = 0;
-
 void
 test(nvobj::pool<struct root> &pop)
 {
@@ -116,7 +119,7 @@ test(nvobj::pool<struct root> &pop)
 	UT_ASSERT(tls->empty() == true);
 	/* map after initialize method must be empty */
 	/* counter == 0 means that map.clear() was called */
-	UT_ASSERT(map_type::counter == 0);
+	UT_ASSERT(counter == 0);
 }
 
 int

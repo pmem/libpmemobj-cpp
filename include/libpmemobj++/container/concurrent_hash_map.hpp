@@ -1661,6 +1661,12 @@ protected:
 				}
 			} else {
 				bucket_lock_type::acquire(my_b->mutex, writer);
+				if (my_b->is_rehashed(
+					    std::memory_order_relaxed) ==
+				    false) {
+					/* recursive rehashing */
+					base->rehash_bucket<false>(my_b, h);
+				}
 			}
 
 			assert(my_b->is_rehashed(std::memory_order_relaxed));

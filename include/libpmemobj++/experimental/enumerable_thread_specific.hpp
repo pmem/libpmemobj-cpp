@@ -251,7 +251,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::initialize(Handler handler)
 	for (reference e : *this) {
 		handler(e);
 	}
-	_storage.clear();
+	clear();
 }
 
 /**
@@ -349,6 +349,8 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::local(bool &exists)
 	exists = it != map->cend();
 	/* return value if thread already exists in map */
 	if (exists) {
+		/* check to track possible datarace */
+		assert(map->size() == _storage.size());
 		return _storage[(*it).second];
 	}
 
@@ -363,6 +365,8 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::local(bool &exists)
 	map_value_type value = storage_emplace();
 	/* XXX: should be emplace, see class description */
 	map->operator[](key) = value;
+	/* check to track possible datarace */
+	assert(map->size() == _storage.size());
 	return _storage[value];
 }
 

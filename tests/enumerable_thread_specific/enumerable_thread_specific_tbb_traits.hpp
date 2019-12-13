@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,24 +34,36 @@
  * tbb traits for enumerable_thread_specific_tbb tests
  */
 
+#include <libpmemobj++/shared_mutex.hpp>
+
 #include "tbb/concurrent_unordered_map.h"
 
-class null_rw_mutex {
+/* This lock performs locking only when exclusive access is requested */
+class exclusive_only_mutex {
 public:
 	void
 	lock()
 	{
+		_mutex.lock();
 	}
+
 	void
 	lock_shared()
 	{
+		/* do nothing */
 	}
+
 	void
 	unlock()
 	{
+		_mutex.unlock();
 	}
+
 	void
 	unlock_shared()
 	{
+		/* do nothing */
 	}
+private:
+	pmem::obj::shared_mutex _mutex;
 };

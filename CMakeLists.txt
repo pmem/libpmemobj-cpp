@@ -92,6 +92,10 @@ option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experi
 option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(ENABLE_ENUMERABLE_THREAD_SPECIFIC "enable installation and testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 
+if (ENABLE_ENUMERABLE_THREAD_SPECIFIC AND CXX_STANDARD LESS 14)
+	message(FATAL_ERROR "enumerable_thread_specific is enabled but it requires at least C++14. Increase CXX_STANDARD or disable ENABLE_ENUMERABLE_THREAD_SPECIFIC")
+endif()
+
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
 set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)

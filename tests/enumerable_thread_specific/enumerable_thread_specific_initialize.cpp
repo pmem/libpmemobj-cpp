@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 
 namespace nvobj = pmem::obj;
 
-using test_t = size_t;
+using test_t = nvobj::p<size_t>;
 using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
 
 struct root {
@@ -57,8 +57,9 @@ create_and_fill(nvobj::pool<struct root> &pop, size_t concurrency)
 		pop, [&] { tls = nvobj::make_persistent<container_type>(); });
 	parallel_exec(concurrency, [&](size_t thread_index) {
 		tls->local() = thread_index;
+		pop.persist(tls->local());
 	});
-	UT_ASSERT(tls->size() == concurrency);
+	UT_ASSERT(tls->size() <= concurrency);
 }
 
 void
@@ -70,7 +71,7 @@ check_and_delete(nvobj::pool<struct root> &pop, size_t concurrency)
 	tls->initialize([&checker](test_t &e) {
 		UT_ASSERT(checker.emplace(e).second);
 	});
-	UT_ASSERT(checker.size() == concurrency);
+	UT_ASSERT(checker.size() <= concurrency);
 	UT_ASSERT(tls->empty());
 
 	nvobj::transaction::run(

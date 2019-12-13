@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +39,15 @@
 
 #include <libpmemobj++/container/segment_vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/experimental/v.hpp>
+#include <libpmemobj++/detail/volatile_state.hpp>
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/shared_mutex.hpp>
 
+#include <cassert>
+#include <deque>
 #include <mutex>
+#include <numeric>
+#include <shared_mutex>
 #include <thread>
 #include <unordered_map>
 
@@ -53,61 +57,6 @@ namespace obj
 {
 namespace experimental
 {
-
-namespace enumerable_thread_specific_internal
-{
-
-/**
- * Simple scoped lock for SharedMutex compatible mutexes.
- * Made to simplify enumerable_thread_specific's code.
- */
-template <typename T>
-class scoped_lock {
-public:
-	using rw_mutex_type = T;
-
-	scoped_lock(rw_mutex_type &m, bool write = true)
-	{
-		mutex = &m;
-		is_writer = write;
-
-		if (write) {
-			m.lock();
-		} else {
-			m.lock_shared();
-		}
-	}
-
-	/* no need to return bool, because we always releasing the mutex */
-	void
-	upgrade_to_writer()
-	{
-		assert(mutex);
-		if (is_writer)
-			return;
-		mutex->unlock_shared();
-		mutex->lock();
-		is_writer = true;
-	}
-
-	~scoped_lock()
-	{
-		assert(mutex);
-		rw_mutex_type *m = mutex;
-		mutex = nullptr;
-		if (is_writer) {
-			m->unlock();
-		} else {
-			m->unlock_shared();
-		}
-	}
-
-private:
-	rw_mutex_type *mutex;
-	bool is_writer;
-};
-
-} /* enumerable_thread_specific_internal */
 
 /**
  * Class for storing thread local data.
@@ -121,8 +70,7 @@ private:
  *    const_iterator find(const key_type&) const
  *    const_iterator cend()
  *    void clear()
- *    XXX: used instead of emplace (libpmemobj-cpp tbb version update required)
- *    reference operator[](key_type)
+ *    insert(const std::pair<const key, value> &val)
  * @pre Mutex must satisfy SharedMutex requirements.
  * @pre Storage must provide methods:
  *    reference emplace_back(Args &&...)
@@ -138,16 +86,13 @@ template <typename T, template <typename...> class Map = std::unordered_map,
 class enumerable_thread_specific {
 	/* map traits */
 	using storage_type = Storage;
-	using map_key_type = typename std::thread::id;
+	using map_key_type = size_t;
 	using map_value_type = typename storage_type::size_type;
 	using map_hash_type = std::hash<map_key_type>;
 	using map_type = Map<map_key_type, map_value_type, map_hash_type>;
 	/* lock traits */
-	using map_rw_mutex = Mutex;
-	using map_scoped_lock =
-		enumerable_thread_specific_internal::scoped_lock<map_rw_mutex>;
-	using storage_mutex = pmem::obj::mutex;
-	using storage_scoped_lock = std::lock_guard<storage_mutex>;
+	using mutex_type = Mutex;
+	using scoped_lock_type = std::lock_guard<mutex_type>;
 
 public:
 	/* traits */
@@ -160,19 +105,14 @@ public:
 	using const_pointer = const value_type *;
 	using iterator = typename storage_type::iterator;
 	using const_iterator = typename storage_type::const_iterator;
-	using reverse_iterator = typename storage_type::reverse_iterator;
-	using const_reverse_iterator =
-		typename storage_type::const_reverse_iterator;
 
 	/* initialization */
 	template <typename Handler>
 	void initialize(Handler handler = [](reference) {});
 
 	/* ctors & dtor */
-	enumerable_thread_specific();
-	enumerable_thread_specific(enumerable_thread_specific &other);
-	enumerable_thread_specific(enumerable_thread_specific &&other);
-	~enumerable_thread_specific();
+	enumerable_thread_specific() = default;
+	~enumerable_thread_specific() = default;
 
 	/* access */
 	reference local();
@@ -190,50 +130,159 @@ public:
 	const_iterator end() const;
 
 private:
-	/**
-	 * Private helper wrapper class for map_type.
-	 * Needed to construct map_type through v<>.get().
-	 *
-	 * We can't use v<map_type *> because in case of crash and reboot:
-	 * enumerable_thread_specific's constructor will not be called,
-	 * v<>.get() will construct pointer, not the map,
-	 * and thread mapping will not restore.
-	 */
-	class map_wrapper {
-	public:
-		map_wrapper()
-		{
-			p = new map_type();
-		}
-		map_wrapper(const map_wrapper &rhs)
-		{
-			p = new map_type(*rhs.p);
-		}
-		~map_wrapper()
-		{
-			delete p;
-		}
-		map_type *operator->()
-		{
-			return p;
-		}
-
-	private:
-		/* Storing a pointer is necessary for a consistent layout */
-		map_type *p;
-	};
-
-private:
 	/* private helper methods */
 	map_value_type storage_emplace();
 	pool_base get_pool() const noexcept;
 
-	v<map_wrapper> _map;
-	map_rw_mutex _map_mutex;
-
+	mutex_type _mutex;
 	storage_type _storage;
-	storage_mutex _storage_mutex;
+
+	/**
+	 * This structure is used for assigning unique thread ids so that
+	 * those ids will be reused in case of thread exit.
+	 *
+	 * Ids will be between 0 and N where N is max number of threads.
+	 */
+	struct id_manager {
+		id_manager();
+
+		size_t get();
+		void release(size_t id);
+
+	private:
+		static constexpr size_t initial_queue_capacity = 1024;
+
+		std::size_t queue_capacity;
+		std::deque<size_t> queue;
+	};
+
+	/** RAII-style structure for holding thread id */
+	struct thread_id_type {
+		thread_id_type();
+
+		~thread_id_type();
+
+		size_t get();
+
+	private:
+		size_t id;
+	};
+
+	static std::mutex &get_id_mutex();
+	static id_manager &get_id_manager();
 };
+
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+enumerable_thread_specific<T, Map, Mutex, Storage>::id_manager::id_manager()
+    : queue_capacity(initial_queue_capacity), queue(initial_queue_capacity, 0)
+{
+	/* Convert 0, 0, 0, ..., 0 into 0, 1, 2, ..., N */
+	std::iota(queue.begin(), queue.end(), 0);
+}
+
+/**
+ * Obtain unique thread id.
+ *
+ * @pre this method must be called under a lock.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+size_t
+enumerable_thread_specific<T, Map, Mutex, Storage>::id_manager::get()
+{
+	if (queue.empty())
+		queue.push_front(queue_capacity++);
+
+	auto front = queue.front();
+	queue.pop_front();
+
+	return front;
+}
+
+/**
+ * Releases thread id so that it can be reused by other threads.
+ *
+ * @pre this method must be called under a lock.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+void
+enumerable_thread_specific<T, Map, Mutex, Storage>::id_manager::release(
+	size_t id)
+{
+	queue.push_front(id);
+}
+
+/**
+ * Get mutex used to protect id_manager.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+std::mutex &
+enumerable_thread_specific<T, Map, Mutex, Storage>::get_id_mutex()
+{
+	static std::mutex mutex;
+	return mutex;
+}
+
+/**
+ * Get reference to id_manager instance.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+typename enumerable_thread_specific<T, Map, Mutex, Storage>::id_manager &
+enumerable_thread_specific<T, Map, Mutex, Storage>::get_id_manager()
+{
+	static id_manager manager;
+	return manager;
+};
+
+/**
+ * thread_id_type constructor.
+ *
+ * Obtains id for current thread.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+enumerable_thread_specific<T, Map, Mutex,
+			   Storage>::thread_id_type::thread_id_type()
+{
+	/*
+	 * This lock is taken here (and in dtor) rather than in
+	 * id_manager::get() because of drd false-positive:
+	 * https://stackoverflow.com/questions/59719868/drd-reports-conflicting-load-error-on-stdmutexlock
+	 *
+	 * Taking lock here fixes the problem.
+	 */
+	std::unique_lock<std::mutex> lock(get_id_mutex());
+	id = get_id_manager().get();
+}
+
+/**
+ * thread_id_type destructor.
+ *
+ * Releases id associated with current thread.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+enumerable_thread_specific<T, Map, Mutex,
+			   Storage>::thread_id_type::~thread_id_type()
+{
+	std::unique_lock<std::mutex> lock(get_id_mutex());
+	get_id_manager().release(id);
+}
+
+/**
+ * Obtain current thread id.
+ */
+template <typename T, template <typename...> class Map, typename Mutex,
+	  typename Storage>
+size_t
+enumerable_thread_specific<T, Map, Mutex, Storage>::thread_id_type ::get()
+{
+	return id;
+}
 
 /**
  * Initialization method. Uses handler functor to each element stored.
@@ -252,61 +301,6 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::initialize(Handler handler)
 		handler(e);
 	}
 	clear();
-}
-
-/**
- * Dafault constructor.
- */
-template <typename T, template <typename...> class Map, typename Mutex,
-	  typename Storage>
-enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific()
-{
-}
-
-/**
- * Copy constructor.
- *
- * @param[in] other reference to the enumerable_thread_specific to copy.
- *
- * @post size() == other.size().
- */
-template <typename T, template <typename...> class Map, typename Mutex,
-	  typename Storage>
-enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
-	enumerable_thread_specific &other)
-    : _storage(other._storage)
-{
-	_map.get(other._map.get());
-}
-
-/**
- * Move constructor.
- *
- * @param[in] other rvalue reference to the enumerable_thread_specific to move.
- *
- * @post size() == other.size().
- * @post other.empty() == true.
- */
-template <typename T, template <typename...> class Map, typename Mutex,
-	  typename Storage>
-enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
-	enumerable_thread_specific &&other)
-    : _storage(std::move(other._storage))
-{
-	_map.get(std::move(other._map.get()));
-}
-
-/**
- * Dafault destructor.
- */
-template <typename T, template <typename...> class Map, typename Mutex,
-	  typename Storage>
-enumerable_thread_specific<T, Map, Mutex,
-			   Storage>::~enumerable_thread_specific()
-{
-	/* XXX: will not be called in case of transaction abort */
-	/* must be called manually */
-	_map.get().~map_wrapper();
 }
 
 /**
@@ -339,35 +333,39 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::local(bool &exists)
 {
 	assert(pmemobj_tx_stage() != TX_STAGE_WORK);
 
-	const map_key_type key = std::this_thread::get_id();
-	map_wrapper &map = _map.get();
+	static thread_local thread_id_type tid;
 
-	/* read lock to try find key in map */
-	map_scoped_lock lock(_map_mutex, false);
+	const map_key_type key = tid.get();
+	auto map = detail::volatile_state::get<map_type>(pmemobj_oid(this));
 
-	typename map_type::const_iterator it = map->find(key);
-	exists = it != map->cend();
-	/* return value if thread already exists in map */
-	if (exists) {
-		return _storage[(*it).second];
+	{
+		std::shared_lock<mutex_type> lock(_mutex);
+
+		typename map_type::const_iterator it = map->find(key);
+		exists = it != map->end();
+		/* return value if thread already exists in map */
+		if (exists)
+			return _storage[it->second];
 	}
 
 	/* always releasing a mutex, but no need to search through map because
-	 * no other thread has the same id and can insert such key */
-	lock.upgrade_to_writer();
+	 * no other thread has the same id and cannot insert such key */
 
-	/* checking if thread id is not presented in map */
-	assert(map->find(key) == map->cend());
+	{
+		std::unique_lock<mutex_type> lock(_mutex);
+		/* checking if thread id is not presented in map */
+		assert(map->find(key) == map->end());
 
-	/* create bucket if it's not found */
-	map_value_type value = storage_emplace();
-	/* XXX: should be emplace, see class description */
-	map->operator[](key) = value;
-	return _storage[value];
+		/* create bucket if it's not found */
+		auto value = storage_emplace();
+		map->insert(typename map_type::value_type(key, value));
+		return _storage[value];
+	}
 }
 
 /**
- * Private helper function. Default constructs element. Captures mutex.
+ * Private helper function. Default constructs element.
+ * Should be called only when _mutex is taken in exclusive mode.
  *
  * @return value_type of map_type, that indexing the added item of storage.
  */
@@ -376,8 +374,6 @@ template <typename T, template <typename...> class Map, typename Mutex,
 typename enumerable_thread_specific<T, Map, Mutex, Storage>::map_value_type
 enumerable_thread_specific<T, Map, Mutex, Storage>::storage_emplace()
 {
-	storage_scoped_lock lock(_storage_mutex);
-
 	_storage.emplace_back();
 	return _storage.size() - 1;
 }
@@ -393,7 +389,7 @@ template <typename T, template <typename...> class Map, typename Mutex,
 void
 enumerable_thread_specific<T, Map, Mutex, Storage>::clear()
 {
-	_map.get()->clear();
+	detail::volatile_state::destroy(pmemobj_oid(this));
 	_storage.clear();
 }
 
@@ -420,7 +416,7 @@ template <typename T, template <typename...> class Map, typename Mutex,
 bool
 enumerable_thread_specific<T, Map, Mutex, Storage>::empty() const
 {
-	return _storage.empty();
+	return _storage.size() == 0;
 }
 
 /**

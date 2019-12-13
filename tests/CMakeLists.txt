@@ -688,6 +688,9 @@ if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
 	build_test(enumerable_thread_specific_ctor enumerable_thread_specific/enumerable_thread_specific_ctor.cpp)
 	add_test_generic(NAME enumerable_thread_specific_ctor TRACERS none memcheck pmemcheck)
 
+	build_test(enumerable_thread_specific_datarace enumerable_thread_specific/enumerable_thread_specific_datarace.cpp)
+	add_test_generic(NAME enumerable_thread_specific_datarace TRACERS none memcheck pmemcheck drd helgrind)
+
 	if(NOT TBB_FOUND)
 		message(WARNING "Skipping enumerable_thread_specific_tbb tests because Intel TBB library was not found")
 	else()

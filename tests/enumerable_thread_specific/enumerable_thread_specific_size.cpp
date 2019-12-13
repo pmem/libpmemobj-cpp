@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ using test_t = int;
 #include "enumerable_thread_specific_tbb_traits.hpp"
 
 using container_type = nvobj::experimental::enumerable_thread_specific<
-	test_t, tbb::concurrent_unordered_map, null_rw_mutex>;
+	test_t, tbb::concurrent_unordered_map, exclusive_only_mutex>;
 
 #else
 
@@ -59,8 +59,8 @@ struct root {
 void
 test(nvobj::pool<struct root> &pop)
 {
-	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 16;
+	const size_t batch_size = 10;
+	const size_t num_batches = 3;
 
 	auto tls = pop.root()->pptr;
 
@@ -68,9 +68,33 @@ test(nvobj::pool<struct root> &pop)
 	UT_ASSERT(tls->size() == 0);
 	UT_ASSERT(tls->empty());
 
-	parallel_exec(concurrency, [&](size_t thread_index) { tls->local(); });
+	for (size_t i = 0; i < num_batches; i++)
+		parallel_exec(batch_size,
+			      [&](size_t thread_index) { tls->local(); });
 
-	UT_ASSERT(tls->size() == concurrency);
+	/* There was at most batch_size threads at any given time. */
+	UT_ASSERT(tls->size() <= batch_size);
+
+	tls->clear();
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+}
+
+void
+test_with_spin(nvobj::pool<struct root> &pop)
+{
+	const size_t batch_size = 10;
+
+	auto tls = pop.root()->pptr;
+
+	UT_ASSERT(tls != nullptr);
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+
+	parallel_exec_with_sync(batch_size,
+				[&](size_t thread_index) { tls->local(); });
+
+	UT_ASSERT(tls->size() == batch_size);
 
 	tls->clear();
 	UT_ASSERT(tls->size() == 0);
@@ -100,6 +124,7 @@ main(int argc, char *argv[])
 		});
 
 		test(pop);
+		test_with_spin(pop);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container_type>(r->pptr);

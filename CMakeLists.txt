@@ -53,7 +53,7 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 # Treat CMAKE_CXX_STANDARD as a requirement
 set(CXX_STANDARD_REQUIRED ON)
 
-set(CXX_STANDARD 11 CACHE STRING "C++ language standard")
+set(CXX_STANDARD 14 CACHE STRING "C++ language standard")
 set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
 
 include(FindPerl)

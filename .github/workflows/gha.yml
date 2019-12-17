@@ -98,6 +98,7 @@ jobs:
          run: |
             vcpkg install pmdk:x64-windows
             vcpkg install sfml:x64-windows
+            vcpkg install tbb:x64-windows
             vcpkg update
             vcpkg upgrade pmdk:x64-windows --no-dry-run
 
@@ -112,6 +113,7 @@ jobs:
                       -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
                       -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
                       -DTESTS_USE_FORCED_PMEM=ON
+                      -DTESTS_TBB=ON
 
        - name: Build
          run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal /m

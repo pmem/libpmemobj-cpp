@@ -533,7 +533,7 @@ using exponential_size_vector_policy =
  * Segment template represents segment type.
  * Policy template represents Segments storing type and managing methods.
  */
-template <typename T, typename Policy = exponential_size_array_policy<>>
+template <typename T, typename Policy = exponential_size_vector_policy<>>
 class segment_vector {
 public:
 	/* Specific traits*/

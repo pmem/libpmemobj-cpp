@@ -134,7 +134,7 @@ private:
  */
 template <typename T, template <typename...> class Map = std::unordered_map,
 	  typename Mutex = pmem::obj::shared_mutex,
-	  typename Storage = segment_vector<T>>
+	  typename Storage = segment_vector<T, exponential_size_array_policy<>>>
 class enumerable_thread_specific {
 	/* map traits */
 	using storage_type = Storage;

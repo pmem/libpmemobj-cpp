@@ -70,7 +70,8 @@ expected_sizeof()
 
 namespace pexp = pmem::obj;
 template <typename T>
-using container_t = pexp::segment_vector<T>;
+using container_t =
+	pexp::segment_vector<T, pexp::exponential_size_array_policy<>>;
 
 template <typename T>
 struct container_representation_t {
@@ -104,8 +105,7 @@ expected_sizeof()
 
 namespace pexp = pmem::obj;
 template <typename T>
-using container_t =
-	pexp::segment_vector<T, pexp::exponential_size_vector_policy<>>;
+using container_t = pexp::segment_vector<T>;
 
 template <typename T>
 struct container_representation_t {

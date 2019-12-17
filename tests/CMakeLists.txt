@@ -371,17 +371,17 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
 
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
-		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind)
-
 		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS helgrind)
 
 		if (TESTS_LONG)
+			add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind)
+
 			add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS drd)
 
 			add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS drd)
-		endif()
 
-		add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
+			add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
+		endif()
 	endif()
 
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)

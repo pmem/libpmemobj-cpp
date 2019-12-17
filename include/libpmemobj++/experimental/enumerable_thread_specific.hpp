@@ -251,7 +251,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::initialize(Handler handler)
 	for (reference e : *this) {
 		handler(e);
 	}
-	_storage.clear();
+	clear();
 }
 
 /**

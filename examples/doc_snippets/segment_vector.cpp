@@ -42,19 +42,16 @@
 #include <libpmemobj++/pool.hpp>
 
 const int N_ELEMENTS = 4096;
-const int SEGMENT_SIZE = 1024;
 
 using namespace pmem::obj;
 using value_t = p<int>;
 using segment_t = pmem::obj::vector<value_t>;
 
-using policy_exp_arr_t = exponential_size_array_policy<segment_t>;
-using policy_exp_vec_t = exponential_size_vector_policy<segment_t>;
-using policy_fix_vec_t = fixed_size_vector_policy<segment_t, SEGMENT_SIZE>;
-
-using seg_vec_exp_arr = segment_vector<value_t, policy_exp_arr_t>;
-using seg_vec_exp_vec = segment_vector<value_t, policy_exp_vec_t>;
-using seg_vec_fix_vec = segment_vector<value_t, policy_fix_vec_t>;
+using seg_vec_exp_arr =
+	segment_vector<value_t, exponential_size_array_policy<>>;
+using seg_vec_exp_vec =
+	segment_vector<value_t, exponential_size_vector_policy<>>;
+using seg_vec_fix_vec = segment_vector<value_t, fixed_size_vector_policy<>>;
 
 struct root {
 	persistent_ptr<segment_t> pptr0;
@@ -73,7 +70,7 @@ main(int argc, char *argv[])
 	auto pop = pool<root>::open(path, "segment_vector example");
 	auto r = pop.root();
 
-	if (r->pptr1 == nullptr) {
+	if (r->pptr0 == nullptr) {
 		pmem::obj::transaction::run(pop, [&] {
 			r->pptr0 = make_persistent<segment_t>();
 			r->pptr1 = make_persistent<seg_vec_exp_arr>();

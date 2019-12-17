@@ -38,6 +38,7 @@
 #ifndef LIBPMEMOBJ_SEGMENT_VECTOR_POLICIES_HPP
 #define LIBPMEMOBJ_SEGMENT_VECTOR_POLICIES_HPP
 
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 #include <vector>
@@ -48,6 +49,8 @@ namespace obj
 {
 namespace segment_vector_internal
 {
+template <typename T>
+using array_64 = array<T, 64>;
 
 template <typename Container>
 using resize_method =
@@ -77,24 +80,33 @@ struct segment_vector_resize<Container, false> {
 	}
 };
 
-template <typename SegmentVectorType, size_t SegmentSize>
+template <template <typename> class SegmentVectorType,
+	  template <typename> class SegmentType, size_t SegmentSize>
 class fixed_size_policy {
 public:
 	/* Traits */
-	using segment_vector_type = SegmentVectorType;
-	using segment_type = typename segment_vector_type::value_type;
-	using value_type = typename segment_type::value_type;
+	template <typename T>
+	using segment_vector_type = SegmentVectorType<SegmentType<T>>;
+
+	template <typename T>
+	using segment_type = SegmentType<T>;
+
+	template <typename T>
+	using value_type = typename segment_type<T>::value_type;
+
 	using size_type = std::size_t;
 
+	template <typename T>
 	using segment_vector_resize_type =
-		segment_vector_resize<segment_vector_type>;
+		segment_vector_resize<segment_vector_type<T>>;
 
 	static constexpr size_type Size = SegmentSize;
 
+	template <typename T>
 	static void
-	resize(segment_vector_type &c, size_type n)
+	resize(segment_vector_type<T> &c, size_type n)
 	{
-		segment_vector_resize_type::resize(c, n);
+		segment_vector_resize_type<T>::resize(c, n);
 	}
 
 	/**
@@ -141,8 +153,9 @@ public:
 	/**
 	 * @return maximum number of elements we can allocate
 	 */
+	template <typename T>
 	static size_type
-	max_size(const SegmentVectorType &seg_storage)
+	max_size(const segment_vector_type<T> &seg_storage)
 	{
 		return seg_storage.max_size() * SegmentSize;
 	}
@@ -157,22 +170,31 @@ public:
 	}
 };
 
-template <typename SegmentVectorType>
+template <template <typename> class SegmentVectorType,
+	  template <typename> class SegmentType>
 class exponential_size_policy {
 public:
 	/* Traits */
-	using segment_vector_type = SegmentVectorType;
-	using segment_type = typename segment_vector_type::value_type;
-	using value_type = typename segment_type::value_type;
+	template <typename T>
+	using segment_vector_type = SegmentVectorType<SegmentType<T>>;
+
+	template <typename T>
+	using segment_type = SegmentType<T>;
+
+	template <typename T>
+	using value_type = typename segment_type<T>::value_type;
+
 	using size_type = std::size_t;
 
+	template <typename T>
 	using segment_vector_resize_type =
-		segment_vector_resize<segment_vector_type>;
+		segment_vector_resize<segment_vector_type<T>>;
 
+	template <typename T>
 	static void
-	resize(segment_vector_type &c, size_type n)
+	resize(segment_vector_type<T> &c, size_type n)
 	{
-		segment_vector_resize_type::resize(c, n);
+		segment_vector_resize_type<T>::resize(c, n);
 	}
 
 	/**
@@ -219,11 +241,12 @@ public:
 	/**
 	 * @return maximum number of elements we can allocate
 	 */
+	template <typename T>
 	static size_t
-	max_size(const SegmentVectorType &)
+	max_size(const segment_vector_type<T> &)
 	{
 		return segment_size(get_segment(PMEMOBJ_MAX_ALLOC_SIZE /
-						sizeof(value_type)) +
+						sizeof(value_type<T>)) +
 				    1);
 	}
 

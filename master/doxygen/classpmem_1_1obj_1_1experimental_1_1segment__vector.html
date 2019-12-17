@@ -1543,7 +1543,7 @@ template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iter
 <p>Must be called during transaction. Assumes that there is free space for additional elements and input arguments satisfy InputIterator requirements. Copies elements at index idx in underlying segments with the contents of the range [first, last). This overload participates in overload resolution only if InputIt satisfies InputIterator.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>underyling array index where new elements will be constructed. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">idx</td><td>underlying array index where new elements will be constructed. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">first</td><td>first iterator. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">last</td><td>last iterator.</td></tr>
   </table>
@@ -2490,7 +2490,7 @@ template&lt;typename T , typename Segment , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Private helper method. </p>
-<p>Increases capacity. Allocs new segments if segment where new_capacity located greater than segment where located <a class="el" href="classpmem_1_1obj_1_1experimental_1_1segment__vector.html#a0bb6477882ec4c5230d825c830ffcb39">capacity()</a>.</p>
+<p>Increases capacity. Allocs new segments if new_capacity is greater than current capacity.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

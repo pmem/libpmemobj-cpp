@@ -44,10 +44,13 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 2) {
-		UT_FATAL("usage: %s file-name", argv[0]);
+		UT_FATAL("usage: %s file-name [defrag:0|1]", argv[0]);
 	}
 
 	const char *path = argv[1];
+	int defrag = 0;
+	if (argc == 3)
+		defrag = atoi(argv[2]);
 
 	nvobj::pool<root> pop;
 
@@ -87,7 +90,7 @@ main(int argc, char *argv[])
 
 	insert_mt_test(pop, concurrency);
 
-	insert_erase_lookup_test(pop, concurrency);
+	insert_erase_lookup_test(pop, concurrency, defrag);
 
 	pop.close();
 	return 0;

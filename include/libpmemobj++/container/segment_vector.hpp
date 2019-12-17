@@ -467,17 +467,41 @@ typename segment_iterator<Container, is_const>::pointer
 
 } /* segment_vector_internal namespace */
 
+/**
+ * Exponential size policy with pmemobj array of size 64
+ * as a type of segment vector, so this is a static array of segments
+ * and each segment is of SegmentType.
+ *
+ * - requires more memory than exponential_size_vector_policy
+ * - is faster and more efficient than exponential_size_vector_policy
+ */
 template <template <typename> class SegmentType = pmem::obj::vector>
 using exponential_size_array_policy =
 	segment_vector_internal::exponential_size_policy<
 		segment_vector_internal::array_64, SegmentType>;
 
+/**
+ * Fixed size policy with pmemobj vector of a given size
+ * as a type of segment vector, so this is a dynamic vector of segments
+ * and each segment is of SegmentType.
+ *
+ * - is slower than the exponential one (because it has more segments)
+ * - causes less fragmentation than the exponential one
+ */
 template <size_t SegmentSize = 1024,
 	  template <typename> class SegmentType = pmem::obj::vector>
 using fixed_size_vector_policy =
 	segment_vector_internal::fixed_size_policy<pmem::obj::vector,
 						   SegmentType, SegmentSize>;
 
+/**
+ * Exponential size policy with pmemobj vector
+ * as a type of segment vector, so this is a dynamic vector of segments
+ * and each segment is of SegmentType.
+ *
+ * - requires less memory than exponential_size_array_policy
+ * - is slower and less efficient than exponential_size_array_policy
+ */
 template <template <typename> class SegmentType = pmem::obj::vector>
 using exponential_size_vector_policy =
 	segment_vector_internal::exponential_size_policy<pmem::obj::vector,

@@ -61,6 +61,7 @@
 #include <thread>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace std
 {
@@ -1633,6 +1634,16 @@ protected:
 		bucket *my_b;
 
 	public:
+		bucket_accessor(bucket_accessor &&b) noexcept : my_b(b.my_b)
+		{
+			bucket_lock_type::mutex = b.bucket_lock_type::mutex;
+			bucket_lock_type::is_writer =
+				b.bucket_lock_type::is_writer;
+			b.my_b = nullptr;
+			b.bucket_lock_type::mutex = nullptr;
+			b.bucket_lock_type::is_writer = false;
+		}
+
 		bucket_accessor(concurrent_hash_map *base,
 				const hashcode_type h, bool writer = false)
 		{
@@ -2535,6 +2546,70 @@ public:
 		return internal_erase(key);
 	}
 
+	// XXX MOCK - will be replaced by a real implementation
+	struct defrag_t {
+		void
+		add(const T &t)
+		{
+		}
+
+		void
+		do_defrag()
+		{
+		}
+
+	private:
+		// std::vector<PMEMoid*> oids;
+	};
+
+	/**
+	 * Defragments the given (by 'start_percent' and 'end_percent') part
+	 * of buckets of the hash map.
+	 *
+	 * @throws std::range_error if the range:
+	 * [start_percent, end_percent]
+	 * is incorrect.
+	 */
+	void
+	defrag(double start_percent = 0, double amount_percent = 100)
+	{
+		double end_percent = start_percent + amount_percent;
+		if (start_percent < 0 || start_percent >= 100 ||
+		    end_percent < 0 || end_percent > 100 ||
+		    start_percent >= end_percent) {
+			throw std::range_error("incorrect range");
+		}
+
+		size_t max_index = mask().load(std::memory_order_acquire);
+		size_t start_index = (start_percent * max_index) / 100;
+		size_t end_index = (end_percent * max_index) / 100;
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
+
+		defrag_t defrag;
+		mutex_vector mv;
+
+		/*
+		 * Locks are taken in the backward order to avoid deadlocks
+		 * with the rehashing of buckets.
+		 */
+		for (size_t i = end_index; i >= start_index; i--) {
+			/*
+			 * All locks will be unlocked automatically
+			 * in the destructor of 'mv'.
+			 */
+			bucket *b = mv.push_and_try_lock(this, i);
+			defrag_save_nodes(b, defrag);
+
+			if (i == 0)
+				break;
+		}
+
+		defrag.do_defrag();
+	}
+
 	/**
 	 * Remove element with corresponding key
 	 *
@@ -2563,6 +2638,26 @@ public:
 	}
 
 protected:
+	/**
+	 * Vector of locks to be unlocked at the destruction time.
+	 * MutexType - type of mutex used by buckets.
+	 */
+	class mutex_vector {
+	public:
+		using mutex_t = MutexType;
+
+		/** Save pointer to the lock in the vector and lock it. */
+		bucket *
+		push_and_try_lock(concurrent_hash_map *base, hashcode_type h)
+		{
+			vec.emplace_back(base, h, true /*writer*/);
+			return vec.back().get();
+		}
+
+	private:
+		std::vector<bucket_accessor> vec;
+	};
+
 	/*
 	 * Try to acquire the mutex for read or write.
 	 *
@@ -2619,6 +2714,41 @@ protected:
 	template <typename I>
 	void internal_copy(I first, I last);
 
+	/**
+	 * Internal method used by defrag().
+	 * Adds nodes to the defragmentation list.
+	 */
+	void
+	defrag_save_nodes(bucket *b, defrag_t &defrag)
+	{
+		auto node_ptr = static_cast<node *>(
+			b->node_list.get(this->my_pool_uuid));
+
+		while (node_ptr) {
+			{
+				/*
+				 * If any other thread holds lock
+				 * for any element in the bucket,
+				 * we should wait for those locks
+				 * to be dropped.
+				 */
+				typename node::scoped_t item_locker(
+					node_ptr->mutex,
+					/*write=*/true);
+			}
+
+			/*
+			 * XXX what to do with the node pointer itself?
+			 * It is a persistent_pool_ptr so we can't really use it
+			 * defrag.add(node_ptr);
+			 */
+			defrag.add(node_ptr->item.first);
+			defrag.add(node_ptr->item.second);
+
+			node_ptr = static_cast<node *>(
+				node_ptr->next.get((this->my_pool_uuid)));
+		}
+	}
 }; // class concurrent_hash_map
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,

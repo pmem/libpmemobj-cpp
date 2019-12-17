@@ -107,13 +107,19 @@ public:
 	void
 	reinitialize()
 	{
+		reinitialize(m_items_number);
+	}
+
+	void
+	reinitialize(size_t expected)
+	{
 		size_t buckets = map->bucket_count();
 		map->runtime_initialize(true);
 		UT_ASSERT(map->bucket_count() == buckets);
-		UT_ASSERT(map->size() == m_items_number);
+		UT_ASSERT(map->size() == expected);
 		map->runtime_initialize();
 		UT_ASSERT(map->bucket_count() == buckets);
-		UT_ASSERT(map->size() == m_items_number);
+		UT_ASSERT(map->size() == expected);
 	}
 
 	void
@@ -141,8 +147,14 @@ public:
 	void
 	rehash()
 	{
+		rehash(m_items_number);
+	}
+
+	void
+	rehash(size_t expected)
+	{
 		map->rehash(m_items_number * rehash_bucket_ratio);
-		check_items_count();
+		check_items_count(expected);
 	}
 
 	template <typename AccessorType, typename ItemType>
@@ -158,9 +170,21 @@ public:
 	void
 	check_consistency()
 	{
-		check_items_count();
-		rehash();
-		reinitialize();
+		check_consistency(m_items_number);
+	}
+
+	void
+	check_consistency(size_t expected)
+	{
+		check_items_count(expected);
+		rehash(expected);
+		reinitialize(expected);
+	}
+
+	void
+	defrag()
+	{
+		map->defrag();
 	}
 
 	template <typename ItemType>
@@ -294,6 +318,8 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 				i, i + 1);
 	});
 	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -335,6 +361,8 @@ insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 			test.check_item<persistent_map_type::const_accessor>(i,
 									     1);
 	});
+	test.check_consistency();
+	test.defrag();
 	test.check_consistency();
 	test.clear();
 }
@@ -378,6 +406,8 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 				i, i + 1);
 	});
 	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -411,6 +441,8 @@ insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
 								     k2.second);
 	});
 	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -439,6 +471,8 @@ insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 			test.check_item<persistent_map_type::accessor>(
 				i.first, i.second);
 	});
+	test.check_consistency();
+	test.defrag();
 	test.check_consistency();
 	test.clear();
 }
@@ -470,6 +504,9 @@ insert_mt_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 		test.check_item<persistent_map_type::accessor>(
 			i, (int)concurrency);
 	}
+	test.check_consistency();
+	test.defrag();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -508,6 +545,8 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 		}
 	});
 	test.check_items_count(0);
+	test.defrag();
+	test.check_consistency(0);
 	test.clear();
 }
 
@@ -516,7 +555,8 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
 void
-insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
+insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4,
+			int defrag = 0)
 {
 
 	PRINT_TEST_PARAMS;
@@ -564,6 +604,12 @@ insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 					pop.persist(acc->second);
 				}
 			}
+		});
+	}
+
+	if (defrag) {
+		threads.emplace_back([&]() {
+			map->defrag();
 		});
 	}
 

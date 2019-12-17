@@ -467,19 +467,21 @@ typename segment_iterator<Container, is_const>::pointer
 
 } /* segment_vector_internal namespace */
 
-template <typename SegmentType>
+template <template <typename> class SegmentType = pmem::obj::vector>
 using exponential_size_array_policy =
 	segment_vector_internal::exponential_size_policy<
-		pmem::obj::array<SegmentType, 64>>;
+		segment_vector_internal::array_64, SegmentType>;
 
-template <typename SegmentType, size_t SegmentSize>
-using fixed_size_vector_policy = segment_vector_internal::fixed_size_policy<
-	pmem::obj::vector<SegmentType>, SegmentSize>;
+template <size_t SegmentSize = 1024,
+	  template <typename> class SegmentType = pmem::obj::vector>
+using fixed_size_vector_policy =
+	segment_vector_internal::fixed_size_policy<pmem::obj::vector,
+						   SegmentType, SegmentSize>;
 
-template <typename SegmentType>
+template <template <typename> class SegmentType = pmem::obj::vector>
 using exponential_size_vector_policy =
-	segment_vector_internal::exponential_size_policy<
-		pmem::obj::vector<SegmentType>>;
+	segment_vector_internal::exponential_size_policy<pmem::obj::vector,
+							 SegmentType>;
 
 /**
  * Segment table is a data type with a vector-like interface
@@ -507,14 +509,14 @@ using exponential_size_vector_policy =
  * Segment template represents segment type.
  * Policy template represents Segments storing type and managing methods.
  */
-template <typename T,
-	  typename Policy = exponential_size_array_policy<pmem::obj::vector<T>>>
+template <typename T, typename Policy = exponential_size_array_policy<>>
 class segment_vector {
 public:
 	/* Specific traits*/
 	using policy_type = Policy;
-	using segment_type = typename policy_type::segment_type;
-	using segment_vector_type = typename policy_type::segment_vector_type;
+	using segment_type = typename policy_type::template segment_type<T>;
+	using segment_vector_type =
+		typename policy_type::template segment_vector_type<T>;
 	/* Simple access to methods */
 	using policy = policy_type;
 	using storage = policy_type;

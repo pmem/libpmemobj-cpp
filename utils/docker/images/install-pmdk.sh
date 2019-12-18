@@ -38,8 +38,8 @@ set -e
 
 PACKAGE_MANAGER=$1
 
-# stable-1.7: Merge pull request #4057 from ldorau/Add-BuildRequires-fdupes-to-spec-for-opensuse, 25.10.2019
-PMDK_VERSION="bfec2ca71b20ac4b56e1d7be9f51aa875d7c5efc"
+# devel-1.8: Merge pull request #4346 from igchor/pmemobj_set_user_data
+PMDK_VERSION="f62ced08fd854aa288781d01e44313fbd0aa96b7"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

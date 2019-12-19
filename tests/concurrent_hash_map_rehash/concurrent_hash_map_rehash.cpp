@@ -259,6 +259,89 @@ insert_erase_lookup_test_str(nvobj::pool<root> &pop, int defrag)
 }
 }
 
+/*
+ * recursive_rehashing_test -- (internal) test recursive rehashing in
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+recursive_rehashing_test(nvobj::pool<root> &pop, size_t concurrency = 4)
+{
+
+	PRINT_TEST_PARAMS;
+
+	auto map = pop.root()->cons;
+
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	int skip = 0;
+	for (int i = 4095; i >= 2048; i--) {
+		int hb = i & 255;
+		if (hb == 128)
+			skip = 1;
+		if (skip && hb >= 128)
+			continue;
+		map->insert(persistent_map_type::value_type(i, i));
+	}
+
+	std::vector<std::thread> threads;
+	threads.reserve(concurrency);
+
+	threads.emplace_back([&]() {
+		for (int i = 4095; i >= 2048; i--) {
+			persistent_map_type::accessor acc;
+			map->find(acc, i);
+		}
+	});
+
+	threads.emplace_back([&]() {
+		for (int i = 4095; i >= 4070; i--) {
+			map->defrag();
+		}
+	});
+
+	for (auto &t : threads) {
+		t.join();
+	}
+}
+
+/*
+ * recursive_rehashing_deadlock_test -- (internal) test recursive rehashing in
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+recursive_rehashing_deadlock_test(nvobj::pool<root> &pop,
+				  size_t concurrency = 4)
+{
+
+	PRINT_TEST_PARAMS;
+
+	auto map = pop.root()->cons;
+
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	int skip = 0;
+	for (int i = 4095; i >= 2048; i--) {
+		int hb = i & 255;
+		if (hb == 128) {
+			skip = 1;
+		}
+		if (skip && hb >= 128) {
+			continue;
+		}
+		map->insert(persistent_map_type::value_type(i, i));
+	}
+
+	for (int i = 4095; i >= 4090; i--) {
+		persistent_map_type::accessor acc;
+		map->find(acc, i);
+		map->defrag();
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -291,6 +374,8 @@ main(int argc, char *argv[])
 
 	insert_erase_lookup_test(pop, defrag);
 	insert_erase_lookup_test_str(pop, defrag);
+	recursive_rehashing_test(pop);
+	recursive_rehashing_deadlock_test(pop);
 
 	pop.close();
 

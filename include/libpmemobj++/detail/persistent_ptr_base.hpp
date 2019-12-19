@@ -57,33 +57,24 @@ namespace detail
 {
 
 /**
- * Persistent_ptr base class
+ * Persistent_ptr base (non-template) class
  *
  * Implements some of the functionality of the persistent_ptr class. It defines
- * all applicable conversions from and to a persistent_ptr_base. This class is
- * an implementation detail and is not to be instantiated. It cannot be declared
- * as virtual due to the problem with rebuilding the vtable.
+ * all applicable conversions from and to a persistent_ptr_base.
+ *
+ * It can be used e.g. as a parameter, where persistent_ptr of any template
+ * type is required. It is similar to persistent_ptr<void> (it can point
+ * to whatever type), but it can be used when you want to have pointer to some
+ * unspecified persistent_ptr (with persistent_ptr<void> it can't be done,
+ * because: persistent_ptr<T>* does not convert to persistent_ptr<void>*).
  */
-template <typename T>
 class persistent_ptr_base {
-	typedef persistent_ptr_base<T> this_type;
-
-	template <typename U>
-	friend class persistent_ptr_base;
-
 public:
-	/**
-	 * Type of an actual object with all qualifier removed,
-	 * used for easy underlying type access
-	 */
-	typedef typename pmem::detail::sp_element<T>::type element_type;
-
 	/**
 	 * Default constructor, zeroes the PMEMoid.
 	 */
-	persistent_ptr_base() : oid(OID_NULL)
+	persistent_ptr_base() noexcept : oid(OID_NULL)
 	{
-		verify_type();
 	}
 
 	/*
@@ -101,80 +92,6 @@ public:
 	 */
 	persistent_ptr_base(PMEMoid oid) noexcept : oid(oid)
 	{
-		verify_type();
-	}
-
-	/**
-	 * Volatile pointer constructor.
-	 *
-	 * If ptr does not point to an address from a valid pool, the persistent
-	 * pointer will evaluate to nullptr.
-	 *
-	 * @param ptr volatile pointer, pointing to persistent memory.
-	 */
-	persistent_ptr_base(element_type *ptr) : oid(pmemobj_oid(ptr))
-	{
-		verify_type();
-	}
-
-	/**
-	 * Copy constructor from a different persistent_ptr<>.
-	 *
-	 * Available only for convertible types.
-	 */
-	template <typename U,
-		  typename = typename std::enable_if<
-			  !std::is_same<T, U>::value &&
-			  std::is_same<typename std::remove_cv<T>::type,
-				       U>::value>::type>
-	persistent_ptr_base(persistent_ptr_base<U> const &r) noexcept
-	    : oid(r.oid)
-	{
-		this->oid.off +=
-			static_cast<std::uint64_t>(calculate_offset<U>());
-		verify_type();
-	}
-
-	/**
-	 * Copy constructor from a different persistent_ptr<>.
-	 *
-	 * Available only for convertible, non-void types.
-	 */
-	template <
-		typename U, typename Dummy = void,
-		typename = typename std::enable_if<
-			!std::is_same<
-				typename std::remove_cv<T>::type,
-				typename std::remove_cv<U>::type>::value &&
-				!std::is_void<U>::value,
-			decltype(static_cast<T *>(std::declval<U *>()))>::type>
-	persistent_ptr_base(persistent_ptr_base<U> const &r) noexcept
-	    : oid(r.oid)
-	{
-		this->oid.off +=
-			static_cast<std::uint64_t>(calculate_offset<U>());
-		verify_type();
-	}
-
-	/**
-	 * Conversion operator to a different persistent_ptr<>.
-	 *
-	 * Available only for convertible, non-void types.
-	 */
-	template <
-		typename Y,
-		typename = typename std::enable_if<
-			!std::is_same<
-				typename std::remove_cv<T>::type,
-				typename std::remove_cv<Y>::type>::value &&
-				!std::is_void<Y>::value,
-			decltype(static_cast<T *>(std::declval<Y *>()))>::type>
-	operator persistent_ptr_base<Y>() noexcept
-	{
-		/*
-		 * The offset conversion should not be required here.
-		 */
-		return persistent_ptr_base<Y>(this->oid);
 	}
 
 	/*
@@ -184,20 +101,18 @@ public:
 	 */
 	persistent_ptr_base(persistent_ptr_base const &r) noexcept : oid(r.oid)
 	{
-		verify_type();
 	}
 
 	/**
-	 * Defaulted move constructor.
+	 * Move constructor.
 	 */
 	persistent_ptr_base(persistent_ptr_base &&r) noexcept
 	    : oid(std::move(r.oid))
 	{
-		verify_type();
 	}
 
 	/**
-	 * Defaulted move assignment operator.
+	 * Move assignment operator.
 	 */
 	persistent_ptr_base &
 	operator=(persistent_ptr_base &&r)
@@ -221,7 +136,8 @@ public:
 	persistent_ptr_base &
 	operator=(persistent_ptr_base const &r)
 	{
-		this_type(r).swap(*this);
+		detail::conditional_add_to_tx(this);
+		this->oid = r.oid;
 
 		return *this;
 	}
@@ -241,28 +157,6 @@ public:
 	}
 
 	/**
-	 * Converting assignment operator from a different
-	 * persistent_ptr<>.
-	 *
-	 * Available only for convertible types.
-	 * Just like regular assignment, also automatically registers
-	 * itself in a transaction.
-	 *
-	 * @throw pmem::transaction_error when adding the object to the
-	 *	transaction failed.
-	 */
-	template <typename Y,
-		  typename = typename std::enable_if<
-			  std::is_convertible<Y *, T *>::value>::type>
-	persistent_ptr_base &
-	operator=(persistent_ptr_base<Y> const &r)
-	{
-		this_type(r).swap(*this);
-
-		return *this;
-	}
-
-	/**
 	 * Swaps two persistent_ptr objects of the same type.
 	 *
 	 * @param[in,out] other the other persistent_ptr to swap.
@@ -273,24 +167,6 @@ public:
 		detail::conditional_add_to_tx(this);
 		detail::conditional_add_to_tx(&other);
 		std::swap(this->oid, other.oid);
-	}
-
-	/**
-	 * Get a direct pointer.
-	 *
-	 * Performs a calculations on the underlying C-style pointer.
-	 *
-	 * @return a direct pointer to the object.
-	 */
-	element_type *
-	get() const noexcept
-	{
-		if (this->oid.pool_uuid_lo ==
-		    std::numeric_limits<decltype(oid.pool_uuid_lo)>::max())
-			return reinterpret_cast<element_type *>(oid.off);
-		else
-			return static_cast<element_type *>(
-				pmemobj_direct(this->oid));
 	}
 
 	/**
@@ -319,66 +195,9 @@ public:
 		return &(this->oid);
 	}
 
-	/*
-	 * Bool conversion operator.
-	 */
-	explicit operator bool() const noexcept
-	{
-		return get() != nullptr;
-	}
-
 protected:
 	/* The underlying PMEMoid of the held object. */
 	PMEMoid oid;
-
-	void
-	verify_type()
-	{
-		static_assert(!std::is_polymorphic<element_type>::value,
-			      "Polymorphic types are not supported");
-	}
-
-	/**
-	 * Private constructor enabling persistent_ptrs to volatile objects.
-	 *
-	 * This is internal implementation only needed for the
-	 * pointer_traits<persistent_ptr>::pointer_to to be able to create
-	 * valid pointers. This is used in libstdc++'s std::vector::insert().
-	 */
-	persistent_ptr_base(element_type *vptr, int) : persistent_ptr_base(vptr)
-	{
-		if (OID_IS_NULL(oid)) {
-			oid.pool_uuid_lo = std::numeric_limits<decltype(
-				oid.pool_uuid_lo)>::max();
-			oid.off = reinterpret_cast<decltype(oid.off)>(vptr);
-		}
-	}
-
-	/**
-	 * Calculate in-object offset for structures with inheritance.
-	 *
-	 * In case of the given inheritance:
-	 *
-	 *	  A   B
-	 *	   \ /
-	 *	    C
-	 *
-	 * A pointer to B *ptr = &C should be offset by sizeof(A). This function
-	 * calculates that offset.
-	 *
-	 * @return offset between to compatible pointer types to the same object
-	 */
-	template <typename U>
-	inline ptrdiff_t
-	calculate_offset() const
-	{
-		static const ptrdiff_t ptr_offset_magic = 0xDEADBEEF;
-
-		U *tmp{reinterpret_cast<U *>(ptr_offset_magic)};
-		T *diff = static_cast<T *>(tmp);
-		return reinterpret_cast<ptrdiff_t>(diff) -
-			reinterpret_cast<ptrdiff_t>(tmp);
-	}
 };
 
 } /* namespace detail */

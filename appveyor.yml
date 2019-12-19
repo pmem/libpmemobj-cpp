@@ -15,6 +15,7 @@ install:
     Copy-Item -Path c:/tools/vcpkg/ports/pmdk/portfile2.cmake -Destination c:/tools/vcpkg/ports/pmdk/portfile.cmake;
 - vcpkg install pmdk:x64-windows
 - vcpkg install sfml:x64-windows
+- vcpkg install tbb:x64-windows
 - vcpkg integrate install
 
 cache: c:\tools\vcpkg\installed
@@ -31,6 +32,7 @@ before_build:
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
         -DCMAKE_INSTALL_PREFIX=c:/install/libpmemobj-cpp
         -DTESTS_USE_FORCED_PMEM=ON
+        -DTESTS_TBB=ON
 
 build_script:
 - msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%

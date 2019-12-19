@@ -53,16 +53,15 @@
 namespace pmem
 {
 
-namespace detail
+namespace obj
 {
 
 /**
  * Persistent_ptr base class
  *
  * Implements some of the functionality of the persistent_ptr class. It defines
- * all applicable conversions from and to a persistent_ptr_base. This class is
- * an implementation detail and is not to be instantiated. It cannot be declared
- * as virtual due to the problem with rebuilding the vtable.
+ * all applicable conversions from and to a persistent_ptr_base. It cannot be
+ * declared as virtual due to the problem with rebuilding the vtable.
  */
 class persistent_ptr_base {
 public:
@@ -200,7 +199,7 @@ protected:
 	PMEMoid oid;
 };
 
-} /* namespace detail */
+} /* namespace obj */
 
 } /* namespace pmem */
 

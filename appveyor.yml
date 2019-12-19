@@ -15,6 +15,7 @@ install:
     Copy-Item -Path c:/tools/vcpkg/ports/pmdk/portfile2.cmake -Destination c:/tools/vcpkg/ports/pmdk/portfile.cmake;
 - vcpkg install pmdk:x64-windows
 - vcpkg install sfml:x64-windows
+- vcpkg install tbb:x64-windows
 - vcpkg integrate install
 
 cache: c:\tools\vcpkg\installed

@@ -53,7 +53,7 @@
 namespace pmem
 {
 
-namespace detail
+namespace obj
 {
 
 /**
@@ -200,7 +200,7 @@ protected:
 	PMEMoid oid;
 };
 
-} /* namespace detail */
+} /* namespace obj */
 
 } /* namespace pmem */
 

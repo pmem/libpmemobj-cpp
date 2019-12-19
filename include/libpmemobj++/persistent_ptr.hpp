@@ -44,8 +44,8 @@
 #include <ostream>
 
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/persistent_ptr_base.hpp>
 #include <libpmemobj++/detail/specialization.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/base.h>
 
@@ -68,7 +68,7 @@ class persistent_ptr;
  * (unnecessary) functionallities.
  */
 template <>
-class persistent_ptr<void> : public detail::persistent_ptr_base {
+class persistent_ptr<void> : public persistent_ptr_base {
 public:
 	typedef void element_type;
 	typedef persistent_ptr<void> this_type;
@@ -114,7 +114,7 @@ public:
  * (unnecessary) functionallities.
  */
 template <>
-class persistent_ptr<const void> : public detail::persistent_ptr_base {
+class persistent_ptr<const void> : public persistent_ptr_base {
 public:
 	typedef const void element_type;
 	typedef persistent_ptr<const void> this_type;
@@ -206,7 +206,7 @@ public:
  * @snippet doc_snippets/persistent.cpp persistent_ptr_example
  */
 template <typename T>
-class persistent_ptr : public detail::persistent_ptr_base {
+class persistent_ptr : public persistent_ptr_base {
 public:
 	typedef persistent_ptr<T> this_type;
 
@@ -220,7 +220,7 @@ public:
 	typedef typename pmem::detail::sp_element<T>::type element_type;
 
 	persistent_ptr() = default;
-	using detail::persistent_ptr_base::persistent_ptr_base;
+	using persistent_ptr_base::persistent_ptr_base;
 
 	/*
 	 * Constructors
@@ -230,7 +230,7 @@ public:
 	 * Explicit void specialization of the converting constructor.
 	 */
 	explicit persistent_ptr(persistent_ptr<void> const &rhs) noexcept
-	    : detail::persistent_ptr_base(rhs.raw())
+	    : persistent_ptr_base(rhs.raw())
 	{
 	}
 
@@ -238,7 +238,7 @@ public:
 	 * Explicit const void specialization of the converting constructor.
 	 */
 	explicit persistent_ptr(persistent_ptr<const void> const &rhs) noexcept
-	    : detail::persistent_ptr_base(rhs.raw())
+	    : persistent_ptr_base(rhs.raw())
 	{
 	}
 

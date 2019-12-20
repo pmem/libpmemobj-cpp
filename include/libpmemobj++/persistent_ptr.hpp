@@ -430,27 +430,6 @@ public:
 		return *this;
 	}
 
-	/**
-	 * Conversion operator to a different persistent_ptr<>.
-	 *
-	 * Available only for convertible, non-void types.
-	 */
-	template <
-		typename Y,
-		typename = typename std::enable_if<
-			!std::is_same<
-				typename std::remove_cv<T>::type,
-				typename std::remove_cv<Y>::type>::value &&
-				!std::is_void<Y>::value,
-			decltype(static_cast<T *>(std::declval<Y *>()))>::type>
-	operator persistent_ptr<Y>() noexcept
-	{
-		/*
-		 * The offset conversion should not be required here.
-		 */
-		return persistent_ptr<Y>(this->oid);
-	}
-
 	/*
 	 * Bool conversion operator.
 	 */

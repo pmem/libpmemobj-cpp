@@ -343,6 +343,12 @@ test_offset(nvobj::pool<root> &pop)
 			nvobj::persistent_ptr<B> bptr = cptr;
 			UT_ASSERT((bptr.raw().off - cptr.raw().off) ==
 				  sizeof(A));
+
+			nvobj::persistent_ptr<B> bptr2;
+			bptr2 = cptr;
+			UT_ASSERT((bptr2.raw().off - cptr.raw().off) ==
+				  sizeof(A));
+
 			nvobj::delete_persistent<C>(cptr);
 		});
 	} catch (...) {

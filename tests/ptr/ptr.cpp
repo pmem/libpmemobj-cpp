@@ -37,11 +37,13 @@
 
 #include "unittest.hpp"
 
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
@@ -116,12 +118,15 @@ struct nested {
 	nvobj::persistent_ptr<foo> inner;
 };
 
+using V = pmem::obj::vector<nvobj::persistent_ptr_base *>;
+
 struct root {
 	nvobj::persistent_ptr<foo> pfoo;
 	nvobj::persistent_ptr<nvobj::p<int>[TEST_ARR_SIZE]> parr;
+	nvobj::persistent_ptr<V> v;
 
 	/* This variable is unused, but it's here to check if the persistent_ptr
-	 * does not violate it's own restrictions.
+	 * does not violate its own restrictions.
 	 */
 	nvobj::persistent_ptr<nested> outer;
 };
@@ -344,6 +349,32 @@ test_offset(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 }
+
+void
+test_base_ptr_casting(nvobj::pool<root> &pop)
+{
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->v = nvobj::make_persistent<V>();
+			auto vecptr = nvobj::make_persistent<V>();
+			auto intptr = nvobj::make_persistent<int>(TEST_INT);
+			nvobj::persistent_ptr<int> int_explicit_ptr_null =
+				nullptr;
+
+			r->v->push_back(&vecptr);
+			r->v->push_back(&intptr);
+			r->v->push_back(&int_explicit_ptr_null);
+
+			nvobj::delete_persistent<V>(vecptr);
+			nvobj::delete_persistent<int>(intptr);
+			nvobj::delete_persistent<V>(r->v);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
 }
 
 int
@@ -370,6 +401,7 @@ main(int argc, char *argv[])
 	test_ptr_transactional(pop);
 	test_ptr_array(pop);
 	test_offset(pop);
+	test_base_ptr_casting(pop);
 
 	pop.close();
 

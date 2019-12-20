@@ -45,7 +45,8 @@ git clone https://github.com/pmem/pmdk
 cd pmdk
 git checkout $PMDK_VERSION
 
-sudo make -j$(nproc) install prefix=/opt/pmdk
+make -j$(nproc) prefix=/opt/pmdk
+sudo make install prefix=/opt/pmdk
 
 # Do not create nor test any packages if PACKAGE_MANAGER is not set.
 [ "$PACKAGE_MANAGER" == "" ] && exit 0

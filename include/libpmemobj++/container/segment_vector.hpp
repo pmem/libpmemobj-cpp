@@ -39,6 +39,7 @@
 #define LIBPMEMOBJ_SEGMENT_VECTOR_HPP
 
 #include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/detail/segment_vector_policies.hpp>
 #include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
@@ -54,8 +55,6 @@
 namespace pmem
 {
 namespace obj
-{
-namespace experimental
 {
 
 namespace segment_vector_internal
@@ -466,211 +465,47 @@ typename segment_iterator<Container, is_const>::pointer
 	return &operator*();
 }
 
-template <typename Container>
-using resize_method =
-	decltype(std::declval<Container>().resize(std::declval<size_t>()));
-
-template <typename Container>
-using container_has_resize = detail::supports<Container, resize_method>;
-
-template <typename Container, bool = container_has_resize<Container>::value>
-struct segment_vector_resize {
-	using segment_vector_type = Container;
-
-	static void
-	resize(segment_vector_type &c, size_t n)
-	{
-		c.resize(n);
-	}
-};
-
-template <typename Container>
-struct segment_vector_resize<Container, false> {
-	using segment_vector_type = Container;
-
-	static void
-	resize(segment_vector_type &c, size_t n)
-	{
-	}
-};
-
-template <typename SegmentVectorType, size_t SegmentSize>
-class fixed_size_policy {
-public:
-	/* Traits */
-	using segment_vector_type = SegmentVectorType;
-	using segment_type = typename segment_vector_type::value_type;
-	using value_type = typename segment_type::value_type;
-	using size_type = std::size_t;
-
-	using segment_vector_resize_type =
-		segment_vector_resize<segment_vector_type>;
-
-	static constexpr size_type Size = SegmentSize;
-
-	static void
-	resize(segment_vector_type &c, size_type n)
-	{
-		segment_vector_resize_type::resize(c, n);
-	}
-
-	/**
-	 * @param[in] index - index of element in segment_vector
-	 *
-	 * @return index of segment where element should be located
-	 */
-	static size_type
-	get_segment(size_type index)
-	{
-		return index / Size;
-	}
-	/**
-	 * @param[in] segment_index - index of segment
-	 *
-	 * @return index of first element in segment
-	 */
-	static size_type
-	segment_top(size_type segment_index)
-	{
-		return segment_index * Size;
-	}
-	/**
-	 * @param[in] segment_index - index of segment
-	 *
-	 * @return size of segment
-	 */
-	static size_type
-	segment_size(size_type segment_index)
-	{
-		return Size;
-	}
-	/**
-	 * @param[in] index - index of element in segment_vector
-	 *
-	 * @return index in segment where it should be located
-	 */
-	static size_type
-	index_in_segment(size_type index)
-	{
-		return index % Size;
-	}
-
-	/**
-	 * @return maximum number of elements we can allocate
-	 */
-	static size_type
-	max_size(const SegmentVectorType &seg_storage)
-	{
-		return seg_storage.max_size() * SegmentSize;
-	}
-
-	/**
-	 * @return number of elements in range [0, segment_index]
-	 */
-	static size_type
-	capacity(size_type segment_index)
-	{
-		return (segment_index + 1) * Size;
-	}
-};
-
-template <typename SegmentVectorType>
-class exponential_size_policy {
-public:
-	/* Traits */
-	using segment_vector_type = SegmentVectorType;
-	using segment_type = typename segment_vector_type::value_type;
-	using value_type = typename segment_type::value_type;
-	using size_type = std::size_t;
-
-	using segment_vector_resize_type =
-		segment_vector_resize<segment_vector_type>;
-
-	static void
-	resize(segment_vector_type &c, size_type n)
-	{
-		segment_vector_resize_type::resize(c, n);
-	}
-
-	/**
-	 * @param[in] index - index of element in segment_vector
-	 *
-	 * @return index of segment where element should be located
-	 */
-	static size_type
-	get_segment(size_type index)
-	{
-		return static_cast<size_type>(detail::Log2(index | 1));
-	}
-	/**
-	 * @param[in] segment_index - index of segment
-	 *
-	 * @return index of first element in segment
-	 */
-	static size_type
-	segment_top(size_type segment_index)
-	{
-		return (size_type(1) << segment_index) & ~size_type(1);
-	}
-	/**
-	 * @param[in] segment_index - index of segment
-	 *
-	 * @return size of segment
-	 */
-	static size_type
-	segment_size(size_type segment_index)
-	{
-		return (segment_index == 0) ? 2 : segment_top(segment_index);
-	}
-	/**
-	 * @param[in] index - index of element in segment_vector
-	 *
-	 * @return index in segment where it should be located
-	 */
-	static size_type
-	index_in_segment(size_type index)
-	{
-		return index - segment_top(get_segment(index));
-	}
-
-	/**
-	 * @return maximum number of elements we can allocate
-	 */
-	static size_t
-	max_size(const SegmentVectorType &)
-	{
-		return segment_size(get_segment(PMEMOBJ_MAX_ALLOC_SIZE /
-						sizeof(value_type)) +
-				    1);
-	}
-
-	/**
-	 * @return number of elements in range [0, segment_index]
-	 */
-	static size_type
-	capacity(size_type segment_index)
-	{
-		if (segment_index == 0)
-			return 2;
-		return segment_size(segment_index) * 2;
-	}
-};
-
 } /* segment_vector_internal namespace */
 
-template <typename SegmentType>
+/**
+ * Exponential size policy with pmemobj array of size 64
+ * as a type of segment vector, so this is a static array of segments
+ * and each segment is of SegmentType.
+ *
+ * - requires more memory than exponential_size_vector_policy
+ * - is faster and more efficient than exponential_size_vector_policy
+ */
+template <template <typename> class SegmentType = pmem::obj::vector>
 using exponential_size_array_policy =
 	segment_vector_internal::exponential_size_policy<
-		pmem::obj::array<SegmentType, 64>>;
+		segment_vector_internal::array_64, SegmentType>;
 
-template <typename SegmentType, size_t SegmentSize>
-using fixed_size_vector_policy = segment_vector_internal::fixed_size_policy<
-	pmem::obj::vector<SegmentType>, SegmentSize>;
+/**
+ * Fixed size policy with pmemobj vector of a given size
+ * as a type of segment vector, so this is a dynamic vector of segments
+ * and each segment is of SegmentType.
+ *
+ * - is slower than the exponential one (because it has more segments)
+ * - causes less fragmentation than the exponential one
+ */
+template <size_t SegmentSize = 1024,
+	  template <typename> class SegmentType = pmem::obj::vector>
+using fixed_size_vector_policy =
+	segment_vector_internal::fixed_size_policy<pmem::obj::vector,
+						   SegmentType, SegmentSize>;
 
-template <typename SegmentType>
+/**
+ * Exponential size policy with pmemobj vector
+ * as a type of segment vector, so this is a dynamic vector of segments
+ * and each segment is of SegmentType.
+ *
+ * - requires less memory than exponential_size_array_policy
+ * - is slower and less efficient than exponential_size_array_policy
+ */
+template <template <typename> class SegmentType = pmem::obj::vector>
 using exponential_size_vector_policy =
-	segment_vector_internal::exponential_size_policy<
-		pmem::obj::vector<SegmentType>>;
+	segment_vector_internal::exponential_size_policy<pmem::obj::vector,
+							 SegmentType>;
 
 /**
  * Segment table is a data type with a vector-like interface
@@ -698,14 +533,14 @@ using exponential_size_vector_policy =
  * Segment template represents segment type.
  * Policy template represents Segments storing type and managing methods.
  */
-template <typename T, typename Segment = pmem::obj::vector<T>,
-	  typename Policy = exponential_size_array_policy<Segment>>
+template <typename T, typename Policy = exponential_size_vector_policy<>>
 class segment_vector {
 public:
 	/* Specific traits*/
 	using policy_type = Policy;
-	using segment_type = typename policy_type::segment_type;
-	using segment_vector_type = typename policy_type::segment_vector_type;
+	using segment_type = typename policy_type::template segment_type<T>;
+	using segment_vector_type =
+		typename policy_type::template segment_vector_type<T>;
 	/* Simple access to methods */
 	using policy = policy_type;
 	using storage = policy_type;
@@ -854,80 +689,75 @@ private:
 };
 
 /* Non-member swap */
-template <typename T, typename Segment, typename Policy>
-void swap(segment_vector<T, Segment, Policy> &lhs,
-	  segment_vector<T, Segment, Policy> &rhs);
+template <typename T, typename Policy>
+void swap(segment_vector<T, Policy> &lhs, segment_vector<T, Policy> &rhs);
 
 /*
  * Comparison operators between
- * pmem::obj::experimental::segment_vector<T, Segment, Policy> and
- * pmem::obj::experimental::segment_vector<T, Segment, Policy>
+ * pmem::obj::experimental::segment_vector<T, Policy> and
+ * pmem::obj::experimental::segment_vector<T, Policy>
  */
-template <typename T, typename Segment, typename Policy>
-bool operator==(const segment_vector<T, Segment, Policy> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator!=(const segment_vector<T, Segment, Policy> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator<(const segment_vector<T, Segment, Policy> &lhs,
-	       const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator<=(const segment_vector<T, Segment, Policy> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator>(const segment_vector<T, Segment, Policy> &lhs,
-	       const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator>=(const segment_vector<T, Segment, Policy> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator==(const segment_vector<T, Policy> &lhs,
+		const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator!=(const segment_vector<T, Policy> &lhs,
+		const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator<(const segment_vector<T, Policy> &lhs,
+	       const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator<=(const segment_vector<T, Policy> &lhs,
+		const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator>(const segment_vector<T, Policy> &lhs,
+	       const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator>=(const segment_vector<T, Policy> &lhs,
+		const segment_vector<T, Policy> &rhs);
 
 /*
  * Comparison operators between
- * pmem::obj::experimental::segment_vector<T, Segment, Policy> and
+ * pmem::obj::experimental::segment_vector<T, Policy> and
  * std::vector<T>
  */
-template <typename T, typename Segment, typename Policy>
-bool operator==(const segment_vector<T, Segment, Policy> &lhs,
+template <typename T, typename Policy>
+bool operator==(const segment_vector<T, Policy> &lhs,
 		const std::vector<T> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator!=(const segment_vector<T, Segment, Policy> &lhs,
+template <typename T, typename Policy>
+bool operator!=(const segment_vector<T, Policy> &lhs,
 		const std::vector<T> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator<(const segment_vector<T, Segment, Policy> &lhs,
-	       const std::vector<T> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator<=(const segment_vector<T, Segment, Policy> &lhs,
+template <typename T, typename Policy>
+bool operator<(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs);
+template <typename T, typename Policy>
+bool operator<=(const segment_vector<T, Policy> &lhs,
 		const std::vector<T> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator>(const segment_vector<T, Segment, Policy> &lhs,
-	       const std::vector<T> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator>=(const segment_vector<T, Segment, Policy> &lhs,
+template <typename T, typename Policy>
+bool operator>(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs);
+template <typename T, typename Policy>
+bool operator>=(const segment_vector<T, Policy> &lhs,
 		const std::vector<T> &rhs);
 
 /*
  * Comparison operators between std::vector<T> and
- * pmem::obj::experimental::segment_vector<T, Segment, Policy>
+ * pmem::obj::experimental::segment_vector<T, Policy>
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool operator==(const std::vector<T> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
+		const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
 bool operator!=(const std::vector<T> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator<(const std::vector<T> &lhs,
-	       const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
+		const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator<(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
 bool operator<=(const std::vector<T> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
-bool operator>(const std::vector<T> &lhs,
-	       const segment_vector<T, Segment, Policy> &rhs);
-template <typename T, typename Segment, typename Policy>
+		const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
+bool operator>(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs);
+template <typename T, typename Policy>
 bool operator>=(const std::vector<T> &lhs,
-		const segment_vector<T, Segment, Policy> &rhs);
+		const segment_vector<T, Policy> &rhs);
 
 /**
  * Default constructor. Constructs an empty container.
@@ -937,8 +767,8 @@ bool operator>=(const std::vector<T> &lhs,
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector()
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector()
 {
 }
 
@@ -964,9 +794,9 @@ segment_vector<T, Segment, Policy>::segment_vector()
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector(size_type count,
-						   const value_type &value)
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector(size_type count,
+					  const value_type &value)
 {
 	internal_reserve(count);
 	construct(0, count, value);
@@ -993,8 +823,8 @@ segment_vector<T, Segment, Policy>::segment_vector(size_type count,
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector(size_type count)
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector(size_type count)
 {
 	internal_reserve(count);
 	construct(0, count);
@@ -1026,11 +856,11 @@ segment_vector<T, Segment, Policy>::segment_vector(size_type count)
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
-segment_vector<T, Segment, Policy>::segment_vector(InputIt first, InputIt last)
+segment_vector<T, Policy>::segment_vector(InputIt first, InputIt last)
 {
 	internal_reserve(static_cast<size_type>(std::distance(first, last)));
 	construct_range(0, first, last);
@@ -1057,8 +887,8 @@ segment_vector<T, Segment, Policy>::segment_vector(InputIt first, InputIt last)
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector(const segment_vector &other)
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector(const segment_vector &other)
 {
 	internal_reserve(other.capacity());
 	construct_range(0, other.cbegin(), other.cend());
@@ -1084,8 +914,8 @@ segment_vector<T, Segment, Policy>::segment_vector(const segment_vector &other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector(segment_vector &&other)
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector(segment_vector &&other)
 {
 	_data = std::move(other._data);
 	_segments_used = other._segments_used;
@@ -1113,9 +943,8 @@ segment_vector<T, Segment, Policy>::segment_vector(segment_vector &&other)
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector(
-	std::initializer_list<T> init)
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector(std::initializer_list<T> init)
     : segment_vector(init.begin(), init.end())
 {
 }
@@ -1141,8 +970,8 @@ segment_vector<T, Segment, Policy>::segment_vector(
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::segment_vector(const std::vector<T> &other)
+template <typename T, typename Policy>
+segment_vector<T, Policy>::segment_vector(const std::vector<T> &other)
     : segment_vector(other.cbegin(), other.cend())
 {
 }
@@ -1164,9 +993,9 @@ segment_vector<T, Segment, Policy>::segment_vector(const std::vector<T> &other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy> &
-segment_vector<T, Segment, Policy>::operator=(const segment_vector &other)
+template <typename T, typename Policy>
+segment_vector<T, Policy> &
+segment_vector<T, Policy>::operator=(const segment_vector &other)
 {
 	assign(other);
 	return *this;
@@ -1187,9 +1016,9 @@ segment_vector<T, Segment, Policy>::operator=(const segment_vector &other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy> &
-segment_vector<T, Segment, Policy>::operator=(segment_vector &&other)
+template <typename T, typename Policy>
+segment_vector<T, Policy> &
+segment_vector<T, Policy>::operator=(segment_vector &&other)
 {
 	assign(std::move(other));
 	return *this;
@@ -1212,9 +1041,9 @@ segment_vector<T, Segment, Policy>::operator=(segment_vector &&other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy> &
-segment_vector<T, Segment, Policy>::operator=(std::initializer_list<T> ilist)
+template <typename T, typename Policy>
+segment_vector<T, Policy> &
+segment_vector<T, Policy>::operator=(std::initializer_list<T> ilist)
 {
 	assign(ilist.begin(), ilist.end());
 	return *this;
@@ -1237,9 +1066,9 @@ segment_vector<T, Segment, Policy>::operator=(std::initializer_list<T> ilist)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy> &
-segment_vector<T, Segment, Policy>::operator=(const std::vector<T> &other)
+template <typename T, typename Policy>
+segment_vector<T, Policy> &
+segment_vector<T, Policy>::operator=(const std::vector<T> &other)
 {
 	assign(other);
 	return *this;
@@ -1267,10 +1096,9 @@ segment_vector<T, Segment, Policy>::operator=(const std::vector<T> &other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::assign(size_type count,
-					   const_reference value)
+segment_vector<T, Policy>::assign(size_type count, const_reference value)
 {
 	if (count > max_size())
 		throw std::length_error("Assignable range exceeds max size.");
@@ -1321,12 +1149,12 @@ segment_vector<T, Segment, Policy>::assign(size_type count,
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-segment_vector<T, Segment, Policy>::assign(InputIt first, InputIt last)
+segment_vector<T, Policy>::assign(InputIt first, InputIt last)
 {
 	size_type count = static_cast<size_type>(std::distance(first, last));
 	if (count > max_size())
@@ -1382,9 +1210,9 @@ segment_vector<T, Segment, Policy>::assign(InputIt first, InputIt last)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::assign(std::initializer_list<T> ilist)
+segment_vector<T, Policy>::assign(std::initializer_list<T> ilist)
 {
 	assign(ilist.begin(), ilist.end());
 }
@@ -1405,9 +1233,9 @@ segment_vector<T, Segment, Policy>::assign(std::initializer_list<T> ilist)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::assign(const segment_vector &other)
+segment_vector<T, Policy>::assign(const segment_vector &other)
 {
 	if (this != &other)
 		assign(other.cbegin(), other.cend());
@@ -1428,9 +1256,9 @@ segment_vector<T, Segment, Policy>::assign(const segment_vector &other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::assign(segment_vector &&other)
+segment_vector<T, Policy>::assign(segment_vector &&other)
 {
 	if (this == &other)
 		return;
@@ -1459,9 +1287,9 @@ segment_vector<T, Segment, Policy>::assign(segment_vector &&other)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::assign(const std::vector<T> &other)
+segment_vector<T, Policy>::assign(const std::vector<T> &other)
 {
 	assign(other.cbegin(), other.cend());
 }
@@ -1477,8 +1305,8 @@ segment_vector<T, Segment, Policy>::assign(const std::vector<T> &other)
  * @throw pmem::transaction_free_error when freeing underlying segments
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-segment_vector<T, Segment, Policy>::~segment_vector()
+template <typename T, typename Policy>
+segment_vector<T, Policy>::~segment_vector()
 {
 	free_data();
 }
@@ -1496,9 +1324,9 @@ segment_vector<T, Segment, Policy>::~segment_vector()
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reference
-segment_vector<T, Segment, Policy>::at(size_type n)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reference
+segment_vector<T, Policy>::at(size_type n)
 {
 	if (n >= size())
 		throw std::out_of_range("segment_vector::at");
@@ -1518,9 +1346,9 @@ segment_vector<T, Segment, Policy>::at(size_type n)
  * @throw std::out_of_range if n is not within the range of the
  * container.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::at(size_type n) const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::at(size_type n) const
 {
 	if (n >= size())
 		throw std::out_of_range("segment_vector::at");
@@ -1539,9 +1367,9 @@ segment_vector<T, Segment, Policy>::at(size_type n) const
  * @throw std::out_of_range if n is not within the range of the
  * container.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::const_at(size_type n) const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::const_at(size_type n) const
 {
 	if (n >= size())
 		throw std::out_of_range("segment_vector::const_at");
@@ -1559,9 +1387,9 @@ segment_vector<T, Segment, Policy>::const_at(size_type n) const
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reference
-	segment_vector<T, Segment, Policy>::operator[](size_type n)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reference
+	segment_vector<T, Policy>::operator[](size_type n)
 {
 	reference element = get(n);
 
@@ -1578,9 +1406,9 @@ typename segment_vector<T, Segment, Policy>::reference
  *
  * @return const_reference to element number n in underlying segments.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-	segment_vector<T, Segment, Policy>::operator[](size_type n) const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+	segment_vector<T, Policy>::operator[](size_type n) const
 {
 	return get(n);
 }
@@ -1593,9 +1421,9 @@ typename segment_vector<T, Segment, Policy>::const_reference
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reference
-segment_vector<T, Segment, Policy>::front()
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reference
+segment_vector<T, Policy>::front()
 {
 	detail::conditional_add_to_tx(&_data[0][0], 1,
 				      POBJ_XADD_ASSUME_INITIALIZED);
@@ -1608,9 +1436,9 @@ segment_vector<T, Segment, Policy>::front()
  *
  * @return const_reference to first element in underlying segments.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::front() const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::front() const
 {
 	return _data[0][0];
 }
@@ -1622,9 +1450,9 @@ segment_vector<T, Segment, Policy>::front() const
  *
  * @return reference to first element in underlying segments.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::cfront() const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::cfront() const
 {
 	return _data[0][0];
 }
@@ -1637,9 +1465,9 @@ segment_vector<T, Segment, Policy>::cfront() const
  * @throw pmem::transaction_error when adding the object to the
  * transaction failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reference
-segment_vector<T, Segment, Policy>::back()
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reference
+segment_vector<T, Policy>::back()
 {
 	reference element = get(size() - 1);
 
@@ -1654,9 +1482,9 @@ segment_vector<T, Segment, Policy>::back()
  *
  * @return const_reference to the last element in underlying segments.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::back() const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::back() const
 {
 	return get(size() - 1);
 }
@@ -1668,9 +1496,9 @@ segment_vector<T, Segment, Policy>::back() const
  *
  * @return const_reference to the last element in underlying segments.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::cback() const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::cback() const
 {
 	return get(size() - 1);
 }
@@ -1680,9 +1508,9 @@ segment_vector<T, Segment, Policy>::cback() const
  *
  * @return iterator pointing to the first element in the segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::begin()
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::begin()
 {
 	return iterator(this, 0);
 }
@@ -1693,9 +1521,9 @@ segment_vector<T, Segment, Policy>::begin()
  * @return const_iterator pointing to the first element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_iterator
-segment_vector<T, Segment, Policy>::begin() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_iterator
+segment_vector<T, Policy>::begin() const noexcept
 {
 	return const_iterator(this, 0);
 }
@@ -1708,9 +1536,9 @@ segment_vector<T, Segment, Policy>::begin() const noexcept
  * @return const_iterator pointing to the first element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_iterator
-segment_vector<T, Segment, Policy>::cbegin() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_iterator
+segment_vector<T, Policy>::cbegin() const noexcept
 {
 	return const_iterator(this, 0);
 }
@@ -1721,9 +1549,9 @@ segment_vector<T, Segment, Policy>::cbegin() const noexcept
  * @return iterator referring to the past-the-end element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::end()
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::end()
 {
 	return iterator(this, size());
 }
@@ -1734,9 +1562,9 @@ segment_vector<T, Segment, Policy>::end()
  * @return const_iterator referring to the past-the-end element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_iterator
-segment_vector<T, Segment, Policy>::end() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_iterator
+segment_vector<T, Policy>::end() const noexcept
 {
 	return const_iterator(this, size());
 }
@@ -1749,9 +1577,9 @@ segment_vector<T, Segment, Policy>::end() const noexcept
  * @return const_iterator referring to the past-the-end element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_iterator
-segment_vector<T, Segment, Policy>::cend() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_iterator
+segment_vector<T, Policy>::cend() const noexcept
 {
 	return const_iterator(this, size());
 }
@@ -1762,9 +1590,9 @@ segment_vector<T, Segment, Policy>::cend() const noexcept
  * @return reverse_iterator pointing to the last element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reverse_iterator
-segment_vector<T, Segment, Policy>::rbegin()
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reverse_iterator
+segment_vector<T, Policy>::rbegin()
 {
 	return reverse_iterator(end());
 }
@@ -1775,9 +1603,9 @@ segment_vector<T, Segment, Policy>::rbegin()
  * @return const_reverse_iterator pointing to the last element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reverse_iterator
-segment_vector<T, Segment, Policy>::rbegin() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reverse_iterator
+segment_vector<T, Policy>::rbegin() const noexcept
 {
 	return const_reverse_iterator(end());
 }
@@ -1790,9 +1618,9 @@ segment_vector<T, Segment, Policy>::rbegin() const noexcept
  * @return const_reverse_iterator pointing to the last element in the
  * segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reverse_iterator
-segment_vector<T, Segment, Policy>::crbegin() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reverse_iterator
+segment_vector<T, Policy>::crbegin() const noexcept
 {
 	return rbegin();
 }
@@ -1803,9 +1631,9 @@ segment_vector<T, Segment, Policy>::crbegin() const noexcept
  * @return reverse_iterator pointing to the theoretical element
  * preceding the first element in the segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reverse_iterator
-segment_vector<T, Segment, Policy>::rend()
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reverse_iterator
+segment_vector<T, Policy>::rend()
 {
 	return reverse_iterator(begin());
 }
@@ -1816,9 +1644,9 @@ segment_vector<T, Segment, Policy>::rend()
  * @return const_reverse_iterator pointing to the theoretical element
  * preceding the first element in the segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reverse_iterator
-segment_vector<T, Segment, Policy>::rend() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reverse_iterator
+segment_vector<T, Policy>::rend() const noexcept
 {
 	return const_reverse_iterator(begin());
 }
@@ -1831,9 +1659,9 @@ segment_vector<T, Segment, Policy>::rend() const noexcept
  * @return const_reverse_iterator pointing to the theoretical element
  * preceding the first element in the segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reverse_iterator
-segment_vector<T, Segment, Policy>::crend() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reverse_iterator
+segment_vector<T, Policy>::crend() const noexcept
 {
 	return rend();
 }
@@ -1851,9 +1679,9 @@ segment_vector<T, Segment, Policy>::crend() const noexcept
  * of the segment_vector.
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename T, typename Segment, typename Policy>
-slice<typename segment_vector<T, Segment, Policy>::iterator>
-segment_vector<T, Segment, Policy>::range(size_type start, size_type n)
+template <typename T, typename Policy>
+slice<typename segment_vector<T, Policy>::iterator>
+segment_vector<T, Policy>::range(size_type start, size_type n)
 {
 	if (start + n > size())
 		throw std::out_of_range("segment_vector::range");
@@ -1874,9 +1702,9 @@ segment_vector<T, Segment, Policy>::range(size_type start, size_type n)
  * @throw std::out_of_range if any element of the range would be outside
  * of the segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-slice<typename segment_vector<T, Segment, Policy>::const_iterator>
-segment_vector<T, Segment, Policy>::range(size_type start, size_type n) const
+template <typename T, typename Policy>
+slice<typename segment_vector<T, Policy>::const_iterator>
+segment_vector<T, Policy>::range(size_type start, size_type n) const
 {
 	if (start + n > size())
 		throw std::out_of_range("segment_vector::range");
@@ -1895,9 +1723,9 @@ segment_vector<T, Segment, Policy>::range(size_type start, size_type n) const
  * @throw std::out_of_range if any element of the range would be outside
  * of the segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-slice<typename segment_vector<T, Segment, Policy>::const_iterator>
-segment_vector<T, Segment, Policy>::crange(size_type start, size_type n) const
+template <typename T, typename Policy>
+slice<typename segment_vector<T, Policy>::const_iterator>
+segment_vector<T, Policy>::crange(size_type start, size_type n) const
 {
 	if (start + n > size())
 		throw std::out_of_range("segment_vector::range");
@@ -1910,9 +1738,9 @@ segment_vector<T, Segment, Policy>::crange(size_type start, size_type n) const
  *
  * @return true if container is empty, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 constexpr bool
-segment_vector<T, Segment, Policy>::empty() const noexcept
+segment_vector<T, Policy>::empty() const noexcept
 {
 	return size() == 0;
 }
@@ -1920,9 +1748,9 @@ segment_vector<T, Segment, Policy>::empty() const noexcept
 /**
  * @return number of elements.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::size_type
-segment_vector<T, Segment, Policy>::size() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::size_type
+segment_vector<T, Policy>::size() const noexcept
 {
 	size_type result = 0;
 	for (size_type i = 0; i < _segments_used; ++i)
@@ -1934,9 +1762,9 @@ segment_vector<T, Segment, Policy>::size() const noexcept
  * @return maximum number of elements the container is able to hold due
  * to PMDK limitations.
  */
-template <typename T, typename Segment, typename Policy>
-constexpr typename segment_vector<T, Segment, Policy>::size_type
-segment_vector<T, Segment, Policy>::max_size() const noexcept
+template <typename T, typename Policy>
+constexpr typename segment_vector<T, Policy>::size_type
+segment_vector<T, Policy>::max_size() const noexcept
 {
 	return policy::max_size(_data);
 }
@@ -1957,9 +1785,9 @@ segment_vector<T, Segment, Policy>::max_size() const noexcept
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::reserve(size_type capacity_new)
+segment_vector<T, Policy>::reserve(size_type capacity_new)
 {
 	if (capacity_new <= capacity())
 		return;
@@ -1972,9 +1800,9 @@ segment_vector<T, Segment, Policy>::reserve(size_type capacity_new)
  * @return number of elements that can be held in currently allocated
  * storage.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::size_type
-segment_vector<T, Segment, Policy>::capacity() const noexcept
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::size_type
+segment_vector<T, Policy>::capacity() const noexcept
 {
 	if (_segments_used == 0)
 		return 0;
@@ -1992,9 +1820,9 @@ segment_vector<T, Segment, Policy>::capacity() const noexcept
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::shrink_to_fit()
+segment_vector<T, Policy>::shrink_to_fit()
 {
 	if (empty())
 		return;
@@ -2022,9 +1850,9 @@ segment_vector<T, Segment, Policy>::shrink_to_fit()
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::clear()
+segment_vector<T, Policy>::clear()
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] { shrink(0); });
@@ -2043,9 +1871,9 @@ segment_vector<T, Segment, Policy>::clear()
  * @throw pmem::transaction_free_error when freeing underlying segments
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::free_data()
+segment_vector<T, Policy>::free_data()
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
@@ -2078,9 +1906,9 @@ segment_vector<T, Segment, Policy>::free_data()
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::insert(const_iterator pos, const T &value)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::insert(const_iterator pos, const T &value)
 {
 	return insert(pos, 1, value);
 }
@@ -2108,9 +1936,9 @@ segment_vector<T, Segment, Policy>::insert(const_iterator pos, const T &value)
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::insert(const_iterator pos, T &&value)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::insert(const_iterator pos, T &&value)
 {
 	size_type idx = static_cast<size_type>(pos - cbegin());
 
@@ -2149,10 +1977,10 @@ segment_vector<T, Segment, Policy>::insert(const_iterator pos, T &&value)
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::insert(const_iterator pos, size_type count,
-					   const T &value)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::insert(const_iterator pos, size_type count,
+				  const T &value)
 {
 	size_type idx = static_cast<size_type>(pos - cbegin());
 
@@ -2199,13 +2027,13 @@ segment_vector<T, Segment, Policy>::insert(const_iterator pos, size_type count,
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::insert(const_iterator pos, InputIt first,
-					   InputIt last)
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::insert(const_iterator pos, InputIt first,
+				  InputIt last)
 {
 	size_type idx = static_cast<size_type>(pos - cbegin());
 	size_type gap_size = static_cast<size_type>(std::distance(first, last));
@@ -2246,10 +2074,10 @@ segment_vector<T, Segment, Policy>::insert(const_iterator pos, InputIt first,
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::insert(const_iterator pos,
-					   std::initializer_list<T> ilist)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::insert(const_iterator pos,
+				  std::initializer_list<T> ilist)
 {
 	return insert(pos, ilist.begin(), ilist.end());
 }
@@ -2282,10 +2110,10 @@ segment_vector<T, Segment, Policy>::insert(const_iterator pos,
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <class... Args>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::emplace(const_iterator pos, Args &&... args)
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::emplace(const_iterator pos, Args &&... args)
 {
 	size_type idx = static_cast<size_type>(pos - cbegin());
 
@@ -2325,10 +2153,10 @@ segment_vector<T, Segment, Policy>::emplace(const_iterator pos, Args &&... args)
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <class... Args>
-typename segment_vector<T, Segment, Policy>::reference
-segment_vector<T, Segment, Policy>::emplace_back(Args &&... args)
+typename segment_vector<T, Policy>::reference
+segment_vector<T, Policy>::emplace_back(Args &&... args)
 {
 	assert(size() < max_size());
 
@@ -2365,9 +2193,9 @@ segment_vector<T, Segment, Policy>::emplace_back(Args &&... args)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::erase(const_iterator pos)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::erase(const_iterator pos)
 {
 	return erase(pos, pos + 1);
 }
@@ -2396,10 +2224,9 @@ segment_vector<T, Segment, Policy>::erase(const_iterator pos)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::iterator
-segment_vector<T, Segment, Policy>::erase(const_iterator first,
-					  const_iterator last)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::iterator
+segment_vector<T, Policy>::erase(const_iterator first, const_iterator last)
 {
 	size_type count = static_cast<size_type>(std::distance(first, last));
 	size_type idx = static_cast<size_type>(first - cbegin());
@@ -2455,9 +2282,9 @@ segment_vector<T, Segment, Policy>::erase(const_iterator first,
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::push_back(const T &value)
+segment_vector<T, Policy>::push_back(const T &value)
 {
 	emplace_back(value);
 }
@@ -2480,9 +2307,9 @@ segment_vector<T, Segment, Policy>::push_back(const T &value)
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::push_back(T &&value)
+segment_vector<T, Policy>::push_back(T &&value)
 {
 	emplace_back(std::move(value));
 }
@@ -2500,9 +2327,9 @@ segment_vector<T, Segment, Policy>::push_back(T &&value)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::pop_back()
+segment_vector<T, Policy>::pop_back()
 {
 	if (empty())
 		return;
@@ -2535,9 +2362,9 @@ segment_vector<T, Segment, Policy>::pop_back()
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::resize(size_type count)
+segment_vector<T, Policy>::resize(size_type count)
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
@@ -2577,10 +2404,9 @@ segment_vector<T, Segment, Policy>::resize(size_type count)
  * @throw pmem::transaction_out_of_memory when not enough memory to
  * allocate.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::resize(size_type count,
-					   const value_type &value)
+segment_vector<T, Policy>::resize(size_type count, const value_type &value)
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
@@ -2599,9 +2425,9 @@ segment_vector<T, Segment, Policy>::resize(size_type count,
 /**
  * Exchanges the contents of the container with other transactionally.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::swap(segment_vector &other)
+segment_vector<T, Policy>::swap(segment_vector &other)
 {
 	pool_base pb = get_pool();
 	transaction::run(pb, [&] {
@@ -2625,9 +2451,9 @@ segment_vector<T, Segment, Policy>::swap(segment_vector &other)
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::internal_reserve(size_type new_capacity)
+segment_vector<T, Policy>::internal_reserve(size_type new_capacity)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
@@ -2675,11 +2501,11 @@ segment_vector<T, Segment, Policy>::internal_reserve(size_type new_capacity)
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying segment in transaction failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <typename... Args>
 void
-segment_vector<T, Segment, Policy>::construct(size_type idx, size_type count,
-					      Args &&... args)
+segment_vector<T, Policy>::construct(size_type idx, size_type count,
+				     Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(capacity() >= size() + count);
@@ -2722,13 +2548,13 @@ segment_vector<T, Segment, Policy>::construct(size_type idx, size_type count,
  * @throw pmem::transaction_alloc_error when allocating memory for
  * underlying segment in transaction failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 template <typename InputIt,
 	  typename std::enable_if<detail::is_input_iterator<InputIt>::value,
 				  InputIt>::type *>
 void
-segment_vector<T, Segment, Policy>::construct_range(size_type idx,
-						    InputIt first, InputIt last)
+segment_vector<T, Policy>::construct_range(size_type idx, InputIt first,
+					   InputIt last)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	size_type count = static_cast<size_type>(std::distance(first, last));
@@ -2763,9 +2589,9 @@ segment_vector<T, Segment, Policy>::construct_range(size_type idx,
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::insert_gap(size_type idx, size_type count)
+segment_vector<T, Policy>::insert_gap(size_type idx, size_type count)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	if (count == 0)
@@ -2807,9 +2633,9 @@ segment_vector<T, Segment, Policy>::insert_gap(size_type idx, size_type count)
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::shrink(size_type size_new)
+segment_vector<T, Policy>::shrink(size_type size_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= size());
@@ -2837,9 +2663,9 @@ segment_vector<T, Segment, Policy>::shrink(size_type size_new)
  *
  * @return reference to pool_base object where segment_vector resides.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 pool_base
-segment_vector<T, Segment, Policy>::get_pool() const noexcept
+segment_vector<T, Policy>::get_pool() const noexcept
 {
 	auto pop = pmemobj_pool_by_ptr(this);
 	assert(pop != nullptr);
@@ -2855,10 +2681,9 @@ segment_vector<T, Segment, Policy>::get_pool() const noexcept
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-segment_vector<T, Segment, Policy>::snapshot_data(size_type first,
-						  size_type last)
+segment_vector<T, Policy>::snapshot_data(size_type first, size_type last)
 {
 	if (first == last)
 		return;
@@ -2882,9 +2707,9 @@ segment_vector<T, Segment, Policy>::snapshot_data(size_type first,
  *
  * @return reference to element with given index in segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::reference
-segment_vector<T, Segment, Policy>::get(size_type n)
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::reference
+segment_vector<T, Policy>::get(size_type n)
 {
 	size_type s_idx = policy::get_segment(n);
 	size_type local_idx = policy::index_in_segment(n);
@@ -2897,9 +2722,9 @@ segment_vector<T, Segment, Policy>::get(size_type n)
  *
  * @return const reference to element with given index.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::get(size_type n) const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::get(size_type n) const
 {
 	size_type s_idx = policy::get_segment(n);
 	size_type local_idx = policy::index_in_segment(n);
@@ -2912,9 +2737,9 @@ segment_vector<T, Segment, Policy>::get(size_type n) const
  *
  * @return const reference to element with given index.
  */
-template <typename T, typename Segment, typename Policy>
-typename segment_vector<T, Segment, Policy>::const_reference
-segment_vector<T, Segment, Policy>::cget(size_type n) const
+template <typename T, typename Policy>
+typename segment_vector<T, Policy>::const_reference
+segment_vector<T, Policy>::cget(size_type n) const
 {
 	size_type s_idx = policy::get_segment(n);
 	size_type local_idx = policy::index_in_segment(n);
@@ -2929,9 +2754,9 @@ segment_vector<T, Segment, Policy>::cget(size_type n) const
  * @return true if capacity of all segments matches to expected
  * capacity, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-segment_vector<T, Segment, Policy>::segment_capacity_validation() const
+segment_vector<T, Policy>::segment_capacity_validation() const
 {
 	for (size_type i = 0; i < _segments_used; ++i)
 		if (_data.const_at(i).capacity() != policy::segment_size(i))
@@ -2945,10 +2770,9 @@ segment_vector<T, Segment, Policy>::segment_capacity_validation() const
  * @param[in] lhs first segment_vector.
  * @param[in] rhs second segment_vector.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 void
-swap(segment_vector<T, Segment, Policy> &lhs,
-     segment_vector<T, Segment, Policy> &rhs)
+swap(segment_vector<T, Policy> &lhs, segment_vector<T, Policy> &rhs)
 {
 	lhs.swap(rhs);
 }
@@ -2967,10 +2791,10 @@ swap(segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of the containers are equal, false
  * otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator==(const segment_vector<T, Segment, Policy> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator==(const segment_vector<T, Policy> &lhs,
+	   const segment_vector<T, Policy> &rhs)
 {
 	return lhs.size() == rhs.size() &&
 		std::equal(lhs.begin(), lhs.end(), rhs.begin());
@@ -2991,10 +2815,10 @@ operator==(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of the containers are not equal, false
  * otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator!=(const segment_vector<T, Segment, Policy> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator!=(const segment_vector<T, Policy> &lhs,
+	   const segment_vector<T, Policy> &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -3011,10 +2835,10 @@ operator!=(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically less than
  * contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator<(const segment_vector<T, Segment, Policy> &lhs,
-	  const segment_vector<T, Segment, Policy> &rhs)
+operator<(const segment_vector<T, Policy> &lhs,
+	  const segment_vector<T, Policy> &rhs)
 {
 	return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
 					    rhs.end());
@@ -3032,10 +2856,10 @@ operator<(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically lesser than or
  * equal to contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator<=(const segment_vector<T, Segment, Policy> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator<=(const segment_vector<T, Policy> &lhs,
+	   const segment_vector<T, Policy> &rhs)
 {
 	return !(rhs < lhs);
 }
@@ -3052,10 +2876,10 @@ operator<=(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically greater than
  * contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator>(const segment_vector<T, Segment, Policy> &lhs,
-	  const segment_vector<T, Segment, Policy> &rhs)
+operator>(const segment_vector<T, Policy> &lhs,
+	  const segment_vector<T, Policy> &rhs)
 {
 	return rhs < lhs;
 }
@@ -3072,10 +2896,10 @@ operator>(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically greater than or
  * equal to contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator>=(const segment_vector<T, Segment, Policy> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator>=(const segment_vector<T, Policy> &lhs,
+	   const segment_vector<T, Policy> &rhs)
 {
 	return !(lhs < rhs);
 }
@@ -3093,10 +2917,9 @@ operator>=(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of the containers are equal, false
  * otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator==(const segment_vector<T, Segment, Policy> &lhs,
-	   const std::vector<T> &rhs)
+operator==(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
 {
 	return lhs.size() == rhs.size() &&
 		std::equal(lhs.begin(), lhs.end(), rhs.begin());
@@ -3115,10 +2938,9 @@ operator==(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of the containers are not equal, false
  * otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator!=(const segment_vector<T, Segment, Policy> &lhs,
-	   const std::vector<T> &rhs)
+operator!=(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -3134,10 +2956,9 @@ operator!=(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically less than
  * contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator<(const segment_vector<T, Segment, Policy> &lhs,
-	  const std::vector<T> &rhs)
+operator<(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
 {
 	return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(),
 					    rhs.end());
@@ -3154,10 +2975,9 @@ operator<(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically lesser than or
  * equal to contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator<=(const segment_vector<T, Segment, Policy> &lhs,
-	   const std::vector<T> &rhs)
+operator<=(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
 {
 	return !(std::lexicographical_compare(rhs.begin(), rhs.end(),
 					      lhs.begin(), lhs.end()));
@@ -3175,10 +2995,9 @@ operator<=(const segment_vector<T, Segment, Policy> &lhs,
  * contents of rhs, false otherwise.
  */
 
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator>(const segment_vector<T, Segment, Policy> &lhs,
-	  const std::vector<T> &rhs)
+operator>(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
 {
 	return !(lhs <= rhs);
 }
@@ -3194,10 +3013,9 @@ operator>(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of lhs are lexicographically greater than or
  * equal to contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator>=(const segment_vector<T, Segment, Policy> &lhs,
-	   const std::vector<T> &rhs)
+operator>=(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
 {
 	return !(lhs < rhs);
 }
@@ -3215,10 +3033,9 @@ operator>=(const segment_vector<T, Segment, Policy> &lhs,
  * @return true if contents of the containers are equal, false
  * otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator==(const std::vector<T> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator==(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
 {
 	return rhs == lhs;
 }
@@ -3236,10 +3053,9 @@ operator==(const std::vector<T> &lhs,
  * @return true if contents of the containers are not equal, false
  * otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator!=(const std::vector<T> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator!=(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
 {
 	return !(lhs == rhs);
 }
@@ -3255,10 +3071,9 @@ operator!=(const std::vector<T> &lhs,
  * @return true if contents of lhs are lexicographically less than
  * contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator<(const std::vector<T> &lhs,
-	  const segment_vector<T, Segment, Policy> &rhs)
+operator<(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
 {
 	return rhs > lhs;
 }
@@ -3274,10 +3089,9 @@ operator<(const std::vector<T> &lhs,
  * @return true if contents of lhs are lexicographically lesser than or
  * equal to contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator<=(const std::vector<T> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator<=(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
 {
 	return !(rhs < lhs);
 }
@@ -3294,10 +3108,9 @@ operator<=(const std::vector<T> &lhs,
  * contents of rhs, false otherwise.
  */
 
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator>(const std::vector<T> &lhs,
-	  const segment_vector<T, Segment, Policy> &rhs)
+operator>(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
 {
 	return rhs < lhs;
 }
@@ -3313,15 +3126,13 @@ operator>(const std::vector<T> &lhs,
  * @return true if contents of lhs are lexicographically greater than or
  * equal to contents of rhs, false otherwise.
  */
-template <typename T, typename Segment, typename Policy>
+template <typename T, typename Policy>
 bool
-operator>=(const std::vector<T> &lhs,
-	   const segment_vector<T, Segment, Policy> &rhs)
+operator>=(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
 {
 	return !(lhs < rhs);
 }
 
-} /* namespace experimental */
 } /* namespace obj */
 } /* namespace pmem */
 

@@ -37,8 +37,8 @@
 #ifndef LIBPMEMOBJ_CPP_ENUMERABLE_THREAD_SPECIFIC_HPP
 #define LIBPMEMOBJ_CPP_ENUMERABLE_THREAD_SPECIFIC_HPP
 
+#include <libpmemobj++/container/segment_vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/experimental/segment_vector.hpp>
 #include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/shared_mutex.hpp>
@@ -134,7 +134,7 @@ private:
  */
 template <typename T, template <typename...> class Map = std::unordered_map,
 	  typename Mutex = pmem::obj::shared_mutex,
-	  typename Storage = segment_vector<T>>
+	  typename Storage = segment_vector<T, exponential_size_array_policy<>>>
 class enumerable_thread_specific {
 	/* map traits */
 	using storage_type = Storage;

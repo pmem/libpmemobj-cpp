@@ -887,8 +887,8 @@ public:
 
 	/** Compat and incompat features of a layout */
 	struct features {
-		uint32_t compat;
-		uint32_t incompat;
+		p<uint32_t> compat;
+		p<uint32_t> incompat;
 	};
 
 	/* --------------------------------------------------------- */

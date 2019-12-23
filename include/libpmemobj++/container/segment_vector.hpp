@@ -518,6 +518,9 @@ using exponential_size_vector_policy =
  * have signature the same as in vector. Also must support iterators.
  *
  * Policy template represents Segments storing type and managing methods.
+ *
+ * Example usage:
+ * @snippet doc_snippets/segment_vector.cpp segment_vector_example
  */
 template <typename T, typename Policy = exponential_size_vector_policy<>>
 class segment_vector {

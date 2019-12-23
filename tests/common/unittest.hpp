@@ -33,6 +33,18 @@
 #ifndef LIBPMEMOBJ_CPP_UNITTEST_HPP
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
 
+#ifdef _WIN32
+/*
+ * Enable workaround in libpmemobj.h for the issue with the offsetof() macro:
+ *
+ * https://github.com/pmem/pmdk/issues/4303
+ *
+ * https://developercommunity.visualstudio.com/content/problem/96174/\
+ * offsetof-macro-is-broken-for-nested-objects.html
+ */
+#define PMEMOBJ_OFFSETOF_WA 1
+#endif
+
 #include "../test_backtrace.h"
 #include "../valgrind_internal.hpp"
 #include "iterators_support.hpp"

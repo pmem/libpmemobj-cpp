@@ -512,25 +512,11 @@ using exponential_size_vector_policy =
  * The difference is that it does not do reallocations and iterators are
  * not invalidated when adding new elements
  *
- * @pre Segment must contain such functions as: default constructor, destructor,
- * assign, operator[], free_data, emplace_back, clear, resize, reserve, erase,
- * capacity(), size(). They must have signature the same as in vector. Also must
- * support iterators. Examples in class array_storage_policy.
+ * @pre if SegmentType for policy is specified it must contain such functions
+ * as: default constructor, destructor, assign, operator[], free_data,
+ * emplace_back, clear, resize, reserve, erase, capacity(), size(). They must
+ * have signature the same as in vector. Also must support iterators.
  *
- * @pre Policy must define segment_vector_type as container for Segment.
- * Must have method resize(segment_vector_type, segment_vector_type::size_type),
- * that reserves space for Segments and default constructs them.
- *
- * @pre segment_vector_type must contain const_at(idx), operator[],
- * operator=(&&), swap(&) methods.
- *
- * @pre Policy must define segmentation_policy, that contains methods to manage
- * Segments: get_segment(idx), segment_top(idx), segment_size(idx),
- * index_in_segment(idx), last_segment(), max_size(), capacity(idx) and field
- * MAX_SEGMENTS. Examples and full methods signature in class
- * exponential_segmentation_policy.
- *
- * Segment template represents segment type.
  * Policy template represents Segments storing type and managing methods.
  */
 template <typename T, typename Policy = exponential_size_vector_policy<>>

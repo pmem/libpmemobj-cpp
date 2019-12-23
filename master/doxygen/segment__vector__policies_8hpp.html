@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: pmem::obj::experimental::enumerable_thread_specific&lt; T, Map, Mutex, Storage &gt;::map_wrapper Class Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/container/detail/segment_vector_policies.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -63,30 +63,35 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><b>experimental</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html">enumerable_thread_specific</a></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific_1_1map__wrapper.html">map_wrapper</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_83ecae25392e6e33dc533801e27668b5.html">container</a></li><li class="navelem"><a class="el" href="dir_48c2a0b445b2b5e8afb8cbb18acb3322.html">detail</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific_1_1map__wrapper-members.html">List of all members</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
-<div class="title">pmem::obj::experimental::enumerable_thread_specific&lt; T, Map, Mutex, Storage &gt;::map_wrapper Class Reference</div>  </div>
+<div class="title">segment_vector_policies.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Private helper wrapper class for map_type.  
- <a href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific_1_1map__wrapper.html#details">More...</a></p>
+<p>A persistent version of segment vector implementation.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;<a class="el" href="array_8hpp_source.html">libpmemobj++/container/array.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="vector_8hpp_source.html">libpmemobj++/container/vector.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="template__helpers_8hpp_source.html">libpmemobj++/detail/template_helpers.hpp</a>&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
+</div>
+<p><a href="segment__vector__policies_8hpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T, template&lt; typename... &gt; class Map = std::unordered_map, typename Mutex = pmem::obj::shared_mutex, typename Storage = segment_vector&lt;T, exponential_size_array_policy&lt;&gt;&gt;&gt;<br />
-class pmem::obj::experimental::enumerable_thread_specific&lt; T, Map, Mutex, Storage &gt;::map_wrapper</h3>
-
-<p>Private helper wrapper class for map_type. </p>
-<p>Needed to construct map_type through <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a8b44166a7c90911e77b743fa1865b2a9" title="Retrieves reference to the object.">v&lt;&gt;.get()</a>.</p>
-<p>We can't use v&lt;map_type *&gt; because in case of crash and reboot: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html" title="Class for storing thread local data.">enumerable_thread_specific</a>'s constructor will not be called, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a8b44166a7c90911e77b743fa1865b2a9" title="Retrieves reference to the object.">v&lt;&gt;.get()</a> will construct pointer, not the map, and thread mapping will not restore. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>libpmemobj++/experimental/<a class="el" href="enumerable__thread__specific_8hpp_source.html">enumerable_thread_specific.hpp</a></li>
-</ul>
-</div><!-- contents -->
+<div class="textblock"><p>A persistent version of segment vector implementation. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

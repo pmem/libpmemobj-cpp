@@ -111,3 +111,13 @@ jobs:
        - name: Tests
          working-directory: build
          run: ctest -C ${{ matrix.CONFIG }} --output-on-failure --timeout 540
+
+       - name: Install
+         working-directory: build
+         run: msbuild INSTALL.vcxproj /verbosity:minimal /m
+
+       - name: Examples
+         working-directory: examples/map_cli
+         run: |
+            cmake . -G "${env:GENERATOR}" -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}" -DCMAKE_PREFIX_PATH="${env:INSTALL_PREFIX}" -Ax64
+            msbuild ALL_BUILD.vcxproj /verbosity:minimal /m

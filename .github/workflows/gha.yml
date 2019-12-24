@@ -56,7 +56,6 @@ jobs:
       platform: x64
       VCPKG_DEFAULT_TRIPLET: x64-windows
       GENERATOR: "Visual Studio 16 2019"
-      PMDK_DIR: "C:\\vcpkg\\packages\\pmdk_x64-windows"
       PMDK_BIN: "C:/vcpkg/packages/pmdk_x64-windows/bin;C:/vcpkg/packages/pmdk_x64-windows/debug/bin"
       PMDK_VERSION: "1.7"
       WORKDIR: "D:/a/libpmemobj-cpp/libpmemobj-cpp/"
@@ -70,18 +69,23 @@ jobs:
        - name: Update PATH
          run: |
            echo "::add-path::$Env:MSBUILD"
-           echo "::add-path::$Env:PMDK_DIR"
            echo "::add-path::$Env:PMDK_BIN"
 
        - name: Cache vcpkg packages
          uses: actions/cache@v1
-         id: cache-vcpkg
+         id: cache-vcpkg-packages
          with:
             path: C:/vcpkg/packages
-            key:  pmdk-1.7
+            key:  vcpkg-packages
+
+       - name: Cache vcpkg installed
+         uses: actions/cache@v1
+         id: cache-vcpkg-installed
+         with:
+            path: C:/vcpkg/installed
+            key:  vcpkg-installed
 
        - name: Install PMDK
-         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
          run: |
             vcpkg install pmdk:x64-windows
             vcpkg install sfml:x64-windows
@@ -99,7 +103,6 @@ jobs:
                       -DCMAKE_INSTALL_PREFIX="${env:INSTALL_PREFIX}"
                       -DTESTS_USE_FORCED_PMEM=ON
                       -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
-                      -DCMAKE_PREFIX_PATH="${env:PMDK_DIR}"
                       -Ax64
 
        - name: Build

@@ -100,6 +100,7 @@ jobs:
                       -DTESTS_USE_FORCED_PMEM=ON
                       -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
                       -DCMAKE_PREFIX_PATH="${env:PMDK_DIR}"
+                      -Ax64
 
        - name: Build
          run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal

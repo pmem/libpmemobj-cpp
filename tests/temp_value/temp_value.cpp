@@ -39,7 +39,7 @@
 #include <libpmemobj++/detail/temp_value.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-#include <libpmemobj.h>
+#include <libpmemobj/pool_base.h>
 
 namespace nvobj = pmem::obj;
 namespace det = pmem::detail;

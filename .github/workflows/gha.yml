@@ -106,3 +106,7 @@ jobs:
 
        - name: Build
          run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal /m
+
+       - name: Tests
+         working-directory: build
+         run: ctest -C ${{ matrix.CONFIG }} --output-on-failure --timeout 540

@@ -60,7 +60,6 @@ jobs:
       PMDK_VERSION: "1.7"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
-      PMDK_DIR: "C:\\vcpkg\\packages\\pmdk_x64-windows"
       PMDK_BIN: "C:\\vcpkg\\packages\\pmdk_x64-windows\\bin;C:\\vcpkg\\packages\\pmdk_x64-windows\\debug\\bin"
       WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"
       MSBUILD:  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin"
@@ -72,19 +71,24 @@ jobs:
        - name: Update PATH
          run: |
            echo "::add-path::$Env:MSBUILD"
-           echo "::add-path::$Env:PMDK_DIR"
            echo "::add-path::$Env:PMDK_BIN"
            echo "::add-path::$Env:DLLS"
 
-       - name: Cache vcpkg
+       - name: Cache vcpkg packages
          uses: actions/cache@v1
-         id: cache-vcpkg
+         id: cache-vcpkg-packages
          with:
-            path: C:/vcpkg
-            key:  vcpkg-pmdk-1.7
+            path: C:/vcpkg/packages
+            key:  vcpkg-packages
+
+       - name: Cache vcpkg installed
+         uses: actions/cache@v1
+         id: cache-vcpkg-installed
+         with:
+            path: C:/vcpkg/installed
+            key:  vcpkg-installed
 
        - name: Install PMDK
-         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
          run: |
             vcpkg install pmdk:x64-windows
             vcpkg install sfml:x64-windows
@@ -102,7 +106,6 @@ jobs:
                       -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
                       -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
                       -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
-                      -DCMAKE_PREFIX_PATH="${env:PMDK_DIR}"
                       -DTESTS_USE_FORCED_PMEM=ON
 
        - name: Build

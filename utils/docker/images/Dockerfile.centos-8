@@ -59,6 +59,7 @@ RUN dnf update -y \
 	json-c-devel \
 	keyutils-libs-devel \
 	kmod-devel \
+	daxctl-devel \
 	libtool \
 	libudev-devel \
 	libunwind-devel \
@@ -66,6 +67,7 @@ RUN dnf update -y \
 	make \
 	man \
 	ncurses-devel \
+	ndctl-devel \
 	open-sans-fonts \
 	passwd \
 	perl-Text-Diff \

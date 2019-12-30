@@ -60,6 +60,7 @@ RUN zypper install -y \
 	keyutils-devel \
 	libjson-c-devel \
 	libkmod-devel \
+	libndctl-devel \
 	libtool \
 	libudev-devel \
 	libunwind-devel \

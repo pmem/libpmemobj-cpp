@@ -63,6 +63,18 @@ add_flag(-DDEBUG DEBUG)
 
 add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
 
+if(NOT OFFSETOF_CORRECT)
+	#
+	# Enable workaround in libpmemobj.h for the issue with the offsetof() macro:
+	#
+	# https://github.com/pmem/pmdk/issues/4303
+	#
+	# https://developercommunity.visualstudio.com/content/problem/96174/\
+	# offsetof-macro-is-broken-for-nested-objects.html
+	#
+	add_flag(-DPMEMOBJ_OFFSETOF_WA)
+endif()
+
 if(USE_ASAN)
        add_sanitizer_flag(address)
 endif()

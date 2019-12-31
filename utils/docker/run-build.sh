@@ -191,6 +191,7 @@ if [ $PACKAGE_MANAGER = "deb" ]; then
 	sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
 	sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
 elif [ $PACKAGE_MANAGER = "rpm" ]; then
+	sudo_password rpm -i /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
 	sudo_password rpm -i /opt/pmdk-pkg/libpmem-*.rpm
 	sudo_password rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
 fi

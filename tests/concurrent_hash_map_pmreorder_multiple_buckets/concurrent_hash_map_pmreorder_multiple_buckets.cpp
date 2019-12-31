@@ -45,9 +45,7 @@
 #include <pmemcheck.h>
 #include <vector>
 
-#define LIBPMEMOBJ_CPP_CONCURRENT_HASH_MAP_USE_ATOMIC_ALLOCATOR 1
-
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "persistent_concurrent_hash_map"
 
@@ -64,8 +62,7 @@ struct identity_hash {
 	}
 };
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>,
-						 identity_hash>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>, identity_hash>
 	persistent_map_type;
 
 typedef persistent_map_type::value_type value_type;
@@ -86,6 +83,8 @@ void
 test_insert(nvobj::pool<root> &pop)
 {
 	auto persistent_map = pop.root()->cons;
+
+	persistent_map->runtime_initialize();
 
 	for (int i = 0; i < NUMBER_OF_INSERTS / 2; i++)
 		persistent_map->insert(value_type(i, i));
@@ -161,7 +160,7 @@ check_consistency(nvobj::pool<root> &pop)
 {
 	auto persistent_map = pop.root()->cons;
 
-	persistent_map->initialize();
+	persistent_map->runtime_initialize();
 
 	auto size = static_cast<typename persistent_map_type::difference_type>(
 		persistent_map->size());
@@ -225,9 +224,11 @@ main(int argc, char *argv[])
 							PMEMOBJ_MIN_POOL * 20,
 							S_IWUSR | S_IRUSR);
 
-			nvobj::make_persistent_atomic<persistent_map_type>(
-				pop, pop.root()->cons);
-			pop.root()->cons->insert(value_type(1, 1));
+			pmem::obj::transaction::run(pop, [&] {
+				pop.root()->cons = nvobj::make_persistent<
+					persistent_map_type>();
+			});
+			pop.root()->cons->insert(value_type(0, 0));
 		} else if (argv[1][0] == 'i') {
 			pop = nvobj::pool<root>::open(path, LAYOUT);
 

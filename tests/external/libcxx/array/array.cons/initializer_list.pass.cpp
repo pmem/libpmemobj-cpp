@@ -7,24 +7,22 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
 struct Testcase1 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	C c = {{1, 2, 3.5}};
 
 	void
@@ -39,7 +37,7 @@ struct Testcase1 {
 
 struct Testcase2 {
 	typedef double T;
-	typedef pmem_exp::array<T, 0> C;
+	typedef pmem::obj::array<T, 0> C;
 	C c = {{}};
 
 	void
@@ -51,7 +49,7 @@ struct Testcase2 {
 
 struct Testcase3 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	C c = {{1}};
 
 	void
@@ -64,7 +62,7 @@ struct Testcase3 {
 
 struct Testcase4 {
 	typedef int T;
-	typedef pmem_exp::array<T, 1> C;
+	typedef pmem::obj::array<T, 1> C;
 	C c = {{}};
 
 	void

@@ -12,23 +12,21 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
-
-namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
+#include <libpmemobj++/container/vector.hpp>
 
 int
 main()
 {
 	/**
-	 * Test pmem::obj::experimental::vector destructor
+	 * Test pmem::obj::vector destructor
 	 *
 	 * Expects that destructor is not deleted and noexcept
 	 */
 	{
-		using vector_type = pmem_exp::vector<int>;
+		using vector_type = container_t<int>;
 		static_assert(std::is_nothrow_destructible<vector_type>::value,
 			      "");
 	}

@@ -30,16 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using C = pmem_exp::vector<int>;
+
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
@@ -58,7 +58,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector assign() methods
+ * Test pmem::obj::vector assign() methods
  *
  * Checks if vector's state is reverted when transaction aborts.
  * Methods under test:
@@ -234,9 +234,9 @@ main(int argc, char *argv[])
 		return 1;
 	}
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: assign_txabort",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(path, "VectorTest: assign_txabort",
+					     2 * PMEMOBJ_MIN_POOL,
+					     S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

@@ -7,16 +7,14 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
-
-namespace pmem_exp = pmem::obj::experimental;
+#include <libpmemobj++/container/array.hpp>
 
 template <int Dummy>
 struct NoCompare {
@@ -30,7 +28,7 @@ main()
 	int result = 0;
 	{
 		typedef NoCompare<0> T;
-		typedef pmem_exp::array<T, 3> C;
+		typedef pmem::obj::array<T, 3> C;
 		C c1 = {{}};
 		// expected-error@algorithm:* 2 {{invalid operands to binary
 		// expression}}

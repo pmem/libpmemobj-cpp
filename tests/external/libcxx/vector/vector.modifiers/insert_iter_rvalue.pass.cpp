@@ -13,15 +13,15 @@
 //
 
 #include "helper_classes.hpp"
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<move_only>;
+using C = container_t<move_only>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
@@ -39,7 +39,7 @@ main(int argc, char *argv[])
 
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: insert_iter_rvalue", PMEMOBJ_MIN_POOL,
+		path, "VectorTest: insert_iter_rvalue", PMEMOBJ_MIN_POOL * 2,
 		S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();

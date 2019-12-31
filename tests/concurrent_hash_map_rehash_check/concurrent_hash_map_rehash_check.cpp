@@ -38,6 +38,7 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/make_persistent_atomic.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -46,7 +47,7 @@
 #include <thread>
 #include <vector>
 
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 
@@ -55,7 +56,7 @@ namespace nvobj = pmem::obj;
 namespace
 {
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type;
 
 struct root {
@@ -115,7 +116,7 @@ rehash_test(nvobj::pool<root> &pop)
 
 	UT_ASSERT(map != nullptr);
 
-	map->initialize();
+	map->runtime_initialize();
 
 	run_inserts(pop, 0, 100);
 
@@ -150,8 +151,10 @@ main(int argc, char *argv[])
 	try {
 		pop = nvobj::pool<root>::create(
 			path, LAYOUT, PMEMOBJ_MIN_POOL * 20, S_IWUSR | S_IRUSR);
-		nvobj::make_persistent_atomic<persistent_map_type>(
-			pop, pop.root()->cons);
+		pmem::obj::transaction::run(pop, [&] {
+			pop.root()->cons =
+				nvobj::make_persistent<persistent_map_type>();
+		});
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}

@@ -13,15 +13,14 @@
 //
 
 #include "helper_classes.hpp"
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<emplace_constructible_moveable_and_assignable<int>>;
+using C = container_t<emplace_constructible_moveable_and_assignable<int>>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;

@@ -46,7 +46,7 @@
 #include <thread>
 #include <vector>
 
-#include <libpmemobj++/experimental/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 
@@ -55,7 +55,7 @@ namespace nvobj = pmem::obj;
 namespace
 {
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type;
 
 typedef persistent_map_type::value_type value_type;
@@ -152,12 +152,12 @@ public:
 	}
 };
 
-typedef nvobj::experimental::concurrent_hash_map<nvobj::p<int>, move_element>
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, move_element>
 	persistent_map_move_type;
 
 typedef persistent_map_move_type::value_type value_move_type;
 
-typedef nvobj::experimental::concurrent_hash_map<MyLong, MyLong, HeteroHasher>
+typedef nvobj::concurrent_hash_map<MyLong, MyLong, HeteroHasher>
 	persistent_map_hetero_type;
 
 struct root {
@@ -208,6 +208,8 @@ ctor_test(nvobj::pool<root> &pop)
 	auto &map2 = pop.root()->map2;
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1, size_t(10));
+	map1->runtime_initialize();
+
 	UT_ASSERT(map1->bucket_count() >= 10);
 	UT_ASSERT(map1->empty());
 
@@ -217,6 +219,7 @@ ctor_test(nvobj::pool<root> &pop)
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, map1->begin(),
 					      map1->end());
+	map2->runtime_initialize();
 
 	UT_ASSERT(!map2->empty());
 	UT_ASSERT(map1->size() == map2->size());
@@ -225,6 +228,7 @@ ctor_test(nvobj::pool<root> &pop)
 
 	pmem::detail::destroy<persistent_map_type>(*map2);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, *map1);
+	map2->runtime_initialize();
 
 	UT_ASSERT(map1->size() == map2->size());
 
@@ -232,6 +236,7 @@ ctor_test(nvobj::pool<root> &pop)
 
 	pmem::detail::destroy<persistent_map_type>(*map2);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2, std::move(*map1));
+	map2->runtime_initialize();
 
 	verify_elements(*map2, 300);
 
@@ -240,6 +245,7 @@ ctor_test(nvobj::pool<root> &pop)
 		pop, map2,
 		std::initializer_list<value_type>{value_type(0, 0),
 						  value_type(1, 1)});
+	map2->runtime_initialize();
 
 	verify_elements(*map2, 2);
 
@@ -259,6 +265,9 @@ assignment_test(nvobj::pool<root> &pop)
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2);
+
+	map1->runtime_initialize();
+	map2->runtime_initialize();
 
 	UT_ASSERT(map1->empty());
 
@@ -317,6 +326,9 @@ swap_test(nvobj::pool<root> &pop)
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
 	tx_alloc_wrapper<persistent_map_type>(pop, map2);
 
+	map1->runtime_initialize();
+	map2->runtime_initialize();
+
 	for (int i = 0; i < 50; i++) {
 		UT_ASSERT(map1->insert(value_type(i, i)) == true);
 	}
@@ -343,6 +355,8 @@ access_test(nvobj::pool<root> &pop)
 	auto &map1 = pop.root()->map1;
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
+
+	map1->runtime_initialize();
 
 	for (int i = 0; i < 100; i++) {
 		UT_ASSERT(map1->insert(value_type(i, i)) == true);
@@ -383,6 +397,8 @@ insert_test(nvobj::pool<root> &pop)
 
 	tx_alloc_wrapper<persistent_map_type>(pop, map1);
 
+	map1->runtime_initialize();
+
 	{
 		typename persistent_map_type::accessor accessor;
 		UT_ASSERTeq(map1->insert(accessor, value_type(1, 1)), true);
@@ -400,6 +416,8 @@ insert_test(nvobj::pool<root> &pop)
 	}
 
 	tx_alloc_wrapper<persistent_map_move_type>(pop, map_move);
+
+	map_move->runtime_initialize();
 
 	{
 		typename persistent_map_move_type::accessor accessor;
@@ -473,12 +491,14 @@ insert_test(nvobj::pool<root> &pop)
  * pmem::obj::concurrent_hash_map<MyLong, MyLong, HeteroHasher >
  */
 void
-hatero_test(nvobj::pool<root> &pop)
+hetero_test(nvobj::pool<root> &pop)
 {
 	typedef persistent_map_hetero_type::value_type value_type;
 	auto &map = pop.root()->map_hetero;
 
 	tx_alloc_wrapper<persistent_map_hetero_type>(pop, map);
+
+	map->runtime_initialize();
 
 	for (long i = 0; i < 100; ++i) {
 		map->insert(value_type(i, i));
@@ -510,6 +530,49 @@ hatero_test(nvobj::pool<root> &pop)
 		UT_ASSERTeq(map->count(i), 0);
 	}
 }
+
+/*
+ * iterator_test -- (internal) test iterators
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+iterator_test(nvobj::pool<root> &pop)
+{
+	auto &map = pop.root()->map1;
+	tx_alloc_wrapper<persistent_map_type>(pop, map);
+
+	{
+		persistent_map_type::iterator i = map->begin();
+		persistent_map_type::iterator j = map->end();
+		UT_ASSERT(std::distance(i, j) == 0);
+		UT_ASSERT(i == j);
+	}
+	{
+		persistent_map_type::const_iterator i = map->begin();
+		persistent_map_type::const_iterator j = map->end();
+		UT_ASSERT(std::distance(i, j) == 0);
+		UT_ASSERT(i == j);
+	}
+	{
+		persistent_map_type::const_iterator i =
+			const_cast<std::add_const<decltype(map)>::type>(map)
+				->begin();
+		persistent_map_type::const_iterator j =
+			const_cast<std::add_const<decltype(map)>::type>(map)
+				->end();
+		UT_ASSERT(std::distance(i, j) == 0);
+		UT_ASSERT(i == j);
+		UT_ASSERT(i == map->end());
+	}
+	{
+		persistent_map_type::iterator i;
+		persistent_map_type::const_iterator j;
+		(void)i;
+		(void)j;
+	}
+
+	pmem::detail::destroy<persistent_map_type>(*map);
+}
 }
 
 int
@@ -537,7 +600,8 @@ main(int argc, char *argv[])
 	access_test(pop);
 	swap_test(pop);
 	insert_test(pop);
-	hatero_test(pop);
+	hetero_test(pop);
+	iterator_test(pop);
 
 	pop.close();
 

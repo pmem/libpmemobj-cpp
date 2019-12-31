@@ -15,14 +15,13 @@
 #include "helper_classes.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using vector_type = pmem_exp::vector<int>;
-using vector_type2 = pmem_exp::vector<default_constructible_only>;
+using vector_type = pmem::obj::vector<int>;
+using vector_type2 = pmem::obj::vector<default_constructible_only>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> test1;
@@ -30,7 +29,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector fill constructor
+ * Test pmem::obj::vector fill constructor
  *
  * Constructs container with n default constructed elements.
  * Validates container's size and its elements for both fundamental and user

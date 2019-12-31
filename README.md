@@ -3,17 +3,23 @@ libpmemobj-cpp
 
 [![Build Status](https://travis-ci.org/pmem/libpmemobj-cpp.svg?branch=master)](https://travis-ci.org/pmem/libpmemobj-cpp)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/pmem/libpmemobj-cpp?branch/master?svg=true&pr=false)](https://ci.appveyor.com/project/pmem/libpmemobj-cpp/branch/master)
+[![libpmemobj-cpp version](https://img.shields.io/github/tag/pmem/libpmemobj-cpp.svg)](https://github.com/pmem/libpmemobj-cpp/releases/latest)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15911/badge.svg)](https://scan.coverity.com/projects/pmem-libpmemobj-cpp)
 [![Coverage Status](https://codecov.io/github/pmem/libpmemobj-cpp/coverage.svg?branch=master)](https://codecov.io/gh/pmem/libpmemobj-cpp/branch/master)
 
 C++ bindings for libpmemobj (https://github.com/pmem/pmdk)
-More informations in include/libpmemobj++/README.md
+More information in include/libpmemobj++/README.md
 
 # How to build #
 
 ## Requirements: ##
 - cmake >= 3.3
-- libpmemobj-dev(el) >= 1.4 (http://pmem.io/pmdk/)
+- libpmemobj-dev(el) >= 1.7 (http://pmem.io/pmdk/)
+- compiler with C++11 support
+- for testing and development:
+	- valgrind-devel (at best with [pmemcheck support](https://github.com/pmem/valgrind))
+	- clang format 9.0
+	- perl
 
 ## On Linux ##
 
@@ -28,7 +34,7 @@ $ make install
 #### When developing: ####
 ```sh
 $ ...
-$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEVELOPER_MODE=1
+$ cmake .. -DCMAKE_BUILD_TYPE=Debug -DDEVELOPER_MODE=1 -DCHECK_CPP_STYLE=1
 $ ...
 $ ctest --output-on-failure
 ```
@@ -43,15 +49,6 @@ make package
 $GEN is type of package generator and can be RPM or DEB
 
 CMAKE_INSTALL_PREFIX must be set to a destination were packages will be installed
-
-#### To use Intel(R) Threading Building Blocks library ####
-
-By default concurrent_hash_map uses pmem::obj::shared_mutex internally. But read-write mutex from Intel(R) Threading Building Blocks library can be used instead to achieve better performance. To enable it in your application set the following compilation flag:
-- -DLIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX=1
-
-If you want to build tests for concurrent_hash_map with read-write mutex from Intel(R) Threading Building Blocks library, run cmake with ```-DUSE_TBB=1 -DTBB_DIR=<Path to Intel TBB>/cmake``` option.
-
-Intel(R) Threading Building Blocks library can be downloaded from the official [release page](https://github.com/01org/tbb/releases).
 
 #### To use with Valgrind ####
 

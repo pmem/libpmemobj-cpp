@@ -12,17 +12,18 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <iterator>
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <type_traits>
 
 template <typename T>
 void
 test()
 {
-	using C = pmem::obj::experimental::vector<T>;
+	using C = container_t<T>;
 
 	static_assert(std::is_same<typename C::value_type, T>::value, "");
 
@@ -61,9 +62,11 @@ test()
 				   std::reverse_iterator<
 					   typename C::const_iterator>>::value,
 		      "");
+#if defined(VECTOR)
 	static_assert(
 		(std::is_same<typename C::const_iterator, const T *>::value),
 		"");
+#endif
 }
 
 int
@@ -74,7 +77,7 @@ main()
 	test<int>();
 	test<int *>();
 
-	using C = pmem::obj::experimental::vector<int>;
+	using C = pmem::obj::vector<int>;
 	static_assert(std::is_same<C::reference, int &>::value, "");
 	static_assert(std::is_same<C::const_reference, const int &>::value, "");
 

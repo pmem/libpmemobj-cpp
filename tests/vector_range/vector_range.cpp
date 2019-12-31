@@ -30,18 +30,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/slice.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 namespace pmemobj = pmem::obj;
-namespace pmemobj_exp = pmemobj::experimental;
 
-using vec_type = pmemobj_exp::vector<int>;
+using vec_type = container_t<int>;
 
 struct root {
 	pmemobj::persistent_ptr<vec_type> pptr;
@@ -96,7 +95,7 @@ main(int argc, char *argv[])
 
 	try {
 		pmemobj::transaction::run(pop, [&] {
-			pmemobj_exp::slice<vec_type::const_iterator> slice =
+			pmem::obj::slice<vec_type::const_iterator> slice =
 				const_pmem_vec.range(0,
 						     10); /* should not throw */
 			(void)slice;
@@ -147,7 +146,7 @@ main(int argc, char *argv[])
 	exception_thrown = false;
 	try {
 		pmemobj::transaction::run(pop, [&] {
-			pmemobj_exp::slice<vec_type::const_iterator> slice =
+			pmem::obj::slice<vec_type::const_iterator> slice =
 				const_pmem_vec.range(0, 11); /* should throw */
 			(void)slice;
 		});
@@ -191,7 +190,7 @@ main(int argc, char *argv[])
 			UT_ASSERTeq(&pmem_vec.front(), &*slice3.begin());
 			UT_ASSERTeq(&pmem_vec.front() + 10, &*slice3.end());
 
-			pmemobj_exp::slice<vec_type::const_iterator> slice4 =
+			pmem::obj::slice<vec_type::const_iterator> slice4 =
 				const_pmem_vec.range(0, 3);
 
 			UT_ASSERTeq(&const_pmem_vec.front(), slice4.begin());

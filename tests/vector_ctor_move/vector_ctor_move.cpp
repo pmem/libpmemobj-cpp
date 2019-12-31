@@ -30,15 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using vector_type = pmem_exp::vector<int>;
+using vector_type = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> v1;
@@ -46,7 +45,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector move constructor.
+ * Test pmem::obj::vector move constructor.
  *
  * Checks if vector state is reverted when transaction aborts
  */
@@ -102,9 +101,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: vector_ctor_move",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: vector_ctor_move", PMEMOBJ_MIN_POOL * 2,
+		S_IWUSR | S_IRUSR);
 
 	int arr[] = {0, 1, 2, 3, 4, 5};
 

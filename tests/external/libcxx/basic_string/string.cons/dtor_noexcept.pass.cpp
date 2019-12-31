@@ -14,15 +14,13 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
-
-namespace pmem_exp = pmem::obj::experimental;
+#include <libpmemobj++/container/string.hpp>
 
 int
 main()
 {
 	{
-		typedef pmem_exp::string C;
+		typedef pmem::obj::string C;
 		static_assert(std::is_nothrow_destructible<C>::value, "");
 	}
 }

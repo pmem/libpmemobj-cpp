@@ -30,17 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using pmem_vec = pmem_exp::vector<int>;
+using pmem_vec = container_t<int>;
 using std_vec = std::vector<int>;
 
 struct root {
@@ -67,7 +66,7 @@ main(int argc, char *argv[])
 	}
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+		path, "VectorTest", PMEMOBJ_MIN_POOL * 2, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

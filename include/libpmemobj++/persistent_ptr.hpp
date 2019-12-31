@@ -47,7 +47,7 @@
 #include <libpmemobj++/detail/persistent_ptr_base.hpp>
 #include <libpmemobj++/detail/specialization.hpp>
 #include <libpmemobj++/pool.hpp>
-#include <libpmemobj.h>
+#include <libpmemobj/base.h>
 
 namespace pmem
 {
@@ -288,7 +288,7 @@ public:
 		pmemobjpool *pop = pmemobj_pool_by_oid(this->raw());
 
 		if (pop == nullptr)
-			throw pool_error(
+			throw pmem::pool_error(
 				"Cannot get pool from persistent pointer");
 
 		pmemobj_persist(pop, this->get(), sizeof(T));
@@ -317,7 +317,7 @@ public:
 		pmemobjpool *pop = pmemobj_pool_by_oid(this->raw());
 
 		if (pop == nullptr)
-			throw pool_error(
+			throw pmem::pool_error(
 				"Cannot get pool from persistent pointer");
 
 		pmemobj_flush(pop, this->get(), sizeof(T));

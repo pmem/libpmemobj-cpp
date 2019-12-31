@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -15,10 +15,8 @@
 #include "unittest.hpp"
 #include <iterator>
 
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/contiguous_iterator.hpp>
-
-namespace pmem_exp = pmem::obj::experimental;
+#include <libpmemobj++/container/array.hpp>
+#include <libpmemobj++/container/detail/contiguous_iterator.hpp>
 
 template <class C>
 void
@@ -66,15 +64,15 @@ main()
 
 	{
 		typedef double T;
-		typedef pmem_exp::array<T, 10> C;
+		typedef pmem::obj::array<T, 10> C;
 		static_assert((std::is_same<C::reference, T &>::value), "");
 		static_assert(
 			(std::is_same<C::const_reference, const T &>::value),
 			"");
 		static_assert(
-			(std::is_same<
-				C::iterator,
-				pmem_exp::basic_contiguous_iterator<T>>::value),
+			(std::is_same<C::iterator,
+				      pmem::detail::basic_contiguous_iterator<
+					      T>>::value),
 			"");
 		static_assert(
 			(std::is_same<C::const_iterator, const T *>::value),
@@ -117,15 +115,15 @@ main()
 	}
 	{
 		typedef int *T;
-		typedef pmem_exp::array<T, 0> C;
+		typedef pmem::obj::array<T, 0> C;
 		static_assert((std::is_same<C::reference, T &>::value), "");
 		static_assert(
 			(std::is_same<C::const_reference, const T &>::value),
 			"");
 		static_assert(
-			(std::is_same<
-				C::iterator,
-				pmem_exp::basic_contiguous_iterator<T>>::value),
+			(std::is_same<C::iterator,
+				      pmem::detail::basic_contiguous_iterator<
+					      T>>::value),
 			"");
 		static_assert(
 			(std::is_same<C::const_iterator, const T *>::value),

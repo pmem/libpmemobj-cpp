@@ -14,17 +14,16 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
 namespace nvobj = pmem::obj;
 
 struct root {
-	nvobj::persistent_ptr<pmem_exp::string> s1, s2, s3, s4;
+	nvobj::persistent_ptr<pmem::obj::string> s1, s2, s3, s4;
 };
 
 int
@@ -1341,16 +1340,16 @@ run(pmem::obj::pool<root> &pop)
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->s1 = nvobj::make_persistent<pmem_exp::string>("");
-			r->s2 = nvobj::make_persistent<pmem_exp::string>(
+			r->s1 = nvobj::make_persistent<pmem::obj::string>("");
+			r->s2 = nvobj::make_persistent<pmem::obj::string>(
 				"abcde");
-			r->s3 = nvobj::make_persistent<pmem_exp::string>(
+			r->s3 = nvobj::make_persistent<pmem::obj::string>(
 				"abcdefghij");
-			r->s4 = nvobj::make_persistent<pmem_exp::string>(
+			r->s4 = nvobj::make_persistent<pmem::obj::string>(
 				"abcdefghijklmnopqrst");
 		});
 
-		using S = pmem_exp::string;
+		using S = pmem::obj::string;
 		test0<S>(pop);
 		test1<S>(pop);
 		test2<S>(pop);
@@ -1365,10 +1364,10 @@ run(pmem::obj::pool<root> &pop)
 		test11<S>(pop);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<pmem_exp::string>(r->s1);
-			nvobj::delete_persistent<pmem_exp::string>(r->s2);
-			nvobj::delete_persistent<pmem_exp::string>(r->s3);
-			nvobj::delete_persistent<pmem_exp::string>(r->s4);
+			nvobj::delete_persistent<pmem::obj::string>(r->s1);
+			nvobj::delete_persistent<pmem::obj::string>(r->s2);
+			nvobj::delete_persistent<pmem::obj::string>(r->s3);
+			nvobj::delete_persistent<pmem::obj::string>(r->s4);
 		});
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

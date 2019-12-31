@@ -143,22 +143,22 @@ if (ENABLE_ARRAY)
 endif()
 
 if (ENABLE_VECTOR)
-	build_test(vector_libcxx_assign_copy libcxx/vector/vector.cons/assign_copy.pass.cpp)
+	build_test_ext(NAME vector_libcxx_assign_copy SRC_FILES libcxx/vector/vector.cons/assign_copy.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_assign_copy TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_assign_initializer_list libcxx/vector/vector.cons/assign_initializer_list.pass.cpp)
+	build_test_ext(NAME vector_libcxx_assign_initializer_list SRC_FILES libcxx/vector/vector.cons/assign_initializer_list.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_assign_iter_iter libcxx/vector/vector.cons/assign_iter_iter.pass.cpp)
+	build_test_ext(NAME vector_libcxx_assign_iter_iter SRC_FILES libcxx/vector/vector.cons/assign_iter_iter.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_assign_iter_iter TRACERS none pmemcheck memcheck)
 
 	build_test(vector_libcxx_assign_move_pass libcxx/vector/vector.cons/assign_move.pass.cpp)
 	add_test_generic(NAME vector_libcxx_assign_move_pass TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_assign_size_value libcxx/vector/vector.cons/assign_size_value.pass.cpp)
+	build_test_ext(NAME vector_libcxx_assign_size_value SRC_FILES libcxx/vector/vector.cons/assign_size_value.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_assign_size_value TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_ctor_default libcxx/vector/vector.cons/construct_default.pass.cpp)
+	build_test_ext(NAME vector_libcxx_ctor_default SRC_FILES libcxx/vector/vector.cons/construct_default.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_ctor_default TRACERS none pmemcheck memcheck)
 
 	build_test(vector_libcxx_ctor_iter_iter libcxx/vector/vector.cons/construct_iter_iter.pass.cpp)
@@ -170,22 +170,22 @@ if (ENABLE_VECTOR)
 	build_test(vector_libcxx_ctor_size libcxx/vector/vector.cons/construct_size.pass.cpp)
 	add_test_generic(NAME vector_libcxx_ctor_size TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_ctor_size_value libcxx/vector/vector.cons/construct_size_value.pass.cpp)
+	build_test_ext(NAME vector_libcxx_ctor_size_value SRC_FILES libcxx/vector/vector.cons/construct_size_value.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_ctor_size_value TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_copy libcxx/vector/vector.cons/copy.pass.cpp)
+	build_test_ext(NAME vector_libcxx_copy SRC_FILES libcxx/vector/vector.cons/copy.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_copy TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_dtor_noexcept libcxx/vector/vector.cons/dtor_noexcept.pass.cpp)
+	build_test_ext(NAME vector_libcxx_dtor_noexcept SRC_FILES libcxx/vector/vector.cons/dtor_noexcept.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_dtor_noexcept TRACERS none)
 
 	build_test(vector_libcxx_contiguous libcxx/vector/contiguous.pass.cpp)
 	add_test_generic(NAME vector_libcxx_contiguous TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_types libcxx/vector/types.pass.cpp)
+	build_test_ext(NAME vector_libcxx_types SRC_FILES libcxx/vector/types.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_types TRACERS none)
 
-	build_test(vector_libcxx_iterators libcxx/vector/iterators.pass.cpp)
+	build_test_ext(NAME vector_libcxx_iterators SRC_FILES libcxx/vector/iterators.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_iterators TRACERS TRACERS none pmemcheck memcheck)
 
 	build_test(vector_libcxx_data_const libcxx/vector/vector.data/data_const.pass.cpp)
@@ -194,76 +194,76 @@ if (ENABLE_VECTOR)
 	build_test(vector_libcxx_data libcxx/vector/vector.data/data.pass.cpp)
 	add_test_generic(NAME vector_libcxx_data TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_initializer_list libcxx/vector/vector.cons/initializer_list.pass.cpp)
+	build_test_ext(NAME vector_libcxx_initializer_list SRC_FILES libcxx/vector/vector.cons/initializer_list.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_initializer_list TRACERS none pmemcheck memcheck)
-
-	build_test(vector_libcxx_op_equal_initializer_list libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp)
+	
+	build_test_ext(NAME vector_libcxx_op_equal_initializer_list SRC_FILES libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_op_equal_initializer_list TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_capacity libcxx/vector/vector.capacity/capacity.pass.cpp)
+	build_test_ext(NAME vector_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_capacity TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_empty libcxx/vector/vector.capacity/empty.pass.cpp)
+	build_test_ext(NAME vector_libcxx_empty SRC_FILES libcxx/vector/vector.capacity/empty.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_empty TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_max_size libcxx/vector/vector.capacity/max_size.pass.cpp)
+	build_test_ext(NAME vector_libcxx_max_size SRC_FILES libcxx/vector/vector.capacity/max_size.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_max_size TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_reserve libcxx/vector/vector.capacity/reserve.pass.cpp)
+	build_test_ext(NAME vector_libcxx_reserve SRC_FILES libcxx/vector/vector.capacity/reserve.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_reserve TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_resize_size libcxx/vector/vector.capacity/resize_size.pass.cpp)
+	build_test_ext(NAME vector_libcxx_resize_size SRC_FILES libcxx/vector/vector.capacity/resize_size.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_resize_size TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_resize_size_value libcxx/vector/vector.capacity/resize_size_value.pass.cpp)
+	build_test_ext(NAME vector_libcxx_resize_size_value SRC_FILES libcxx/vector/vector.capacity/resize_size_value.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_resize_size_value TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_shrink_to_fit libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp)
+	build_test_ext(NAME vector_libcxx_shrink_to_fit SRC_FILES libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_shrink_to_fit TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_size libcxx/vector/vector.capacity/size.pass.cpp)
+	build_test_ext(NAME vector_libcxx_size SRC_FILES libcxx/vector/vector.capacity/size.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_size TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_swap libcxx/vector/vector.capacity/swap.pass.cpp)
+	build_test_ext(NAME vector_libcxx_swap SRC_FILES libcxx/vector/vector.capacity/swap.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_swap TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_clear libcxx/vector/vector.modifiers/clear.pass.cpp)
+	build_test_ext(NAME vector_libcxx_clear SRC_FILES libcxx/vector/vector.modifiers/clear.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_clear TRACERS none pmemcheck memcheck)
 
 	build_test(vector_libcxx_emplace libcxx/vector/vector.modifiers/emplace.pass.cpp)
 	add_test_generic(NAME vector_libcxx_emplace TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_emplace_back libcxx/vector/vector.modifiers/emplace_back.pass.cpp)
+	build_test_ext(NAME vector_libcxx_emplace_back SRC_FILES libcxx/vector/vector.modifiers/emplace_back.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_emplace_back TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_emplace_extra libcxx/vector/vector.modifiers/emplace_extra.pass.cpp)
+	build_test_ext(NAME vector_libcxx_emplace_extra SRC_FILES libcxx/vector/vector.modifiers/emplace_extra.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_emplace_extra TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_erase_iter libcxx/vector/vector.modifiers/erase_iter.pass.cpp)
+	build_test_ext(NAME vector_libcxx_erase_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_erase_iter TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_erase_iter_iter libcxx/vector/vector.modifiers/erase_iter_iter.pass.cpp)
+	build_test_ext(NAME vector_libcxx_erase_iter_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_insert_iter_initializer_list libcxx/vector/vector.modifiers/insert_iter_initializer_list.pass.cpp)
+	build_test_ext(NAME vector_libcxx_insert_iter_initializer_list SRC_FILES libcxx/vector/vector.modifiers/insert_iter_initializer_list.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_insert_iter_initializer_list TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_insert_iter_iter_iter libcxx/vector/vector.modifiers/insert_iter_iter_iter.pass.cpp)
+	build_test_ext(NAME vector_libcxx_insert_iter_iter_iter SRC_FILES libcxx/vector/vector.modifiers/insert_iter_iter_iter.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_insert_iter_iter_iter TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_insert_iter_rvalue libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp)
+	build_test_ext(NAME vector_libcxx_insert_iter_rvalue SRC_FILES libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_insert_iter_rvalue TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_insert_iter_size_value libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp)
+	build_test_ext(NAME vector_libcxx_insert_iter_size_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_insert_iter_size_value TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_insert_iter_value libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp)
+	build_test_ext(NAME vector_libcxx_insert_iter_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_insert_iter_value TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_pop_back libcxx/vector/vector.modifiers/pop_back.pass.cpp)
+	build_test_ext(NAME vector_libcxx_pop_back SRC_FILES libcxx/vector/vector.modifiers/pop_back.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_pop_back TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_push_back libcxx/vector/vector.modifiers/push_back.pass.cpp)
+	build_test_ext(NAME vector_libcxx_push_back SRC_FILES libcxx/vector/vector.modifiers/push_back.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_push_back TRACERS none pmemcheck memcheck)
 
 	# XXX: port libcxx test vector.modifiers/push_back_exception_safety.pass
@@ -271,7 +271,7 @@ if (ENABLE_VECTOR)
 	build_test(vector_libcxx_push_back_rvalue libcxx/vector/vector.modifiers/push_back_rvalue.pass.cpp)
 	add_test_generic(NAME vector_libcxx_push_back_rvalue TRACERS none pmemcheck memcheck)
 
-	build_test(vector_libcxx_special_swap libcxx/vector/vector.special/swap.pass.cpp)
+	build_test_ext(NAME vector_libcxx_special_swap SRC_FILES libcxx/vector/vector.special/swap.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck)
 endif()
 
@@ -420,39 +420,90 @@ if (ENABLE_STRING)
 	# XXX: port libcxx test basic_string/string.nonmembers/string_opgt/string_view_string.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_string_view.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string_opgt=/string_view_string.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.of/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.last.not.of/pointer_size_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_string_view.pass
 	# XXX: port libcxx test basic_string/string.ops/string_compare/size_size_T_size_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_compare/string_view.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.not.of/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/string_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_rfind/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/string_size.pass
 	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find.first.of/pointer_size_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/string_size.pass
+
+	build_test(string_libcxx_ops_find_char_size libcxx/basic_string/string.ops/string_find/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_char_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_find_pointer_size libcxx/basic_string/string.ops/string_find/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_pointer_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_find_pointer_size_size libcxx/basic_string/string.ops/string_find/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_pointer_size_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_find_string_size libcxx/basic_string/string.ops/string_find/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_string_size TRACERS none pmemcheck memcheck)
+		
 	# XXX: port libcxx test basic_string/string.ops/string_find/string_view_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/pointer_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/char_size.pass
-	# XXX: port libcxx test basic_string/string.ops/string_find/pointer_size_size.pass
+
+	build_test(string_libcxx_ops_find_first_of_char_size libcxx/basic_string/string.ops/string_find.first.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_of_pointer_size libcxx/basic_string/string.ops/string_find.first.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_of_pointer_size_size libcxx/basic_string/string.ops/string_find.first.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_of_string_size libcxx/basic_string/string.ops/string_find.first.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_of_string_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_char_size libcxx/basic_string/string.ops/string_find.first.not.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_pointer_size libcxx/basic_string/string.ops/string_find.first.not.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_pointer_size_size libcxx/basic_string/string.ops/string_find.first.not.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_first_not_of_string_size libcxx/basic_string/string.ops/string_find.first.not.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_first_not_of_string_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_char_size libcxx/basic_string/string.ops/string_find.last.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_pointer_size libcxx/basic_string/string.ops/string_find.last.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_pointer_size_size libcxx/basic_string/string.ops/string_find.last.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_of_string_size libcxx/basic_string/string.ops/string_find.last.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_of_string_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_char_size libcxx/basic_string/string.ops/string_find.last.not.of/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_pointer_size libcxx/basic_string/string.ops/string_find.last.not.of/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_pointer_size_size libcxx/basic_string/string.ops/string_find.last.not.of/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_find_last_not_of_string_size libcxx/basic_string/string.ops/string_find.last.not.of/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_find_last_not_of_string_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_rfind_char_size libcxx/basic_string/string.ops/string_rfind/char_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_char_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_rfind_pointer_size libcxx/basic_string/string.ops/string_rfind/pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_pointer_size TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_ops_rfind_pointer_size_size libcxx/basic_string/string.ops/string_rfind/pointer_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_pointer_size_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_ops_rfind_string_size libcxx/basic_string/string.ops/string_rfind/string_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_ops_rfind_string_size TRACERS none pmemcheck memcheck)
+		
+	# XXX: port libcxx test basic_string/string.ops/string_rfind/string_view_size.pass
+		
 	# XXX: port libcxx test basic_string/string.ops/string_substr/substr.pass
 
 	build_test(string_libcxx_ops_accessors_c_str libcxx/basic_string/string.ops/string.accessors/c_str.pass.cpp)
@@ -474,30 +525,63 @@ if (ENABLE_STRING)
 	build_test(string_libcxx_modifiers_erase_size_size libcxx/basic_string/string.modifiers/string_erase/size_size.pass.cpp)
 	add_test_generic(NAME string_libcxx_modifiers_erase_size_size TRACERS none pmemcheck memcheck)
 
-	# XXX: port libcxx test basic_string/string.modifiers/string_erase/pop_back.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_size_char.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_iter_iter.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_string_size_size.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_string.pass
+	build_test(string_libcxx_modifiers_erase_pop_back libcxx/basic_string/string.modifiers/string_erase/pop_back.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_erase_pop_back TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_iter_iter_initializer_list libcxx/basic_string/string.modifiers/string_replace/iter_iter_initializer_list.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_iter_iter_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_iter_iter_iter_iter libcxx/basic_string/string.modifiers/string_replace/iter_iter_iter_iter.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_iter_iter_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_iter_iter_pointer libcxx/basic_string/string.modifiers/string_replace/iter_iter_pointer.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_iter_iter_pointer TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_iter_iter_pointer_size libcxx/basic_string/string.modifiers/string_replace/iter_iter_pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_iter_iter_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_iter_iter_size_char libcxx/basic_string/string.modifiers/string_replace/iter_iter_size_char.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_iter_iter_size_char TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_iter_iter_string libcxx/basic_string/string.modifiers/string_replace/iter_iter_string.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_iter_iter_string TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_size_size_pointer libcxx/basic_string/string.modifiers/string_replace/size_size_pointer.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_size_size_pointer TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_size_size_pointer_size libcxx/basic_string/string.modifiers/string_replace/size_size_pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_size_size_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_size_size_size_char libcxx/basic_string/string.modifiers/string_replace/size_size_size_char.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_size_size_size_char TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_size_size_string libcxx/basic_string/string.modifiers/string_replace/size_size_string.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_size_size_string TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_replace_size_size_string_size_size libcxx/basic_string/string.modifiers/string_replace/size_size_string_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_replace_size_size_string_size_size TRACERS none pmemcheck memcheck)
+
 	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_string_view.pass
 	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_T_size_size.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_string_view.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_initializer_list.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_string.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_pointer.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_pointer.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_pointer_size.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_size_char.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_replace/size_size_pointer_size.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_op_plus_equal/char.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_op_plus_equal/string.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_op_plus_equal/initializer_list.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_op_plus_equal/pointer.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_copy/copy.pass
+	# XXX: port libcxx test basic_string/string.modifiers/string_replace/iter_iter_string_view.pass 
 
-	# XXX: push_back() required
-	# build_test(string_libcxx_modifiers_append_push_back libcxx/basic_string/string.modifiers/string_append/push_back.pass.cpp)
-	# add_test_generic(NAME string_libcxx_modifiers_append_push_back TRACERS none pmemcheck memcheck)
+	build_test(string_libcxx_modifiers_copy libcxx/basic_string/string.modifiers/string_copy/copy.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_copy TRACERS none pmemcheck memcheck)
+		
+	build_test(string_libcxx_modifiers_op_plus_equal_char libcxx/basic_string/string.modifiers/string_op_plus_equal/char.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_op_plus_equal_char TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_op_plus_equal_initializer_list libcxx/basic_string/string.modifiers/string_op_plus_equal/initializer_list.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_op_plus_equal_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_op_plus_equal_pointer libcxx/basic_string/string.modifiers/string_op_plus_equal/pointer.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_op_plus_equal_pointer TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_op_plus_equal_string libcxx/basic_string/string.modifiers/string_op_plus_equal/string.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_op_plus_equal_string TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_append_push_back libcxx/basic_string/string.modifiers/string_append/push_back.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_append_push_back TRACERS none pmemcheck memcheck)
 
 	build_test(string_libcxx_modifiers_append_iterator libcxx/basic_string/string.modifiers/string_append/iterator.pass.cpp)
 	add_test_generic(NAME string_libcxx_modifiers_append_iterator TRACERS none pmemcheck memcheck)
@@ -523,15 +607,33 @@ if (ENABLE_STRING)
 	# XXX: port libcxx test basic_string/string.modifiers/string_append/string_view.pass
 	# XXX: port libcxx test basic_string/string.modifiers/string_append/T_size_size.pass
 
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/iter_char.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/iter_initializer_list.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/size_string_size_size.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/size_string.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/iter_size_char.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/size_size_char.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/size_pointer.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/size_pointer_size.pass
-	# XXX: port libcxx test basic_string/string.modifiers/string_insert/iter_iter_iter.pass
+	build_test(string_libcxx_modifiers_insert_iter_char libcxx/basic_string/string.modifiers/string_insert/iter_char.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_iter_char TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_iter_initializer_list libcxx/basic_string/string.modifiers/string_insert/iter_initializer_list.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_iter_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_iter_iter_iter libcxx/basic_string/string.modifiers/string_insert/iter_iter_iter.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_iter_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_iter_size_char libcxx/basic_string/string.modifiers/string_insert/iter_size_char.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_iter_size_char TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_size_pointer libcxx/basic_string/string.modifiers/string_insert/size_pointer.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_size_pointer TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_size_pointer_size libcxx/basic_string/string.modifiers/string_insert/size_pointer_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_size_pointer_size TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_size_size_char libcxx/basic_string/string.modifiers/string_insert/size_size_char.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_size_size_char TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_size_string libcxx/basic_string/string.modifiers/string_insert/size_string.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_size_string TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_modifiers_insert_size_string_size_size libcxx/basic_string/string.modifiers/string_insert/size_string_size_size.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_insert_size_string_size_size TRACERS none pmemcheck memcheck)
+
 	# XXX: port libcxx test basic_string/string.modifiers/string_insert/string_view.pass
 	# XXX: port libcxx test basic_string/string.modifiers/string_insert/size_T_size_size.pass
 
@@ -594,9 +696,8 @@ if (ENABLE_STRING)
 		
 	# XXX: port libcxx test basic_string/string.require/contiguous.pass
 
-	# XXX: push_back() required
-	# build_test(string_libcxx_capacity libcxx/basic_string/string.capacity/capacity.pass.cpp)
-	# add_test_generic(NAME string_libcxx_capacity TRACERS none pmemcheck memcheck)
+	build_test(string_libcxx_capacity libcxx/basic_string/string.capacity/capacity.pass.cpp)
+	add_test_generic(NAME string_libcxx_capacity TRACERS none pmemcheck memcheck)
 
 	build_test(string_libcxx_capacity_clear libcxx/basic_string/string.capacity/clear.pass.cpp)
 	add_test_generic(NAME string_libcxx_capacity_clear TRACERS none pmemcheck memcheck)
@@ -650,4 +751,307 @@ if (ENABLE_STRING)
 	# XXX: port libcxx test basic_string/string.cons/string_view.pass
 	# XXX: port libcxx test basic_string/string.cons/initializer_list_assignment.pass
 	# XXX: port libcxx test basic_string/string.cons/string_view.fail
+endif()
+
+if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_capacity TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_empty SRC_FILES libcxx/vector/vector.capacity/empty.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_empty TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_max_size SRC_FILES libcxx/vector/vector.capacity/max_size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_max_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_reserve SRC_FILES libcxx/vector/vector.capacity/reserve.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_reserve TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_resize_size SRC_FILES libcxx/vector/vector.capacity/resize_size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_resize_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_resize_size_value SRC_FILES libcxx/vector/vector.capacity/resize_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_resize_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_shrink_to_fit SRC_FILES libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_shrink_to_fit TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_size SRC_FILES libcxx/vector/vector.capacity/size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_swap SRC_FILES libcxx/vector/vector.capacity/swap.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_assign_copy SRC_FILES libcxx/vector/vector.cons/assign_copy.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_assign_copy TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_assign_initializer_list SRC_FILES libcxx/vector/vector.cons/assign_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_assign_size_value SRC_FILES libcxx/vector/vector.cons/assign_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_assign_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_ctor_default SRC_FILES libcxx/vector/vector.cons/construct_default.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_ctor_default TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_ctor_size_value SRC_FILES libcxx/vector/vector.cons/construct_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_ctor_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_copy SRC_FILES libcxx/vector/vector.cons/copy.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_copy TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_dtor_noexcept SRC_FILES libcxx/vector/vector.cons/dtor_noexcept.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_dtor_noexcept TRACERS none)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_initializer_list SRC_FILES libcxx/vector/vector.cons/initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_op_equal_initializer_list SRC_FILES libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_op_equal_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_clear SRC_FILES libcxx/vector/vector.modifiers/clear.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_clear TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_emplace_back SRC_FILES libcxx/vector/vector.modifiers/emplace_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_emplace_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_emplace_extra SRC_FILES libcxx/vector/vector.modifiers/emplace_extra.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_emplace_extra TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_erase_iter_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_erase_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_erase_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_insert_iter_initializer_list SRC_FILES libcxx/vector/vector.modifiers/insert_iter_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_insert_iter_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_insert_iter_iter_iter SRC_FILES libcxx/vector/vector.modifiers/insert_iter_iter_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_insert_iter_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_insert_iter_rvalue SRC_FILES libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_insert_iter_rvalue TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_insert_iter_size_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_insert_iter_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_insert_iter_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_insert_iter_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_pop_back SRC_FILES libcxx/vector/vector.modifiers/pop_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_pop_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_push_back SRC_FILES libcxx/vector/vector.modifiers/push_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_push_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_special_swap SRC_FILES libcxx/vector/vector.special/swap.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_special_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_iterators SRC_FILES libcxx/vector/iterators.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_iterators TRACERS TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_array_expsize_libcxx_types SRC_FILES libcxx/vector/types.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_libcxx_types TRACERS none)
+endif()
+
+if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_capacity TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_empty SRC_FILES libcxx/vector/vector.capacity/empty.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_empty TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_max_size SRC_FILES libcxx/vector/vector.capacity/max_size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_max_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_reserve SRC_FILES libcxx/vector/vector.capacity/reserve.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_reserve TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_resize_size SRC_FILES libcxx/vector/vector.capacity/resize_size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_resize_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_resize_size_value SRC_FILES libcxx/vector/vector.capacity/resize_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_resize_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_shrink_to_fit SRC_FILES libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_shrink_to_fit TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_size SRC_FILES libcxx/vector/vector.capacity/size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_swap SRC_FILES libcxx/vector/vector.capacity/swap.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_assign_copy SRC_FILES libcxx/vector/vector.cons/assign_copy.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_assign_copy TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_assign_initializer_list SRC_FILES libcxx/vector/vector.cons/assign_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_assign_size_value SRC_FILES libcxx/vector/vector.cons/assign_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_assign_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_ctor_default SRC_FILES libcxx/vector/vector.cons/construct_default.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_ctor_default TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_ctor_size_value SRC_FILES libcxx/vector/vector.cons/construct_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_ctor_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_copy SRC_FILES libcxx/vector/vector.cons/copy.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_copy TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_dtor_noexcept SRC_FILES libcxx/vector/vector.cons/dtor_noexcept.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_dtor_noexcept TRACERS none)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_initializer_list SRC_FILES libcxx/vector/vector.cons/initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_op_equal_initializer_list SRC_FILES libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_op_equal_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_clear SRC_FILES libcxx/vector/vector.modifiers/clear.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_clear TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_emplace_back SRC_FILES libcxx/vector/vector.modifiers/emplace_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_emplace_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_emplace_extra SRC_FILES libcxx/vector/vector.modifiers/emplace_extra.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_emplace_extra TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_erase_iter_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_erase_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_erase_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_insert_iter_initializer_list SRC_FILES libcxx/vector/vector.modifiers/insert_iter_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_insert_iter_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_insert_iter_iter_iter SRC_FILES libcxx/vector/vector.modifiers/insert_iter_iter_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_insert_iter_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_insert_iter_rvalue SRC_FILES libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_insert_iter_rvalue TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_insert_iter_size_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_insert_iter_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_insert_iter_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_insert_iter_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_pop_back SRC_FILES libcxx/vector/vector.modifiers/pop_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_pop_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_push_back SRC_FILES libcxx/vector/vector.modifiers/push_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_push_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_special_swap SRC_FILES libcxx/vector/vector.special/swap.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_special_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_iterators SRC_FILES libcxx/vector/iterators.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_iterators TRACERS TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_expsize_libcxx_types SRC_FILES libcxx/vector/types.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_libcxx_types TRACERS none)
+endif()
+
+if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_capacity TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_empty SRC_FILES libcxx/vector/vector.capacity/empty.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_empty TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_max_size SRC_FILES libcxx/vector/vector.capacity/max_size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_max_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_reserve SRC_FILES libcxx/vector/vector.capacity/reserve.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_reserve TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_resize_size SRC_FILES libcxx/vector/vector.capacity/resize_size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_resize_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_resize_size_value SRC_FILES libcxx/vector/vector.capacity/resize_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_resize_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_shrink_to_fit SRC_FILES libcxx/vector/vector.capacity/shrink_to_fit.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_shrink_to_fit TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_size SRC_FILES libcxx/vector/vector.capacity/size.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_size TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_swap SRC_FILES libcxx/vector/vector.capacity/swap.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_assign_copy SRC_FILES libcxx/vector/vector.cons/assign_copy.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_assign_copy TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_assign_initializer_list SRC_FILES libcxx/vector/vector.cons/assign_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_assign_size_value SRC_FILES libcxx/vector/vector.cons/assign_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_assign_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_ctor_default SRC_FILES libcxx/vector/vector.cons/construct_default.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_ctor_default TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_ctor_size_value SRC_FILES libcxx/vector/vector.cons/construct_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_ctor_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_copy SRC_FILES libcxx/vector/vector.cons/copy.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_copy TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_dtor_noexcept SRC_FILES libcxx/vector/vector.cons/dtor_noexcept.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_dtor_noexcept TRACERS none)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_initializer_list SRC_FILES libcxx/vector/vector.cons/initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_op_equal_initializer_list SRC_FILES libcxx/vector/vector.cons/op_equal_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_op_equal_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_clear SRC_FILES libcxx/vector/vector.modifiers/clear.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_clear TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_emplace_back SRC_FILES libcxx/vector/vector.modifiers/emplace_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_emplace_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_emplace_extra SRC_FILES libcxx/vector/vector.modifiers/emplace_extra.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_emplace_extra TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_erase_iter_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_erase_iter SRC_FILES libcxx/vector/vector.modifiers/erase_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_erase_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_initializer_list SRC_FILES libcxx/vector/vector.modifiers/insert_iter_initializer_list.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_iter_iter SRC_FILES libcxx/vector/vector.modifiers/insert_iter_iter_iter.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_iter_iter TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_rvalue SRC_FILES libcxx/vector/vector.modifiers/insert_iter_rvalue.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_rvalue TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_size_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_size_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_size_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_value SRC_FILES libcxx/vector/vector.modifiers/insert_iter_value.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_insert_iter_value TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_pop_back SRC_FILES libcxx/vector/vector.modifiers/pop_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_pop_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_push_back SRC_FILES libcxx/vector/vector.modifiers/push_back.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_push_back TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_special_swap SRC_FILES libcxx/vector/vector.special/swap.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_special_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_iterators SRC_FILES libcxx/vector/iterators.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_iterators TRACERS TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_types SRC_FILES libcxx/vector/types.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_types TRACERS none)
 endif()

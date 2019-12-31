@@ -30,17 +30,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "iterators_support.hpp"
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<int>;
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
@@ -51,7 +51,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 {
 	auto r = pop.root();
 
-	UT_ASSERT(r->v->capacity() == count);
+	UT_ASSERT(r->v->capacity() == expected_capacity(count));
 	UT_ASSERT(r->v->size() == count);
 
 	for (unsigned i = 0; i < count; ++i) {
@@ -60,7 +60,7 @@ check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector assign() methods
+ * Test pmem::obj::vector assign() methods
  *
  * Replace content of the vector with content greater than max_size()
  * Expect std::length_error exception is thrown
@@ -93,11 +93,10 @@ test(nvobj::pool<struct root> &pop)
 	check_vector(pop, 10, 1);
 
 	/* assign() - range version */
-	int a[] = {1};
-	auto begin = std::begin(a);
+	auto begin = test_support::counting_it<size_t>(0);
 	/* we won't try to dereference this, it will be used for std::distance()
 	 * calculation only */
-	auto end = begin + size;
+	auto end = test_support::counting_it<size_t>(size);
 
 	exception_thrown = false;
 
@@ -126,7 +125,7 @@ main(int argc, char *argv[])
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
 		path, "VectorTest: vector_assign_exceptions_length",
-		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+		PMEMOBJ_MIN_POOL * 2, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

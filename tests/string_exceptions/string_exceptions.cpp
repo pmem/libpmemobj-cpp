@@ -32,17 +32,15 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/slice.hpp>
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 #include <iostream>
 
-namespace pmemobj_exp = pmem::obj::experimental;
-
-using string_type = pmemobj_exp::string;
+using string_type = pmem::obj::string;
 
 struct pmem_string_struct {
 	pmem_string_struct() : str("abcdefgh"), other("abc")
@@ -77,7 +75,7 @@ assert_pool_exception(std::function<void(void)> f)
 }
 
 /*
- * this function verifies that f() throws transaction_error exception.
+ * this function verifies that f() throws transaction_scope_error exception.
  */
 void
 assert_tx_exception(std::function<void(void)> f)
@@ -86,7 +84,7 @@ assert_tx_exception(std::function<void(void)> f)
 	try {
 		f();
 		UT_ASSERT(0);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_scope_error &) {
 		exception_thrown = true;
 	} catch (std::exception &e) {
 		UT_FATALexc(e);

@@ -46,8 +46,8 @@ if(TRACE_TESTS)
 	set(GLOBAL_TEST_ARGS ${GLOBAL_TEST_ARGS} --trace-expand)
 endif()
 
-set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} common/ .. .)
-set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS})
+set(INCLUDE_DIRS ${LIBPMEMOBJ_INCLUDE_DIRS} ${LIBPMEM_INCLUDE_DIRS} common/ .. .)
+set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS} ${LIBPMEM_LIBRARY_DIRS})
 
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
@@ -76,43 +76,6 @@ function(find_pmemcheck)
 	endif()
 endfunction()
 
-function(build_pmemobj_cow_check)
-	execute_process(COMMAND ${CMAKE_COMMAND}
-			${PROJECT_SOURCE_DIR}/tests/pmemobj_check_cow/CMakeLists.txt
-			-DLIBPMEMOBJ_INCLUDE_DIRS=${LIBPMEMOBJ_INCLUDE_DIRS}
-			-DLIBPMEMOBJ++_INCLUDE_DIRS=${PROJECT_SOURCE_DIR}/include
-			-DLIBPMEMOBJ_LIBRARIES=${LIBPMEMOBJ_LIBRARIES}
-			-DLIBPMEMOBJ_LIBRARY_DIRS=${LIBPMEMOBJ_LIBRARY_DIRS}
-			-Bpmemobj_check_cow
-			OUTPUT_QUIET)
-
-	execute_process(COMMAND ${CMAKE_COMMAND}
-			--build pmemobj_check_cow
-			OUTPUT_QUIET)
-endfunction()
-
-# pmreorder tests require COW support in libpmemobj because if checker program
-# does any recovery (for example in pool::open) this is not logged and will not
-# be reverted by pmreorder. This results in unexpected state in proceding
-# pmreorder steps (expected state is initial pool, modified only by pmreorder)
-function(check_pmemobj_cow_support pool)
-	build_pmemobj_cow_check()
-	set(ENV{PMEMOBJ_COW} 1)
-
-	execute_process(COMMAND pmemobj_check_cow/pmemobj_check_cow
-			${pool} RESULT_VARIABLE ret)
-	if (ret EQUAL 0)
-		set(PMEMOBJ_COW_SUPPORTED true CACHE INTERNAL "")
-	elseif(ret EQUAL 2)
-		set(PMEMOBJ_COW_SUPPORTED false CACHE INTERNAL "")
-		message(WARNING "Pmemobj does not support PMEMOBJ_COW. Pmreorder tests will not be performed.")
-	else()
-		message(FATAL_ERROR "pmemobj_check_cow failed")
-	endif()
-
-	unset(ENV{PMEMOBJ_COW})
-endfunction()
-
 function(find_packages)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(CURSES QUIET ncurses)
@@ -136,9 +99,9 @@ function(find_packages)
 		if(VALGRIND_FOUND)
 			if ((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
-				check_pmemobj_cow_support("cow.pool")
 
-				if(PMREORDER AND PMEMOBJ_COW_SUPPORTED)
+				# copy_on_write support since libpmemobj 1.6
+				if(PMREORDER AND NOT (LIBPMEMOBJ_VERSION_MINOR LESS 6))
 					set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
 					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
 				endif()
@@ -149,6 +112,17 @@ function(find_packages)
 			message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
 		endif()
 	endif()
+endfunction()
+
+# Function to build test with custom build options (e.g. passing defines)
+# Example: build_test_ext(NAME ... SRC_FILES ....cpp BUILD_OPTIONS -D...)
+function(build_test_ext)
+	set(oneValueArgs NAME)
+	set(multiValueArgs SRC_FILES BUILD_OPTIONS)
+	cmake_parse_arguments(TEST "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+	build_test(${TEST_NAME} ${TEST_SRC_FILES})
+	target_compile_definitions(${TEST_NAME} PRIVATE ${TEST_BUILD_OPTIONS})
 endfunction()
 
 function(build_test name)

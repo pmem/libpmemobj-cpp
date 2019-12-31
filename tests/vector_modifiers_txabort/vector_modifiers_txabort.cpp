@@ -31,17 +31,16 @@
  */
 
 #include "helper_classes.hpp"
+#include "list_wrapper.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using C = pmem_exp::vector<int>;
-using C2 = pmem_exp::vector<move_only>;
+using C = container_t<int>;
+using C2 = container_t<move_only>;
 
 struct root {
 	nvobj::persistent_ptr<C> v1;
@@ -74,7 +73,7 @@ check_range(It start, It end, int value)
 }
 
 /**
- * Test pmem::obj::experimental::vector modifiers
+ * Test pmem::obj::vector modifiers
  *
  * Checks if vector's state is reverted when transaction aborts.
  * Methods under test:
@@ -479,9 +478,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: modifiers_txabort",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: modifiers_txabort", PMEMOBJ_MIN_POOL * 2,
+		S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

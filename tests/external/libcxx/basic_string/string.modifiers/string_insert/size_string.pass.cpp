@@ -6,225 +6,274 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// <string>
+#include "unittest.hpp"
 
-// basic_string<charT,traits,Allocator>&
-//   insert(size_type pos1, const basic_string& str);
+#include <libpmemobj++/container/string.hpp>
 
-#include <string>
-#include <stdexcept>
-#include <cassert>
+namespace nvobj = pmem::obj;
 
-#include "test_macros.h"
-#include "min_allocator.h"
+using C = pmem::obj::string;
+
+struct root {
+	nvobj::persistent_ptr<C> s;
+	nvobj::persistent_ptr<C> s_arr[53];
+};
 
 template <class S>
 void
-test(S s, typename S::size_type pos, S str, S expected)
+test(nvobj::pool<struct root> &pop, const S &s1, typename S::size_type pos,
+     const S &str, const S &expected)
 {
-    const typename S::size_type old_size = s.size();
-    S s0 = s;
-    if (pos <= old_size)
-    {
-        s.insert(pos, str);
-        LIBCPP_ASSERT(s.__invariants());
-        assert(s == expected);
-    }
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    else
-    {
-        try
-        {
-            s.insert(pos, str);
-            assert(false);
-        }
-        catch (std::out_of_range&)
-        {
-            assert(pos > old_size);
-            assert(s == s0);
-        }
-    }
-#endif
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop,
+				[&] { r->s = nvobj::make_persistent<C>(s1); });
+
+	auto &s = *r->s;
+
+	const typename S::size_type old_size = s.size();
+
+	if (pos <= old_size) {
+		s.insert(pos, str);
+		UT_ASSERT(s == expected);
+	} else {
+		try {
+			s.insert(pos, str);
+			UT_ASSERT(false);
+		} catch (std::out_of_range &) {
+			UT_ASSERT(pos > old_size);
+			UT_ASSERT(s == s1);
+		}
+	}
+
+	nvobj::transaction::run(pop,
+				[&] { nvobj::delete_persistent<C>(r->s); });
 }
 
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-    typedef std::string S;
-    test(S(""), 0, S(""), S(""));
-    test(S(""), 0, S("12345"), S("12345"));
-    test(S(""), 0, S("1234567890"), S("1234567890"));
-    test(S(""), 0, S("12345678901234567890"), S("12345678901234567890"));
-    test(S(""), 1, S(""), S("can't happen"));
-    test(S(""), 1, S("12345"), S("can't happen"));
-    test(S(""), 1, S("1234567890"), S("can't happen"));
-    test(S(""), 1, S("12345678901234567890"), S("can't happen"));
-    test(S("abcde"), 0, S(""), S("abcde"));
-    test(S("abcde"), 0, S("12345"), S("12345abcde"));
-    test(S("abcde"), 0, S("1234567890"), S("1234567890abcde"));
-    test(S("abcde"), 0, S("12345678901234567890"), S("12345678901234567890abcde"));
-    test(S("abcde"), 1, S(""), S("abcde"));
-    test(S("abcde"), 1, S("12345"), S("a12345bcde"));
-    test(S("abcde"), 1, S("1234567890"), S("a1234567890bcde"));
-    test(S("abcde"), 1, S("12345678901234567890"), S("a12345678901234567890bcde"));
-    test(S("abcde"), 2, S(""), S("abcde"));
-    test(S("abcde"), 2, S("12345"), S("ab12345cde"));
-    test(S("abcde"), 2, S("1234567890"), S("ab1234567890cde"));
-    test(S("abcde"), 2, S("12345678901234567890"), S("ab12345678901234567890cde"));
-    test(S("abcde"), 4, S(""), S("abcde"));
-    test(S("abcde"), 4, S("12345"), S("abcd12345e"));
-    test(S("abcde"), 4, S("1234567890"), S("abcd1234567890e"));
-    test(S("abcde"), 4, S("12345678901234567890"), S("abcd12345678901234567890e"));
-    test(S("abcde"), 5, S(""), S("abcde"));
-    test(S("abcde"), 5, S("12345"), S("abcde12345"));
-    test(S("abcde"), 5, S("1234567890"), S("abcde1234567890"));
-    test(S("abcde"), 5, S("12345678901234567890"), S("abcde12345678901234567890"));
-    test(S("abcde"), 6, S(""), S("can't happen"));
-    test(S("abcde"), 6, S("12345"), S("can't happen"));
-    test(S("abcde"), 6, S("1234567890"), S("can't happen"));
-    test(S("abcde"), 6, S("12345678901234567890"), S("can't happen"));
-    test(S("abcdefghij"), 0, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 0, S("12345"), S("12345abcdefghij"));
-    test(S("abcdefghij"), 0, S("1234567890"), S("1234567890abcdefghij"));
-    test(S("abcdefghij"), 0, S("12345678901234567890"), S("12345678901234567890abcdefghij"));
-    test(S("abcdefghij"), 1, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 1, S("12345"), S("a12345bcdefghij"));
-    test(S("abcdefghij"), 1, S("1234567890"), S("a1234567890bcdefghij"));
-    test(S("abcdefghij"), 1, S("12345678901234567890"), S("a12345678901234567890bcdefghij"));
-    test(S("abcdefghij"), 5, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 5, S("12345"), S("abcde12345fghij"));
-    test(S("abcdefghij"), 5, S("1234567890"), S("abcde1234567890fghij"));
-    test(S("abcdefghij"), 5, S("12345678901234567890"), S("abcde12345678901234567890fghij"));
-    test(S("abcdefghij"), 9, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 9, S("12345"), S("abcdefghi12345j"));
-    test(S("abcdefghij"), 9, S("1234567890"), S("abcdefghi1234567890j"));
-    test(S("abcdefghij"), 9, S("12345678901234567890"), S("abcdefghi12345678901234567890j"));
-    test(S("abcdefghij"), 10, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 10, S("12345"), S("abcdefghij12345"));
-    test(S("abcdefghij"), 10, S("1234567890"), S("abcdefghij1234567890"));
-    test(S("abcdefghij"), 10, S("12345678901234567890"), S("abcdefghij12345678901234567890"));
-    test(S("abcdefghij"), 11, S(""), S("can't happen"));
-    test(S("abcdefghij"), 11, S("12345"), S("can't happen"));
-    test(S("abcdefghij"), 11, S("1234567890"), S("can't happen"));
-    test(S("abcdefghij"), 11, S("12345678901234567890"), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 0, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 0, S("12345"), S("12345abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 0, S("1234567890"), S("1234567890abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 0, S("12345678901234567890"), S("12345678901234567890abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S("12345"), S("a12345bcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S("1234567890"), S("a1234567890bcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S("12345678901234567890"), S("a12345678901234567890bcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S("12345"), S("abcdefghij12345klmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S("1234567890"), S("abcdefghij1234567890klmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S("12345678901234567890"), S("abcdefghij12345678901234567890klmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 19, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 19, S("12345"), S("abcdefghijklmnopqrs12345t"));
-    test(S("abcdefghijklmnopqrst"), 19, S("1234567890"), S("abcdefghijklmnopqrs1234567890t"));
-    test(S("abcdefghijklmnopqrst"), 19, S("12345678901234567890"), S("abcdefghijklmnopqrs12345678901234567890t"));
-    test(S("abcdefghijklmnopqrst"), 20, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 20, S("12345"), S("abcdefghijklmnopqrst12345"));
-    test(S("abcdefghijklmnopqrst"), 20, S("1234567890"), S("abcdefghijklmnopqrst1234567890"));
-    test(S("abcdefghijklmnopqrst"), 20, S("12345678901234567890"), S("abcdefghijklmnopqrst12345678901234567890"));
-    test(S("abcdefghijklmnopqrst"), 21, S(""), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 21, S("12345"), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 21, S("1234567890"), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 21, S("12345678901234567890"), S("can't happen"));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-    test(S(""), 0, S(""), S(""));
-    test(S(""), 0, S("12345"), S("12345"));
-    test(S(""), 0, S("1234567890"), S("1234567890"));
-    test(S(""), 0, S("12345678901234567890"), S("12345678901234567890"));
-    test(S(""), 1, S(""), S("can't happen"));
-    test(S(""), 1, S("12345"), S("can't happen"));
-    test(S(""), 1, S("1234567890"), S("can't happen"));
-    test(S(""), 1, S("12345678901234567890"), S("can't happen"));
-    test(S("abcde"), 0, S(""), S("abcde"));
-    test(S("abcde"), 0, S("12345"), S("12345abcde"));
-    test(S("abcde"), 0, S("1234567890"), S("1234567890abcde"));
-    test(S("abcde"), 0, S("12345678901234567890"), S("12345678901234567890abcde"));
-    test(S("abcde"), 1, S(""), S("abcde"));
-    test(S("abcde"), 1, S("12345"), S("a12345bcde"));
-    test(S("abcde"), 1, S("1234567890"), S("a1234567890bcde"));
-    test(S("abcde"), 1, S("12345678901234567890"), S("a12345678901234567890bcde"));
-    test(S("abcde"), 2, S(""), S("abcde"));
-    test(S("abcde"), 2, S("12345"), S("ab12345cde"));
-    test(S("abcde"), 2, S("1234567890"), S("ab1234567890cde"));
-    test(S("abcde"), 2, S("12345678901234567890"), S("ab12345678901234567890cde"));
-    test(S("abcde"), 4, S(""), S("abcde"));
-    test(S("abcde"), 4, S("12345"), S("abcd12345e"));
-    test(S("abcde"), 4, S("1234567890"), S("abcd1234567890e"));
-    test(S("abcde"), 4, S("12345678901234567890"), S("abcd12345678901234567890e"));
-    test(S("abcde"), 5, S(""), S("abcde"));
-    test(S("abcde"), 5, S("12345"), S("abcde12345"));
-    test(S("abcde"), 5, S("1234567890"), S("abcde1234567890"));
-    test(S("abcde"), 5, S("12345678901234567890"), S("abcde12345678901234567890"));
-    test(S("abcde"), 6, S(""), S("can't happen"));
-    test(S("abcde"), 6, S("12345"), S("can't happen"));
-    test(S("abcde"), 6, S("1234567890"), S("can't happen"));
-    test(S("abcde"), 6, S("12345678901234567890"), S("can't happen"));
-    test(S("abcdefghij"), 0, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 0, S("12345"), S("12345abcdefghij"));
-    test(S("abcdefghij"), 0, S("1234567890"), S("1234567890abcdefghij"));
-    test(S("abcdefghij"), 0, S("12345678901234567890"), S("12345678901234567890abcdefghij"));
-    test(S("abcdefghij"), 1, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 1, S("12345"), S("a12345bcdefghij"));
-    test(S("abcdefghij"), 1, S("1234567890"), S("a1234567890bcdefghij"));
-    test(S("abcdefghij"), 1, S("12345678901234567890"), S("a12345678901234567890bcdefghij"));
-    test(S("abcdefghij"), 5, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 5, S("12345"), S("abcde12345fghij"));
-    test(S("abcdefghij"), 5, S("1234567890"), S("abcde1234567890fghij"));
-    test(S("abcdefghij"), 5, S("12345678901234567890"), S("abcde12345678901234567890fghij"));
-    test(S("abcdefghij"), 9, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 9, S("12345"), S("abcdefghi12345j"));
-    test(S("abcdefghij"), 9, S("1234567890"), S("abcdefghi1234567890j"));
-    test(S("abcdefghij"), 9, S("12345678901234567890"), S("abcdefghi12345678901234567890j"));
-    test(S("abcdefghij"), 10, S(""), S("abcdefghij"));
-    test(S("abcdefghij"), 10, S("12345"), S("abcdefghij12345"));
-    test(S("abcdefghij"), 10, S("1234567890"), S("abcdefghij1234567890"));
-    test(S("abcdefghij"), 10, S("12345678901234567890"), S("abcdefghij12345678901234567890"));
-    test(S("abcdefghij"), 11, S(""), S("can't happen"));
-    test(S("abcdefghij"), 11, S("12345"), S("can't happen"));
-    test(S("abcdefghij"), 11, S("1234567890"), S("can't happen"));
-    test(S("abcdefghij"), 11, S("12345678901234567890"), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 0, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 0, S("12345"), S("12345abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 0, S("1234567890"), S("1234567890abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 0, S("12345678901234567890"), S("12345678901234567890abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S("12345"), S("a12345bcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S("1234567890"), S("a1234567890bcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 1, S("12345678901234567890"), S("a12345678901234567890bcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S("12345"), S("abcdefghij12345klmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S("1234567890"), S("abcdefghij1234567890klmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 10, S("12345678901234567890"), S("abcdefghij12345678901234567890klmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 19, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 19, S("12345"), S("abcdefghijklmnopqrs12345t"));
-    test(S("abcdefghijklmnopqrst"), 19, S("1234567890"), S("abcdefghijklmnopqrs1234567890t"));
-    test(S("abcdefghijklmnopqrst"), 19, S("12345678901234567890"), S("abcdefghijklmnopqrs12345678901234567890t"));
-    test(S("abcdefghijklmnopqrst"), 20, S(""), S("abcdefghijklmnopqrst"));
-    test(S("abcdefghijklmnopqrst"), 20, S("12345"), S("abcdefghijklmnopqrst12345"));
-    test(S("abcdefghijklmnopqrst"), 20, S("1234567890"), S("abcdefghijklmnopqrst1234567890"));
-    test(S("abcdefghijklmnopqrst"), 20, S("12345678901234567890"), S("abcdefghijklmnopqrst12345678901234567890"));
-    test(S("abcdefghijklmnopqrst"), 21, S(""), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 21, S("12345"), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 21, S("1234567890"), S("can't happen"));
-    test(S("abcdefghijklmnopqrst"), 21, S("12345678901234567890"), S("can't happen"));
-    }
-#endif
+	START();
 
-#if TEST_STD_VER > 3
-    {   // LWG 2946
-    std::string s;
-    s.insert(0, {"abc", 1});
-    assert(s.size() == 1);
-    assert(s == "a");
-    }
-#endif
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+	{
+		auto &s_arr = r->s_arr;
+
+		try {
+			nvobj::transaction::run(pop, [&] {
+				s_arr[0] = nvobj::make_persistent<C>("");
+				s_arr[1] = nvobj::make_persistent<C>("12345");
+				s_arr[2] =
+					nvobj::make_persistent<C>("1234567890");
+				s_arr[3] = nvobj::make_persistent<C>(
+					"12345678901234567890");
+				s_arr[4] = nvobj::make_persistent<C>(
+					"12345678901234567890abcde");
+				s_arr[5] = nvobj::make_persistent<C>(
+					"12345678901234567890abcdefghij");
+				s_arr[6] = nvobj::make_persistent<C>(
+					"12345678901234567890abcdefghijklmnopqrst");
+				s_arr[7] = nvobj::make_persistent<C>(
+					"1234567890abcde");
+				s_arr[8] = nvobj::make_persistent<C>(
+					"1234567890abcdefghij");
+				s_arr[9] = nvobj::make_persistent<C>(
+					"1234567890abcdefghijklmnopqrst");
+				s_arr[10] =
+					nvobj::make_persistent<C>("12345abcde");
+				s_arr[11] = nvobj::make_persistent<C>(
+					"12345abcdefghij");
+				s_arr[12] = nvobj::make_persistent<C>(
+					"12345abcdefghijklmnopqrst");
+				s_arr[13] = nvobj::make_persistent<C>(
+					"a12345678901234567890bcde");
+				s_arr[14] = nvobj::make_persistent<C>(
+					"a12345678901234567890bcdefghij");
+				s_arr[15] = nvobj::make_persistent<C>(
+					"a12345678901234567890bcdefghijklmnopqrst");
+				s_arr[16] = nvobj::make_persistent<C>(
+					"a1234567890bcde");
+				s_arr[17] = nvobj::make_persistent<C>(
+					"a1234567890bcdefghij");
+				s_arr[18] = nvobj::make_persistent<C>(
+					"a1234567890bcdefghijklmnopqrst");
+				s_arr[19] =
+					nvobj::make_persistent<C>("a12345bcde");
+				s_arr[20] = nvobj::make_persistent<C>(
+					"a12345bcdefghij");
+				s_arr[21] = nvobj::make_persistent<C>(
+					"a12345bcdefghijklmnopqrst");
+				s_arr[22] = nvobj::make_persistent<C>(
+					"ab12345678901234567890cde");
+				s_arr[23] = nvobj::make_persistent<C>(
+					"ab1234567890cde");
+				s_arr[24] =
+					nvobj::make_persistent<C>("ab12345cde");
+				s_arr[25] = nvobj::make_persistent<C>(
+					"abcd12345678901234567890e");
+				s_arr[26] = nvobj::make_persistent<C>(
+					"abcd1234567890e");
+				s_arr[27] =
+					nvobj::make_persistent<C>("abcd12345e");
+				s_arr[28] = nvobj::make_persistent<C>("abcde");
+				s_arr[29] =
+					nvobj::make_persistent<C>("abcde12345");
+				s_arr[30] = nvobj::make_persistent<C>(
+					"abcde1234567890");
+				s_arr[31] = nvobj::make_persistent<C>(
+					"abcde12345678901234567890");
+				s_arr[32] = nvobj::make_persistent<C>(
+					"abcde12345678901234567890fghij");
+				s_arr[33] = nvobj::make_persistent<C>(
+					"abcde1234567890fghij");
+				s_arr[34] = nvobj::make_persistent<C>(
+					"abcde12345fghij");
+				s_arr[35] = nvobj::make_persistent<C>(
+					"abcdefghi12345678901234567890j");
+				s_arr[36] = nvobj::make_persistent<C>(
+					"abcdefghi1234567890j");
+				s_arr[37] = nvobj::make_persistent<C>(
+					"abcdefghi12345j");
+				s_arr[38] =
+					nvobj::make_persistent<C>("abcdefghij");
+				s_arr[39] = nvobj::make_persistent<C>(
+					"abcdefghij12345");
+				s_arr[40] = nvobj::make_persistent<C>(
+					"abcdefghij1234567890");
+				s_arr[41] = nvobj::make_persistent<C>(
+					"abcdefghij12345678901234567890");
+				s_arr[42] = nvobj::make_persistent<C>(
+					"abcdefghij12345678901234567890klmnopqrst");
+				s_arr[43] = nvobj::make_persistent<C>(
+					"abcdefghij1234567890klmnopqrst");
+				s_arr[44] = nvobj::make_persistent<C>(
+					"abcdefghij12345klmnopqrst");
+				s_arr[45] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrs12345678901234567890t");
+				s_arr[46] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrs1234567890t");
+				s_arr[47] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrs12345t");
+				s_arr[48] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrst");
+				s_arr[49] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrst12345");
+				s_arr[50] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrst1234567890");
+				s_arr[51] = nvobj::make_persistent<C>(
+					"abcdefghijklmnopqrst12345678901234567890");
+				s_arr[52] = nvobj::make_persistent<C>(
+					"can't happen");
+			});
+
+			test(pop, *s_arr[0], 0, *s_arr[0], *s_arr[0]);
+			test(pop, *s_arr[0], 0, *s_arr[1], *s_arr[1]);
+			test(pop, *s_arr[0], 0, *s_arr[2], *s_arr[2]);
+			test(pop, *s_arr[0], 0, *s_arr[3], *s_arr[3]);
+			test(pop, *s_arr[0], 1, *s_arr[0], *s_arr[52]);
+			test(pop, *s_arr[0], 1, *s_arr[1], *s_arr[52]);
+			test(pop, *s_arr[0], 1, *s_arr[2], *s_arr[52]);
+			test(pop, *s_arr[0], 1, *s_arr[3], *s_arr[52]);
+			test(pop, *s_arr[28], 0, *s_arr[0], *s_arr[28]);
+			test(pop, *s_arr[28], 0, *s_arr[1], *s_arr[10]);
+			test(pop, *s_arr[28], 0, *s_arr[2], *s_arr[7]);
+			test(pop, *s_arr[28], 0, *s_arr[3], *s_arr[4]);
+			test(pop, *s_arr[28], 1, *s_arr[0], *s_arr[28]);
+			test(pop, *s_arr[28], 1, *s_arr[1], *s_arr[19]);
+			test(pop, *s_arr[28], 1, *s_arr[2], *s_arr[16]);
+			test(pop, *s_arr[28], 1, *s_arr[3], *s_arr[13]);
+			test(pop, *s_arr[28], 2, *s_arr[0], *s_arr[28]);
+			test(pop, *s_arr[28], 2, *s_arr[1], *s_arr[24]);
+			test(pop, *s_arr[28], 2, *s_arr[2], *s_arr[23]);
+			test(pop, *s_arr[28], 2, *s_arr[3], *s_arr[22]);
+			test(pop, *s_arr[28], 4, *s_arr[0], *s_arr[28]);
+			test(pop, *s_arr[28], 4, *s_arr[1], *s_arr[27]);
+			test(pop, *s_arr[28], 4, *s_arr[2], *s_arr[26]);
+			test(pop, *s_arr[28], 4, *s_arr[3], *s_arr[25]);
+			test(pop, *s_arr[28], 5, *s_arr[0], *s_arr[28]);
+			test(pop, *s_arr[28], 5, *s_arr[1], *s_arr[29]);
+			test(pop, *s_arr[28], 5, *s_arr[2], *s_arr[30]);
+			test(pop, *s_arr[28], 5, *s_arr[3], *s_arr[31]);
+			test(pop, *s_arr[28], 6, *s_arr[0], *s_arr[52]);
+			test(pop, *s_arr[28], 6, *s_arr[1], *s_arr[52]);
+			test(pop, *s_arr[28], 6, *s_arr[2], *s_arr[52]);
+			test(pop, *s_arr[28], 6, *s_arr[3], *s_arr[52]);
+			test(pop, *s_arr[38], 0, *s_arr[0], *s_arr[38]);
+			test(pop, *s_arr[38], 0, *s_arr[1], *s_arr[11]);
+			test(pop, *s_arr[38], 0, *s_arr[2], *s_arr[8]);
+			test(pop, *s_arr[38], 0, *s_arr[3], *s_arr[5]);
+			test(pop, *s_arr[38], 1, *s_arr[0], *s_arr[38]);
+			test(pop, *s_arr[38], 1, *s_arr[1], *s_arr[20]);
+			test(pop, *s_arr[38], 1, *s_arr[2], *s_arr[17]);
+			test(pop, *s_arr[38], 1, *s_arr[3], *s_arr[14]);
+			test(pop, *s_arr[38], 5, *s_arr[0], *s_arr[38]);
+			test(pop, *s_arr[38], 5, *s_arr[1], *s_arr[34]);
+			test(pop, *s_arr[38], 5, *s_arr[2], *s_arr[33]);
+			test(pop, *s_arr[38], 5, *s_arr[3], *s_arr[32]);
+			test(pop, *s_arr[38], 9, *s_arr[0], *s_arr[38]);
+			test(pop, *s_arr[38], 9, *s_arr[1], *s_arr[37]);
+			test(pop, *s_arr[38], 9, *s_arr[2], *s_arr[36]);
+			test(pop, *s_arr[38], 9, *s_arr[3], *s_arr[35]);
+			test(pop, *s_arr[38], 10, *s_arr[0], *s_arr[38]);
+			test(pop, *s_arr[38], 10, *s_arr[1], *s_arr[39]);
+			test(pop, *s_arr[38], 10, *s_arr[2], *s_arr[40]);
+			test(pop, *s_arr[38], 10, *s_arr[3], *s_arr[41]);
+			test(pop, *s_arr[38], 11, *s_arr[0], *s_arr[52]);
+			test(pop, *s_arr[38], 11, *s_arr[1], *s_arr[52]);
+			test(pop, *s_arr[38], 11, *s_arr[2], *s_arr[52]);
+			test(pop, *s_arr[38], 11, *s_arr[3], *s_arr[52]);
+			test(pop, *s_arr[48], 0, *s_arr[0], *s_arr[48]);
+			test(pop, *s_arr[48], 0, *s_arr[1], *s_arr[12]);
+			test(pop, *s_arr[48], 0, *s_arr[2], *s_arr[9]);
+			test(pop, *s_arr[48], 0, *s_arr[3], *s_arr[6]);
+			test(pop, *s_arr[48], 1, *s_arr[0], *s_arr[48]);
+			test(pop, *s_arr[48], 1, *s_arr[1], *s_arr[21]);
+			test(pop, *s_arr[48], 1, *s_arr[2], *s_arr[18]);
+			test(pop, *s_arr[48], 1, *s_arr[3], *s_arr[15]);
+			test(pop, *s_arr[48], 10, *s_arr[0], *s_arr[48]);
+			test(pop, *s_arr[48], 10, *s_arr[1], *s_arr[44]);
+			test(pop, *s_arr[48], 10, *s_arr[2], *s_arr[43]);
+			test(pop, *s_arr[48], 10, *s_arr[3], *s_arr[42]);
+			test(pop, *s_arr[48], 19, *s_arr[0], *s_arr[48]);
+			test(pop, *s_arr[48], 19, *s_arr[1], *s_arr[47]);
+			test(pop, *s_arr[48], 19, *s_arr[2], *s_arr[46]);
+			test(pop, *s_arr[48], 19, *s_arr[3], *s_arr[45]);
+			test(pop, *s_arr[48], 20, *s_arr[0], *s_arr[48]);
+			test(pop, *s_arr[48], 20, *s_arr[1], *s_arr[49]);
+			test(pop, *s_arr[48], 20, *s_arr[2], *s_arr[50]);
+			test(pop, *s_arr[48], 20, *s_arr[3], *s_arr[51]);
+			test(pop, *s_arr[48], 21, *s_arr[0], *s_arr[52]);
+			test(pop, *s_arr[48], 21, *s_arr[1], *s_arr[52]);
+			test(pop, *s_arr[48], 21, *s_arr[2], *s_arr[52]);
+			test(pop, *s_arr[48], 21, *s_arr[3], *s_arr[52]);
+
+			nvobj::transaction::run(pop, [&] {
+				for (unsigned i = 0; i < 53; ++i) {
+					nvobj::delete_persistent<C>(s_arr[i]);
+				}
+			});
+
+		} catch (std::exception &e) {
+			UT_FATALexc(e);
+		}
+	}
+
+	pop.close();
+
+	return 0;
 }

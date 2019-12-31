@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ mkdir build
 cd build
 
 cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ..
-make doc
+make -j$(nproc) doc
 cp -R doc/cpp_html ../..
 
 cd ..

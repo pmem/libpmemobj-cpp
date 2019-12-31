@@ -12,17 +12,17 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/life.hpp>
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using vector_type = pmem_exp::vector<int>;
+using vector_type = container_t<int>;
 
 struct foo {
 	vector_type v_1;
@@ -37,7 +37,7 @@ struct root {
 };
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::vector default constructor.
  *
  * First case: call default constructor in three different ways and check if
  * new container is empty. Expect no exception is thrown.
@@ -73,8 +73,8 @@ main(int argc, char *argv[])
 	}
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: construct_default.pass", PMEMOBJ_MIN_POOL,
-		S_IWUSR | S_IRUSR);
+		path, "VectorTest: construct_default.pass",
+		PMEMOBJ_MIN_POOL * 2, S_IWUSR | S_IRUSR);
 	test_default_ctor(pop);
 
 	pop.close();

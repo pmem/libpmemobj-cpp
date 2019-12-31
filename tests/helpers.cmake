@@ -140,6 +140,9 @@ function(execute_common expect_success output_file name)
     elseif(${TRACER} STREQUAL drd)
         set(TRACE valgrind --error-exitcode=99 --tool=drd)
         set(ENV{LIBPMEMOBJ_CPP_TRACER_DRD} 1)
+    elseif(${TRACER} STREQUAL gdb)
+        set(TRACE gdb --batch --command=${GDB_BATCH_FILE} --args)
+        set(ENV{LIBPMEMOBJ_CPP_TRACER_GDB} 1)
     elseif(${TRACER} MATCHES "none.*")
         # nothing
     else()
@@ -188,6 +191,8 @@ function(execute_common expect_success output_file name)
             ERROR_FILE ${BIN_DIR}/${TEST_NAME}.err)
     endif()
 
+    print_logs()
+
     # memcheck and pmemcheck match files should follow name pattern:
     # testname_testcasenr_memcheck/pmemcheck.err.match
     # If they do exist, ignore test result - it will be verified during
@@ -211,12 +216,10 @@ function(execute_common expect_success output_file name)
         endif()
 
         if(res AND expect_success)
-            print_logs()
             message(FATAL_ERROR "${TRACE} ${name} ${ARGN} failed: ${res}")
         endif()
 
         if(NOT res AND NOT expect_success)
-            print_logs()
             message(FATAL_ERROR "${TRACE} ${name} ${ARGN} unexpectedly succeeded: ${res}")
         endif()
     endif()
@@ -229,6 +232,8 @@ function(execute_common expect_success output_file name)
         unset(ENV{LIBPMEMOBJ_CPP_TRACER_HELGRIND})
     elseif(${TRACER} STREQUAL drd)
         unset(ENV{LIBPMEMOBJ_CPP_TRACER_DRD})
+    elseif(${TRACER} STREQUAL gdb)
+        unset(ENV{LIBPMEMOBJ_CPP_TRACER_GDB})
     endif()
 
     if(TESTS_USE_FORCED_PMEM)
@@ -322,7 +327,7 @@ function(pmreorder_execute expect_success engine conf_file name)
         message(FATAL_ERROR "Pmreorder test must be run without any tracer.")
     endif()
 
-    set(ENV{PMEMOBJ_COW} 1)
+    set(ENV{PMEMOBJ_CONF} "copy_on_write.at_open=1")
 
     set(cmd pmreorder -l ${BIN_DIR}/${TEST_NAME}.storelog
                     -o ${BIN_DIR}/${TEST_NAME}.pmreorder
@@ -332,5 +337,35 @@ function(pmreorder_execute expect_success engine conf_file name)
 
     execute_common(${expect_success} ${TRACER}_${TESTCASE} ${cmd})
 
-    unset(ENV{PMEMOBJ_COW})
+    unset(ENV{PMEMOBJ_CONF})
+endfunction()
+
+# Executes test command ${name} under GDB.
+# First argument of the command is a gdb batch file.
+# Second argument of the command is the test command.
+# Optional function arguments are passed as consecutive arguments to
+# the command.
+function(crash_with_gdb gdb_batch_file name)
+    check_target(${name})
+
+    set(PREV_TRACER ${TRACER})
+    set(TRACER gdb)
+    set(GDB_BATCH_FILE ${gdb_batch_file})
+
+    execute_common(true ${TRACER}_${TESTCASE} ${name} ${ARGN})
+
+    set(TRACER ${PREV_TRACER})
+endfunction()
+
+# Checks whether specified filename is located on persistent memory and emits
+# FATAL_ERROR in case it's not.
+function(check_is_pmem filename)
+    execute_process(COMMAND ${BIN_DIR}/../check_is_pmem ${filename} RESULT_VARIABLE is_pmem)
+
+    if (${is_pmem} EQUAL 2)
+        message(FATAL_ERROR "check_is_pmem failed.")
+    elseif ((${is_pmem} EQUAL 1) AND (NOT TESTS_USE_FORCED_PMEM))
+        # Return value 1 means that path points to non-pmem
+        message(FATAL_ERROR "${TEST_NAME} can only be run on PMEM.")
+    endif()
 endfunction()

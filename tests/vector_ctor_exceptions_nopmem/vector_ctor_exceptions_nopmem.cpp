@@ -30,24 +30,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using vector_type = pmem_exp::vector<int>;
+
+using vector_type = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr;
 };
 
 /**
- * Test pmem::obj::experimental::vector default constructor.
+ * Test pmem::obj::vector default constructor.
  *
  * Call default constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_default_ctor()
@@ -66,10 +66,10 @@ test_default_ctor()
 }
 
 /**
- * Test pmem::obj::experimental::vector range constructor.
+ * Test pmem::obj::vector range constructor.
  *
  * Call range constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_iter_iter_ctor()
@@ -90,11 +90,11 @@ test_iter_iter_ctor()
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * default values.
  *
  * Call fill constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_size_ctor()
@@ -113,11 +113,11 @@ test_size_ctor()
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * custom values.
  *
  * Call fill constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_size_value_ctor()
@@ -136,10 +136,10 @@ test_size_value_ctor()
 }
 
 /**
- * Test pmem::obj::experimental::vector copy constructor
+ * Test pmem::obj::vector copy constructor
  *
  * Call copy constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_copy_ctor(nvobj::pool<struct root> &pop)
@@ -176,10 +176,10 @@ test_copy_ctor(nvobj::pool<struct root> &pop)
 }
 
 /**
- * Test pmem::obj::experimental::vector initializer list constructor
+ * Test pmem::obj::vector initializer list constructor
  *
  * Call initializer list constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_initializer_list_ctor()
@@ -198,10 +198,10 @@ test_initializer_list_ctor()
 }
 
 /**
- * Test pmem::obj::experimental::vector move constructor
+ * Test pmem::obj::vector move constructor
  *
  * Call move constructor for volatile instance of
- * pmem::obj::experimental::vector. Expect pmem::pool_error exception is thrown.
+ * pmem::obj::vector. Expect pmem::pool_error exception is thrown.
  */
 void
 test_move_ctor(nvobj::pool<struct root> &pop)
@@ -248,9 +248,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: ctor_nopmem",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(path, "VectorTest: ctor_nopmem",
+					     PMEMOBJ_MIN_POOL * 2,
+					     S_IWUSR | S_IRUSR);
 
 	test_copy_ctor(pop);
 	test_default_ctor();

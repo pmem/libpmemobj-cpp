@@ -30,28 +30,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <iterator>
 #include <vector>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 const static size_t pool_size = 2 * PMEMOBJ_MIN_POOL;
 const static size_t test_val = pool_size * 2;
 
-using vector_type = pmem_exp::vector<int>;
+using vector_type = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr;
 };
 
 /**
- * Test pmem::obj::experimental::vector range constructor.
+ * Test pmem::obj::vector range constructor.
  *
  * Call range constructor to exceed available memory of the pool. Expect
  * pmem:transaction_alloc_error exception is thrown.
@@ -80,7 +79,7 @@ test_iter_iter_ctor(nvobj::pool<struct root> &pop,
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * default values.
  *
  * Call fill constructor to exceed available memory of the pool. Expect
@@ -104,10 +103,25 @@ test_size_ctor(nvobj::pool<struct root> &pop,
 	}
 
 	UT_ASSERT(exception_thrown);
+
+	exception_thrown = false;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pptr = nvobj::make_persistent<vector_type>(test_val);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_out_of_memory &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(exception_thrown);
 }
 
 /**
- * Test pmem::obj::experimental::vector fill constructor with elements with
+ * Test pmem::obj::vector fill constructor with elements with
  * custom values.
  *
  * Call fill constructor to exceed available memory of the pool.

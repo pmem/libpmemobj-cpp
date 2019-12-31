@@ -96,14 +96,18 @@ function(add_cppstyle name)
 	endif()
 
 	if(${ARGC} EQUAL 1)
-		add_custom_target(cppstyle-${name}
+		add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/cppstyle-${name}-status
+			DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+				${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 			COMMAND ${PERL_EXECUTABLE}
 				${CMAKE_SOURCE_DIR}/utils/cppstyle
 				${CLANG_FORMAT}
 				check
 				${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 				${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
+			COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/cppstyle-${name}-status
 			)
+
 		add_custom_target(cppformat-${name}
 			COMMAND ${PERL_EXECUTABLE}
 				${CMAKE_SOURCE_DIR}/utils/cppstyle
@@ -113,13 +117,16 @@ function(add_cppstyle name)
 				${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 			)
 	else()
-		add_custom_target(cppstyle-${name}
+		add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/cppstyle-${name}-status
+			DEPENDS ${ARGN}
 			COMMAND ${PERL_EXECUTABLE}
 				${CMAKE_SOURCE_DIR}/utils/cppstyle
 				${CLANG_FORMAT}
 				check
 				${ARGN}
+			COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/cppstyle-${name}-status
 			)
+
 		add_custom_target(cppformat-${name}
 			COMMAND ${PERL_EXECUTABLE}
 				${CMAKE_SOURCE_DIR}/utils/cppstyle
@@ -129,6 +136,9 @@ function(add_cppstyle name)
 			)
 	endif()
 
+	add_custom_target(cppstyle-${name}
+			DEPENDS ${CMAKE_BINARY_DIR}/cppstyle-${name}-status)
+
 	add_dependencies(cppstyle cppstyle-${name})
 	add_dependencies(cppformat cppformat-${name})
 endfunction()
@@ -137,10 +147,14 @@ endfunction()
 # of global "check-whitespace" target.
 # ${name} must be unique.
 function(add_check_whitespace name)
-	add_custom_target(check-whitespace-${name}
+	add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/check-whitespace-${name}-status
+		DEPENDS ${ARGN}
 		COMMAND ${PERL_EXECUTABLE}
-			${CMAKE_SOURCE_DIR}/utils/check_whitespace ${ARGN})
+			${CMAKE_SOURCE_DIR}/utils/check_whitespace ${ARGN}
+		COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/check-whitespace-${name}-status)
 
+	add_custom_target(check-whitespace-${name}
+			DEPENDS ${CMAKE_BINARY_DIR}/check-whitespace-${name}-status)
 	add_dependencies(check-whitespace check-whitespace-${name})
 endfunction()
 

@@ -30,21 +30,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
-using C = pmem_exp::vector<int>;
+
+using C = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
 };
 
 /**
- * Test pmem::obj::experimental::vector capacity methods
+ * Test pmem::obj::vector capacity methods
  *
  * Checks if vector's state is reverted when transaction aborts.
  * Methods under test:
@@ -56,7 +56,7 @@ test(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
 
-	UT_ASSERT(r->v->capacity() == 100);
+	UT_ASSERT(r->v->capacity() == expected_capacity(100U));
 
 	bool exception_thrown = false;
 
@@ -64,7 +64,7 @@ test(nvobj::pool<struct root> &pop)
 	try {
 		nvobj::transaction::run(pop, [&] {
 			r->v->reserve(150);
-			UT_ASSERT(r->v->capacity() == 150);
+			UT_ASSERT(r->v->capacity() == expected_capacity(150U));
 			nvobj::transaction::abort(EINVAL);
 		});
 	} catch (pmem::manual_tx_abort &) {
@@ -73,7 +73,7 @@ test(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 
-	UT_ASSERT(r->v->capacity() == 100);
+	UT_ASSERT(r->v->capacity() == expected_capacity(100U));
 	UT_ASSERT(r->v->size() == 100);
 	for (unsigned i = 0; i < r->v->size(); ++i)
 		UT_ASSERT(r->v->const_at(i) == 0);
@@ -82,11 +82,11 @@ test(nvobj::pool<struct root> &pop)
 	/* test shrink_to_fit() revert */
 	try {
 		r->v->reserve(150);
-		UT_ASSERT(r->v->capacity() == 150);
+		UT_ASSERT(r->v->capacity() == expected_capacity(150U));
 
 		nvobj::transaction::run(pop, [&] {
 			r->v->shrink_to_fit();
-			UT_ASSERT(r->v->capacity() == 100);
+			UT_ASSERT(r->v->capacity() == expected_capacity(100U));
 			nvobj::transaction::abort(EINVAL);
 		});
 	} catch (pmem::manual_tx_abort &) {
@@ -95,7 +95,7 @@ test(nvobj::pool<struct root> &pop)
 		UT_FATALexc(e);
 	}
 
-	UT_ASSERT(r->v->capacity() == 150);
+	UT_ASSERT(r->v->capacity() == expected_capacity(150U));
 	UT_ASSERT(r->v->size() == 100);
 	for (unsigned i = 0; i < r->v->size(); ++i)
 		UT_ASSERT(r->v->const_at(i) == 0);
@@ -113,9 +113,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: capacity_txabort",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(
+		path, "VectorTest: capacity_txabort", PMEMOBJ_MIN_POOL * 2,
+		S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

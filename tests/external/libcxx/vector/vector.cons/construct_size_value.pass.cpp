@@ -12,22 +12,22 @@
 // Modified to test pmem::obj containers
 //
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
-using vector_type = pmem_exp::vector<int>;
+using vector_type = container_t<int>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr;
 };
 
 /**
- * Test pmem::obj::experimental::vector fill constructor
+ * Test pmem::obj::vector fill constructor
  *
  * Constructs container with n copies of elements with custom value.
  * Validates container's size and its elements. Expects no exception is thrown.
@@ -75,7 +75,7 @@ main(int argc, char *argv[])
 
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "VectorTest: construct_size_value", PMEMOBJ_MIN_POOL,
+		path, "VectorTest: construct_size_value", PMEMOBJ_MIN_POOL * 2,
 		S_IWUSR | S_IRUSR);
 
 	test<vector_type>(pop, 5);

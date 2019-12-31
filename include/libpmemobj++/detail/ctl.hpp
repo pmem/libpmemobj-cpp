@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,13 +38,13 @@
 #ifndef LIBPMEMOBJ_CPP_CTL_HPP
 #define LIBPMEMOBJ_CPP_CTL_HPP
 
-#include <libpmemobj.h>
+#include <libpmemobj/ctl.h>
 #include <string>
 
 #include <cerrno>
 #include <cstring>
 
-#include <libpmemobj++/detail/pexceptions.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 
 namespace pmem
 {
@@ -64,7 +64,7 @@ ctl_get_detail(PMEMobjpool *pool, const std::string &name)
 	int ret = pmemobj_ctl_get(pool, name.c_str(), &tmp);
 #endif
 	if (ret)
-		throw ctl_error(strerror(errno));
+		throw pmem::ctl_error("ctl_get failed").with_pmemobj_errormsg();
 
 	return tmp;
 }
@@ -79,7 +79,7 @@ ctl_set_detail(PMEMobjpool *pool, const std::string &name, T arg)
 	int ret = pmemobj_ctl_set(pool, name.c_str(), &arg);
 #endif
 	if (ret)
-		throw ctl_error(strerror(errno));
+		throw pmem::ctl_error("ctl_set failed").with_pmemobj_errormsg();
 
 	return arg;
 }
@@ -94,7 +94,8 @@ ctl_exec_detail(PMEMobjpool *pool, const std::string &name, T arg)
 	int ret = pmemobj_ctl_exec(pool, name.c_str(), &arg);
 #endif
 	if (ret)
-		throw ctl_error(strerror(errno));
+		throw pmem::ctl_error("ctl_exec failed")
+			.with_pmemobj_errormsg();
 
 	return arg;
 }
@@ -108,7 +109,7 @@ ctl_get_detail(PMEMobjpool *pool, const std::wstring &name)
 
 	int ret = pmemobj_ctl_getW(pool, name.c_str(), &tmp);
 	if (ret)
-		throw ctl_error(strerror(errno));
+		throw pmem::ctl_error("ctl_get failed").with_pmemobj_errormsg();
 
 	return tmp;
 }
@@ -119,7 +120,7 @@ ctl_set_detail(PMEMobjpool *pool, const std::wstring &name, T arg)
 {
 	int ret = pmemobj_ctl_setW(pool, name.c_str(), &arg);
 	if (ret)
-		throw ctl_error(strerror(errno));
+		throw pmem::ctl_error("ctl_set failed").with_pmemobj_errormsg();
 
 	return arg;
 }
@@ -130,7 +131,8 @@ ctl_exec_detail(PMEMobjpool *pool, const std::wstring &name, T arg)
 {
 	int ret = pmemobj_ctl_execW(pool, name.c_str(), &arg);
 	if (ret)
-		throw ctl_error(strerror(errno));
+		throw pmem::ctl_error("ctl_exec failed")
+			.with_pmemobj_errormsg();
 
 	return arg;
 }

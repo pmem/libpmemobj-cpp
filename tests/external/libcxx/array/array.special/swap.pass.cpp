@@ -7,20 +7,18 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
-
-namespace pmem_exp = pmem::obj::experimental;
 
 struct NonSwappable {
 	NonSwappable()
@@ -32,7 +30,7 @@ private:
 	NonSwappable &operator=(NonSwappable const &);
 };
 
-using pmem_exp::swap;
+using pmem::obj::swap;
 
 template <class Tp>
 decltype(swap(std::declval<Tp>(), std::declval<Tp>())) can_swap_imp(int);
@@ -46,7 +44,7 @@ struct can_swap : std::is_same<decltype(can_swap_imp<Tp>(0)), void> {
 
 struct Testcase1 {
 	typedef double T;
-	typedef pmem_exp::array<T, 3> C;
+	typedef pmem::obj::array<T, 3> C;
 	C c1 = {{1, 2, 3.5}};
 	C c2 = {{4, 5, 6.5}};
 
@@ -67,7 +65,7 @@ struct Testcase1 {
 
 struct Testcase2 {
 	typedef double T;
-	typedef pmem_exp::array<T, 0> C;
+	typedef pmem::obj::array<T, 0> C;
 	C c1 = {{}};
 	C c2 = {{}};
 
@@ -82,7 +80,7 @@ struct Testcase2 {
 
 struct Testcase3 {
 	typedef NonSwappable T;
-	typedef pmem_exp::array<T, 0> C0;
+	typedef pmem::obj::array<T, 0> C0;
 	static_assert(can_swap<C0 &>::value, "");
 	C0 l = {{}};
 	C0 r = {{}};

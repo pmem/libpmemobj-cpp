@@ -7,18 +7,16 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018, Intel Corporation
+// Copyright 2018-2019, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
+#include <libpmemobj++/container/array.hpp>
 
-namespace pmem_exp = pmem::obj::experimental;
-
-using pmem_exp::swap;
+using pmem::obj::swap;
 
 int
 main()
@@ -28,7 +26,7 @@ main()
 	{
 
 		typedef double T;
-		typedef pmem_exp::array<const T, 0> C;
+		typedef pmem::obj::array<const T, 0> C;
 		C c = {{}};
 		C c2 = {{}};
 		// expected-error-re@array:* {{static_assert failed

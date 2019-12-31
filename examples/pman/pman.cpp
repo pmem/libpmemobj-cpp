@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -227,7 +227,7 @@ private:
 	void set_bonus(field f);
 	void set_board(const std::string &map_file);
 	int find_wall(int x, int y, direction dir);
-	p<unsigned> life;	      /* number of lives left for player */
+	p<unsigned> life;	       /* number of lives left for player */
 	persistent_ptr<field[]> board; /* current state of board */
 	persistent_ptr<field[]> board_tmpl; /* board template loaded from file*/
 };
@@ -940,7 +940,7 @@ state::print_game_over()
 	mvprintw(y + 13, x, "       Your final score is %u         ",
 		 (unsigned)board->score);
 	if (board->score == highscore)
-		mvprintw(y + 14, x, "       YOU BET YOUR BEST SCORE!       ");
+		mvprintw(y + 14, x, "    YOU'VE BEATEN YOUR BEST SCORE!    ");
 	mvprintw(y + 16, x, "          Press 'q' to quit           ");
 	mvprintw(y + 17, x, "         Press 'r' to resume          ");
 }

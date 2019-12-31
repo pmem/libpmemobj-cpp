@@ -59,8 +59,6 @@ if [[ -z "$HOST_WORKDIR" ]]; then
 	HOST_WORKDIR=$(readlink -f ../..)
 fi
 
-chmod -R a+w $HOST_WORKDIR
-
 if [[ "$TRAVIS_EVENT_TYPE" == "cron" || "$TRAVIS_BRANCH" == "coverity_scan" ]]; then
 	if [[ "$TYPE" != "coverity" ]]; then
 		echo "Skipping non-Coverity job for cron/Coverity build"
@@ -78,12 +76,32 @@ containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
 if [[ "$command" == "" ]]; then
 	case $TYPE in
-		normal)
-			command="./run-build.sh";
-			;;
-		coverity)
-			command="./run-coverity.sh";
-			;;
+	debug|coverage)
+		[ "$TYPE" == "coverage" ] && COVERAGE=1
+		builds=(tests_gcc_debug_no_valgrind
+				tests_clang_debug_cpp17_no_valgrind)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	release)
+		builds=(tests_gcc_release_cpp17_no_valgrind)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	valgrind)
+		builds=(tests_gcc_debug_valgrind_other)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	memcheck_drd)
+		builds=(tests_gcc_debug_valgrind_memcheck_drd)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	package)
+		builds=(tests_package
+			tests_findLIBPMEMOBJ_cmake)
+		command="./run-build.sh ${builds[@]}";
+		;;
+	coverity)
+		command="./run-coverity.sh";
+		;;
 	esac
 fi
 
@@ -101,13 +119,19 @@ fi
 WORKDIR=/libpmemobj-cpp
 SCRIPTSDIR=$WORKDIR/utils/docker
 
+# check if we are running on a CI (Travis or GitHub Actions)
+[ -n "$GITHUB_ACTIONS" -o -n "$TRAVIS" ] && CI_RUN="YES" || CI_RUN="NO"
+
+# do not allocate a pseudo-TTY if we are running on GitHub Actions
+[ ! $GITHUB_ACTIONS ] && TTY='-t' || TTY=''
+
 echo Building ${OS}-${OS_VER}
 
 # Run a container with
 #  - environment variables set (--env)
 #  - host directory containing source mounted (-v)
 #  - working directory set (-w)
-docker run --privileged=true --name=$containerName -ti \
+docker run --privileged=true --name=$containerName -i $TTY \
 	$DNS_SETTING \
 	${docker_opts} \
 	--env http_proxy=$http_proxy \
@@ -122,7 +146,9 @@ docker run --privileged=true --name=$containerName -ti \
 	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
 	--env COVERAGE=$COVERAGE \
-	--env CLANG_FORMAT=clang-format-3.8 \
+	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON} \
+	--env TESTS_LONG=${TESTS_LONG:-OFF} \
+	--env CI_RUN=$CI_RUN \
 	--env TZ='Europe/Warsaw' \
 	-v $HOST_WORKDIR:$WORKDIR \
 	-v /etc/localtime:/etc/localtime \

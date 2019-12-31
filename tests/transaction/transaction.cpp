@@ -72,7 +72,7 @@ uncaught_exceptions() noexcept
 #include <libpmemobj++/transaction.hpp>
 
 #define LAYOUT "cpp"
-#define POOL_SZIE PMEMOBJ_MIN_POOL
+#define POOL_SIZE 2 * PMEMOBJ_MIN_POOL
 
 namespace nvobj = pmem::obj;
 
@@ -808,6 +808,8 @@ test_tx_snapshot(nvobj::pool<root> &pop)
 	try {
 		nvobj::transaction::snapshot<char>(parr.get(), 5);
 		UT_ASSERT(0);
+	} catch (std::bad_alloc &) {
+		UT_ASSERT(0);
 	} catch (pmem::transaction_error &) {
 		exception_thrown = true;
 	} catch (...) {
@@ -819,10 +821,85 @@ test_tx_snapshot(nvobj::pool<root> &pop)
 	try {
 		nvobj::transaction::run(pop, [&] {
 			nvobj::transaction::snapshot<char>(parr.get(),
-							   POOL_SZIE);
+							   POOL_SIZE);
 		});
 		UT_ASSERT(0);
-	} catch (pmem::transaction_error &) {
+	} catch (pmem::transaction_error &e) {
+		(void)e.what();
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+
+	nvobj::persistent_ptr<char[]> p1;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			p1 = nvobj::make_persistent<char[]>(POOL_SIZE / 2);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	/* OOM handling */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::transaction::snapshot<char>(p1.get(),
+							   POOL_SIZE / 2);
+		});
+		UT_ASSERT(0);
+	} catch (std::bad_alloc &e) {
+		(void)e.what();
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+
+	/* OOM handling */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::transaction::snapshot<char>(p1.get(),
+							   POOL_SIZE / 2);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &e) {
+		(void)e.what();
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+
+	/* OOM handling */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pmem::detail::conditional_add_to_tx<char>(
+				p1.get(), POOL_SIZE / 2);
+		});
+		UT_ASSERT(0);
+	} catch (pmem::transaction_alloc_error &e) {
+		(void)e.what();
+		exception_thrown = true;
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(exception_thrown);
+
+	/* OOM handling */
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			pmem::detail::conditional_add_to_tx<char>(
+				p1.get(), POOL_SIZE / 2);
+		});
+		UT_ASSERT(0);
+	} catch (std::bad_alloc &e) {
+		(void)e.what();
 		exception_thrown = true;
 	} catch (...) {
 		UT_ASSERT(0);
@@ -868,7 +945,7 @@ main(int argc, char *argv[])
 
 	nvobj::pool<root> pop;
 	try {
-		pop = nvobj::pool<root>::create(path, LAYOUT, POOL_SZIE,
+		pop = nvobj::pool<root>::create(path, LAYOUT, POOL_SIZE,
 						S_IWUSR | S_IRUSR);
 	} catch (...) {
 		UT_FATAL("!pmemobj_create: %s", path);

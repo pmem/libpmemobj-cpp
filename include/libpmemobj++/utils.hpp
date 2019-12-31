@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,8 @@
 #ifndef LIBPMEMOBJ_CPP_UTILS_HPP
 #define LIBPMEMOBJ_CPP_UTILS_HPP
 
-#include <libpmemobj++/detail/pexceptions.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/base.h>
 
 namespace pmem
@@ -62,7 +62,7 @@ pool_by_vptr(const T *that)
 {
 	auto pop = pmemobj_pool_by_ptr(that);
 	if (!pop)
-		throw pool_error("Object not in an open pool.");
+		throw pmem::pool_error("Object not in an open pool.");
 
 	return pool_base(pop);
 }
@@ -82,7 +82,7 @@ pool_by_pptr(const persistent_ptr<T> ptr)
 {
 	auto pop = pmemobj_pool_by_oid(ptr.raw());
 	if (!pop)
-		throw pool_error("Object not in an open pool.");
+		throw pmem::pool_error("Object not in an open pool.");
 
 	return pool_base(pop);
 }

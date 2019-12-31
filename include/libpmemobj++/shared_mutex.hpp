@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2019, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,7 +71,7 @@ public:
 	{
 		PMEMobjpool *pop;
 		if ((pop = pmemobj_pool_by_ptr(&plock)) == nullptr)
-			throw lock_error(
+			throw pmem::lock_error(
 				1, std::generic_category(),
 				"Persistent shared mutex not from persistent memory.");
 
@@ -100,8 +100,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_rwlock_wrlock(pop, &this->plock))
-			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a shared mutex.");
+			throw pmem::lock_error(ret, std::system_category(),
+					       "Failed to lock a shared mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -124,7 +125,7 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_rwlock_rdlock(pop, &this->plock))
-			throw lock_error(
+			throw pmem::lock_error(
 				ret, std::system_category(),
 				"Failed to shared lock a shared mutex.");
 	}
@@ -154,8 +155,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a shared mutex.");
+			throw pmem::lock_error(ret, std::system_category(),
+					       "Failed to lock a shared mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -185,8 +187,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw lock_error(ret, std::system_category(),
-					 "Failed to lock a shared mutex.");
+			throw pmem::lock_error(ret, std::system_category(),
+					       "Failed to lock a shared mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**
@@ -201,8 +204,10 @@ public:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		int ret = pmemobj_rwlock_unlock(pop, &this->plock);
 		if (ret)
-			throw lock_error(ret, std::system_category(),
-					 "Failed to unlock a shared mutex.");
+			throw pmem::lock_error(
+				ret, std::system_category(),
+				"Failed to unlock a shared mutex.")
+				.with_pmemobj_errormsg();
 	}
 
 	/**

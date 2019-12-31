@@ -14,16 +14,15 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/string.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 int
 main()
 {
 	{ // N3644 testing
-		using C = pmem_exp::string;
+		using C = pmem::obj::string;
 		C::iterator ii1{}, ii2{};
 		C::iterator ii4 = ii1;
 		C::const_iterator cii{};
@@ -35,7 +34,7 @@ main()
 	}
 
 	{ // N3644 testing
-		using C = pmem_exp::wstring;
+		using C = pmem::obj::wstring;
 		C::iterator ii1{}, ii2{};
 		C::iterator ii4 = ii1;
 		C::const_iterator cii{};
@@ -47,7 +46,7 @@ main()
 	}
 
 	{ // N3644 testing
-		using C = pmem_exp::u16string;
+		using C = pmem::obj::u16string;
 		C::iterator ii1{}, ii2{};
 		C::iterator ii4 = ii1;
 		C::const_iterator cii{};
@@ -59,7 +58,7 @@ main()
 	}
 
 	{ // N3644 testing
-		using C = pmem_exp::u32string;
+		using C = pmem::obj::u32string;
 		C::iterator ii1{}, ii2{};
 		C::iterator ii4 = ii1;
 		C::const_iterator cii{};

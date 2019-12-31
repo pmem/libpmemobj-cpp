@@ -6,32 +6,58 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2019, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
-// UNSUPPORTED: c++98, c++03
+#include "unittest.hpp"
 
-// <string>
+#include <libpmemobj++/container/string.hpp>
 
-// iterator insert(const_iterator p, initializer_list<charT> il);
+namespace nvobj = pmem::obj;
 
+using S = pmem::obj::string;
 
-#include <string>
-#include <cassert>
+struct root {
+	nvobj::persistent_ptr<S> s;
+};
 
-#include "min_allocator.h"
-
-int main()
+int
+main(int argc, char *argv[])
 {
-    {
-        std::string s("123456");
-        std::string::iterator i = s.insert(s.begin() + 3, {'a', 'b', 'c'});
-        assert(i - s.begin() == 3);
-        assert(s == "123abc456");
-    }
-    {
-        typedef std::basic_string<char, std::char_traits<char>, min_allocator<char>> S;
-        S s("123456");
-        S::iterator i = s.insert(s.begin() + 3, {'a', 'b', 'c'});
-        assert(i - s.begin() == 3);
-        assert(s == "123abc456");
-    }
+	START();
+
+	if (argc < 2) {
+		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
+		return 1;
+	}
+
+	auto path = argv[1];
+	auto pop = nvobj::pool<root>::create(
+		path, "string_test", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->s = nvobj::make_persistent<S>("123456");
+		});
+
+		auto &s = *r->s;
+
+		S::iterator i = s.insert(s.begin() + 3, {'a', 'b', 'c'});
+		UT_ASSERT(i - s.begin() == 3);
+		UT_ASSERT(s == "123abc456");
+
+		nvobj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<S>(r->s); });
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	pop.close();
+
+	return 0;
 }

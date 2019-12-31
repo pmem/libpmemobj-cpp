@@ -32,13 +32,11 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/array.hpp>
-#include <libpmemobj++/experimental/slice.hpp>
+#include <libpmemobj++/container/array.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
-
-namespace pmemobj_exp = pmem::obj::experimental;
 
 static bool Is_pmemcheck_enabled = false;
 
@@ -161,13 +159,13 @@ struct TestSuccess {
 
 		char data[10];
 		try {
-			pmemobj_exp::slice<char *> good_slice(data, data);
+			pmem::obj::slice<char *> good_slice(data, data);
 		} catch (...) {
 			UT_ASSERT(0);
 		}
 
 		try {
-			pmemobj_exp::slice<char *> bad_slice(data + 1, data);
+			pmem::obj::slice<char *> bad_slice(data + 1, data);
 			UT_ASSERT(0);
 		} catch (...) {
 		}
@@ -215,7 +213,7 @@ struct TestSuccess {
 		UT_ASSERT(c[1] == 4);
 	}
 
-	using C = pmemobj_exp::array<double, 6>;
+	using C = pmem::obj::array<double, 6>;
 	C c = {{1, 2, 3, 4, 5, 6}};
 };
 
@@ -288,7 +286,7 @@ struct TestAbort {
 			e = 0;
 	}
 
-	using C = pmemobj_exp::array<double, 15>;
+	using C = pmem::obj::array<double, 15>;
 	C c = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
 	C c2 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}};
 };
@@ -335,7 +333,7 @@ struct TestRanges {
 		int data[5] = {1, 2, 3, 4, 5};
 	};
 
-	using C = pmemobj_exp::array<DataStruct, 15>;
+	using C = pmem::obj::array<DataStruct, 15>;
 	C c;
 	C c2;
 };
@@ -359,7 +357,7 @@ struct TestAt {
 		UT_ASSERT(c == excpected);
 	}
 
-	using C = pmemobj_exp::array<double, 6>;
+	using C = pmem::obj::array<double, 6>;
 	C c = {{0, 0, 0, 0, 0, 0}};
 };
 
@@ -588,7 +586,7 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	Is_pmemcheck_enabled = std::stoi(argv[2]);
+	Is_pmemcheck_enabled = (std::stoi(argv[2])) != 0;
 
 	auto path = argv[1];
 	auto pop = pmem::obj::pool<root>::create(

@@ -30,9 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "list_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/vector.hpp>
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -40,7 +41,6 @@
 #include <cstring>
 
 namespace nvobj = pmem::obj;
-namespace pmem_exp = nvobj::experimental;
 
 struct X {
 	static unsigned count;
@@ -58,14 +58,14 @@ struct X {
 
 unsigned X::count = 0;
 
-using vector_type = pmem_exp::vector<X>;
+using vector_type = container_t<X>;
 
 struct root {
 	nvobj::persistent_ptr<vector_type> pptr;
 };
 
 /**
- * Test pmem::obj::experimental::vector default destructor.
+ * Test pmem::obj::vector default destructor.
  *
  * Call default destructor out of transaction scope.
  * Expects vector is empty and no exception is thrown.
@@ -84,7 +84,7 @@ test_dtor(nvobj::pool<struct root> &pop)
 		UT_ASSERTeq(r->pptr->size(), X::count);
 		UT_ASSERTeq(X::count, size);
 
-		r->pptr->~vector();
+		r->pptr->~vector_type();
 
 		UT_ASSERT(r->pptr->empty());
 		UT_ASSERTeq(X::count, 0);
@@ -104,9 +104,9 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto pop =
-		nvobj::pool<root>::create(path, "VectorTest: vector_dtor",
-					  PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	auto pop = nvobj::pool<root>::create(path, "VectorTest: vector_dtor",
+					     PMEMOBJ_MIN_POOL * 2,
+					     S_IWUSR | S_IRUSR);
 
 	test_dtor(pop);
 

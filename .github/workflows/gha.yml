@@ -13,13 +13,14 @@ on: [push, pull_request]
 env:
     GITHUB_REPO:    pmem/libpmemobj-cpp
     DOCKERHUB_REPO: pmem/libpmemobj-cpp
-    HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
-    WORKDIR:        utils/docker
 
 jobs:
-  build:
-    name: Build
+  linux:
+    name: Linux
     runs-on: ubuntu-latest
+    env:
+      HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
+      WORKDIR:        utils/docker
     strategy:
       matrix:
         CONFIG: ["N=1 OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1",
@@ -47,3 +48,62 @@ jobs:
 
        - name: Push the image
          run: cd $WORKDIR && source ./set-vars.sh && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f XXX_DISABLE_${CI_FILE_PUSH_IMAGE_TO_REPO} ]]; then images/push-image.sh $OS-$OS_VER; fi"
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    env:
+      platform: x64
+      VCPKG_DEFAULT_TRIPLET: x64-windows
+      GENERATOR: "Visual Studio 16 2019"
+      ARCH:      "x64"
+      PMDK_VERSION: "1.7"
+      CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
+      CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
+      PMDK_DIR: "C:\\vcpkg\\packages\\pmdk_x64-windows"
+      PMDK_BIN: "C:\\vcpkg\\packages\\pmdk_x64-windows\\bin;C:\\vcpkg\\packages\\pmdk_x64-windows\\debug\\bin"
+      WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"
+      MSBUILD:  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin"
+      DLLS:     "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.23.27820\\debug_nonredist\\x64\\Microsoft.VC142.DebugCRT;C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.23.27820\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT"
+    strategy:
+      matrix:
+        CONFIG: [Debug, Release]
+    steps:
+       - name: Update PATH
+         run: |
+           echo "::add-path::$Env:MSBUILD"
+           echo "::add-path::$Env:PMDK_DIR"
+           echo "::add-path::$Env:PMDK_BIN"
+           echo "::add-path::$Env:DLLS"
+
+       - name: Cache vcpkg
+         uses: actions/cache@v1
+         id: cache-vcpkg
+         with:
+            path: C:/vcpkg
+            key:  vcpkg-pmdk-1.7
+
+       - name: Install PMDK
+         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+         run: |
+            vcpkg install pmdk:x64-windows
+            vcpkg install sfml:x64-windows
+
+       - name: vcpkg integrate install
+         run: vcpkg integrate install
+
+       - name: Clone the git repo
+         uses: actions/checkout@v1
+
+       - name: Configure
+         run: cmake . -Bbuild
+                      -G "${env:GENERATOR}"
+                      -A "${env:ARCH}"
+                      -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
+                      -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
+                      -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
+                      -DCMAKE_PREFIX_PATH="${env:PMDK_DIR}"
+                      -DTESTS_USE_FORCED_PMEM=ON
+
+       - name: Build
+         run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal /m

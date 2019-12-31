@@ -195,6 +195,7 @@ if [ $PACKAGE_MANAGER = "deb" ]; then
 elif [ $PACKAGE_MANAGER = "rpm" ]; then
 	sudo_password rpm -i /opt/pmdk-pkg/libpmem-*.rpm
 	sudo_password rpm -i /opt/pmdk-pkg/libpmemobj-*.rpm
+	sudo_password rpm -i /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
 fi
 
 CC=gcc CXX=g++ \

@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -369,7 +369,7 @@ if (ENABLE_STRING)
 	add_test_generic(NAME string_layout TRACERS none)
 endif()
 
-if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
+if(ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
@@ -454,8 +454,6 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	else()
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
-elseif(NOT PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
-	message(WARNING "Skipping concurrent_hash_map tests because no pmemvlt support found.")
 endif()
 
 if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)

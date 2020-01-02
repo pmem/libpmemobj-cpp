@@ -250,13 +250,18 @@ add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
 # Check for existence of pmemvlt (introduced after 1.4 release)
 set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+
 set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJ_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
 CHECK_CXX_SOURCE_COMPILES(
 	"#include <libpmemobj.h>
 	struct pmemvlt vlt;
 	int main() {}"
 	PMEMVLT_PRESENT)
+
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
+set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 
 if(NOT PMEMVLT_PRESENT)
 	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")

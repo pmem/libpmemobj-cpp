@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -409,8 +409,8 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 
 	if(NOT WIN32)
 		# add 2 concurrent_hash_map_rehash_break tests
-		set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map_rehash_break)
-		set(CMAKE_SCRIPT ${TEST_DIR}/concurrent_hash_map_rehash_break)
+		set(CURRENT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map_rehash_break)
+		set(CMAKE_SCRIPT ${CURRENT_TEST_DIR}/concurrent_hash_map_rehash_break)
 		foreach(TESTCASE RANGE 1)
 			configure_file("${CMAKE_SCRIPT}.cmake.in" "${CMAKE_SCRIPT}_${TESTCASE}.cmake" @ONLY)
 			add_test_generic(NAME concurrent_hash_map_rehash_break CASE ${TESTCASE} TRACERS none)
@@ -444,9 +444,9 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 		build_test(${TEST} ${TEST}/${TEST}.cpp)
 
 		# add 5 concurrent_hash_map_pmreorder_break_insert test cases
-		set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${TEST})
-		set(CMAKE_SCRIPT ${TEST_DIR}/${TEST})
-		set(GDB_SCRIPT ${TEST_DIR}/break_before_persist)
+		set(CURRENT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${TEST})
+		set(CMAKE_SCRIPT ${CURRENT_TEST_DIR}/${TEST})
+		set(GDB_SCRIPT ${CURRENT_TEST_DIR}/break_before_persist)
 		foreach(case RANGE 4)
 			math(EXPR IGNORE "${case} + 1")
 			math(EXPR PERSIST "${case} + 2")

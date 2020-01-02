@@ -1,5 +1,5 @@
 #
-# Copyright 2019-2020, Intel Corporation
+# Copyright 2019, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@ include(${SRC_DIR}/../helpers.cmake)
 
 setup()
 
-set(DEFRAG 0)
+set(DEFRAG 1)
 
 if ((${TRACER} STREQUAL "drd") OR (${TRACER} STREQUAL "helgrind"))
     check_is_pmem(${DIR}/testfile)

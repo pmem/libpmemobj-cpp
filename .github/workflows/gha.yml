@@ -60,10 +60,8 @@ jobs:
       PMDK_VERSION: "1.7"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
-      PMDK_BIN: "C:\\vcpkg\\packages\\pmdk_x64-windows\\bin;C:\\vcpkg\\packages\\pmdk_x64-windows\\debug\\bin"
       WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"
       MSBUILD:  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin"
-      DLLS:     "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.23.27820\\debug_nonredist\\x64\\Microsoft.VC142.DebugCRT;C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Redist\\MSVC\\14.23.27820\\debug_nonredist\\x86\\Microsoft.VC142.DebugCRT"
     strategy:
       matrix:
         CONFIG: [Debug, Release]
@@ -71,8 +69,6 @@ jobs:
        - name: Update PATH
          run: |
            echo "::add-path::$Env:MSBUILD"
-           echo "::add-path::$Env:PMDK_BIN"
-           echo "::add-path::$Env:DLLS"
 
        - name: Cache vcpkg packages
          uses: actions/cache@v1

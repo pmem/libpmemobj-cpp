@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,7 +108,7 @@ struct root {
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
 void
-insert_erase_lookup_test(nvobj::pool<root> &pop)
+insert_erase_lookup_test(nvobj::pool<root> &pop, int defrag)
 {
 	const size_t NUMBER_ITEMS_INSERT = 500;
 
@@ -160,6 +160,10 @@ insert_erase_lookup_test(nvobj::pool<root> &pop)
 		});
 	}
 
+	if (defrag) {
+		threads.emplace_back([&]() { map->defrag(); });
+	}
+
 	for (auto &t : threads) {
 		t.join();
 	}
@@ -174,7 +178,7 @@ insert_erase_lookup_test(nvobj::pool<root> &pop)
  * pmem::obj::concurrent_hash_map<pmem::obj::string, pmem::obj::string>
  */
 void
-insert_erase_lookup_test_str(nvobj::pool<root> &pop)
+insert_erase_lookup_test_str(nvobj::pool<root> &pop, int defrag)
 {
 	const size_t NUMBER_ITEMS_INSERT = 500;
 
@@ -237,6 +241,10 @@ insert_erase_lookup_test_str(nvobj::pool<root> &pop)
 		});
 	}
 
+	if (defrag) {
+		threads.emplace_back([&]() { map->defrag(); });
+	}
+
 	for (auto &t : threads) {
 		t.join();
 	}
@@ -257,10 +265,13 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 2) {
-		UT_FATAL("usage: %s file-name", argv[0]);
+		UT_FATAL("usage: %s file-name [defrag:0|1]", argv[0]);
 	}
 
 	const char *path = argv[1];
+	int defrag = 0;
+	if (argc == 3)
+		defrag = atoi(argv[2]);
 
 	nvobj::pool<root> pop;
 
@@ -278,8 +289,8 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	insert_erase_lookup_test(pop);
-	insert_erase_lookup_test_str(pop);
+	insert_erase_lookup_test(pop, defrag);
+	insert_erase_lookup_test_str(pop, defrag);
 
 	pop.close();
 

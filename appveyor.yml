@@ -6,46 +6,12 @@ environment:
   VCPKG_DEFAULT_TRIPLET: x64-windows
   GENERATOR: "Visual Studio 14 2015 Win64"
 
-install:
-- ps: >-
-    Get-Content c:/tools/vcpkg/ports/pmdk/portfile.cmake |
-    %{$_ -replace "REF 1.6","REF 1.7" } |
-    %{$_ -replace "f66e4edf1937d51abfa7c087b65a64109cd3d2a8d9587d6c4fc28a1003d67ec1f35a0011c9a9d0bfe76ad7227be83e86582f8405c988eac828d8ae5d0a399483", "ce6c36f0354c2272cc7258b190077d7655528c414128c937d8735854a083516f0a15340cebb16f3c0588835dc9b48501e04415a4d3e96887be5fcee5a3b90905"} |
-    Out-File -Encoding UTF8 c:/tools/vcpkg/ports/pmdk/portfile2.cmake;
-    Copy-Item -Path c:/tools/vcpkg/ports/pmdk/portfile2.cmake -Destination c:/tools/vcpkg/ports/pmdk/portfile.cmake;
-- vcpkg install pmdk:x64-windows
-- vcpkg install sfml:x64-windows
-- vcpkg integrate install
-
-cache: c:\tools\vcpkg\installed
-
 configuration:
 - Debug
 - Release
 
-matrix:
-  fast_finish: true
-
-before_build:
-- cmake . -Bbuild -G "%GENERATOR%"
-        -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
-        -DCMAKE_INSTALL_PREFIX=c:/install/libpmemobj-cpp
-        -DTESTS_USE_FORCED_PMEM=ON
-
 build_script:
-- msbuild build/ALL_BUILD.vcxproj /property:Configuration=%CONFIGURATION%
-          /verbosity:minimal
+- exit 0
 
 test_script:
-- cd build
-- ctest -C %CONFIGURATION% --output-on-failure --timeout 540
-# XXX: enable this after pmdk update
-#- msbuild INSTALL.vcxproj /verbosity:minimal
-#- cd ..
-# build standalone example
-#- cd examples/map_cli
-#- cmake . -G "%GENERATOR%"
-#        -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
-#        -DCMAKE_PREFIX_PATH=c:/install/libpmemobj-cpp
-#        -DTESTS_USE_FORCED_PMEM=ON
-#- msbuild ALL_BUILD.vcxproj /verbosity:minimal
+- exit 0

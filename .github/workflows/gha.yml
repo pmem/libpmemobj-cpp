@@ -84,16 +84,25 @@ jobs:
             path: C:/vcpkg/installed
             key:  vcpkg-installed
 
+       - name: Clone the git repo
+         uses: actions/checkout@v1
+
+       - name: Update vcpkg's pmdk version
+         working-directory: C:\\vcpkg
+         run: |
+            git checkout 2019.11
+            git apply -v "${env:WORKDIR}\\.github\\workflows\\update_pmdk\\portfile.cmake.patch"
+            Copy-Item -Path "${env:WORKDIR}\\.github\\workflows\\update_pmdk\\controlfile" -Destination "C:\\vcpkg\\ports\\pmdk\\CONTROL"
+
        - name: Install PMDK
          run: |
             vcpkg install pmdk:x64-windows
             vcpkg install sfml:x64-windows
+            vcpkg update
+            vcpkg upgrade pmdk:x64-windows --no-dry-run
 
        - name: vcpkg integrate install
          run: vcpkg integrate install
-
-       - name: Clone the git repo
-         uses: actions/checkout@v1
 
        - name: Configure
          run: cmake . -Bbuild

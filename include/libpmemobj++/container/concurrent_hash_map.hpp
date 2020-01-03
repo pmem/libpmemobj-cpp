@@ -2076,7 +2076,7 @@ public:
 	 */
 	concurrent_hash_map() : hash_map_base()
 	{
-		runtime_initialize(true);
+		runtime_initialize();
 	}
 
 	/**
@@ -2085,7 +2085,7 @@ public:
 	 */
 	concurrent_hash_map(size_type n) : hash_map_base()
 	{
-		runtime_initialize(true);
+		runtime_initialize();
 
 		reserve(n);
 	}
@@ -2095,7 +2095,7 @@ public:
 	 */
 	concurrent_hash_map(const concurrent_hash_map &table) : hash_map_base()
 	{
-		runtime_initialize(true);
+		runtime_initialize();
 
 		reserve(table.size());
 
@@ -2107,7 +2107,7 @@ public:
 	 */
 	concurrent_hash_map(concurrent_hash_map &&table) : hash_map_base()
 	{
-		runtime_initialize(true);
+		runtime_initialize();
 
 		swap(table);
 	}
@@ -2118,7 +2118,7 @@ public:
 	template <typename I>
 	concurrent_hash_map(I first, I last)
 	{
-		runtime_initialize(true);
+		runtime_initialize();
 
 		reserve(static_cast<size_type>(std::distance(first, last)));
 
@@ -2130,7 +2130,7 @@ public:
 	 */
 	concurrent_hash_map(std::initializer_list<value_type> il)
 	{
-		runtime_initialize(true);
+		runtime_initialize();
 
 		reserve(il.size());
 
@@ -2146,7 +2146,7 @@ public:
 	 * version of libpmemobj-cpp
 	 */
 	void
-	runtime_initialize(bool graceful_shutdown = false)
+	runtime_initialize()
 	{
 		check_incompat_features();
 
@@ -2178,6 +2178,13 @@ public:
 
 		assert(this->size() ==
 		       size_type(std::distance(this->begin(), this->end())));
+	}
+
+	[[deprecated(
+		"runtime_initialize(bool) is now deprecated, use runtime_initialize(void)")]] void
+	runtime_initialize(bool)
+	{
+		runtime_initialize();
 	}
 
 	/**

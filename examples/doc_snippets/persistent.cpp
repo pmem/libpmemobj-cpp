@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,3 +131,98 @@ persistent_ptr_example()
 	proot.comp->some_variable = 12;
 }
 //! [persistent_ptr_example]
+
+//! [persistent_ptr_casting_example]
+#include <iostream>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
+
+using namespace pmem::obj;
+
+struct root {
+	persistent_ptr<int> pfoo;
+};
+
+void
+persistent_ptr_conversion_example(pool<root> &pop)
+{
+	// Casting persistent_ptr to persistent_ptr_base
+	transaction::run(pop, [&] {
+		// good: any persistent_ptr<T> class can be stored in a base ptr
+		persistent_ptr_base i_ptr_base = make_persistent<int>(10);
+
+		/* wrong: even though raw pointer can be used to create new
+		 * persistent_ptr it's not advised to use it this way, since
+		 * there's no information about underlying/template type */
+		persistent_ptr<double> dptr = i_ptr_base.raw();
+		std::cout << *dptr; // contains trash data
+
+		/* acceptable: it's not advised, but it will work properly.
+		 * Although, you have to be sure the underlying type is correct
+		 */
+		persistent_ptr<int> iptr_nonbase = i_ptr_base.raw();
+		std::cout << *iptr_nonbase; // contains proper data
+
+		/* wrong: illegal call for derived constructor
+		 * no viable conversion from 'persistent_ptr_base' to
+		 * 'persistent_ptr<int>' */
+		// iptr_nonbase = i_ptr_base;
+
+		/* wrong: conversion from base class to persistent_ptr<T> is not
+		 * possible: no matching conversion from 'persistent_ptr_base'
+		 * to 'persistent_ptr<int>' */
+		// iptr_nonbase = static_cast<persistent_ptr<int>>(i_ptr_base);
+
+		// good: you can use base and ptr classes with volatile pointer
+		persistent_ptr<int> i_ptr = make_persistent<int>(10);
+		persistent_ptr_base *i_ptr_ref = &i_ptr;
+		std::cout << i_ptr_ref->raw().off; // contains PMEMoid's data
+	});
+
+	struct A {
+		uint64_t a;
+	};
+	struct B {
+		uint64_t b;
+	};
+	struct C : public A, public B {
+		uint64_t c;
+	};
+
+	// Convertible types, using struct A, B and C
+	transaction::run(pop, [] {
+		// good: conversion from type C to B, using copy constructor
+		auto cptr = make_persistent<C>();
+		persistent_ptr<B> bptr = cptr;
+		std::cout << (bptr->b ==
+			      cptr->b); // thanks to conversion and
+					// recalculating offsets it's true
+
+		/* good: conversion from type C to B, using converting
+		 * assignment operator */
+		persistent_ptr<B> bptr2;
+		bptr2 = cptr;
+		std::cout << (bptr2->b == cptr->b); // true
+
+		// good: direct conversion using static_cast
+		persistent_ptr<B> bptr3 = static_cast<persistent_ptr<B>>(cptr);
+		std::cout << (bptr3->b == cptr->b); // true
+
+		/* wrong: conversion to base class and then to different ptr
+		 * class no matching conversion from 'persistent_ptr_base' to
+		 * 'persistent_ptr<B>' */
+		// auto cptr2 = (persistent_ptr_base)cptr;
+		// persistent_ptr<B> bptr4 =
+		//		static_cast<persistent_ptr<B>>(cptr2);
+
+		/* wrong: conversion to 'void *' and then to different ptr class
+		 * ambiguous conversion from 'void *' to 'persistent_ptr<B>' */
+		// auto cptr3 = (void *)&cptr;
+		// persistent_ptr<B> bptr5 =
+		//		static_cast<persistent_ptr<B>>(cptr3);
+	});
+}
+//! [persistent_ptr_casting_example]

@@ -41,10 +41,12 @@
 #include <cstddef>
 #include <string>
 #include <sys/stat.h>
+#include <vector>
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/ctl.hpp>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/pool_base.h>
 
@@ -409,6 +411,18 @@ public:
 	get_handle() noexcept
 	{
 		return pool_base::handle();
+	}
+
+	/**
+	 * Starts defragmentation on pointers within this pool
+	 *
+	 * //@ return int/bool return value ?
+	 */
+	void
+	defrag(const std::vector<persistent_ptr_base *> &vec)
+	{
+		//int pmemobj_defrag(this->pop, PMEMoid **oidv, size_t oidcnt,
+		//	struct pobj_defrag_result *result);;
 	}
 
 protected:

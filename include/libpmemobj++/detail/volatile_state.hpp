@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #ifndef LIBPMEMOBJ_CPP_VOLATILE_STATE_HPP
 #define LIBPMEMOBJ_CPP_VOLATILE_STATE_HPP
 
+#include <cassert>
 #include <functional>
 #include <memory>
 #include <mutex>

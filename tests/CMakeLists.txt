@@ -176,7 +176,13 @@ build_test(shared_mutex_posix shared_mutex_posix/shared_mutex_posix.cpp)
 add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
 
 build_test(transaction transaction/transaction.cpp)
-add_test_generic(NAME transaction TRACERS none pmemcheck)
+add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
+
+# XXX: add flag for features which will use volatile_state
+if (CXX_STANDARD GREATER_EQUAL 14)
+	build_test(volatile_state volatile_state/volatile_state.cpp)
+	add_test_generic(NAME volatile_state TRACERS none pmemcheck memcheck drd helgrind)
+endif()
 
 if(WIN32)
 	build_test(pool_win pool_win/pool_win.cpp)
@@ -227,6 +233,9 @@ else()
 	message(WARNING "Skipping array tests because of clang template bug")
 	skip_test("make_persistent_array" "SKIPPED_BECAUSE_OF_CLANG_TEMPLATE_BUG")
 endif()
+
+build_test(pool_cleanup pool_cleanup/pool_cleanup.cpp)
+add_test_generic(NAME pool_cleanup TRACERS none pmemcheck memcheck drd helgrind CASE 0)
 
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(NAME iterator_traits TRACERS none)

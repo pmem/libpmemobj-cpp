@@ -78,20 +78,21 @@ if [[ "$command" == "" ]]; then
 	case $TYPE in
 	debug|coverage)
 		[ "$TYPE" == "coverage" ] && COVERAGE=1
-		builds=(tests_gcc_debug_no_valgrind
+		builds=(tests_gcc_debug_cpp14_no_valgrind
 				tests_clang_debug_cpp17_no_valgrind)
 		command="./run-build.sh ${builds[@]}";
 		;;
 	release)
-		builds=(tests_gcc_release_cpp17_no_valgrind)
+		builds=(tests_gcc_release_cpp17_no_valgrind
+				tests_clang_release_cpp11_no_valgrind)
 		command="./run-build.sh ${builds[@]}";
 		;;
 	valgrind)
-		builds=(tests_gcc_debug_valgrind_other)
+		builds=(tests_gcc_debug_cpp14_valgrind_other)
 		command="./run-build.sh ${builds[@]}";
 		;;
 	memcheck_drd)
-		builds=(tests_gcc_debug_valgrind_memcheck_drd)
+		builds=(tests_gcc_debug_cpp14_valgrind_memcheck_drd)
 		command="./run-build.sh ${builds[@]}";
 		;;
 	package)

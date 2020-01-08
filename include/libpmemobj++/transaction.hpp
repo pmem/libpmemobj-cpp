@@ -38,8 +38,10 @@
 #ifndef LIBPMEMOBJ_CPP_TRANSACTION_HPP
 #define LIBPMEMOBJ_CPP_TRANSACTION_HPP
 
+#include <array>
 #include <functional>
 #include <string>
+#include <vector>
 
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/pexceptions.hpp>
@@ -65,6 +67,12 @@ namespace obj
  *
  * This class also exposes a closure-like transaction API, which is the
  * preferred way of handling transactions.
+ *
+ * This API should NOT be mixed with C transactions API. One issue is that
+ * C++ callbacks registered using transaction::register_callback() would not
+ * be called if C++ transaction is created inside C transaction.
+ * The same is true if user calls pmemobj_tx_set_user_data() inside a C++
+ * transaction.
  *
  * The typical usage example would be:
  * @snippet doc_snippets/transaction.cpp general_tx_example
@@ -107,8 +115,19 @@ public:
 		template <typename... L>
 		manual(obj::pool_base &pop, L &... locks)
 		{
-			if (pmemobj_tx_begin(pop.handle(), nullptr,
-					     TX_PARAM_NONE) != 0)
+			int ret = 0;
+
+			if (pmemobj_tx_stage() == TX_STAGE_NONE) {
+				ret = pmemobj_tx_begin(pop.handle(), nullptr,
+						       TX_PARAM_CB,
+						       transaction::c_callback,
+						       nullptr, TX_PARAM_NONE);
+			} else {
+				ret = pmemobj_tx_begin(pop.handle(), nullptr,
+						       TX_PARAM_NONE);
+			}
+
+			if (ret != 0)
 				throw pmem::transaction_error(
 					"failed to start transaction")
 					.with_pmemobj_errormsg();
@@ -402,8 +421,19 @@ public:
 	static void
 	run(pool_base &pool, std::function<void()> tx, Locks &... locks)
 	{
-		if (pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE) !=
-		    0)
+		int ret = 0;
+
+		if (pmemobj_tx_stage() == TX_STAGE_NONE) {
+			ret = pmemobj_tx_begin(pool.handle(), nullptr,
+					       TX_PARAM_CB,
+					       transaction::c_callback, nullptr,
+					       TX_PARAM_NONE);
+		} else {
+			ret = pmemobj_tx_begin(pool.handle(), nullptr,
+					       TX_PARAM_NONE);
+		}
+
+		if (ret != 0)
 			throw pmem::transaction_error(
 				"failed to start transaction")
 				.with_pmemobj_errormsg();
@@ -498,6 +528,42 @@ public:
 		}
 	}
 
+	/**
+	 * Possible stages of a transaction, for every stage one or more
+	 * callbacks can be registered.
+	 */
+	enum class stage {
+		work = TX_STAGE_WORK,	      /* transaction in progress */
+		oncommit = TX_STAGE_ONCOMMIT, /* successfully committed */
+		onabort = TX_STAGE_ONABORT,   /* tx_begin failed or transaction
+						 aborted */
+		finally = TX_STAGE_FINALLY,   /* ready for cleanup */
+	};
+
+	/**
+	 * Registers callback to be called on specified stage for the
+	 * transaction. In case of nested transactions those callbacks
+	 * are called when the outer most transaction enters a specified stage.
+	 *
+	 * @pre this function must be called during a transaction.
+	 *
+	 * @throw transaction_scope_error when called outside of a transaction
+	 * scope
+	 *
+	 * The typical usage example would be:
+	 * @snippet doc_snippets/transaction.cpp tx_callback_example
+	 */
+	static void
+	register_callback(stage stg, std::function<void()> cb)
+	{
+		if (pmemobj_tx_stage() != TX_STAGE_WORK)
+			throw pmem::transaction_scope_error(
+				"register_callback must be called during a transaction");
+
+		get_tx_data()->callbacks[static_cast<size_t>(stg)].push_back(
+			cb);
+	}
+
 private:
 	/**
 	 * Recursively add locks to the active transaction.
@@ -531,6 +597,66 @@ private:
 	add_lock() noexcept
 	{
 		return 0;
+	}
+
+	using callbacks_list_type = std::vector<std::function<void()>>;
+	using callbacks_map_type =
+		std::array<callbacks_list_type, MAX_TX_STAGE>;
+
+	/**
+	 * C-style function which is passed as callback to pmemobj_begin.
+	 * It executes previously registered callbacks for all stages.
+	 */
+	static void
+	c_callback(PMEMobjpool *pop, enum pobj_tx_stage obj_stage, void *arg)
+	{
+		/*
+		 * We cannot do anything when in TX_STAGE_NONE because
+		 * pmemobj_tx_get_user_data() can only be called when there is
+		 * an active transaction.
+		 */
+		if (obj_stage == TX_STAGE_NONE)
+			return;
+
+		auto *data = static_cast<tx_data *>(pmemobj_tx_get_user_data());
+		if (data == nullptr)
+			return;
+
+		for (auto &cb : data->callbacks[obj_stage])
+			cb();
+
+		/*
+		 * Callback for TX_STAGE_FINALLY is called as the last one so we
+		 * can free tx_data here
+		 */
+		if (obj_stage == TX_STAGE_FINALLY) {
+			delete data;
+			pmemobj_tx_set_user_data(NULL);
+		}
+	}
+
+	/**
+	 * This data is stored along with the pmemobj transaction data using
+	 * pmemobj_tx_set_data().
+	 */
+	struct tx_data {
+		callbacks_map_type callbacks;
+	};
+
+	/**
+	 * Gets tx user data from pmemobj or creates it if this is a first
+	 * call to this function inside a transaction.
+	 */
+	static tx_data *
+	get_tx_data()
+	{
+		auto *data = static_cast<tx_data *>(pmemobj_tx_get_user_data());
+		if (data == nullptr) {
+			data = new tx_data;
+			pmemobj_tx_set_user_data(data);
+		}
+
+		return data;
 	}
 };
 

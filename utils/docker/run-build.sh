@@ -128,9 +128,41 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 ###############################################################################
-# BUILD tests_gcc_debug
+# BUILD tests_clang_release_cpp11 llvm
 ###############################################################################
-function build_gcc_debug() {
+function tests_clang_release_cpp11_no_valgrind() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+	mkdir build
+	cd build
+
+	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	CC=clang CXX=clang++ \
+	cmake .. -DDEVELOPER_MODE=1 \
+		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DTRACE_TESTS=1 \
+		-DCOVERAGE=$COVERAGE \
+		-DCXX_STANDARD=11 \
+		-DTESTS_USE_VALGRIND=0 \
+		-DTESTS_LONG=${TESTS_LONG} \
+		-DTEST_DIR=/mnt/pmem \
+		-DTESTS_USE_FORCED_PMEM=1
+
+	make -j$(nproc)
+	ctest --output-on-failure -E "_pmreorder"  --timeout 540
+	if [ "$COVERAGE" == "1" ]; then
+		upload_codecov tests_clang_release_cpp11
+	fi
+
+	cd ..
+	rm -r build
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
+###############################################################################
+# BUILD tests_gcc_debug_cpp14
+###############################################################################
+function build_gcc_debug_cpp14() {
 	mkdir build
 	cd build
 
@@ -142,6 +174,7 @@ function build_gcc_debug() {
 		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
 		-DTRACE_TESTS=1 \
 		-DCOVERAGE=$COVERAGE \
+		-DCXX_STANDARD=14 \
 		-DTESTS_USE_VALGRIND=1 \
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTEST_DIR=/mnt/pmem \
@@ -152,11 +185,11 @@ function build_gcc_debug() {
 }
 
 ###############################################################################
-# BUILD tests_gcc_debug_no_valgrind
+# BUILD tests_gcc_debug_cpp14_no_valgrind
 ###############################################################################
-function tests_gcc_debug_no_valgrind() {
+function tests_gcc_debug_cpp14_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
-	build_gcc_debug
+	build_gcc_debug_cpp14
 	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 540 --output-on-failure
 	if [ "$COVERAGE" == "1" ]; then
 		upload_codecov tests_gcc_debug
@@ -167,11 +200,11 @@ function tests_gcc_debug_no_valgrind() {
 }
 
 ###############################################################################
-# BUILD tests_gcc_debug_valgrind_memcheck_drd
+# BUILD tests_gcc_debug_cpp14_valgrind_memcheck_drd
 ###############################################################################
-function tests_gcc_debug_valgrind_memcheck_drd() {
+function tests_gcc_debug_cpp14_valgrind_memcheck_drd() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
-	build_gcc_debug
+	build_gcc_debug_cpp14
 	ctest -R "_memcheck|_drd" --timeout 700 --output-on-failure
 	cd ..
 	rm -r build
@@ -179,11 +212,11 @@ function tests_gcc_debug_valgrind_memcheck_drd() {
 }
 
 ###############################################################################
-# BUILD tests_gcc_debug_valgrind_other
+# BUILD tests_gcc_debug_cpp14_valgrind_other
 ###############################################################################
-function tests_gcc_debug_valgrind_other() {
+function tests_gcc_debug_cpp14_valgrind_other() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
-	build_gcc_debug
+	build_gcc_debug_cpp14
 	ctest -E "_none|_memcheck|_drd" --timeout 540 --output-on-failure
 	ctest -R "_pmreorder" --timeout 540 --output-on-failure
 	cd ..

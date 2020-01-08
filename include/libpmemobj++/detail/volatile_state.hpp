@@ -40,6 +40,7 @@
 #ifndef LIBPMEMOBJ_CPP_VOLATILE_STATE_HPP
 #define LIBPMEMOBJ_CPP_VOLATILE_STATE_HPP
 
+#include <cassert>
 #include <functional>
 #include <memory>
 #include <mutex>

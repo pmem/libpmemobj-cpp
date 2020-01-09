@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019, Intel Corporation
+ * Copyright 2015-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,8 +44,8 @@
 #include <ostream>
 
 #include <libpmemobj++/detail/common.hpp>
-#include <libpmemobj++/detail/persistent_ptr_base.hpp>
 #include <libpmemobj++/detail/specialization.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/base.h>
 
@@ -61,27 +61,96 @@ class pool;
 template <typename T>
 class persistent_ptr;
 
-/*
+/**
  * persistent_ptr void specialization.
+ *
+ * It's truncated specialization to disallow some of the
+ * (unnecessary) functionallities.
  */
 template <>
-class persistent_ptr<void> : public detail::persistent_ptr_base<void> {
+class persistent_ptr<void> : public persistent_ptr_base {
 public:
+	typedef void element_type;
+	typedef persistent_ptr<void> this_type;
+
 	persistent_ptr() = default;
-	using detail::persistent_ptr_base<void>::persistent_ptr_base;
-	using detail::persistent_ptr_base<void>::operator=;
+	using persistent_ptr_base::persistent_ptr_base;
+	persistent_ptr(void *ptr) : persistent_ptr_base(pmemobj_oid(ptr))
+	{
+	}
+
+	element_type *
+	get() const noexcept
+	{
+		if (this->oid.pool_uuid_lo ==
+		    std::numeric_limits<decltype(oid.pool_uuid_lo)>::max())
+			return reinterpret_cast<element_type *>(oid.off);
+		else
+			return static_cast<element_type *>(
+				pmemobj_direct(this->oid));
+	}
+
+	template <typename Y,
+		  typename = typename std::enable_if<
+			  std::is_convertible<Y *, void *>::value>::type>
+	persistent_ptr<void> &
+	operator=(persistent_ptr<void> const &r)
+	{
+		this_type(r).swap(*this);
+
+		return *this;
+	}
+
+	explicit operator bool() const noexcept
+	{
+		return get() != nullptr;
+	}
 };
 
-/*
+/**
  * persistent_ptr const void specialization.
+ *
+ * It's truncated specialization to disallow some of the
+ * (unnecessary) functionallities.
  */
 template <>
-class persistent_ptr<const void>
-    : public detail::persistent_ptr_base<const void> {
+class persistent_ptr<const void> : public persistent_ptr_base {
 public:
+	typedef const void element_type;
+	typedef persistent_ptr<const void> this_type;
+
 	persistent_ptr() = default;
-	using detail::persistent_ptr_base<const void>::persistent_ptr_base;
-	using detail::persistent_ptr_base<const void>::operator=;
+	using persistent_ptr_base::persistent_ptr_base;
+	persistent_ptr(const void *ptr) : persistent_ptr_base(pmemobj_oid(ptr))
+	{
+	}
+
+	element_type *
+	get() const noexcept
+	{
+		if (this->oid.pool_uuid_lo ==
+		    std::numeric_limits<decltype(oid.pool_uuid_lo)>::max())
+			return reinterpret_cast<element_type *>(oid.off);
+		else
+			return static_cast<element_type *>(
+				pmemobj_direct(this->oid));
+	}
+
+	template <typename Y,
+		  typename = typename std::enable_if<
+			  std::is_convertible<Y *, const void *>::value>::type>
+	persistent_ptr<const void> &
+	operator=(persistent_ptr<const void> const &r)
+	{
+		this_type(r).swap(*this);
+
+		return *this;
+	}
+
+	explicit operator bool() const noexcept
+	{
+		return get() != nullptr;
+	}
 };
 
 /**
@@ -127,18 +196,44 @@ public:
  * This type does NOT manage the life-cycle of the object. The typical usage
  * example would be:
  * @snippet doc_snippets/persistent.cpp persistent_ptr_example
+ *
+ * Casting to persistent_ptr_base can be easily done from any persistent_ptr<T>
+ * objects, but when casting between convertible objects be advised to use
+ * constructors or operator= specified for such conversion, see:
+ * * persistent_ptr::persistent_ptr(persistent_ptr<U> const &r) ,
+ * * persistent_ptr<T> & operator=(persistent_ptr<Y> const &r) .
+ * When casting indirectly with (void *) or using static_cast, and then casting
+ * to the second (convertible) type, the offset will not be re-calculated.
+ *
+ * Below you can find an example how to and how NOT to cast persistent_ptr's:
+ * @snippet doc_snippets/persistent.cpp persistent_ptr_casting_example
  */
 template <typename T>
-class persistent_ptr : public detail::persistent_ptr_base<T> {
+class persistent_ptr : public persistent_ptr_base {
 public:
+	typedef persistent_ptr<T> this_type;
+
+	template <typename U>
+	friend class persistent_ptr;
+
+	/**
+	 * Type of the actual object with all qualifiers removed,
+	 * used for easy underlying type access.
+	 */
+	typedef typename pmem::detail::sp_element<T>::type element_type;
+
 	persistent_ptr() = default;
-	using detail::persistent_ptr_base<T>::persistent_ptr_base;
+	using persistent_ptr_base::persistent_ptr_base;
+
+	/*
+	 * Constructors
+	 */
 
 	/**
 	 * Explicit void specialization of the converting constructor.
 	 */
 	explicit persistent_ptr(persistent_ptr<void> const &rhs) noexcept
-	    : detail::persistent_ptr_base<T>(rhs.raw())
+	    : persistent_ptr_base(rhs.raw())
 	{
 	}
 
@@ -146,9 +241,66 @@ public:
 	 * Explicit const void specialization of the converting constructor.
 	 */
 	explicit persistent_ptr(persistent_ptr<const void> const &rhs) noexcept
-	    : detail::persistent_ptr_base<T>(rhs.raw())
+	    : persistent_ptr_base(rhs.raw())
 	{
 	}
+
+	/**
+	 * Volatile pointer constructor.
+	 *
+	 * If ptr does not point to an address from a valid pool, the persistent
+	 * pointer will evaluate to nullptr.
+	 *
+	 * @param ptr volatile pointer, pointing to persistent memory.
+	 */
+	persistent_ptr(element_type *ptr)
+	    : persistent_ptr_base(pmemobj_oid(ptr))
+	{
+		verify_type();
+	}
+
+	/**
+	 * Copy constructor from a different persistent_ptr<>.
+	 *
+	 * Available only for convertible types.
+	 */
+	template <typename U,
+		  typename = typename std::enable_if<
+			  !std::is_same<T, U>::value &&
+			  std::is_same<typename std::remove_cv<T>::type,
+				       U>::value>::type>
+	persistent_ptr(persistent_ptr<U> const &r) noexcept
+	    : persistent_ptr_base(r.oid)
+	{
+		this->oid.off +=
+			static_cast<std::uint64_t>(calculate_offset<U>());
+		verify_type();
+	}
+
+	/**
+	 * Copy constructor from a different persistent_ptr<>.
+	 *
+	 * Available only for convertible, non-void types.
+	 */
+	template <
+		typename U, typename Dummy = void,
+		typename = typename std::enable_if<
+			!std::is_same<
+				typename std::remove_cv<T>::type,
+				typename std::remove_cv<U>::type>::value &&
+				!std::is_void<U>::value,
+			decltype(static_cast<T *>(std::declval<U *>()))>::type>
+	persistent_ptr(persistent_ptr<U> const &r) noexcept
+	    : persistent_ptr_base(r.oid)
+	{
+		this->oid.off +=
+			static_cast<std::uint64_t>(calculate_offset<U>());
+		verify_type();
+	}
+
+	/*
+	 * Operators
+	 */
 
 	/**
 	 * Persistent pointer to void conversion operator.
@@ -266,6 +418,40 @@ public:
 	}
 
 	/**
+	 * Converting assignment operator from a different
+	 * persistent_ptr<>.
+	 *
+	 * Available only for convertible types.
+	 * Just like regular assignment, also automatically registers
+	 * itself in a transaction.
+	 *
+	 * @throw pmem::transaction_error when adding the object
+	 * to the transaction failed.
+	 */
+	template <typename Y,
+		  typename = typename std::enable_if<
+			  std::is_convertible<Y *, T *>::value>::type>
+	persistent_ptr<T> &
+	operator=(persistent_ptr<Y> const &r)
+	{
+		this_type(r).swap(*this);
+
+		return *this;
+	}
+
+	/*
+	 * Bool conversion operator.
+	 */
+	explicit operator bool() const noexcept
+	{
+		return get() != nullptr;
+	}
+
+	/*
+	 * Persist/flush methods
+	 */
+
+	/**
 	 * Persists the content of the underlying object.
 	 *
 	 * @param[in] pop Pmemobj pool
@@ -342,6 +528,24 @@ public:
 	}
 
 	/**
+	 * Get the direct pointer.
+	 *
+	 * Performs a calculations on the underlying C-style pointer.
+	 *
+	 * @return the direct pointer to the object.
+	 */
+	element_type *
+	get() const noexcept
+	{
+		if (this->oid.pool_uuid_lo ==
+		    std::numeric_limits<decltype(oid.pool_uuid_lo)>::max())
+			return reinterpret_cast<element_type *>(oid.off);
+		else
+			return static_cast<element_type *>(
+				pmemobj_direct(this->oid));
+	}
+
+	/**
 	 * Rebind to a different type of pointer.
 	 */
 	template <class U>
@@ -357,7 +561,7 @@ public:
 	 */
 	using bool_type = bool;
 
-	/*
+	/**
 	 * Random access iterator requirements (members)
 	 */
 
@@ -385,6 +589,60 @@ public:
 	 * The pointer type.
 	 */
 	using pointer = persistent_ptr<T>;
+
+protected:
+	/**
+	 * Verify if element_type is not polymorphic
+	 */
+	void
+	verify_type()
+	{
+		static_assert(!std::is_polymorphic<element_type>::value,
+			      "Polymorphic types are not supported");
+	}
+
+	/**
+	 * Private constructor enabling persistent_ptrs to volatile objects.
+	 *
+	 * This is internal implementation needed only for the
+	 * pointer_traits<persistent_ptr>::pointer_to to be able to create
+	 * valid pointers. This is used in libstdc++'s std::vector::insert().
+	 */
+	persistent_ptr(element_type *vptr, int) : persistent_ptr_base(vptr)
+	{
+		if (OID_IS_NULL(oid)) {
+			oid.pool_uuid_lo = std::numeric_limits<decltype(
+				oid.pool_uuid_lo)>::max();
+			oid.off = reinterpret_cast<decltype(oid.off)>(vptr);
+		}
+	}
+
+	/**
+	 * Calculate in-object offset for structures with inheritance.
+	 *
+	 * In case of the given inheritance:
+	 *
+	 *	  A   B
+	 *	   \ /
+	 *	    C
+	 *
+	 * A pointer to B *ptr = &C should be offset by sizeof(A). This function
+	 * calculates that offset.
+	 *
+	 * @return offset between two compatible pointer types to the same
+	 * object
+	 */
+	template <typename U>
+	inline ptrdiff_t
+	calculate_offset() const
+	{
+		static const ptrdiff_t ptr_offset_magic = 0xDEADBEEF;
+
+		U *tmp{reinterpret_cast<U *>(ptr_offset_magic)};
+		T *diff = static_cast<T *>(tmp);
+		return reinterpret_cast<ptrdiff_t>(diff) -
+			reinterpret_cast<ptrdiff_t>(tmp);
+	}
 };
 
 /**

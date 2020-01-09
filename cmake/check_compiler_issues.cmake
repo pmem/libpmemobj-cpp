@@ -1,5 +1,5 @@
 #
-# Copyright 2019, Intel Corporation
+# Copyright 2019-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,8 +33,11 @@ if(NOT MSVC_VERSION)
 	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 	set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 
-	# Check for issues with older gcc compilers which do not expand variadic template
-	# variables in lambda expressions.
+	# Check for issues with older gcc compilers which do not expand variadic
+	# template variables in lambda expressions. This functionality is being
+	# used in libpmemobj-cpp containers, lack of its support resuls with
+	# FATAL_ERROR unless you will disable containers by setting flag
+	# ENABLE_CONTAINERS=OFF.
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
 		"void print() {}
@@ -47,6 +50,13 @@ if(NOT MSVC_VERSION)
 			return 0;
 		}"
 		NO_GCC_VARIADIC_TEMPLATE_BUG)
+	if(NOT NO_GCC_VARIADIC_TEMPLATE_BUG)
+		if(ENABLE_CONTAINERS)
+			message(FATAL_ERROR "Compiler does not support expanding variadic template variables in lambda expressions. For more information about compiler requirements, check README.md.")
+		elseif()
+			message(WARNING "Compiler does not support expanding variadic template variables in lambda expressions. Some tests will be skipped and some functionalities won't be installed. For more information about compiler requirements, check README.md.")
+		endif()
+	endif()
 
 	# Check for issues with older gcc compilers if "inline" aggregate initialization
 	# works for array class members https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65815

@@ -15,7 +15,9 @@ More information in include/libpmemobj++/README.md
 ## Requirements: ##
 - cmake >= 3.3
 - libpmemobj-dev(el) >= 1.7 (http://pmem.io/pmdk/)
-- compiler with C++11 support
+- compiler with C++11 support:
+	- gcc >= 4.8.5 (C++11 is supported in gcc since version 4.8.5, but it does not support expanding variadic template variables in lambda expressions which is required to build persistent containers and possible with gcc >= 4.9.0. If you want to build libpmemobj-cpp without containers, use flag ENABLE_CONTAINERS=OFF)
+	- clang >= 3.3
 - for testing and development:
 	- valgrind-devel (at best with [pmemcheck support](https://github.com/pmem/valgrind))
 	- clang format 9.0

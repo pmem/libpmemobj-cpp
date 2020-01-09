@@ -378,7 +378,7 @@ if(BUILD_DOC)
 	add_subdirectory(doc)
 endif()
 
-if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
+if(BUILD_EXAMPLES)
 	add_subdirectory(examples)
 elseif(BUILD_EXAMPLES)
 	message(WARNING "Skipping build of examples because of compiler issue")

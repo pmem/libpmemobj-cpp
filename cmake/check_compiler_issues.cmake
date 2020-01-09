@@ -33,8 +33,10 @@ if(NOT MSVC_VERSION)
 	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
 	set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 
-	# Check for issues with older gcc compilers which do not expand variadic template
-	# variables in lambda expressions.
+	# Check for issues with older gcc compilers which do not expand variadic
+	# template variables in lambda expressions. Due to the fact that this
+	# functionality is being used heavily in libpmemobj-cpp containers, lack
+	# of its support is treated as a fatal error.
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
 		"void print() {}
@@ -47,6 +49,8 @@ if(NOT MSVC_VERSION)
 			return 0;
 		}"
 		NO_GCC_VARIADIC_TEMPLATE_BUG)
+	if(NOT NO_GCC_VARIADIC_TEMPLATE_BUG)
+		message(FATAL_ERROR "Compiler does not support expanding variadic template variables in lambda expressions. For more information about compiler requirements, check README.md.")
 
 	# Check for issues with older gcc compilers if "inline" aggregate initialization
 	# works for array class members https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65815
@@ -100,7 +104,6 @@ if(NOT MSVC_VERSION)
 		"int main() { return 0; }"
 		NO_CHRONO_BUG)
 else()
-	set(NO_GCC_VARIADIC_TEMPLATE_BUG TRUE)
 	set(NO_GCC_AGGREGATE_INITIALIZATION_BUG TRUE)
 	set(NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG TRUE)
 	set(NO_CLANG_TEMPLATE_BUG TRUE)

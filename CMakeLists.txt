@@ -82,6 +82,8 @@ option(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND "enable concurrent_hash_map tests 
 option(TESTS_LONG "enable long running tests" OFF)
 option(TRACE_TESTS "more verbose test outputs" OFF)
 
+option(ENABLE_CONTAINERS "enable installation and testing of all containers, OFF overrides options for each individual container" ON)
+
 option(ENABLE_ARRAY "enable installation and testing of pmem::obj::array" ON)
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::vector" ON)
 option(ENABLE_STRING "enable installation and testing of pmem::obj::string (depends on ENABLE_VECTOR)" ON)
@@ -91,6 +93,18 @@ option(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE "enable testing of pmem::obj::experim
 option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and exponential_size_policy" ON)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(ENABLE_ENUMERABLE_THREAD_SPECIFIC "enable installation and testing of pmem::obj::experimental::enumerable_thread_specific" ON)
+
+if(NOT ENABLE_CONTAINERS)
+	set(ENABLE_ARRAY OFF)
+	set(ENABLE_VECTOR OFF)
+	set(ENABLE_STRING OFF)
+	set(ENABLE_CONCURRENT_HASHMAP OFF)
+	set(ENABLE_SEGMENT_VECTOR OFF)
+	set(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE OFF)
+	set(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE OFF)
+	set(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE OFF)
+	set(ENABLE_ENUMERABLE_THREAD_SPECIFIC OFF)
+endif()
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.

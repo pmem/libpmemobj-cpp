@@ -43,7 +43,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj++/pext.hpp>
-#include <libpmemobj.h>
+#include <libpmemobj/tx_base.h>
 
 namespace pmem
 {

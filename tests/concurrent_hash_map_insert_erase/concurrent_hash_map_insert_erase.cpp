@@ -36,6 +36,7 @@
  */
 
 #include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
+#include "tests/wrap_pmemobj_defrag.h"
 #include "unittest.hpp"
 
 int

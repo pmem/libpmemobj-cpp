@@ -382,22 +382,22 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup.cpp)
+	build_test_defrag(concurrent_hash_map_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
+	build_test_defrag(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 1 TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
+	build_test_defrag(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 1 TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map_rehash_recursive concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive.cpp)
+	build_test_defrag(concurrent_hash_map_rehash_recursive concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_recursive CASE 0 TRACERS none memcheck pmemcheck)
 
 	# this single-threaded test should not be run under helgrind/drd, because a false-positive deadlock can be detected
-	build_test(concurrent_hash_map_rehash_deadlock concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock.cpp)
+	build_test_defrag(concurrent_hash_map_rehash_deadlock concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_deadlock CASE 0 TRACERS none memcheck pmemcheck)
 
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
@@ -441,10 +441,10 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	if(NOT TBB_FOUND)
 		message(WARNING "Skipping concurrent_hash_map_tbb test because Intel TBB library was not found")
 	else()
-		build_test_tbb(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
+		build_test_tbb_defrag(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
 		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none pmemcheck)
 
-		build_test_tbb(concurrent_hash_map_tbb_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_tbb_insert_erase.cpp)
+		build_test_tbb_defrag(concurrent_hash_map_tbb_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_tbb_insert_erase.cpp)
 		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase TRACERS none pmemcheck)
 	endif()
 

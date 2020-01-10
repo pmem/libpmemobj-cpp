@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,7 @@ struct v_data1 {
 	int *val;
 };
 
-static std::atomic<int> v2_initialized;
+static std::atomic<size_t> v2_initialized;
 
 struct v_data2 {
 	v_data2() : val(new int(VALUE))

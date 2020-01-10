@@ -49,6 +49,8 @@
 #include <libpmemobj++/container/concurrent_hash_map.hpp>
 #include <libpmemobj++/container/string.hpp>
 
+#include "tests/wrap_pmemobj_defrag.h"
+
 #define LAYOUT "concurrent_hash_map"
 
 namespace nvobj = pmem::obj;

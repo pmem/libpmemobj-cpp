@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ namespace obj
 /**
  * Persistent memory resident shared_mutex implementation.
  *
- * This class is an implementation of a PMEM-resident share_mutex
+ * This class is an implementation of a PMEM-resident shared_mutex
  * which mimics in behavior the C++11 std::mutex. This class
  * satisfies all requirements of the SharedMutex and StandardLayoutType
  * concepts. The typical usage would be:

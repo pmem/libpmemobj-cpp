@@ -43,6 +43,7 @@
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 
+#include <libpmemobj++/defrag.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/mutex.hpp>
 #include <libpmemobj++/p.hpp>
@@ -64,6 +65,7 @@
 #include <thread>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace std
 {
@@ -1744,6 +1746,16 @@ protected:
 		bucket *my_b;
 
 	public:
+		bucket_accessor(bucket_accessor &&b) noexcept : my_b(b.my_b)
+		{
+			bucket_lock_type::mutex = b.bucket_lock_type::mutex;
+			bucket_lock_type::is_writer =
+				b.bucket_lock_type::is_writer;
+			b.my_b = nullptr;
+			b.bucket_lock_type::mutex = nullptr;
+			b.bucket_lock_type::is_writer = false;
+		}
+
 		bucket_accessor(concurrent_hash_map *base,
 				const hashcode_type h, bool writer = false)
 		{
@@ -2784,6 +2796,58 @@ public:
 	}
 
 	/**
+	 * Defragment the given (by 'start_percent' and 'amount_percent') part
+	 * of buckets of the hash map. The algorithm is 'opportunistic' -
+	 * if it is not able to lock a bucket it will just skip it.
+	 *
+	 * @throws std::range_error if the range:
+	 * [start_percent, start_percent + amount_percent]
+	 * is incorrect.
+	 */
+	pobj_defrag_result
+	defragment(double start_percent = 0, double amount_percent = 100)
+	{
+		double end_percent = start_percent + amount_percent;
+		if (start_percent < 0 || start_percent >= 100 ||
+		    end_percent < 0 || end_percent > 100 ||
+		    start_percent >= end_percent) {
+			throw std::range_error("incorrect range");
+		}
+
+		size_t max_index = mask().load(std::memory_order_acquire);
+		size_t start_index = (start_percent * max_index) / 100;
+		size_t end_index = (end_percent * max_index) / 100;
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));
+#endif
+
+		/* Create defrag object for elements in current pool */
+		pmem::obj::defrag my_defrag(this->get_pool_base());
+		mutex_vector mv;
+
+		/*
+		 * Locks are taken in the backward order to avoid deadlocks
+		 * with the rehashing of buckets.
+		 *
+		 * We do '+ 1' and '- 1' to handle the 'i == 0' case.
+		 */
+		for (size_t i = end_index + 1; i >= start_index + 1; i--) {
+			/*
+			 * All locks will be unlocked automatically
+			 * in the destructor of 'mv'.
+			 */
+			bucket *b = mv.push_and_try_lock(this, i - 1);
+			if (b == nullptr)
+				continue;
+
+			defrag_save_nodes(b, my_defrag);
+		}
+
+		return my_defrag.run();
+	}
+
+	/**
 	 * Remove element with corresponding key
 	 *
 	 * This overload only participates in overload resolution if the
@@ -2819,6 +2883,45 @@ protected:
 	 */
 	bool try_acquire_item(const_accessor *result, node_mutex_t &mutex,
 			      bool write);
+
+	/**
+	 * Vector of locks to be unlocked at the destruction time.
+	 * MutexType - type of mutex used by buckets.
+	 */
+	class mutex_vector {
+	public:
+		using mutex_t = MutexType;
+
+		/** Save pointer to the lock in the vector and lock it. */
+		bucket *
+		push_and_try_lock(concurrent_hash_map *base, hashcode_type h)
+		{
+			vec.emplace_back(base, h, true /*writer*/);
+			bucket *b = vec.back().get();
+
+			auto node_ptr = static_cast<node *>(
+				b->node_list.get(base->my_pool_uuid));
+
+			while (node_ptr) {
+				const_accessor ca;
+				if (!base->try_acquire_item(&ca,
+							    node_ptr->mutex,
+							    /*write=*/true)) {
+					vec.pop_back();
+					return nullptr;
+				}
+
+				node_ptr =
+					static_cast<node *>(node_ptr->next.get(
+						(base->my_pool_uuid)));
+			}
+
+			return b;
+		}
+
+	private:
+		std::vector<bucket_accessor> vec;
+	};
 
 	template <typename K>
 	bool internal_find(const K &key, const_accessor *result, bool write);
@@ -2867,6 +2970,29 @@ protected:
 	template <typename I>
 	void internal_copy(I first, I last);
 
+	/**
+	 * Internal method used by defrag().
+	 * Adds nodes to the defragmentation list.
+	 */
+	void
+	defrag_save_nodes(bucket *b, pmem::obj::defrag &defrag)
+	{
+		auto node_ptr = static_cast<node *>(
+			b->node_list.get(this->my_pool_uuid));
+
+		while (node_ptr) {
+			/*
+			 * We do not perform the defragmentation
+			 * on node pointers, because nodes
+			 * always have the same size.
+			 */
+			defrag.add(node_ptr->item.first);
+			defrag.add(node_ptr->item.second);
+
+			node_ptr = static_cast<node *>(
+				node_ptr->next.get((this->my_pool_uuid)));
+		}
+	}
 }; // class concurrent_hash_map
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,

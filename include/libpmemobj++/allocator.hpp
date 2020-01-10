@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 
 /**
  * @file
- * Persistent memory aware allocator. (EXPERIMENTAL)
+ * Persistent memory aware allocator.
  */
 
 #ifndef LIBPMEMOBJ_CPP_ALLOCATOR_HPP
@@ -417,11 +417,10 @@ operator==(standard_alloc_policy<T> const &, OtherAllocator const &)
 }
 
 /**
- * (EXPERIMENTAL) Encapsulates the information about the persistent
- * memory allocation model using PMDK's libpmemobj. This information includes
- * the knowledge of the pointer type, their difference type, the type of the
- * size of objects in this allocation model as well as memory allocation and
- * deallocation primitives.
+ * Encapsulates the information about the persistent memory allocation model
+ * using PMDK's libpmemobj. This information includes the knowledge of the
+ * pointer type, their difference type, the type of the size of objects in this
+ * allocation model as well as memory allocation and deallocation primitives.
  */
 template <typename T, typename Policy = standard_alloc_policy<T>,
 	  typename Traits = object_traits<T>>

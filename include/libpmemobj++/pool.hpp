@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,9 @@
 #include <libpmemobj++/detail/ctl.hpp>
 #include <libpmemobj++/detail/pool_data.hpp>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pexceptions.hpp>
+#include <libpmemobj/atomic_base.h>
 #include <libpmemobj/pool_base.h>
 
 namespace pmem
@@ -431,6 +433,33 @@ public:
 	get_handle() noexcept
 	{
 		return pool_base::handle();
+	}
+
+	/**
+	 * Starts defragmentation on selected pointers within this pool.
+	 *
+	 * @param[in] ptrv pointer to contiguous space containing
+	 *	persistent_ptr's for defrag.
+	 * @param[in] oidcnt number of persistent_ptr's passed (in ptrv).
+	 * @return result struct containing a number of relocated and total
+	 *	processed objects.
+	 *
+	 * @throw pmem::defrag_error when a failure during defragmentation
+	 *	occurs. Even if this error is thrown, some of objects could
+	 *	have been relocated, see defrag_error.result for summary stats.
+	 */
+	pobj_defrag_result
+	defrag(persistent_ptr_base **ptrv, size_t oidcnt)
+	{
+		pobj_defrag_result result;
+		int ret = pmemobj_defrag(this->pop, (PMEMoid **)ptrv, oidcnt,
+					 &result);
+
+		if (ret != 0)
+			throw defrag_error(result, "Defragmentation failed")
+				.with_pmemobj_errormsg();
+
+		return result;
 	}
 
 protected:

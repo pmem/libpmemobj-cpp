@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -184,3 +184,4 @@ add_library(doc_snippets_pool OBJECT doc_snippets/pool.cpp)
 add_library(doc_snippets_transaction OBJECT doc_snippets/transaction.cpp)
 add_library(doc_snippets_concurrent_hash_map OBJECT doc_snippets/concurrent_hash_map.cpp)
 add_library(doc_snippets_segment_vector OBJECT doc_snippets/segment_vector.cpp)
+add_library(doc_snippets_defrag OBJECT doc_snippets/defrag.cpp)

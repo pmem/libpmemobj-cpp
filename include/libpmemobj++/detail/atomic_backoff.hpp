@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,12 @@
  */
 
 /**
- * A persistent version of concurrent hash map implementation
+ * @file
+ * Atomic backoff, for time delay.
+ *
+ * For a persistent version of concurrent hash map implementation
  * Ref: https://arxiv.org/abs/1509.02235
+
  */
 
 #ifndef LIBPMEMOBJ_ATOMIC_BACKOFF_HPP

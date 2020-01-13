@@ -64,8 +64,8 @@ class persistent_ptr;
 /**
  * persistent_ptr void specialization.
  *
- * It's truncated specialization to disallow some of the
- * (unnecessary) functionallities.
+ * It's truncated specialization to disallow some
+ * of the (unnecessary) functionalities.
  */
 template <>
 class persistent_ptr<void> : public persistent_ptr_base {

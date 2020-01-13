@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,7 @@
 #include <libpmemobj++/detail/ctl.hpp>
 #include <libpmemobj++/detail/pool_data.hpp>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pexceptions.hpp>
 #include <libpmemobj/pool_base.h>
 
@@ -431,6 +432,19 @@ public:
 	get_handle() noexcept
 	{
 		return pool_base::handle();
+	}
+
+	/**
+	 * Starts defragmentation on pointers within this pool
+	 *
+	 * @return struct return value, containing number of total and
+	 * relocated pointers
+	 */
+	void
+	defrag(const std::vector<persistent_ptr_base *> &vec)
+	{
+		//int pmemobj_defrag(this->pop, PMEMoid **oidv, size_t oidcnt,
+		//	struct pobj_defrag_result *result);;
 	}
 
 protected:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include <stdexcept>
 #include <system_error>
 
+#include <libpmemobj/atomic_base.h>
 #include <libpmemobj/base.h>
 
 namespace pmem
@@ -61,7 +62,7 @@ errormsg(void)
 	return std::string(pmemobj_errormsg());
 #endif
 }
-}
+} /* namespace detail */
 
 /**
  * Custom pool error class.
@@ -221,6 +222,28 @@ public:
 	{
 		(*this) = ctl_error(what() + std::string(": ") +
 				    detail::errormsg());
+		return *this;
+	}
+};
+
+/**
+ * Custom defrag error class.
+ *
+ * Thrown when defragmentation process fails.
+ */
+class defrag_error : public std::runtime_error {
+public:
+	using std::runtime_error::runtime_error;
+
+	/**
+	 * Results of the defragmentation run.
+	 */
+	pobj_defrag_result result;
+
+	defrag_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = defrag_error(what() + std::string(": ") + detail::errormsg(), result);
 		return *this;
 	}
 };

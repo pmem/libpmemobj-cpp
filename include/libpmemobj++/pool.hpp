@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,9 @@
 #include <libpmemobj++/detail/ctl.hpp>
 #include <libpmemobj++/detail/pool_data.hpp>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr_base.hpp>
 #include <libpmemobj++/pexceptions.hpp>
+#include <libpmemobj/atomic_base.h>
 #include <libpmemobj/pool_base.h>
 
 namespace pmem
@@ -431,6 +433,22 @@ public:
 	get_handle() noexcept
 	{
 		return pool_base::handle();
+	}
+
+	/**
+	 * Starts defragmentation on pointers within this pool
+	 *
+	 * @param[in] ptrv pointer to contigous space containing ptr's for defrag
+	 * @param[in] oidcnt number of persistent_ptr's passed (in ptrv)
+	 * @param[out] result struct containing number of total and relocated ptr's
+	 * @return int exit value: 0 on success; -1 on (possibly partial) failure
+	 */
+	int
+	defrag(persistent_ptr_base **ptrv, size_t oidcnt, pobj_defrag_result &result)
+	{
+		int ret = pmemobj_defrag(this->pop, (PMEMoid **)ptrv, oidcnt,
+					 &result);
+		return ret;
 	}
 
 protected:

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "../test_backtrace.h"
 #include "../valgrind_internal.hpp"
 #include "iterators_support.hpp"
+#include "thread_helpers.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>

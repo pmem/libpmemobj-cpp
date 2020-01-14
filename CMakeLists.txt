@@ -266,6 +266,26 @@ if(NOT PMEMVLT_PRESENT)
 	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
 endif()
 
+# Even if we are ensuring that we use CMAKE_CXX_STANDARD >= 14, check if
+# shared_mutex header file is available for current compiler version because
+# CXX_STANDARD is being set to 14 for --c++1y parameter
+if(NOT MSVC_VERSION AND CXX_STANDARD GREATER_EQUAL 14)
+	set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+	CHECK_CXX_SOURCE_COMPILES(
+		"#include <shared_mutex>
+		int main() {}"
+		NO_SHARED_MUTEX_BUG)
+else()
+	set(NO_SHARED_MUTEX_BUG TRUE)
+endif()
+
+if(CXX_STANDARD LESS 14 OR NOT NO_SHARED_MUTEX_BUG)
+	message(WARNING "volatile_state not supported (required C++14 compliat compiler)")
+	set(VOLATILE_STATE_PRESENT OFF)
+else()
+	set(VOLATILE_STATE_PRESENT ON)
+endif()
+
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
 		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,22 +71,6 @@ typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 struct root {
 	nvobj::persistent_ptr<persistent_map_type> cons;
 };
-
-template <typename Function>
-void
-parallel_exec(size_t concurrency, Function f)
-{
-	std::vector<std::thread> threads;
-	threads.reserve(concurrency);
-
-	for (size_t i = 0; i < concurrency; ++i) {
-		threads.emplace_back(f, i);
-	}
-
-	for (auto &t : threads) {
-		t.join();
-	}
-}
 
 struct ConcurrentHashMapTestPrimitives {
 private:

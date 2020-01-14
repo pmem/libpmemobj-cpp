@@ -58,22 +58,6 @@ struct root {
 	nvobj::persistent_ptr<container_type> pptr;
 };
 
-template <typename Function>
-void
-parallel_exec(size_t concurrency, Function f)
-{
-	std::vector<std::thread> threads;
-	threads.reserve(concurrency);
-
-	for (size_t i = 0; i < concurrency; ++i) {
-		threads.emplace_back(f, i);
-	}
-
-	for (auto &t : threads) {
-		t.join();
-	}
-}
-
 void
 test(nvobj::pool<struct root> &pop)
 {

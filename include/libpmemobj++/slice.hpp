@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 
 /**
  * @file
- * Iterface to access sequence of objects.
+ * Interface to access sequence of objects.
  */
 
 #ifndef LIBPMEMOBJ_CPP_SLICE_HPP

@@ -110,8 +110,8 @@ public:
 /**
  * persistent_ptr const void specialization.
  *
- * It's truncated specialization to disallow some of the
- * (unnecessary) functionallities.
+ * It's truncated specialization to disallow some
+ * of the (unnecessary) functionalities.
  */
 template <>
 class persistent_ptr<const void> : public persistent_ptr_base {

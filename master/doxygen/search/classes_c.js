@@ -8,5 +8,6 @@ var searchData=
   ['transaction_5ffree_5ferror',['transaction_free_error',['../classpmem_1_1transaction__free__error.html',1,'pmem']]],
   ['transaction_5fout_5fof_5fmemory',['transaction_out_of_memory',['../classpmem_1_1transaction__out__of__memory.html',1,'pmem']]],
   ['transaction_5fscope_5ferror',['transaction_scope_error',['../classpmem_1_1transaction__scope__error.html',1,'pmem']]],
+  ['tx_5fdata',['tx_data',['../structpmem_1_1obj_1_1transaction_1_1tx__data.html',1,'pmem::obj::transaction']]],
   ['type_20_3e',['type &gt;',['../structpmem_1_1detail_1_1temp__value_1_1type_01_4.html',1,'pmem::detail::temp_value']]]
 ];

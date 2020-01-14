@@ -18,5 +18,6 @@ var searchData=
   ['try_5flock_5ffor',['try_lock_for',['../classpmem_1_1obj_1_1timed__mutex.html#addfc0dcd69f92ecbc76239ef6fefe5ee',1,'pmem::obj::timed_mutex']]],
   ['try_5flock_5fshared',['try_lock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#af161f61d3c651d5242ea998ea0a6b4f9',1,'pmem::obj::shared_mutex']]],
   ['try_5flock_5funtil',['try_lock_until',['../classpmem_1_1obj_1_1timed__mutex.html#a3f6bf8bc19debd3e569cc921e0653149',1,'pmem::obj::timed_mutex']]],
+  ['tx_5fdata',['tx_data',['../structpmem_1_1obj_1_1transaction_1_1tx__data.html',1,'pmem::obj::transaction']]],
   ['type_20_3e',['type &gt;',['../structpmem_1_1detail_1_1temp__value_1_1type_01_4.html',1,'pmem::detail::temp_value']]]
 ];

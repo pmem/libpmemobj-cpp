@@ -77,8 +77,10 @@ $(function() {
 
 <p>C++ pmemobj transactions.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;functional&gt;</code><br />
+<div class="textblock"><code>#include &lt;array&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pexceptions_8hpp_source.html">libpmemobj++/pexceptions.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="pool_8hpp_source.html">libpmemobj++/pool.hpp</a>&gt;</code><br />
@@ -100,11 +102,14 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html">pmem::obj::transaction::automatic::uncaught_exception_counter</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal class for counting active exceptions.  <a href="classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1transaction_1_1tx__data.html">pmem::obj::transaction::tx_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This data is stored along with the pmemobj transaction data using pmemobj_tx_set_data().  <a href="structpmem_1_1obj_1_1transaction_1_1tx__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
-<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of concurrent hash map implementation Ref: <a href="https://arxiv.org/abs/1509.02235">https://arxiv.org/abs/1509.02235</a>. <br /></td></tr>
+<tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of thread-local storage. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

@@ -98,10 +98,6 @@ option(INSTALL_CONCURRENT_HASHMAP "enable installation of pmem::obj::concurrent_
 option(INSTALL_SEGMENT_VECTOR "enable installation of pmem::obj::segment_vector" ON)
 option(INSTALL_ENUMERABLE_THREAD_SPECIFIC "enable installation of pmem::obj::experimental::enumerable_thread_specific" ON)
 
-if (ENABLE_ENUMERABLE_THREAD_SPECIFIC AND CXX_STANDARD LESS 14)
-	message(FATAL_ERROR "enumerable_thread_specific is enabled but it requires at least C++14. Increase CXX_STANDARD or disable ENABLE_ENUMERABLE_THREAD_SPECIFIC")
-endif()
-
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
 set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)

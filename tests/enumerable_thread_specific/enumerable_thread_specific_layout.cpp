@@ -48,17 +48,18 @@ main(int argc, char *argv[])
 	}
 
 	static_assert(
-		2120 ==
+		2128 ==
 			sizeof(pmem::obj::shared_mutex) +
 				sizeof(pmem::obj::segment_vector<
 					char,
 					pmem::obj::
-						exponential_size_array_policy<>>),
+						exponential_size_array_policy<>>) +
+				sizeof(std::atomic<size_t>),
 		"");
 
-	static_assert(sizeof(container_type<int>) == 2120, "");
-	static_assert(sizeof(container_type<char>) == 2120, "");
-	static_assert(sizeof(container_type<container_type<int>>) == 2120, "");
+	static_assert(sizeof(container_type<int>) == 2128, "");
+	static_assert(sizeof(container_type<char>) == 2128, "");
+	static_assert(sizeof(container_type<container_type<int>>) == 2128, "");
 
 	static_assert(std::is_standard_layout<container_type<char>>::value, "");
 

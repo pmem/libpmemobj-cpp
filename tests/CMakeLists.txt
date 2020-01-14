@@ -704,21 +704,6 @@ if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
 
 	build_test(enumerable_thread_specific_ctor enumerable_thread_specific/enumerable_thread_specific_ctor.cpp)
 	add_test_generic(NAME enumerable_thread_specific_ctor TRACERS none memcheck pmemcheck)
-
-	build_test(enumerable_thread_specific_datarace enumerable_thread_specific/enumerable_thread_specific_datarace.cpp)
-	add_test_generic(NAME enumerable_thread_specific_datarace TRACERS none memcheck pmemcheck drd helgrind)
-
-	if(NOT TESTS_TBB)
-		message(WARNING "Skipping enumerable_thread_specific_tbb tests - disabled by cmake TESTS_TBB option")
-	elseif(NOT TBB_FOUND)
-		message(FATAL_ERROR "enumerable_thread_specific_tbb tests enabled by cmake TESTS_TBB option, but Intel TBB library was not found")
-	else()
-		build_test_tbb(enumerable_thread_specific_tbb_access enumerable_thread_specific/enumerable_thread_specific_tbb_access.cpp)
-		add_test_generic(NAME enumerable_thread_specific_tbb_access TRACERS none memcheck pmemcheck)
-
-		build_test_tbb(enumerable_thread_specific_tbb_size enumerable_thread_specific/enumerable_thread_specific_tbb_size.cpp)
-		add_test_generic(NAME enumerable_thread_specific_tbb_size TRACERS none memcheck pmemcheck)
-	endif()
 endif()
 
 add_subdirectory(external)

@@ -55,7 +55,7 @@ create_and_fill(nvobj::pool<struct root> &pop, size_t concurrency)
 
 	nvobj::transaction::run(
 		pop, [&] { tls = nvobj::make_persistent<container_type>(); });
-	parallel_exec(concurrency, [&](size_t thread_index) {
+	parallel_exec_with_sync(concurrency, [&](size_t thread_index) {
 		tls->local() = thread_index;
 		pop.persist(tls->local());
 	});
@@ -74,8 +74,80 @@ check_and_delete(nvobj::pool<struct root> &pop, size_t concurrency)
 	UT_ASSERT(checker.size() <= concurrency);
 	UT_ASSERT(tls->empty());
 
-	nvobj::transaction::run(
-		pop, [&] { nvobj::delete_persistent<container_type>(tls); });
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_type>(tls);
+		tls = nullptr;
+	});
+}
+
+void
+check_with_tx_and_delete(nvobj::pool<struct root> &pop, size_t concurrency)
+{
+	auto &tls = pop.root()->pptr;
+
+	std::set<size_t> checker;
+	nvobj::transaction::run(pop, [&] {
+		tls->initialize([&checker](test_t &e) {
+			UT_ASSERT(checker.emplace(e).second);
+		});
+	});
+
+	UT_ASSERT(checker.size() <= concurrency);
+	UT_ASSERT(tls->empty());
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_type>(tls);
+		tls = nullptr;
+	});
+}
+
+void
+check_with_tx_abort_and_delete(nvobj::pool<struct root> &pop,
+			       size_t concurrency)
+{
+	auto &tls = pop.root()->pptr;
+
+	std::set<size_t> checker;
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			tls->initialize([&checker](test_t &e) {
+				UT_ASSERT(checker.emplace(e).second);
+			});
+
+			nvobj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERT(checker.size() <= concurrency);
+	UT_ASSERT(!tls->empty());
+	UT_ASSERT(tls->size() <= concurrency);
+
+	for (auto &e : *tls)
+		e = 0;
+
+	std::atomic<size_t> counter;
+	counter = 0;
+	parallel_exec(concurrency, [&](size_t thread_index) {
+		tls->local()++;
+		counter++;
+
+		/* Spin until every thread has called tls->local() */
+		while (counter.load() != concurrency) {
+		}
+	});
+
+	for (auto &e : *tls) {
+		UT_ASSERTeq(e, 1);
+	}
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_type>(tls);
+		tls = nullptr;
+	});
 }
 
 int
@@ -95,12 +167,30 @@ main(int argc, char *argv[])
 	// Adding more concurrency will increase DRD test time
 	size_t concurrency = 16;
 
-	create_and_fill(pop, concurrency);
+	{
+		create_and_fill(pop, concurrency);
 
-	pop.close();
-	pop = nvobj::pool<root>::open(path, layout);
+		pop.close();
+		pop = nvobj::pool<root>::open(path, layout);
 
-	check_and_delete(pop, concurrency);
+		check_and_delete(pop, concurrency);
+	}
+	{
+		create_and_fill(pop, concurrency);
+
+		pop.close();
+		pop = nvobj::pool<root>::open(path, layout);
+
+		check_with_tx_and_delete(pop, concurrency);
+	}
+	{
+		create_and_fill(pop, concurrency);
+
+		pop.close();
+		pop = nvobj::pool<root>::open(path, layout);
+
+		check_with_tx_abort_and_delete(pop, concurrency);
+	}
 
 	pop.close();
 	return 0;

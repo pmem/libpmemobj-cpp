@@ -37,7 +37,6 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
@@ -118,12 +117,10 @@ struct nested {
 	nvobj::persistent_ptr<foo> inner;
 };
 
-using V = pmem::obj::vector<nvobj::persistent_ptr_base *>;
-
 struct root {
 	nvobj::persistent_ptr<foo> pfoo;
 	nvobj::persistent_ptr<nvobj::p<int>[TEST_ARR_SIZE]> parr;
-	nvobj::persistent_ptr<V> v;
+	nvobj::persistent_ptr_base arr[3];
 
 	/* This variable is unused, but it's here to check if the persistent_ptr
 	 * does not violate its own restrictions.
@@ -368,24 +365,24 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->v = nvobj::make_persistent<V>();
-			auto vecptr = nvobj::make_persistent<V>();
-			auto intptr = nvobj::make_persistent<int>(TEST_INT);
-			nvobj::persistent_ptr<int> int_explicit_ptr_null =
-				nullptr;
+			r->arr[0] = nvobj::make_persistent<double>();
+			r->arr[1] = nvobj::make_persistent<int>(TEST_INT);
+			r->arr[2] = nullptr;
 
-			r->v->push_back(&vecptr);
-			r->v->push_back(&intptr);
-			r->v->push_back(&int_explicit_ptr_null);
-
-			UT_ASSERT(!OID_IS_NULL(r->v->at(0)->raw()));
-			UT_ASSERTeq(*(int *)pmemobj_direct(r->v->at(1)->raw()),
+			UT_ASSERT(!OID_IS_NULL(r->arr[0].raw()));
+			UT_ASSERTeq(*(int *)pmemobj_direct(r->arr[1].raw()),
 				    TEST_INT);
-			UT_ASSERT(OID_IS_NULL(r->v->at(2)->raw()));
+			UT_ASSERT(OID_IS_NULL(r->arr[2].raw()));
 
-			nvobj::delete_persistent<V>(vecptr);
-			nvobj::delete_persistent<int>(intptr);
-			nvobj::delete_persistent<V>(r->v);
+			nvobj::persistent_ptr<double> tmp0 = r->arr[0].raw();
+			nvobj::persistent_ptr<int> tmp1 = r->arr[1].raw();
+			nvobj::persistent_ptr<foo> tmp2 = r->arr[2].raw();
+			nvobj::delete_persistent<nvobj::persistent_ptr<double>>(
+				&tmp0);
+			nvobj::delete_persistent<nvobj::persistent_ptr_base>(
+				&tmp1);
+			nvobj::delete_persistent<nvobj::persistent_ptr<foo>>(
+				&tmp2);
 		});
 	} catch (...) {
 		UT_ASSERT(0);

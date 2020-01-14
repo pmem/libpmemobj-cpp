@@ -42,18 +42,7 @@ namespace nvobj = pmem::obj;
 
 using test_t = std::size_t;
 
-#if LIBPMEMOBJ_CPP_USE_TBB
-
-#include "enumerable_thread_specific_tbb_traits.hpp"
-
-using container_type = nvobj::experimental::enumerable_thread_specific<
-	test_t, tbb::concurrent_unordered_map, exclusive_only_mutex>;
-
-#else
-
 using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
-
-#endif
 
 struct root {
 	nvobj::persistent_ptr<container_type> pptr;
@@ -75,22 +64,19 @@ test(nvobj::pool<struct root> &pop)
 	{
 		std::vector<size_t> checker(concurrency, 0);
 		parallel_exec(concurrency, [&](size_t thread_index) {
-			bool exists;
-			test_t &ref = tls->local(exists);
+			test_t &ref = tls->local();
 
 			/*
 			 * Another thread already wrote some data there
 			 * (and exited).
 			 */
-			if (exists)
+			if (ref > 0)
 				return;
 
 			ref = thread_index;
 			for (size_t i = 0; i < 100; ++i) {
-				ref = tls->local(exists);
-
+				ref = tls->local();
 				UT_ASSERTeq(ref, thread_index);
-				UT_ASSERT(exists);
 
 				checker[ref]++;
 			}
@@ -113,13 +99,44 @@ test(nvobj::pool<struct root> &pop)
 		UT_ASSERT(n_100 > 0);
 		UT_ASSERT(n_100 + n_zeros == concurrency);
 	}
-	{
+
+	std::thread t([&] {
 		tls->local() = 99;
-		bool exists;
 		UT_ASSERT(tls->size() <= concurrency + 1);
-		UT_ASSERT(tls->local(exists) == 99);
-		UT_ASSERT(exists);
+		UT_ASSERT(tls->local() == 99);
+	});
+
+	t.join();
+
+	tls->clear();
+}
+
+void
+test_with_spin(nvobj::pool<struct root> &pop, size_t concurrency)
+{
+	auto tls = pop.root()->pptr;
+
+	UT_ASSERT(tls != nullptr);
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+
+	parallel_exec_with_sync(concurrency,
+				[&](size_t thread_index) { tls->local()++; });
+
+	/*
+	 * tls->size() will be equal to max number of threads that have used
+	 * tls at any given time. This test assumes that concurrency is >=
+	 * than any previously used number of threads
+	 */
+	UT_ASSERTeq(tls->size(), concurrency);
+
+	for (auto &e : *tls) {
+		UT_ASSERTeq(e, 1);
 	}
+
+	tls->clear();
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
 }
 
 void
@@ -219,6 +236,16 @@ main(int argc, char *argv[])
 
 		test(pop);
 		test_multiple_tls(pop);
+		test_with_spin(pop, 16);
+
+		if (!On_valgrind) {
+			/*
+			 * larger that initial size of queue of thread ids,
+			 * run this only when not on valgrind due to execution
+			 * time.
+			 */
+			test_with_spin(pop, 2048);
+		}
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container_type>(r->pptr);

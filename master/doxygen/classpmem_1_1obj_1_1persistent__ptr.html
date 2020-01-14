@@ -71,6 +71,7 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classpmem_1_1obj_1_1persistent__ptr-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">pmem::obj::persistent_ptr&lt; T &gt; Class Template Reference</div>  </div>
@@ -87,12 +88,16 @@ Inheritance diagram for pmem::obj::persistent_ptr&lt; T &gt;:</div>
  <div class="center">
   <img src="classpmem_1_1obj_1_1persistent__ptr.png" usemap="#pmem::obj::persistent_5Fptr_3C_20T_20_3E_map" alt=""/>
   <map id="pmem::obj::persistent_5Fptr_3C_20T_20_3E_map" name="pmem::obj::persistent_5Fptr_3C_20T_20_3E_map">
-<area href="classpmem_1_1detail_1_1persistent__ptr__base.html" title="Persistent_ptr base class." alt="pmem::detail::persistent_ptr_base&lt; T &gt;" shape="rect" coords="0,0,227,24"/>
+<area href="classpmem_1_1obj_1_1persistent__ptr__base.html" title="Persistent_ptr base (non-template) class." alt="pmem::obj::persistent_ptr_base" shape="rect" coords="0,0,183,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:aa0da8c77b8229979234b565b6e99b3e3"><td class="memItemLeft" align="right" valign="top"><a id="aa0da8c77b8229979234b565b6e99b3e3"></a>
+typedef pmem::detail::sp_element&lt; T &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a></td></tr>
+<tr class="memdesc:aa0da8c77b8229979234b565b6e99b3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the actual object with all qualifiers removed, used for easy underlying type access. <br /></td></tr>
+<tr class="separator:aa0da8c77b8229979234b565b6e99b3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a5f287d06995fe517000650ee35a2a8"><td class="memTemplParams" colspan="2"><a id="a5a5f287d06995fe517000650ee35a2a8"></a>
 template&lt;class U &gt; </td></tr>
 <tr class="memitem:a5a5f287d06995fe517000650ee35a2a8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a5a5f287d06995fe517000650ee35a2a8">rebind</a> = <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; U &gt;</td></tr>
@@ -106,9 +111,8 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a3e85a0b982f88b0eeb217cf3c0ad3e35">bool_type</a> = bool</td></tr>
 <tr class="memdesc:a3e85a0b982f88b0eeb217cf3c0ad3e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">The used bool_type. <br /></td></tr>
 <tr class="separator:a3e85a0b982f88b0eeb217cf3c0ad3e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a978fa74b702f6d40c235a68103d3e0ff"><td class="memItemLeft" align="right" valign="top"><a id="a978fa74b702f6d40c235a68103d3e0ff"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff">iterator_category</a> = std::random_access_iterator_tag</td></tr>
-<tr class="memdesc:a978fa74b702f6d40c235a68103d3e0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> iterator category. <br /></td></tr>
+<tr class="memitem:a978fa74b702f6d40c235a68103d3e0ff"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff">iterator_category</a> = std::random_access_iterator_tag</td></tr>
+<tr class="memdesc:a978fa74b702f6d40c235a68103d3e0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random access iterator requirements (members)  <a href="#a978fa74b702f6d40c235a68103d3e0ff">More...</a><br /></td></tr>
 <tr class="separator:a978fa74b702f6d40c235a68103d3e0ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad725a74e0fa382ae9cafbe90dbc0c3b7"><td class="memItemLeft" align="right" valign="top"><a id="ad725a74e0fa382ae9cafbe90dbc0c3b7"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ad725a74e0fa382ae9cafbe90dbc0c3b7">difference_type</a> = std::ptrdiff_t</td></tr>
@@ -126,11 +130,6 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ad8000c13e9a76ddaae15a8df5344a5ba">pointer</a> = <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt;</td></tr>
 <tr class="memdesc:ad8000c13e9a76ddaae15a8df5344a5ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">The pointer type. <br /></td></tr>
 <tr class="separator:ad8000c13e9a76ddaae15a8df5344a5ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_types_classpmem_1_1detail_1_1persistent__ptr__base"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classpmem_1_1detail_1_1persistent__ptr__base')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">pmem::detail::persistent_ptr_base&lt; T &gt;</a></td></tr>
-<tr class="memitem:ac77978a242f54224491875c51ad161e6 inherit pub_types_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="ac77978a242f54224491875c51ad161e6"></a>
-typedef pmem::detail::sp_element&lt; T &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#ac77978a242f54224491875c51ad161e6">element_type</a></td></tr>
-<tr class="memdesc:ac77978a242f54224491875c51ad161e6 inherit pub_types_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of an actual object with all qualifier removed, used for easy underlying type access. <br /></td></tr>
-<tr class="separator:ac77978a242f54224491875c51ad161e6 inherit pub_types_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -142,6 +141,17 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a602b7a7c3030bbb04b200e4390676337">persistent_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; const void &gt; const &amp;rhs) noexcept</td></tr>
 <tr class="memdesc:a602b7a7c3030bbb04b200e4390676337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Explicit const void specialization of the converting constructor. <br /></td></tr>
 <tr class="separator:a602b7a7c3030bbb04b200e4390676337"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f2ba8801160ec958ce7bba25179f646"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a9f2ba8801160ec958ce7bba25179f646">persistent_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a> *ptr)</td></tr>
+<tr class="memdesc:a9f2ba8801160ec958ce7bba25179f646"><td class="mdescLeft">&#160;</td><td class="mdescRight">Volatile pointer constructor.  <a href="#a9f2ba8801160ec958ce7bba25179f646">More...</a><br /></td></tr>
+<tr class="separator:a9f2ba8801160ec958ce7bba25179f646"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac767d19090d50575fe12d0e73d29ce26"><td class="memTemplParams" colspan="2">template&lt;typename U , typename  = typename std::enable_if&lt;			  !std::is_same&lt;T, U&gt;::value &amp;&amp;			  std::is_same&lt;typename std::remove_cv&lt;T&gt;::type,				       U&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:ac767d19090d50575fe12d0e73d29ce26"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ac767d19090d50575fe12d0e73d29ce26">persistent_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; U &gt; const &amp;r) noexcept</td></tr>
+<tr class="memdesc:ac767d19090d50575fe12d0e73d29ce26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor from a different persistent_ptr&lt;&gt;.  <a href="#ac767d19090d50575fe12d0e73d29ce26">More...</a><br /></td></tr>
+<tr class="separator:ac767d19090d50575fe12d0e73d29ce26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca1bd3321cb14059719ed1c8c89bfa05"><td class="memTemplParams" colspan="2">template&lt;typename U , typename Dummy  = void, typename  = typename std::enable_if&lt;			!std::is_same&lt;				typename std::remove_cv&lt;T&gt;::type,				typename std::remove_cv&lt;U&gt;::type&gt;::value &amp;&amp;				!std::is_void&lt;U&gt;::value,			decltype(static_cast&lt;T *&gt;(std::declval&lt;U *&gt;()))&gt;::type&gt; </td></tr>
+<tr class="memitem:aca1bd3321cb14059719ed1c8c89bfa05"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aca1bd3321cb14059719ed1c8c89bfa05">persistent_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; U &gt; const &amp;r) noexcept</td></tr>
+<tr class="memdesc:aca1bd3321cb14059719ed1c8c89bfa05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor from a different persistent_ptr&lt;&gt;.  <a href="#aca1bd3321cb14059719ed1c8c89bfa05">More...</a><br /></td></tr>
+<tr class="separator:aca1bd3321cb14059719ed1c8c89bfa05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eceeb630b864b49d68bb184c0253331"><td class="memItemLeft" align="right" valign="top"><a id="a6eceeb630b864b49d68bb184c0253331"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a6eceeb630b864b49d68bb184c0253331">operator persistent_ptr&lt; void &gt;</a> () const noexcept</td></tr>
 <tr class="memdesc:a6eceeb630b864b49d68bb184c0253331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent pointer to void conversion operator. <br /></td></tr>
@@ -182,6 +192,10 @@ pmem::detail::sp_member_access&lt; T &gt;::type&#160;</td><td class="memItemRigh
 <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a7cc718501518e2bbb567dcc12d501c44">operator-=</a> (std::ptrdiff_t s)</td></tr>
 <tr class="memdesc:a7cc718501518e2bbb567dcc12d501c44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtraction assignment operator. <br /></td></tr>
 <tr class="separator:a7cc718501518e2bbb567dcc12d501c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4241eff22b48089de2df630af6b0c493"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename  = typename std::enable_if&lt;			  std::is_convertible&lt;Y *, T *&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:a4241eff22b48089de2df630af6b0c493"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a4241eff22b48089de2df630af6b0c493">operator=</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; Y &gt; const &amp;r)</td></tr>
+<tr class="memdesc:a4241eff22b48089de2df630af6b0c493"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converting assignment operator from a different persistent_ptr&lt;&gt;.  <a href="#a4241eff22b48089de2df630af6b0c493">More...</a><br /></td></tr>
+<tr class="separator:a4241eff22b48089de2df630af6b0c493"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25a44b42d2e9466cff96b62d1439b559"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a25a44b42d2e9466cff96b62d1439b559">persist</a> (<a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;pop)</td></tr>
 <tr class="memdesc:a25a44b42d2e9466cff96b62d1439b559"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persists the content of the underlying object.  <a href="#a25a44b42d2e9466cff96b62d1439b559">More...</a><br /></td></tr>
 <tr class="separator:a25a44b42d2e9466cff96b62d1439b559"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -194,59 +208,51 @@ pmem::detail::sp_member_access&lt; T &gt;::type&#160;</td><td class="memItemRigh
 <tr class="memitem:a52fe3d39a95e1281ba102a3fc51fa1a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a52fe3d39a95e1281ba102a3fc51fa1a3">flush</a> (void)</td></tr>
 <tr class="memdesc:a52fe3d39a95e1281ba102a3fc51fa1a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes what the persistent pointer points to.  <a href="#a52fe3d39a95e1281ba102a3fc51fa1a3">More...</a><br /></td></tr>
 <tr class="separator:a52fe3d39a95e1281ba102a3fc51fa1a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classpmem_1_1detail_1_1persistent__ptr__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">pmem::detail::persistent_ptr_base&lt; T &gt;</a></td></tr>
-<tr class="memitem:aadf817c57cfdb8c3bfb6463b96cbef92 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="aadf817c57cfdb8c3bfb6463b96cbef92"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#aadf817c57cfdb8c3bfb6463b96cbef92">persistent_ptr_base</a> ()</td></tr>
-<tr class="memdesc:aadf817c57cfdb8c3bfb6463b96cbef92 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor, zeroes the PMEMoid. <br /></td></tr>
-<tr class="separator:aadf817c57cfdb8c3bfb6463b96cbef92 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d54a4a84f0e2ce2b91a3c6f963abb1b inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a5d54a4a84f0e2ce2b91a3c6f963abb1b">persistent_ptr_base</a> (PMEMoid oid) noexcept</td></tr>
-<tr class="memdesc:a5d54a4a84f0e2ce2b91a3c6f963abb1b inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">PMEMoid constructor.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a5d54a4a84f0e2ce2b91a3c6f963abb1b">More...</a><br /></td></tr>
-<tr class="separator:a5d54a4a84f0e2ce2b91a3c6f963abb1b inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a7d3cebea65092d434e8b0739ec171d inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a7a7d3cebea65092d434e8b0739ec171d">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#ac77978a242f54224491875c51ad161e6">element_type</a> *ptr)</td></tr>
-<tr class="memdesc:a7a7d3cebea65092d434e8b0739ec171d inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Volatile pointer constructor.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a7a7d3cebea65092d434e8b0739ec171d">More...</a><br /></td></tr>
-<tr class="separator:a7a7d3cebea65092d434e8b0739ec171d inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2560d1e307d28977c0f07e10d3507862 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplParams" colspan="2">template&lt;typename U , typename  = typename std::enable_if&lt;			  !std::is_same&lt;T, U&gt;::value &amp;&amp;			  std::is_same&lt;typename std::remove_cv&lt;T&gt;::type,				       U&gt;::value&gt;::type&gt; </td></tr>
-<tr class="memitem:a2560d1e307d28977c0f07e10d3507862 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a2560d1e307d28977c0f07e10d3507862">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a>&lt; U &gt; const &amp;r) noexcept</td></tr>
-<tr class="memdesc:a2560d1e307d28977c0f07e10d3507862 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor from a different persistent_ptr&lt;&gt;.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a2560d1e307d28977c0f07e10d3507862">More...</a><br /></td></tr>
-<tr class="separator:a2560d1e307d28977c0f07e10d3507862 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9853a42c65af9297e2b02d0de72dbeef inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplParams" colspan="2">template&lt;typename U , typename Dummy  = void, typename  = typename std::enable_if&lt;			!std::is_same&lt;				typename std::remove_cv&lt;T&gt;::type,				typename std::remove_cv&lt;U&gt;::type&gt;::value &amp;&amp;				!std::is_void&lt;U&gt;::value,			decltype(static_cast&lt;T *&gt;(std::declval&lt;U *&gt;()))&gt;::type&gt; </td></tr>
-<tr class="memitem:a9853a42c65af9297e2b02d0de72dbeef inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a9853a42c65af9297e2b02d0de72dbeef">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a>&lt; U &gt; const &amp;r) noexcept</td></tr>
-<tr class="memdesc:a9853a42c65af9297e2b02d0de72dbeef inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor from a different persistent_ptr&lt;&gt;.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a9853a42c65af9297e2b02d0de72dbeef">More...</a><br /></td></tr>
-<tr class="separator:a9853a42c65af9297e2b02d0de72dbeef inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6cdbb54744a791eb0de3ca75da4b994 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename  = typename std::enable_if&lt;			!std::is_same&lt;				typename std::remove_cv&lt;T&gt;::type,				typename std::remove_cv&lt;Y&gt;::type&gt;::value &amp;&amp;				!std::is_void&lt;Y&gt;::value,			decltype(static_cast&lt;T *&gt;(std::declval&lt;Y *&gt;()))&gt;::type&gt; </td></tr>
-<tr class="memitem:af6cdbb54744a791eb0de3ca75da4b994 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#af6cdbb54744a791eb0de3ca75da4b994">operator persistent_ptr_base&lt; Y &gt;</a> () noexcept</td></tr>
-<tr class="memdesc:af6cdbb54744a791eb0de3ca75da4b994 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Conversion operator to a different persistent_ptr&lt;&gt;.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#af6cdbb54744a791eb0de3ca75da4b994">More...</a><br /></td></tr>
-<tr class="separator:af6cdbb54744a791eb0de3ca75da4b994 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73c546f3ba51a0ae8036e0650fa164ce inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="a73c546f3ba51a0ae8036e0650fa164ce"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a73c546f3ba51a0ae8036e0650fa164ce">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&amp;r) noexcept</td></tr>
-<tr class="memdesc:a73c546f3ba51a0ae8036e0650fa164ce inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defaulted move constructor. <br /></td></tr>
-<tr class="separator:a73c546f3ba51a0ae8036e0650fa164ce inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa6dd0a4e77944d005c98c25971d79f1 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="afa6dd0a4e77944d005c98c25971d79f1"></a>
-<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#afa6dd0a4e77944d005c98c25971d79f1">operator=</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&amp;r)</td></tr>
-<tr class="memdesc:afa6dd0a4e77944d005c98c25971d79f1 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defaulted move assignment operator. <br /></td></tr>
-<tr class="separator:afa6dd0a4e77944d005c98c25971d79f1 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab09ad8d290d4a11f0c8d5a630e40876a inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#ab09ad8d290d4a11f0c8d5a630e40876a">operator=</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> const &amp;r)</td></tr>
-<tr class="memdesc:ab09ad8d290d4a11f0c8d5a630e40876a inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#ab09ad8d290d4a11f0c8d5a630e40876a">More...</a><br /></td></tr>
-<tr class="separator:ab09ad8d290d4a11f0c8d5a630e40876a inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a154afa40d6c9e7a9baff9c1daa0294ac inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a154afa40d6c9e7a9baff9c1daa0294ac">operator=</a> (std::nullptr_t &amp;&amp;)</td></tr>
-<tr class="memdesc:a154afa40d6c9e7a9baff9c1daa0294ac inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nullptr move assignment operator.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a154afa40d6c9e7a9baff9c1daa0294ac">More...</a><br /></td></tr>
-<tr class="separator:a154afa40d6c9e7a9baff9c1daa0294ac inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a337b2ddd1775c95ee5e8b520c329eb84 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplParams" colspan="2">template&lt;typename Y , typename  = typename std::enable_if&lt;			  std::is_convertible&lt;Y *, T *&gt;::value&gt;::type&gt; </td></tr>
-<tr class="memitem:a337b2ddd1775c95ee5e8b520c329eb84 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a337b2ddd1775c95ee5e8b520c329eb84">operator=</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a>&lt; Y &gt; const &amp;r)</td></tr>
-<tr class="memdesc:a337b2ddd1775c95ee5e8b520c329eb84 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converting assignment operator from a different persistent_ptr&lt;&gt;.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a337b2ddd1775c95ee5e8b520c329eb84">More...</a><br /></td></tr>
-<tr class="separator:a337b2ddd1775c95ee5e8b520c329eb84 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1638245534d2b0c0c3c4f5393134c29c inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a1638245534d2b0c0c3c4f5393134c29c">swap</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;other)</td></tr>
-<tr class="memdesc:a1638245534d2b0c0c3c4f5393134c29c inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swaps two persistent_ptr objects of the same type.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a1638245534d2b0c0c3c4f5393134c29c">More...</a><br /></td></tr>
-<tr class="separator:a1638245534d2b0c0c3c4f5393134c29c inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75304406ee361aa4ad8c5a5f5720f584 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#ac77978a242f54224491875c51ad161e6">element_type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a75304406ee361aa4ad8c5a5f5720f584">get</a> () const noexcept</td></tr>
-<tr class="memdesc:a75304406ee361aa4ad8c5a5f5720f584 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a direct pointer.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a75304406ee361aa4ad8c5a5f5720f584">More...</a><br /></td></tr>
-<tr class="separator:a75304406ee361aa4ad8c5a5f5720f584 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a87704888c7b172afb45e774030e0df2f inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">const PMEMoid &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a87704888c7b172afb45e774030e0df2f">raw</a> () const noexcept</td></tr>
-<tr class="memdesc:a87704888c7b172afb45e774030e0df2f inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get PMEMoid encapsulated by this object.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a87704888c7b172afb45e774030e0df2f">More...</a><br /></td></tr>
-<tr class="separator:a87704888c7b172afb45e774030e0df2f inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ab4111b4395ef4517b1abed1d7ea636 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">PMEMoid *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a9ab4111b4395ef4517b1abed1d7ea636">raw_ptr</a> () noexcept</td></tr>
-<tr class="memdesc:a9ab4111b4395ef4517b1abed1d7ea636 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get pointer to PMEMoid encapsulated by this object.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a9ab4111b4395ef4517b1abed1d7ea636">More...</a><br /></td></tr>
-<tr class="separator:a9ab4111b4395ef4517b1abed1d7ea636 inherit pub_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad45c60e7966d086029c42d151ce969e0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ad45c60e7966d086029c42d151ce969e0">get</a> () const noexcept</td></tr>
+<tr class="memdesc:ad45c60e7966d086029c42d151ce969e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the direct pointer.  <a href="#ad45c60e7966d086029c42d151ce969e0">More...</a><br /></td></tr>
+<tr class="separator:ad45c60e7966d086029c42d151ce969e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51602c5383f310740e4e0c70c98b07b5"><td class="memItemLeft" align="right" valign="top"><a id="a51602c5383f310740e4e0c70c98b07b5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a51602c5383f310740e4e0c70c98b07b5">persistent_ptr_base</a> () noexcept</td></tr>
+<tr class="memdesc:a51602c5383f310740e4e0c70c98b07b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor, zeroes the PMEMoid. <br /></td></tr>
+<tr class="separator:a51602c5383f310740e4e0c70c98b07b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6526afba61462160150673fcf7489971"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a6526afba61462160150673fcf7489971">persistent_ptr_base</a> (PMEMoid oid) noexcept</td></tr>
+<tr class="memdesc:a6526afba61462160150673fcf7489971"><td class="mdescLeft">&#160;</td><td class="mdescRight">PMEMoid constructor.  <a href="#a6526afba61462160150673fcf7489971">More...</a><br /></td></tr>
+<tr class="separator:a6526afba61462160150673fcf7489971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab189ea8e11b71db7fb9e371b9635b56b"><td class="memItemLeft" align="right" valign="top"><a id="ab189ea8e11b71db7fb9e371b9635b56b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ab189ea8e11b71db7fb9e371b9635b56b">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&amp;r) noexcept</td></tr>
+<tr class="memdesc:ab189ea8e11b71db7fb9e371b9635b56b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="separator:ab189ea8e11b71db7fb9e371b9635b56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classpmem_1_1obj_1_1persistent__ptr__base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">pmem::obj::persistent_ptr_base</a></td></tr>
+<tr class="memitem:a51602c5383f310740e4e0c70c98b07b5 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="a51602c5383f310740e4e0c70c98b07b5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a51602c5383f310740e4e0c70c98b07b5">persistent_ptr_base</a> () noexcept</td></tr>
+<tr class="memdesc:a51602c5383f310740e4e0c70c98b07b5 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor, zeroes the PMEMoid. <br /></td></tr>
+<tr class="separator:a51602c5383f310740e4e0c70c98b07b5 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6526afba61462160150673fcf7489971 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a6526afba61462160150673fcf7489971">persistent_ptr_base</a> (PMEMoid oid) noexcept</td></tr>
+<tr class="memdesc:a6526afba61462160150673fcf7489971 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">PMEMoid constructor.  <a href="classpmem_1_1obj_1_1persistent__ptr__base.html#a6526afba61462160150673fcf7489971">More...</a><br /></td></tr>
+<tr class="separator:a6526afba61462160150673fcf7489971 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab189ea8e11b71db7fb9e371b9635b56b inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="ab189ea8e11b71db7fb9e371b9635b56b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#ab189ea8e11b71db7fb9e371b9635b56b">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&amp;r) noexcept</td></tr>
+<tr class="memdesc:ab189ea8e11b71db7fb9e371b9635b56b inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor. <br /></td></tr>
+<tr class="separator:ab189ea8e11b71db7fb9e371b9635b56b inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ce34020b9b778a8c9a56e8eebde688a inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a id="a0ce34020b9b778a8c9a56e8eebde688a"></a>
+<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a0ce34020b9b778a8c9a56e8eebde688a">operator=</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&amp;r)</td></tr>
+<tr class="memdesc:a0ce34020b9b778a8c9a56e8eebde688a inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator. <br /></td></tr>
+<tr class="separator:a0ce34020b9b778a8c9a56e8eebde688a inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4eda11a39f158b4450d3259be8d806d3 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a4eda11a39f158b4450d3259be8d806d3">operator=</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> const &amp;r)</td></tr>
+<tr class="memdesc:a4eda11a39f158b4450d3259be8d806d3 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator.  <a href="classpmem_1_1obj_1_1persistent__ptr__base.html#a4eda11a39f158b4450d3259be8d806d3">More...</a><br /></td></tr>
+<tr class="separator:a4eda11a39f158b4450d3259be8d806d3 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a455d915bfc184166ff5cf67aae0b28 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a0a455d915bfc184166ff5cf67aae0b28">operator=</a> (std::nullptr_t &amp;&amp;)</td></tr>
+<tr class="memdesc:a0a455d915bfc184166ff5cf67aae0b28 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nullptr move assignment operator.  <a href="classpmem_1_1obj_1_1persistent__ptr__base.html#a0a455d915bfc184166ff5cf67aae0b28">More...</a><br /></td></tr>
+<tr class="separator:a0a455d915bfc184166ff5cf67aae0b28 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a396d703ed024438de713fd7fb871e15f inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a396d703ed024438de713fd7fb871e15f">swap</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> &amp;other)</td></tr>
+<tr class="memdesc:a396d703ed024438de713fd7fb871e15f inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swaps two <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> objects of the same type.  <a href="classpmem_1_1obj_1_1persistent__ptr__base.html#a396d703ed024438de713fd7fb871e15f">More...</a><br /></td></tr>
+<tr class="separator:a396d703ed024438de713fd7fb871e15f inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa75eca8b91580df65760e63270e3dae8 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">const PMEMoid &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#aa75eca8b91580df65760e63270e3dae8">raw</a> () const noexcept</td></tr>
+<tr class="memdesc:aa75eca8b91580df65760e63270e3dae8 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get PMEMoid encapsulated by this object.  <a href="classpmem_1_1obj_1_1persistent__ptr__base.html#aa75eca8b91580df65760e63270e3dae8">More...</a><br /></td></tr>
+<tr class="separator:aa75eca8b91580df65760e63270e3dae8 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13a2704fa826df5b3592190bf4645f67 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">PMEMoid *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html#a13a2704fa826df5b3592190bf4645f67">raw_ptr</a> () noexcept</td></tr>
+<tr class="memdesc:a13a2704fa826df5b3592190bf4645f67 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get pointer to PMEMoid encapsulated by this object.  <a href="classpmem_1_1obj_1_1persistent__ptr__base.html#a13a2704fa826df5b3592190bf4645f67">More...</a><br /></td></tr>
+<tr class="separator:a13a2704fa826df5b3592190bf4645f67 inherit pub_methods_classpmem_1_1obj_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -254,16 +260,19 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:aff9a32d18e6ccaf34b1c08ca3ddeb473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a persistent pointer from a given reference.  <a href="#aff9a32d18e6ccaf34b1c08ca3ddeb473">More...</a><br /></td></tr>
 <tr class="separator:aff9a32d18e6ccaf34b1c08ca3ddeb473"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classpmem_1_1detail_1_1persistent__ptr__base')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html">pmem::detail::persistent_ptr_base&lt; T &gt;</a></td></tr>
-<tr class="memitem:a9bf166aee4fc673dae1b30bd445a8c7d inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a9bf166aee4fc673dae1b30bd445a8c7d">persistent_ptr_base</a> (<a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#ac77978a242f54224491875c51ad161e6">element_type</a> *vptr, int)</td></tr>
-<tr class="memdesc:a9bf166aee4fc673dae1b30bd445a8c7d inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private constructor enabling persistent_ptrs to volatile objects.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a9bf166aee4fc673dae1b30bd445a8c7d">More...</a><br /></td></tr>
-<tr class="separator:a9bf166aee4fc673dae1b30bd445a8c7d inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12c15a4fd373be79ac6ef488fff9efd4 inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplParams" colspan="2">template&lt;typename U &gt; </td></tr>
-<tr class="memitem:a12c15a4fd373be79ac6ef488fff9efd4 inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memTemplItemLeft" align="right" valign="top">ptrdiff_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1persistent__ptr__base.html#a12c15a4fd373be79ac6ef488fff9efd4">calculate_offset</a> () const</td></tr>
-<tr class="memdesc:a12c15a4fd373be79ac6ef488fff9efd4 inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate in-object offset for structures with inheritance.  <a href="classpmem_1_1detail_1_1persistent__ptr__base.html#a12c15a4fd373be79ac6ef488fff9efd4">More...</a><br /></td></tr>
-<tr class="separator:a12c15a4fd373be79ac6ef488fff9efd4 inherit pro_methods_classpmem_1_1detail_1_1persistent__ptr__base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ae5e4e6f4f66affcd0b29ffb8ea27038d"><td class="memItemLeft" align="right" valign="top"><a id="ae5e4e6f4f66affcd0b29ffb8ea27038d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ae5e4e6f4f66affcd0b29ffb8ea27038d">verify_type</a> ()</td></tr>
+<tr class="memdesc:ae5e4e6f4f66affcd0b29ffb8ea27038d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify if element_type is not polymorphic. <br /></td></tr>
+<tr class="separator:ae5e4e6f4f66affcd0b29ffb8ea27038d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf5d64a209866470043a33409cbd1764"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#adf5d64a209866470043a33409cbd1764">persistent_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a> *vptr, int)</td></tr>
+<tr class="memdesc:adf5d64a209866470043a33409cbd1764"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private constructor enabling persistent_ptrs to volatile objects.  <a href="#adf5d64a209866470043a33409cbd1764">More...</a><br /></td></tr>
+<tr class="separator:adf5d64a209866470043a33409cbd1764"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd0cdb42d48a60e158e75638896b8687"><td class="memTemplParams" colspan="2">template&lt;typename U &gt; </td></tr>
+<tr class="memitem:acd0cdb42d48a60e158e75638896b8687"><td class="memTemplItemLeft" align="right" valign="top">ptrdiff_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#acd0cdb42d48a60e158e75638896b8687">calculate_offset</a> () const</td></tr>
+<tr class="memdesc:acd0cdb42d48a60e158e75638896b8687"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate in-object offset for structures with inheritance.  <a href="#acd0cdb42d48a60e158e75638896b8687">More...</a><br /></td></tr>
+<tr class="separator:acd0cdb42d48a60e158e75638896b8687"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
@@ -284,7 +293,211 @@ class pmem::obj::persistent_ptr&lt; T &gt;</h3>
 <p>The <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> is not designed to work with polymorphic types, as they have runtime RTTI info embedded, which is implementation specific and thus not consistently rebuildable. Such constructs as polymorphic members or members of a union defined within a class held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> will also yield undefined behavior.</p>
 <p>C++ standard states that lifetime of an object is a runtime property [basic.lifetime]. Conditions which must be fulfilled for object's lifetime to begin, imply that using any non-trivially constructible object with <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> is undefined behaviour. This is being partially addressed by the following proposal: <a href="https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/bk8esqk-Qoo">https://groups.google.com/a/isocpp.org/forum/#!topic/std-proposals/bk8esqk-Qoo</a></p>
 <p>Another caveat is that snapshotting elements in a transaction and performing rollback uses memcpy internally. Using memcpy on an object in C++ is allowed by the standard only if the type satisfies TriviallyCopyable requirement.</p>
-<p>This type does NOT manage the life-cycle of the object. The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;fcntl.h&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="transaction_8hpp.html">libpmemobj++/transaction.hpp</a>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">using namespace </span>pmem::obj;</div><div class="line"></div><div class="line"><span class="keywordtype">void</span></div><div class="line">persistent_ptr_example()</div><div class="line">{</div><div class="line"></div><div class="line">    <span class="keyword">struct </span>compound_type {</div><div class="line"></div><div class="line">        <span class="keywordtype">void</span></div><div class="line">        set_some_variable(<span class="keywordtype">int</span> val)</div><div class="line">        {</div><div class="line">            some_variable = val;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keywordtype">int</span> some_variable;</div><div class="line">        <span class="keywordtype">double</span> some_other_variable;</div><div class="line">    };</div><div class="line"></div><div class="line">    <span class="comment">// pool root structure</span></div><div class="line">    <span class="keyword">struct </span>root {</div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;compound_type&gt;</a> comp;</div><div class="line">    } proot;</div><div class="line"></div><div class="line">    <span class="comment">// create a pmemobj pool</span></div><div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>, PMEMOBJ_MIN_POOL);</div><div class="line"></div><div class="line">    <span class="comment">// typical usage schemes</span></div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">        proot.comp = make_persistent&lt;compound_type&gt;(); <span class="comment">// allocation</span></div><div class="line">        proot.comp-&gt;set_some_variable(12);         <span class="comment">// call function</span></div><div class="line">        proot.comp-&gt;some_other_variable = 2.3;         <span class="comment">// set variable</span></div><div class="line">    });</div><div class="line"></div><div class="line">    <span class="comment">// reading from the persistent_ptr</span></div><div class="line">    compound_type tmp = *proot.comp;</div><div class="line">    (void)tmp;</div><div class="line"></div><div class="line">    <span class="comment">// Changing a persistent_ptr&lt;&gt; variable outside of a transaction is a</span></div><div class="line">    <span class="comment">// volatile modification. No way to ensure persistence in case of power</span></div><div class="line">    <span class="comment">// failure.</span></div><div class="line">    proot.comp-&gt;some_variable = 12;</div><div class="line">}</div></div><!-- fragment --></div><h2 class="groupheader">Member Function Documentation</h2>
+<p>This type does NOT manage the life-cycle of the object. The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;fcntl.h&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="transaction_8hpp.html">libpmemobj++/transaction.hpp</a>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">using namespace </span>pmem::obj;</div><div class="line"></div><div class="line"><span class="keywordtype">void</span></div><div class="line">persistent_ptr_example()</div><div class="line">{</div><div class="line"></div><div class="line">    <span class="keyword">struct </span>compound_type {</div><div class="line"></div><div class="line">        <span class="keywordtype">void</span></div><div class="line">        set_some_variable(<span class="keywordtype">int</span> val)</div><div class="line">        {</div><div class="line">            some_variable = val;</div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="keywordtype">int</span> some_variable;</div><div class="line">        <span class="keywordtype">double</span> some_other_variable;</div><div class="line">    };</div><div class="line"></div><div class="line">    <span class="comment">// pool root structure</span></div><div class="line">    <span class="keyword">struct </span>root {</div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;compound_type&gt;</a> comp;</div><div class="line">    } proot;</div><div class="line"></div><div class="line">    <span class="comment">// create a pmemobj pool</span></div><div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>, PMEMOBJ_MIN_POOL);</div><div class="line"></div><div class="line">    <span class="comment">// typical usage schemes</span></div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">        proot.comp = make_persistent&lt;compound_type&gt;(); <span class="comment">// allocation</span></div><div class="line">        proot.comp-&gt;set_some_variable(12);         <span class="comment">// call function</span></div><div class="line">        proot.comp-&gt;some_other_variable = 2.3;         <span class="comment">// set variable</span></div><div class="line">    });</div><div class="line"></div><div class="line">    <span class="comment">// reading from the persistent_ptr</span></div><div class="line">    compound_type tmp = *proot.comp;</div><div class="line">    (void)tmp;</div><div class="line"></div><div class="line">    <span class="comment">// Changing a persistent_ptr&lt;&gt; variable outside of a transaction is a</span></div><div class="line">    <span class="comment">// volatile modification. No way to ensure persistence in case of power</span></div><div class="line">    <span class="comment">// failure.</span></div><div class="line">    proot.comp-&gt;some_variable = 12;</div><div class="line">}</div></div><!-- fragment --><p> Casting to <a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html" title="Persistent_ptr base (non-template) class.">persistent_ptr_base</a> can be easily done from any persistent_ptr&lt;T&gt; objects, but when casting between convertible objects be advised to use constructors or operator= specified for such conversion, see:</p><ul>
+<li><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#ac767d19090d50575fe12d0e73d29ce26" title="Copy constructor from a different persistent_ptr&lt;&gt;.">persistent_ptr::persistent_ptr(persistent_ptr&lt;U&gt; const &amp;r)</a> ,</li>
+<li>persistent_ptr&lt;T&gt; &amp; <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a4241eff22b48089de2df630af6b0c493" title="Converting assignment operator from a different persistent_ptr&lt;&gt;.">operator=(persistent_ptr&lt;Y&gt; const &amp;r)</a> . When casting indirectly with (void *) or using static_cast, and then casting to the second (convertible) type, the offset will not be re-calculated.</li>
+</ul>
+<p>Below you can find an example how to and how NOT to cast <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>'s: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr__base_8hpp.html">libpmemobj++/persistent_ptr_base.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="transaction_8hpp.html">libpmemobj++/transaction.hpp</a>&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">using namespace </span>pmem::obj;</div><div class="line"></div><div class="line"><span class="keyword">struct </span>root {</div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;int&gt;</a> pfoo;</div><div class="line">};</div><div class="line"></div><div class="line"><span class="keywordtype">void</span></div><div class="line">persistent_ptr_conversion_example(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;root&gt;</a> &amp;pop)</div><div class="line">{</div><div class="line">    <span class="comment">/* Casting persistent_ptr to persistent_ptr_base */</span></div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">        <span class="comment">/* Good: any persistent_ptr&lt;T&gt; can be stored in a base ptr */</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> i_ptr_base = make_persistent&lt;int&gt;(10);</div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Wrong: even though raw pointer can be used to create new</span></div><div class="line"><span class="comment">         * persistent_ptr it&#39;s not advised to use it this way, since</span></div><div class="line"><span class="comment">         * there&#39;s no information about underlying/template type</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;double&gt;</a> dptr = i_ptr_base.<a class="code" href="classpmem_1_1obj_1_1persistent__ptr__base.html#aa75eca8b91580df65760e63270e3dae8">raw</a>();</div><div class="line">        std::cout &lt;&lt; *dptr; <span class="comment">// contains trash data</span></div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Acceptable: it&#39;s not advised, but it will work properly.</span></div><div class="line"><span class="comment">         * Although, you have to be sure the underlying type is correct</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;int&gt;</a> iptr_nonbase = i_ptr_base.<a class="code" href="classpmem_1_1obj_1_1persistent__ptr__base.html#aa75eca8b91580df65760e63270e3dae8">raw</a>();</div><div class="line">        std::cout &lt;&lt; *iptr_nonbase; <span class="comment">// contains proper data</span></div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Wrong: illegal call for derived constructor.</span></div><div class="line"><span class="comment">         * no viable conversion from &#39;persistent_ptr_base&#39; to</span></div><div class="line"><span class="comment">         * &#39;persistent_ptr&lt;int&gt;&#39; */</span></div><div class="line">        <span class="comment">// iptr_nonbase = i_ptr_base;</span></div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Wrong: conversion from base class to persistent_ptr&lt;T&gt; is not</span></div><div class="line"><span class="comment">         * possible: no matching conversion from &#39;persistent_ptr_base&#39;</span></div><div class="line"><span class="comment">         * to &#39;persistent_ptr&lt;int&gt;&#39;</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <span class="comment">// iptr_nonbase = static_cast&lt;persistent_ptr&lt;int&gt;&gt;(i_ptr_base);</span></div><div class="line"></div><div class="line">        <span class="comment">/* Good: you can use base and ptr classes with volatile pointer</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;int&gt;</a> i_ptr = make_persistent&lt;int&gt;(10);</div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> *i_ptr_ref = &amp;i_ptr;</div><div class="line">        std::cout &lt;&lt; i_ptr_ref-&gt;<a class="code" href="classpmem_1_1obj_1_1persistent__ptr__base.html#aa75eca8b91580df65760e63270e3dae8">raw</a>().off; <span class="comment">// contains PMEMoid&#39;s data</span></div><div class="line">    });</div><div class="line"></div><div class="line">    <span class="keyword">struct </span>A {</div><div class="line">        uint64_t a;</div><div class="line">    };</div><div class="line">    <span class="keyword">struct </span>B {</div><div class="line">        uint64_t b;</div><div class="line">    };</div><div class="line">    <span class="keyword">struct </span>C : <span class="keyword">public</span> A, <span class="keyword">public</span> B {</div><div class="line">        uint64_t c;</div><div class="line">    };</div><div class="line"></div><div class="line">    <span class="comment">/* Convertible types, using struct A, B and C */</span></div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [] {</div><div class="line">        <span class="comment">/* Good: conversion from type C to B, using copy constructor */</span></div><div class="line">        <span class="keyword">auto</span> cptr = make_persistent&lt;C&gt;();</div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;B&gt;</a> bptr = cptr;</div><div class="line">        std::cout &lt;&lt; (bptr-&gt;b ==</div><div class="line">                  cptr-&gt;b); <span class="comment">// thanks to conversion and</span></div><div class="line">                    <span class="comment">// recalculating offsets it&#39;s correct</span></div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Good: conversion from type C to B, using converting</span></div><div class="line"><span class="comment">         * assignment operator</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;B&gt;</a> bptr2;</div><div class="line">        bptr2 = cptr;</div><div class="line">        std::cout &lt;&lt; (bptr2-&gt;b == cptr-&gt;b); <span class="comment">// true</span></div><div class="line"></div><div class="line">        <span class="comment">/* Good: direct conversion using static_cast */</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;B&gt;</a> bptr3 = <span class="keyword">static_cast&lt;</span><a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;B&gt;</a><span class="keyword">&gt;</span>(cptr);</div><div class="line">        std::cout &lt;&lt; (bptr3-&gt;b == cptr-&gt;b); <span class="comment">// true</span></div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Wrong: conversion to base class and then to different ptr.</span></div><div class="line"><span class="comment">         * class no matching conversion from &#39;persistent_ptr_base&#39; to</span></div><div class="line"><span class="comment">         * &#39;persistent_ptr&lt;B&gt;&#39;</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <span class="comment">// auto cptr2 = (persistent_ptr_base)cptr;</span></div><div class="line">        <span class="comment">// persistent_ptr&lt;B&gt; bptr4 =</span></div><div class="line">        <span class="comment">//      static_cast&lt;persistent_ptr&lt;B&gt;&gt;(cptr2);</span></div><div class="line"></div><div class="line">        <span class="comment">/*</span></div><div class="line"><span class="comment">         * Wrong: conversion to &#39;void *&#39; and then to different ptr</span></div><div class="line"><span class="comment">         * class. ambiguous conversion from &#39;void *&#39; to</span></div><div class="line"><span class="comment">         * &#39;persistent_ptr&lt;B&gt;&#39;</span></div><div class="line"><span class="comment">         */</span></div><div class="line">        <span class="comment">// auto cptr3 = (void *)&amp;cptr;</span></div><div class="line">        <span class="comment">// persistent_ptr&lt;B&gt; bptr5 =</span></div><div class="line">        <span class="comment">//      static_cast&lt;persistent_ptr&lt;B&gt;&gt;(cptr3);</span></div><div class="line">    });</div><div class="line">}</div></div><!-- fragment --></div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a978fa74b702f6d40c235a68103d3e0ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a978fa74b702f6d40c235a68103d3e0ff">&#9670;&nbsp;</a></span>iterator_category</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff">iterator_category</a> =  std::random_access_iterator_tag</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Random access iterator requirements (members) </p>
+<p>The <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> iterator category. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a9f2ba8801160ec958ce7bba25179f646"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f2ba8801160ec958ce7bba25179f646">&#9670;&nbsp;</a></span>persistent_ptr() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a> *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Volatile pointer constructor. </p>
+<p>If ptr does not point to an address from a valid pool, the persistent pointer will evaluate to nullptr.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>volatile pointer, pointing to persistent memory. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac767d19090d50575fe12d0e73d29ce26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac767d19090d50575fe12d0e73d29ce26">&#9670;&nbsp;</a></span>persistent_ptr() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename U , typename  = typename std::enable_if&lt;			  !std::is_same&lt;T, U&gt;::value &amp;&amp;			  std::is_same&lt;typename std::remove_cv&lt;T&gt;::type,				       U&gt;::value&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; U &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor from a different persistent_ptr&lt;&gt;. </p>
+<p>Available only for convertible types. </p>
+
+</div>
+</div>
+<a id="aca1bd3321cb14059719ed1c8c89bfa05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca1bd3321cb14059719ed1c8c89bfa05">&#9670;&nbsp;</a></span>persistent_ptr() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename U , typename Dummy  = void, typename  = typename std::enable_if&lt;			!std::is_same&lt;				typename std::remove_cv&lt;T&gt;::type,				typename std::remove_cv&lt;U&gt;::type&gt;::value &amp;&amp;				!std::is_void&lt;U&gt;::value,			decltype(static_cast&lt;T *&gt;(std::declval&lt;U *&gt;()))&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; U &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy constructor from a different persistent_ptr&lt;&gt;. </p>
+<p>Available only for convertible, non-void types. </p>
+
+</div>
+</div>
+<a id="adf5d64a209866470043a33409cbd1764"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf5d64a209866470043a33409cbd1764">&#9670;&nbsp;</a></span>persistent_ptr() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a> *&#160;</td>
+          <td class="paramname"><em>vptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Private constructor enabling persistent_ptrs to volatile objects. </p>
+<p>This is internal implementation needed only for the pointer_traits&lt;persistent_ptr&gt;::pointer_to to be able to create valid pointers. This is used in libstdc++'s std::vector::insert(). </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="acd0cdb42d48a60e158e75638896b8687"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd0cdb42d48a60e158e75638896b8687">&#9670;&nbsp;</a></span>calculate_offset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename U &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ptrdiff_t <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::calculate_offset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate in-object offset for structures with inheritance. </p>
+<p>In case of the given inheritance:</p>
+<p>A B \ / C</p>
+<p>A pointer to B *ptr = &amp;C should be offset by sizeof(A). This function calculates that offset.</p>
+<dl class="section return"><dt>Returns</dt><dd>offset between two compatible pointer types to the same object </dd></dl>
+
+</div>
+</div>
 <a id="a3576b7c9381e281518a077ee76e9188e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3576b7c9381e281518a077ee76e9188e">&#9670;&nbsp;</a></span>flush() <span class="overload">[1/2]</span></h2>
 
@@ -351,6 +564,76 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pool_error</a></td><td>when cannot get pool from persistent pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad45c60e7966d086029c42d151ce969e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad45c60e7966d086029c42d151ce969e0">&#9670;&nbsp;</a></span>get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#aa0da8c77b8229979234b565b6e99b3e3">element_type</a>* <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::get </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the direct pointer. </p>
+<p>Performs a calculations on the underlying C-style pointer.</p>
+<dl class="section return"><dt>Returns</dt><dd>the direct pointer to the object. </dd></dl>
+
+</div>
+</div>
+<a id="a4241eff22b48089de2df630af6b0c493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4241eff22b48089de2df630af6b0c493">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<div class="memtemplate">
+template&lt;typename Y , typename  = typename std::enable_if&lt;			  std::is_convertible&lt;Y *, T *&gt;::value&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt;T&gt;&amp; <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt; T &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; Y &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Converting assignment operator from a different persistent_ptr&lt;&gt;. </p>
+<p>Available only for convertible types. Just like regular assignment, also automatically registers itself in a transaction.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when adding the object to the transaction failed. </td></tr>
   </table>
   </dd>
 </dl>
@@ -456,6 +739,39 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pool_error</a></td><td>when cannot get pool from persistent pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6526afba61462160150673fcf7489971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6526afba61462160150673fcf7489971">&#9670;&nbsp;</a></span>persistent_ptr_base()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pmem::obj::persistent_ptr_base::persistent_ptr_base</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>PMEMoid constructor. </p>
+<p>Provided for easy interoperability between C++ and C API's.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">oid</td><td>C-style persistent pointer </td></tr>
   </table>
   </dd>
 </dl>

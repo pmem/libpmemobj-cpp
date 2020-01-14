@@ -39,27 +39,15 @@ namespace nvobj = pmem::obj;
 
 using test_t = int;
 
-#if LIBPMEMOBJ_CPP_USE_TBB
-
-#include "enumerable_thread_specific_tbb_traits.hpp"
-
-using container_type = nvobj::experimental::enumerable_thread_specific<
-	test_t, tbb::concurrent_unordered_map, exclusive_only_mutex>;
-
-#else
-
 using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
-
-#endif
 
 struct root {
 	nvobj::persistent_ptr<container_type> pptr;
 };
 
 void
-test(nvobj::pool<struct root> &pop)
+test(nvobj::pool<struct root> &pop, size_t batch_size)
 {
-	const size_t batch_size = 10;
 	const size_t num_batches = 3;
 
 	auto tls = pop.root()->pptr;
@@ -81,10 +69,33 @@ test(nvobj::pool<struct root> &pop)
 }
 
 void
-test_with_spin(nvobj::pool<struct root> &pop)
+test_with_spin(nvobj::pool<struct root> &pop, size_t batch_size)
 {
-	const size_t batch_size = 10;
+	auto tls = pop.root()->pptr;
 
+	UT_ASSERT(tls != nullptr);
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+
+	parallel_exec_with_sync(batch_size, [&](size_t thread_index) {
+		tls->local() = thread_index;
+	});
+
+	/*
+	 * tls->size() will be equal to max number of threads that have used
+	 * tls at any given time. This test assumes that batch_size is >=
+	 * than any previously used number of threads
+	 */
+	UT_ASSERTeq(tls->size(), batch_size);
+
+	tls->clear();
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+}
+
+void
+test_clear_abort(nvobj::pool<struct root> &pop, size_t batch_size)
+{
 	auto tls = pop.root()->pptr;
 
 	UT_ASSERT(tls != nullptr);
@@ -92,13 +103,30 @@ test_with_spin(nvobj::pool<struct root> &pop)
 	UT_ASSERT(tls->empty());
 
 	parallel_exec_with_sync(batch_size,
-				[&](size_t thread_index) { tls->local(); });
+				[&](size_t thread_index) { tls->local() = 2; });
 
-	UT_ASSERT(tls->size() == batch_size);
+	/*
+	 * tls->size() will be equal to max number of threads that have used
+	 * tls at any given time. This test assumes that batch_size is >=
+	 * than any previously used number of threads
+	 */
+	UT_ASSERTeq(tls->size(), batch_size);
 
-	tls->clear();
-	UT_ASSERT(tls->size() == 0);
-	UT_ASSERT(tls->empty());
+	try {
+		nvobj::transaction::run(pop, [&] {
+			tls->clear();
+
+			nvobj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERTeq(tls->size(), batch_size);
+
+	for (auto &e : *tls)
+		UT_ASSERTeq(e, 2);
 }
 
 int
@@ -123,8 +151,13 @@ main(int argc, char *argv[])
 			r->pptr = nvobj::make_persistent<container_type>();
 		});
 
-		test(pop);
-		test_with_spin(pop);
+		test(pop, 8);
+		test(pop, 10);
+
+		test_with_spin(pop, 12);
+		test_with_spin(pop, 16);
+
+		test_clear_abort(pop, 16);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container_type>(r->pptr);

@@ -348,9 +348,8 @@ struct hash_map_node {
 	}
 
 	template <typename... Args>
-	hash_map_node(node_ptr_t &&_next, Args &&... args)
-	    : next(std::forward<node_ptr_t>(_next)),
-	      item(std::forward<Args>(args)...)
+	hash_map_node(const node_ptr_t &_next, Args &&... args)
+	    : next(_next), item(std::forward<Args>(args)...)
 	{
 	}
 
@@ -2518,6 +2517,97 @@ public:
 		concurrent_hash_map_internal::check_outside_tx();
 
 		insert(il.begin(), il.end());
+	}
+
+	/**
+	 * Inserts item if there is no such key present already, assigns
+	 * provided value otherwise.
+	 * @return return true if the insertion took place and false if the
+	 * assignment took place.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
+	template <typename M>
+	bool
+	insert_or_assign(const key_type &key, M &&obj)
+	{
+		concurrent_hash_map_internal::check_outside_tx();
+
+		accessor acc;
+		auto result = internal_insert(key, &acc, true, key,
+					      std::forward<M>(obj));
+
+		if (!result) {
+			pool_base pop = get_pool_base();
+			pmem::obj::transaction::manual tx(pop);
+			acc->second = std::forward<M>(obj);
+			pmem::obj::transaction::commit();
+		}
+
+		return result;
+	}
+
+	/**
+	 * Inserts item if there is no such key present already, assigns
+	 * provided value otherwise.
+	 * @return return true if the insertion took place and false if the
+	 * assignment took place.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
+	template <typename M>
+	bool
+	insert_or_assign(key_type &&key, M &&obj)
+	{
+		concurrent_hash_map_internal::check_outside_tx();
+
+		accessor acc;
+		auto result = internal_insert(key, &acc, true, std::move(key),
+					      std::forward<M>(obj));
+
+		if (!result) {
+			pool_base pop = get_pool_base();
+			pmem::obj::transaction::manual tx(pop);
+			acc->second = std::forward<M>(obj);
+			pmem::obj::transaction::commit();
+		}
+
+		return result;
+	}
+
+	/**
+	 * Inserts item if there is no such key-comparable type present already,
+	 * assigns provided value otherwise.
+	 * @return return true if the insertion took place and false if the
+	 * assignment took place.
+	 * @throw pmem::transaction_alloc_error on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
+	template <
+		typename K, typename M,
+		typename = typename std::enable_if<
+			concurrent_hash_map_internal::has_transparent_key_equal<
+				hasher>::value &&
+				std::is_constructible<key_type, K>::value,
+			K>::type>
+	bool
+	insert_or_assign(K &&key, M &&obj)
+	{
+		concurrent_hash_map_internal::check_outside_tx();
+
+		accessor acc;
+		auto result =
+			internal_insert(key, &acc, true, std::forward<K>(key),
+					std::forward<M>(obj));
+
+		if (!result) {
+			pool_base pop = get_pool_base();
+			pmem::obj::transaction::manual tx(pop);
+			acc->second = std::forward<M>(obj);
+			pmem::obj::transaction::commit();
+		}
+
+		return result;
 	}
 
 	/**

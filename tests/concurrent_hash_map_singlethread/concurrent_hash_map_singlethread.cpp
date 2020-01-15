@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,13 +95,20 @@ public:
 
 	MyLong(int v)
 	{
-		UT_ASSERT(false);
+		UT_ASSERT(pmemobj_pool_by_ptr(this) != nullptr);
 	}
 
 	long
 	get_val() const
 	{
 		return val.get_ro();
+	}
+
+	MyLong &
+	operator=(long other)
+	{
+		val = other;
+		return *this;
 	}
 
 	bool
@@ -493,7 +500,6 @@ insert_test(nvobj::pool<root> &pop)
 void
 hetero_test(nvobj::pool<root> &pop)
 {
-	typedef persistent_map_hetero_type::value_type value_type;
 	auto &map = pop.root()->map_hetero;
 
 	tx_alloc_wrapper<persistent_map_hetero_type>(pop, map);
@@ -501,7 +507,7 @@ hetero_test(nvobj::pool<root> &pop)
 	map->runtime_initialize();
 
 	for (long i = 0; i < 100; ++i) {
-		map->insert(value_type(i, i));
+		map->insert_or_assign(i, i);
 	}
 
 	for (int i = 0; i < 100; ++i) {
@@ -515,11 +521,15 @@ hetero_test(nvobj::pool<root> &pop)
 		UT_ASSERT(i == accessor->second);
 	}
 
+	for (long i = 0; i < 100; ++i) {
+		map->insert_or_assign(i, i + 1);
+	}
+
 	for (int i = 0; i < 100; ++i) {
 		persistent_map_hetero_type::const_accessor accessor;
 		UT_ASSERT(map->find(accessor, i));
 		UT_ASSERT(i == accessor->first);
-		UT_ASSERT(i == accessor->second);
+		UT_ASSERT(i + 1 == accessor->second);
 	}
 
 	for (int i = 0; i < 100; ++i) {

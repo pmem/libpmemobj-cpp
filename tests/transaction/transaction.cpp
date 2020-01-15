@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -544,7 +544,7 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
-	/* commiting non-existent transaction should fail with an exception */
+	/* committing non-existent transaction should fail with an exception */
 	exception_thrown = false;
 	try {
 		nvobj::transaction::commit();

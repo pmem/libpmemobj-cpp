@@ -1,10 +1,10 @@
 # Content
 
-Dockerfiles and scripts placed in this directory are indended to be used as
-developement process vehicles and part of continuous integration process.
+Dockerfiles and scripts placed in this directory are intended to be used as
+development process vehicles and part of continuous integration process.
 
 Images built out of those recipes may by used with docker or podman as
-developement environment.
+development environment.
 Only those used on travis are fully tested on a daily basis.
 In case of any problem, patches and github issues are welcome.
 

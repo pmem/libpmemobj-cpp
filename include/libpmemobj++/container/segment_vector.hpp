@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,7 +129,7 @@ public:
 	/**
 	 * Compare methods
 	 * Template parameter is needed to enable this methods work with
-	 * non-constant and constant interators
+	 * non-constant and constant iterators
 	 */
 	template <bool C>
 	bool operator==(const segment_iterator<Container, C> &rhs) const;
@@ -308,7 +308,7 @@ segment_iterator<Container, is_const>::operator+(
 }
 
 /**
- * Substraction operation.
+ * Subtraction operation.
  *
  * @return difference between this and other segment_iterator.
  */

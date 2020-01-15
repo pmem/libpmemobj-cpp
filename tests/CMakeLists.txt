@@ -499,7 +499,7 @@ if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_ctor_exceptions_notx TRACERS none memcheck)
 
 	#[[ XXX:
-	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standart.
+	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standard.
 	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
 	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
 	]]
@@ -572,7 +572,7 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_ctor_exceptions_notx TRACERS none memcheck)
 
 	#[[ XXX:
-	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standart.
+	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standard.
 	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
 	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
 	]]
@@ -645,7 +645,7 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_ctor_exceptions_notx TRACERS none memcheck)
 
 	#[[ XXX:
-	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standart.
+	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standard.
 	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
 	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
 	]]

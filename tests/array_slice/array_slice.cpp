@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -353,8 +353,8 @@ struct TestAt {
 		rit++;
 		*rit = 3;
 
-		C excpected = {{0, 0, 1, 2, 3, 2.5}};
-		UT_ASSERT(c == excpected);
+		C expected = {{0, 0, 1, 2, 3, 2.5}};
+		UT_ASSERT(c == expected);
 	}
 
 	using C = pmem::obj::array<double, 6>;

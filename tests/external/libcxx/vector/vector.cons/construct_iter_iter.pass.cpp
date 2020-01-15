@@ -97,7 +97,7 @@ basic_test_cases(nvobj::pool<struct root> &pop)
  * TEST_1 - Checks if elements are emplace-constructed from given range, in the
  * same order
  *
- * TEST_2 - additionaly to TEST_1 checks if elements within [first, last) range
+ * TEST_2 - additionally to TEST_1 checks if elements within [first, last) range
  * are not moved if iterator does not meet forward iterator requirements
  */
 static void

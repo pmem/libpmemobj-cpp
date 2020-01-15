@@ -476,7 +476,7 @@ public:
  * number of buckets in the hashmap.
  *
  * PMDK has limitation for max allocation size. Therefore, at some
- * point new segment cannot be allocated as one contigious memory block.
+ * point new segment cannot be allocated as one contiguous memory block.
  *
  * block - array of buckets, continues in memory
  * segment - logical abstraction, might consist of several blocks.
@@ -786,7 +786,7 @@ private:
 
 /**
  * Base class of concurrent_hash_map.
- * Implements logic not dependant to Key/Value types.
+ * Implements logic not dependent to Key/Value types.
  * MutexType - type of mutex used by buckets.
  * ScopedLockType - type of scoped lock for mutex.
  */
@@ -2043,8 +2043,8 @@ public:
 	}
 
 	/**
-	 * Intialize persistent concurrent hash map after process restart.
-	 * MUST be called everytime after process restart.
+	 * Initialize persistent concurrent hash map after process restart.
+	 * MUST be called every time after process restart.
 	 * Not thread safe.
 	 *
 	 * @throw pmem::layout_error if hashmap was created using incompatible

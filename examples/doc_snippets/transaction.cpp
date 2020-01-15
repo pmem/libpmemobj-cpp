@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -244,7 +244,7 @@ tx_callback_example()
 	try {
 		transaction::run(pop, [&] { internal_tx_function(); });
 
-		// cb_called == true if transaction ended succesfully
+		// cb_called == true if transaction ended successfully
 	} catch (pmem::transaction_error &) {
 		// an internal transaction error occurred, tx aborted
 		// reacquire locks if necessary

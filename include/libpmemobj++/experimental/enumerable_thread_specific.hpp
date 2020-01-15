@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -255,7 +255,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::initialize(Handler handler)
 }
 
 /**
- * Dafault constructor.
+ * Default constructor.
  */
 template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>
@@ -297,7 +297,7 @@ enumerable_thread_specific<T, Map, Mutex, Storage>::enumerable_thread_specific(
 }
 
 /**
- * Dafault destructor.
+ * Default destructor.
  */
 template <typename T, template <typename...> class Map, typename Mutex,
 	  typename Storage>

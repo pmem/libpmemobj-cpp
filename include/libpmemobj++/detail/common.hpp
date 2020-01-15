@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,15 +116,33 @@
 	std::is_trivially_copyable<T>::value
 #endif
 
+/*! \namespace pmem
+	\brief Persistent memory namespace.
+
+	It is a common namespace for all persistent memory C++ libraries
+	For more information about pmem goto: http://pmem.io
+*/
+
 namespace pmem
 {
+/*! \namespace pmem::obj
+	\brief Main libpmemobj namespace.
 
+	It contains all libpmemobj's public types, enums, classes with their
+   functions and members. It is located within pmem namespace.
+*/
 namespace obj
 {
 template <typename T>
 class persistent_ptr;
 }
 
+/*! \namespace pmem::detail
+	\brief Implementation details
+
+	It contains libpmemobj's implementation details, not needed in public
+   headers. It is located within pmem namespace.
+*/
 namespace detail
 {
 

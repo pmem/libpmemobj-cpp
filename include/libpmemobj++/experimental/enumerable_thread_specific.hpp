@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
  */
 
 /**
+ * @file
  * A persistent version of thread-local storage.
  */
 
@@ -51,6 +52,14 @@ namespace pmem
 {
 namespace obj
 {
+
+/*! \namespace pmem::obj::experimental
+	\brief Experimental implementations
+
+	It contains implementations, which are not yet ready to be used in
+   production. They may not be finished, fully tested or still in discussion.
+   It is located within pmem::obj namespace.
+*/
 namespace experimental
 {
 

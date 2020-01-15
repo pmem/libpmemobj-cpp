@@ -832,7 +832,7 @@ segment_vector<T, Policy>::segment_vector(size_type count)
  * @pre must be called in transaction scope.
  *
  * @post size() == std::distance(first, last)
- * @post capacity() == nearest power of 2 greate than
+ * @post capacity() == nearest power of 2 greater than
  * std::distance(first, last)
  *
  * @throw rethrows constructor exception.

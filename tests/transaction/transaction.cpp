@@ -792,7 +792,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
  * pmemobj_tx_add_range_direct() failed.
  * 3) Check if assigning value to pmem object is valid under pmemcheck when
  * object was snapshotted beforehand.
- * 4) Check if snapshotted value was rolled back in case of transacion abort.
+ * 4) Check if snapshotted value was rolled back in case of transaction abort.
  */
 void
 test_tx_snapshot(nvobj::pool<root> &pop)

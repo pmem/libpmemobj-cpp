@@ -127,20 +127,5 @@ CHECK_CXX_SOURCE_COMPILES(
 	AGGREGATE_INITIALIZATION_AVAILABLE
 )
 
-set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-CHECK_CXX_SOURCE_COMPILES("
-	#include <libpmemobj/types.h>
-	struct s {
-		int a;
-		int b;
-	};
-	int main() {
-		if (offsetof(struct s, a) >= offsetof(struct s, b))
-			return 1;
-		return 0;
-	}"
-	OFFSETOF_CORRECT
-)
-
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})

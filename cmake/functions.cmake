@@ -159,7 +159,7 @@ function(add_check_whitespace name)
 endfunction()
 
 # Sets ${ret} to version of program specified by ${name} in major.minor format
-function(get_program_version name ret)
+function(get_program_version_major_minor name ret)
 	execute_process(COMMAND ${name} --version
 		OUTPUT_VARIABLE cmd_ret
 		ERROR_QUIET)

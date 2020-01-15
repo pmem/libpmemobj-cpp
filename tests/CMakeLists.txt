@@ -388,6 +388,9 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck)
 
+	build_test(concurrent_hash_map_insert_or_assign concurrent_hash_map_insert_or_assign/concurrent_hash_map_insert_or_assign.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_or_assign TRACERS none memcheck pmemcheck helgrind drd)
+
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
 

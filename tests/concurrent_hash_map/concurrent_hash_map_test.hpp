@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -245,6 +245,18 @@ public:
 		for (auto i : v) {
 			auto key = i.first;
 			UT_ASSERTeq(map->count(key), 1);
+		}
+	}
+
+	template <typename ItemType>
+	bool
+	insert_or_assign(ItemType key, ItemType obj, bool copy = true)
+	{
+		if (copy) {
+			const persistent_map_type::key_type const_key(key);
+			return map->insert_or_assign(const_key, obj);
+		} else {
+			return map->insert_or_assign(std::move(key), obj);
 		}
 	}
 };
@@ -574,4 +586,46 @@ insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 	for (auto &e : *map) {
 		UT_ASSERT(e.first <= e.second);
 	}
+}
+
+/*
+ * insert_or_assign_test -- (internal) test insert_or_assign operation
+ * pmem::obj::concurrent_hash_map<nvobj::string, nvobj::string >
+ */
+void
+insert_or_assign_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+		      size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives test(pop, thread_items * concurrency);
+	using acc = persistent_map_type::accessor;
+	using const_acc = persistent_map_type::const_accessor;
+
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
+		bool result = false;
+
+		for (int i = begin; i < end; i++) {
+			/* calls insert_or_assign overload with lvalue reference
+			 * if 'i' is even, rvalue reference otherwise */
+			result = test.insert_or_assign(i, i, i % 2 == 0);
+			if (!result)
+				UT_ASSERT(false);
+		}
+		for (int i = begin; i < end; i++) {
+			test.check_item<acc>(i, i);
+		}
+		for (int i = begin; i < end; i++) {
+			/* assign existing keys new values */
+			result = test.insert_or_assign(i, i + 1, i % 2 == 0);
+			if (result)
+				UT_ASSERT(false);
+		}
+		for (int i = begin; i < end; i++) {
+			test.check_item<const_acc>(i, i + 1);
+		}
+	});
+	test.check_consistency();
+	test.clear();
 }

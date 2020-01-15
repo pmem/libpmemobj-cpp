@@ -687,23 +687,23 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 endif()
 
 if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
-	build_test(enumerable_thread_specific_access enumerable_thread_specific/enumerable_thread_specific_access.cpp)
-	add_test_generic(NAME enumerable_thread_specific_access TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(enumerable_thread_specific_access enumerable_thread_specific_access/enumerable_thread_specific_access.cpp)
+	add_test_generic(NAME enumerable_thread_specific_access CASE 0 TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(enumerable_thread_specific_size enumerable_thread_specific/enumerable_thread_specific_size.cpp)
-	add_test_generic(NAME enumerable_thread_specific_size TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(enumerable_thread_specific_size enumerable_thread_specific_size/enumerable_thread_specific_size.cpp)
+	add_test_generic(NAME enumerable_thread_specific_size CASE 0 TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(enumerable_thread_specific_iterators enumerable_thread_specific/enumerable_thread_specific_iterators.cpp)
-	add_test_generic(NAME enumerable_thread_specific_iterators TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(enumerable_thread_specific_iterators enumerable_thread_specific_iterators/enumerable_thread_specific_iterators.cpp)
+	add_test_generic(NAME enumerable_thread_specific_iterators CASE 0 TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(enumerable_thread_specific_layout enumerable_thread_specific/enumerable_thread_specific_layout.cpp)
+	build_test(enumerable_thread_specific_layout enumerable_thread_specific_layout/enumerable_thread_specific_layout.cpp)
 	add_test_generic(NAME enumerable_thread_specific_layout TRACERS none)
 
-	build_test(enumerable_thread_specific_initialize enumerable_thread_specific/enumerable_thread_specific_initialize.cpp)
-	add_test_generic(NAME enumerable_thread_specific_initialize TRACERS none memcheck pmemcheck)
+	build_test(enumerable_thread_specific_initialize enumerable_thread_specific_initialize/enumerable_thread_specific_initialize.cpp)
+	add_test_generic(NAME enumerable_thread_specific_initialize CASE 0 TRACERS none memcheck pmemcheck)
 
-	build_test(enumerable_thread_specific_ctor enumerable_thread_specific/enumerable_thread_specific_ctor.cpp)
-	add_test_generic(NAME enumerable_thread_specific_ctor TRACERS none memcheck pmemcheck)
+	build_test(enumerable_thread_specific_ctor enumerable_thread_specific_ctor/enumerable_thread_specific_ctor.cpp)
+	add_test_generic(NAME enumerable_thread_specific_ctor CASE 0 TRACERS none memcheck pmemcheck)
 endif()
 
 add_subdirectory(external)

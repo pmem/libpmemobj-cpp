@@ -1,0 +1,220 @@
+/*
+ * Copyright 2020, Intel Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in
+ *       the documentation and/or other materials provided with the
+ *       distribution.
+ *
+ *     * Neither the name of the copyright holder nor the names of its
+ *       contributors may be used to endorse or promote products derived
+ *       from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*
+ * concurrent_hash_map_traits.hpp -- traits for testing
+ * pmem::obj::concurrent_hash_map
+ */
+
+#include "thread_helpers.hpp"
+#include "unittest.hpp"
+
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
+
+#include <thread>
+#include <vector>
+
+namespace nvobj = pmem::obj;
+
+template <typename RootType, typename MapType>
+struct ConcurrentHashMapTestPrimitives {
+private:
+	nvobj::pool<RootType> &m_pop;
+	nvobj::persistent_ptr<MapType> map;
+	size_t m_items_number;
+	const size_t rehash_bucket_ratio = 8;
+
+public:
+	using value_type = typename MapType::value_type;
+
+	ConcurrentHashMapTestPrimitives(nvobj::pool<RootType> &pop,
+					nvobj::persistent_ptr<MapType> &map_ptr,
+					size_t items_number)
+	    : m_pop(pop), map(map_ptr), m_items_number(items_number)
+	{
+		map->runtime_initialize();
+	}
+
+	void
+	reinitialize()
+	{
+		size_t buckets = map->bucket_count();
+		map->runtime_initialize(true);
+		UT_ASSERT(map->bucket_count() == buckets);
+		UT_ASSERT(map->size() == m_items_number);
+		map->runtime_initialize();
+		UT_ASSERT(map->bucket_count() == buckets);
+		UT_ASSERT(map->size() == m_items_number);
+	}
+
+	void
+	check_items_count()
+	{
+		check_items_count(m_items_number);
+	}
+
+	void
+	check_items_count(size_t expected)
+	{
+		UT_ASSERT(map->size() == expected);
+		UT_ASSERT(std::distance(map->begin(), map->end()) ==
+			  int(expected));
+	}
+
+	void
+	clear()
+	{
+		map->clear();
+		UT_ASSERT(map->size() == 0);
+		UT_ASSERT(std::distance(map->begin(), map->end()) == 0);
+	}
+
+	void
+	rehash()
+	{
+		map->rehash(m_items_number * rehash_bucket_ratio);
+		check_items_count();
+	}
+
+	template <typename AccessorType, typename Key, typename Obj>
+	void
+	check_item(Key i, Obj j)
+	{
+		AccessorType acc;
+		bool found = map->find(acc, i);
+		UT_ASSERT(found == true);
+		UT_ASSERT(acc->first == i);
+		UT_ASSERT(acc->second == j);
+	}
+
+	void
+	check_consistency()
+	{
+		check_items_count();
+		rehash();
+		reinitialize();
+	}
+
+	template <typename ItemType>
+	void
+	increment(ItemType i)
+	{
+		/* Do we need update method in cmap api? */
+		typename MapType::accessor acc;
+		bool found = map->find(acc, i);
+		UT_ASSERT(found == true);
+		UT_ASSERT(acc->first == i);
+		auto old_val = acc->second;
+		acc->second.get_rw() += 1;
+		m_pop.persist(acc->second);
+		UT_ASSERT(acc->second == (old_val + 1));
+	}
+
+	template <typename ItemType>
+	void
+	erase(ItemType i)
+	{
+		bool res = map->erase(i);
+		UT_ASSERT(res == true);
+	}
+
+	template <typename ItemType>
+	void
+	check_erased(ItemType i)
+	{
+		typename MapType::accessor acc;
+		bool found = map->find(acc, i);
+		UT_ASSERT(found == false);
+	}
+
+	template <typename ValueType>
+	void
+	insert(ValueType val)
+	{
+		bool ret = map->insert(val);
+		UT_ASSERT(ret == true);
+	}
+
+	template <typename AccessorType, typename ValueType>
+	void
+	insert(ValueType val)
+	{
+		AccessorType accessor;
+		bool ret = map->insert(accessor, val);
+		UT_ASSERT(ret == true);
+	}
+
+	template <typename ItemType>
+	void
+	insert_or_increment(ItemType i, ItemType j)
+	{
+		typename MapType::accessor acc;
+		bool ret = map->insert(acc, value_type(i, j));
+		if (!ret) {
+			/* Update needs to be persisted by the user */
+			nvobj::transaction::run(
+				m_pop, [&] { acc->second.get_rw()++; });
+		}
+	}
+
+	void
+	insert(std::initializer_list<value_type> il)
+	{
+		/* Initializer list insert is void type */
+		map->insert(il);
+		for (auto i : il) {
+			auto key = i.first;
+			UT_ASSERTeq(map->count(key), 1);
+		}
+	}
+
+	void
+	insert(std::vector<value_type> v)
+	{
+		/* Iterator insert is void type */
+		map->insert(v.begin(), v.end());
+		for (auto i : v) {
+			auto key = i.first;
+			UT_ASSERTeq(map->count(key), 1);
+		}
+	}
+
+	template <typename K, typename M>
+	bool
+	insert_or_assign(K &&key, M &&obj)
+	{
+		return map->insert_or_assign(std::forward<K>(key),
+					     std::forward<M>(obj));
+	}
+};

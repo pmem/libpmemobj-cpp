@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@
 #include <vector>
 
 #include <libpmemobj++/container/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 
@@ -95,13 +96,20 @@ public:
 
 	MyLong(int v)
 	{
-		UT_ASSERT(false);
+		UT_ASSERT(pmemobj_pool_by_ptr(this) != nullptr);
 	}
 
 	long
 	get_val() const
 	{
 		return val.get_ro();
+	}
+
+	MyLong &
+	operator=(long other)
+	{
+		val = other;
+		return *this;
 	}
 
 	bool
@@ -120,12 +128,6 @@ private:
 	nvobj::p<long> val;
 };
 
-bool
-operator==(int lhs, const MyLong &rhs)
-{
-	return rhs == lhs;
-}
-
 class TransparentKeyEqual {
 public:
 	template <typename M, typename U>
@@ -136,19 +138,34 @@ public:
 	}
 };
 
-class HeteroHasher {
+class string_hasher {
+	/* hash multiplier used by fibonacci hashing */
+	static const size_t hash_multiplier = 11400714819323198485ULL;
+
 public:
 	using transparent_key_equal = TransparentKeyEqual;
+
 	size_t
-	operator()(const MyLong &myLong) const
+	operator()(const nvobj::string &str) const
 	{
-		return size_t(myLong.get_val());
+		return hash(str.c_str(), str.size());
 	}
 
 	size_t
-	operator()(int i) const
+	operator()(const std::string &str) const
 	{
-		return size_t(i);
+		return hash(str.c_str(), str.size());
+	}
+
+private:
+	size_t
+	hash(const char *str, size_t size) const
+	{
+		size_t h = 0;
+		for (size_t i = 0; i < size; ++i) {
+			h = static_cast<size_t>(str[i]) ^ (h * hash_multiplier);
+		}
+		return h;
 	}
 };
 
@@ -157,7 +174,7 @@ typedef nvobj::concurrent_hash_map<nvobj::p<int>, move_element>
 
 typedef persistent_map_move_type::value_type value_move_type;
 
-typedef nvobj::concurrent_hash_map<MyLong, MyLong, HeteroHasher>
+typedef nvobj::concurrent_hash_map<nvobj::string, nvobj::p<int>, string_hasher>
 	persistent_map_hetero_type;
 
 struct root {
@@ -488,12 +505,11 @@ insert_test(nvobj::pool<root> &pop)
 
 /*
  * hetero_test -- (internal) test heterogeneous count/find/erase methods
- * pmem::obj::concurrent_hash_map<MyLong, MyLong, HeteroHasher >
+ * pmem::obj::concurrent_hash_map<nvobj::string, nvobj::p<int>, string_hasher >
  */
 void
 hetero_test(nvobj::pool<root> &pop)
 {
-	typedef persistent_map_hetero_type::value_type value_type;
 	auto &map = pop.root()->map_hetero;
 
 	tx_alloc_wrapper<persistent_map_hetero_type>(pop, map);
@@ -501,33 +517,39 @@ hetero_test(nvobj::pool<root> &pop)
 	map->runtime_initialize();
 
 	for (long i = 0; i < 100; ++i) {
-		map->insert(value_type(i, i));
+		map->insert_or_assign(std::to_string(i), i);
 	}
 
 	for (int i = 0; i < 100; ++i) {
-		UT_ASSERTeq(map->count(i), 1);
+		UT_ASSERTeq(map->count(std::to_string(i)), 1);
 	}
 
 	for (int i = 0; i < 100; ++i) {
 		persistent_map_hetero_type::accessor accessor;
-		UT_ASSERT(map->find(accessor, i));
-		UT_ASSERT(i == accessor->first);
+		auto val = std::to_string(i);
+		UT_ASSERT(map->find(accessor, val));
+		UT_ASSERT(val == accessor->first);
 		UT_ASSERT(i == accessor->second);
+	}
+
+	for (long i = 0; i < 100; ++i) {
+		map->insert_or_assign(std::to_string(i), i + 1);
 	}
 
 	for (int i = 0; i < 100; ++i) {
 		persistent_map_hetero_type::const_accessor accessor;
-		UT_ASSERT(map->find(accessor, i));
-		UT_ASSERT(i == accessor->first);
-		UT_ASSERT(i == accessor->second);
+		auto val = std::to_string(i);
+		UT_ASSERT(map->find(accessor, val));
+		UT_ASSERT(val == accessor->first);
+		UT_ASSERT(i + 1 == accessor->second);
 	}
 
 	for (int i = 0; i < 100; ++i) {
-		UT_ASSERT(map->erase(i));
+		UT_ASSERT(map->erase(std::to_string(i)));
 	}
 
 	for (int i = 0; i < 100; ++i) {
-		UT_ASSERTeq(map->count(i), 0);
+		UT_ASSERTeq(map->count(std::to_string(i)), 0);
 	}
 }
 

@@ -1896,7 +1896,7 @@ public:
 		 * Release accessor.
 		 * Cannot be called inside of a transaction.
 		 *
-		 * @throw transaction_scope_error if called inside tranaction
+		 * @throw transaction_scope_error if called inside transaction
 		 */
 		void
 		release()

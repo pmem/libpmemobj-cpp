@@ -1,5 +1,5 @@
 #
-# Copyright 2019, Intel Corporation
+# Copyright 2019-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -125,21 +125,6 @@ CHECK_CXX_SOURCE_COMPILES(
 	#endif
 	}"
 	AGGREGATE_INITIALIZATION_AVAILABLE
-)
-
-set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-CHECK_CXX_SOURCE_COMPILES("
-	#include <libpmemobj/types.h>
-	struct s {
-		int a;
-		int b;
-	};
-	int main() {
-		if (offsetof(struct s, a) >= offsetof(struct s, b))
-			return 1;
-		return 0;
-	}"
-	OFFSETOF_CORRECT
 )
 
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,9 @@ main(int argc, char *argv[])
 		// recalculate mask and check for consistentcy.
 
 		pop.root()->pptr->runtime_initialize();
+
+		// defragment the whole pool at the beginning
+		pop.root()->pptr->defrag();
 	}
 
 	auto &map = *pop.root()->pptr;
@@ -129,6 +132,9 @@ main(int argc, char *argv[])
 	for (auto &t : threads) {
 		t.join();
 	}
+
+	// defragment the whole pool at the end
+	map.defrag();
 
 	// Erase remaining itemes in map. This function is not thread-safe,
 	// hence the function is being called only after thread execution has

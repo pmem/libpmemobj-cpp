@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017-2019, Intel Corporation
+# Copyright 2017-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -149,6 +149,7 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env COVERAGE=$COVERAGE \
 	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON} \
 	--env TESTS_LONG=${TESTS_LONG:-OFF} \
+	--env TESTS_TBB=${TESTS_TBB:-ON} \
 	--env CI_RUN=$CI_RUN \
 	--env TZ='Europe/Warsaw' \
 	-v $HOST_WORKDIR:$WORKDIR \

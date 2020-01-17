@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2830,28 +2830,31 @@ search:
 		goto search;
 	}
 
+	persistent_ptr<node> del = n(this->my_pool_uuid);
+
 	{
-		transaction::manual tx(pop);
+		/* We cannot remove this element immediately because
+		 * other threads might work with this element via
+		 * accessors. The item_locker required to wait while
+		 * other threads use the node. */
+		const_accessor acc;
+		if (!try_acquire_item(&acc, del->mutex, true)) {
+			/* the wait takes really long, restart the operation */
+			b.release();
 
-		persistent_ptr<node> del = n(this->my_pool_uuid);
+			std::this_thread::yield();
 
-		*p = del->next;
+			m = mask().load(std::memory_order_acquire);
 
-		{
-			/* We cannot remove this element immediately because
-			 * other threads might work with this element via
-			 * accessors. The item_locker required to wait while
-			 * other threads use the node. */
-			typename node::scoped_t item_locker(del->mutex,
-							    /*write=*/true);
+			goto restart;
 		}
-
-		/* Only one thread can delete it due to write lock on the bucket
-		 */
-		delete_node(del);
-
-		transaction::commit();
 	}
+
+	/* Only one thread can delete it due to write lock on the bucket */
+	transaction::run(pop, [&] {
+		*p = del->next;
+		delete_node(del);
+	});
 
 	--(this->my_size.get_rw());
 	pop.persist(this->my_size);

@@ -367,6 +367,11 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
 
+	# This test can NOT be run under helgrind as it will report wrong lock ordering. Helgrind is right about
+	# possible deadlock situation but that could only happen in case of wrong API usage.
+	build_test(concurrent_hash_map_deadlock concurrent_hash_map_deadlock/concurrent_hash_map_deadlock.cpp)
+	add_test_generic(NAME concurrent_hash_map_deadlock CASE 0 TRACERS none drd memcheck pmemcheck)
+
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
 		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2019, Intel Corporation
+# Copyright 2016-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,8 +38,8 @@ set -e
 
 git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind
-# pmem-3.14: fix memcheck failure on Ubuntu-19.04
-git checkout 0965e35d7fd5c7941dc3f2a0c981cb8386c479d3
+# pmem-3.15: Merge pull request #73 from kkajrewicz/fix-memcheck
+git checkout c27a8a2f973414934e63f1e94bc84c0a580e3840
 ./autogen.sh
 ./configure --prefix=/usr
 make -j$(nproc)

@@ -29,9 +29,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+
 if(NOT MSVC_VERSION)
-	set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-	set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+
+	# Even if we are ensuring that we use CMAKE_CXX_STANDARD >= 14, check if
+	# shared_mutex header file is available for the current compiler version
+	# because CXX_STANDARD is being set to 14 for --c++1y parameter
+	if(CXX_STANDARD GREATER_EQUAL 14)
+		set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+		CHECK_CXX_SOURCE_COMPILES(
+			"#include <shared_mutex>
+			int main() {}"
+			NO_SHARED_MUTEX_BUG)
+	else()
+		set(NO_SHARED_MUTEX_BUG TRUE)
+	endif()
 
 	# Check for issues with older gcc compilers which do not expand variadic template
 	# variables in lambda expressions.
@@ -100,11 +114,19 @@ if(NOT MSVC_VERSION)
 		"int main() { return 0; }"
 		NO_CHRONO_BUG)
 else()
+	set(NO_SHARED_MUTEX_BUG TRUE)
 	set(NO_GCC_VARIADIC_TEMPLATE_BUG TRUE)
 	set(NO_GCC_AGGREGATE_INITIALIZATION_BUG TRUE)
 	set(NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG TRUE)
 	set(NO_CLANG_TEMPLATE_BUG TRUE)
 	set(NO_CHRONO_BUG TRUE)
+endif()
+
+if(CXX_STANDARD LESS 14 OR NOT NO_SHARED_MUTEX_BUG)
+	message(WARNING "volatile_state not supported (required C++14 compliant compiler)")
+	set(VOLATILE_STATE_PRESENT OFF)
+else()
+	set(VOLATILE_STATE_PRESENT ON)
 endif()
 
 set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
@@ -126,6 +148,19 @@ CHECK_CXX_SOURCE_COMPILES(
 	}"
 	AGGREGATE_INITIALIZATION_AVAILABLE
 )
+
+# Check for existence of pmemvlt (introduced after libpmemobj 1.4 release)
+set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJ_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+CHECK_CXX_SOURCE_COMPILES(
+	"#include <libpmemobj/base.h>
+	struct pmemvlt vlt;
+	int main() {}"
+	PMEMVLT_PRESENT)
+
+if(NOT PMEMVLT_PRESENT)
+	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
+endif()
 
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})

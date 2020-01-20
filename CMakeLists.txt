@@ -247,47 +247,6 @@ add_check_whitespace(include-experimental ${CMAKE_CURRENT_SOURCE_DIR}/include/li
 add_check_whitespace(cmake-main ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
-# Check for existence of pmemvlt (introduced after 1.4 release)
-set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
-set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-
-set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJ_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-CHECK_CXX_SOURCE_COMPILES(
-	"#include <libpmemobj/base.h>
-	struct pmemvlt vlt;
-	int main() {}"
-	PMEMVLT_PRESENT)
-
-set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
-set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
-
-if(NOT PMEMVLT_PRESENT)
-	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
-endif()
-
-# Even if we are ensuring that we use CMAKE_CXX_STANDARD >= 14, check if
-# shared_mutex header file is available the for current compiler version because
-# CXX_STANDARD is being set to 14 for --c++1y parameter
-if(NOT MSVC_VERSION AND CXX_STANDARD GREATER_EQUAL 14)
-	set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-	CHECK_CXX_SOURCE_COMPILES(
-		"#include <shared_mutex>
-		int main() {}"
-		NO_SHARED_MUTEX_BUG)
-else()
-	set(NO_SHARED_MUTEX_BUG TRUE)
-endif()
-
-if(CXX_STANDARD LESS 14 OR NOT NO_SHARED_MUTEX_BUG)
-	message(WARNING "volatile_state not supported (required C++14 compliant compiler)")
-	set(VOLATILE_STATE_PRESENT OFF)
-else()
-	set(VOLATILE_STATE_PRESENT ON)
-endif()
-
-set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
-
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
 		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
 
@@ -364,7 +323,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake ${CMAKE_CURR
 
 include_directories(include)
 
-include(${CMAKE_SOURCE_DIR}/cmake/check_compiler_issues.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/check_compiling_issues.cmake)
 
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(VALGRIND QUIET valgrind)

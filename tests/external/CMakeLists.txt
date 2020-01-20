@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ function(add_test_expect_failure name)
 	set_tests_properties(${name}_fail_expected PROPERTIES WILL_FAIL TRUE)
 endfunction()
 
-if (ENABLE_ARRAY)
+if (TEST_ARRAY)
 	build_test(array_at libcxx/array/at.pass.cpp)
 	add_test_generic(NAME array_at TRACERS none)
 
@@ -142,7 +142,7 @@ if (ENABLE_ARRAY)
 	add_test_generic(NAME array_iterators TRACERS none)
 endif()
 
-if (ENABLE_VECTOR)
+if (TEST_VECTOR)
 	build_test_ext(NAME vector_libcxx_assign_copy SRC_FILES libcxx/vector/vector.cons/assign_copy.pass.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_libcxx_assign_copy TRACERS none pmemcheck memcheck)
 
@@ -275,7 +275,7 @@ if (ENABLE_VECTOR)
 	add_test_generic(NAME vector_libcxx_special_swap TRACERS none pmemcheck memcheck)
 endif()
 
-if (ENABLE_STRING)
+if (TEST_STRING)
 	build_test(string_libcxx_cons_initializer_list libcxx/basic_string/string.cons/initializer_list.pass.cpp)
 	add_test_generic(NAME string_libcxx_cons_initializer_list TRACERS none pmemcheck memcheck)
 
@@ -753,7 +753,7 @@ if (ENABLE_STRING)
 	# XXX: port libcxx test basic_string/string.cons/string_view.fail
 endif()
 
-if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
+if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	build_test_ext(NAME segment_vector_array_expsize_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_libcxx_capacity TRACERS none pmemcheck memcheck)
 
@@ -854,7 +854,7 @@ if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_libcxx_types TRACERS none)
 endif()
 
-if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
+if(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	build_test_ext(NAME segment_vector_vector_expsize_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_libcxx_capacity TRACERS none pmemcheck memcheck)
 
@@ -955,7 +955,7 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_libcxx_types TRACERS none)
 endif()
 
-if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_capacity SRC_FILES libcxx/vector/vector.capacity/capacity.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_capacity TRACERS none pmemcheck memcheck)
 

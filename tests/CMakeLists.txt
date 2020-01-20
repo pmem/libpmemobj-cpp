@@ -371,37 +371,69 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup.cpp)
-	add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS none)
+
+	build_test_defrag(concurrent_hash_map_insert_lookup_mock concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_lookup_mock CASE 0 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup_0.cmake)
 
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
-	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck)
-	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 1 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none)
+	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 1 TRACERS none)
+
+	build_test_defrag(concurrent_hash_map_insert_erase_mock concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 0 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase_0.cmake)
+	add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 1 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase_1.cmake)
 
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
-	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
-	add_test_generic(NAME concurrent_hash_map_rehash CASE 1 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none)
+	add_test_generic(NAME concurrent_hash_map_rehash CASE 1 TRACERS none)
+
+	build_test_defrag(concurrent_hash_map_rehash_mock concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
+	add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_rehash/concurrent_hash_map_rehash_0.cmake)
+	add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_rehash/concurrent_hash_map_rehash_1.cmake)
 
 	build_test(concurrent_hash_map_rehash_recursive concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive.cpp)
-	add_test_generic(NAME concurrent_hash_map_rehash_recursive CASE 0 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_rehash_recursive CASE 0 TRACERS none)
+
+	build_test_defrag(concurrent_hash_map_rehash_recursive_mock concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive.cpp)
+	add_test_generic(NAME concurrent_hash_map_rehash_recursive_mock CASE 0 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive_0.cmake)
+
+	build_test(concurrent_hash_map_rehash_deadlock concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock.cpp)
+	add_test_generic(NAME concurrent_hash_map_rehash_deadlock CASE 0 TRACERS none)
 
 	# this single-threaded test should not be run under helgrind/drd, because a false-positive deadlock can be detected
-	build_test(concurrent_hash_map_rehash_deadlock concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock.cpp)
-	add_test_generic(NAME concurrent_hash_map_rehash_deadlock CASE 0 TRACERS none memcheck pmemcheck)
+	build_test_defrag(concurrent_hash_map_rehash_deadlock_mock concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock.cpp)
+	add_test_generic(NAME concurrent_hash_map_rehash_deadlock_mock CASE 0 TRACERS memcheck pmemcheck
+			SCRIPT concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock_0.cmake)
 
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
-		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS helgrind drd)
-		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 1 TRACERS helgrind drd)
+		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 0 TRACERS helgrind drd
+				SCRIPT concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase_0.cmake)
+		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 1 TRACERS helgrind drd
+				SCRIPT concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase_1.cmake)
 
-		add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
-		add_test_generic(NAME concurrent_hash_map_rehash CASE 1 TRACERS helgrind)
+		add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS helgrind
+				SCRIPT concurrent_hash_map_rehash/concurrent_hash_map_rehash_0.cmake)
+		add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS helgrind
+				SCRIPT concurrent_hash_map_rehash/concurrent_hash_map_rehash_1.cmake)
 
 		if (TESTS_LONG)
-			add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind drd)
+			add_test_generic(NAME concurrent_hash_map_insert_lookup_mock CASE 0 TRACERS helgrind drd
+					SCRIPT concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup_0.cmake)
 
-			add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS drd)
-			add_test_generic(NAME concurrent_hash_map_rehash CASE 1 TRACERS drd)
+			add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS drd
+					SCRIPT concurrent_hash_map_rehash/concurrent_hash_map_rehash_0.cmake)
+			add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS drd
+					SCRIPT concurrent_hash_map_rehash/concurrent_hash_map_rehash_1.cmake)
 
-			add_test_generic(NAME concurrent_hash_map_rehash_recursive CASE 0 TRACERS helgrind drd)
+			add_test_generic(NAME concurrent_hash_map_rehash_recursive_mock CASE 0 TRACERS helgrind drd
+					SCRIPT concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive_0.cmake)
 		endif()
 	endif()
 
@@ -432,10 +464,16 @@ if(ENABLE_CONCURRENT_HASHMAP)
 		message(FATAL_ERROR "concurrent_hash_map_tbb tests enabled by cmake TESTS_TBB option, but Intel TBB library was not found")
 	else()
 		build_test_tbb(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
-		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none pmemcheck)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none)
+
+		build_test_tbb_defrag(concurrent_hash_map_tbb_insert_lookup_mock concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup_mock TRACERS pmemcheck)
 
 		build_test_tbb(concurrent_hash_map_tbb_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_tbb_insert_erase.cpp)
-		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase TRACERS none pmemcheck)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase TRACERS none)
+
+		build_test_tbb_defrag(concurrent_hash_map_tbb_insert_erase_mock concurrent_hash_map_insert_erase/concurrent_hash_map_tbb_insert_erase.cpp)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase_mock TRACERS pmemcheck)
 	endif()
 
 	if(PMREORDER_SUPPORTED)

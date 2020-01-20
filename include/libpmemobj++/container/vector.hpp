@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,6 +82,8 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	using range_snapshotting_iterator =
 		pmem::detail::range_snapshotting_iterator<T>;
+	// using collect_function = void (*)(persistent_ptr_base &ptr);
+	using collect_function = std::function<void(persistent_ptr_base &)>;
 
 	/* Constructors */
 	vector();
@@ -187,6 +189,9 @@ public:
 	void resize(size_type count);
 	void resize(size_type count, const value_type &value);
 	void swap(vector &other);
+
+	/* Defrag related */
+	void collect_all(collect_function func);
 
 private:
 	/* helper iterator */
@@ -2018,6 +2023,22 @@ vector<T>::swap(vector &other)
 		std::swap(this->_size, other._size);
 		std::swap(this->_capacity, other._capacity);
 	});
+}
+
+/**
+ * TODO: think of another name for this (public) method...
+ *	another proposal is: foreach_ptrs(); collect_all_ptrs()
+ *
+ * Iterates over all internal pointers and collectes them
+ * using callback function.
+ *
+ * @param func callback function to call on internal pointer
+ */
+template <typename T>
+void
+vector<T>::collect_all(collect_function func)
+{
+	func(_data);
 }
 
 /**

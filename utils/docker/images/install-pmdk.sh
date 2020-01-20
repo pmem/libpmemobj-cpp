@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,8 +38,8 @@ set -e
 
 PACKAGE_MANAGER=$1
 
-# devel-1.8: Merge pull request #4346 from igchor/pmemobj_set_user_data
-PMDK_VERSION="f62ced08fd854aa288781d01e44313fbd0aa96b7"
+# devel-1.8: doc: fix indentation; 17.01.2020
+PMDK_VERSION="45e5a673eecd9a6302b8af6c4901b60f9a239b04"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

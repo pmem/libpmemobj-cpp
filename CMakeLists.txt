@@ -90,7 +90,6 @@ option(ENABLE_SEGMENT_VECTOR "enable installation of pmem::obj::experimental::se
 option(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with array as segment_vector_type and exponential_size_policy" ON)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and exponential_size_policy" ON)
 option(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::experimental::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
-option(ENABLE_ENUMERABLE_THREAD_SPECIFIC "enable installation and testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
@@ -277,6 +276,7 @@ endif()
 
 if (ENABLE_CONCURRENT_HASHMAP)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "concurrent_hash_map.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
 endif()
 
 if (ENABLE_ARRAY OR ENABLE_VECTOR OR ENABLE_STRING)
@@ -286,10 +286,6 @@ endif()
 
 if (ENABLE_SEGMENT_VECTOR)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "segment_vector.hpp")
-endif()
-
-if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
-	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
 endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples

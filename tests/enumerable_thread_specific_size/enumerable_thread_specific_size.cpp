@@ -32,14 +32,14 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 namespace nvobj = pmem::obj;
 
 using test_t = int;
 
-using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
+using container_type = pmem::detail::enumerable_thread_specific<test_t>;
 
 struct root {
 	nvobj::persistent_ptr<container_type> pptr;

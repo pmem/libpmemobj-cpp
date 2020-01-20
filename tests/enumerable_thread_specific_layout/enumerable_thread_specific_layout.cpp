@@ -32,10 +32,10 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 
 template <typename T>
-using container_type = pmem::obj::experimental::enumerable_thread_specific<T>;
+using container_type = pmem::detail::enumerable_thread_specific<T>;
 
 int
 main(int argc, char *argv[])

@@ -81,6 +81,7 @@ option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
 option(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND "enable concurrent_hash_map tests with drd and helgrind (can only be run on PMEM)." OFF)
 option(TESTS_LONG "enable long running tests" OFF)
 option(TESTS_TBB "enable tests which require TBB" OFF)
+option(TESTS_COMPATIBILITY "enable compatibility tests (requires internet connection)" OFF)
 
 option(ENABLE_ARRAY "enable installation and testing of pmem::obj::array" ON)
 option(ENABLE_VECTOR "enable installation and testing of pmem::obj::vector" ON)

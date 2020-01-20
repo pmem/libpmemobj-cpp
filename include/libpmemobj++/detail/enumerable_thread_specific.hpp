@@ -52,9 +52,7 @@
 
 namespace pmem
 {
-namespace obj
-{
-namespace experimental
+namespace detail
 {
 
 /**
@@ -94,8 +92,9 @@ private:
  * @pre Reference to an object in Storage (obtained by operator[])
  *    must be valid until this object is removed.
  */
-template <typename T, typename Mutex = pmem::obj::shared_mutex,
-	  typename Storage = segment_vector<T, exponential_size_array_policy<>>>
+template <typename T, typename Mutex = obj::shared_mutex,
+	  typename Storage =
+		  obj::segment_vector<T, obj::exponential_size_array_policy<>>>
 class enumerable_thread_specific {
 	using storage_type = Storage;
 	using mutex_type = Mutex;
@@ -136,14 +135,14 @@ public:
 
 private:
 	/* private helper methods */
-	pool_base get_pool() const noexcept;
+	obj::pool_base get_pool() const noexcept;
 	void set_cached_size(size_t s);
 	size_t get_cached_size();
 
 	mutex_type _mutex;
 	storage_type _storage;
 
-	p<std::atomic<size_t>> _storage_size;
+	obj::p<std::atomic<size_t>> _storage_size;
 
 	/** RAII-style structure for holding thread id */
 	struct thread_id_type {
@@ -378,7 +377,7 @@ enumerable_thread_specific<T, Mutex, Storage>::clear()
 {
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] {
+	obj::transaction::run(pop, [&] {
 		_storage_size.get_rw() = 0;
 		_storage.clear();
 	});
@@ -464,16 +463,15 @@ enumerable_thread_specific<T, Mutex, Storage>::end() const
  * @return reference to pool_base object where enumerable_thread_local resides.
  */
 template <typename T, typename Mutex, typename Storage>
-pool_base
+obj::pool_base
 enumerable_thread_specific<T, Mutex, Storage>::get_pool() const noexcept
 {
 	auto pop = pmemobj_pool_by_ptr(this);
 	assert(pop != nullptr);
-	return pool_base(pop);
+	return obj::pool_base(pop);
 }
 
-} /* namespace experimental */
-} /* namespace obj */
+} /* namespace detail */
 } /* namespace pmem */
 
 #endif

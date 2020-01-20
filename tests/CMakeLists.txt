@@ -236,7 +236,7 @@ if(WIN32)
 	add_test_generic(NAME ctl_win CASE 0 TRACERS none)
 endif()
 
-if (ENABLE_ARRAY)
+if (TEST_ARRAY)
 	build_test(array_algorithms array_algorithms/array_algorithms.cpp)
 	add_test_generic(NAME array_algorithms TRACERS none pmemcheck)
 
@@ -262,7 +262,7 @@ if (ENABLE_ARRAY)
 	endif()
 endif()
 
-if (ENABLE_VECTOR)
+if (TEST_VECTOR)
 	build_test_ext(NAME vector_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_temp_value TRACERS none pmemcheck memcheck)
 
@@ -343,7 +343,7 @@ if (ENABLE_VECTOR)
 	add_test_generic(NAME vector_layout TRACERS none)
 endif()
 
-if (ENABLE_STRING)
+if (TEST_STRING)
 	build_test(string_access string_access/string_access.cpp)
 	add_test_generic(NAME string_access TRACERS none memcheck pmemcheck)
 
@@ -366,7 +366,7 @@ if (ENABLE_STRING)
 	add_test_generic(NAME string_layout TRACERS none)
 endif()
 
-if(ENABLE_CONCURRENT_HASHMAP)
+if(TEST_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
@@ -455,7 +455,7 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	endif()
 endif()
 
-if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
+if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	build_test_ext(NAME segment_vector_array_expsize_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_temp_value TRACERS none pmemcheck memcheck)
 
@@ -528,7 +528,7 @@ if(ENABLE_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_layout TRACERS none)
 endif()
 
-if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
+if(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	build_test_ext(NAME segment_vector_vector_expsize_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_temp_value TRACERS none pmemcheck memcheck)
 
@@ -601,7 +601,7 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_layout TRACERS none)
 endif()
 
-if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	build_test_ext(NAME segment_vector_vector_fixedsize_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_temp_value TRACERS none pmemcheck memcheck)
 
@@ -674,7 +674,7 @@ if(ENABLE_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_layout TRACERS none)
 endif()
 
-if (ENABLE_ENUMERABLE_THREAD_SPECIFIC)
+if (TEST_ENUMERABLE_THREAD_SPECIFIC)
 	build_test(enumerable_thread_specific_access enumerable_thread_specific/enumerable_thread_specific_access.cpp)
 	add_test_generic(NAME enumerable_thread_specific_access TRACERS none memcheck pmemcheck drd helgrind)
 

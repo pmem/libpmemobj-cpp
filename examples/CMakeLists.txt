@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -116,11 +116,11 @@ else()
 	set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system)
 endif()
 
-if (ENABLE_ARRAY)
+if (TEST_ARRAY)
 	add_example(queue queue/queue.cpp)
 endif()
 
-if (ENABLE_VECTOR)
+if (TEST_VECTOR)
 	add_example(simplekv simplekv/simplekv.cpp)
 	if(NOT CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT)
 		add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)

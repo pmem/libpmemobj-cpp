@@ -32,7 +32,7 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 
 #include <set>
@@ -40,7 +40,7 @@
 namespace nvobj = pmem::obj;
 
 using test_t = size_t;
-using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
+using container_type = pmem::detail::enumerable_thread_specific<test_t>;
 
 // Adding more concurrency will increase DRD test time
 const size_t concurrency = 16;

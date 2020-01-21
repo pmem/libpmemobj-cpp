@@ -166,8 +166,7 @@ add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
 build_test(transaction transaction/transaction.cpp)
 add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
 
-# XXX: add flag for features which will use volatile_state
-if (CXX_STANDARD GREATER_EQUAL 14)
+if (VOLATILE_STATE_PRESENT)
 	build_test(volatile_state volatile_state/volatile_state.cpp)
 	add_test_generic(NAME volatile_state TRACERS none pmemcheck memcheck drd helgrind)
 endif()

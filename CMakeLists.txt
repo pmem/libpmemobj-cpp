@@ -247,25 +247,6 @@ add_check_whitespace(include-experimental ${CMAKE_CURRENT_SOURCE_DIR}/include/li
 add_check_whitespace(cmake-main ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
-# Check for existence of pmemvlt (introduced after 1.4 release)
-set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
-set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
-
-set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJ_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-CHECK_CXX_SOURCE_COMPILES(
-	"#include <libpmemobj/base.h>
-	struct pmemvlt vlt;
-	int main() {}"
-	PMEMVLT_PRESENT)
-
-set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
-set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
-
-if(NOT PMEMVLT_PRESENT)
-	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
-endif()
-
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
 		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
 
@@ -342,7 +323,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake ${CMAKE_CURR
 
 include_directories(include)
 
-include(${CMAKE_SOURCE_DIR}/cmake/check_compiler_issues.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/check_compiling_issues.cmake)
 
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(VALGRIND QUIET valgrind)

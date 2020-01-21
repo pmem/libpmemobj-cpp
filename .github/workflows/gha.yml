@@ -75,14 +75,14 @@ jobs:
          id: cache-vcpkg-packages
          with:
             path: C:/vcpkg/packages
-            key:  vcpkg-packages
+            key:  vcpkg-packages-45e5a67
 
        - name: Cache vcpkg installed
          uses: actions/cache@v1
          id: cache-vcpkg-installed
          with:
             path: C:/vcpkg/installed
-            key:  vcpkg-installed
+            key:  vcpkg-installed-45e5a67
 
        - name: Clone the git repo
          uses: actions/checkout@v1

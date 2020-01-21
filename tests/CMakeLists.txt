@@ -367,14 +367,17 @@ if (ENABLE_STRING)
 endif()
 
 if(ENABLE_CONCURRENT_HASHMAP)
-	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
-	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
+	# build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
+	# add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck)
+
+	build_test(concurrent_hash_map_emplace concurrent_hash_map_emplace/concurrent_hash_map_emplace.cpp)
+	add_test_generic(NAME concurrent_hash_map_emplace TRACERS none memcheck pmemcheck drd helgrind)
 
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
@@ -396,8 +399,8 @@ if(ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_check TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map_singlethread concurrent_hash_map_singlethread/concurrent_hash_map_singlethread.cpp)
-	add_test_generic(NAME concurrent_hash_map_singlethread TRACERS none memcheck pmemcheck)
+	# build_test(concurrent_hash_map_singlethread concurrent_hash_map_singlethread/concurrent_hash_map_singlethread.cpp)
+	# add_test_generic(NAME concurrent_hash_map_singlethread TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_layout concurrent_hash_map_layout/concurrent_hash_map_layout.cpp)
 	add_test_generic(NAME concurrent_hash_map_layout TRACERS none)

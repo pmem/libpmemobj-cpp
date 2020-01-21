@@ -39,6 +39,8 @@
 #ifndef PMEMOBJ_CONCURRENT_HASH_MAP_HPP
 #define PMEMOBJ_CONCURRENT_HASH_MAP_HPP
 
+#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+
 #include <libpmemobj++/detail/atomic_backoff.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
@@ -348,9 +350,8 @@ struct hash_map_node {
 	}
 
 	template <typename... Args>
-	hash_map_node(node_ptr_t &&_next, Args &&... args)
-	    : next(std::forward<node_ptr_t>(_next)),
-	      item(std::forward<Args>(args)...)
+	hash_map_node(const node_ptr_t &_next, Args &&... args)
+	    : next(_next), item(std::forward<Args>(args)...)
 	{
 	}
 
@@ -885,6 +886,10 @@ public:
 	/** Segment mutex type. */
 	using segment_enable_mutex_t = pmem::obj::mutex;
 
+	/** Thread-local storage type. */
+	using tls_t = pmem::obj::experimental::enumerable_thread_specific<
+		detail::persistent_pool_ptr<node>>;
+
 	/** Compat and incompat features of a layout */
 	struct features {
 		uint32_t compat;
@@ -927,7 +932,10 @@ public:
 	std::aligned_storage<24, 8>::type padding2;
 
 	/** Reserved for future use */
-	std::aligned_storage<64, 8>::type reserved;
+	std::aligned_storage<48, 8>::type reserved;
+
+	/** Thread-local storage used to implement emplace method. */
+	pmem::obj::persistent_ptr<tls_t> my_tls;
 
 	/** Segment mutex used to enable new segment. */
 	segment_enable_mutex_t my_segment_enable_mutex;
@@ -941,7 +949,11 @@ public:
 	static constexpr features
 	header_features()
 	{
+#if HASH_MAP_EMPLACE_SUPPORT
+		return {0, 1};
+#else
 		return {0, 0};
+#endif
 	}
 
 	const std::atomic<hashcode_type> &
@@ -964,8 +976,8 @@ public:
 	using segment_facade_t =
 		segment_facade_impl<blocks_table_t, segment_traits_t, false>;
 
-	/** Default constructor */
-	hash_map_base()
+	void
+	initialize()
 	{
 		static_assert(
 			sizeof(size_type) == sizeof(std::atomic<size_type>),
@@ -994,6 +1006,21 @@ public:
 			segment_facade_t seg(my_table, i);
 			mark_rehashed<false>(pop, seg);
 		}
+	}
+
+	/** Default constructor */
+	hash_map_base()
+	{
+		initialize();
+		my_tls = pmem::obj::make_persistent<tls_t>();
+	}
+
+	~hash_map_base()
+	{
+		pool_base pop = get_pool_base();
+		pmem::obj::transaction::run(pop, [&] {
+			pmem::obj::delete_persistent<tls_t>(my_tls);
+		});
 	}
 
 	/**
@@ -1183,9 +1210,16 @@ public:
 		pool_base pop = get_pool_base();
 
 		pmem::obj::transaction::run(pop, [&] {
-			new_node = pmem::obj::make_persistent<Node>(
-				b->node_list, std::forward<Args>(args)...);
+			if (!new_node) {
+				new_node = pmem::obj::make_persistent<Node>(
+					b->node_list,
+					std::forward<Args>(args)...);
+			} else {
+				new_node.get(this->my_pool_uuid)->next =
+					b->node_list;
+			}
 			b->node_list = new_node; /* bucket is locked */
+			new_node = nullptr;
 		});
 
 		/* prefix form is to enforce allocation after the first item
@@ -1860,6 +1894,11 @@ protected:
 		if (layout_features.incompat != header_features().incompat)
 			throw pmem::layout_error(
 				"Incompat flags mismatch, for more details go to: https://pmem.io/pmdk/cpp_obj/ \n");
+		if (layout_features.compat < header_features().compat) {
+			hash_map_base::my_tls = pmem::obj::make_persistent<
+				typename hash_map_base::tls_t>();
+			++layout_features.compat;
+		}
 	}
 
 public:
@@ -2067,6 +2106,24 @@ public:
 			       size_type(std::distance(this->begin(),
 						       this->end())));
 		}
+
+		pool_base pop = get_pool_base();
+		using ptr_ref = typename hash_map_base::tls_t::reference;
+		auto handler = [&](ptr_ref ptr) {
+			if (!ptr)
+				return;
+
+			auto &item = ptr.get(this->my_pool_uuid)->item;
+			internal_insert(item.first, nullptr, false, ptr,
+					std::move(item));
+
+			if (ptr) {
+				pmem::obj::transaction::run(
+					pop, [&] { delete_node(ptr); });
+			}
+			ptr = nullptr;
+		};
+		hash_map_base::my_tls->initialize(handler);
 	}
 
 	/**
@@ -2373,7 +2430,8 @@ public:
 
 		result.release();
 
-		return internal_insert(key, &result, false, key);
+		persistent_node_ptr_t ptr;
+		return internal_insert(key, &result, false, ptr, key);
 	}
 
 	/**
@@ -2390,7 +2448,8 @@ public:
 
 		result.release();
 
-		return internal_insert(key, &result, true, key);
+		persistent_node_ptr_t ptr;
+		return internal_insert(key, &result, true, ptr, key);
 	}
 
 	/**
@@ -2407,7 +2466,8 @@ public:
 
 		result.release();
 
-		return internal_insert(value.first, &result, false, value);
+		persistent_node_ptr_t ptr;
+		return internal_insert(value.first, &result, false, ptr, value);
 	}
 
 	/**
@@ -2424,7 +2484,8 @@ public:
 
 		result.release();
 
-		return internal_insert(value.first, &result, true, value);
+		persistent_node_ptr_t ptr;
+		return internal_insert(value.first, &result, true, ptr, value);
 	}
 
 	/**
@@ -2438,7 +2499,8 @@ public:
 	{
 		concurrent_hash_map_internal::check_outside_tx();
 
-		return internal_insert(value.first, nullptr, false, value);
+		persistent_node_ptr_t ptr;
+		return internal_insert(value.first, nullptr, false, ptr, value);
 	}
 
 	/**
@@ -2455,7 +2517,8 @@ public:
 
 		result.release();
 
-		return internal_insert(value.first, &result, false,
+		persistent_node_ptr_t ptr;
+		return internal_insert(value.first, &result, false, ptr,
 				       std::move(value));
 	}
 
@@ -2473,7 +2536,8 @@ public:
 
 		result.release();
 
-		return internal_insert(value.first, &result, true,
+		persistent_node_ptr_t ptr;
+		return internal_insert(value.first, &result, true, ptr,
 				       std::move(value));
 	}
 
@@ -2488,7 +2552,8 @@ public:
 	{
 		concurrent_hash_map_internal::check_outside_tx();
 
-		return internal_insert(value.first, nullptr, false,
+		persistent_node_ptr_t ptr;
+		return internal_insert(value.first, nullptr, false, ptr,
 				       std::move(value));
 	}
 
@@ -2518,6 +2583,55 @@ public:
 		concurrent_hash_map_internal::check_outside_tx();
 
 		insert(il.begin(), il.end());
+	}
+
+	/**
+	 * Emplace with accessor and args
+	 * @throw pmem::transaction_alloc_error on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
+	template <typename... Args>
+	bool
+	emplace(accessor &acc, Args &&... args)
+	{
+		concurrent_hash_map_internal::check_outside_tx();
+
+		acc.release();
+
+		return internal_emplace(&acc, true,
+					std::forward<Args>(args)...);
+	}
+
+	/**
+	 * Emplace with const_accessor and args
+	 * @throw pmem::transaction_alloc_error on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
+	template <typename... Args>
+	bool
+	emplace(const_accessor &acc, Args &&... args)
+	{
+		concurrent_hash_map_internal::check_outside_tx();
+
+		acc.release();
+
+		return internal_emplace(&acc, false,
+					std::forward<Args>(args)...);
+	}
+
+	/**
+	 * Emplace with args
+	 * @throw pmem::transaction_alloc_error on allocation failure.
+	 * @throw pmem::transaction_scope_error if called inside transaction
+	 */
+	template <typename... Args>
+	bool
+	emplace(Args &&... args)
+	{
+		concurrent_hash_map_internal::check_outside_tx();
+
+		return internal_emplace(nullptr, false,
+					std::forward<Args>(args)...);
 	}
 
 	/**
@@ -2578,6 +2692,7 @@ protected:
 
 	template <typename K, typename... Args>
 	bool internal_insert(const K &key, const_accessor *result, bool write,
+			     detail::persistent_pool_ptr<node> &ptr,
 			     Args &&... args);
 
 	/* Obtain pointer to node and lock bucket */
@@ -2610,6 +2725,9 @@ protected:
 	template <typename K>
 	bool internal_erase(const K &key);
 
+	template <typename... Args>
+	bool internal_emplace(const_accessor *acc, bool write, Args &&... args);
+
 	void clear_segment(segment_index_t s);
 
 	/**
@@ -2619,7 +2737,6 @@ protected:
 
 	template <typename I>
 	void internal_copy(I first, I last);
-
 }; // class concurrent_hash_map
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,
@@ -2713,11 +2830,9 @@ template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>
 template <typename K, typename... Args>
 bool
-concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
-		    ScopedLockType>::internal_insert(const K &key,
-						     const_accessor *result,
-						     bool write,
-						     Args &&... args)
+concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::
+	internal_insert(const K &key, const_accessor *result, bool write,
+			detail::persistent_pool_ptr<node> &ptr, Args &&... args)
 {
 	assert(!result || !result->my_node);
 
@@ -2749,8 +2864,9 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 			}
 
 			/* insert and set flag to grow the container */
-			new_size = insert_new_node(b.get(), node,
+			new_size = insert_new_node(b.get(), ptr,
 						   std::forward<Args>(args)...);
+			node = b->node_list;
 			inserted = true;
 		}
 
@@ -2760,8 +2876,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
 			    result, node.get(this->my_pool_uuid)->mutex, write))
 			break;
 
-		/* the wait takes really long, restart the
-		 * operation */
+		/* the wait takes really long, restart the operation */
 		b.release();
 
 		std::this_thread::yield();
@@ -2859,6 +2974,38 @@ search:
 }
 
 	return true;
+}
+
+template <typename Key, typename T, typename Hash, typename KeyEqual,
+	  typename MutexType, typename ScopedLockType>
+template <typename... Args>
+bool
+concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType,
+		    ScopedLockType>::internal_emplace(const_accessor *acc,
+						      bool write,
+						      Args &&... args)
+{
+	persistent_node_ptr_t &ptr = hash_map_base::my_tls->local();
+
+	/* why explanation */
+	assert(ptr == nullptr);
+
+	pool_base pop = get_pool_base();
+	pmem::obj::transaction::run(pop, [&] {
+		ptr = pmem::obj::make_persistent<node>(
+			nullptr, std::forward<Args>(args)...);
+	});
+
+	auto result =
+		internal_insert(ptr.get(this->my_pool_uuid)->item.first, acc,
+				write, ptr, std::forward<Args>(args)...);
+
+	if (ptr) {
+		pmem::obj::transaction::run(pop, [&] { delete_node(ptr); });
+		ptr = nullptr;
+	}
+
+	return result;
 }
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,
@@ -2971,6 +3118,7 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::
 {
 	reserve(source.my_size.get_ro());
 	internal_copy(source.begin(), source.end());
+	hash_map_base::my_tls = source.my_tls;
 }
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,

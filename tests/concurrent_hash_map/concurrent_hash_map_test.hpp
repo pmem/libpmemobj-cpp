@@ -37,6 +37,7 @@
 
 #include "unittest.hpp"
 
+#include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/experimental/v.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
@@ -48,6 +49,7 @@
 #endif
 
 #include <iostream>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -57,6 +59,42 @@
 
 namespace nvobj = pmem::obj;
 
+class string_hasher {
+	class key_equal {
+	public:
+		template <typename M, typename U>
+		bool
+		operator()(const M &lhs, const U &rhs) const
+		{
+			return lhs == rhs;
+		}
+	};
+
+	/* hash multiplier used by fibonacci hashing */
+	static const size_t hash_multiplier = 11400714819323198485ULL;
+
+public:
+	using transparent_key_equal = key_equal;
+
+	template <typename String>
+	size_t
+	operator()(const String &str) const
+	{
+		return hash(str.c_str(), str.size());
+	}
+
+private:
+	size_t
+	hash(const char *str, size_t size) const
+	{
+		size_t h = 0;
+		for (size_t i = 0; i < size; ++i) {
+			h = static_cast<size_t>(str[i]) ^ (h * hash_multiplier);
+		}
+		return h;
+	}
+};
+
 #if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
 typedef nvobj::concurrent_hash_map<
 	nvobj::p<int>, nvobj::p<int>, std::hash<nvobj::p<int>>,
@@ -64,12 +102,21 @@ typedef nvobj::concurrent_hash_map<
 	pmem::obj::experimental::v<tbb::spin_rw_mutex>,
 	tbb::spin_rw_mutex::scoped_lock>
 	persistent_map_type;
+typedef nvobj::concurrent_hash_map<
+	nvobj::string, nvobj::string, string_hasher,
+	std::equal_to<nvobj::string>,
+	pmem::obj::experimental::v<tbb::spin_rw_mutex>,
+	tbb::spin_rw_mutex::scoped_lock>
+	string_persistent_map_type;
 #else
 typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type;
+typedef nvobj::concurrent_hash_map<nvobj::string, nvobj::string, string_hasher>
+	string_persistent_map_type;
 #endif
+template <typename T>
 struct root {
-	nvobj::persistent_ptr<persistent_map_type> cons;
+	nvobj::persistent_ptr<T> cons;
 };
 
 template <typename Function>
@@ -88,15 +135,16 @@ parallel_exec(size_t concurrency, Function f)
 	}
 }
 
+template <typename MapType>
 struct ConcurrentHashMapTestPrimitives {
 private:
-	nvobj::pool<root> &m_pop;
-	nvobj::persistent_ptr<persistent_map_type> map;
+	nvobj::pool<root<MapType>> &m_pop;
+	nvobj::persistent_ptr<MapType> map;
 	size_t m_items_number;
 	const size_t rehash_bucket_ratio = 8;
 
 public:
-	ConcurrentHashMapTestPrimitives(nvobj::pool<root> &pop,
+	ConcurrentHashMapTestPrimitives(nvobj::pool<root<MapType>> &pop,
 					size_t items_number)
 	    : m_pop(pop), m_items_number(items_number)
 	{
@@ -168,7 +216,7 @@ public:
 	increment(ItemType i)
 	{
 		/* Do we need update method in cmap api? */
-		persistent_map_type::accessor acc;
+		typename MapType::accessor acc;
 		bool found = map->find(acc, i);
 		UT_ASSERT(found == true);
 		UT_ASSERT(acc->first == i);
@@ -190,7 +238,7 @@ public:
 	void
 	check_erased(ItemType i)
 	{
-		persistent_map_type::accessor acc;
+		typename MapType::accessor acc;
 		bool found = map->find(acc, i);
 		UT_ASSERT(found == false);
 	}
@@ -216,9 +264,8 @@ public:
 	void
 	insert_or_increment(ItemType i, ItemType j)
 	{
-		persistent_map_type::accessor acc;
-		bool ret =
-			map->insert(acc, persistent_map_type::value_type(i, j));
+		typename MapType::accessor acc;
+		bool ret = map->insert(acc, typename MapType::value_type(i, j));
 		if (!ret) {
 			/* Update needs to be persisted by the user */
 			nvobj::transaction::run(
@@ -227,7 +274,7 @@ public:
 	}
 
 	void
-	insert(std::initializer_list<persistent_map_type::value_type> il)
+	insert(std::initializer_list<typename MapType::value_type> il)
 	{
 		/* Initializer list insert is void type */
 		map->insert(il);
@@ -238,7 +285,7 @@ public:
 	}
 
 	void
-	insert(std::vector<persistent_map_type::value_type> v)
+	insert(std::vector<typename MapType::value_type> v)
 	{
 		/* Iterator insert is void type */
 		map->insert(v.begin(), v.end());
@@ -246,6 +293,21 @@ public:
 			auto key = i.first;
 			UT_ASSERTeq(map->count(key), 1);
 		}
+	}
+
+	template <typename... Args>
+	bool
+	emplace(Args &&... args)
+	{
+		typename MapType::const_accessor acc;
+		return map->emplace(acc, std::forward<Args>(args)...);
+	}
+
+	template <typename K, typename M>
+	bool
+	insert_or_assign(K&& k, M&& obj)
+	{
+		return map->insert_or_assign(k, obj);
 	}
 };
 
@@ -265,12 +327,13 @@ public:
  */
 template <typename InsertAccessor, typename ValueType>
 void
-insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
+insert_and_lookup_value_type_test(nvobj::pool<root<persistent_map_type>> &pop,
 				  size_t concurrency = 8,
 				  size_t thread_items = 50)
 {
 	PRINT_TEST_PARAMS;
-	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(
+		pop, concurrency * thread_items);
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * thread_items;
@@ -309,11 +372,12 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
  */
 template <typename InsertAccessor, typename ValueType>
 void
-insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
-			   size_t thread_items = 50)
+insert_and_lookup_key_test(nvobj::pool<root<persistent_map_type>> &pop,
+			   size_t concurrency = 8, size_t thread_items = 50)
 {
 	PRINT_TEST_PARAMS;
-	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(
+		pop, concurrency * thread_items);
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * thread_items;
@@ -349,12 +413,13 @@ insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
  */
 template <typename ValueType>
 void
-insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
+insert_and_lookup_value_type_test(nvobj::pool<root<persistent_map_type>> &pop,
 				  size_t concurrency = 8,
 				  size_t thread_items = 50)
 {
 	PRINT_TEST_PARAMS;
-	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(
+		pop, concurrency * thread_items);
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * thread_items;
@@ -390,11 +455,12 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
  *	 KeyEqual>::insert(std::initializer_list< value_type > il)
  */
 void
-insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
-					size_t concurrency = 8)
+insert_and_lookup_initializer_list_test(
+	nvobj::pool<root<persistent_map_type>> &pop, size_t concurrency = 8)
 {
 	PRINT_TEST_PARAMS;
-	ConcurrentHashMapTestPrimitives test(pop, concurrency * 2);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(
+		pop, concurrency * 2);
 
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		auto k1 =
@@ -421,12 +487,14 @@ insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
  *	KeyEqual>::insert(I first, I last)
  */
 void
-insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
+insert_and_lookup_iterator_test(nvobj::pool<root<persistent_map_type>> &pop,
+				size_t concurrency = 8,
 				size_t thread_items = 50)
 {
 	PRINT_TEST_PARAMS;
 
-	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(
+		pop, concurrency * thread_items);
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		int begin = thread_id * thread_items;
 		int end = begin + int(thread_items);
@@ -450,12 +518,13 @@ insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
  *	KeyEqual>::insert(I first, I last)
  */
 void
-insert_mt_test(nvobj::pool<root> &pop, size_t concurrency = 8,
-	       size_t thread_items = 50)
+insert_mt_test(nvobj::pool<root<persistent_map_type>> &pop,
+	       size_t concurrency = 8, size_t thread_items = 50)
 {
 	PRINT_TEST_PARAMS;
 
-	ConcurrentHashMapTestPrimitives test(pop, thread_items);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(pop,
+								  thread_items);
 	parallel_exec(concurrency, [&](size_t thread_id) {
 		for (int i = 0; i < int(thread_items); i++) {
 			test.insert_or_increment(i, 1);
@@ -480,13 +549,14 @@ insert_mt_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 
 template <typename InsertAccessor, typename ValueType>
 void
-insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
-		      size_t thread_items = 50)
+insert_and_erase_test(nvobj::pool<root<persistent_map_type>> &pop,
+		      size_t concurrency = 8, size_t thread_items = 50)
 {
 
 	PRINT_TEST_PARAMS;
 
-	ConcurrentHashMapTestPrimitives test(pop, concurrency * thread_items);
+	ConcurrentHashMapTestPrimitives<persistent_map_type> test(
+		pop, concurrency * thread_items);
 
 	// Adding more concurrency will increase DRD test time
 	auto map = pop.root()->cons;
@@ -516,7 +586,8 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
 void
-insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
+insert_erase_lookup_test(nvobj::pool<root<persistent_map_type>> &pop,
+			 size_t concurrency = 4)
 {
 
 	PRINT_TEST_PARAMS;
@@ -574,4 +645,80 @@ insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 	for (auto &e : *map) {
 		UT_ASSERT(e.first <= e.second);
 	}
+}
+
+/*
+ * emplace_string_test -- (internal) test emplace operation with std::string
+ * pmem::obj::concurrent_hash_map<nvobj::string, nvobj::string >
+ */
+void
+emplace_test(nvobj::pool<root<string_persistent_map_type>> &pop,
+	     size_t concurrency = 8, size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives<string_persistent_map_type> test(
+		pop, thread_items * concurrency);
+
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		using acc = string_persistent_map_type::accessor;
+		using const_acc = string_persistent_map_type::const_accessor;
+
+		int begin = thread_id * thread_items;
+		int end = begin + int(thread_items);
+
+		for (int i = begin; i < end; i++) {
+			auto val = std::to_string(i);
+			bool result = test.emplace(val, val);
+			UT_ASSERTinfo(result, "emplace_test failed");
+		}
+		for (int i = begin; i < end; i++) {
+			auto val = std::to_string(i);
+			test.check_item<acc>(val, val);
+		}
+		for (int i = begin; i < end; i++) {
+			auto val = std::to_string(i);
+			test.check_item<const_acc>(val, val);
+		}
+	});
+	test.check_consistency();
+	test.clear();
+}
+
+/*
+ * emplace_piecewise_test -- (internal) test emplace operation with
+ * std::piecewise_construct
+ * pmem::obj::concurrent_hash_map<nvobj::string, nvobj::string >
+ */
+void
+emplace_piecewise_test(nvobj::pool<root<string_persistent_map_type>> &pop,
+		       size_t concurrency = 8, size_t thread_items = 50)
+{
+	PRINT_TEST_PARAMS;
+	ConcurrentHashMapTestPrimitives<string_persistent_map_type> test(
+		pop, thread_items);
+
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		using acc = string_persistent_map_type::accessor;
+		using const_acc = string_persistent_map_type::const_accessor;
+
+		int end = int(thread_items);
+
+		for (int i = 0; i < end; i++) {
+			auto val = std::to_string(i);
+			test.emplace(
+				std::piecewise_construct,
+				std::forward_as_tuple(val.data(), val.size()),
+				std::forward_as_tuple(val.data(), val.size()));
+		}
+		for (int i = 0; i < end; i++) {
+			auto val = std::to_string(i);
+			test.check_item<acc>(val, val);
+		}
+		for (int i = 0; i < end; i++) {
+			auto val = std::to_string(i);
+			test.check_item<const_acc>(val, val);
+		}
+	});
+	test.check_consistency();
+	test.clear();
 }

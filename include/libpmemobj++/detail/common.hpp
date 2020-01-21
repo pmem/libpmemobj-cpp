@@ -116,6 +116,8 @@
 	std::is_trivially_copyable<T>::value
 #endif
 
+#define HASH_MAP_EMPLACE_SUPPORT 1
+
 namespace pmem
 {
 

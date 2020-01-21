@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -242,15 +242,19 @@ function(add_test_common name tracer testcase cmake_script)
 endfunction()
 
 function(add_test_generic)
-	set(oneValueArgs NAME CASE)
+	set(oneValueArgs NAME CASE SCRIPT)
 	set(multiValueArgs TRACERS)
 	cmake_parse_arguments(TEST "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-	if("${TEST_CASE}" STREQUAL "")
-		set(TEST_CASE "0")
-		set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/run_default.cmake)
+	if("${TEST_SCRIPT}" STREQUAL "")
+		if("${TEST_CASE}" STREQUAL "")
+			set(TEST_CASE "0")
+			set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/run_default.cmake)
+		else()
+			set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}/${TEST_NAME}_${TEST_CASE}.cmake)
+		endif()
 	else()
-		set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}/${TEST_NAME}_${TEST_CASE}.cmake)
+		set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT})
 	endif()
 
 	foreach(tracer ${TEST_TRACERS})

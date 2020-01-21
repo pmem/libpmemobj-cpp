@@ -11,8 +11,8 @@ index e8f1c309e..9f2d3a4a4 100644
      REPO pmem/pmdk
 -    REF bc5e309485df61c452d08367e4b13ba9dfed5071 #Commit id corresponding to the version 1.7
 -    SHA512 15bee6a046746e4ab7e827bb36685bc5d9cdffdbc68ba86eb71e2c4bd84eb4fed4586c09174257bfd87ea178c8ee9865a8824842d7d1df67e0ae79ff80cf650e
-+    REF f62ced08fd854aa288781d01e44313fbd0aa96b7 #devel-1.8: Merge pull request #4346 from igchor/pmemobj_set_user_data
-+    SHA512 946a64c42b139bf1e90fc40d1a5a2f4605a01e52e8b66c23c5edbf87e1596892afbf0d723b4c1ce8c71a8c6c6d6b5c92127241cf0ecb47370872baf92087662e
++    REF 45e5a673eecd9a6302b8af6c4901b60f9a239b04 # devel-1.8: doc: fix indentation; 17.01.2020
++    SHA512 ac3e23657ac5c0f62cae5f4211aaea336330b9258a8e48315acd07b597ccc78e76b0f8bd63014f00c28b73c615255a1c69f27326f641d9590eaa3460bb2de374
      HEAD_REF master
 @@ -19,3 +19,3 @@ vcpkg_build_msbuild(
      PROJECT_PATH ${SOURCE_PATH}/src/PMDK.sln

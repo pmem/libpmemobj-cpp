@@ -6,7 +6,7 @@ var searchData=
   ['timed_5fmutex',['timed_mutex',['../classpmem_1_1obj_1_1timed__mutex.html',1,'pmem::obj::timed_mutex'],['../classpmem_1_1obj_1_1timed__mutex.html#a432952ca0affc6baab420fceda7c37b4',1,'pmem::obj::timed_mutex::timed_mutex()'],['../classpmem_1_1obj_1_1timed__mutex.html#a72c61d0dd7d100d7d494da1111f502cc',1,'pmem::obj::timed_mutex::timed_mutex(const timed_mutex &amp;)=delete']]],
   ['timed_5fmutex_2ehpp',['timed_mutex.hpp',['../timed__mutex_8hpp.html',1,'']]],
   ['timedlock_5fimpl',['timedlock_impl',['../classpmem_1_1obj_1_1timed__mutex.html#ad3661edbe31f8f2d1b536f8182f2b879',1,'pmem::obj::timed_mutex']]],
-  ['timepoint_5fto_5ftimespec',['timepoint_to_timespec',['../conversions_8hpp.html#af01e97a9018816a35f80bd32f50b66a8',1,'pmem::detail']]],
+  ['timepoint_5fto_5ftimespec',['timepoint_to_timespec',['../namespacepmem_1_1detail.html#af01e97a9018816a35f80bd32f50b66a8',1,'pmem::detail']]],
   ['transaction',['transaction',['../classpmem_1_1obj_1_1transaction.html',1,'pmem::obj']]],
   ['transaction_2ehpp',['transaction.hpp',['../transaction_8hpp.html',1,'']]],
   ['transaction_5falloc_5ferror',['transaction_alloc_error',['../classpmem_1_1transaction__alloc__error.html',1,'pmem']]],

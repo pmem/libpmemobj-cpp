@@ -1,5 +1,8 @@
 var searchData=
 [
+  ['detail',['detail',['../namespacepmem_1_1detail.html',1,'pmem']]],
+  ['experimental',['experimental',['../namespacepmem_1_1obj_1_1experimental.html',1,'pmem::obj']]],
+  ['obj',['obj',['../namespacepmem_1_1obj.html',1,'pmem']]],
   ['p',['p',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj::p&lt; T &gt;'],['../classpmem_1_1obj_1_1p.html#a3ab11de2b346b70bc94542fde9f85866',1,'pmem::obj::p::p(const T &amp;_val) noexcept'],['../classpmem_1_1obj_1_1p.html#a9955c335aaeff79f3800aa319c288ef6',1,'pmem::obj::p::p()=default']]],
   ['p_2ehpp',['p.hpp',['../p_8hpp.html',1,'']]],
   ['p_3c_20size_5ftype_20_3e',['p&lt; size_type &gt;',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj']]],
@@ -24,8 +27,8 @@ var searchData=
   ['pool',['pool',['../classpmem_1_1obj_1_1pool.html',1,'pmem::obj::pool&lt; T &gt;'],['../classpmem_1_1obj_1_1pool.html#ae26e5edd74a7fecaa683353fc22fe8b5',1,'pmem::obj::pool::pool() noexcept=default'],['../classpmem_1_1obj_1_1pool.html#aa5473cb18d6e9cd0ab88fc875c611e2b',1,'pmem::obj::pool::pool(const pool &amp;) noexcept=default'],['../classpmem_1_1obj_1_1pool.html#a41b44411aeb6b321e38d7378d5b62ece',1,'pmem::obj::pool::pool(pool &amp;&amp;) noexcept=default'],['../classpmem_1_1obj_1_1pool.html#a7b373fb46d72a5c395194ff71af8ff17',1,'pmem::obj::pool::pool(const pool_base &amp;pb) noexcept'],['../classpmem_1_1obj_1_1pool.html#a71e3d24e46a574a4cc092bdb1af57a3c',1,'pmem::obj::pool::pool(pool_base &amp;&amp;pb) noexcept']]],
   ['pool_2ehpp',['pool.hpp',['../pool_8hpp.html',1,'']]],
   ['pool_5fbase',['pool_base',['../classpmem_1_1obj_1_1pool__base.html',1,'pmem::obj::pool_base'],['../classpmem_1_1obj_1_1pool__base.html#a8a23bb65137dc9de11d5d1584c76ac12',1,'pmem::obj::pool_base::pool_base() noexcept'],['../classpmem_1_1obj_1_1pool__base.html#a68b9430c045e4b2e0b59723d66df94eb',1,'pmem::obj::pool_base::pool_base(pmemobjpool *cpop) noexcept'],['../classpmem_1_1obj_1_1pool__base.html#aaba19731d485b712f8d776d0a3e3a2a7',1,'pmem::obj::pool_base::pool_base(const pool_base &amp;) noexcept=default'],['../classpmem_1_1obj_1_1pool__base.html#a467c20a06acb70ac9f3235ffcdac6c8e',1,'pmem::obj::pool_base::pool_base(pool_base &amp;&amp;) noexcept=default']]],
-  ['pool_5fby_5fpptr',['pool_by_pptr',['../utils_8hpp.html#a91c6d7a276ccbdfd1eee3f10431aa71f',1,'pmem::obj']]],
-  ['pool_5fby_5fvptr',['pool_by_vptr',['../utils_8hpp.html#ac392b8f634101ffeebb3c6838ebe3f8a',1,'pmem::obj']]],
+  ['pool_5fby_5fpptr',['pool_by_pptr',['../namespacepmem_1_1obj.html#a91c6d7a276ccbdfd1eee3f10431aa71f',1,'pmem::obj']]],
+  ['pool_5fby_5fvptr',['pool_by_vptr',['../namespacepmem_1_1obj.html#ac392b8f634101ffeebb3c6838ebe3f8a',1,'pmem::obj']]],
   ['pool_5fdata_2ehpp',['pool_data.hpp',['../pool__data_8hpp.html',1,'']]],
   ['pool_5ferror',['pool_error',['../classpmem_1_1pool__error.html',1,'pmem']]],
   ['pop_5fback',['pop_back',['../classpmem_1_1obj_1_1basic__string.html#a3b41a7c888f7dd4a582c87edf74f328f',1,'pmem::obj::basic_string::pop_back()'],['../classpmem_1_1obj_1_1segment__vector.html#ac0e672237c087e7ce916297cc38f11bb',1,'pmem::obj::segment_vector::pop_back()'],['../classpmem_1_1obj_1_1vector.html#a4820e20ca9b0047918e0402ff2e1c610',1,'pmem::obj::vector::pop_back()']]],

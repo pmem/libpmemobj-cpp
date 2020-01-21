@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><b>obj</b></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacepmem.html">pmem</a></li><li class="navelem"><a class="el" href="namespacepmem_1_1obj.html">obj</a></li><li class="navelem"><a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -932,7 +932,7 @@ template&lt;typename T&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> == std::distance(<a class="el" href="array_8hpp.html#af7b865184397a869c6c3961222774c35" title="Non-member begin.">ilist.begin()</a>, <a class="el" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83" title="Non-member end.">ilist.end()</a>) </dd>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> == std::distance(<a class="el" href="namespacepmem_1_1obj.html#af7b865184397a869c6c3961222774c35" title="Non-member begin.">ilist.begin()</a>, <a class="el" href="namespacepmem_1_1obj.html#a8c9a19e08dff0b1cba582993afd16b83" title="Non-member end.">ilist.end()</a>) </dd>
 <dd>
 <a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a> == max(<a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a>, <a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a>)</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
@@ -2650,7 +2650,7 @@ template&lt;typename T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element inserted, or pos if ilist is empty.</dd></dl>
 <dl class="section pre"><dt>Precondition</dt><dd>value_type must meet the requirements of EmplaceConstructible, Swappable, CopyAssignable, CopyConstructible and CopyInsertable.</dd></dl>
-<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a> is equal to the smallest next power of 2, bigger than old capacity + std::distance(<a class="el" href="array_8hpp.html#af7b865184397a869c6c3961222774c35" title="Non-member begin.">ilist.begin()</a>, <a class="el" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83" title="Non-member end.">ilist.end()</a>), or remains the same if there is enough space to add std::distance(<a class="el" href="array_8hpp.html#af7b865184397a869c6c3961222774c35" title="Non-member begin.">ilist.begin()</a>, <a class="el" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83" title="Non-member end.">ilist.end()</a>) elements.</dd></dl>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a> is equal to the smallest next power of 2, bigger than old capacity + std::distance(<a class="el" href="namespacepmem_1_1obj.html#af7b865184397a869c6c3961222774c35" title="Non-member begin.">ilist.begin()</a>, <a class="el" href="namespacepmem_1_1obj.html#a8c9a19e08dff0b1cba582993afd16b83" title="Non-member end.">ilist.end()</a>), or remains the same if there is enough space to add std::distance(<a class="el" href="namespacepmem_1_1obj.html#af7b865184397a869c6c3961222774c35" title="Non-member begin.">ilist.begin()</a>, <a class="el" href="namespacepmem_1_1obj.html#a8c9a19e08dff0b1cba582993afd16b83" title="Non-member end.">ilist.end()</a>) elements.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>

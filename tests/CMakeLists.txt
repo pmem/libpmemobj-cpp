@@ -237,6 +237,11 @@ add_test_generic(NAME ctl CASE 0 TRACERS none
 build_test(defrag defrag/defrag.cpp)
 add_test_generic(NAME defrag TRACERS none pmemcheck)
 
+if (TEST_VECTOR)
+	build_test(defrag_containers defrag/defrag_containers.cpp)
+	add_test_generic(NAME defrag_containers TRACERS none pmemcheck)
+endif()
+
 if(WIN32)
 	build_test(ctl_win ctl_win/ctl_win.cpp)
 	add_test_generic(NAME ctl_win CASE 0 TRACERS none

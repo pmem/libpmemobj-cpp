@@ -254,6 +254,7 @@ function(add_test_generic)
 			set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}/${TEST_NAME}_${TEST_CASE}.cmake)
 		endif()
 	else()
+		set(TEST_CASE "0")
 		set(cmake_script ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT})
 	endif()
 

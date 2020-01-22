@@ -68,6 +68,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
 option(BUILD_EXAMPLES "build examples" ON)
 option(BUILD_TESTS "build tests" ON)
 option(BUILD_DOC "build documentation" ON)
+option(BUILD_BENCHMARKS "build benchmarks" ON)
 
 option(COVERAGE "run coverage test" OFF)
 option(DEVELOPER_MODE "enable developer checks" OFF)
@@ -358,6 +359,10 @@ endif()
 
 if(BUILD_DOC)
 	add_subdirectory(doc)
+endif()
+
+if (BUILD_BENCHMARKS)
+	add_subdirectory(benchmarks)
 endif()
 
 if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)

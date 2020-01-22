@@ -58,6 +58,7 @@ RUN pacman -S --noconfirm \
 	libunwind \
 	llvm \
 	make \
+	man \
 	pandoc \
 	perl-text-diff \
 	pkg-config \

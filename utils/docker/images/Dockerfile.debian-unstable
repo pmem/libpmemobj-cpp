@@ -67,6 +67,7 @@ RUN apt-get update \
 	libudev-dev \
 	libunwind-dev \
 	llvm \
+	man \
 	pandoc \
 	pkg-config \
 	ruby \

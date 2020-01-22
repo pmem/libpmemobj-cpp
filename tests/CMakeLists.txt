@@ -145,10 +145,12 @@ add_test_generic(NAME pool CASE 4 TRACERS none)
 add_test_generic(NAME pool CASE 5 TRACERS none)
 
 build_test(pool_primitives pool_primitives/pool_primitives.cpp)
-add_test_generic(NAME pool_primitives CASE 0 TRACERS none pmemcheck)
+add_test_generic(NAME pool_primitives CASE 0 TRACERS none pmemcheck
+		SCRIPT cmake/common_0.cmake)
 
 build_test(ptr ptr/ptr.cpp)
-add_test_generic(NAME ptr CASE 0 TRACERS none pmemcheck)
+add_test_generic(NAME ptr CASE 0 TRACERS none pmemcheck
+		SCRIPT cmake/common_0.cmake)
 
 build_test(ptr_arith ptr_arith/ptr_arith.cpp)
 add_test_generic(NAME ptr_arith TRACERS memcheck pmemcheck)
@@ -181,7 +183,8 @@ endif()
 
 if(PMEMVLT_PRESENT)
 	build_test(v v/v.cpp)
-	add_test_generic(NAME v CASE 0 TRACERS none memcheck)
+	add_test_generic(NAME v CASE 0 TRACERS none memcheck
+			SCRIPT cmake/common_0.cmake)
 else()
 	message(WARNING "Skipping v test because no pmemvlt support found")
 	skip_test("v" "SKIPPED_BECAUSE_OF_MISSING_PMEMVLT")
@@ -228,11 +231,13 @@ build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(NAME iterator_traits TRACERS none)
 
 build_test(ctl ctl/ctl.cpp)
-add_test_generic(NAME ctl CASE 0 TRACERS none)
+add_test_generic(NAME ctl CASE 0 TRACERS none
+		SCRIPT ctl/ctl_0.cmake)
 
 if(WIN32)
 	build_test(ctl_win ctl_win/ctl_win.cpp)
-	add_test_generic(NAME ctl_win CASE 0 TRACERS none)
+	add_test_generic(NAME ctl_win CASE 0 TRACERS none
+			SCRIPT ctl/ctl_0.cmake)
 endif()
 
 if (TEST_ARRAY)
@@ -370,31 +375,40 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
 
 	build_test(concurrent_hash_map_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_insert_lookup.cpp)
-	add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS none memcheck pmemcheck
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
-	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
-	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 	# This test can NOT be run under helgrind as it will report wrong lock ordering. Helgrind is right about
 	# possible deadlock situation but that could only happen in case of wrong API usage.
 	build_test(concurrent_hash_map_deadlock concurrent_hash_map_deadlock/concurrent_hash_map_deadlock.cpp)
-	add_test_generic(NAME concurrent_hash_map_deadlock CASE 0 TRACERS none drd memcheck pmemcheck)
+	add_test_generic(NAME concurrent_hash_map_deadlock CASE 0 TRACERS none drd memcheck pmemcheck
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
-		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind)
+		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
-		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS helgrind)
+		add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS helgrind
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 		if (TESTS_LONG)
-			add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS drd)
+			add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS drd
+					SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
-			add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS drd)
+			add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS drd
+					SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 		endif()
 
-		add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
+		add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 	endif()
 
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)
@@ -424,18 +438,22 @@ if(TEST_CONCURRENT_HASHMAP)
 		message(FATAL_ERROR "concurrent_hash_map_tbb tests enabled by cmake TESTS_TBB option, but Intel TBB library was not found")
 	else()
 		build_test_tbb(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
-		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none pmemcheck)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none pmemcheck
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 		build_test_tbb(concurrent_hash_map_tbb_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_tbb_insert_erase.cpp)
-		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase TRACERS none pmemcheck)
+		add_test_generic(NAME concurrent_hash_map_tbb_insert_erase TRACERS none pmemcheck
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 	endif()
 
 	if(PMREORDER_SUPPORTED)
 		build_test(concurrent_hash_map_pmreorder_simple concurrent_hash_map_pmreorder_simple/concurrent_hash_map_pmreorder_simple.cpp)
-		add_test_generic(NAME concurrent_hash_map_pmreorder_simple CASE 0 TRACERS none)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_simple CASE 0 TRACERS none
+				SCRIPT concurrent_hash_map/pmreorder.cmake)
 
 		build_test(concurrent_hash_map_pmreorder_multiple_buckets concurrent_hash_map_pmreorder_multiple_buckets/concurrent_hash_map_pmreorder_multiple_buckets.cpp)
-		add_test_generic(NAME concurrent_hash_map_pmreorder_multiple_buckets CASE 0 TRACERS none)
+		add_test_generic(NAME concurrent_hash_map_pmreorder_multiple_buckets CASE 0 TRACERS none
+				SCRIPT concurrent_hash_map/pmreorder.cmake)
 
 		build_test(concurrent_hash_map_pmreorder_erase concurrent_hash_map_pmreorder_erase/concurrent_hash_map_pmreorder_erase.cpp)
 		add_test_generic(NAME concurrent_hash_map_pmreorder_erase CASE 0 TRACERS none)

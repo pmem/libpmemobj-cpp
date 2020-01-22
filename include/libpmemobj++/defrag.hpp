@@ -52,12 +52,12 @@ namespace pmem
 
 namespace detail
 {
-using collect_function = void (*)(obj::persistent_ptr_base &ptr);
+using for_each_ptr_function = void (*)(obj::persistent_ptr_base &ptr);
 
 template <typename T>
 using t_has_for_each_ptr = typename std::enable_if<
 	std::is_same<decltype(std::declval<T>().for_each_ptr(
-			     std::declval<collect_function>())),
+			     std::declval<for_each_ptr_function>())),
 		     void>::value>::type;
 
 template <typename T>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,66 +32,10 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
-#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 
-namespace nvobj = pmem::obj;
-
-using test_t = int;
-
-#if LIBPMEMOBJ_CPP_USE_TBB
-
-#include "enumerable_thread_specific_tbb_traits.hpp"
-
-using container_type = nvobj::experimental::enumerable_thread_specific<
-	test_t, tbb::concurrent_unordered_map, null_rw_mutex>;
-
-#else
-
-using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
-
-#endif
-
-struct root {
-	nvobj::persistent_ptr<container_type> pptr;
-};
-
-template <typename Function>
-void
-parallel_exec(size_t concurrency, Function f)
-{
-	std::vector<std::thread> threads;
-	threads.reserve(concurrency);
-
-	for (size_t i = 0; i < concurrency; ++i) {
-		threads.emplace_back(f, i);
-	}
-
-	for (auto &t : threads) {
-		t.join();
-	}
-}
-
-void
-test(nvobj::pool<struct root> &pop)
-{
-	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 16;
-
-	auto tls = pop.root()->pptr;
-
-	UT_ASSERT(tls != nullptr);
-	UT_ASSERT(tls->size() == 0);
-	UT_ASSERT(tls->empty());
-
-	parallel_exec(concurrency, [&](size_t thread_index) { tls->local(); });
-
-	UT_ASSERT(tls->size() == concurrency);
-
-	tls->clear();
-	UT_ASSERT(tls->size() == 0);
-	UT_ASSERT(tls->empty());
-}
+template <typename T>
+using container_type = pmem::detail::enumerable_thread_specific<T>;
 
 int
 main(int argc, char *argv[])
@@ -103,28 +47,21 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	auto path = argv[1];
-	auto pop = nvobj::pool<root>::create(
-		path, "TLSTest: enumerable_thread_specific_size",
-		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	static_assert(
+		2128 ==
+			sizeof(pmem::obj::shared_mutex) +
+				sizeof(pmem::obj::segment_vector<
+					char,
+					pmem::obj::
+						exponential_size_array_policy<>>) +
+				sizeof(std::atomic<size_t>),
+		"");
 
-	auto r = pop.root();
+	static_assert(sizeof(container_type<int>) == 2128, "");
+	static_assert(sizeof(container_type<char>) == 2128, "");
+	static_assert(sizeof(container_type<container_type<int>>) == 2128, "");
 
-	try {
-		nvobj::transaction::run(pop, [&] {
-			r->pptr = nvobj::make_persistent<container_type>();
-		});
-
-		test(pop);
-
-		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_type>(r->pptr);
-		});
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
-
-	pop.close();
+	static_assert(std::is_standard_layout<container_type<char>>::value, "");
 
 	return 0;
 }

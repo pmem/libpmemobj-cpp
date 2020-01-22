@@ -96,7 +96,6 @@ option(INSTALL_VECTOR "enable installation of pmem::obj::vector" ON)
 option(INSTALL_STRING "enable installation of pmem::obj::string (depends on INSTALL_VECTOR)" ON)
 option(INSTALL_CONCURRENT_HASHMAP "enable installation of pmem::obj::concurrent_hash_map (depends on INSTALL_STRING)" ON)
 option(INSTALL_SEGMENT_VECTOR "enable installation of pmem::obj::segment_vector" ON)
-option(INSTALL_ENUMERABLE_THREAD_SPECIFIC "enable installation of pmem::obj::experimental::enumerable_thread_specific" ON)
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
@@ -283,6 +282,7 @@ endif()
 
 if(INSTALL_CONCURRENT_HASHMAP)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "concurrent_hash_map.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
 endif()
 
 if(INSTALL_ARRAY OR INSTALL_VECTOR OR INSTALL_STRING)
@@ -292,10 +292,6 @@ endif()
 
 if(INSTALL_SEGMENT_VECTOR)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "segment_vector.hpp")
-endif()
-
-if(INSTALL_ENUMERABLE_THREAD_SPECIFIC)
-	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
 endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples

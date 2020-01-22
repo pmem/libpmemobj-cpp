@@ -679,39 +679,23 @@ if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 endif()
 
 if (TEST_ENUMERABLE_THREAD_SPECIFIC)
-	build_test(enumerable_thread_specific_access enumerable_thread_specific/enumerable_thread_specific_access.cpp)
-	add_test_generic(NAME enumerable_thread_specific_access TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(enumerable_thread_specific_access enumerable_thread_specific_access/enumerable_thread_specific_access.cpp)
+	add_test_generic(NAME enumerable_thread_specific_access CASE 0 TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(enumerable_thread_specific_size enumerable_thread_specific/enumerable_thread_specific_size.cpp)
-	add_test_generic(NAME enumerable_thread_specific_size TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(enumerable_thread_specific_size enumerable_thread_specific_size/enumerable_thread_specific_size.cpp)
+	add_test_generic(NAME enumerable_thread_specific_size CASE 0 TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(enumerable_thread_specific_iterators enumerable_thread_specific/enumerable_thread_specific_iterators.cpp)
-	add_test_generic(NAME enumerable_thread_specific_iterators TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(enumerable_thread_specific_iterators enumerable_thread_specific_iterators/enumerable_thread_specific_iterators.cpp)
+	add_test_generic(NAME enumerable_thread_specific_iterators CASE 0 TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(enumerable_thread_specific_layout enumerable_thread_specific/enumerable_thread_specific_layout.cpp)
+	build_test(enumerable_thread_specific_layout enumerable_thread_specific_layout/enumerable_thread_specific_layout.cpp)
 	add_test_generic(NAME enumerable_thread_specific_layout TRACERS none)
 
-	# XXX: reopening pool in one process mustn't increase pool id to enable this test
-	# build_test(enumerable_thread_specific_initialize enumerable_thread_specific/enumerable_thread_specific_initialize.cpp)
-	# add_test_generic(NAME enumerable_thread_specific_initialize TRACERS none memcheck pmemcheck)
+	build_test(enumerable_thread_specific_initialize enumerable_thread_specific_initialize/enumerable_thread_specific_initialize.cpp)
+	add_test_generic(NAME enumerable_thread_specific_initialize CASE 0 TRACERS none memcheck pmemcheck)
 
-	build_test(enumerable_thread_specific_ctor enumerable_thread_specific/enumerable_thread_specific_ctor.cpp)
-	add_test_generic(NAME enumerable_thread_specific_ctor TRACERS none memcheck pmemcheck)
-
-	build_test(enumerable_thread_specific_datarace enumerable_thread_specific/enumerable_thread_specific_datarace.cpp)
-	add_test_generic(NAME enumerable_thread_specific_datarace TRACERS none memcheck pmemcheck drd helgrind)
-
-	if(NOT TESTS_TBB)
-		message(WARNING "Skipping enumerable_thread_specific_tbb tests - disabled by cmake TESTS_TBB option")
-	elseif(NOT TBB_FOUND)
-		message(FATAL_ERROR "enumerable_thread_specific_tbb tests enabled by cmake TESTS_TBB option, but Intel TBB library was not found")
-	else()
-		build_test_tbb(enumerable_thread_specific_tbb_access enumerable_thread_specific/enumerable_thread_specific_tbb_access.cpp)
-		add_test_generic(NAME enumerable_thread_specific_tbb_access TRACERS none memcheck pmemcheck)
-
-		build_test_tbb(enumerable_thread_specific_tbb_size enumerable_thread_specific/enumerable_thread_specific_tbb_size.cpp)
-		add_test_generic(NAME enumerable_thread_specific_tbb_size TRACERS none memcheck pmemcheck)
-	endif()
+	build_test(enumerable_thread_specific_ctor enumerable_thread_specific_ctor/enumerable_thread_specific_ctor.cpp)
+	add_test_generic(NAME enumerable_thread_specific_ctor CASE 0 TRACERS none memcheck pmemcheck)
 endif()
 
 add_subdirectory(external)

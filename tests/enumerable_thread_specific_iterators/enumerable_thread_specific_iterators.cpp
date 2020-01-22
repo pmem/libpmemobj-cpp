@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,65 +32,36 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-
-#include <set>
 
 namespace nvobj = pmem::obj;
 
-using test_t = size_t;
-using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
+using container_type = pmem::detail::enumerable_thread_specific<size_t>;
 
 struct root {
 	nvobj::persistent_ptr<container_type> pptr;
 };
 
-template <typename Function>
 void
-parallel_exec(size_t concurrency, Function f)
+test(nvobj::pool<struct root> &pop)
 {
-	std::vector<std::thread> threads;
-	threads.reserve(concurrency);
+	// Adding more concurrency will increase DRD test time
+	const size_t concurrency = 16;
 
-	for (size_t i = 0; i < concurrency; ++i) {
-		threads.emplace_back(f, i);
+	auto tls = pop.root()->pptr;
+
+	UT_ASSERT(tls != nullptr);
+
+	parallel_exec(concurrency,
+		      [&](size_t thread_index) { tls->local() = 99; });
+
+	UT_ASSERT(tls->size() <= concurrency);
+
+	container_type &ref = *tls;
+	for (auto &e : ref) {
+		UT_ASSERT(e == 99);
 	}
-
-	for (auto &t : threads) {
-		t.join();
-	}
-}
-
-void
-create_and_fill(nvobj::pool<struct root> &pop, size_t concurrency)
-{
-	auto &tls = pop.root()->pptr;
-
-	UT_ASSERT(tls == nullptr);
-
-	nvobj::transaction::run(
-		pop, [&] { tls = nvobj::make_persistent<container_type>(); });
-	parallel_exec(concurrency, [&](size_t thread_index) {
-		tls->local() = thread_index;
-	});
-	UT_ASSERT(tls->size() == concurrency);
-}
-
-void
-check_and_delete(nvobj::pool<struct root> &pop, size_t concurrency)
-{
-	auto &tls = pop.root()->pptr;
-
-	std::set<size_t> checker;
-	tls->initialize([&checker](test_t &e) {
-		UT_ASSERT(checker.emplace(e).second);
-	});
-	UT_ASSERT(checker.size() == concurrency);
-	UT_ASSERT(tls->empty());
-
-	nvobj::transaction::run(
-		pop, [&] { nvobj::delete_persistent<container_type>(tls); });
 }
 
 int
@@ -104,19 +75,27 @@ main(int argc, char *argv[])
 	}
 
 	auto path = argv[1];
-	auto layout = "TLSTest: enumerable_thread_specific_initialize";
-	auto pop = nvobj::pool<root>::create(path, layout, PMEMOBJ_MIN_POOL,
-					     S_IWUSR | S_IRUSR);
-	// Adding more concurrency will increase DRD test time
-	size_t concurrency = 16;
+	auto pop = nvobj::pool<root>::create(
+		path, "TLSTest: enumerable_thread_specific_iterators",
+		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
-	create_and_fill(pop, concurrency);
+	auto r = pop.root();
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			r->pptr = nvobj::make_persistent<container_type>();
+		});
+
+		test(pop);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_type>(r->pptr);
+		});
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
 
 	pop.close();
-	pop = nvobj::pool<root>::open(path, layout);
 
-	check_and_delete(pop, concurrency);
-
-	pop.close();
 	return 0;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,82 +32,101 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/enumerable_thread_specific.hpp>
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 #include <libpmemobj++/make_persistent.hpp>
-
-#include <vector>
 
 namespace nvobj = pmem::obj;
 
-using test_t = std::size_t;
+using test_t = int;
 
-#if LIBPMEMOBJ_CPP_USE_TBB
-
-#include "enumerable_thread_specific_tbb_traits.hpp"
-
-using container_type = nvobj::experimental::enumerable_thread_specific<
-	test_t, tbb::concurrent_unordered_map, null_rw_mutex>;
-
-#else
-
-using container_type = nvobj::experimental::enumerable_thread_specific<test_t>;
-
-#endif
+using container_type = pmem::detail::enumerable_thread_specific<test_t>;
 
 struct root {
 	nvobj::persistent_ptr<container_type> pptr;
 };
 
-template <typename Function>
 void
-parallel_exec(size_t concurrency, Function f)
+test(nvobj::pool<struct root> &pop, size_t batch_size)
 {
-	std::vector<std::thread> threads;
-	threads.reserve(concurrency);
-
-	for (size_t i = 0; i < concurrency; ++i) {
-		threads.emplace_back(f, i);
-	}
-
-	for (auto &t : threads) {
-		t.join();
-	}
-}
-
-void
-test(nvobj::pool<struct root> &pop)
-{
-	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 16;
+	const size_t num_batches = 3;
 
 	auto tls = pop.root()->pptr;
 
 	UT_ASSERT(tls != nullptr);
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
 
-	{
-		std::vector<size_t> checker(concurrency, 0);
-		parallel_exec(concurrency, [&](size_t thread_index) {
-			tls->local() = thread_index;
-			bool exists;
-			for (size_t i = 0; i < 100; ++i) {
-				checker[tls->local(exists)]++;
-				UT_ASSERT(exists);
-			}
+	for (size_t i = 0; i < num_batches; i++)
+		parallel_exec(batch_size,
+			      [&](size_t thread_index) { tls->local(); });
+
+	/* There was at most batch_size threads at any given time. */
+	UT_ASSERT(tls->size() <= batch_size);
+
+	tls->clear();
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+}
+
+void
+test_with_spin(nvobj::pool<struct root> &pop, size_t batch_size)
+{
+	auto tls = pop.root()->pptr;
+
+	UT_ASSERT(tls != nullptr);
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+
+	parallel_exec_with_sync(batch_size, [&](size_t thread_index) {
+		tls->local() = thread_index;
+	});
+
+	/*
+	 * tls->size() will be equal to max number of threads that have used
+	 * tls at any given time. This test assumes that batch_size is >=
+	 * than any previously used number of threads
+	 */
+	UT_ASSERTeq(tls->size(), batch_size);
+
+	tls->clear();
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+}
+
+void
+test_clear_abort(nvobj::pool<struct root> &pop, size_t batch_size)
+{
+	auto tls = pop.root()->pptr;
+
+	UT_ASSERT(tls != nullptr);
+	UT_ASSERT(tls->size() == 0);
+	UT_ASSERT(tls->empty());
+
+	parallel_exec_with_sync(batch_size,
+				[&](size_t thread_index) { tls->local() = 2; });
+
+	/*
+	 * tls->size() will be equal to max number of threads that have used
+	 * tls at any given time. This test assumes that batch_size is >=
+	 * than any previously used number of threads
+	 */
+	UT_ASSERTeq(tls->size(), batch_size);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			tls->clear();
+
+			nvobj::transaction::abort(0);
 		});
-
-		UT_ASSERT(tls->size() == concurrency);
-
-		for (auto &e : checker) {
-			UT_ASSERT(e == 100);
-		}
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
 	}
-	{
-		tls->local() = 99;
-		bool exists;
-		UT_ASSERT(tls->size() == concurrency + 1);
-		UT_ASSERT(tls->local(exists) == 99);
-		UT_ASSERT(exists);
-	}
+
+	UT_ASSERTeq(tls->size(), batch_size);
+
+	for (auto &e : *tls)
+		UT_ASSERTeq(e, 2);
 }
 
 int
@@ -122,7 +141,7 @@ main(int argc, char *argv[])
 
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
-		path, "TLSTest: enumerable_thread_specific_access",
+		path, "TLSTest: enumerable_thread_specific_size",
 		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
@@ -132,7 +151,13 @@ main(int argc, char *argv[])
 			r->pptr = nvobj::make_persistent<container_type>();
 		});
 
-		test(pop);
+		test(pop, 8);
+		test(pop, 10);
+
+		test_with_spin(pop, 12);
+		test_with_spin(pop, 16);
+
+		test_clear_abort(pop, 16);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container_type>(r->pptr);

@@ -203,7 +203,7 @@ function tests_gcc_debug_cpp14_no_valgrind() {
 		upload_codecov tests_gcc_debug
 	fi
 	cd ..
-	rm -r build
+	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -215,7 +215,7 @@ function tests_gcc_debug_cpp14_valgrind_memcheck_drd() {
 	build_gcc_debug_cpp14
 	ctest -R "_memcheck|_drd" --timeout 700 --output-on-failure
 	cd ..
-	rm -r build
+	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -228,7 +228,7 @@ function tests_gcc_debug_cpp14_valgrind_other() {
 	ctest -E "_none|_memcheck|_drd" --timeout 540 --output-on-failure
 	ctest -R "_pmreorder" --timeout 540 --output-on-failure
 	cd ..
-	rm -r build
+	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 

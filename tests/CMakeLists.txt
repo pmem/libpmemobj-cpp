@@ -348,6 +348,9 @@ if (TEST_VECTOR)
 
 	build_test_ext(NAME vector_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_layout TRACERS none)
+
+	build_test(defrag_vector defrag/defrag_vector.cpp)
+	add_test_generic(NAME defrag_vector TRACERS none pmemcheck)
 endif()
 
 if (TEST_STRING)

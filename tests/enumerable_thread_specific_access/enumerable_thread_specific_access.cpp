@@ -84,8 +84,8 @@ test(nvobj::pool<struct root> &pop)
 
 		UT_ASSERT(tls->size() <= concurrency);
 
-		int n_zeros = 0;
-		int n_100 = 0;
+		size_t n_zeros = 0;
+		size_t n_100 = 0;
 		for (auto &e : checker) {
 			if (e == 0)
 				n_zeros++;
@@ -95,7 +95,7 @@ test(nvobj::pool<struct root> &pop)
 				UT_ASSERTeq(e, 0);
 		}
 
-		/* At least one thread should have done it's work */
+		/* At least one thread should have done its work */
 		UT_ASSERT(n_100 > 0);
 		UT_ASSERT(n_100 + n_zeros == concurrency);
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +75,8 @@ struct hashmap_test : public MapType {
 		ASSERT_ALIGNED_FIELD(T, t, my_size);
 		ASSERT_ALIGNED_FIELD(T, t, padding2);
 		ASSERT_OFFSET_CHECKPOINT(T, 16 * CACHELINE_SIZE);
+		ASSERT_ALIGNED_FIELD(T, t, tls_ptr);
+		ASSERT_ALIGNED_FIELD(T, t, on_init_size);
 		ASSERT_ALIGNED_FIELD(T, t, reserved);
 		ASSERT_OFFSET_CHECKPOINT(T, 17 * CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, my_segment_enable_mutex);
@@ -151,7 +153,7 @@ struct hashmap_test : public MapType {
 		map->layout_features.incompat = static_cast<uint32_t>(-1);
 
 		try {
-			map->runtime_initialize(true);
+			map->runtime_initialize();
 			UT_ASSERT(0);
 		} catch (pmem::layout_error &) {
 		} catch (...) {
@@ -159,7 +161,7 @@ struct hashmap_test : public MapType {
 		}
 
 		try {
-			map->runtime_initialize(false);
+			map->runtime_initialize();
 			UT_ASSERT(0);
 		} catch (pmem::layout_error &) {
 		} catch (...) {

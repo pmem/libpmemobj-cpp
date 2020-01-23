@@ -35,7 +35,7 @@
  *
  */
 
-#include "concurrent_hash_map/concurrent_hash_map_test.hpp"
+#include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
 
 #define LAYOUT "concurrent_hash_map"
@@ -51,8 +51,8 @@ init(nvobj::pool<root> &pop)
 {
 	PRINT_TEST_PARAMS;
 
-	ConcurrentHashMapTestPrimitives test(pop,
-					     concurrency * thread_insert_num);
+	ConcurrentHashMapTestPrimitives<root, persistent_map_type> test(
+		pop, pop.root()->cons, thread_insert_num * concurrency);
 
 	auto map = pop.root()->cons;
 
@@ -87,7 +87,8 @@ verify(nvobj::pool<root> &pop)
 {
 	size_t expected_size = concurrency * thread_insert_num;
 
-	ConcurrentHashMapTestPrimitives test(pop, expected_size);
+	ConcurrentHashMapTestPrimitives<root, persistent_map_type> test(
+		pop, pop.root()->cons, expected_size);
 
 	auto map = pop.root()->cons;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,7 +107,7 @@ rehash(nvobj::pool<root> &pop)
 {
 	auto persistent_map = pop.root()->cons;
 
-	persistent_map->runtime_initialize(true);
+	persistent_map->runtime_initialize();
 
 	/* Force rehash */
 	auto ret = persistent_map->count(test_element);

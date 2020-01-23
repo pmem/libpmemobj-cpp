@@ -70,7 +70,7 @@ public:
 	reinitialize()
 	{
 		size_t buckets = map->bucket_count();
-		map->runtime_initialize(true);
+		map->runtime_initialize();
 		UT_ASSERT(map->bucket_count() == buckets);
 		UT_ASSERT(map->size() == m_items_number);
 		map->runtime_initialize();

@@ -382,6 +382,9 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
+	build_test(concurrent_hash_map_insert_or_assign concurrent_hash_map_insert_or_assign/concurrent_hash_map_insert_or_assign.cpp)
+	add_test_generic(NAME concurrent_hash_map_insert_or_assign TRACERS none memcheck pmemcheck helgrind drd)
+
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)

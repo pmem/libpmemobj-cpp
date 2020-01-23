@@ -699,3 +699,7 @@ if (TEST_ENUMERABLE_THREAD_SPECIFIC)
 endif()
 
 add_subdirectory(external)
+
+if (TESTS_COMPATIBILITY)
+	add_subdirectory(compatibility)
+endif()

@@ -82,6 +82,9 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	using range_snapshotting_iterator =
 		pmem::detail::range_snapshotting_iterator<T>;
+	/* func argument type definition for 'for_each_ptr' method */
+	using for_each_ptr_function =
+		std::function<void(persistent_ptr_base &)>;
 
 	/* Constructors */
 	vector();
@@ -154,6 +157,7 @@ public:
 						 size_type snapshot_size);
 	slice<const_iterator> range(size_type start, size_type n) const;
 	slice<const_iterator> crange(size_type start, size_type n) const;
+	void for_each_ptr(for_each_ptr_function func);
 
 	/* Capacity */
 	constexpr bool empty() const noexcept;
@@ -2018,6 +2022,19 @@ vector<T>::swap(vector &other)
 		std::swap(this->_size, other._size);
 		std::swap(this->_capacity, other._capacity);
 	});
+}
+
+/**
+ * Iterates over all internal pointers and executes a callback function
+ * on each of them. In this implementation, it is just a single pointer.
+ *
+ * @param func callback function to call on internal pointer.
+ */
+template <typename T>
+void
+vector<T>::for_each_ptr(for_each_ptr_function func)
+{
+	func(_data);
 }
 
 /**

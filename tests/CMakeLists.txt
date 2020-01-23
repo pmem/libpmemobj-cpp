@@ -234,6 +234,9 @@ build_test(ctl ctl/ctl.cpp)
 add_test_generic(NAME ctl CASE 0 TRACERS none
 		SCRIPT ctl/ctl_0.cmake)
 
+build_test(defrag defrag/defrag.cpp)
+add_test_generic(NAME defrag TRACERS none pmemcheck)
+
 if(WIN32)
 	build_test(ctl_win ctl_win/ctl_win.cpp)
 	add_test_generic(NAME ctl_win CASE 0 TRACERS none

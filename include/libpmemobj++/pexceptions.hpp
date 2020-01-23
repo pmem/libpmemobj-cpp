@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,10 @@
 #define LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP
 
 #include <stdexcept>
+#include <string>
 #include <system_error>
 
+#include <libpmemobj/atomic_base.h>
 #include <libpmemobj/base.h>
 
 namespace pmem
@@ -61,7 +63,7 @@ errormsg(void)
 	return std::string(pmemobj_errormsg());
 #endif
 }
-}
+} /* namespace detail */
 
 /**
  * Custom pool error class.
@@ -223,6 +225,39 @@ public:
 				    detail::errormsg());
 		return *this;
 	}
+};
+
+/**
+ * Custom defrag error class.
+ *
+ * Thrown when the defragmentation process fails
+ * (possibly in the middle of a run).
+ */
+class defrag_error : public std::runtime_error {
+public:
+	using std::runtime_error::runtime_error;
+
+	defrag_error(pobj_defrag_result result, const std::string &msg)
+	    : std::runtime_error(msg), result(result)
+	{
+	}
+
+	defrag_error &
+	with_pmemobj_errormsg()
+	{
+		(*this) = defrag_error(result,
+				       what() + std::string(": ") +
+					       detail::errormsg());
+		return *this;
+	}
+
+	/**
+	 * Results of the defragmentation run.
+	 *
+	 * When failure occurs during the defragmentation,
+	 * partial results will be stored in here.
+	 */
+	pobj_defrag_result result;
 };
 
 } /* namespace pmem */

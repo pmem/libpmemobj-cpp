@@ -84,8 +84,8 @@ test(nvobj::pool<struct root> &pop)
 
 		UT_ASSERT(tls->size() <= concurrency);
 
-		int n_zeros = 0;
-		int n_100 = 0;
+		size_t n_zeros = 0;
+		size_t n_100 = 0;
 		for (auto &e : checker) {
 			if (e == 0)
 				n_zeros++;

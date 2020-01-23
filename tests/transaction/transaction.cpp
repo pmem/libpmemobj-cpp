@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -544,7 +544,7 @@ test_tx_throw_no_abort_scope(nvobj::pool<root> &pop)
 	UT_ASSERT(rootp->pfoo == nullptr);
 	UT_ASSERT(rootp->parr == nullptr);
 
-	/* commiting non-existent transaction should fail with an exception */
+	/* committing non-existent transaction should fail with an exception */
 	exception_thrown = false;
 	try {
 		nvobj::transaction::commit();
@@ -792,7 +792,7 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
  * pmemobj_tx_add_range_direct() failed.
  * 3) Check if assigning value to pmem object is valid under pmemcheck when
  * object was snapshotted beforehand.
- * 4) Check if snapshotted value was rolled back in case of transacion abort.
+ * 4) Check if snapshotted value was rolled back in case of transaction abort.
  */
 void
 test_tx_snapshot(nvobj::pool<root> &pop)

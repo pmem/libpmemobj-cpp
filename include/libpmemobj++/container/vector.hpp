@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1924,7 +1924,7 @@ vector<T>::push_back(value_type &&value)
  * @post size() == std::max(0, size() - 1)
  *
  * @throw transaction_error when snapshotting failed.
- * @throw rethrows desctructor exception.
+ * @throw rethrows destructor exception.
  */
 template <typename T>
 void
@@ -2343,7 +2343,7 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 		/* Insert (first, last) range to the new array */
 		construct_at_end(first, last);
 
-		/* Move remaining element ot the new array */
+		/* Move remaining element to the new array */
 		construct_at_end(std::make_move_iterator(old_mid),
 				 std::make_move_iterator(old_end));
 

@@ -86,7 +86,7 @@ if(NOT MSVC_VERSION)
 		}"
 		NO_GCC_AGGREGATE_INITIALIZATION_BUG)
 
-	# Check for issues related to agregate initialization in new expression.
+	# Check for issues related to aggregate initialization in new expression.
 	# Following code will fail for LLVM compiler https://bugs.llvm.org/show_bug.cgi?id=39988
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error")
 	CHECK_CXX_SOURCE_COMPILES(

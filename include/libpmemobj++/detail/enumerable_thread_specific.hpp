@@ -397,7 +397,7 @@ enumerable_thread_specific<T, Mutex, Storage>::size() const
 /**
  * Determines if container is empty or not.
  *
- * @return true if container is empty, false overwise.
+ * @return true if container is empty, false otherwise.
  */
 template <typename T, typename Mutex, typename Storage>
 bool

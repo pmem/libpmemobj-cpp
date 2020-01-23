@@ -87,7 +87,7 @@ Tue Feb 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 	- fix v swap, assignment operators and constructors
 	- change conversion operator from T() to T&() in v<>
 	- fix range_snapshotting initialization in array.hpp.
-	- fix range_snapshotting_iterator bahaviour for snapshot_size == 0.
+	- fix range_snapshotting_iterator behaviour for snapshot_size == 0.
 
 Fri Oct 26 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
 

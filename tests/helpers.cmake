@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -101,7 +101,7 @@ endfunction()
 # the brk segment, causing matching failures. We can safely
 # ignore it because malloc() will fallback to mmap() anyway.
 #
-# list of ingored warnings should match with the list provided by PMDK:
+# list of ignored warnings should match the list provided by PMDK:
 # https://github.com/pmem/pmdk/blob/master/src/test/unittest/unittest.sh
 function(valgrind_ignore_warnings valgrind_log)
     execute_process(COMMAND bash "-c" "cat ${valgrind_log} | grep -v \

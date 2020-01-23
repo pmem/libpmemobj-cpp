@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,9 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <mutex>
+#include <condition_variable>
+#include <chrono>
 
 #include <libpmemobj++/container/concurrent_hash_map.hpp>
 
@@ -574,4 +577,97 @@ insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 	for (auto &e : *map) {
 		UT_ASSERT(e.first <= e.second);
 	}
+}
+
+/*
+ * insert_erase_deadlock_test -- (internal) test lookup and erase operations
+ * to the same bucket while holding an accessor to item (in the same bucket)
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+lookup_insert_erase_deadlock_test(nvobj::pool<root> &pop)
+{
+	PRINT_TEST_PARAMS;
+
+	/* All elements will go to the same bucket. */
+	static constexpr int elements[] = {1, 257, 513};
+
+	ConcurrentHashMapTestPrimitives test(pop, sizeof(elements) / sizeof(elements[0]));
+
+	auto map = pop.root()->cons;
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	for (auto &e : elements)
+		map->insert(persistent_map_type::value_type(e, e));
+
+	std::condition_variable cv;
+	bool ready = false;
+	std::mutex m;
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+			VALGRIND_HG_DISABLE_CHECKING(&m,
+						     sizeof(m));
+#endif
+
+	auto lookup_thread = [&]{
+		persistent_map_type::accessor acc1;
+		map->find(acc1, elements[0]);
+
+		{
+			std::unique_lock<std::mutex> lock(m);
+			ready = true;
+			cv.notify_one();
+		}
+
+		/* Wait until other thread calls erase() */
+		{
+			std::this_thread::sleep_for(std::chrono::seconds{1});
+		}
+
+		persistent_map_type::accessor acc2;
+		map->find(acc2, elements[1]);
+	};
+
+	auto erase_thread = [&]{
+		{
+			std::unique_lock<std::mutex> lock(m);
+			cv.wait(lock, [&]{return ready;});
+		}
+
+		/* Test erase of element to which is locked by other thread */
+		map->erase(elements[0]);;
+	};
+
+	auto lookup_insert_thread = [&]{
+		{
+			std::unique_lock<std::mutex> lock(m);
+			cv.wait(lock, [&]{return ready;});
+		}
+
+		persistent_map_type::accessor acc1;
+		map->find(acc1, elements[0]);
+
+		persistent_map_type::accessor acc2;
+		map->find(acc2, elements[2]);
+
+		persistent_map_type::accessor acc3;
+		map->insert(acc3, persistent_map_type::value_type(1025, 1025));
+	};
+
+	parallel_exec(2, [&](size_t tid){
+		if (tid == 0)
+			lookup_thread();
+		else
+			erase_thread();
+	});
+
+	ready = false;
+	parallel_exec(2, [&](size_t tid){
+		if (tid == 0)
+			lookup_thread();
+		else
+			lookup_insert_thread();
+	});
 }

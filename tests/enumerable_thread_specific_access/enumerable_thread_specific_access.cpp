@@ -223,7 +223,7 @@ main(int argc, char *argv[])
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
 		path, "TLSTest: enumerable_thread_specific_access",
-		PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+		10 * PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
 	auto r = pop.root();
 

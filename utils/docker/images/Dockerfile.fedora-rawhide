@@ -62,7 +62,6 @@ RUN dnf update -y \
 	libunwind-devel \
 	libuuid-devel \
 	make \
-	man \
 	ncurses-devel \
 	ndctl-devel \
 	open-sans-fonts \

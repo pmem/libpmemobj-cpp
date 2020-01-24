@@ -35,12 +35,31 @@
  *
  */
 
-#include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
+#include "../concurrent_hash_map/concurrent_hash_map_traits.hpp"
 #include "unittest.hpp"
+
+#include <libpmemobj++/experimental/v.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+
+#include <chrono>
+#include <condition_variable>
+#include <mutex>
+
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
 
 #define LAYOUT "concurrent_hash_map"
 
 namespace nvobj = pmem::obj;
+
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
+	persistent_map_type;
+
+struct root {
+	nvobj::persistent_ptr<persistent_map_type> cons;
+};
 
 static const size_t items_remove = 10;
 static const size_t concurrency = 4;

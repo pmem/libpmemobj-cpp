@@ -377,12 +377,9 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 			nvobj::persistent_ptr<foo> tmp0 = r->arr[0].raw();
 			nvobj::persistent_ptr<int> tmp1 = r->arr[1].raw();
 			nvobj::persistent_ptr<foo> tmp2 = r->arr[2].raw();
-			nvobj::delete_persistent<nvobj::persistent_ptr<foo>>(
-				&tmp0);
-			nvobj::delete_persistent<nvobj::persistent_ptr_base>(
-				&tmp1);
-			nvobj::delete_persistent<nvobj::persistent_ptr<foo>>(
-				&tmp2);
+			nvobj::delete_persistent<foo>(tmp0);
+			nvobj::delete_persistent<int>(tmp1);
+			nvobj::delete_persistent<foo>(tmp2);
 		});
 	} catch (...) {
 		UT_ASSERT(0);

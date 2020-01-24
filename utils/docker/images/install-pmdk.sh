@@ -38,8 +38,8 @@ set -e
 
 PACKAGE_MANAGER=$1
 
-# devel-1.8: doc: fix indentation; 17.01.2020
-PMDK_VERSION="45e5a673eecd9a6302b8af6c4901b60f9a239b04"
+# devel-1.8: Merge pull request #4497 from marcinslusarz/build, 23.01.2020
+PMDK_VERSION="1947982d15ebb3d107e781cdc1484ef4ce81cc41"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

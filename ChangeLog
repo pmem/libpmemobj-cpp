@@ -1,3 +1,13 @@
+Fri Jan 24 2020 Szymon Romik <szymon.romik@intel.com>
+
+	* Version 1.8.1-rc1
+
+	This release fixes minor bugs.
+
+	Notable change:
+	- fix compilation error in concurrent_hash_map
+	- fix possible deadlock in erase method in concurrent_hash_map
+
 Thu Oct 03 2019 Szymon Romik <szymon.romik@intel.com>
 
 	* Version 1.8

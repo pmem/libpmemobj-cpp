@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -51,6 +51,19 @@ set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS} ${LIBPMEM_LIBRARY_DIRS})
 
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
+
+function(find_gdb)
+	execute_process(COMMAND gdb --help
+			RESULT_VARIABLE GDB_RET
+			OUTPUT_QUIET
+			ERROR_QUIET)
+	if(GDB_RET)
+		set(GDB_FOUND 0 CACHE INTERNAL "")
+		message(WARNING "GDB NOT found, some tests will be skipped")
+	else()
+		set(GDB_FOUND 1 CACHE INTERNAL "")
+	endif()
+endfunction()
 
 function(find_pmemcheck)
 	set(ENV{PATH} ${VALGRIND_PREFIX}/bin:$ENV{PATH})

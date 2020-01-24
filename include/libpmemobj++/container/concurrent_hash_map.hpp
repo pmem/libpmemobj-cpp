@@ -2197,9 +2197,22 @@ public:
 
 	[[deprecated(
 		"runtime_initialize(bool) is now deprecated, use runtime_initialize(void)")]] void
-	runtime_initialize(bool)
+	runtime_initialize(bool graceful_shutdown)
 	{
-		runtime_initialize();
+		check_incompat_features();
+
+		calculate_mask();
+
+		if (!graceful_shutdown) {
+			auto actual_size =
+				std::distance(this->begin(), this->end());
+			assert(actual_size >= 0);
+			this->my_size = static_cast<size_type>(actual_size);
+		} else {
+			assert(this->size() ==
+			       size_type(std::distance(this->begin(),
+						       this->end())));
+		}
 	}
 
 	/**

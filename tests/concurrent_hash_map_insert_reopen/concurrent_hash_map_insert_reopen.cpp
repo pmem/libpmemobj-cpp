@@ -38,6 +38,12 @@
 #include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
 
+#ifdef USE_DEPRECATED_RUNTIME_INITIALIZE
+#define RUNTIME_INITIALIZE runtime_initialize(true)
+#else
+#define RUNTIME_INITIALIZE runtime_initialize()
+#endif
+
 /*
  * insert_reopen_test -- (internal) test insert operations and verify
  * consistency after reopen
@@ -87,7 +93,7 @@ insert_reopen_test(nvobj::pool<root> &pop, std::string path,
 
 		UT_ASSERT(map != nullptr);
 
-		map->runtime_initialize();
+		map->RUNTIME_INITIALIZE;
 
 		test.check_items_count();
 

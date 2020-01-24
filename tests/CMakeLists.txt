@@ -402,6 +402,14 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
+	build_test_ext(NAME concurrent_hash_map_insert_reopen_deprecated SRC_FILES concurrent_hash_map_insert_reopen/concurrent_hash_map_insert_reopen.cpp
+			BUILD_OPTIONS -DUSE_DEPRECATED_RUNTIME_INITIALIZE)
+	check_cxx_compiler_flag(-Wdeprecated-declarations deprecated_declarations)
+	if (deprecated_declarations)
+		target_compile_options(concurrent_hash_map_insert_reopen_deprecated PUBLIC -Wno-deprecated-declarations)
+	endif()
+	add_test_generic(NAME concurrent_hash_map_insert_reopen_deprecated TRACERS none)
+
 	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
 		add_test_generic(NAME concurrent_hash_map_insert_lookup CASE 0 TRACERS helgrind
 				SCRIPT concurrent_hash_map/check_is_pmem.cmake)

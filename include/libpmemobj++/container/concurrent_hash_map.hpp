@@ -920,8 +920,11 @@ public:
 	/* my_mask always restored on restart. */
 	p<std::atomic<hashcode_type>> my_mask;
 
+	/* Size of value (key and value pair) stored in a pool */
+	std::size_t value_size;
+
 	/** Padding to the end of cacheline */
-	std::aligned_storage<32, 8>::type padding1;
+	std::aligned_storage<24, 8>::type padding1;
 
 	/**
 	 * Segment pointers table. Also prevents false sharing between my_mask
@@ -1053,6 +1056,8 @@ public:
 		}
 
 		on_init_size = 0;
+
+		value_size = sizeof(std::pair<const Key, T>);
 
 		this->tls_ptr = make_persistent<tls_t>();
 	}
@@ -1970,6 +1975,11 @@ protected:
 		if (layout_features.incompat != header_features().incompat)
 			throw pmem::layout_error(
 				"Incompat flags mismatch, for more details go to: https://pmem.io/pmdk/cpp_obj/ \n");
+
+		if ((layout_features.compat & FEATURE_CONSISTENT_SIZE) &&
+		    this->value_size != sizeof(value_type))
+			throw pmem::layout_error(
+				"Size of value_type is different than the one stored in the pool \n");
 	}
 
 public:

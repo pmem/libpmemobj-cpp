@@ -53,7 +53,7 @@ struct root {
 };
 
 void
-test_defrag_basic(nvobj::pool<root> &pop)
+test_basic(nvobj::pool<root> &pop)
 {
 	nvobj::transaction::run(pop, [&] {
 		pop.root()->i = nvobj::make_persistent<int>(5);
@@ -71,7 +71,7 @@ test_defrag_basic(nvobj::pool<root> &pop)
 	pobj_defrag_result res;
 	try {
 		res = my_defrag.run();
-	} catch (pmem::defrag_error &e) {
+	} catch (pmem::defrag_error &) {
 		UT_ASSERT(0);
 	}
 
@@ -83,7 +83,7 @@ test_defrag_basic(nvobj::pool<root> &pop)
  * should not increase the total number of objects.
  */
 void
-test_defrag_add_empty(nvobj::pool<root> &pop)
+test_add_empty(nvobj::pool<root> &pop)
 {
 	nvobj::persistent_ptr<double> d;
 	nvobj::transaction::run(pop, [&] {
@@ -94,6 +94,7 @@ test_defrag_add_empty(nvobj::pool<root> &pop)
 	});
 
 	UT_ASSERT(!nvobj::is_defragmentable<nvobj::persistent_ptr<double>>());
+	UT_ASSERT(!nvobj::is_defragmentable<double>());
 
 	nvobj::defrag my_defrag(pop);
 	my_defrag.add(*pop.root()->i);
@@ -103,7 +104,7 @@ test_defrag_add_empty(nvobj::pool<root> &pop)
 	pobj_defrag_result res;
 	try {
 		res = my_defrag.run();
-	} catch (pmem::defrag_error &e) {
+	} catch (pmem::defrag_error &) {
 		UT_ASSERT(0);
 	}
 
@@ -111,6 +112,69 @@ test_defrag_add_empty(nvobj::pool<root> &pop)
 
 	nvobj::transaction::run(pop,
 				[&] { nvobj::delete_persistent<double>(d); });
+}
+
+/*
+ * When trying to add any object from outside of the selected pool,
+ * the 'std::runtime_error' exception should be thrown.
+ */
+void
+test_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
+{
+	nvobj::persistent_ptr<double> d;
+	nvobj::pool<root> pop_test;
+
+	try {
+		pop_test = nvobj::pool<struct root>::create(
+			path, "layout", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	} catch (pmem::pool_error &pe) {
+		UT_FATAL("!pool::create: %s %s", pe.what(), path.c_str());
+	}
+
+	nvobj::transaction::run(pop_test, [&] {
+		pop_test.root()->i = nvobj::make_persistent<int>(1);
+
+		d = nvobj::make_persistent<double>(10);
+	});
+
+	nvobj::defrag my_defrag(pop);
+	try {
+		my_defrag.add(pop_test.root()->i);
+		UT_ASSERT(0);
+	} catch (std::runtime_error &e) {
+		UT_ASSERT(e.what() != std::string());
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	try {
+		my_defrag.add(d);
+		UT_ASSERT(0);
+	} catch (std::runtime_error &e) {
+		UT_ASSERT(e.what() != std::string());
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	try {
+		my_defrag.add(*d);
+		UT_ASSERT(0);
+	} catch (std::runtime_error &e) {
+		UT_ASSERT(e.what() != std::string());
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	pobj_defrag_result res;
+	try {
+		res = my_defrag.run();
+	} catch (pmem::defrag_error &) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERTeq(res.total, 0);
+
+	nvobj::transaction::run(pop_test,
+				[&] { nvobj::delete_persistent<double>(d); });
+	pop_test.close();
 }
 }
 
@@ -133,8 +197,9 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_defrag_basic(pop);
-	test_defrag_add_empty(pop);
+	test_basic(pop);
+	test_add_empty(pop);
+	test_try_add_wrong_pointer(pop, std::string(path) + "_tmp");
 
 	pop.close();
 

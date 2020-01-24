@@ -364,6 +364,8 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none memcheck pmemcheck)
 
+	# This test is NOT run under helgrind becase of false-positive:
+	# https://github.com/pmem/libpmemobj-cpp/issues/469
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none memcheck pmemcheck)
 
@@ -382,8 +384,6 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 
 			add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS drd)
 		endif()
-
-		add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
 	endif()
 
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)

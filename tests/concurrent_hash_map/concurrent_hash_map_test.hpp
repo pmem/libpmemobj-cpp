@@ -119,6 +119,8 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 				i, i + 1);
 	});
 	test.check_consistency();
+	test.defragment();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -161,6 +163,8 @@ insert_and_lookup_key_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 			test.check_item<persistent_map_type::const_accessor>(i,
 									     1);
 	});
+	test.check_consistency();
+	test.defragment();
 	test.check_consistency();
 	test.clear();
 }
@@ -205,6 +209,8 @@ insert_and_lookup_value_type_test(nvobj::pool<root> &pop,
 				i, i + 1);
 	});
 	test.check_consistency();
+	test.defragment();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -239,6 +245,8 @@ insert_and_lookup_initializer_list_test(nvobj::pool<root> &pop,
 								     k2.second);
 	});
 	test.check_consistency();
+	test.defragment();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -268,6 +276,8 @@ insert_and_lookup_iterator_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 			test.check_item<persistent_map_type::accessor>(
 				i.first, i.second);
 	});
+	test.check_consistency();
+	test.defragment();
 	test.check_consistency();
 	test.clear();
 }
@@ -300,6 +310,9 @@ insert_mt_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 		test.check_item<persistent_map_type::accessor>(
 			i, (int)concurrency);
 	}
+	test.check_consistency();
+	test.defragment();
+	test.check_consistency();
 	test.clear();
 }
 
@@ -339,6 +352,8 @@ insert_and_erase_test(nvobj::pool<root> &pop, size_t concurrency = 8,
 		}
 	});
 	test.check_items_count(0);
+	test.defragment();
+	test.check_consistency(0);
 	test.clear();
 }
 
@@ -411,7 +426,8 @@ insert_erase_count_test(nvobj::pool<root> &pop, size_t concurrency = 8,
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
 void
-insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
+insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4,
+			int defrag = 0)
 {
 
 	PRINT_TEST_PARAMS;
@@ -459,6 +475,12 @@ insert_erase_lookup_test(nvobj::pool<root> &pop, size_t concurrency = 4)
 					pop.persist(acc->second);
 				}
 			}
+		});
+	}
+
+	if (defrag) {
+		threads.emplace_back([&]() {
+			map->defragment();
 		});
 	}
 

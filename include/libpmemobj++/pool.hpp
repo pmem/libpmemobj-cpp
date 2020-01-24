@@ -542,7 +542,7 @@ public:
 	 * @returns variable representing internal state
 	 *
 	 * For more details, see:
-	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
 	 */
 	template <typename M>
 	M
@@ -560,7 +560,7 @@ public:
 	 * @returns copy of arg, possibly modified by query
 	 *
 	 * For more details, see:
-	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
 	 */
 	template <typename M>
 	M
@@ -578,7 +578,7 @@ public:
 	 * @returns copy of arg, possibly modified by query
 	 *
 	 * For more details, see:
-	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
 	 */
 	template <typename M>
 	M
@@ -596,7 +596,7 @@ public:
 	 * @returns variable representing internal state
 	 *
 	 * For more details, see:
-	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
 	 */
 	template <typename M>
 	M
@@ -614,7 +614,7 @@ public:
 	 * @returns copy of arg, possibly modified by query
 	 *
 	 * For more details, see:
-	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
 	 */
 	template <typename M>
 	M
@@ -632,7 +632,7 @@ public:
 	 * @returns copy of arg, possibly modified by query
 	 *
 	 * For more details, see:
-	 * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+	 * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
 	 */
 	template <typename M>
 	M
@@ -791,7 +791,7 @@ public:
  * @returns variable representing internal state
  *
  * For more details, see:
- * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
  */
 template <typename T>
 T
@@ -809,7 +809,7 @@ ctl_get(const std::string &name)
  * @returns copy of arg, possibly modified by query
  *
  * For more details, see:
- * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
  */
 template <typename T>
 T
@@ -827,7 +827,7 @@ ctl_set(const std::string &name, T arg)
  * @returns copy of arg, possibly modified by query
  *
  * For more details, see:
- * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
  */
 template <typename T>
 T
@@ -845,7 +845,7 @@ ctl_exec(const std::string &name, T arg)
  * @returns variable representing internal state
  *
  * For more details, see:
- * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
  */
 template <typename T>
 T
@@ -863,7 +863,7 @@ ctl_get(const std::wstring &name)
  * @returns copy of arg, possibly modified by query
  *
  * For more details, see:
- * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
  */
 template <typename T>
 T
@@ -881,7 +881,7 @@ ctl_set(const std::wstring &name, T arg)
  * @returns copy of arg, possibly modified by query
  *
  * For more details, see:
- * http://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
+ * https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_ctl_get.3
  */
 template <typename T>
 T

@@ -120,7 +120,7 @@
  * \brief Persistent memory namespace.
  *
  * It is a common namespace for all persistent memory C++ libraries
- * For more information about pmem goto: http://pmem.io
+ * For more information about pmem goto: https://pmem.io
  */
 
 namespace pmem

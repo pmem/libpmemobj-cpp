@@ -1094,12 +1094,14 @@ test_tx_callback_scope(nvobj::pool<root> &pop, std::function<void()> commit)
 	cb_work_called = 0;
 
 	try {
+		counter = 0;
 		{
 			T to(pop);
 
 			tx_with_callbacks(cb_oncommit_called, cb_onabort_called,
 					  cb_finally_called, cb_work_called);
 
+			counter = 1;
 			nvobj::transaction::abort(0);
 
 			UT_ASSERT(0);

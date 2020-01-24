@@ -36,7 +36,7 @@ consistent across subsequent executions or compilations of user applications.
 
 If you find any issues or have suggestion about these bindings please file an
 issue in https://github.com/pmem/libpmemobj-cpp/issues. There are also blog articles in
-http://pmem.io/blog/ which you might find helpful.
+https://pmem.io/blog/ which you might find helpful.
 
 Have fun!
 The PMDK team

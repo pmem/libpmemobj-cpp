@@ -383,7 +383,8 @@ if(PMEMVLT_PRESENT AND ENABLE_CONCURRENT_HASHMAP)
 			add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS drd)
 		endif()
 
-		add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
+		# disabled due to intermittent failures (most probably false-positive reported by helgrind, ref. issue #469)
+		# add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
 	endif()
 
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)

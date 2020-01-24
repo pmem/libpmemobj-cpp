@@ -1,3 +1,43 @@
+XXX XXX XX 2020 Szymon Romik <szymon.romik@intel.com>
+
+	* Version 1.9
+
+	This release moves segment_vector out of experimental namespace and
+	directory. It means that abovementioned container is guaranteed to have
+	stable API and on-media	layout.
+
+	It also introduces defragmentation functionality with new defrag class
+	in pmem::obj namespace and helper classes (which currently resides in
+	"detail" directory): enumerable_thread_specific and volatile_state.
+
+	With this release, we also decreased restart time of concurrent_hash_map
+	after graceful shutdown (with a usage of the enumerable_thread_specific
+	feature).
+
+	New features:
+	- enumerable_thread_specific class ("persistent TLS") implemented in
+	  "detail" directory
+	- new methods for pmem::obj::string (find and its overloads)
+	- volatile_state class (reimplemented v class) implemented in "detail"
+	  directory
+	- defragmentation feature as a separate class in pmem::obj namespace and
+	  support for the defragmentation in containers: concurrent_hash_map,
+	  vector, string
+	- remove template parameters from persistent_ptr_base class and move the
+	  class to public API
+	- new methods for pmem::obj::concurrent_hash_map (insert_or_assign and
+	  its overloads)
+
+	Optimizations:
+	- bucket rehashing in concurrent_hash_map moved to transaction
+	- faster concurrent_hash_map restart after graceful shutdown (with
+	  "persistent TLS")
+
+	Other changes:
+	- added GitHub Actions as an additional CI
+	- added documentation and doc snippets with some usage examples
+	- added compatibility tests for different libpmemobj-cpp versions
+
 Thu Oct 03 2019 Szymon Romik <szymon.romik@intel.com>
 
 	* Version 1.8

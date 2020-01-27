@@ -41,6 +41,7 @@
 
 #include <libpmemobj++/detail/atomic_backoff.hpp>
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/pair.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 
 #include <libpmemobj++/defrag.hpp>
@@ -309,7 +310,7 @@ struct hash_map_node {
 	/** Scoped lock type for mutex. */
 	using scoped_t = ScopedLockType;
 
-	using value_type = std::pair<const Key, T>;
+	using value_type = detail::pair<const Key, T>;
 
 	/** Persistent pointer type for next. */
 	using node_ptr_t = detail::persistent_pool_ptr<
@@ -324,20 +325,10 @@ struct hash_map_node {
 	/** Item stored in node */
 	value_type item;
 
-	hash_map_node() : next(OID_NULL)
-	{
-	}
-
-	hash_map_node(const node_ptr_t &_next) : next(_next)
-	{
-	}
-
-	hash_map_node(node_ptr_t &&_next) : next(std::move(_next))
-	{
-	}
-
 	hash_map_node(const node_ptr_t &_next, const Key &key)
-	    : next(_next), item(key, T())
+	    : next(_next),
+	      item(std::piecewise_construct, std::forward_as_tuple(key),
+		   std::forward_as_tuple())
 	{
 	}
 
@@ -922,8 +913,11 @@ public:
 	/* my_mask always restored on restart. */
 	p<std::atomic<hashcode_type>> my_mask;
 
+	/* Size of value (key and value pair) stored in a pool */
+	std::size_t value_size;
+
 	/** Padding to the end of cacheline */
-	std::aligned_storage<32, 8>::type padding1;
+	std::aligned_storage<24, 8>::type padding1;
 
 	/**
 	 * Segment pointers table. Also prevents false sharing between my_mask
@@ -1035,7 +1029,7 @@ public:
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
-		layout_features = header_features();
+		layout_features = {0, 0};
 
 		PMEMoid oid = pmemobj_oid(this);
 
@@ -1056,7 +1050,9 @@ public:
 
 		on_init_size = 0;
 
-		this->tls_ptr = make_persistent<tls_t>();
+		value_size = 0;
+
+		this->tls_ptr = nullptr;
 	}
 
 	/*
@@ -1982,6 +1978,11 @@ protected:
 		if (layout_features.incompat != header_features().incompat)
 			throw pmem::layout_error(
 				"Incompat flags mismatch, for more details go to: https://pmem.io/pmdk/cpp_obj/ \n");
+
+		if ((layout_features.compat & FEATURE_CONSISTENT_SIZE) &&
+		    this->value_size != sizeof(value_type))
+			throw pmem::layout_error(
+				"Size of value_type is different than the one stored in the pool \n");
 	}
 
 public:
@@ -2188,12 +2189,14 @@ public:
 				std::distance(this->begin(), this->end());
 			assert(actual_size >= 0);
 
-			this->on_init_size = static_cast<size_t>(actual_size);
 			this->my_size = static_cast<size_t>(actual_size);
 
 			auto pop = get_pool_base();
 			transaction::run(pop, [&] {
 				this->tls_ptr = make_persistent<tls_t>();
+				this->on_init_size =
+					static_cast<size_t>(actual_size);
+				this->value_size = sizeof(value_type);
 
 				layout_features.compat |=
 					FEATURE_CONSISTENT_SIZE;

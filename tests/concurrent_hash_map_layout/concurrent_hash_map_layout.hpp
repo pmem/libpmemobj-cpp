@@ -53,9 +53,9 @@ static constexpr std::size_t CACHELINE_SIZE = 64;
 /*
  * Test is implemented in inherited class to get access to protected variables.
  */
-template <typename MapType, std::size_t value_size>
+template <typename MapType, std::size_t ValueSize>
 struct hashmap_test : public MapType {
-	static constexpr std::size_t NODE_SIZE = 72 + value_size;
+	static constexpr std::size_t NODE_SIZE = 72 + ValueSize;
 
 	using persistent_map_type = MapType;
 	using hash_map_base = typename MapType::hash_map_base;
@@ -69,6 +69,7 @@ struct hashmap_test : public MapType {
 		ASSERT_ALIGNED_FIELD(T, t, layout_features);
 		ASSERT_ALIGNED_FIELD(T, t, my_mask_reserved);
 		ASSERT_ALIGNED_FIELD(T, t, my_mask);
+		ASSERT_ALIGNED_FIELD(T, t, value_size);
 		ASSERT_ALIGNED_FIELD(T, t, padding1);
 		ASSERT_OFFSET_CHECKPOINT(T, CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, my_table);

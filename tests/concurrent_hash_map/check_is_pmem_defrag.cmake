@@ -33,7 +33,7 @@ include(${SRC_DIR}/../helpers.cmake)
 
 setup()
 
-set(DEFRAG 0)
+set(DEFRAG 1)
 
 if ((${TRACER} STREQUAL "drd") OR (${TRACER} STREQUAL "helgrind"))
     check_is_pmem(${DIR}/testfile)

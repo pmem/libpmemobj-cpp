@@ -150,9 +150,29 @@ function(build_test name)
 	add_dependencies(tests ${name})
 endfunction()
 
+# Function to build a test with mocked pmemobj_defrag() function
+function(build_test_defrag name)
+	build_test(${name} ${ARGN})
+	if (NOT WIN32)
+		# target_link_options() should be used below,
+		# but it is available since CMake v3.13
+		target_link_libraries(${name} "-Wl,--wrap=pmemobj_defrag")
+	endif()
+endfunction()
+
 function(build_test_tbb name)
 	build_test(${name} ${ARGN})
 	target_link_libraries(${name} ${TBB_LIBRARIES})
+endfunction()
+
+# Function to build a TBB test with mocked pmemobj_defrag() function
+function(build_test_tbb_defrag name)
+	build_test_tbb(${name} ${ARGN})
+	if (NOT WIN32)
+		# target_link_options() should be used below,
+		# but it is available since CMake v3.13
+		target_link_libraries(${name} "-Wl,--wrap=pmemobj_defrag")
+	endif()
 endfunction()
 
 set(vg_tracers memcheck helgrind drd pmemcheck)

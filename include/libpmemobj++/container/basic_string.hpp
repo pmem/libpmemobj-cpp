@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,6 +82,8 @@ public:
 	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using for_each_ptr_function =
+		std::function<void(persistent_ptr_base &)>;
 
 	/* Number of characters which can be stored using sso */
 	static constexpr size_type sso_capacity = (32 - 8) / sizeof(CharT) - 1;
@@ -149,6 +151,7 @@ public:
 	const CharT *data() const noexcept;
 	const CharT *cdata() const noexcept;
 	const CharT *c_str() const noexcept;
+	void for_each_ptr(for_each_ptr_function func);
 
 	/* Iterators */
 	iterator begin();
@@ -1038,6 +1041,22 @@ basic_string<CharT, Traits> &
 basic_string<CharT, Traits>::assign(std::initializer_list<CharT> ilist)
 {
 	return assign(ilist.begin(), ilist.end());
+}
+
+/**
+ * Iterates over all internal pointers and executes a callback function
+ * on each of them. In this implementation, it just calls for_each_ptr()
+ * of the vector stored in SSO.
+ *
+ * @param func callback function to call on internal pointer.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::for_each_ptr(for_each_ptr_function func)
+{
+	if (!is_sso_used()) {
+		non_sso._data.for_each_ptr(func);
+	}
 }
 
 /**

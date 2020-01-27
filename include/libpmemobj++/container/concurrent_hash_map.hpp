@@ -1036,7 +1036,7 @@ public:
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 		VALGRIND_HG_DISABLE_CHECKING(&my_mask, sizeof(my_mask));
 #endif
-		layout_features = header_features();
+		layout_features = {0, 0};
 
 		PMEMoid oid = pmemobj_oid(this);
 
@@ -1057,9 +1057,9 @@ public:
 
 		on_init_size = 0;
 
-		value_size = sizeof(std::pair<const Key, T>);
+		value_size = 0;
 
-		this->tls_ptr = make_persistent<tls_t>();
+		this->tls_ptr = nullptr;
 	}
 
 	/*
@@ -2192,6 +2192,7 @@ public:
 			auto pop = get_pool_base();
 			transaction::run(pop, [&] {
 				this->tls_ptr = make_persistent<tls_t>();
+				this->value_size = sizeof(value_type);
 
 				layout_features.compat |=
 					FEATURE_CONSISTENT_SIZE;

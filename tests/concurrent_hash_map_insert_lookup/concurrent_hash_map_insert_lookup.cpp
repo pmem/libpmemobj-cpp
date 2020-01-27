@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
  */
 
 #include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
+#include "tests/wrap_pmemobj_defrag.h"
 #include "unittest.hpp"
 
 int

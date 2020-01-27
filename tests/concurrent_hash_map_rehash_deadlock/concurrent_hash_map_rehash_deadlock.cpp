@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,13 +31,91 @@
  */
 
 /*
- * concurrent_hash_map_insert_erase.cpp -- pmem::obj::concurrent_hash_map test
+ * concurrent_hash_map_rehash_deadlock.cpp -- pmem::obj::concurrent_hash_map
+ * test
  *
  */
 
-#include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
-#include "tests/wrap_pmemobj_defrag.h"
 #include "unittest.hpp"
+
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/p.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+
+#include <iterator>
+#include <vector>
+
+#include <libpmemobj++/container/concurrent_hash_map.hpp>
+#include <libpmemobj++/container/string.hpp>
+
+#include "tests/wrap_pmemobj_defrag.h"
+
+#define LAYOUT "concurrent_hash_map"
+
+namespace nvobj = pmem::obj;
+
+namespace
+{
+
+typedef nvobj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int>>
+	persistent_map_type;
+
+struct root {
+	nvobj::persistent_ptr<persistent_map_type> cons;
+};
+
+/*
+ * recursive_rehashing_deadlock_test -- (internal) test recursive rehashing in
+ * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
+ */
+void
+recursive_rehashing_deadlock_test(nvobj::pool<root> &pop)
+{
+
+	PRINT_TEST_PARAMS;
+
+	auto map = pop.root()->cons;
+
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	/*
+	 * Insert many elements to the hash map in a way
+	 * that 128 buckets in 5 following segments are not rehashed:
+	 * - buckets #128-#255 contain numbers: 3968-4095
+	 * - buckets #384-#511 are empty
+	 * - buckets #896-#1023 are empty
+	 * - buckets #1920-#2047 are empty
+	 * - buckets #3968-#4095 are empty
+	 *
+	 * A reference (find()) to the buckets #3968-#4095 will cause
+	 * recursive rehashing of the previous buckets.
+	 *
+	 * For example 'find(acc, 4095)' will cause taking locks
+	 * on the following 5 buckets and recursive rehashing of them:
+	 * 4095, 2047, 1023, 511 and 255.
+	 */
+	int skip = 0;
+	for (int i = 4095; i >= 2048; i--) {
+		int hb = i & 255;
+		if (hb == 128) {
+			skip = 1;
+		}
+		if (skip && hb >= 128) {
+			continue;
+		}
+		map->insert(persistent_map_type::value_type(i, i));
+	}
+
+	for (int i = 4095; i >= 4090; i--) {
+		persistent_map_type::accessor acc;
+		map->find(acc, i);
+		map->defragment();
+	}
+}
+}
 
 int
 main(int argc, char *argv[])
@@ -45,13 +123,10 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 2) {
-		UT_FATAL("usage: %s file-name [defrag:0|1]", argv[0]);
+		UT_FATAL("usage: %s file-name", argv[0]);
 	}
 
 	const char *path = argv[1];
-	int defrag = 0;
-	if (argc == 3)
-		defrag = atoi(argv[2]);
 
 	nvobj::pool<root> pop;
 
@@ -66,35 +141,9 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	/* Test that scoped_lock traits is working correctly */
-#if LIBPMEMOBJ_CPP_USE_TBB_RW_MUTEX
-	UT_ASSERT(pmem::obj::concurrent_hash_map_internal::scoped_lock_traits<
-			  tbb::spin_rw_mutex::scoped_lock>::
-			  initial_rw_state(true) == false);
-#else
-	UT_ASSERT(pmem::obj::concurrent_hash_map_internal::scoped_lock_traits<
-			  pmem::obj::concurrent_hash_map_internal::
-				  shared_mutex_scoped_lock<
-					  pmem::obj::shared_mutex>>::
-			  initial_rw_state(true) == true);
-#endif
-
-	size_t concurrency = 8;
-	if (On_drd)
-		concurrency = 2;
-	std::cout << "Running tests for " << concurrency << " threads"
-		  << std::endl;
-
-	insert_and_erase_test<persistent_map_type::accessor,
-			      persistent_map_type::value_type>(pop,
-							       concurrency);
-
-	insert_erase_count_test(pop, concurrency);
-
-	insert_mt_test(pop, concurrency);
-
-	insert_erase_lookup_test(pop, concurrency, defrag);
+	recursive_rehashing_deadlock_test(pop);
 
 	pop.close();
+
 	return 0;
 }

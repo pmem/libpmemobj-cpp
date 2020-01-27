@@ -69,13 +69,19 @@ public:
 	void
 	reinitialize()
 	{
+		reinitialize(m_items_number);
+	}
+
+	void
+	reinitialize(size_t expected)
+	{
 		size_t buckets = map->bucket_count();
 		map->runtime_initialize();
 		UT_ASSERT(map->bucket_count() == buckets);
-		UT_ASSERT(map->size() == m_items_number);
+		UT_ASSERT(map->size() == expected);
 		map->runtime_initialize();
 		UT_ASSERT(map->bucket_count() == buckets);
-		UT_ASSERT(map->size() == m_items_number);
+		UT_ASSERT(map->size() == expected);
 	}
 
 	void
@@ -103,8 +109,14 @@ public:
 	void
 	rehash()
 	{
+		rehash(m_items_number);
+	}
+
+	void
+	rehash(size_t expected)
+	{
 		map->rehash(m_items_number * rehash_bucket_ratio);
-		check_items_count();
+		check_items_count(expected);
 	}
 
 	template <typename AccessorType, typename Key, typename Obj>
@@ -121,9 +133,21 @@ public:
 	void
 	check_consistency()
 	{
-		check_items_count();
-		rehash();
-		reinitialize();
+		check_consistency(m_items_number);
+	}
+
+	void
+	check_consistency(size_t expected)
+	{
+		check_items_count(expected);
+		rehash(expected);
+		reinitialize(expected);
+	}
+
+	void
+	defragment()
+	{
+		map->defragment();
 	}
 
 	template <typename ItemType>

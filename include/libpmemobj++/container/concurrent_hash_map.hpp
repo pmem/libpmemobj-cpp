@@ -2186,12 +2186,13 @@ public:
 				std::distance(this->begin(), this->end());
 			assert(actual_size >= 0);
 
-			this->on_init_size = static_cast<size_t>(actual_size);
 			this->my_size = static_cast<size_t>(actual_size);
 
 			auto pop = get_pool_base();
 			transaction::run(pop, [&] {
 				this->tls_ptr = make_persistent<tls_t>();
+				this->on_init_size =
+					static_cast<size_t>(actual_size);
 				this->value_size = sizeof(value_type);
 
 				layout_features.compat |=

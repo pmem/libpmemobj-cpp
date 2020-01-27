@@ -307,7 +307,34 @@ struct hash_map_node {
 	/** Scoped lock type for mutex. */
 	using scoped_t = ScopedLockType;
 
-	using value_type = std::pair<const Key, T>;
+	struct value_type {
+		constexpr value_type() : first(Key()), second(T())
+		{
+		}
+
+		constexpr value_type(const Key &k, const T &v)
+		    : first(k), second(v)
+		{
+		}
+
+		constexpr value_type(Key &&k, T &&v)
+		    : first(std::forward<Key>(k)), second(std::forward<T>(v))
+		{
+		}
+
+		constexpr value_type(const std::pair<const Key, T> &p)
+		    : first(p.first), second(p.second)
+		{
+		}
+
+		constexpr value_type(std::pair<const Key, T> &&p)
+		    : first(std::move(p.first)), second(std::move(p.second))
+		{
+		}
+
+		const Key first;
+		T second;
+	};
 
 	/** Persistent pointer type for next. */
 	using node_ptr_t = detail::persistent_pool_ptr<

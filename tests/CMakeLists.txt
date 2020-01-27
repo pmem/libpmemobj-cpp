@@ -235,7 +235,7 @@ add_test_generic(NAME ctl CASE 0 TRACERS none
 		SCRIPT ctl/ctl_0.cmake)
 
 build_test(defrag defrag/defrag.cpp)
-add_test_generic(NAME defrag TRACERS none pmemcheck)
+add_test_generic(NAME defrag TRACERS none pmemcheck memcheck)
 
 if(WIN32)
 	build_test(ctl_win ctl_win/ctl_win.cpp)
@@ -348,6 +348,9 @@ if (TEST_VECTOR)
 
 	build_test_ext(NAME vector_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_layout TRACERS none)
+
+	build_test(defrag_vector defrag/defrag_vector.cpp)
+	add_test_generic(NAME defrag_vector TRACERS none pmemcheck memcheck)
 endif()
 
 if (TEST_STRING)

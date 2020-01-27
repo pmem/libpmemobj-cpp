@@ -32,6 +32,7 @@
 
 #include "unittest.hpp"
 
+#include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/defrag.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/make_persistent.hpp>
@@ -47,26 +48,34 @@ namespace
 {
 
 struct root {
-	nvobj::persistent_ptr<int> i;
-	nvobj::persistent_ptr<char> c;
-	nvobj::persistent_ptr<double> d;
+	nvobj::persistent_ptr<nvobj::vector<int>> vi;
+	nvobj::persistent_ptr<nvobj::vector<double>> vd;
 };
 
 void
-test_basic(nvobj::pool<root> &pop)
+test_vector_basic(nvobj::pool<root> &pop)
 {
 	nvobj::transaction::run(pop, [&] {
-		pop.root()->i = nvobj::make_persistent<int>(5);
-		pop.root()->c = nvobj::make_persistent<char>('a');
-		pop.root()->d = nvobj::make_persistent<double>(10);
+		pop.root()->vi = nvobj::make_persistent<nvobj::vector<int>>();
+		pop.root()->vd =
+			nvobj::make_persistent<nvobj::vector<double>>();
 	});
 
-	UT_ASSERT(!nvobj::is_defragmentable<nvobj::persistent_ptr<double>>());
+	static_assert(!nvobj::is_defragmentable<
+			      nvobj::persistent_ptr<nvobj::vector<int>>>(),
+		      "should not assert");
+	static_assert(nvobj::is_defragmentable<nvobj::vector<int>>(),
+		      "should not assert");
+
+	pop.root()->vi->push_back(5);
+	pop.root()->vi->push_back(10);
+	pop.root()->vi->push_back(15);
+
+	pop.root()->vd->push_back(1);
 
 	nvobj::defrag my_defrag(pop);
-	my_defrag.add(pop.root()->i);
-	my_defrag.add(pop.root()->c);
-	my_defrag.add(pop.root()->d);
+	my_defrag.add(pop.root()->vi);
+	my_defrag.add(pop.root()->vd);
 
 	pobj_defrag_result res;
 	try {
@@ -75,31 +84,29 @@ test_basic(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(res.total, 3);
+	/* 2 pointers + 2 vector objects (each have only 1 internal pointer) */
+	UT_ASSERTeq(res.total, 4);
 }
 
 /*
- * Non-defragmentable types added for the defragmentation
- * should not increase the total number of objects.
+ * Adding only objects pointed by ptrs, without pointers themselves.
+ * One of the vectors is empty, hence finally only 1 object was added
+ * to the defragmentation.
  */
 void
-test_add_empty(nvobj::pool<root> &pop)
+test_vector_add_no_ptrs(nvobj::pool<root> &pop)
 {
-	nvobj::persistent_ptr<double> d;
 	nvobj::transaction::run(pop, [&] {
-		pop.root()->i = nvobj::make_persistent<int>(5);
-		pop.root()->c = nvobj::make_persistent<char>('a');
-
-		d = nvobj::make_persistent<double>(10);
+		pop.root()->vi = nvobj::make_persistent<nvobj::vector<int>>();
+		pop.root()->vd =
+			nvobj::make_persistent<nvobj::vector<double>>();
 	});
 
-	UT_ASSERT(!nvobj::is_defragmentable<nvobj::persistent_ptr<double>>());
-	UT_ASSERT(!nvobj::is_defragmentable<double>());
+	pop.root()->vi->push_back(5);
 
 	nvobj::defrag my_defrag(pop);
-	my_defrag.add(*pop.root()->i);
-	my_defrag.add(*pop.root()->c);
-	my_defrag.add(*d);
+	my_defrag.add(*pop.root()->vi);
+	my_defrag.add(*pop.root()->vd);
 
 	pobj_defrag_result res;
 	try {
@@ -108,10 +115,7 @@ test_add_empty(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(res.total, 0);
-
-	nvobj::transaction::run(pop,
-				[&] { nvobj::delete_persistent<double>(d); });
+	UT_ASSERTeq(res.total, 1);
 }
 
 /*
@@ -119,9 +123,9 @@ test_add_empty(nvobj::pool<root> &pop)
  * the 'std::runtime_error' exception should be thrown.
  */
 void
-test_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
+test_vector_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
 {
-	nvobj::persistent_ptr<double> d;
+	nvobj::persistent_ptr<nvobj::vector<char>> vc;
 	nvobj::pool<root> pop_test;
 
 	try {
@@ -132,14 +136,15 @@ test_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
 	}
 
 	nvobj::transaction::run(pop_test, [&] {
-		pop_test.root()->i = nvobj::make_persistent<int>(1);
+		pop_test.root()->vi =
+			nvobj::make_persistent<nvobj::vector<int>>();
 
-		d = nvobj::make_persistent<double>(10);
+		vc = nvobj::make_persistent<nvobj::vector<char>>();
 	});
 
 	nvobj::defrag my_defrag(pop);
 	try {
-		my_defrag.add(pop_test.root()->i);
+		my_defrag.add(pop_test.root()->vi);
 		UT_ASSERT(0);
 	} catch (std::runtime_error &e) {
 		UT_ASSERT(e.what() != std::string());
@@ -147,7 +152,7 @@ test_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
 		UT_ASSERT(0);
 	}
 	try {
-		my_defrag.add(d);
+		my_defrag.add(vc);
 		UT_ASSERT(0);
 	} catch (std::runtime_error &e) {
 		UT_ASSERT(e.what() != std::string());
@@ -155,7 +160,7 @@ test_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
 		UT_ASSERT(0);
 	}
 	try {
-		my_defrag.add(*d);
+		my_defrag.add(*vc);
 		UT_ASSERT(0);
 	} catch (std::runtime_error &e) {
 		UT_ASSERT(e.what() != std::string());
@@ -172,8 +177,9 @@ test_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
 
 	UT_ASSERTeq(res.total, 0);
 
-	nvobj::transaction::run(pop_test,
-				[&] { nvobj::delete_persistent<double>(d); });
+	nvobj::transaction::run(pop_test, [&] {
+		nvobj::delete_persistent<nvobj::vector<char>>(vc);
+	});
 	pop_test.close();
 }
 }
@@ -197,9 +203,9 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_basic(pop);
-	test_add_empty(pop);
-	test_try_add_wrong_pointer(pop, std::string(path) + "_tmp");
+	test_vector_basic(pop);
+	test_vector_add_no_ptrs(pop);
+	test_vector_try_add_wrong_pointer(pop, std::string(path) + "_tmp");
 
 	pop.close();
 

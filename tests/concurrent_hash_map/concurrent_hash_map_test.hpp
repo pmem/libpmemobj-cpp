@@ -552,7 +552,6 @@ lookup_insert_erase_deadlock_test(nvobj::pool<root> &pop)
 
 		/* Test erase of element to which is locked by other thread */
 		map->erase(elements[0]);
-		;
 	};
 
 	auto lookup_insert_thread = [&] {

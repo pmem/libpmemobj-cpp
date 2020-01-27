@@ -41,6 +41,7 @@
 
 #include <libpmemobj++/detail/atomic_backoff.hpp>
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/pair.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 
 #include <libpmemobj++/make_persistent.hpp>
@@ -307,7 +308,7 @@ struct hash_map_node {
 	/** Scoped lock type for mutex. */
 	using scoped_t = ScopedLockType;
 
-	using value_type = std::pair<const Key, T>;
+	using value_type = detail::pair<const Key, T>;
 
 	/** Persistent pointer type for next. */
 	using node_ptr_t = detail::persistent_pool_ptr<
@@ -322,20 +323,10 @@ struct hash_map_node {
 	/** Item stored in node */
 	value_type item;
 
-	hash_map_node() : next(OID_NULL)
-	{
-	}
-
-	hash_map_node(const node_ptr_t &_next) : next(_next)
-	{
-	}
-
-	hash_map_node(node_ptr_t &&_next) : next(std::move(_next))
-	{
-	}
-
 	hash_map_node(const node_ptr_t &_next, const Key &key)
-	    : next(_next), item(key, T())
+	    : next(_next),
+	      item(std::piecewise_construct, std::forward_as_tuple(key),
+		   std::forward_as_tuple())
 	{
 	}
 

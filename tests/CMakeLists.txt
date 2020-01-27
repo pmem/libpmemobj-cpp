@@ -152,6 +152,9 @@ build_test(ptr ptr/ptr.cpp)
 add_test_generic(NAME ptr CASE 0 TRACERS none pmemcheck
 		SCRIPT cmake/common_0.cmake)
 
+build_test(pair pair/pair.cpp)
+add_test_generic(NAME pair TRACERS none memcheck)
+
 build_test(ptr_arith ptr_arith/ptr_arith.cpp)
 add_test_generic(NAME ptr_arith TRACERS memcheck pmemcheck)
 # XXX Bug: incompatibility between asan and custom library

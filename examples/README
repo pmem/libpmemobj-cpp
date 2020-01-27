@@ -1,7 +1,7 @@
 This directory contains examples for libpmemobj-cpp, the library providing
 a transactional object store for pmem.  Some of these examples are explained
-in more detail here: http://pmem.io/pmdk/cpp_obj/
+in more detail here: https://pmem.io/libpmemobj-cpp/
 
 If you're looking for documentation to get you started using PMDK,
-start here: http://pmem.io/pmdk and follow the links to examples and
+start here: https://pmem.io/pmdk and follow the links to examples and
 man pages.

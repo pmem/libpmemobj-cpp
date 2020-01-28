@@ -464,10 +464,11 @@ if(TEST_CONCURRENT_HASHMAP)
 		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 1 TRACERS helgrind drd
 				SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
 
-		add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS helgrind
-				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-		add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS helgrind
-				SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
+		# disabled due to intermittent failures (most probably false-positive reported by helgrind, ref. issue #469)
+		# add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS helgrind
+		#		SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+		# add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS helgrind
+		#		SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
 
 		if (TESTS_LONG)
 			add_test_generic(NAME concurrent_hash_map_insert_lookup_mock CASE 0 TRACERS helgrind drd

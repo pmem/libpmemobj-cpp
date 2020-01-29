@@ -50,9 +50,8 @@ struct pair {
 	}
 
 	template <typename... Args1, typename... Args2>
-	constexpr pair(std::piecewise_construct_t pc,
-		       std::tuple<Args1...> first_args,
-		       std::tuple<Args2...> second_args)
+	pair(std::piecewise_construct_t pc, std::tuple<Args1...> first_args,
+	     std::tuple<Args2...> second_args)
 	    : pair(pc, first_args, second_args,
 		   typename make_index_sequence<Args1...>::type{},
 		   typename make_index_sequence<Args2...>::type{})
@@ -87,10 +86,9 @@ struct pair {
 private:
 	template <typename... Args1, typename... Args2, size_t... I1,
 		  size_t... I2>
-	constexpr pair(std::piecewise_construct_t,
-		       std::tuple<Args1...> &first_args,
-		       std::tuple<Args2...> &second_args, index_sequence<I1...>,
-		       index_sequence<I2...>)
+	pair(std::piecewise_construct_t, std::tuple<Args1...> &first_args,
+	     std::tuple<Args2...> &second_args, index_sequence<I1...>,
+	     index_sequence<I2...>)
 	    : first(std::forward<Args1>(std::get<I1>(first_args))...),
 	      second(std::forward<Args2>(std::get<I2>(second_args))...)
 	{

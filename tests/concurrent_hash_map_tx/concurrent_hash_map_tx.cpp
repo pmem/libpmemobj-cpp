@@ -346,6 +346,18 @@ test_tx_singlethread(nvobj::pool<root> &pop)
 		UT_ASSERT(acc->second == test_value);
 	}
 
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->clear();
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERTeq(map->size(), static_cast<size_t>(number_of_inserts));
+
 	pmem::obj::transaction::run(pop, [&] {
 		pmem::obj::delete_persistent<persistent_map_type>(map);
 		pmem::obj::delete_persistent<persistent_map_type>(map2);

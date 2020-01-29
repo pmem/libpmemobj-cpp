@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +56,7 @@ namespace
 static const int TEST_VALUE = 10;
 
 struct emplace_constructible {
-	emplace_constructible()
+	emplace_constructible() : a(), b(), c()
 	{
 	}
 
@@ -65,7 +65,9 @@ struct emplace_constructible {
 	{
 	}
 
-	int a, b, c;
+	int a;
+	int b;
+	int c;
 };
 
 struct work_in_destructor {

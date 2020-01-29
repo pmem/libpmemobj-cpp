@@ -2063,7 +2063,7 @@ public:
 		 *
 		 * Cannot be used in a transaction.
 		 */
-		const_accessor() : my_node(OID_NULL)
+		const_accessor() : my_node(OID_NULL), my_hash()
 		{
 			concurrent_hash_map_internal::check_outside_tx();
 		}

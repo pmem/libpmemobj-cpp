@@ -94,7 +94,7 @@ public:
 	{
 	}
 
-	MyLong(int v)
+	MyLong(int v) : val(v)
 	{
 		UT_ASSERT(pmemobj_pool_by_ptr(this) != nullptr);
 	}

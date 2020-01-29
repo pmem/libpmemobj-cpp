@@ -57,6 +57,8 @@ struct v_data1 {
 		volatile_object_state = volatile_object_state_type::created;
 	}
 
+	v_data1(const v_data1 &rhs) = delete;
+
 	~v_data1()
 	{
 		volatile_object_state = volatile_object_state_type::destroyed;
@@ -241,7 +243,7 @@ test_inside_tx(nvobj::pool<root> &pop)
 		nvobj::transaction::run(
 			pop, [&] { v_state::get<v_data1>(r->obj_ptr1.raw()); });
 		UT_ASSERT(false);
-	} catch (pmem::transaction_scope_error &e) {
+	} catch (pmem::transaction_scope_error &) {
 	} catch (...) {
 		UT_ASSERT(false);
 	}

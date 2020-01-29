@@ -1742,8 +1742,15 @@ typename segment_vector<T, Policy>::size_type
 segment_vector<T, Policy>::size() const noexcept
 {
 	size_type result = 0;
-	for (size_type i = 0; i < _segments_used; ++i)
-		result += _data.const_at(i).size();
+
+	try {
+		for (size_type i = 0; i < _segments_used; ++i)
+			result += _data.const_at(i).size();
+	} catch (std::out_of_range &) {
+		/* Can only happen in case of a bug with segments_used calc */
+		assert(false);
+	}
+
 	return result;
 }
 

@@ -911,7 +911,7 @@ public:
 
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
-	p<std::atomic<hashcode_type>> my_mask;
+	std::atomic<hashcode_type> my_mask;
 
 	/* Size of value (key and value pair) stored in a pool */
 	std::size_t value_size;
@@ -964,13 +964,13 @@ public:
 	const std::atomic<hashcode_type> &
 	mask() const noexcept
 	{
-		return my_mask.get_ro();
+		return my_mask;
 	}
 
 	std::atomic<hashcode_type> &
 	mask() noexcept
 	{
-		return my_mask.get_rw();
+		return my_mask;
 	}
 
 	size_t
@@ -1358,9 +1358,21 @@ public:
 			transaction::manual tx(p);
 
 			this->my_pool_uuid.swap(table.my_pool_uuid);
-			/* Swap my_mask */
+
+			/*
+			 * As internal_swap can only be called
+			 * from one thread, and there can be an outer
+			 * transaction we must make sure that mask and size
+			 * changes are transactional
+			 */
+			transaction::snapshot((size_t *)&this->my_mask);
+			transaction::snapshot((size_t *)&this->my_size);
+
 			this->mask() = table.mask().exchange(
 				this->mask(), std::memory_order_relaxed);
+
+			this->my_size = table.my_size.exchange(
+				this->my_size, std::memory_order_relaxed);
 
 			/* Swap consistent size */
 			std::swap(this->tls_ptr, table.tls_ptr);
@@ -1375,10 +1387,6 @@ public:
 
 			transaction::commit();
 		}
-
-		/* Swap volatile size */
-		this->my_size = table.my_size.exchange(
-			this->my_size, std::memory_order_relaxed);
 	}
 
 	/**
@@ -2055,7 +2063,7 @@ public:
 		 *
 		 * Cannot be used in a transaction.
 		 */
-		const_accessor() : my_node(OID_NULL)
+		const_accessor() : my_node(OID_NULL), my_hash()
 		{
 			concurrent_hash_map_internal::check_outside_tx();
 		}
@@ -3345,12 +3353,20 @@ concurrent_hash_map<Key, T, Hash, KeyEqual, MutexType, ScopedLockType>::clear()
 			clear_segment(s);
 		} while (s-- > 0);
 
+		/*
+		 * As clear can only be called
+		 * from one thread, and there can be an outer
+		 * transaction we must make sure that mask and size
+		 * changes are transactional
+		 */
+		transaction::snapshot((size_t *)&this->my_mask);
+		transaction::snapshot((size_t *)&this->my_size);
+
 		mask().store(embedded_buckets - 1, std::memory_order_relaxed);
+		this->my_size = 0;
 
 		transaction::commit();
 	}
-
-	this->my_size = 0;
 }
 
 template <typename Key, typename T, typename Hash, typename KeyEqual,

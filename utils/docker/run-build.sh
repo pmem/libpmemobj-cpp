@@ -117,9 +117,8 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTESTS_TBB=${TESTS_TBB} \
 		-DTEST_DIR=/mnt/pmem \
-		-DTESTS_USE_FORCED_PMEM=1
-		# Currently 1.8 does not compile with clang
-		# -DTESTS_COMPATIBILITY=1
+		-DTESTS_USE_FORCED_PMEM=1 \
+		-DTESTS_COMPATIBILITY=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout 590
@@ -128,7 +127,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	fi
 
 	cd ..
-	rm -r build
+	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 ###############################################################################
@@ -151,9 +150,8 @@ function tests_clang_release_cpp11_no_valgrind() {
 		-DTESTS_USE_VALGRIND=0 \
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTEST_DIR=/mnt/pmem \
-		-DTESTS_USE_FORCED_PMEM=1
-		# Currently 1.8 does not compile with clang
-		# -DTESTS_COMPATIBILITY=1
+		-DTESTS_USE_FORCED_PMEM=1 \
+		-DTESTS_COMPATIBILITY=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder"  --timeout 540
@@ -162,7 +160,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 	fi
 
 	cd ..
-	rm -r build
+	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 ###############################################################################

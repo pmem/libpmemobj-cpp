@@ -57,6 +57,8 @@ struct v_data1 {
 		volatile_object_state = volatile_object_state_type::created;
 	}
 
+	v_data1(const v_data1 &rhs) = delete;
+
 	~v_data1()
 	{
 		volatile_object_state = volatile_object_state_type::destroyed;

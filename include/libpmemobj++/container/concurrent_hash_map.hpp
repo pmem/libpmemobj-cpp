@@ -911,7 +911,7 @@ public:
 
 	/** Hash mask = sum of allocated segment sizes - 1. */
 	/* my_mask always restored on restart. */
-	p<std::atomic<hashcode_type>> my_mask;
+	std::atomic<hashcode_type> my_mask;
 
 	/* Size of value (key and value pair) stored in a pool */
 	std::size_t value_size;
@@ -964,13 +964,13 @@ public:
 	const std::atomic<hashcode_type> &
 	mask() const noexcept
 	{
-		return my_mask.get_ro();
+		return my_mask;
 	}
 
 	std::atomic<hashcode_type> &
 	mask() noexcept
 	{
-		return my_mask.get_rw();
+		return my_mask;
 	}
 
 	size_t

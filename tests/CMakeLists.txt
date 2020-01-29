@@ -75,6 +75,7 @@ if(COVERAGE)
 endif()
 
 find_packages()
+find_gdb()
 
 add_library(test_backtrace STATIC test_backtrace.c)
 if(LIBUNWIND_FOUND)

@@ -159,18 +159,5 @@ CHECK_CXX_SOURCE_COMPILES(
 	AGGREGATE_INITIALIZATION_AVAILABLE
 )
 
-# Check for existence of pmemvlt (introduced after libpmemobj 1.4 release)
-set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJ_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
-CHECK_CXX_SOURCE_COMPILES(
-	"#include <libpmemobj/base.h>
-	struct pmemvlt vlt;
-	int main() {}"
-	PMEMVLT_PRESENT)
-
-if(NOT PMEMVLT_PRESENT)
-	message(WARNING "pmemvlt support in libpmemobj not found (to enable - use libpmemobj version > 1.4")
-endif()
-
 set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})

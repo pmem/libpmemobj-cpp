@@ -184,14 +184,9 @@ if(WIN32)
 	add_test_generic(NAME pool_win CASE 3 TRACERS none)
 endif()
 
-if(PMEMVLT_PRESENT)
-	build_test(v v/v.cpp)
-	add_test_generic(NAME v CASE 0 TRACERS none memcheck
-			SCRIPT cmake/common_0.cmake)
-else()
-	message(WARNING "Skipping v test because no pmemvlt support found")
-	skip_test("v" "SKIPPED_BECAUSE_OF_MISSING_PMEMVLT")
-endif()
+build_test(v v/v.cpp)
+add_test_generic(NAME v CASE 0 TRACERS none memcheck SCRIPT cmake/common_0.cmake)
+
 
 if(NO_CHRONO_BUG)
 	build_test(cond_var cond_var/cond_var.cpp)

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: libpmemobj++/experimental/enumerable_thread_specific.hpp File Reference</title>
+<title>PMDK C++ bindings: libpmemobj++/detail/enumerable_thread_specific.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -63,7 +63,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_55fd483c9ae557ee09ad95ebc247273e.html">experimental</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_78fd0ef1c12e2c4e76100e472fbc448e.html">libpmemobj++</a></li><li class="navelem"><a class="el" href="dir_260aea9212bad7ad28b9965711bc32cc.html">detail</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -79,10 +79,13 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="segment__vector_8hpp_source.html">libpmemobj++/container/segment_vector.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="v_8hpp_source.html">libpmemobj++/experimental/v.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="mutex_8hpp_source.html">libpmemobj++/mutex.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="shared__mutex_8hpp_source.html">libpmemobj++/shared_mutex.hpp</a>&gt;</code><br />
+<code>#include &lt;cassert&gt;</code><br />
+<code>#include &lt;deque&gt;</code><br />
 <code>#include &lt;mutex&gt;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
+<code>#include &lt;shared_mutex&gt;</code><br />
 <code>#include &lt;thread&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
 </div>
@@ -90,14 +93,14 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific__internal_1_1scoped__lock.html">pmem::obj::experimental::enumerable_thread_specific_internal::scoped_lock&lt; T &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple scoped lock for SharedMutex compatible mutexes.  <a href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific__internal_1_1scoped__lock.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1id__manager.html">pmem::detail::id_manager</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This structure is used for assigning unique thread ids so that those ids will be reused in case of thread exit.  <a href="structpmem_1_1detail_1_1id__manager.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html">pmem::obj::experimental::enumerable_thread_specific&lt; T, Map, Mutex, Storage &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for storing thread local data.  <a href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1thread__id__type.html">pmem::detail::thread_id_type</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">RAII-style structure for holding thread id.  <a href="structpmem_1_1detail_1_1thread__id__type.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific_1_1map__wrapper.html">pmem::obj::experimental::enumerable_thread_specific&lt; T, Map, Mutex, Storage &gt;::map_wrapper</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper wrapper class for map_type.  <a href="classpmem_1_1obj_1_1experimental_1_1enumerable__thread__specific_1_1map__wrapper.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1enumerable__thread__specific.html">pmem::detail::enumerable_thread_specific&lt; T, Mutex, Storage &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for storing thread local data.  <a href="classpmem_1_1detail_1_1enumerable__thread__specific.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -105,11 +108,8 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
 <tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory namespace. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespacepmem_1_1obj"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html">pmem::obj</a></td></tr>
-<tr class="memdesc:namespacepmem_1_1obj"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main libpmemobj namespace. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespacepmem_1_1obj_1_1experimental"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html">pmem::obj::experimental</a></td></tr>
-<tr class="memdesc:namespacepmem_1_1obj_1_1experimental"><td class="mdescLeft">&#160;</td><td class="mdescRight">Experimental implementations. <br /></td></tr>
+<tr class="memitem:namespacepmem_1_1detail"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html">pmem::detail</a></td></tr>
+<tr class="memdesc:namespacepmem_1_1detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation details. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

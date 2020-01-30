@@ -2,6 +2,7 @@ var searchData=
 [
   ['abort',['abort',['../classpmem_1_1obj_1_1transaction.html#a4ff5a4362ea2a82830c7ca06a4358e05',1,'pmem::obj::transaction']]],
   ['acquire',['acquire',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1bucket__accessor.html#a823b24a3b185bcc3979f958b0ab51930',1,'pmem::obj::concurrent_hash_map::bucket_accessor']]],
+  ['add',['add',['../classpmem_1_1obj_1_1defrag.html#a43fe62e13169e20a2aca498fd5de16d1',1,'pmem::obj::defrag::add(T &amp;t)'],['../classpmem_1_1obj_1_1defrag.html#a7a265019bb313c93930812624bf2ce59',1,'pmem::obj::defrag::add(T &amp;t)'],['../classpmem_1_1obj_1_1defrag.html#a15408f45f109cb29d8ae6ae35ef291b1',1,'pmem::obj::defrag::add(persistent_ptr&lt; T &gt; &amp;ptr)']]],
   ['add_5fdata_5fto_5ftx',['add_data_to_tx',['../classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848',1,'pmem::obj::vector']]],
   ['add_5flock',['add_lock',['../classpmem_1_1obj_1_1transaction.html#aa5a605fedbe2a633f2921c2d0e9ccdde',1,'pmem::obj::transaction::add_lock(L &amp;lock, Locks &amp;... locks) noexcept'],['../classpmem_1_1obj_1_1transaction.html#af1b9ef6f5a49231fd2d9ccadc66fa132',1,'pmem::obj::transaction::add_lock() noexcept']]],
   ['add_5fsso_5fto_5ftx',['add_sso_to_tx',['../classpmem_1_1obj_1_1basic__string.html#a64625453b5d11ebb774a4a6f8b3d53b9',1,'pmem::obj::basic_string']]],

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PMDK C++ bindings: C++ Bindings For libpmemobj</title>
+<title>PMDK C++ bindings: libpmemobj-cpp</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -64,10 +64,10 @@ $(function() {
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">C++ Bindings For libpmemobj </div>  </div>
+<div class="title">libpmemobj-cpp </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>This is the C++ API for libpmemobj.</p>
+<div class="textblock"><p>This is the C++ API for libpmemobj extended with persistent containers.</p>
 <p>During the development of libpmemobj, many difficulties were encountered and compromises were made to make the C API as much user-friendly as possible. This is mostly due to the semantics of the C language. Since C++ is a more expressive language, it was natural to try and bridge the gap using native C++ features.</p>
 <p>There are three main features of the C++ bindings:</p><ul>
 <li>the <code>persistent_ptr&lt;&gt;</code> smart pointer,</li>
@@ -78,10 +78,10 @@ $(function() {
 <p>The other drawback of the C API is the transaction semantics. Manual usage of <code>setjmp</code> and <code>jmpbuf</code> is error prone, so they were once again wrapped in macros. They themselves have issues with undefined values of automatic variables (see the libpmemobj manpage for more details). The transactions defined in the C++ bindings try to fix the inadequacies of their C counterparts.</p>
 <p>The <code>p&lt;&gt;</code>, which is called the <em>persistent property</em>, was designed with seamless persistent memory integration in mind. It is designed to be used with basic types within classes, to signify that these members in fact reside in persistent memory and need to be handled appropriately.</p>
 <p>Please remember to take extra care when using <em>static class members</em>. They are not stored in persistent memory, therefore their value will <em>not</em> always be consistent across subsequent executions or compilations of user applications.</p>
-<p>If you find any issues or have suggestion about these bindings please file an issue in <a href="https://github.com/pmem/libpmemobj-cpp/issues">https://github.com/pmem/libpmemobj-cpp/issues</a>. There are also blog articles in <a href="http://pmem.io/blog/">http://pmem.io/blog/</a> which you might find helpful.</p>
+<p>If you find any issues or have suggestion about these bindings please file an issue in <a href="https://github.com/pmem/libpmemobj-cpp/issues">https://github.com/pmem/libpmemobj-cpp/issues</a>. There are also blog articles in <a href="https://pmem.io/blog/">https://pmem.io/blog/</a> which you might find helpful.</p>
 <p>Have fun! The PMDK team</p>
 <h3>Compiler notice</h3>
-<p>The C++ bindings require a C++11 compliant compiler, therefore the minimal versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the <a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic.html" title="C++ automatic scope transaction class.">pmem::obj::transaction::automatic</a> class requires C++17, so you need a more recent version for this to be available (GCC 6.1/Clang 3.7). It is recommended to use these or newer versions of GCC or Clang.</p>
+<p>The C++ bindings require a C++11 compliant compiler, therefore the minimal versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the <a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic.html" title="C++ automatic scope transaction class.">pmem::obj::transaction::automatic</a> class requires C++17, so you need a more recent version for this to be available (GCC 6.1/Clang 3.7). It is recommended to use these or newer versions of GCC or Clang. A usage of the libpmemobj-cpp containers requires GCC &gt;= 4.9.0 (see explanation in the main README.md file).</p>
 <h3>Standard notice</h3>
 <p>Please note that the C++11 standard, section 3.8, states that a valid non-trivially default constructible object (in other words, not plain old data) must be properly constructed in the lifetime of the application. Libpmemobj, or any shared memory solution for that matter, does not strictly adhere to that constraint.</p>
 <p>We believe that in the future, languages that wish to support persistent memory will need to alter their semantics to establish a defined behavior for objects whose lifetimes exceed that of the application. In the meantime, the programs that wish to use persistent memory will need to rely on compiler-defined behavior.</p>
@@ -97,8 +97,26 @@ $(function() {
 <li>Persistent memory transactions - <a class="el" href="classpmem_1_1obj_1_1transaction.html">transaction</a></li>
 <li>Persistent memory resident mutex - <a class="el" href="classpmem_1_1obj_1_1mutex.html">mutex</a></li>
 <li>Persistent memory pool - <a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a></li>
-<li>Persistent memory allocator - <a class="el" href="classpmem_1_1obj_1_1allocator.html">allocator</a></li>
-<li>Volatile resides on pmem property - <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html">v</a> </li>
+<li>Defrag class - <a class="el" href="classpmem_1_1obj_1_1defrag.html">defrag</a></li>
+</ul>
+<h2>Persistent containers</h2>
+<p>The C++ standard library containers collection is something that persistent memory programmers may want to use. Containers manage the lifetime of held objects through allocation/creation and deallocation/destruction with the use of allocators. Implementing custom persistent allocator for C++ STL (Standard Template Library) containers has two main downsides:</p>
+<p>Implementation details:</p><ul>
+<li>STL containers do not use algorithms optimal from persistent memory programming point of view.</li>
+<li>Persistent memory containers should have durability and consistency properties, while not every STL method guarantees strong exception safety.</li>
+<li>Persistent memory containers should be designed with an awareness of fragmentation limitations.</li>
+</ul>
+<p>Memory layout:</p><ul>
+<li>The STL does not guarantee that the container layout will remain unchanged in new library versions.</li>
+</ul>
+<p>Due to these obstacles, the libpmemobj-cpp contains the set of custom, implemented-from-scratch containers with optimized on-media layouts and algorithms to fully exploit the potential and features of persistent memory. These methods guarantee atomicity, consistency and durability. Besides specific internal implementation details, libpmemobj-cpp persistent memory containers have the well-known STL-like interface and they work with STL algorithms.</p>
+<h3>Available containers</h3>
+<ul>
+<li>array with STL-like interface - <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a></li>
+<li>string with STL-like interface - <a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::string</a></li>
+<li>vector with STL-like interface - <a class="el" href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a></li>
+<li>segment_vector with std::vector-like interface (no STL counterpart) - <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">pmem::obj::segment_vector</a></li>
+<li>concurrent_hash_map (no STL counterpart) - <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a> </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->

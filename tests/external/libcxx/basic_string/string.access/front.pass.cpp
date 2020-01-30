@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2019, Intel Corporation
+// Copyright 2019-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -29,12 +29,13 @@ struct root {
 
 template <class S>
 void
-test(S &s)
+test(nvobj::pool<root> &pop, S &s)
 {
 	const S &cs = s;
 	UT_ASSERT(&cs.front() == &cs[0]);
 	UT_ASSERT(&s.front() == &s[0]);
-	s.front() = typename S::value_type('z');
+	nvobj::transaction::run(
+		pop, [&] { s.front() = typename S::value_type('z'); });
 	UT_ASSERT(s.front() == typename S::value_type('z'));
 	UT_ASSERT(s.front() == s.cfront());
 }
@@ -67,9 +68,9 @@ main(int argc, char *argv[])
 				"1234567890");
 		});
 
-		test(*r->s1);
-		test(*r->s2);
-		test(*r->s3);
+		test(pop, *r->s1);
+		test(pop, *r->s2);
+		test(pop, *r->s3);
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<C>(r->s1);

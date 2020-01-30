@@ -1,7 +1,7 @@
-C++ Bindings For libpmemobj	{#mainpage}
+libpmemobj-cpp	{#mainpage}
 ===========================
 
-This is the C++ API for libpmemobj.
+This is the C++ API for libpmemobj extended with persistent containers.
 
 During the development of libpmemobj, many difficulties were encountered and
 compromises were made to make the C API as much user-friendly as possible. This
@@ -47,6 +47,8 @@ versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the
 pmem::obj::transaction::automatic class requires C++17, so
 you need a more recent version for this to be available (GCC 6.1/Clang 3.7).
 It is recommended to use these or newer versions of GCC or Clang.
+A usage of the libpmemobj-cpp containers requires GCC >= 4.9.0 (see explanation
+in the main README.md file).
 
 ### Standard notice ###
 Please note that the C++11 standard, section 3.8, states that a valid
@@ -78,5 +80,35 @@ bindings.
  * Persistent memory transactions - [transaction](@ref pmem::obj::transaction)
  * Persistent memory resident mutex - [mutex](@ref pmem::obj::mutex)
  * Persistent memory pool - [pool](@ref pmem::obj::pool)
- * Persistent memory allocator - [allocator](@ref pmem::obj::allocator)
- * Volatile resides on pmem property - [v](@ref pmem::obj::experimental::v)
+ * Defrag class - [defrag](@ref pmem::obj::defrag)
+
+## Persistent containers ##
+
+The C++ standard library containers collection is something that persistent
+memory programmers may want to use. Containers manage the lifetime of held
+objects through allocation/creation and deallocation/destruction with the use of
+allocators. Implementing custom persistent allocator for C++ STL (Standard
+Template Library) containers has two main downsides:
+
+Implementation details:
+ - STL containers do not use algorithms optimal from persistent memory programming point of view.
+ - Persistent memory containers should have durability and consistency properties, while not every STL method guarantees strong exception safety.
+ - Persistent memory containers should be designed with an awareness of fragmentation limitations.
+
+Memory layout:
+ - The STL does not guarantee that the container layout will remain unchanged in new library versions.
+
+Due to these obstacles, the libpmemobj-cpp contains the set of custom,
+implemented-from-scratch containers with optimized on-media layouts and
+algorithms to fully exploit the potential and features of persistent memory.
+These methods guarantee atomicity, consistency and durability. Besides specific
+internal implementation details, libpmemobj-cpp persistent memory containers
+have the well-known STL-like interface and they work with STL algorithms.
+
+### Available containers ###
+
+ * array with STL-like interface - [pmem::obj::array](@ref pmem::obj::array)
+ * string with STL-like interface - [pmem::obj::string](@ref pmem::obj::basic_string)
+ * vector with STL-like interface - [pmem::obj::vector](@ref pmem::obj::vector)
+ * segment_vector with std::vector-like interface (no STL counterpart) - [pmem::obj::segment_vector](@ref pmem::obj::segment_vector)
+ * concurrent_hash_map (no STL counterpart) - [pmem::obj::concurrent_hash_map](@ref pmem::obj::concurrent_hash_map)

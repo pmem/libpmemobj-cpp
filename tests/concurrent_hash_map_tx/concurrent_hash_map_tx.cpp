@@ -356,7 +356,7 @@ test_tx_singlethread(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 
-	UT_ASSERTeq(map->size(), static_cast<size_t>(number_of_inserts));
+	UT_ASSERT(static_cast<int>(map->size()) == number_of_inserts);
 
 	pmem::obj::transaction::run(pop, [&] {
 		pmem::obj::delete_persistent<persistent_map_type>(map);

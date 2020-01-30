@@ -71,7 +71,7 @@ else
 	fi
 fi
 
-imageName=${DOCKERHUB_REPO}:${OS}-${OS_VER}
+imageName=${DOCKERHUB_REPO}:1.9-${OS}-${OS_VER}
 containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
 if [[ "$command" == "" ]]; then

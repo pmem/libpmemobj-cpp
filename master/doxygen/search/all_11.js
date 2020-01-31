@@ -3,6 +3,7 @@ var searchData=
   ['temp_5fvalue',['temp_value',['../structpmem_1_1detail_1_1temp__value.html',1,'pmem::detail']]],
   ['temp_5fvalue_2ehpp',['temp_value.hpp',['../temp__value_8hpp.html',1,'']]],
   ['template_5fhelpers_2ehpp',['template_helpers.hpp',['../template__helpers_8hpp.html',1,'']]],
+  ['thread_5fid_5ftype',['thread_id_type',['../structpmem_1_1detail_1_1thread__id__type.html',1,'pmem::detail::thread_id_type'],['../structpmem_1_1detail_1_1thread__id__type.html#ae6994bc90b1f2ef57adbff122222d37d',1,'pmem::detail::thread_id_type::thread_id_type()']]],
   ['timed_5fmutex',['timed_mutex',['../classpmem_1_1obj_1_1timed__mutex.html',1,'pmem::obj::timed_mutex'],['../classpmem_1_1obj_1_1timed__mutex.html#a432952ca0affc6baab420fceda7c37b4',1,'pmem::obj::timed_mutex::timed_mutex()'],['../classpmem_1_1obj_1_1timed__mutex.html#a72c61d0dd7d100d7d494da1111f502cc',1,'pmem::obj::timed_mutex::timed_mutex(const timed_mutex &amp;)=delete']]],
   ['timed_5fmutex_2ehpp',['timed_mutex.hpp',['../timed__mutex_8hpp.html',1,'']]],
   ['timedlock_5fimpl',['timedlock_impl',['../classpmem_1_1obj_1_1timed__mutex.html#ad3661edbe31f8f2d1b536f8182f2b879',1,'pmem::obj::timed_mutex']]],

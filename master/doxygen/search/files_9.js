@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['temp_5fvalue_2ehpp',['temp_value.hpp',['../temp__value_8hpp.html',1,'']]],
-  ['template_5fhelpers_2ehpp',['template_helpers.hpp',['../template__helpers_8hpp.html',1,'']]],
-  ['timed_5fmutex_2ehpp',['timed_mutex.hpp',['../timed__mutex_8hpp.html',1,'']]],
-  ['transaction_2ehpp',['transaction.hpp',['../transaction_8hpp.html',1,'']]]
+  ['segment_5fvector_2ehpp',['segment_vector.hpp',['../segment__vector_8hpp.html',1,'']]],
+  ['segment_5fvector_5fpolicies_2ehpp',['segment_vector_policies.hpp',['../segment__vector__policies_8hpp.html',1,'']]],
+  ['shared_5fmutex_2ehpp',['shared_mutex.hpp',['../shared__mutex_8hpp.html',1,'']]],
+  ['slice_2ehpp',['slice.hpp',['../slice_8hpp.html',1,'']]],
+  ['specialization_2ehpp',['specialization.hpp',['../specialization_8hpp.html',1,'']]],
+  ['string_2ehpp',['string.hpp',['../string_8hpp.html',1,'']]]
 ];

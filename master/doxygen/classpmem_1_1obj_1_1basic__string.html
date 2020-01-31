@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -207,6 +207,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aab727616a876744677b68abf42f094dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1038c13c40f765ffa5bc0c5c2e84022"><td class="memItemLeft" align="right" valign="top">const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#ad1038c13c40f765ffa5bc0c5c2e84022">c_str</a> () const noexcept</td></tr>
 <tr class="separator:ad1038c13c40f765ffa5bc0c5c2e84022"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02c18bada220b7b0b89e279ae167b378"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a02c18bada220b7b0b89e279ae167b378">for_each_ptr</a> (for_each_ptr_function func)</td></tr>
+<tr class="memdesc:a02c18bada220b7b0b89e279ae167b378"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterates over all internal pointers and executes a callback function on each of them.  <a href="#a02c18bada220b7b0b89e279ae167b378">More...</a><br /></td></tr>
+<tr class="separator:a02c18bada220b7b0b89e279ae167b378"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1f6fa88d20294e7292c5a6a79ca6bf9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a1f6fa88d20294e7292c5a6a79ca6bf9e">begin</a> ()</td></tr>
 <tr class="memdesc:a1f6fa88d20294e7292c5a6a79ca6bf9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return an iterator to the beginning.  <a href="#a1f6fa88d20294e7292c5a6a79ca6bf9e">More...</a><br /></td></tr>
 <tr class="separator:a1f6fa88d20294e7292c5a6a79ca6bf9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -4461,6 +4464,35 @@ template&lt;typename CharT, typename Traits &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+
+</div>
+</div>
+<a id="a02c18bada220b7b0b89e279ae167b378"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02c18bada220b7b0b89e279ae167b378">&#9670;&nbsp;</a></span>for_each_ptr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::for_each_ptr </td>
+          <td>(</td>
+          <td class="paramtype">for_each_ptr_function&#160;</td>
+          <td class="paramname"><em>func</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Iterates over all internal pointers and executes a callback function on each of them. </p>
+<p>In this implementation, it just calls <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a02c18bada220b7b0b89e279ae167b378" title="Iterates over all internal pointers and executes a callback function on each of them.">for_each_ptr()</a> of the vector stored in SSO.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">func</td><td>callback function to call on internal pointer. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

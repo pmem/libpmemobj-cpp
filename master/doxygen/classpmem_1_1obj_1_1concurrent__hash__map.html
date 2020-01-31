@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -95,6 +95,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html">const_accessor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines data access, locking, and garbage collection.  <a href="classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1mutex__vector.html">mutex_vector</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector of locks to be unlocked at the destruction time.  <a href="classpmem_1_1obj_1_1concurrent__hash__map_1_1mutex__vector.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html">serial_bucket_accessor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serial bucket accessor used to access bucket in a serial operations.  <a href="classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,9 +128,9 @@ template&lt;typename I &gt; </td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#ac8e66209a73f1839ad11c6a77c80be42">concurrent_hash_map</a> (std::initializer_list&lt; value_type &gt; il)</td></tr>
 <tr class="memdesc:ac8e66209a73f1839ad11c6a77c80be42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct table with initializer list. <br /></td></tr>
 <tr class="separator:ac8e66209a73f1839ad11c6a77c80be42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae10a25e3463219758c60927a0915aa93"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#ae10a25e3463219758c60927a0915aa93">runtime_initialize</a> (bool graceful_shutdown=false)</td></tr>
-<tr class="memdesc:ae10a25e3463219758c60927a0915aa93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intialize persistent concurrent hash map after process restart.  <a href="#ae10a25e3463219758c60927a0915aa93">More...</a><br /></td></tr>
-<tr class="separator:ae10a25e3463219758c60927a0915aa93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1ca0393b5537618390728c764544a2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#af1ca0393b5537618390728c764544a2e">runtime_initialize</a> ()</td></tr>
+<tr class="memdesc:af1ca0393b5537618390728c764544a2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize persistent concurrent hash map after process restart.  <a href="#af1ca0393b5537618390728c764544a2e">More...</a><br /></td></tr>
+<tr class="separator:af1ca0393b5537618390728c764544a2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43cef0fd273e35db65f8247a851792df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a43cef0fd273e35db65f8247a851792df">operator=</a> (const <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map</a> &amp;table)</td></tr>
 <tr class="memdesc:a43cef0fd273e35db65f8247a851792df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment Not thread safe.  <a href="#a43cef0fd273e35db65f8247a851792df">More...</a><br /></td></tr>
 <tr class="separator:a43cef0fd273e35db65f8247a851792df"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -216,9 +219,24 @@ size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <tr class="memitem:a32b253de73883188f578ddad2ef88838"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a32b253de73883188f578ddad2ef88838">insert</a> (std::initializer_list&lt; value_type &gt; il)</td></tr>
 <tr class="memdesc:a32b253de73883188f578ddad2ef88838"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert initializer list.  <a href="#a32b253de73883188f578ddad2ef88838">More...</a><br /></td></tr>
 <tr class="separator:a32b253de73883188f578ddad2ef88838"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aded92bc959c27193d8a4b966171a3a19"><td class="memTemplParams" colspan="2">template&lt;typename M &gt; </td></tr>
+<tr class="memitem:aded92bc959c27193d8a4b966171a3a19"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#aded92bc959c27193d8a4b966171a3a19">insert_or_assign</a> (const key_type &amp;key, M &amp;&amp;obj)</td></tr>
+<tr class="memdesc:aded92bc959c27193d8a4b966171a3a19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts item if there is no such key present already, assigns provided value otherwise.  <a href="#aded92bc959c27193d8a4b966171a3a19">More...</a><br /></td></tr>
+<tr class="separator:aded92bc959c27193d8a4b966171a3a19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebdefd9e84690758cc0c6803e1be1cf0"><td class="memTemplParams" colspan="2">template&lt;typename M &gt; </td></tr>
+<tr class="memitem:aebdefd9e84690758cc0c6803e1be1cf0"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#aebdefd9e84690758cc0c6803e1be1cf0">insert_or_assign</a> (key_type &amp;&amp;key, M &amp;&amp;obj)</td></tr>
+<tr class="memdesc:aebdefd9e84690758cc0c6803e1be1cf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts item if there is no such key present already, assigns provided value otherwise.  <a href="#aebdefd9e84690758cc0c6803e1be1cf0">More...</a><br /></td></tr>
+<tr class="separator:aebdefd9e84690758cc0c6803e1be1cf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eac81173be23680ca9d7ce613133e4c"><td class="memTemplParams" colspan="2">template&lt;typename K , typename M , typename  = typename std::enable_if&lt;			concurrent_hash_map_internal::has_transparent_key_equal&lt;				hasher&gt;::value &amp;&amp;				std::is_constructible&lt;key_type, K&gt;::value,			K&gt;::type&gt; </td></tr>
+<tr class="memitem:a7eac81173be23680ca9d7ce613133e4c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a7eac81173be23680ca9d7ce613133e4c">insert_or_assign</a> (K &amp;&amp;key, M &amp;&amp;obj)</td></tr>
+<tr class="memdesc:a7eac81173be23680ca9d7ce613133e4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts item if there is no such key-comparable type present already, assigns provided value otherwise.  <a href="#a7eac81173be23680ca9d7ce613133e4c">More...</a><br /></td></tr>
+<tr class="separator:a7eac81173be23680ca9d7ce613133e4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ab79cba29a999871cfccf94fd6e203d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a9ab79cba29a999871cfccf94fd6e203d">erase</a> (const Key &amp;key)</td></tr>
 <tr class="memdesc:a9ab79cba29a999871cfccf94fd6e203d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove element with corresponding key.  <a href="#a9ab79cba29a999871cfccf94fd6e203d">More...</a><br /></td></tr>
 <tr class="separator:a9ab79cba29a999871cfccf94fd6e203d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd573b5dd87d540652e9c63e9e195fd1"><td class="memItemLeft" align="right" valign="top">pobj_defrag_result&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#afd573b5dd87d540652e9c63e9e195fd1">defragment</a> (double start_percent=0, double amount_percent=100)</td></tr>
+<tr class="memdesc:afd573b5dd87d540652e9c63e9e195fd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defragment the given (by 'start_percent' and 'amount_percent') part of buckets of the hash map.  <a href="#afd573b5dd87d540652e9c63e9e195fd1">More...</a><br /></td></tr>
+<tr class="separator:afd573b5dd87d540652e9c63e9e195fd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad791334f451c680e445ba7be9a833de7"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  concurrent_hash_map_internal::				  has_transparent_key_equal&lt;hasher&gt;::value,			  K&gt;::type&gt; </td></tr>
 <tr class="memitem:ad791334f451c680e445ba7be9a833de7"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#ad791334f451c680e445ba7be9a833de7">erase</a> (const K &amp;key)</td></tr>
 <tr class="memdesc:ad791334f451c680e445ba7be9a833de7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove element with corresponding key.  <a href="#ad791334f451c680e445ba7be9a833de7">More...</a><br /></td></tr>
@@ -230,6 +248,9 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#aac9e7ffb5390d7994e724ea7ce2fda22">internal_copy</a> (const <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map</a> &amp;source)</td></tr>
 <tr class="memdesc:aac9e7ffb5390d7994e724ea7ce2fda22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy "source" to *this, where *this must start out empty. <br /></td></tr>
 <tr class="separator:aac9e7ffb5390d7994e724ea7ce2fda22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a854c72fb2c1466b7f7e5fc26cf94f374"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a854c72fb2c1466b7f7e5fc26cf94f374">defrag_save_nodes</a> (bucket *b, <a class="el" href="classpmem_1_1obj_1_1defrag.html">pmem::obj::defrag</a> &amp;<a class="el" href="classpmem_1_1obj_1_1defrag.html">defrag</a>)</td></tr>
+<tr class="memdesc:a854c72fb2c1466b7f7e5fc26cf94f374"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal method used by <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#afd573b5dd87d540652e9c63e9e195fd1" title="Defragment the given (by &#39;start_percent&#39; and &#39;amount_percent&#39;) part of buckets of the hash map.">defragment()</a>.  <a href="#a854c72fb2c1466b7f7e5fc26cf94f374">More...</a><br /></td></tr>
+<tr class="separator:a854c72fb2c1466b7f7e5fc26cf94f374"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt;<br />
@@ -237,12 +258,14 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 
 <p>Persistent memory aware implementation of Intel TBB <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. </p>
 <p>The implementation is based on a concurrent hash table algorithm (<a href="https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf">https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf</a>) where elements assigned to buckets based on a hash code are calculated from a key. In addition to concurrent find, insert, and erase operations, the algorithm employs resizing and on-demand per-bucket rehashing. The hash table consists of an array of buckets, and each bucket consists of a list of nodes and a read-write lock to control concurrent access by multiple threads.</p>
-<p>Each time, the pool with <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> is being opened, the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> requires <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#ae10a25e3463219758c60927a0915aa93" title="Intialize persistent concurrent hash map after process restart.">runtime_initialize()</a> to be called (in order to recalculate mask and restore the size).</p>
+<p>Each time, the pool with <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> is being opened, the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> requires <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#af1ca0393b5537618390728c764544a2e" title="Initialize persistent concurrent hash map after process restart.">runtime_initialize()</a> to be called (in order to recalculate mask and restore the size).</p>
 <p><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a442339a16de9b2b28bfb319186a6bca8" title="Find item and acquire a read lock on the item.">find()</a>, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#aa6dbd0a198de4bdd2ee05fd7d78d7b83" title="Insert item (if not already present) and acquire a read lock on the item.">insert()</a>, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a9ab79cba29a999871cfccf94fd6e203d" title="Remove element with corresponding key.">erase()</a> (and all overloads) are guaranteed to be thread-safe.</p>
+<p>When a thread holds accessor to an element with a certain key, it is not allowed to call find, insert nor erase with that key.</p>
 <p>MutexType defines type of read write lock used in <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. ScopedLockType defines a mutex wrapper that provides RAII-style mechanism for owning a mutex. It should implement following methods and constructors: ScopedLockType() ScopedLockType(rw_mutex_type &amp;m, bool write = true) void acquire(rw_mutex_type &amp;m, bool write) void release() bool try_acquire(rw_mutex_type &amp;m, bool write)</p>
 <p>and optionally: bool upgrade_to_writer() bool downgrade_to_reader() bool is_writer (variable)</p>
 <p>Implementing all optional methods and supplying is_writer variable can improve performance if MutexType supports efficient upgrading and downgrading operations.</p>
-<p>The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="concurrent__hash__map_8hpp.html">libpmemobj++/container/concurrent_hash_map.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div><div class="line"></div><div class="line"><span class="comment">// In this example we will be using concurrent_hash_map with p&lt;int&gt; type for</span></div><div class="line"><span class="comment">// both keys and values</span></div><div class="line"><span class="keyword">using</span> hashmap_type = <a class="code" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map&lt;p&lt;int&gt;</a>, <a class="code" href="classpmem_1_1obj_1_1p.html">p&lt;int&gt;</a>&gt;;</div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> THREADS_NUM = 30;</div><div class="line"></div><div class="line"><span class="comment">// This is basic example and we only need to use concurrent_hash_map. Hence we</span></div><div class="line"><span class="comment">// will correlate memory pool root object with single instance of persistent</span></div><div class="line"><span class="comment">// pointer to hasmap_type</span></div><div class="line"><span class="keyword">struct </span>root {</div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;hashmap_type&gt;</a> pptr;</div><div class="line">};</div><div class="line"></div><div class="line"><span class="keywordtype">int</span></div><div class="line">main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div><div class="line">{</div><div class="line">    <span class="keywordflow">if</span> (argc != 2)</div><div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;usage: &quot;</span> &lt;&lt; argv[0] &lt;&lt; <span class="stringliteral">&quot; file-name&quot;</span> &lt;&lt; std::endl;</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> path = argv[1];</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;concurrent_hash_map example&quot;</span>);</div><div class="line">    <span class="keyword">auto</span> r = pop.root();</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (r-&gt;pptr == <span class="keyword">nullptr</span>) {</div><div class="line">        <span class="comment">// Logic when file didn&#39;t exist when open() was called. After</span></div><div class="line">        <span class="comment">// the pool was created, we have to allocate object of</span></div><div class="line">        <span class="comment">// hashmap_type and attach it to the root object.</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a>(pop, [&amp;] {</div><div class="line">            r-&gt;pptr = make_persistent&lt;hashmap_type&gt;();</div><div class="line">        });</div><div class="line">    } <span class="keywordflow">else</span> {</div><div class="line">        <span class="comment">// Logic when file already exists. After opening of the pool we</span></div><div class="line">        <span class="comment">// have to call runtime_initialize() function in order to</span></div><div class="line">        <span class="comment">// recalculate mask and check for consistentcy.</span></div><div class="line"></div><div class="line">        pop.root()-&gt;pptr-&gt;runtime_initialize();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> &amp;map = *pop.root()-&gt;pptr;</div><div class="line"></div><div class="line">    std::vector&lt;std::thread&gt; threads;</div><div class="line">    threads.reserve(static_cast&lt;size_t&gt;(THREADS_NUM));</div><div class="line"></div><div class="line">    <span class="comment">// Insert THREADS_NUM / 3 key-value pairs to the hashmap. This operation</span></div><div class="line">    <span class="comment">// is thread-safe.</span></div><div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; THREADS_NUM / 3; ++i) {</div><div class="line">        threads.emplace_back([&amp;]() {</div><div class="line">            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10 * THREADS_NUM; ++i) {</div><div class="line">                map.insert(hashmap_type::value_type(i, i));</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Erase THREADS_NUM /3 key-value pairs from the hashmap. This operation</span></div><div class="line">    <span class="comment">// is thread-safe.</span></div><div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; THREADS_NUM / 3; ++i) {</div><div class="line">        threads.emplace_back([&amp;]() {</div><div class="line">            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10 * THREADS_NUM; ++i) {</div><div class="line">                map.erase(i);</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Check if given key is in the hashmap. For the time of an accessor</span></div><div class="line">    <span class="comment">// life, the read-write lock is taken on the item.</span></div><div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; THREADS_NUM / 3; ++i) {</div><div class="line">        threads.emplace_back([&amp;]() {</div><div class="line">            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10 * THREADS_NUM; ++i) {</div><div class="line">                hashmap_type::accessor acc;</div><div class="line">                <span class="keywordtype">bool</span> res = map.find(acc, i);</div><div class="line"></div><div class="line">                <span class="keywordflow">if</span> (res) {</div><div class="line">                    assert(acc-&gt;first == i);</div><div class="line">                    assert(acc-&gt;second &gt;= i);</div><div class="line">                    acc-&gt;second.get_rw() += 1;</div><div class="line">                    pop.persist(acc-&gt;second);</div><div class="line">                }</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;t : threads) {</div><div class="line">        t.join();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Erase remaining itemes in map. This function is not thread-safe,</span></div><div class="line">    <span class="comment">// hence the function is being called only after thread execution has</span></div><div class="line">    <span class="comment">// completed.</span></div><div class="line">    map.clear();</div><div class="line"></div><div class="line">    pop.close();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> 0;</div><div class="line">}</div><div class="line"></div></div><!-- fragment --></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<p>Testing note: In some case, helgrind and drd might report lock ordering errors for <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. This might happen when calling find, insert or erase while already holding an accessor to some element.</p>
+<p>The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="concurrent__hash__map_8hpp.html">libpmemobj++/container/concurrent_hash_map.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;vector&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div><div class="line"></div><div class="line"><span class="comment">// In this example we will be using concurrent_hash_map with p&lt;int&gt; type for</span></div><div class="line"><span class="comment">// both keys and values</span></div><div class="line"><span class="keyword">using</span> hashmap_type = <a class="code" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map&lt;p&lt;int&gt;</a>, <a class="code" href="classpmem_1_1obj_1_1p.html">p&lt;int&gt;</a>&gt;;</div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> THREADS_NUM = 30;</div><div class="line"><span class="keyword">const</span> <span class="keywordtype">bool</span> remove_hashmap = <span class="keyword">true</span>;</div><div class="line"></div><div class="line"><span class="comment">// This is basic example and we only need to use concurrent_hash_map. Hence we</span></div><div class="line"><span class="comment">// will correlate memory pool root object with single instance of persistent</span></div><div class="line"><span class="comment">// pointer to hasmap_type</span></div><div class="line"><span class="keyword">struct </span>root {</div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;hashmap_type&gt;</a> pptr;</div><div class="line">};</div><div class="line"></div><div class="line"><span class="keywordtype">int</span></div><div class="line">main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div><div class="line">{</div><div class="line">    <span class="keywordflow">if</span> (argc != 2)</div><div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;usage: &quot;</span> &lt;&lt; argv[0] &lt;&lt; <span class="stringliteral">&quot; file-name&quot;</span> &lt;&lt; std::endl;</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> path = argv[1];</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;concurrent_hash_map example&quot;</span>);</div><div class="line">    <span class="keyword">auto</span> r = pop.root();</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (r-&gt;pptr == <span class="keyword">nullptr</span>) {</div><div class="line">        <span class="comment">// Logic when file didn&#39;t exist when open() was called. After</span></div><div class="line">        <span class="comment">// the pool was created, we have to allocate object of</span></div><div class="line">        <span class="comment">// hashmap_type and attach it to the root object.</span></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a>(pop, [&amp;] {</div><div class="line">            r-&gt;pptr = make_persistent&lt;hashmap_type&gt;();</div><div class="line">        });</div><div class="line">    } <span class="keywordflow">else</span> {</div><div class="line">        <span class="comment">// Logic when file already exists. After opening of the pool we</span></div><div class="line">        <span class="comment">// have to call runtime_initialize() function in order to</span></div><div class="line">        <span class="comment">// recalculate mask and check for consistentcy.</span></div><div class="line"></div><div class="line">        pop.root()-&gt;pptr-&gt;runtime_initialize();</div><div class="line"></div><div class="line">        <span class="comment">// defragment the whole pool at the beginning</span></div><div class="line">        pop.root()-&gt;pptr-&gt;defragment();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> &amp;map = *pop.root()-&gt;pptr;</div><div class="line"></div><div class="line">    std::vector&lt;std::thread&gt; threads;</div><div class="line">    threads.reserve(static_cast&lt;size_t&gt;(THREADS_NUM));</div><div class="line"></div><div class="line">    <span class="comment">// Insert THREADS_NUM / 3 key-value pairs to the hashmap. This operation</span></div><div class="line">    <span class="comment">// is thread-safe.</span></div><div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; THREADS_NUM / 3; ++i) {</div><div class="line">        threads.emplace_back([&amp;]() {</div><div class="line">            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10 * THREADS_NUM; ++i) {</div><div class="line">                map.insert(hashmap_type::value_type(i, i));</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Erase THREADS_NUM /3 key-value pairs from the hashmap. This operation</span></div><div class="line">    <span class="comment">// is thread-safe.</span></div><div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; THREADS_NUM / 3; ++i) {</div><div class="line">        threads.emplace_back([&amp;]() {</div><div class="line">            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10 * THREADS_NUM; ++i) {</div><div class="line">                map.erase(i);</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// Check if given key is in the hashmap. For the time of an accessor</span></div><div class="line">    <span class="comment">// life, the read-write lock is taken on the item.</span></div><div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; THREADS_NUM / 3; ++i) {</div><div class="line">        threads.emplace_back([&amp;]() {</div><div class="line">            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 10 * THREADS_NUM; ++i) {</div><div class="line">                hashmap_type::accessor acc;</div><div class="line">                <span class="keywordtype">bool</span> res = map.find(acc, i);</div><div class="line"></div><div class="line">                <span class="keywordflow">if</span> (res) {</div><div class="line">                    assert(acc-&gt;first == i);</div><div class="line">                    assert(acc-&gt;second &gt;= i);</div><div class="line">                    acc-&gt;second.get_rw() += 1;</div><div class="line">                    pop.persist(acc-&gt;second);</div><div class="line">                }</div><div class="line">            }</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span> &amp;t : threads) {</div><div class="line">        t.join();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// defragment the whole pool at the end</span></div><div class="line">    map.defragment();</div><div class="line"></div><div class="line">    <span class="comment">// Erase remaining itemes in map. This function is not thread-safe,</span></div><div class="line">    <span class="comment">// hence the function is being called only after thread execution has</span></div><div class="line">    <span class="comment">// completed.</span></div><div class="line">    map.clear();</div><div class="line"></div><div class="line">    <span class="comment">// If hash map is to be removed, free_data() method should be called</span></div><div class="line">    <span class="comment">// first. Otherwise, if deallocating internal hash map metadata in</span></div><div class="line">    <span class="comment">// a destructor fail program might terminate.</span></div><div class="line">    <span class="keywordflow">if</span> (remove_hashmap) {</div><div class="line">        map.free_data();</div><div class="line"></div><div class="line">        <span class="comment">// map.clear() // WRONG</span></div><div class="line">        <span class="comment">// After free_data() concurrent hash map cannot be used anymore!</span></div><div class="line"></div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">            delete_persistent&lt;hashmap_type&gt;(pop.root()-&gt;pptr);</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    pop.close();</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> 0;</div><div class="line">}</div><div class="line"></div></div><!-- fragment --></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af413fb72ac263c4c72edccdf0123a973"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af413fb72ac263c4c72edccdf0123a973">&#9670;&nbsp;</a></span>concurrent_hash_map()</h2>
 
@@ -461,6 +484,96 @@ template&lt;typename K , typename  = typename std::enable_if&lt;			  concurrent_
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if called inside transaction </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a854c72fb2c1466b7f7e5fc26cf94f374"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a854c72fb2c1466b7f7e5fc26cf94f374">&#9670;&nbsp;</a></span>defrag_save_nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::defrag_save_nodes </td>
+          <td>(</td>
+          <td class="paramtype">bucket *&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1defrag.html">pmem::obj::defrag</a> &amp;&#160;</td>
+          <td class="paramname"><em>defrag</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal method used by <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#afd573b5dd87d540652e9c63e9e195fd1" title="Defragment the given (by &#39;start_percent&#39; and &#39;amount_percent&#39;) part of buckets of the hash map.">defragment()</a>. </p>
+<p>Adds nodes to the defragmentation list. </p>
+
+</div>
+</div>
+<a id="afd573b5dd87d540652e9c63e9e195fd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd573b5dd87d540652e9c63e9e195fd1">&#9670;&nbsp;</a></span>defragment()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pobj_defrag_result <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::defragment </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>start_percent</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>amount_percent</em> = <code>100</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Defragment the given (by 'start_percent' and 'amount_percent') part of buckets of the hash map. </p>
+<p>The algorithm is 'opportunistic' - if it is not able to lock a bucket it will just skip it.</p>
+<dl class="section return"><dt>Returns</dt><dd>result struct containing a number of relocated and total processed objects.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::range_error</td><td>if the range: [start_percent, start_percent + amount_percent] is incorrect.</td></tr>
+    <tr><td class="paramname">rethrows</td><td><a class="el" href="classpmem_1_1defrag__error.html" title="Custom defrag error class.">pmem::defrag_error</a> when a failure during defragmentation occurs. Even if this error is thrown, some of objects could have been relocated, see in such case <a class="el" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7" title="Results of the defragmentation run.">defrag_error.result</a> for summary stats. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1272,6 +1385,156 @@ template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename
 
 </div>
 </div>
+<a id="aded92bc959c27193d8a4b966171a3a19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aded92bc959c27193d8a4b966171a3a19">&#9670;&nbsp;</a></span>insert_or_assign() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<div class="memtemplate">
+template&lt;typename M &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::insert_or_assign </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">M &amp;&amp;&#160;</td>
+          <td class="paramname"><em>obj</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Inserts item if there is no such key present already, assigns provided value otherwise. </p>
+<dl class="section return"><dt>Returns</dt><dd>return true if the insertion took place and false if the assignment took place. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>on allocation failure. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if called inside transaction </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aebdefd9e84690758cc0c6803e1be1cf0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebdefd9e84690758cc0c6803e1be1cf0">&#9670;&nbsp;</a></span>insert_or_assign() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<div class="memtemplate">
+template&lt;typename M &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::insert_or_assign </td>
+          <td>(</td>
+          <td class="paramtype">key_type &amp;&amp;&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">M &amp;&amp;&#160;</td>
+          <td class="paramname"><em>obj</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Inserts item if there is no such key present already, assigns provided value otherwise. </p>
+<dl class="section return"><dt>Returns</dt><dd>return true if the insertion took place and false if the assignment took place. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>on allocation failure. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if called inside transaction </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7eac81173be23680ca9d7ce613133e4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eac81173be23680ca9d7ce613133e4c">&#9670;&nbsp;</a></span>insert_or_assign() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename M , typename  = typename std::enable_if&lt;			concurrent_hash_map_internal::has_transparent_key_equal&lt;				hasher&gt;::value &amp;&amp;				std::is_constructible&lt;key_type, K&gt;::value,			K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::insert_or_assign </td>
+          <td>(</td>
+          <td class="paramtype">K &amp;&amp;&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">M &amp;&amp;&#160;</td>
+          <td class="paramname"><em>obj</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Inserts item if there is no such key-comparable type present already, assigns provided value otherwise. </p>
+<dl class="section return"><dt>Returns</dt><dd>return true if the insertion took place and false if the assignment took place. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>on allocation failure. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if called inside transaction </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a43cef0fd273e35db65f8247a851792df"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a43cef0fd273e35db65f8247a851792df">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
 
@@ -1379,8 +1642,8 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual , type
 
 </div>
 </div>
-<a id="ae10a25e3463219758c60927a0915aa93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae10a25e3463219758c60927a0915aa93">&#9670;&nbsp;</a></span>runtime_initialize()</h2>
+<a id="af1ca0393b5537618390728c764544a2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1ca0393b5537618390728c764544a2e">&#9670;&nbsp;</a></span>runtime_initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1393,8 +1656,7 @@ template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename
         <tr>
           <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::runtime_initialize </td>
           <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>graceful_shutdown</em> = <code>false</code></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1405,8 +1667,8 @@ template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename
 </table>
 </div><div class="memdoc">
 
-<p>Intialize persistent concurrent hash map after process restart. </p>
-<p>MUST be called everytime after process restart. Not thread safe.</p>
+<p>Initialize persistent concurrent hash map after process restart. </p>
+<p>MUST be called every time after process restart. Not thread safe.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1layout__error.html" title="Custom layout error class.">pmem::layout_error</a></td><td>if hashmap was created using incompatible version of libpmemobj-cpp </td></tr>

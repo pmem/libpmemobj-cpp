@@ -103,7 +103,7 @@ is_defragmentable() noexcept
  * When defragmentation is called/run, all objects previously stored
  * will be a subject of a defragmentation process.
  *
- * Important note: an instance of this class should collect pointers
+ * Important note: an instance of this class can collect pointers
  * only from one pmem::obj::pool instance.
  *
  * The typical usage example would be:
@@ -130,6 +130,8 @@ public:
 	 * It's to be called on objects (most likely containers), which are
 	 * defragmentable (they implement 'for_each_ptr' method).
 	 *
+	 * @param[in] t object of type T to be added for the defragmentation.
+	 *
 	 * @throw std::runtime_error when object t is not from the pool
 	 *	passed in ctor.
 	 */
@@ -152,8 +154,10 @@ public:
 	 * It's to be called on (most likely trivial) types, which are NOT
 	 * defragmentable - it means they don't implement 'for_each_ptr' method.
 	 *
-	 * Thanks to that specialization there's no need to check for each
+	 * Thanks to this specialization there's no need to check for each
 	 * object, if it's defragmentable, before calling 'add()'.
+	 *
+	 * @param[in] t object of type T to be added for the defragmentation.
 	 *
 	 * @throw std::runtime_error when object t is not from the pool
 	 *	passed in ctor.
@@ -173,6 +177,9 @@ public:
 	 * It's to be called for a 'persistent_ptr<T>' objects.
 	 * If 'is_defragmentable<T>()' returns true, the underlying (T) object
 	 * will also be added for the defragmentation.
+	 *
+	 * @param[in] ptr reference of the persistent_ptr to be added
+	 *	for the defragmentation.
 	 *
 	 * @throw std::runtime_error when ptr does not point to an object
 	 *	from the pool passed in ctor.

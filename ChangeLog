@@ -1,6 +1,6 @@
-Thu Jan 30 2020 Szymon Romik <szymon.romik@intel.com>
+Fri Jan 31 2020 Szymon Romik <szymon.romik@intel.com>
 
-	* Version 1.9-rc2
+	* Version 1.9
 
 	This release moves segment_vector out of experimental namespace and
 	directory. It means that abovementioned container is guaranteed to have

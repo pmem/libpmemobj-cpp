@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -79,7 +79,9 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="atomic__backoff_8hpp_source.html">libpmemobj++/detail/atomic_backoff.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
+<code>#include &lt;libpmemobj++/detail/pair.hpp&gt;</code><br />
 <code>#include &lt;<a class="el" href="template__helpers_8hpp_source.html">libpmemobj++/detail/template_helpers.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="defrag_8hpp_source.html">libpmemobj++/defrag.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="make__persistent_8hpp_source.html">libpmemobj++/make_persistent.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="mutex_8hpp_source.html">libpmemobj++/mutex.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="p_8hpp_source.html">libpmemobj++/p.hpp</a>&gt;</code><br />
@@ -87,6 +89,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="transaction_8hpp_source.html">libpmemobj++/transaction.hpp</a>&gt;</code><br />
 <code>#include &lt;libpmemobj++/detail/persistent_pool_ptr.hpp&gt;</code><br />
 <code>#include &lt;<a class="el" href="shared__mutex_8hpp_source.html">libpmemobj++/shared_mutex.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="enumerable__thread__specific_8hpp_source.html">libpmemobj++/detail/enumerable_thread_specific.hpp</a>&gt;</code><br />
 <code>#include &lt;atomic&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
@@ -97,6 +100,7 @@ $(function() {
 <code>#include &lt;thread&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div>
 <p><a href="concurrent__hash__map_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -122,6 +126,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1accessor.html">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::accessor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows write access to elements and combines data access, locking, and garbage collection.  <a href="classpmem_1_1obj_1_1concurrent__hash__map_1_1accessor.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map_1_1mutex__vector.html">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::mutex_vector</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vector of locks to be unlocked at the destruction time.  <a href="classpmem_1_1obj_1_1concurrent__hash__map_1_1mutex__vector.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>

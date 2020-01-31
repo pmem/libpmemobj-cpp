@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -157,6 +157,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a1b5f6a903bdedaba77186510ae1efbee"><td class="memItemLeft" align="right" valign="top">PMEMobjpool *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1pool__base.html#a1b5f6a903bdedaba77186510ae1efbee">handle</a> () noexcept</td></tr>
 <tr class="memdesc:a1b5f6a903bdedaba77186510ae1efbee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the C style handle to the pool.  <a href="#a1b5f6a903bdedaba77186510ae1efbee">More...</a><br /></td></tr>
 <tr class="separator:a1b5f6a903bdedaba77186510ae1efbee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33f80e80e1f19247d8353a61a514e4a0"><td class="memItemLeft" align="right" valign="top">pobj_defrag_result&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1pool__base.html#a33f80e80e1f19247d8353a61a514e4a0">defrag</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> **ptrv, size_t oidcnt)</td></tr>
+<tr class="memdesc:a33f80e80e1f19247d8353a61a514e4a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts defragmentation using selected pointers within this pool.  <a href="#a33f80e80e1f19247d8353a61a514e4a0">More...</a><br /></td></tr>
+<tr class="separator:a33f80e80e1f19247d8353a61a514e4a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -471,6 +474,58 @@ Static Public Member Functions</h2></td></tr>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pmem::pool_error</a></td><td>when an error during creation occurs. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a33f80e80e1f19247d8353a61a514e4a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33f80e80e1f19247d8353a61a514e4a0">&#9670;&nbsp;</a></span>defrag()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pobj_defrag_result pmem::obj::pool_base::defrag </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr__base.html">persistent_ptr_base</a> **&#160;</td>
+          <td class="paramname"><em>ptrv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>oidcnt</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Starts defragmentation using selected pointers within this pool. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptrv</td><td>pointer to contiguous space containing <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>'s for defrag. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">oidcnt</td><td>number of <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>'s passed (in ptrv). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>result struct containing a number of relocated and total processed objects.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1defrag__error.html" title="Custom defrag error class.">pmem::defrag_error</a></td><td>when a failure during defragmentation occurs. Even if this error is thrown, some of the objects could have been relocated, see <a class="el" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7" title="Results of the defragmentation run.">defrag_error.result</a> for summary stats. </td></tr>
   </table>
   </dd>
 </dl>

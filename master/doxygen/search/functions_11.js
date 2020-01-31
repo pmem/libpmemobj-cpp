@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['thread_5fid_5ftype',['thread_id_type',['../structpmem_1_1detail_1_1thread__id__type.html#ae6994bc90b1f2ef57adbff122222d37d',1,'pmem::detail::thread_id_type']]],
   ['timed_5fmutex',['timed_mutex',['../classpmem_1_1obj_1_1timed__mutex.html#a432952ca0affc6baab420fceda7c37b4',1,'pmem::obj::timed_mutex::timed_mutex()'],['../classpmem_1_1obj_1_1timed__mutex.html#a72c61d0dd7d100d7d494da1111f502cc',1,'pmem::obj::timed_mutex::timed_mutex(const timed_mutex &amp;)=delete']]],
   ['timedlock_5fimpl',['timedlock_impl',['../classpmem_1_1obj_1_1timed__mutex.html#ad3661edbe31f8f2d1b536f8182f2b879',1,'pmem::obj::timed_mutex']]],
   ['timepoint_5fto_5ftimespec',['timepoint_to_timespec',['../namespacepmem_1_1detail.html#af01e97a9018816a35f80bd32f50b66a8',1,'pmem::detail']]],

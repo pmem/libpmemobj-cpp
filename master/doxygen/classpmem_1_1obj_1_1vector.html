@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.8</span>
+   &#160;<span id="projectnumber">1.9-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -229,6 +229,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3b3cd8767f646f9c9c7c511a914e20a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1slice.html">slice</a>&lt; const_iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1vector.html#a3b3cd8767f646f9c9c7c511a914e20a4">crange</a> (size_type start, size_type n) const</td></tr>
 <tr class="memdesc:a3b3cd8767f646f9c9c7c511a914e20a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns const slice.  <a href="#a3b3cd8767f646f9c9c7c511a914e20a4">More...</a><br /></td></tr>
 <tr class="separator:a3b3cd8767f646f9c9c7c511a914e20a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ee4388c6d44ace9bfca36344fa6dfcc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1vector.html#a9ee4388c6d44ace9bfca36344fa6dfcc">for_each_ptr</a> (for_each_ptr_function func)</td></tr>
+<tr class="memdesc:a9ee4388c6d44ace9bfca36344fa6dfcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterates over all internal pointers and executes a callback function on each of them.  <a href="#a9ee4388c6d44ace9bfca36344fa6dfcc">More...</a><br /></td></tr>
+<tr class="separator:a9ee4388c6d44ace9bfca36344fa6dfcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade9426cd275c6c3094d2700674bf7b07"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1vector.html#ade9426cd275c6c3094d2700674bf7b07">empty</a> () const noexcept</td></tr>
 <tr class="memdesc:ade9426cd275c6c3094d2700674bf7b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether the container is empty.  <a href="#ade9426cd275c6c3094d2700674bf7b07">More...</a><br /></td></tr>
 <tr class="separator:ade9426cd275c6c3094d2700674bf7b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2238,6 +2241,35 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a9ee4388c6d44ace9bfca36344fa6dfcc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ee4388c6d44ace9bfca36344fa6dfcc">&#9670;&nbsp;</a></span>for_each_ptr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a>&lt; T &gt;::for_each_ptr </td>
+          <td>(</td>
+          <td class="paramtype">for_each_ptr_function&#160;</td>
+          <td class="paramname"><em>func</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Iterates over all internal pointers and executes a callback function on each of them. </p>
+<p>In this implementation, it is just a single pointer.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">func</td><td>callback function to call on internal pointer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a1eb0f817ca0158756caf9eb02ce00298"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1eb0f817ca0158756caf9eb02ce00298">&#9670;&nbsp;</a></span>free_data()</h2>
 
@@ -3019,7 +3051,7 @@ template&lt;typename T &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>desctructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
   </table>
   </dd>
 </dl>

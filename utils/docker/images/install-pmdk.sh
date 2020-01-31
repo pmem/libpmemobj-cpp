@@ -38,8 +38,8 @@ set -e
 
 PACKAGE_MANAGER=$1
 
-# devel-1.8: Merge pull request #4516 from marcinslusarz/test-pthread, 28.01.2020
-PMDK_VERSION="6baf149494c3f8859816d0a1222cc66bee3a3bc1"
+# tag: 1.8, 31.01.2020
+PMDK_VERSION="1.8"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

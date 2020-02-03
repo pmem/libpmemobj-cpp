@@ -1,0 +1,10 @@
+<map id="libpmemobj++/make_persistent.hpp" name="libpmemobj++/make_persistent.hpp">
+<area shape="rect" id="node2" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509.02235. " alt="" coords="5,541,184,583"/>
+<area shape="rect" id="node3" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="86,363,247,404"/>
+<area shape="rect" id="node5" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="206,169,367,211"/>
+<area shape="rect" id="node9" href="$temp__value_8hpp.html" title="temp_value template class for caching objects. " alt="" coords="111,80,249,121"/>
+<area shape="rect" id="node4" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage. " alt="" coords="60,452,273,493"/>
+<area shape="rect" id="node6" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface. " alt="" coords="399,266,561,307"/>
+<area shape="rect" id="node8" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="162,259,323,315"/>
+<area shape="rect" id="node7" href="$string_8hpp.html" title="String typedefs for common character types. " alt="" coords="399,363,561,404"/>
+</map>

@@ -12,6 +12,7 @@ scoped and closure transactions, locking primitives and many others.
 Doxygen documentation is available:
 
 * documentation for current [master](http://pmem.io/libpmemobj-cpp/master/doxygen/index.html)
+* documentation for [v1.9](http://pmem.io/libpmemobj-cpp/v1.9/doxygen/index.html)
 * documentation for [v1.8](http://pmem.io/libpmemobj-cpp/v1.8/doxygen/index.html)
 * documentation for [v1.7](http://pmem.io/libpmemobj-cpp/v1.7/doxygen/index.html)
 * documentation for [v1.6](http://pmem.io/libpmemobj-cpp/v1.6/doxygen/index.html)

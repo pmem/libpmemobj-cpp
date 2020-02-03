@@ -1,0 +1,9 @@
+<map id="libpmemobj++/detail/iterator_traits.hpp" name="libpmemobj++/detail/iterator_traits.hpp">
+<area shape="rect" id="node2" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface. " alt="" coords="5,191,167,233"/>
+<area shape="rect" id="node4" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="173,95,335,136"/>
+<area shape="rect" id="node3" href="$string_8hpp.html" title="String typedefs for common character types. " alt="" coords="5,288,167,329"/>
+<area shape="rect" id="node5" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="191,184,352,240"/>
+<area shape="rect" id="node6" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="249,288,411,329"/>
+<area shape="rect" id="node7" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage. " alt="" coords="223,377,437,419"/>
+<area shape="rect" id="node8" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509.02235. " alt="" coords="241,467,419,508"/>
+</map>

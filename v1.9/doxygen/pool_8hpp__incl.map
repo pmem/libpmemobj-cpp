@@ -1,0 +1,9 @@
+<map id="libpmemobj++/pool.hpp" name="libpmemobj++/pool.hpp">
+<area shape="rect" id="node10" href="$common_8hpp.html" title="Commonly used functionality. " alt="" coords="1206,169,1345,211"/>
+<area shape="rect" id="node11" href="$pexceptions_8hpp.html" title="Custom exceptions. " alt="" coords="945,259,1147,285"/>
+<area shape="rect" id="node18" href="$ctl_8hpp.html" title="C++ ctl api. " alt="" coords="821,169,959,211"/>
+<area shape="rect" id="node22" href="$pool__data_8hpp.html" title="A volatile data stored along with pmemobjpool. " alt="" coords="705,80,843,121"/>
+<area shape="rect" id="node24" href="$p_8hpp.html" title="Resides on pmem property template. " alt="" coords="1224,87,1364,114"/>
+<area shape="rect" id="node27" href="$persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr. " alt="" coords="1406,80,1571,121"/>
+<area shape="rect" id="node26" href="$specialization_8hpp.html" title="Helper template for persistent ptr specialization. " alt="" coords="1419,169,1558,211"/>
+</map>

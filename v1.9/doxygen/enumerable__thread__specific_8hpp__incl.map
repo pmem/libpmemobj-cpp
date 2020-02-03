@@ -1,0 +1,29 @@
+<map id="libpmemobj++/detail/enumerable_thread_specific.hpp" name="libpmemobj++/detail/enumerable_thread_specific.hpp">
+<area shape="rect" id="node2" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="1239,95,1401,136"/>
+<area shape="rect" id="node8" href="$common_8hpp.html" title="Commonly used functionality. " alt="" coords="916,1003,1055,1044"/>
+<area shape="rect" id="node44" href="$mutex_8hpp.html" title="Pmem&#45;resident mutex. " alt="" coords="2650,1010,2819,1037"/>
+<area shape="rect" id="node46" href="$shared__mutex_8hpp.html" title="Pmem&#45;resident shared mutex. " alt="" coords="2844,1003,2991,1044"/>
+<area shape="rect" id="node3" href="$array_8hpp.html" title="Array container with std::array compatible interface. " alt="" coords="491,638,653,679"/>
+<area shape="rect" id="node14" href="$persistent__ptr_8hpp.html" title="Persistent smart pointer. " alt="" coords="1843,735,2008,776"/>
+<area shape="rect" id="node26" href="$pext_8hpp.html" title="Convenience extensions for the resides on pmem property template. " alt="" coords="1227,742,1386,769"/>
+<area shape="rect" id="node28" href="$transaction_8hpp.html" title="C++ pmemobj transactions. " alt="" coords="296,742,493,769"/>
+<area shape="rect" id="node29" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="998,184,1159,240"/>
+<area shape="rect" id="node30" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="998,288,1159,329"/>
+<area shape="rect" id="node32" href="$life_8hpp.html" title="Functions for destroying arrays. " alt="" coords="2147,638,2285,679"/>
+<area shape="rect" id="node36" href="$temp__value_8hpp.html" title="temp_value template class for caching objects. " alt="" coords="1459,377,1597,419"/>
+<area shape="rect" id="node37" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects. " alt="" coords="1520,467,1749,493"/>
+<area shape="rect" id="node43" href="$template__helpers_8hpp.html" title="Commonly used SFINAE helpers. " alt="" coords="1673,288,1823,329"/>
+<area shape="rect" id="node6" href="$contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers. " alt="" coords="721,735,917,776"/>
+<area shape="rect" id="node27" href="$slice_8hpp.html" title="Interface to access sequence of objects. " alt="" coords="1043,742,1203,769"/>
+<area shape="rect" id="node9" href="$pexceptions_8hpp.html" title="Custom exceptions. " alt="" coords="1209,1092,1412,1119"/>
+<area shape="rect" id="node18" href="$specialization_8hpp.html" title="Helper template for persistent ptr specialization. " alt="" coords="1699,1003,1837,1044"/>
+<area shape="rect" id="node19" href="$persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr. " alt="" coords="1621,913,1787,955"/>
+<area shape="rect" id="node21" href="$pool_8hpp.html" title="C++ pmemobj pool. " alt="" coords="1064,831,1221,858"/>
+<area shape="rect" id="node31" href="$iterator__traits_8hpp.html" title="Common iterator traits. " alt="" coords="879,377,1017,419"/>
+<area shape="rect" id="node34" href="$array__traits_8hpp.html" title="Common array traits. " alt="" coords="2133,735,2272,776"/>
+<area shape="rect" id="node35" href="$integer__sequence_8hpp.html" title="Create c++14 style index sequence. " alt="" coords="2218,824,2371,865"/>
+<area shape="rect" id="node38" href="$allocation__flag_8hpp.html" title="allocation_flag &#45; defines flags which can be passed to make_persistent " alt="" coords="2411,638,2573,679"/>
+<area shape="rect" id="node39" href="$check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent. " alt="" coords="1875,631,2021,687"/>
+<area shape="rect" id="node40" href="$variadic_8hpp.html" title="Helper functionality for handling variadic templates. " alt="" coords="1509,638,1648,679"/>
+<area shape="rect" id="node41" href="$make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays. " alt="" coords="1629,541,1833,583"/>
+</map>

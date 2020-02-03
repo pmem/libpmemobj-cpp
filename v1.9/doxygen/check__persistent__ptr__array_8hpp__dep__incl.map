@@ -1,0 +1,14 @@
+<map id="libpmemobj++/detail/check_persistent_ptr_array.hpp" name="libpmemobj++/detail/check_persistent_ptr_array.hpp">
+<area shape="rect" id="node2" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects. " alt="" coords="12,206,241,233"/>
+<area shape="rect" id="node11" href="$make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays. " alt="" coords="63,109,267,151"/>
+<area shape="rect" id="node12" href="$make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays. " alt="" coords="291,109,495,151"/>
+<area shape="rect" id="node13" href="$make__persistent__atomic_8hpp.html" title="Persistent_ptr atomic allocation functions for objects. " alt="" coords="329,199,533,240"/>
+<area shape="rect" id="node3" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509.02235. " alt="" coords="5,749,184,791"/>
+<area shape="rect" id="node4" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="86,571,247,612"/>
+<area shape="rect" id="node6" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="206,377,367,419"/>
+<area shape="rect" id="node10" href="$temp__value_8hpp.html" title="temp_value template class for caching objects. " alt="" coords="111,288,249,329"/>
+<area shape="rect" id="node5" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage. " alt="" coords="60,660,273,701"/>
+<area shape="rect" id="node7" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface. " alt="" coords="399,474,561,515"/>
+<area shape="rect" id="node9" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="162,467,323,523"/>
+<area shape="rect" id="node8" href="$string_8hpp.html" title="String typedefs for common character types. " alt="" coords="399,571,561,612"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="pmem::obj::persistent_ptr_base" name="pmem::obj::persistent_ptr_base">
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="pmem::obj::persistent\l_ptr\&lt; node \&gt;" alt="" coords="201,5,349,47"/>
+<area shape="rect" id="node3" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="pmem::obj::persistent\l_ptr\&lt; T[]\&gt;" alt="" coords="201,71,349,112"/>
+<area shape="rect" id="node4" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="pmem::obj::persistent\l_ptr\&lt; value_type []\&gt;" alt="" coords="201,136,349,177"/>
+<area shape="rect" id="node5" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class. " alt="" coords="201,201,349,243"/>
+<area shape="rect" id="node6" href="$classpmem_1_1obj_1_1persistent__ptr_3_01const_01void_01_4.html" title="persistent_ptr const void specialization. " alt="" coords="201,267,349,308"/>
+<area shape="rect" id="node7" href="$classpmem_1_1obj_1_1persistent__ptr_3_01void_01_4.html" title="persistent_ptr void specialization. " alt="" coords="201,332,349,373"/>
+</map>

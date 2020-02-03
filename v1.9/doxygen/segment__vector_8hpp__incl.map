@@ -1,0 +1,27 @@
+<map id="libpmemobj++/container/segment_vector.hpp" name="libpmemobj++/container/segment_vector.hpp">
+<area shape="rect" id="node2" href="$array_8hpp.html" title="Array container with std::array compatible interface. " alt="" coords="958,549,1119,590"/>
+<area shape="rect" id="node7" href="$common_8hpp.html" title="Commonly used functionality. " alt="" coords="1423,913,1561,955"/>
+<area shape="rect" id="node16" href="$persistent__ptr_8hpp.html" title="Persistent smart pointer. " alt="" coords="960,645,1125,687"/>
+<area shape="rect" id="node30" href="$pext_8hpp.html" title="Convenience extensions for the resides on pmem property template. " alt="" coords="507,653,666,679"/>
+<area shape="rect" id="node34" href="$transaction_8hpp.html" title="C++ pmemobj transactions. " alt="" coords="285,653,483,679"/>
+<area shape="rect" id="node36" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="921,95,1082,151"/>
+<area shape="rect" id="node37" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="1438,199,1599,240"/>
+<area shape="rect" id="node39" href="$life_8hpp.html" title="Functions for destroying arrays. " alt="" coords="2897,549,3036,590"/>
+<area shape="rect" id="node43" href="$temp__value_8hpp.html" title="temp_value template class for caching objects. " alt="" coords="2023,288,2161,329"/>
+<area shape="rect" id="node44" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects. " alt="" coords="2413,377,2643,404"/>
+<area shape="rect" id="node50" href="$template__helpers_8hpp.html" title="Commonly used SFINAE helpers. " alt="" coords="2827,199,2978,240"/>
+<area shape="rect" id="node5" href="$contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers. " alt="" coords="1251,645,1447,687"/>
+<area shape="rect" id="node32" href="$slice_8hpp.html" title="Interface to access sequence of objects. " alt="" coords="1675,653,1835,679"/>
+<area shape="rect" id="node8" href="$pexceptions_8hpp.html" title="Custom exceptions. " alt="" coords="1145,1003,1348,1029"/>
+<area shape="rect" id="node20" href="$specialization_8hpp.html" title="Helper template for persistent ptr specialization. " alt="" coords="1092,913,1231,955"/>
+<area shape="rect" id="node21" href="$persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr. " alt="" coords="1188,824,1353,865"/>
+<area shape="rect" id="node24" href="$pool_8hpp.html" title="C++ pmemobj pool. " alt="" coords="672,742,829,769"/>
+<area shape="rect" id="node29" href="$p_8hpp.html" title="Resides on pmem property template. " alt="" coords="922,831,1062,858"/>
+<area shape="rect" id="node38" href="$iterator__traits_8hpp.html" title="Common iterator traits. " alt="" coords="1607,288,1745,329"/>
+<area shape="rect" id="node41" href="$array__traits_8hpp.html" title="Common array traits. " alt="" coords="2589,645,2728,687"/>
+<area shape="rect" id="node42" href="$integer__sequence_8hpp.html" title="Create c++14 style index sequence. " alt="" coords="2722,735,2875,776"/>
+<area shape="rect" id="node45" href="$allocation__flag_8hpp.html" title="allocation_flag &#45; defines flags which can be passed to make_persistent " alt="" coords="2447,549,2609,590"/>
+<area shape="rect" id="node46" href="$check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent. " alt="" coords="1972,541,2119,597"/>
+<area shape="rect" id="node47" href="$variadic_8hpp.html" title="Helper functionality for handling variadic templates. " alt="" coords="2684,549,2823,590"/>
+<area shape="rect" id="node48" href="$make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays. " alt="" coords="2257,452,2461,493"/>
+</map>

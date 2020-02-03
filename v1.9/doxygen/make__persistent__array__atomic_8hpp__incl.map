@@ -1,0 +1,18 @@
+<map id="libpmemobj++/make_persistent_array_atomic.hpp" name="libpmemobj++/make_persistent_array_atomic.hpp">
+<area shape="rect" id="node2" href="$allocation__flag_8hpp.html" title="allocation_flag &#45; defines flags which can be passed to make_persistent " alt="" coords="37,199,200,240"/>
+<area shape="rect" id="node4" href="$array__traits_8hpp.html" title="Common array traits. " alt="" coords="2296,288,2435,329"/>
+<area shape="rect" id="node6" href="$check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent. " alt="" coords="1616,95,1763,151"/>
+<area shape="rect" id="node12" href="$common_8hpp.html" title="Commonly used functionality. " alt="" coords="496,467,635,508"/>
+<area shape="rect" id="node13" href="$pexceptions_8hpp.html" title="Custom exceptions. " alt="" coords="1112,556,1315,583"/>
+<area shape="rect" id="node39" href="$make__atomic__impl_8hpp.html" title="Implementation details of atomic allocation and construction. " alt="" coords="2148,102,2308,143"/>
+<area shape="rect" id="node44" href="$variadic_8hpp.html" title="Helper functionality for handling variadic templates. " alt="" coords="2517,102,2656,143"/>
+<area shape="rect" id="node7" href="$persistent__ptr_8hpp.html" title="Persistent smart pointer. " alt="" coords="372,199,537,240"/>
+<area shape="rect" id="node20" href="$specialization_8hpp.html" title="Helper template for persistent ptr specialization. " alt="" coords="144,467,283,508"/>
+<area shape="rect" id="node21" href="$persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr. " alt="" coords="360,377,525,419"/>
+<area shape="rect" id="node24" href="$pool_8hpp.html" title="C++ pmemobj pool. " alt="" coords="1033,295,1191,322"/>
+<area shape="rect" id="node31" href="$ctl_8hpp.html" title="C++ ctl api. " alt="" coords="764,467,903,508"/>
+<area shape="rect" id="node35" href="$pool__data_8hpp.html" title="A volatile data stored along with pmemobjpool. " alt="" coords="989,377,1128,419"/>
+<area shape="rect" id="node37" href="$p_8hpp.html" title="Resides on pmem property template. " alt="" coords="195,385,335,411"/>
+<area shape="rect" id="node41" href="$integer__sequence_8hpp.html" title="Create c++14 style index sequence. " alt="" coords="2118,288,2271,329"/>
+<area shape="rect" id="node42" href="$life_8hpp.html" title="Functions for destroying arrays. " alt="" coords="2011,199,2149,240"/>
+</map>

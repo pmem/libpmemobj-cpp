@@ -177,4 +177,4 @@ done
 
 # Getting here means rebuilding the Docker image is not required.
 # Pull the image from Docker Hub.
-docker pull ${DOCKERHUB_REPO}:1.9-${OS}-${OS_VER}
+docker pull ${DOCKERHUB_REPO}:1.10-${OS}-${OS_VER}

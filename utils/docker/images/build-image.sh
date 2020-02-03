@@ -62,8 +62,8 @@ if [[ ! -f "Dockerfile.$2" ]]; then
 	exit 1
 fi
 
-# Build a Docker image tagged with ${DOCKERHUB_REPO}:1.9-OS-VER
-docker build -t $1:1.9-$2 \
+# Build a Docker image tagged with ${DOCKERHUB_REPO}:1.10-OS-VER
+docker build -t $1:1.10-$2 \
 	--build-arg http_proxy=$http_proxy \
 	--build-arg https_proxy=$https_proxy \
 	-f Dockerfile.$2 .

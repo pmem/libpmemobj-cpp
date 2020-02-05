@@ -5,7 +5,8 @@ coverage:
         threshold: 0.2
 
   ignore:
-    - utils/
-    - tests/
+    - benchmarks/
     - doc/
     - examples/
+    - tests/
+    - utils/

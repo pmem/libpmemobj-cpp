@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ git rebase upstream/master
 mkdir build
 cd build
 
-cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ..
+cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF ..
 make -j$(nproc) doc
 cp -R doc/cpp_html ../..
 

@@ -163,8 +163,6 @@ if(BUILD_TESTS OR BUILD_EXAMPLES)
 	include(tbb)
 endif()
 
-add_executable(check_license EXCLUDE_FROM_ALL utils/check_license/check-license.c)
-
 add_custom_target(checkers ALL)
 add_custom_target(cppstyle)
 add_custom_target(cppformat)
@@ -172,9 +170,7 @@ add_custom_target(check-whitespace)
 add_custom_target(check-license
 	COMMAND ${CMAKE_SOURCE_DIR}/utils/check_license/check-headers.sh
 		${CMAKE_SOURCE_DIR}
-		${CMAKE_BINARY_DIR}/check_license
-		${CMAKE_SOURCE_DIR}/LICENSE)
-add_dependencies(check-license check_license)
+		BSD-3-Clause)
 
 add_custom_target(check-whitespace-main
 		COMMAND ${PERL_EXECUTABLE}

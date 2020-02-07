@@ -11,12 +11,12 @@ scoped and closure transactions, locking primitives and many others.
 
 Doxygen documentation is available:
 
-* documentation for current [master](./master/doxygen/index.html)
-* documentation for [v1.9](./v1.9/doxygen/index.html)
-* documentation for [v1.8](./v1.8/doxygen/index.html)
-* documentation for [v1.7](./v1.7/doxygen/index.html)
-* documentation for [v1.6](./v1.6/doxygen/index.html)
-* documentation for [v1.5](./v1.5/doxygen/index.html)
+* for current [master](./master/doxygen/index.html)
+* for [v1.9](./v1.9/doxygen/index.html)
+* for [v1.8](./v1.8/doxygen/index.html)
+* for [v1.7](./v1.7/doxygen/index.html)
+* for [v1.6](./v1.6/doxygen/index.html)
+* for [v1.5](./v1.5/doxygen/index.html)
 
 #### Blog entries
 
@@ -32,3 +32,11 @@ to the **C++ bindings**:
 * [Part 6 - Transactions](https://pmem.io/2016/05/25/cpp-07.html)
 * [Part 7 - Synchronization Primitives](https://pmem.io/2016/05/31/cpp-08.html)
 * [Part 8 - Converting Existing Applications](https://pmem.io/2016/06/02/cpp-ctree-conversion.html)
+
+There are also another blog posts regarding **C++ bindings**:
+* [Modeling strings with libpmemobj C++ bindings](https://pmem.io/2017/01/23/cpp-strings.html)
+* [Using Standard Library Containers with Persistent Memory](https://pmem.io/2017/07/10/cpp-containers.html)
+* [C++ persistent containers - array](https://pmem.io/2018/11/02/cpp-array.html)
+* [C++ persistent containers](https://pmem.io/2018/11/20/cpp-persistent-containers.html)
+* [C++ persistent containers - vector](https://pmem.io/2019/02/20/cpp-vector.html)
+* [C++ standard limitations and Persistent Memory](https://pmem.io/2019/10/04/cpp-limitations.html)

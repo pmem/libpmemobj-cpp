@@ -78,3 +78,27 @@ to use your real name (not an alias) when committing your changes to PMEMKV:
 ```
 Author: Random J Developer <random@developer.example.org>
 ```
+
+# Implementing persisten containers
+
+When developing a persistent container make sure you follow the rules and steps described here.
+
+# Steps
+1. Create container implementation
+2. Create doc_snippet/example
+3. Add CMake flag for enabling/disabling the container
+4. Add tests
+
+# Requirements:
+* Constructors should check whether the container is being constructed on pmem and within a transaction.
+  If not, appropriate exception should be thrown.
+* If any operation has to or is not allowed to be called inside of a transaction there should be a proper check for that.
+* Operations which modify the entire container (like operator=, clear(), etc.) should be transactional.
+* If any operation inside destructor can fail there should be a separate method like free_data/destroy.
+* Each complex container should have a mechanism for checking layout compatibility. One way is to store size of key and value on pmem and compare it with sizeof(value_type) after pool reopen.
+* Padding should always be explicit.
+* If any object from standard library is being stored on pmem its size should be verified by static_assert.
+
+# Optional features:
+* for_each_ptr method for defragmentation purposes.
+* Containers with lower memory overhead (like vector) can implement some heuristic for veryfing layout (like comparing pmemobj_alloc_usable_size with expected capacity).

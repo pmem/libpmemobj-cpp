@@ -172,6 +172,9 @@ add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
 build_test(transaction transaction/transaction.cpp)
 add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
 
+build_test(transaction_noabort transaction/transaction_noabort.cpp)
+add_test_generic(NAME transaction_noabort TRACERS none pmemcheck memcheck)
+
 if (VOLATILE_STATE_PRESENT)
 	build_test(volatile_state volatile_state/volatile_state.cpp)
 	add_test_generic(NAME volatile_state TRACERS none pmemcheck memcheck drd helgrind)

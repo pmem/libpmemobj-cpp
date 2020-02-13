@@ -423,14 +423,19 @@ public:
 	{
 		int ret = 0;
 
-		if (pmemobj_tx_stage() == TX_STAGE_NONE) {
+		bool nested = pmemobj_tx_stage() == TX_STAGE_WORK;
+
+		if (nested) {
 			ret = pmemobj_tx_begin(pool.handle(), nullptr,
 					       TX_PARAM_CB,
 					       transaction::c_callback, nullptr,
 					       TX_PARAM_NONE);
-		} else {
+		} else if (pmemobj_tx_stage() == TX_STAGE_NONE) {
 			ret = pmemobj_tx_begin(pool.handle(), nullptr,
 					       TX_PARAM_NONE);
+		} else {
+			throw pmem::transaction_scope_error(
+				"Cannot start transaction in stage different thatn WORK or NONE");
 		}
 
 		if (ret != 0)
@@ -454,9 +459,14 @@ public:
 			(void)pmemobj_tx_end();
 			throw;
 		} catch (...) {
-			/* first exception caught */
-			if (pmemobj_tx_stage() == TX_STAGE_WORK)
-				pmemobj_tx_abort(ECANCELED);
+			if (!nested) {
+				/* first exception caught */
+				if (pmemobj_tx_stage() == TX_STAGE_WORK)
+					pmemobj_tx_abort(ECANCELED);
+			} else {
+				if (pmemobj_tx_stage() == TX_STAGE_WORK)
+					pmemobj_tx_commit();
+			}
 
 			/* waterfall tx_end for outer tx */
 			(void)pmemobj_tx_end();

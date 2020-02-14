@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,6 +35,11 @@
 #
 
 set -e
+
+if [ "${SKIP_PMDK_BUILD}" ]; then
+	echo "Variable 'SKIP_PMDK_BUILD' is set; skipping building PMDK"
+	exit
+fi
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

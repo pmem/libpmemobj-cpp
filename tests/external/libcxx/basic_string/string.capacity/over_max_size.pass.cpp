@@ -52,11 +52,9 @@ test(nvobj::pool<struct root> &pop, const S &s)
 				[&] { nvobj::delete_persistent<S>(r->s2); });
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -94,6 +92,10 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

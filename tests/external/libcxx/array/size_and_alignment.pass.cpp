@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018-2019, Intel Corporation
+// Copyright 2018-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -54,15 +54,13 @@ test_type()
 // static_assert(sizeof(void*) == 4, "");
 
 int
-main()
+main(int argc, char *argv[])
 {
-	START();
-
-	test_type<char>();
-	test_type<int>();
-	test_type<double>();
-	test_type<long double>();
-	test_type<std::max_align_t>();
-
-	return 0;
+	return run_test([&] {
+		test_type<char>();
+		test_type<int>();
+		test_type<double>();
+		test_type<long double>();
+		test_type<std::max_align_t>();
+	});
 }

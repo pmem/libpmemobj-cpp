@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018-2019, Intel Corporation
+// Copyright 2018-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -23,8 +23,6 @@ struct NoCompare {
 int
 main()
 {
-	START();
-
 	int result = 0;
 	{
 		typedef NoCompare<2> T;

@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2019, Intel Corporation
+// Copyright 2019-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -69,17 +69,19 @@ test()
 #endif
 }
 
-int
-main()
+static void
+test()
 {
-	START();
-
 	test<int>();
 	test<int *>();
 
 	using C = pmem::obj::vector<int>;
 	static_assert(std::is_same<C::reference, int &>::value, "");
 	static_assert(std::is_same<C::const_reference, const int &>::value, "");
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(); });
 }

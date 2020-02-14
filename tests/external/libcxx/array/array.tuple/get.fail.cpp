@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018-2019, Intel Corporation
+// Copyright 2018-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -21,8 +21,6 @@ using pmem::obj::get;
 int
 main()
 {
-	START();
-
 	{
 		typedef double T;
 		typedef pmem::obj::array<T, 3> C;

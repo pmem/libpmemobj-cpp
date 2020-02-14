@@ -195,11 +195,9 @@ test_insert_with_reserve3(nvobj::pool_base &pop,
 	}
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -311,6 +309,10 @@ main(int argc, char *argv[])
 				  pop.root()->string_test_arr->cend());
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

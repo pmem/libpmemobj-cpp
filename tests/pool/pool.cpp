@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019, Intel Corporation
+ * Copyright 2015-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,11 +155,9 @@ get_root_closed()
 
 } /* namespace */
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 4)
 		UT_FATAL("usage: %s op path layout [poolsize mode]", argv[0]);
 
@@ -198,6 +196,10 @@ main(int argc, char *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

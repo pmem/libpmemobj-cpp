@@ -184,11 +184,9 @@ test_vector_try_add_wrong_pointer(nvobj::pool<root> &pop, std::string path)
 }
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -208,6 +206,10 @@ main(int argc, char *argv[])
 	test_vector_try_add_wrong_pointer(pop, std::string(path) + "_tmp");
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

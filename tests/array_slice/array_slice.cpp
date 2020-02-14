@@ -575,11 +575,9 @@ run_test_at(pmem::obj::pool<struct root> &pop)
 	}
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 3) {
 		UT_FATAL("usage: %s file-name is-pmemcheck-enabled", argv[0]);
 	}
@@ -597,6 +595,10 @@ main(int argc, char *argv[])
 	run_test_at(pop);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -118,8 +118,8 @@ check_consistency(nvobj::pool<root> &pop)
 }
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
 	if (argc != 3 || strchr("coi", argv[1][0]) == nullptr)
 		UT_FATAL("usage: %s <c|o|i> file-name", argv[0]);
@@ -155,6 +155,10 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

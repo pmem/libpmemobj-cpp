@@ -58,11 +58,9 @@ test(nvobj::pool<struct root> &pop, nvobj::persistent_ptr<C> &pptr,
 	}
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -79,6 +77,10 @@ main(int argc, char *argv[])
 	UT_ASSERT(default_constructible_only::count == 0);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

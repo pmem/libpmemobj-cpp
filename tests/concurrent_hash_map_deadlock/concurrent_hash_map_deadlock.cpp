@@ -38,11 +38,9 @@
 #include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
 #include "unittest.hpp"
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -65,5 +63,10 @@ main(int argc, char *argv[])
 	lookup_insert_erase_deadlock_test(pop);
 
 	pop.close();
-	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

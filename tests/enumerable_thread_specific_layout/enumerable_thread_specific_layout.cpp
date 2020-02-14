@@ -37,11 +37,9 @@
 template <typename T>
 using container_type = pmem::detail::enumerable_thread_specific<T>;
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -61,6 +59,10 @@ main(int argc, char *argv[])
 	static_assert(sizeof(container_type<container_type<int>>) == 2128, "");
 
 	static_assert(std::is_standard_layout<container_type<char>>::value, "");
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

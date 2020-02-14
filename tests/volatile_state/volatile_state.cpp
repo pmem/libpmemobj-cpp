@@ -415,11 +415,9 @@ test_multiple_pool(nvobj::pool<root> &pop1, const std::string &path)
 	UT_ASSERT(v2_initialized == 0);
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -439,6 +437,10 @@ main(int argc, char *argv[])
 	test_multiple_pool(pop, path);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

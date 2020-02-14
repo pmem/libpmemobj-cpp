@@ -134,11 +134,9 @@ run_ctl_exception()
 	}
 }
 
-int
-wmain(int argc, wchar_t *argv[])
+void
+test(int argc, wchar_t *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", ut_toUTF8(argv[0]));
 	}
@@ -153,6 +151,11 @@ wmain(int argc, wchar_t *argv[])
 	run_ctl_exception();
 
 	pop.close();
-
-	return 0;
 }
+
+int
+wmain(int argc, wchar_t *argv[])
+{
+	return run_test([&] { test(argc, argv); });
+}
+

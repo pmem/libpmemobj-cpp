@@ -100,11 +100,9 @@ test_insert3(nvobj::pool_base &pop, nvobj::persistent_ptr<container_t<C>> &ptr)
 	}
 }
 
-int
-main(int argc, char *argv[])
+void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -125,6 +123,10 @@ main(int argc, char *argv[])
 	test_insert3(pop, r->v2);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

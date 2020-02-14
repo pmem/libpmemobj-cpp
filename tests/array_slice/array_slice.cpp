@@ -581,9 +581,7 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 3) {
-		std::cerr << "usage: " << argv[0] << " file-name "
-			  << "is-pmemcheck-enabled " << std::endl;
-		return 1;
+		UT_FATAL("usage: %s file-name is-pmemcheck-enabled", argv[0]);
 	}
 
 	Is_pmemcheck_enabled = (std::stoi(argv[2])) != 0;

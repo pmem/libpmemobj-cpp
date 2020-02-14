@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,7 +141,6 @@ wmain(int argc, wchar_t *argv[])
 
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", ut_toUTF8(argv[0]));
-		return 1;
 	}
 
 	auto path = argv[1];

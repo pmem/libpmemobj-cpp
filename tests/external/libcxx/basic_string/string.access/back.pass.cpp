@@ -47,8 +47,7 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
+		UT_FATAL("usage: %s file-name", argv[0]);
 	}
 
 	auto path = argv[1];

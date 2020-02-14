@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -114,9 +114,7 @@ main(int argc, char *argv[])
 	START();
 
 	if (argc < 3) {
-		std::cerr << "usage: " << argv[0] << " file-name1 file-name2"
-			  << std::endl;
-		return 1;
+		UT_FATAL("usage: %s file-name1 file-name2", argv[0]);
 	}
 
 	auto pop1 = nvobj::pool<root>::create(argv[1], "pool_callbacks test",

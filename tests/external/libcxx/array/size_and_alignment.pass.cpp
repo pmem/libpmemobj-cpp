@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018-2019, Intel Corporation
+// Copyright 2018-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -56,8 +56,6 @@ test_type()
 int
 main()
 {
-	START();
-
 	test_type<char>();
 	test_type<int>();
 	test_type<double>();

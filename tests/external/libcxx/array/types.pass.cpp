@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018-2019, Intel Corporation
+// Copyright 2018-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -60,8 +60,6 @@ test_iterators()
 int
 main()
 {
-	START();
-
 	{
 		typedef double T;
 		typedef pmem::obj::array<T, 10> C;

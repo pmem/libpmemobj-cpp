@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018, Intel Corporation
+ * Copyright 2017-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -161,11 +161,9 @@ get_root_closed()
 
 } /* namespace */
 
-int
-wmain(int argc, wchar_t *argv[])
+void
+test(int argc, wchar_t *argv[])
 {
-	START();
-
 	if (argc < 4)
 		UT_FATAL("usage: %s op path layout [poolsize mode]",
 			 ut_toUTF8(argv[0]));
@@ -203,6 +201,11 @@ wmain(int argc, wchar_t *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
-
-	return 0;
 }
+
+int
+wmain(int argc, wchar_t *argv[])
+{
+	return run_test([&] { test(argc, argv); });
+}
+

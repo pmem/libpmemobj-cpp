@@ -387,11 +387,9 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 }
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -414,6 +412,10 @@ main(int argc, char *argv[])
 	test_base_ptr_casting(pop);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

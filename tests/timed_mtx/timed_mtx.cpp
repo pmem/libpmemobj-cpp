@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -232,11 +232,9 @@ test_error_handling(nvobj::pool<root> &pop)
 }
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
 
@@ -291,6 +289,10 @@ main(int argc, char *argv[])
 	test_error_handling(pop);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

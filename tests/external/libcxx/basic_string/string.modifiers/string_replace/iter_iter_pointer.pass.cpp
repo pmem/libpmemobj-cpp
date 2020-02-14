@@ -295,11 +295,9 @@ test2(nvobj::pool<struct root> &pop)
 	test(pop, *s_arr[146], 20, 0, "12345678901234567890", *s_arr[149]);
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -704,6 +702,10 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

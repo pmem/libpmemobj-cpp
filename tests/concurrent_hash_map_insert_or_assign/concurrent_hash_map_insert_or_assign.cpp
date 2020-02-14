@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,11 +38,9 @@
 #include "../concurrent_hash_map/concurrent_hash_map_string_test.hpp"
 #include "unittest.hpp"
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
@@ -92,5 +90,10 @@ main(int argc, char *argv[])
 	});
 
 	pop.close();
-	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

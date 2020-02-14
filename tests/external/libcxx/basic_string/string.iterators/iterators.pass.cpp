@@ -18,8 +18,8 @@
 
 namespace nvobj = pmem::obj;
 
-int
-main()
+void
+test()
 {
 	{ // N3644 testing
 		using C = pmem::obj::string;
@@ -68,6 +68,10 @@ main()
 		UT_ASSERT(!(ii1 != ii2));
 		UT_ASSERT(!(ii1 != cii));
 	}
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(); });
 }

@@ -108,11 +108,9 @@ pool_cleanup(nvobj::pool<root> &pop1, nvobj::pool<root> &pop2)
 	UT_ASSERTeq(counter2, 1);
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 3) {
 		UT_FATAL("usage: %s file-name1 file-name2", argv[0]);
 	}
@@ -126,6 +124,10 @@ main(int argc, char *argv[])
 					      S_IWUSR | S_IRUSR);
 
 	pool_cleanup(pop1, pop2);
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

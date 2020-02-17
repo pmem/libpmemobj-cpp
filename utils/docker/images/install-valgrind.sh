@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2019, Intel Corporation
+# Copyright 2016-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,6 +35,11 @@
 #
 
 set -e
+
+if [ "${SKIP_VALGRIND_BUILD}" ]; then
+	echo "Variable 'SKIP_VALGRIND_BUILD' is set; skipping building valgrind (pmem's fork)"
+	exit
+fi
 
 git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind

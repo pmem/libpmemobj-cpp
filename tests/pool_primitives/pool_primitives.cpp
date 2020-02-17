@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -302,11 +302,9 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 
 } /* namespace */
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc != 2)
 		UT_FATAL("usage: %s path", argv[0]);
 
@@ -332,6 +330,10 @@ main(int argc, char *argv[])
 
 	pool_test_flush_ptr_invalid(root);
 	pool_test_persist_ptr_invalid(root);
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

@@ -150,12 +150,14 @@ construct_test()
 	}
 }
 
+static void
+test(int argc, char *argv[])
+{
+	construct_test();
+}
+
 int
 main(int argc, char *argv[])
 {
-	START();
-
-	construct_test();
-
-	return 0;
+	return run_test([&] { test(argc, argv); });
 }

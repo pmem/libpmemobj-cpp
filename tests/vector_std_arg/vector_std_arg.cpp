@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,14 +55,11 @@ check_vector(const pmem_vec &v1, const std_vec &v2)
 		UT_ASSERTeq(v1[i], v2[i]);
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
+		UT_FATAL("usage: %s file-name", argv[0]);
 	}
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
@@ -99,6 +96,10 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

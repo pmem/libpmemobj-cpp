@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, Intel Corporation
+ * Copyright 2019-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,15 +108,11 @@ pool_cleanup(nvobj::pool<root> &pop1, nvobj::pool<root> &pop2)
 	UT_ASSERTeq(counter2, 1);
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 3) {
-		std::cerr << "usage: " << argv[0] << " file-name1 file-name2"
-			  << std::endl;
-		return 1;
+		UT_FATAL("usage: %s file-name1 file-name2", argv[0]);
 	}
 
 	auto pop1 = nvobj::pool<root>::create(argv[1], "pool_callbacks test",
@@ -128,6 +124,10 @@ main(int argc, char *argv[])
 					      S_IWUSR | S_IRUSR);
 
 	pool_cleanup(pop1, pop2);
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

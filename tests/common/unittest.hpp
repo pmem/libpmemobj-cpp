@@ -41,17 +41,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <type_traits>
-
-#define START()                                                                \
-	do {                                                                   \
-		test_register_sighandlers();                                   \
-		set_valgrind_internals();                                      \
-	} while (0)
 
 #ifndef _WIN32
 #define os_stat_t struct stat
@@ -208,5 +203,22 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 				 "checkpoint %lu, real offset %lu",            \
 				 STR(type), checkpoint, off);                  \
 	} while (0)
+
+static inline int
+run_test(std::function<void()> test)
+{
+	test_register_sighandlers();
+	set_valgrind_internals();
+
+	try {
+		test();
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	} catch (...) {
+		UT_FATAL("catch(...){}");
+	}
+
+	return 0;
+}
 
 #endif /* LIBPMEMOBJ_CPP_UNITTEST_HPP */

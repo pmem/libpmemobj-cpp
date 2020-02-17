@@ -145,11 +145,9 @@ verify(nvobj::pool<root> &pop)
 	test.check_items_count(0);
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 3) {
 		UT_FATAL("usage: %s file-name mode [c|o]", argv[0]);
 	}
@@ -181,5 +179,10 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
-	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

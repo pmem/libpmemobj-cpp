@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2019, Intel Corporation
+// Copyright 2019-2020, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -100,14 +100,11 @@ test_insert3(nvobj::pool_base &pop, nvobj::persistent_ptr<container_t<C>> &ptr)
 	}
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	START();
-
 	if (argc < 2) {
-		std::cerr << "usage: " << argv[0] << " file-name" << std::endl;
-		return 1;
+		UT_FATAL("usage: %s file-name", argv[0]);
 	}
 
 	auto path = argv[1];
@@ -126,6 +123,10 @@ main(int argc, char *argv[])
 	test_insert3(pop, r->v2);
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

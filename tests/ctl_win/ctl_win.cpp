@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,14 +134,11 @@ run_ctl_exception()
 	}
 }
 
-int
-wmain(int argc, wchar_t *argv[])
+static void
+test(int argc, wchar_t *argv[])
 {
-	START();
-
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", ut_toUTF8(argv[0]));
-		return 1;
 	}
 
 	auto path = argv[1];
@@ -154,6 +151,11 @@ wmain(int argc, wchar_t *argv[])
 	run_ctl_exception();
 
 	pop.close();
-
-	return 0;
 }
+
+int
+wmain(int argc, wchar_t *argv[])
+{
+	return run_test([&] { test(argc, argv); });
+}
+

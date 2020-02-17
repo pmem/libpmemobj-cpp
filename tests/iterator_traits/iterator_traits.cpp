@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,11 +139,7 @@ test_is_type_of_iterator()
 }
 
 int
-main()
+main(int argc, char *argv[])
 {
-	START();
-
-	test_is_type_of_iterator();
-
-	return 0;
+	return run_test([&] { test_is_type_of_iterator(); });
 }

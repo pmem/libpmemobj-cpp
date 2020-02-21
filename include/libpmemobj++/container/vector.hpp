@@ -2076,8 +2076,8 @@ vector<T>::alloc(size_type capacity_new)
 	 * transaction.
 	 */
 	persistent_ptr<T[]> res =
-		pmemobj_tx_alloc(sizeof(value_type) * capacity_new,
-				 detail::type_num<value_type>());
+		pmemobj_tx_xalloc(sizeof(value_type) * capacity_new,
+				 detail::type_num<value_type>(), POBJ_XALLOC_NO_ABORT);
 
 	if (res == nullptr) {
 		if (errno == ENOMEM)

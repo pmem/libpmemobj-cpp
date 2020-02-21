@@ -2075,9 +2075,9 @@ vector<T>::alloc(size_type capacity_new)
 	 * assign it to _data, because when pmemobj_tx_alloc fails, it aborts
 	 * transaction.
 	 */
-	persistent_ptr<T[]> res =
-		pmemobj_tx_alloc(sizeof(value_type) * capacity_new,
-				 detail::type_num<value_type>());
+	persistent_ptr<T[]> res = pmemobj_tx_xalloc(
+		sizeof(value_type) * capacity_new,
+		detail::type_num<value_type>(), POBJ_XALLOC_NO_ABORT);
 
 	if (res == nullptr) {
 		if (errno == ENOMEM)

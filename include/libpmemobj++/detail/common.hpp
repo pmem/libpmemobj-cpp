@@ -183,7 +183,8 @@ conditional_add_to_tx(const T *that, std::size_t count = 1, uint64_t flags = 0)
 	if (!pmemobj_pool_by_ptr(that))
 		return;
 
-	if (pmemobj_tx_xadd_range_direct(that, sizeof(*that) * count, flags)) {
+	if (pmemobj_tx_xadd_range_direct(that, sizeof(*that) * count,
+					 flags | POBJ_XADD_NO_ABORT)) {
 		if (errno == ENOMEM)
 			throw pmem::transaction_out_of_memory(
 				"Could not add object(s) to the transaction.")

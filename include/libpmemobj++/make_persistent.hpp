@@ -83,7 +83,8 @@ make_persistent(allocation_flag flag, Args &&... args)
 			"refusing to allocate memory outside of transaction scope");
 
 	persistent_ptr<T> ptr =
-		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(), flag.value);
+		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(),
+				  flag.value | POBJ_XALLOC_NO_ABORT);
 
 	if (ptr == nullptr) {
 		if (errno == ENOMEM)
@@ -157,7 +158,7 @@ delete_persistent(typename detail::pp_if_not_array<T>::type ptr)
 	 */
 	detail::destroy<T>(*ptr);
 
-	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
+	if (pmemobj_tx_xfree(*ptr.raw_ptr(), POBJ_XFREE_NO_ABORT) != 0)
 		throw pmem::transaction_free_error(
 			"failed to delete persistent memory object")
 			.with_pmemobj_errormsg();

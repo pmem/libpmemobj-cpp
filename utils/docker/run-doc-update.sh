@@ -77,7 +77,7 @@ git clean -dfx
 
 # Clean old content, since some files might have been deleted
 rm -r ./$VERSION
-mkdir ./$VERSION
+mkdir -p ./$VERSION/doxygen/
 
 cp -r ../cpp_html/* ./$VERSION/doxygen/
 

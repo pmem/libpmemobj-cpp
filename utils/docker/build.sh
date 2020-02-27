@@ -44,6 +44,7 @@
 #
 
 set -e
+source $(dirname $0)/valid-branches.sh
 
 # Environment variables that can be customized (default values are after dash):
 export KEEP_CONTAINER=${KEEP_CONTAINER:-0}
@@ -93,8 +94,8 @@ fi
 
 if [ -n "$DNS_SERVER" ]; then DNS_SETTING=" --dns=$DNS_SERVER "; fi
 
-# Only run doc update on pmem/libpmemobj-cpp master branch
-if [[ "$TRAVIS_BRANCH" != "master" || "$TRAVIS_PULL_REQUEST" != "false" || "$TRAVIS_REPO_SLUG" != "${GITHUB_REPO}" ]]; then
+# Only run doc update on $GITHUB_REPO master or stable branch
+if [[ -z "${TRAVIS_BRANCH}" || -z "${TARGET_BRANCHES[${TRAVIS_BRANCH}]}" || "$TRAVIS_PULL_REQUEST" != "false" || "$TRAVIS_REPO_SLUG" != "${GITHUB_REPO}" ]]; then
 	AUTO_DOC_UPDATE=0
 fi
 

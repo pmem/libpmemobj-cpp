@@ -1,8 +1,0 @@
-<map id="libpmemobj++/transaction.hpp" name="libpmemobj++/transaction.hpp">
-<area shape="rect" id="node4" href="$common_8hpp.html" title="Commonly used functionality. " alt="" coords="746,244,885,285"/>
-<area shape="rect" id="node5" href="$pexceptions_8hpp.html" title="Custom exceptions. " alt="" coords="129,333,267,375"/>
-<area shape="rect" id="node10" href="$pool_8hpp.html" title="C++ pmemobj pool. " alt="" coords="545,80,702,107"/>
-<area shape="rect" id="node13" href="$ctl_8hpp.html" title="C++ ctl api. " alt="" coords="210,155,349,196"/>
-<area shape="rect" id="node17" href="$p_8hpp.html" title="Resides on pmem property template. " alt="" coords="957,162,1097,189"/>
-<area shape="rect" id="node19" href="$specialization_8hpp.html" title="Helper template for persistent ptr specialization. " alt="" coords="909,244,1047,285"/>
-</map>

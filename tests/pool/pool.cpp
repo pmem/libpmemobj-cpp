@@ -167,7 +167,7 @@ test(int argc, char *argv[])
 
 	if (strcmp(argv[3], "EMPTY") == 0)
 		layout = "";
-	else if (strcmp(argv[3], "NULL") != 0)
+	else
 		layout = argv[3];
 
 	switch (argv[1][0]) {
@@ -176,7 +176,6 @@ test(int argc, char *argv[])
 				MB; /* in megabytes */
 			mode = static_cast<unsigned>(
 				std::stoul(argv[5], nullptr, 8));
-
 			pool_create(argv[2], layout, poolsize, mode);
 			break;
 		case 'o':
@@ -187,7 +186,6 @@ test(int argc, char *argv[])
 				MB; /* in megabytes */
 			mode = static_cast<unsigned>(
 				std::stoul(argv[5], nullptr, 8));
-
 			double_close(argv[2], layout, poolsize, mode);
 			break;
 		case 'i':

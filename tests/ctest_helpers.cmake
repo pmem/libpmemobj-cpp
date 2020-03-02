@@ -113,8 +113,7 @@ function(find_packages)
 			if ((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
 
-				# copy_on_write support since libpmemobj 1.6
-				if(PMREORDER AND NOT (LIBPMEMOBJ_VERSION_MINOR LESS 6))
+				if(PMREORDER)
 					set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
 					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
 				endif()
@@ -234,7 +233,7 @@ function(skip_test name message)
 	set_tests_properties(${name}_${message} PROPERTIES COST 0)
 endfunction()
 
-# adds testcase with name, tracer, and cmake_script responsible for running it
+# adds testcase only if tracer is found and target is build, skips adding test otherwise
 function(add_test_common name tracer testcase cmake_script)
 	if(${tracer} STREQUAL "")
 	    set(tracer none)
@@ -266,7 +265,7 @@ function(add_test_common name tracer testcase cmake_script)
 		return()
 	endif()
 
-	# skip all tests with pmemcheck/memcheck/drd on windows
+	# skip all valgrind tests on windows
 	if ((NOT ${tracer} STREQUAL none) AND WIN32)
 		return()
 	endif()
@@ -274,6 +273,7 @@ function(add_test_common name tracer testcase cmake_script)
 	add_testcase(${name} ${tracer} ${testcase} ${cmake_script})
 endfunction()
 
+# adds testscase with optional TRACERS and SCRIPT parameters
 function(add_test_generic)
 	set(oneValueArgs NAME CASE SCRIPT)
 	set(multiValueArgs TRACERS)

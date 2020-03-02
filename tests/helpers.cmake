@@ -194,7 +194,7 @@ function(execute_common expect_success output_file name)
     print_logs()
 
     # memcheck and pmemcheck match files should follow name pattern:
-    # testname_testcasenr_memcheck/pmemcheck.err.match
+    # testname_testcaseno_memcheck/pmemcheck.err.match
     # If they do exist, ignore test result - it will be verified during
     # log matching in finish() function.
     if(EXISTS ${SRC_DIR}/${TEST_NAME}.err.match)

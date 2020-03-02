@@ -1856,11 +1856,9 @@ vector<T>::erase(const_iterator first, const_iterator last)
 	pool_base pb = get_pool();
 
 	transaction::run(pb, [&] {
-		/*
-		 * XXX: future optimization: no need to snapshot trivial types,
-		 * if idx + count = _size
-		 */
-		add_data_to_tx(idx, _size - idx);
+		if (!std::is_trivially_destructible<T>::value ||
+		    idx + count < _size)
+			add_data_to_tx(idx, _size - idx);
 
 		pointer move_begin =
 			&_data[static_cast<difference_type>(idx + count)];
@@ -2465,7 +2463,8 @@ vector<T>::shrink(size_type size_new)
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 	assert(size_new <= _size);
 
-	add_data_to_tx(size_new, _size - size_new);
+	if (!std::is_trivially_destructible<T>::value)
+		add_data_to_tx(size_new, _size - size_new);
 
 	for (size_type i = size_new; i < _size; ++i)
 		detail::destroy<value_type>(

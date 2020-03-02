@@ -57,7 +57,7 @@ struct root {
  */
 void
 pool_create(const char *path, const char *layout, size_t poolsize,
-	    unsigned mode)
+			unsigned mode)
 {
 	nvobj::pool<root> pop;
 	try {
@@ -73,7 +73,7 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 	STAT(path, &stbuf);
 
 	UT_OUT("%s: file size %zu mode 0%o", path, stbuf.st_size,
-	       stbuf.st_mode & 0777);
+		   stbuf.st_mode & 0777);
 	try {
 		pop.close();
 	} catch (std::logic_error &lr) {
@@ -84,7 +84,7 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 	int result = nvobj::pool<root>::check(path, layout);
 
 	if (result < 0)
-		UT_OUT("!%s: pool::check", path);
+		UT_OUT("!%s: pool::check: error", path);
 	else if (result == 0)
 		UT_OUT("%s: pool::check: not consistent", path);
 }
@@ -103,7 +103,7 @@ pool_open(const char *path, const char *layout)
 		return;
 	}
 
-	UT_OUT("%s: pool::open: Success", path);
+	UT_OUT("%s: pool::open: success", path);
 
 	try {
 		pop.close();
@@ -116,8 +116,7 @@ pool_open(const char *path, const char *layout)
  * double_close -- (internal) test double pool close
  */
 void
-double_close(const char *path, const char *layout, size_t poolsize,
-	     unsigned mode)
+double_close(const char *path, const char *layout, size_t poolsize, unsigned mode)
 {
 	nvobj::pool<root> pop;
 	try {
@@ -127,11 +126,11 @@ double_close(const char *path, const char *layout, size_t poolsize,
 		return;
 	}
 
-	UT_OUT("%s: pool::create: Success", path);
+	UT_OUT("%s: pool::create: success", path);
 
 	try {
 		pop.close();
-		UT_OUT("%s: pool.close: Success", path);
+		UT_OUT("%s: pool.close: success", path);
 		pop.close();
 	} catch (std::logic_error &lr) {
 		UT_OUT("%s: pool.close: %s", path, lr.what());
@@ -167,27 +166,21 @@ test(int argc, char *argv[])
 
 	if (strcmp(argv[3], "EMPTY") == 0)
 		layout = "";
-	else if (strcmp(argv[3], "NULL") != 0)
+	else
 		layout = argv[3];
 
 	switch (argv[1][0]) {
 		case 'c':
-			poolsize = std::stoul(argv[4], nullptr, 0) *
-				MB; /* in megabytes */
-			mode = static_cast<unsigned>(
-				std::stoul(argv[5], nullptr, 8));
-
+			poolsize = std::stoul(argv[4], nullptr, 0) * MB; /* in megabytes */
+			mode = static_cast<unsigned>(std::stoul(argv[5], nullptr, 8));
 			pool_create(argv[2], layout, poolsize, mode);
 			break;
 		case 'o':
 			pool_open(argv[2], layout);
 			break;
 		case 'd':
-			poolsize = std::stoul(argv[4], nullptr, 0) *
-				MB; /* in megabytes */
-			mode = static_cast<unsigned>(
-				std::stoul(argv[5], nullptr, 8));
-
+			poolsize = std::stoul(argv[4], nullptr, 0) * MB; /* in megabytes */
+			mode = static_cast<unsigned>(std::stoul(argv[5], nullptr, 8));
 			double_close(argv[2], layout, poolsize, mode);
 			break;
 		case 'i':

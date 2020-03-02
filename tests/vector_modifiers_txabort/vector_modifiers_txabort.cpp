@@ -317,6 +317,26 @@ test(nvobj::pool<struct root> &pop)
 
 	UT_ASSERT(exception_thrown);
 
+	/* test erase() range version at end */
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto pos = r->v1->begin();
+			r->v1->erase(pos + 90, r->v1->end());
+
+			check_vector(r->v1, 90, 1);
+
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	check_vector(r->v1, 100, 1);
+
+	UT_ASSERT(exception_thrown);
+
 	/* test pop_back() */
 	try {
 		nvobj::transaction::run(pop, [&] {

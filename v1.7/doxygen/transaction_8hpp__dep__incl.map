@@ -1,7 +1,0 @@
-<map id="libpmemobj++/transaction.hpp" name="libpmemobj++/transaction.hpp">
-<area shape="rect" id="node2" href="$array_8hpp.html" title="Array container with std::array compatible interface. " alt="" coords="5,80,188,121"/>
-<area shape="rect" id="node3" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface. " alt="" coords="135,169,317,211"/>
-<area shape="rect" id="node5" href="$concurrent__hash__map_8hpp_source.html" title="libpmemobj++/experimental\l/concurrent_hash_map.hpp" alt="" coords="264,80,447,121"/>
-<area shape="rect" id="node6" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="471,80,653,121"/>
-<area shape="rect" id="node4" href="$string_8hpp.html" title="String typedefs for common character types. " alt="" coords="135,259,317,300"/>
-</map>

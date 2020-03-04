@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 #
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,80 +30,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
-#              environment prepared for running libpmemobj-cpp tests.
-#
-
-# Pull base image
-FROM fedora:30
-MAINTAINER marcin.slusarz@intel.com
-
-# Additional parameters to build docker without building components
-ARG SKIP_VALGRIND_BUILD
-ARG SKIP_PMDK_BUILD
-
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	asciidoc \
-	autoconf \
-	automake \
-	bash-completion \
-	clang \
-	cmake \
-	doxygen \
-	gcc \
-	gdb \
-	git \
-	hub \
-	json-c-devel \
-	kmod-devel \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
-	man \
-	ncurses-devel \
-	open-sans-fonts \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	rpm-build-libs \
-	rpmdevtools \
-	SFML-devel \
-	sudo \
-	tar \
-	tbb-devel \
-	wget \
-	which \
-	xmlto \
- && dnf clean all
-
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh fedora
-
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
-
-# Install pmdk
-COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
-
-# Add user
-ENV USER user
-ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
-USER $USER
-
-# Set required environment variables
-ENV OS fedora
-ENV OS_VER 30
-ENV PACKAGE_MANAGER rpm
-ENV NOTTY 1
-
+declare -A TARGET_BRANCHES=(		\
+		["master"]="master"	\
+		["stable-1.5"]="v1.5"	\
+		["stable-1.6"]="v1.6"	\
+		["stable-1.7"]="v1.7"	\
+		["stable-1.8"]="v1.8"	\
+		["stable-1.9"]="v1.9"	\
+	)

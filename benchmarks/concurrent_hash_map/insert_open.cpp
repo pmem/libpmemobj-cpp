@@ -89,72 +89,83 @@ open(pmem::obj::pool<root> &pop)
 int
 main(int argc, char *argv[])
 {
-	std::string usage =
-		"usage: %s file-name <create n_inserts n_threads | open>";
-
-	if (argc < 3) {
-		std::cerr << usage << std::endl;
-		return 1;
-	}
-
-	auto mode = std::string(argv[2]);
-
-	if (mode != "create" && mode != "open") {
-		std::cerr << usage << std::endl;
-		return 1;
-	}
-
-	if (mode == "create" && argc < 5) {
-		std::cerr << usage << std::endl;
-		return 1;
-	}
-
-	const char *path = argv[1];
-
 	pmem::obj::pool<root> pop;
+	try {
+		std::string usage =
+			"usage: %s file-name <create n_inserts n_threads | open>";
 
-	if (mode == "create") {
-		size_t n_inserts = std::stoull(argv[3]);
-		size_t n_threads = std::stoull(argv[4]);
-
-		if (n_inserts * n_threads == 0) {
-			std::cerr << "n_inserts and n_threads must be > 0";
+		if (argc < 3) {
+			std::cerr << usage << std::endl;
 			return 1;
 		}
 
-		try {
-			auto pool_size =
-				n_inserts * n_threads * sizeof(int) * 65 +
-				20 * PMEMOBJ_MIN_POOL;
+		auto mode = std::string(argv[2]);
 
-			pop = pmem::obj::pool<root>::create(
-				path, LAYOUT, pool_size, CREATE_MODE_RW);
-			pmem::obj::transaction::run(pop, [&] {
-				pop.root()->pptr = pmem::obj::make_persistent<
-					persistent_map_type>();
-			});
-		} catch (pmem::pool_error &pe) {
-			std::cerr << "!pool::create: " << pe.what()
-				  << std::endl;
+		if (mode != "create" && mode != "open") {
+			std::cerr << usage << std::endl;
 			return 1;
 		}
 
-		std::cout << measure<std::chrono::milliseconds>([&] {
-			insert(pop, n_inserts, n_threads);
-		}) << "ms" << std::endl;
-	} else {
-		try {
-			pop = pmem::obj::pool<root>::open(path, LAYOUT);
-		} catch (pmem::pool_error &pe) {
-			std::cerr << "!pool::open: " << pe.what() << std::endl;
+		if (mode == "create" && argc < 5) {
+			std::cerr << usage << std::endl;
 			return 1;
 		}
 
-		std::cout << measure<std::chrono::milliseconds>([&] {
-			open(pop);
-		}) << "ms" << std::endl;
+		const char *path = argv[1];
+
+		if (mode == "create") {
+			size_t n_inserts = std::stoull(argv[3]);
+			size_t n_threads = std::stoull(argv[4]);
+
+			if (n_inserts * n_threads == 0) {
+				std::cerr
+					<< "n_inserts and n_threads must be > 0";
+				return 1;
+			}
+
+			try {
+				auto pool_size = n_inserts * n_threads *
+						sizeof(int) * 65 +
+					20 * PMEMOBJ_MIN_POOL;
+
+				pop = pmem::obj::pool<root>::create(
+					path, LAYOUT, pool_size,
+					CREATE_MODE_RW);
+				pmem::obj::transaction::run(pop, [&] {
+					pop.root()->pptr =
+						pmem::obj::make_persistent<
+							persistent_map_type>();
+				});
+			} catch (pmem::pool_error &pe) {
+				std::cerr << "!pool::create: " << pe.what()
+					  << std::endl;
+				return 1;
+			}
+
+			std::cout << measure<std::chrono::milliseconds>([&] {
+				insert(pop, n_inserts, n_threads);
+			}) << "ms" << std::endl;
+		} else {
+			try {
+				pop = pmem::obj::pool<root>::open(path, LAYOUT);
+			} catch (pmem::pool_error &pe) {
+				std::cerr << "!pool::open: " << pe.what()
+					  << std::endl;
+				return 1;
+			}
+			std::cout << measure<std::chrono::milliseconds>([&] {
+				open(pop);
+			}) << "ms" << std::endl;
+		}
+
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "!pool::close: " << e.what() << std::endl;
+		return 1;
+	} catch (const std::exception &e) {
+		std::cerr << "!exception: " << e.what() << std::endl;
+		pop.close();
+		return 1;
 	}
-
-	pop.close();
 	return 0;
 }

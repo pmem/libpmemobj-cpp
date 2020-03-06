@@ -137,6 +137,10 @@ main(int argc, char *argv[])
 			std::cerr << "!pool::create: " << pe.what()
 				  << std::endl;
 			return 1;
+		} catch (const pmem::transaction_error &pe) {
+			std::cerr << "!pool::create: " << pe.what()
+				  << std::endl;
+			return 1;
 		}
 
 		std::cout << measure<std::chrono::milliseconds>([&] {
@@ -149,12 +153,21 @@ main(int argc, char *argv[])
 			std::cerr << "!pool::open: " << pe.what() << std::endl;
 			return 1;
 		}
-
-		std::cout << measure<std::chrono::milliseconds>([&] {
-			open(pop);
-		}) << "ms" << std::endl;
+		try {
+			std::cout << measure<std::chrono::milliseconds>([&] {
+				open(pop);
+			}) << "ms" << std::endl;
+		} catch (const std::exception &pe) {
+			std::cerr << "!pool::open: " << pe.what() << std::endl;
+			return 1;
+		}
 	}
 
-	pop.close();
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "!pool::close: " << e.what() << std::endl;
+		return 1;
+	}
 	return 0;
 }

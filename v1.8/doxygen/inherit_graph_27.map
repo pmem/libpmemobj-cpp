@@ -1,4 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html" title="Combines data access, locking, and garbage collection. " alt="" coords="5,5,240,76"/>
-<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1concurrent__hash__map_1_1accessor.html" title="Allows write access to elements and combines data access, locking, and garbage collection. " alt="" coords="288,5,523,76"/>
-</map>

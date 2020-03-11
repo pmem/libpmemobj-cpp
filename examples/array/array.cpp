@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2020, Intel Corporation */
 
 /*
  * array.cpp -- array example implemented using libpmemobj C++ bindings
@@ -288,11 +288,18 @@ main(int argc, char *argv[])
 	const char *file = argv[1];
 	pool<examples::pmem_array> pop;
 
-	if (file_exists(file) != 0)
-		pop = pool<examples::pmem_array>::create(file, LAYOUT, POOLSIZE,
-							 CREATE_MODE_RW);
-	else
-		pop = pool<examples::pmem_array>::open(file, LAYOUT);
+	try {
+		if (file_exists(file) != 0) {
+
+			pop = pool<examples::pmem_array>::create(
+				file, LAYOUT, POOLSIZE, CREATE_MODE_RW);
+		} else {
+			pop = pool<examples::pmem_array>::open(file, LAYOUT);
+		}
+	} catch (const pmem::pool_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	}
 
 	persistent_ptr<examples::pmem_array> arr = pop.root();
 
@@ -313,7 +320,13 @@ main(int argc, char *argv[])
 			break;
 		case array_op::REALLOC:
 			if (argc == 5)
-				arr->resize(pop, name, atoi(argv[4]));
+				try {
+					arr->resize(pop, name, atoi(argv[4]));
+				} catch (const pmem::transaction_error &e) {
+					std::cerr << "Exception: " << e.what()
+						  << std::endl;
+					return 1;
+				}
 			else
 				arr->print_usage(op, prog_name);
 			break;
@@ -331,7 +344,12 @@ main(int argc, char *argv[])
 			break;
 	}
 
-	pop.close();
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	}
 
 	return 0;
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2020, Intel Corporation */
 
 /*
  * array.cpp -- array example implemented using libpmemobj C++ bindings
@@ -287,51 +287,79 @@ main(int argc, char *argv[])
 
 	const char *file = argv[1];
 	pool<examples::pmem_array> pop;
+	persistent_ptr<examples::pmem_array> arr;
 
-	if (file_exists(file) != 0)
-		pop = pool<examples::pmem_array>::create(file, LAYOUT, POOLSIZE,
-							 CREATE_MODE_RW);
-	else
-		pop = pool<examples::pmem_array>::open(file, LAYOUT);
-
-	persistent_ptr<examples::pmem_array> arr = pop.root();
+	try {
+		if (file_exists(file) != 0) {
+			pop = pool<examples::pmem_array>::create(
+				file, LAYOUT, POOLSIZE, CREATE_MODE_RW);
+		} else {
+			pop = pool<examples::pmem_array>::open(file, LAYOUT);
+		}
+		arr = pop.root();
+	} catch (const pmem::pool_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	}
 
 	array_op op = parse_array_op(argv[2]);
 
-	switch (op) {
-		case array_op::PRINT:
-			if (argc == 4)
-				arr->print_array(name);
-			else
+	try {
+		switch (op) {
+			case array_op::PRINT:
+				if (argc == 4)
+					arr->print_array(name);
+				else
+					arr->print_usage(op, prog_name);
+				break;
+			case array_op::FREE:
+				if (argc == 4)
+					arr->delete_array(pop, name);
+				else
+					arr->print_usage(op, prog_name);
+				break;
+			case array_op::REALLOC:
+				if (argc == 5)
+					arr->resize(pop, name, atoi(argv[4]));
+				else
+					arr->print_usage(op, prog_name);
+				break;
+			case array_op::ALLOC:
+				if (argc == 5)
+					arr->add_array(pop, name,
+						       atoi(argv[4]));
+				else
+					arr->print_usage(op, prog_name);
+				break;
+			default:
+				std::cout
+					<< "Ruh roh! You passed an invalid operation!"
+					<< std::endl;
 				arr->print_usage(op, prog_name);
-			break;
-		case array_op::FREE:
-			if (argc == 4)
-				arr->delete_array(pop, name);
-			else
-				arr->print_usage(op, prog_name);
-			break;
-		case array_op::REALLOC:
-			if (argc == 5)
-				arr->resize(pop, name, atoi(argv[4]));
-			else
-				arr->print_usage(op, prog_name);
-			break;
-		case array_op::ALLOC:
-			if (argc == 5)
-				arr->add_array(pop, name, atoi(argv[4]));
-			else
-				arr->print_usage(op, prog_name);
-			break;
-		default:
-			std::cout << "Ruh roh! You passed an invalid operation!"
-				  << std::endl;
-
-			arr->print_usage(op, prog_name);
-			break;
+				break;
+		}
+	} catch (const pmem::transaction_scope_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	} catch (const pmem::transaction_free_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	} catch (const pmem::manual_tx_abort &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	} catch (const pmem::transaction_alloc_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	} catch (const pmem::transaction_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
 	}
 
-	pop.close();
-
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	}
 	return 0;
 }

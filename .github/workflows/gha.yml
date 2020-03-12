@@ -54,7 +54,7 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: x64-windows
       GENERATOR: "Visual Studio 16 2019"
       ARCH:      "x64"
-      PMDK_VERSION: "1.7"
+      PMDK_VERSION: "1.8"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
       WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"
@@ -83,13 +83,6 @@ jobs:
 
        - name: Clone the git repo
          uses: actions/checkout@v1
-
-       - name: Update vcpkg's pmdk version
-         working-directory: C:\\vcpkg
-         run: |
-            git checkout 2019.11
-            git apply -v "${env:WORKDIR}\\.github\\workflows\\update_pmdk\\portfile.cmake.patch"
-            Copy-Item -Path "${env:WORKDIR}\\.github\\workflows\\update_pmdk\\controlfile" -Destination "C:\\vcpkg\\ports\\pmdk\\CONTROL"
 
        - name: Install PMDK
          run: |

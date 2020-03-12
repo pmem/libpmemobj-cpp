@@ -64,6 +64,9 @@ add_check_whitespace(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*p
 add_cppstyle(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simplekv_rebuild/*.*pp)
 add_check_whitespace(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simplekv_rebuild/*.*pp)
 
+add_cppstyle(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
+add_check_whitespace(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
@@ -145,6 +148,10 @@ endif()
 add_example(map_cli map_cli/map_cli.cpp)
 
 add_example(array array/array.cpp)
+
+if (TEST_VECTOR)
+	add_example(slab slab/slab.cpp)
+endif()
 
 add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)
 add_library(doc_snippets_persistent OBJECT doc_snippets/persistent.cpp)

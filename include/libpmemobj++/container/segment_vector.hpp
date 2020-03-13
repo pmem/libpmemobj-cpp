@@ -747,7 +747,7 @@ segment_vector<T, Policy>::segment_vector()
  * @throw rethrows constructor exception.
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -776,7 +776,7 @@ segment_vector<T, Policy>::segment_vector(size_type count,
  * @throw rethrows constructor exception.
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -809,7 +809,7 @@ segment_vector<T, Policy>::segment_vector(size_type count)
  * @throw rethrows constructor exception.
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -840,7 +840,7 @@ segment_vector<T, Policy>::segment_vector(InputIt first, InputIt last)
  * @throw rethrows constructor exception.
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -896,7 +896,7 @@ segment_vector<T, Policy>::segment_vector(segment_vector &&other)
  * @throw rethrows constructor exception.
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -923,7 +923,7 @@ segment_vector<T, Policy>::segment_vector(std::initializer_list<T> init)
  * @throw rethrows constructor exception.
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_scope_error if wasn't called in transaction.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -946,7 +946,7 @@ segment_vector<T, Policy>::segment_vector(const std::vector<T> &other)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -994,7 +994,7 @@ segment_vector<T, Policy>::operator=(segment_vector &&other)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1019,7 +1019,7 @@ segment_vector<T, Policy>::operator=(std::initializer_list<T> ilist)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1047,7 +1047,7 @@ segment_vector<T, Policy>::operator=(const std::vector<T> &other)
  * count)
  *
  * @throw std::length_error if count > max_size().
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1102,7 +1102,7 @@ segment_vector<T, Policy>::assign(size_type count, const_reference value)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1163,7 +1163,7 @@ segment_vector<T, Policy>::assign(InputIt first, InputIt last)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1186,7 +1186,7 @@ segment_vector<T, Policy>::assign(std::initializer_list<T> ilist)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1240,7 +1240,7 @@ segment_vector<T, Policy>::assign(segment_vector &&other)
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1747,7 +1747,7 @@ segment_vector<T, Policy>::max_size() const noexcept
  *
  * @post capacity() == max(capacity(), capacity_new)
  *
- * @throw pmem::length_error when capacity_new larger than max_size().
+ * @throw std::length_error when capacity_new larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1868,7 +1868,7 @@ segment_vector<T, Policy>::free_data()
  * remains the same if there is enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1898,7 +1898,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, const T &value)
  * remains the same if there is enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1939,7 +1939,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, T &&value)
  * or remains the same if there is enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -1989,7 +1989,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, size_type count,
  * enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -2036,7 +2036,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, InputIt first,
  * there is enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -2072,7 +2072,7 @@ segment_vector<T, Policy>::insert(const_iterator pos,
  * remains the same if there is enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -2115,7 +2115,7 @@ segment_vector<T, Policy>::emplace(const_iterator pos, Args &&... args)
  * remains the same if there is enough space.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -2243,7 +2243,7 @@ segment_vector<T, Policy>::erase(const_iterator first, const_iterator last)
  * @post capacity() == nearest power of 2 greater than size() + 1, or
  * remains the same if there is enough space.
  *
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw rethrows constructor exception.
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
@@ -2268,7 +2268,7 @@ segment_vector<T, Policy>::push_back(const T &value)
  * @post capacity() == nearest power of 2 greater than size() + 1, or
  * remains the same if there is enough space.
  *
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw rethrows constructor exception.
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
@@ -2320,7 +2320,7 @@ segment_vector<T, Policy>::pop_back()
  *
  * @throw rethrows constructor exception.
  * @throw rethrows destructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
@@ -2365,7 +2365,7 @@ segment_vector<T, Policy>::resize(size_type count)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_free_error when freeing underlying segment
  * failed.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
  * @throw pmem::transaction_out_of_memory when not enough memory to
@@ -2413,7 +2413,7 @@ segment_vector<T, Policy>::swap(segment_vector &other)
  *
  * @post capacity() = nearest power of 2 larger than new_capacity
  *
- * @throw pmem::length_error when new_capacity larger than max_size().
+ * @throw std::length_error when new_capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
@@ -2551,7 +2551,7 @@ segment_vector<T, Policy>::construct_range(size_type idx, InputIt first,
  * + count.
  *
  * @throw rethrows constructor exception.
- * @throw pmem::length_error when new capacity larger than max_size().
+ * @throw std::length_error when new capacity larger than max_size().
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.

@@ -2218,7 +2218,7 @@ public:
 	 * failed.
 	 * @throw pmem::transaction_free_error when freeing old underlying array
 	 * failed.
-	 * @throw rethrows constructor exception.
+	 * @throw rethrows constructor's exception.
 	 */
 	concurrent_hash_map &
 	operator=(const concurrent_hash_map &table)
@@ -2240,7 +2240,7 @@ public:
 	 * failed.
 	 * @throw pmem::transaction_free_error when freeing old underlying array
 	 * failed.
-	 * @throw rethrows constructor exception.
+	 * @throw rethrows constructor's exception.
 	 */
 	concurrent_hash_map &
 	operator=(std::initializer_list<value_type> il)

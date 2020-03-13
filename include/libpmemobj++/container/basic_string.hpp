@@ -1540,7 +1540,7 @@ basic_string<CharT, Traits>::pop_back()
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1599,7 +1599,7 @@ basic_string<CharT, Traits>::append(size_type count, CharT ch)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1631,7 +1631,7 @@ basic_string<CharT, Traits>::append(const basic_string &str)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1667,7 +1667,7 @@ basic_string<CharT, Traits>::append(const basic_string &str, size_type pos,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1693,7 +1693,7 @@ basic_string<CharT, Traits>::append(const CharT *s, size_type count)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1721,7 +1721,7 @@ basic_string<CharT, Traits>::append(const CharT *s)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 template <typename InputIt, typename Enable>
@@ -1790,7 +1790,7 @@ basic_string<CharT, Traits>::append(InputIt first, InputIt last)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1813,7 +1813,7 @@ basic_string<CharT, Traits>::append(std::initializer_list<CharT> ilist)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 void
@@ -1838,7 +1838,7 @@ basic_string<CharT, Traits>::push_back(CharT ch)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1864,7 +1864,7 @@ basic_string<CharT, Traits>::operator+=(const basic_string &str)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1887,7 +1887,7 @@ basic_string<CharT, Traits>::operator+=(const CharT *s)
  * @throw std::length_error if new_size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1914,7 +1914,7 @@ basic_string<CharT, Traits>::operator+=(CharT ch)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1942,7 +1942,7 @@ basic_string<CharT, Traits>::operator+=(std::initializer_list<CharT> ilist)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -1977,7 +1977,7 @@ basic_string<CharT, Traits>::insert(size_type index, size_type count, CharT ch)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2005,7 +2005,7 @@ basic_string<CharT, Traits>::insert(size_type index, const CharT *s)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2040,7 +2040,7 @@ basic_string<CharT, Traits>::insert(size_type index, const CharT *s,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2069,7 +2069,7 @@ basic_string<CharT, Traits>::insert(size_type index, const basic_string &str)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2106,7 +2106,7 @@ basic_string<CharT, Traits>::insert(size_type index1, const basic_string &str,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::iterator
@@ -2137,7 +2137,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, CharT ch)
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::iterator
@@ -2205,7 +2205,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 template <typename InputIt, typename Enable>
@@ -2291,7 +2291,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::iterator
@@ -2321,7 +2321,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2349,7 +2349,7 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2383,7 +2383,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2424,7 +2424,7 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 template <typename InputIt, typename Enable>
@@ -2507,7 +2507,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2538,7 +2538,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2575,7 +2575,7 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2606,7 +2606,7 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2642,7 +2642,7 @@ basic_string<CharT, Traits>::replace(size_type index, size_type count,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2713,7 +2713,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -2743,7 +2743,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
  * @throw std::length_error if new size > max_size().
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw pmem::transaction_free_error when freeing old underlying array failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  */
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits> &
@@ -3583,7 +3583,7 @@ basic_string<CharT, Traits>::capacity() const noexcept
  * @post size() == count
  *
  * @throw std::length_error if count > max_size()
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_free_error when freeing old underlying array
@@ -3625,7 +3625,7 @@ basic_string<CharT, Traits>::resize(size_type count, CharT ch)
  * @post size() == count
  *
  * @throw std::length_error if count > max_size()
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  * @throw rethrows destructor exception.
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_free_error when freeing old underlying array
@@ -3687,7 +3687,7 @@ basic_string<CharT, Traits>::reserve(size_type new_cap)
  * @throw pmem::transaction_alloc_error when reallocating failed.
  * @throw pmem::transaction_free_error when freeing old underlying array
  * failed.
- * @throw rethrows constructor exception.
+ * @throw rethrows constructor's exception.
  * @throw rethrows destructor exception.
  */
 template <typename CharT, typename Traits>

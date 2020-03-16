@@ -61,7 +61,11 @@ struct pmem_obj {
 
 	~pmem_obj()
 	{
-		v_state::destroy(pmemobj_oid(this));
+		try {
+			v_state::destroy(pmemobj_oid(this));
+		} catch (const pmem::transaction_scope_error &e) {
+			UT_ASSERT(false);
+		}
 	}
 };
 

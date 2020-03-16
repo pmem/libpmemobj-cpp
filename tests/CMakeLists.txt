@@ -362,6 +362,11 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_insert_lookup_mock CASE 0 TRACERS memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
+	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND AND TESTS_LONG)
+		add_test_generic(NAME concurrent_hash_map_insert_lookup_mock CASE 0 TRACERS helgrind drd
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+	endif()
+
 	build_test(concurrent_hash_map_insert_erase concurrent_hash_map_insert_erase/concurrent_hash_map_insert_erase.cpp)
 	add_test_generic(NAME concurrent_hash_map_insert_erase CASE 0 TRACERS none
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
@@ -374,6 +379,14 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 1 TRACERS memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
 
+	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
+		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 0 TRACERS helgrind drd
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 1 TRACERS helgrind drd
+			SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
+	endif()
+
+	# This test should not be run under helgrind due to intermittent failures (most probably false-positive, ref. issue #469)
 	build_test(concurrent_hash_map_rehash concurrent_hash_map_rehash/concurrent_hash_map_rehash.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS none
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
@@ -386,6 +399,16 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
 
+	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
+		# This test should not be run under helgrind due to intermittent failures (most probably false-positive, ref. issue #469)
+		if(TESTS_LONG)
+			add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS drd
+					SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+			add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS drd
+					SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
+		endif()
+	endif()
+
 	build_test(concurrent_hash_map_rehash_recursive concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_recursive CASE 0 TRACERS none
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
@@ -393,6 +416,11 @@ if(TEST_CONCURRENT_HASHMAP)
 	build_test_defrag(concurrent_hash_map_rehash_recursive_mock concurrent_hash_map_rehash_recursive/concurrent_hash_map_rehash_recursive.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_recursive_mock CASE 0 TRACERS memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+
+	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND AND TESTS_LONG)
+		add_test_generic(NAME concurrent_hash_map_rehash_recursive_mock CASE 0 TRACERS helgrind drd
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+	endif()
 
 	build_test(concurrent_hash_map_rehash_deadlock concurrent_hash_map_rehash_deadlock/concurrent_hash_map_rehash_deadlock.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_deadlock CASE 0 TRACERS none
@@ -416,6 +444,11 @@ if(TEST_CONCURRENT_HASHMAP)
 	add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
+	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
+		add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS drd helgrind
+				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+	endif()
+
 	build_test_ext(NAME concurrent_hash_map_insert_reopen_deprecated SRC_FILES concurrent_hash_map_insert_reopen/concurrent_hash_map_insert_reopen.cpp
 			BUILD_OPTIONS -DUSE_DEPRECATED_RUNTIME_INITIALIZE)
 	check_cxx_compiler_flag(-Wdeprecated-declarations deprecated_declarations)
@@ -423,36 +456,6 @@ if(TEST_CONCURRENT_HASHMAP)
 		target_compile_options(concurrent_hash_map_insert_reopen_deprecated PUBLIC -Wno-deprecated-declarations)
 	endif()
 	add_test_generic(NAME concurrent_hash_map_insert_reopen_deprecated TRACERS none)
-
-	if(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND)
-		add_test_generic(NAME concurrent_hash_map_insert_reopen CASE 0 TRACERS drd helgrind
-				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 0 TRACERS helgrind drd
-				SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-		add_test_generic(NAME concurrent_hash_map_insert_erase_mock CASE 1 TRACERS helgrind drd
-				SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
-
-		# disabled due to intermittent failures (most probably false-positive reported by helgrind, ref. issue #469)
-		# add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS helgrind
-		#		SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-		# add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS helgrind
-		#		SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
-
-		if (TESTS_LONG)
-			add_test_generic(NAME concurrent_hash_map_insert_lookup_mock CASE 0 TRACERS helgrind drd
-					SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-
-			add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 0 TRACERS drd
-					SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-			add_test_generic(NAME concurrent_hash_map_rehash_mock CASE 1 TRACERS drd
-					SCRIPT concurrent_hash_map/check_is_pmem_defrag.cmake)
-
-			add_test_generic(NAME concurrent_hash_map_rehash_recursive_mock CASE 0 TRACERS helgrind drd
-					SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-		endif()
-		# disabled due to intermittent failures (most probably false-positive reported by helgrind, ref. issue #469)
-		# add_test_generic(NAME concurrent_hash_map_rehash CASE 0 TRACERS helgrind)
-	endif()
 
 	build_test(concurrent_hash_map_rehash_check concurrent_hash_map_rehash_check/concurrent_hash_map_rehash_check.cpp)
 	add_test_generic(NAME concurrent_hash_map_rehash_check TRACERS none memcheck pmemcheck)

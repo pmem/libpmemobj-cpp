@@ -21,11 +21,11 @@ void
 check_access_out_of_tx(const S &s)
 {
 	try {
-		s.empty();
-		s.size();
-		s.length();
-		s.max_size();
-		s.capacity();
+		(void)s.empty();
+		(void)s.size();
+		(void)s.length();
+		(void)s.max_size();
+		(void)s.capacity();
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

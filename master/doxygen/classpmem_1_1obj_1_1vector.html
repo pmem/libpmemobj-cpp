@@ -902,7 +902,7 @@ template&lt;typename InputIt , typename std::enable_if&lt; detail::is_input_iter
     <tr><td class="paramname">std::length_error</td><td>if std::distance(first, last) &gt; <a class="el" href="classpmem_1_1obj_1_1vector.html#aed856e8eaf9a1fc6aa8f13f83709deaf">max_size()</a>. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -943,7 +943,7 @@ template&lt;typename T&gt; </div>
     <tr><td class="paramname">std::length_error</td><td>if std::distance(first, last) &gt; <a class="el" href="classpmem_1_1obj_1_1vector.html#aed856e8eaf9a1fc6aa8f13f83709deaf">max_size()</a>. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -977,7 +977,7 @@ template&lt;typename T&gt; </div>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1043,7 +1043,7 @@ template&lt;typename T&gt; </div>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1097,7 +1097,7 @@ template&lt;typename T&gt; </div>
     <tr><td class="paramname">std::length_error</td><td>if count &gt; <a class="el" href="classpmem_1_1obj_1_1vector.html#aed856e8eaf9a1fc6aa8f13f83709deaf">max_size()</a>. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1638,7 +1638,7 @@ args is valid argument for value_type constructor.</dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> == <a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> + count</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1704,7 +1704,7 @@ InputIt::reference is valid argument for value_type constructor.</dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> == <a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> + std::distance(first, last)</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2016,7 +2016,7 @@ template&lt;class... Args&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2059,7 +2059,7 @@ template&lt;class... Args&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2182,7 +2182,7 @@ template&lt;typename T &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
   </table>
   </dd>
@@ -2233,7 +2233,7 @@ template&lt;typename T &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
   </table>
   </dd>
@@ -2460,7 +2460,7 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2512,7 +2512,7 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2571,7 +2571,7 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2634,7 +2634,7 @@ InputIt must satisfies requirements of InputIterator.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2686,7 +2686,7 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2747,7 +2747,7 @@ template&lt;typename InputIt &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -2858,7 +2858,7 @@ template&lt;typename T &gt; </div>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2921,7 +2921,7 @@ template&lt;typename T&gt; </div>
     <tr><td class="paramname">std::length_error</td><td>if ilist.size() &gt; <a class="el" href="classpmem_1_1obj_1_1vector.html#aed856e8eaf9a1fc6aa8f13f83709deaf">max_size()</a>. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2955,7 +2955,7 @@ template&lt;typename T&gt; </div>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
   </table>
   </dd>
 </dl>
@@ -3089,7 +3089,7 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
   </dd>
@@ -3130,7 +3130,7 @@ template&lt;typename T&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
   </dd>
@@ -3373,7 +3373,7 @@ template&lt;typename T &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
   </table>
@@ -3505,7 +3505,7 @@ template&lt;typename T &gt; </div>
 <a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> == count</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
@@ -3557,7 +3557,7 @@ template&lt;typename T &gt; </div>
 <a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> == std::min(_size, count)</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
@@ -3642,7 +3642,7 @@ template&lt;typename T &gt; </div>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when reallocating failed. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing old underlying array failed. </td></tr>
-    <tr><td class="paramname">rethrows</td><td>constructor exception. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>constructor's exception. </td></tr>
     <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
   </table>
   </dd>

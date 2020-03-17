@@ -1,8 +1,0 @@
-<map id="libpmemobj++/pext.hpp" name="libpmemobj++/pext.hpp">
-<area shape="rect" id="node2" href="$allocator_8hpp.html" title="Persistent memory aware allocator. " alt="" coords="5,87,188,114"/>
-<area shape="rect" id="node3" href="$array_8hpp.html" title="Array container with std::array compatible interface. " alt="" coords="449,80,611,121"/>
-<area shape="rect" id="node4" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface. " alt="" coords="259,169,420,211"/>
-<area shape="rect" id="node6" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation. " alt="" coords="444,169,627,211"/>
-<area shape="rect" id="node7" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface. " alt="" coords="264,80,425,121"/>
-<area shape="rect" id="node5" href="$string_8hpp.html" title="String typedefs for common character types. " alt="" coords="259,259,420,300"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="libpmemobj++/experimental/v.hpp" name="libpmemobj++/experimental/v.hpp">
-<area shape="rect" id="node4" href="$common_8hpp.html" title="Commonly used functionality. " alt="" coords="415,95,554,136"/>
-<area shape="rect" id="node12" href="$life_8hpp.html" title="Functions for destroying arrays. " alt="" coords="697,95,835,136"/>
-<area shape="rect" id="node5" href="$pexceptions_8hpp.html" title="Custom exceptions. " alt="" coords="57,191,259,218"/>
-<area shape="rect" id="node16" href="$array__traits_8hpp.html" title="Common array traits. " alt="" coords="863,184,1002,225"/>
-<area shape="rect" id="node17" href="$integer__sequence_8hpp.html" title="Create c++14 style index sequence. " alt="" coords="1027,184,1180,225"/>
-</map>

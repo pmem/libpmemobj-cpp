@@ -1,7 +1,0 @@
-<map id="pmem::obj::basic_string&lt; CharT, Traits &gt;" name="pmem::obj::basic_string&lt; CharT, Traits &gt;">
-<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1p.html" title="pmem::obj::p\&lt; size\l_type \&gt;" alt="" coords="228,5,363,47"/>
-<area shape="rect" id="node3" href="$classpmem_1_1obj_1_1vector.html" title="pmem::obj::vector\&lt;\l value_type \&gt;" alt="" coords="495,60,629,101"/>
-<area shape="rect" id="node4" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="pmem::obj::persistent\l_ptr\&lt; value_type []\&gt;" alt="" coords="221,85,369,127"/>
-<area shape="rect" id="node5" href="$classpmem_1_1detail_1_1persistent__ptr__base.html" title="Persistent_ptr base class. " alt="" coords="5,85,172,127"/>
-<area shape="rect" id="node6" href="$structpmem_1_1obj_1_1array.html" title="pmem::obj::array\&lt; value\l_type, sso_capacity+1 \&gt;" alt="" coords="479,125,645,167"/>
-</map>

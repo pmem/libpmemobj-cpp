@@ -246,7 +246,8 @@ test_snapshotting(pmem::obj::pool<struct root> &pop, bool do_abort)
 
 			std::cout << e.c_str() << " " << i << std::endl;
 
-			UT_ASSERT(e == std::to_string(i++));
+			UT_ASSERT(e == std::to_string(i));
+			++i;
 		}
 	}
 }

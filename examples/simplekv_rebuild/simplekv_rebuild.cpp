@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2020, Intel Corporation */
 
 /*
  * simplekv_rebuild.cpp -- example usage of simple kv which uses vector to hold
@@ -78,7 +78,10 @@ main(int argc, char *argv[])
 		std::cerr << e.what() << std::endl;
 	}
 
-	pop.close();
-
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << e.what() << std::endl;
+	}
 	return 0;
 }

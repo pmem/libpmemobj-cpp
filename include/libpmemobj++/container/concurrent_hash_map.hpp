@@ -2272,7 +2272,7 @@ public:
 	 */
 	void clear();
 
-	/*
+	/**
 	 * Should be called before concurrent_hash_map destructor is called.
 	 * Otherwise, program can terminate if an exception occurs while freeing
 	 * memory inside dtor.
@@ -2296,11 +2296,20 @@ public:
 	}
 
 	/**
-	 * Clear table and destroy it.
+	 * free_data should be called before concurrent_hash_map
+	 * destructor is called. Otherwise, program can terminate if
+	 * an exception occurs while freeing memory inside dtor.
+	 *
+	 * Hash map can NOT be used after free_data() was called (unless it
+	 * was done in a transaction and transaction aborted).
 	 */
 	~concurrent_hash_map()
 	{
-		free_data();
+		try {
+			free_data();
+		} catch (...) {
+			std::terminate();
+		}
 	}
 
 	//------------------------------------------------------------------------

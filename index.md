@@ -18,6 +18,36 @@ Doxygen documentation is available:
 * for [v1.6](./v1.6/doxygen/index.html)
 * for [v1.5](./v1.5/doxygen/index.html)
 
+#### Releases' support status
+
+Currently last 3 branches/releases are fully supported. Latest releases can be
+seen on the ["releases" tab on the GitHub page](https://github.com/pmem/libpmemobj-cpp/releases).
+
+| Version branch | First release date | Last patch release | Maintenance status |
+| -------------- | ------------------ | ------------------ | ------------------ |
+| stable-1.9 | Jan 31, 2020 | N/A | Full |
+| stable-1.8 | Oct 3, 2019 | 1.8.1 (Jan 24, 2020) | Full |
+| stable-1.7 | Jun 26, 2019 | N/A | Full |
+| stable-1.6 | Mar 15, 2019 | N/A | Limited |
+| stable-1.5 | Oct 26, 2018 | 1.5.1 (Feb 19, 2019) | Limited |
+
+Possible statuses:
+1. Full maintenance:
+	* All/most of bugs fixed (if possible),
+	* Patch releases issued based on a number of fixes and their severity,
+	* Full validation efforts for patch releases, including *long tests* execution,
+	* At least one release at the end of the maintenance period,
+	* Full support for at least a year since the initial release.
+2. Limited scope:
+	* Only critical bugs (security, data integrity, etc.) will be backported,
+	* Patch versions will be released when needed (based on severity of found issues),
+	* Validation of patch releases will include at least public CI (Travis, AppVeyor, GitHub Actions); *long tests* may not be executed,
+	* Branch will remain in "limited maintenance" status based on the original release availability in popular distros,
+3. EOL:
+	* No support,
+	* No bug fixes,
+	* No official releases.
+
 #### Blog entries
 
 The following series of blog articles provides a tutorial introduction

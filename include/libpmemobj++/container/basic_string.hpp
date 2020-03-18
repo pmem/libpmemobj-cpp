@@ -149,6 +149,7 @@ public:
 	void reserve(size_type new_cap = 0);
 	void shrink_to_fit();
 	void clear();
+	void free_data();
 
 	/* Modifiers */
 	basic_string &erase(size_type index = 0, size_type count = npos);
@@ -682,8 +683,7 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::~basic_string()
 {
-	if (!is_sso_used())
-		detail::destroy<non_sso_type>(non_sso_data());
+	free_data();
 }
 
 /**
@@ -3720,6 +3720,26 @@ void
 basic_string<CharT, Traits>::clear()
 {
 	erase(begin(), end());
+}
+
+/**
+ * Clears the content of a string and frees all allocated persistent memory for
+ * data transactionally.
+ *
+ * @post size() == 0
+ * @post capacity() == 0
+ * @post data() == nullptr
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ * @throw pmem::transaction_free_error when freeing underlying array failed.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::free_data()
+{
+	if (!is_sso_used())
+		detail::destroy<non_sso_type>(non_sso_data());
 }
 
 /**

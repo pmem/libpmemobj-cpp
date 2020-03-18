@@ -1258,17 +1258,17 @@ segment_vector<T, Policy>::assign(const std::vector<T> &other)
  * Destructor.
  * Note that free_data may throw an transaction_free_error when freeing
  * underlying segments failed. It is recommended to call free_data
- * manually before object destruction.
- *
- * @throw rethrows destructor exception.
- * @throw pmem::transaction_error when snapshotting failed.
- * @throw pmem::transaction_free_error when freeing underlying segments
- * failed.
+ * manually before object destruction, otherwise application can
+ * be terminated on failure.
  */
 template <typename T, typename Policy>
 segment_vector<T, Policy>::~segment_vector()
 {
-	free_data();
+	try {
+		free_data();
+	} catch (...) {
+		std::terminate();
+	}
 }
 
 /**

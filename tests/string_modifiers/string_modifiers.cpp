@@ -394,6 +394,40 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 	});
 }
 
+void
+check_free_data_tx_abort(pmem::obj::pool<struct root> &pop)
+{
+	const char *str = "1234";
+	auto r = pop.root();
+	nvobj::transaction::run(pop, [&] {
+		r->s = nvobj::make_persistent<S>(str);
+		r->s1 = nvobj::make_persistent<S>(str);
+	});
+
+	auto &s = *r->s;
+	auto &expected = *r->s1;
+
+	bool exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			s.free_data();
+			s = "BEEF";
+			nvobj::transaction::abort(EINVAL);
+		});
+	} catch (pmem::manual_tx_abort &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERT(expected == s);
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<S>(r->s);
+		nvobj::delete_persistent<S>(r->s1);
+	});
+	UT_ASSERT(exception_thrown);
+}
+
 static void
 test(int argc, char *argv[])
 {
@@ -404,6 +438,8 @@ test(int argc, char *argv[])
 	auto path = argv[1];
 	auto pop = nvobj::pool<root>::create(
 		path, "StringTest", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+
+	check_free_data_tx_abort(pop);
 
 	check_access_out_of_tx(pop, "0123456789");
 	check_access_out_of_tx(pop,

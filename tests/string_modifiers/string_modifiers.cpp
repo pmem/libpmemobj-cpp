@@ -5,6 +5,7 @@
 
 #include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj.h>
 
 namespace nvobj = pmem::obj;
 
@@ -401,14 +402,30 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 		assert_tx_abort(pop, s, [&] { pmem::obj::swap(s, str); });
 		verify_string(s, expected);
 		verify_string(str, expected_str);
+
+		assert_tx_abort(pop, s, [&] {
+			s.free_data();
+			s = "BEEF";
+		});
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] {
+			s.free_data();
+			s = "BEEFBEEFBEEFBEEFBEEFBEEFBEEFBEEFBEEF"
+			    "BEEFBEEFBEEFBEEFBEEFBEEFBEEFBEEFBEEF";
+		});
+		verify_string(s, expected);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
 
 	nvobj::transaction::run(pop, [&] {
+		r->s->free_data();
+		r->s1->free_data();
 		nvobj::delete_persistent<S>(r->s);
 		nvobj::delete_persistent<S>(r->s1);
 	});
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 }
 
 static void

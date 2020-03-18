@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2017-2018, Intel Corporation */
+/* Copyright 2017-2020, Intel Corporation */
 
 #include "Ball.hpp"
 #include "Pool.hpp"
@@ -15,9 +15,14 @@ Ball::Ball(int x, int y)
 
 Ball::~Ball()
 {
-	pmem::obj::transaction::run(
-		Pool::getGamePool()->getPoolToTransaction(),
-		[&] { pmem::obj::delete_persistent<sf::Vector2f>(velocity); });
+	try {
+		pmem::obj::transaction::run(
+			Pool::getGamePool()->getPoolToTransaction(), [&] {
+				pmem::obj::delete_persistent<sf::Vector2f>(
+					velocity);
+			});
+	} catch (...) {
+	}
 }
 
 void

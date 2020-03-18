@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2017-2018, Intel Corporation */
+/* Copyright 2017-2020, Intel Corporation */
 
 #include "PongGameStatus.hpp"
 #include "Pool.hpp"
@@ -20,12 +20,15 @@ PongGameStatus::PongGameStatus()
 
 PongGameStatus::~PongGameStatus()
 {
-	pmem::obj::transaction::run(
-		Pool::getGamePool()->getPoolToTransaction(), [&] {
-			pmem::obj::delete_persistent<Paddle>(player1);
-			pmem::obj::delete_persistent<Paddle>(player2);
-			pmem::obj::delete_persistent<Ball>(ball);
-		});
+	try {
+		pmem::obj::transaction::run(
+			Pool::getGamePool()->getPoolToTransaction(), [&] {
+				pmem::obj::delete_persistent<Paddle>(player1);
+				pmem::obj::delete_persistent<Paddle>(player2);
+				pmem::obj::delete_persistent<Ball>(ball);
+			});
+	} catch (...) {
+	}
 }
 
 void

@@ -87,6 +87,9 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 			expected = "01234567890";
 		}
 
+		assert_tx_abort(pop, s, [&] { s.clear(); });
+		verify_string(s, expected);
+
 		assert_tx_abort(pop, s, [&] { s.erase(); });
 		verify_string(s, expected);
 
@@ -100,6 +103,10 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 		verify_string(s, expected);
 
 		assert_tx_abort(pop, s, [&] { s.erase(s.begin(), s.end()); });
+		verify_string(s, expected);
+
+		assert_tx_abort(pop, s,
+				[&] { s.erase(s.begin() + 5, s.end()); });
 		verify_string(s, expected);
 
 		assert_tx_abort(pop, s, [&] { s.append(5, 'a'); });

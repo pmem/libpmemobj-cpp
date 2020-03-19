@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2020, Intel Corporation */
 
 /*
  * check_is_pmem.cpp -- check if path points to a directory on pmem.
@@ -35,12 +35,15 @@ main(int argc, char *argv[])
 	void *addr = pmem_map_file(path, 4096, flags, 0, &size, &is_pmem);
 #endif
 	if (addr == nullptr) {
-		perror("pmem_map_file failed");
+		std::perror("pmem_map_file failed");
 		return 2;
 	}
 
 	pmem_unmap(addr, size);
-	remove(path);
+	if (std::remove(path)) {
+		std::perror("cannot remove file");
+		return 2;
+	}
 
 	if (is_pmem)
 		return 0;

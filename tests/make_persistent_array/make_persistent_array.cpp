@@ -46,9 +46,13 @@ public:
 
 	~foo()
 	{
-		this->bar = 0;
-		for (int i = 0; i < TEST_ARR_SIZE; ++i)
-			this->arr[i] = 0;
+		try {
+			this->bar = 0;
+			for (int i = 0; i < TEST_ARR_SIZE; ++i)
+				this->arr[i] = 0;
+		} catch (const pmem::transaction_error &e) {
+			UT_ASSERT(0);
+		}
 	}
 
 	nvobj::p<int> bar;

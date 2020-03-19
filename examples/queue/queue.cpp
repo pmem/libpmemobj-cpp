@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2015-2018, Intel Corporation */
+/* Copyright 2015-2020, Intel Corporation */
 
 /*
  * queue.cpp -- queue example implemented using pmemobj cpp bindings
@@ -156,30 +156,57 @@ main(int argc, char *argv[])
 	queue_op op = parse_queue_op(argv[2]);
 
 	pool<examples::pmem_queue> pop;
+	persistent_ptr<examples::pmem_queue> q;
 
-	if (file_exists(path) != 0) {
-		pop = pool<examples::pmem_queue>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL, CREATE_MODE_RW);
-	} else {
-		pop = pool<examples::pmem_queue>::open(path, LAYOUT);
+	try {
+		if (file_exists(path) != 0) {
+			pop = pool<examples::pmem_queue>::create(
+				path, LAYOUT, PMEMOBJ_MIN_POOL, CREATE_MODE_RW);
+		} else {
+			pop = pool<examples::pmem_queue>::open(path, LAYOUT);
+		}
+		q = pop.root();
+	} catch (const pmem::pool_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
 	}
 
-	auto q = pop.root();
 	switch (op) {
 		case QUEUE_PUSH:
-			q->push(pop, std::stoull(argv[3]));
+			try {
+				q->push(pop, std::stoull(argv[3]));
+			} catch (const std::runtime_error &e) {
+				std::cerr << "Exception: " << e.what()
+					  << std::endl;
+				return 1;
+			}
 			break;
 		case QUEUE_POP:
-			std::cout << q->pop(pop) << std::endl;
+			try {
+				std::cout << q->pop(pop) << std::endl;
+			} catch (const std::runtime_error &e) {
+				std::cerr << "Exception: " << e.what()
+					  << std::endl;
+				return 1;
+			} catch (const std::logic_error &e) {
+				std::cerr << "Exception: " << e.what()
+					  << std::endl;
+				return 1;
+			}
 			break;
 		case QUEUE_SHOW:
 			q->show();
 			break;
 		default:
-			throw std::invalid_argument("invalid queue operation");
+			std::cerr << "Invalid queue operation" << std::endl;
+			return 1;
 	}
 
-	pop.close();
-
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	}
 	return 0;
 }

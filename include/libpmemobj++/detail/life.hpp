@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -132,7 +132,8 @@ c_style_construct(void *ptr, void *arg)
  * Calls object's destructor.
  */
 template <typename T,
-	  typename = typename std::enable_if<!std::is_pod<T>::value>::type>
+	  typename = typename std::enable_if<
+		  !std::is_trivially_destructible<T>::value>::type>
 void
 destroy(typename if_not_array<T>::type &arg)
 {
@@ -143,7 +144,8 @@ destroy(typename if_not_array<T>::type &arg)
  * Don't call destructors for POD types.
  */
 template <typename T, typename dummy = void,
-	  typename = typename std::enable_if<std::is_pod<T>::value>::type>
+	  typename = typename std::enable_if<
+		  std::is_trivially_destructible<T>::value>::type>
 void
 destroy(typename if_not_array<T>::type &)
 {

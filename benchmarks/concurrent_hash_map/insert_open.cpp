@@ -164,7 +164,10 @@ main(int argc, char *argv[])
 		return 1;
 	} catch (const std::exception &e) {
 		std::cerr << "!exception: " << e.what() << std::endl;
-		pop.close();
+		try {
+			pop.close();
+		} catch (const std::logic_error &e) {
+		}
 		return 1;
 	}
 	return 0;

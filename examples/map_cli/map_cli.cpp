@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 #include "ctree_map_persistent.hpp"
 #include "ctree_map_transient.hpp"
@@ -208,7 +208,11 @@ main(int argc, char *argv[])
 		q = pop.root();
 	} catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
-		pop.close();
+		try {
+			pop.close();
+		} catch (const std::logic_error &e) {
+			std::cerr << e.what() << std::endl;
+		}
 		return 1;
 	}
 
@@ -219,7 +223,11 @@ main(int argc, char *argv[])
 			});
 		} catch (pmem::transaction_error &e) {
 			std::cerr << e.what() << std::endl;
-			pop.close();
+			try {
+				pop.close();
+			} catch (const std::logic_error &e) {
+				std::cerr << e.what() << std::endl;
+			}
 			return 1;
 		}
 	}
@@ -239,7 +247,10 @@ main(int argc, char *argv[])
 		}
 	}
 
-	pop.close();
-
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << e.what() << std::endl;
+	}
 	return 0;
 }

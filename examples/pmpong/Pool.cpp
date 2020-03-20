@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2017-2018, Intel Corporation */
+/* Copyright 2017-2020, Intel Corporation */
 
 #include "Pool.hpp"
 
@@ -17,7 +17,11 @@ Pool::Pool(const std::string &fileName)
 
 Pool::~Pool()
 {
-	pool.close();
+	try {
+		pool.close();
+	} catch (const std::logic_error &e) {
+		std::terminate();
+	}
 }
 
 Pool *

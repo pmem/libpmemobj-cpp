@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2017-2019, Intel Corporation */
+/* Copyright 2017-2020, Intel Corporation */
 
 #include "GameController.hpp"
 #include "Pool.hpp"
@@ -11,11 +11,15 @@ GameController::GameController()
 
 GameController::~GameController()
 {
-	pmem::obj::transaction::run(
-		Pool::getGamePool()->getPoolToTransaction(), [&] {
-			pmem::obj::delete_persistent<PongGameStatus>(
-				gameStatus);
-		});
+	try {
+		pmem::obj::transaction::run(
+			Pool::getGamePool()->getPoolToTransaction(), [&] {
+				pmem::obj::delete_persistent<PongGameStatus>(
+					gameStatus);
+			});
+	} catch (...) {
+		std::terminate();
+	}
 }
 
 void

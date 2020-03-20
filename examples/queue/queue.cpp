@@ -169,6 +169,9 @@ main(int argc, char *argv[])
 	} catch (const pmem::pool_error &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
 		return 1;
+	} catch (const pmem::transaction_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
 	}
 
 	switch (op) {
@@ -195,7 +198,13 @@ main(int argc, char *argv[])
 			}
 			break;
 		case QUEUE_SHOW:
-			q->show();
+			try {
+				q->show();
+			} catch (const pmem::transaction_error &e) {
+				std::cerr << "Exception: " << e.what()
+					  << std::endl;
+				return 1;
+			}
 			break;
 		default:
 			std::cerr << "Invalid queue operation" << std::endl;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -73,10 +73,18 @@ public:
 	 *
 	 * @param[in] p the pointer to where the object will be constructed.
 	 * @param[in] t the object reference for copy construction.
+	 *
+	 * @throw transaction_scope_error if called outside of an active
+	 * transaction.
+	 * @throw rethrow exception from T constructor.
 	 */
 	void
 	construct(pointer p, const_reference t)
 	{
+		if (pmemobj_tx_stage() != TX_STAGE_WORK)
+			throw pmem::transaction_scope_error(
+				"construct is called outside of transaction scope");
+
 		/* construct called on newly allocated objects */
 		detail::conditional_add_to_tx(p.get());
 		new (static_cast<void *>(p.get())) value_type(t);
@@ -89,11 +97,19 @@ public:
 	 *
 	 * @param[in] p the pointer to where the object will be constructed.
 	 * @param[in] args parameters passed to the object's constructor.
+	 *
+	 * @throw transaction_scope_error if called outside of an active
+	 * transaction.
+	 * @throw rethrow exception from T constructor.
 	 */
 	template <typename... Args>
 	void
 	construct(pointer p, Args &&... args)
 	{
+		if (pmemobj_tx_stage() != TX_STAGE_WORK)
+			throw pmem::transaction_scope_error(
+				"construct is called outside of transaction scope");
+
 		detail::conditional_add_to_tx(p.get());
 		new (static_cast<void *>(p.get()))
 			value_type(std::forward<Args>(args)...);
@@ -218,6 +234,9 @@ public:
 	 * @param[in] cnt the number of objects to allocate memory for.
 	 *
 	 * @throw transaction_scope_error if called outside of a transaction.
+	 * @throw transaction_out_of_memory if there is no free memory of
+	 * requested size.
+	 * @throw transaction_alloc_error on transactional allocation failure.
 	 */
 	pointer
 	allocate(size_type cnt, const_void_pointer = 0)
@@ -227,8 +246,22 @@ public:
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
-		return pmemobj_tx_alloc(sizeof(value_type) * cnt,
-					detail::type_num<value_type>());
+		pointer ptr = pmemobj_tx_alloc(sizeof(value_type) * cnt,
+					       detail::type_num<value_type>());
+
+		if (ptr == nullptr) {
+			if (errno == ENOMEM) {
+				throw pmem::transaction_out_of_memory(
+					"Failed to allocate persistent memory object")
+					.with_pmemobj_errormsg();
+			} else {
+				throw pmem::transaction_alloc_error(
+					"Failed to allocate persistent memory object")
+					.with_pmemobj_errormsg();
+			}
+		}
+
+		return ptr;
 	}
 
 	/**

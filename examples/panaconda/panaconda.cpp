@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2018, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /*
  * panaconda.cpp -- example usage of libpmemobj C++ bindings
@@ -206,10 +206,18 @@ board_element::board_element(const board_element &element)
 
 board_element::~board_element()
 {
-	pmem::obj::delete_persistent<point>(position);
-	position = nullptr;
-	pmem::obj::delete_persistent<element_shape>(shape);
-	shape = nullptr;
+	try {
+		pmem::obj::delete_persistent<point>(position);
+		position = nullptr;
+		pmem::obj::delete_persistent<element_shape>(shape);
+		shape = nullptr;
+	} catch (const pmem::transaction_free_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		std::terminate();
+	} catch (const pmem::transaction_scope_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		std::terminate();
+	}
 }
 
 persistent_ptr<point>
@@ -302,8 +310,16 @@ snake::snake()
 
 snake::~snake()
 {
-	snake_segments->clear();
-	delete_persistent<list<board_element>>(snake_segments);
+	try {
+		snake_segments->clear();
+		delete_persistent<list<board_element>>(snake_segments);
+	} catch (const pmem::transaction_scope_error &e) {
+		std::cerr << e.what() << std::endl;
+		std::terminate();
+	} catch (const pmem::transaction_error &e) {
+		std::cerr << e.what() << std::endl;
+		std::terminate();
+	}
 }
 
 void
@@ -405,10 +421,16 @@ game_board::game_board()
 
 game_board::~game_board()
 {
-	layout->clear();
-	delete_persistent<list<board_element>>(layout);
-	delete_persistent<snake>(anaconda);
-	delete_persistent<board_element>(food);
+	try {
+		layout->clear();
+		delete_persistent<list<board_element>>(layout);
+		delete_persistent<snake>(anaconda);
+		delete_persistent<board_element>(food);
+	} catch (transaction_error &err) {
+		std::cout << err.what() << std::endl;
+	} catch (transaction_scope_error &tse) {
+		std::cout << tse.what() << std::endl;
+	}
 }
 
 void

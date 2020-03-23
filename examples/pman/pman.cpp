@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /*
  * pman.cpp -- example usage of libpmemobj C++ bindings
@@ -500,8 +500,13 @@ board_state::board_state(const std::string &map_file) : highscore(0)
 
 board_state::~board_state()
 {
-	delete_persistent<field[]>(board, SIZE * SIZE);
-	delete_persistent<field[]>(board_tmpl, SIZE * SIZE);
+	try {
+		delete_persistent<field[]>(board, SIZE * SIZE);
+		delete_persistent<field[]>(board_tmpl, SIZE * SIZE);
+	} catch (...) {
+		std::cerr << "Exception on object destruction" << std::endl;
+		std::terminate();
+	}
 }
 
 /* board_state::reset_params -- reset game parameters */

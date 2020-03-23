@@ -2205,7 +2205,9 @@ segment_vector<T, Policy>::erase(const_iterator first, const_iterator last)
 	transaction::run(pb, [&] {
 		size_type _size = size();
 
-		snapshot_data(idx, _size);
+		if (!std::is_trivially_destructible<T>::value ||
+		    idx + count < _size)
+			snapshot_data(idx, _size);
 
 		/* Moving after-range elements to the place of deleted
 		 */
@@ -2610,7 +2612,8 @@ segment_vector<T, Policy>::shrink(size_type size_new)
 	if (empty())
 		return;
 
-	snapshot_data(size_new, size());
+	if (!std::is_trivially_destructible<T>::value)
+		snapshot_data(size_new, size());
 
 	size_type begin = policy::get_segment(size() - 1);
 	size_type end = policy::get_segment(size_new);

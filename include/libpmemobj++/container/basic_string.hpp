@@ -1435,15 +1435,18 @@ basic_string<CharT, Traits>::erase(size_type index, size_type count)
 			auto move_len = sz - index - count;
 			auto new_size = sz - count;
 
-			auto range = sso_data().range(index, move_len + 1);
+			if (move_len > 0) {
+				auto range =
+					sso_data().range(index, move_len + 1);
+				traits_type::move(range.begin(), &*last,
+						  move_len);
 
-			traits_type::move(range.begin(), &*last, move_len);
+				assert(range.end() - 1 ==
+				       &sso_data()._data[index + move_len]);
+			}
 
+			sso_data()[index + move_len] = value_type('\0');
 			set_sso_size(new_size);
-
-			assert(range.end() - 1 ==
-			       &sso_data()._data[index + move_len]);
-			*(range.end() - 1) = value_type('\0');
 		});
 	} else {
 		non_sso_data().erase(first, last);

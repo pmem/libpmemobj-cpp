@@ -218,6 +218,9 @@ public:
 	 * @param[in] cnt the number of objects to allocate memory for.
 	 *
 	 * @throw transaction_scope_error if called outside of a transaction.
+	 * @throw transaction_out_of_memory if there is no free memory of
+	 * requested size.
+	 * @throw transaction_alloc_error on transactional allocation failure.
 	 */
 	pointer
 	allocate(size_type cnt, const_void_pointer = 0)
@@ -227,8 +230,22 @@ public:
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
-		return pmemobj_tx_alloc(sizeof(value_type) * cnt,
-					detail::type_num<value_type>());
+		pointer ptr = pmemobj_tx_alloc(sizeof(value_type) * cnt,
+					       detail::type_num<value_type>());
+
+		if (ptr == nullptr) {
+			if (errno == ENOMEM) {
+				throw pmem::transaction_out_of_memory(
+					"Failed to allocate persistent memory object")
+					.with_pmemobj_errormsg();
+			} else {
+				throw pmem::transaction_alloc_error(
+					"Failed to allocate persistent memory object")
+					.with_pmemobj_errormsg();
+			}
+		}
+
+		return ptr;
 	}
 
 	/**

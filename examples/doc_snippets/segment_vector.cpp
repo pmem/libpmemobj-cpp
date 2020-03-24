@@ -134,7 +134,14 @@ main(int argc, char *argv[])
 	} catch (const pmem::transaction_free_error &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
 		return 1;
+	} catch (const pmem::manual_tx_abort &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	} catch (const pmem::transaction_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
 	}
+
 	try {
 		pop.close();
 	} catch (const std::logic_error &e) {

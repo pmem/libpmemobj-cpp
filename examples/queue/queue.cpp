@@ -169,6 +169,9 @@ main(int argc, char *argv[])
 	} catch (const pmem::pool_error &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
 		return 1;
+	} catch (const pmem::transaction_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
 	}
 
 	switch (op) {

@@ -617,6 +617,8 @@ public:
 	 * Retrieves pool's root object.
 	 *
 	 * @return persistent pointer to the root object.
+	 *
+	 * @throw pmem::pool_error when pool handle is incorrect.
 	 */
 	persistent_ptr<T>
 	root()

@@ -6,9 +6,13 @@ libpmemobj-cpp
 [![libpmemobj-cpp version](https://img.shields.io/github/tag/pmem/libpmemobj-cpp.svg)](https://github.com/pmem/libpmemobj-cpp/releases/latest)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15911/badge.svg)](https://scan.coverity.com/projects/pmem-libpmemobj-cpp)
 [![Coverage Status](https://codecov.io/github/pmem/libpmemobj-cpp/coverage.svg?branch=master)](https://codecov.io/gh/pmem/libpmemobj-cpp/branch/master)
+[![Packaging status](https://repology.org/badge/tiny-repos/libpmemobj-cpp.svg)](https://repology.org/project/libpmemobj-cpp/versions)
 
-C++ bindings for libpmemobj (https://github.com/pmem/pmdk)
-More information in include/libpmemobj++/README.md
+**libpmemobj-cpp** is a C++ binding for **libpmemobj** (a library which is a part of [PMDK collection](https://github.com/pmem/pmdk)).
+More implementation details can be found in [include/libpmemobj++/README.md](include/libpmemobj++/README.md).
+
+Latest releases can be found on the ["releases" tab](https://github.com/pmem/libpmemobj-cpp/releases).
+Up-to-date support/maintenance status of branches/releases is available on [pmem.io](https://pmem.io/libpmemobj-cpp).
 
 # How to build #
 

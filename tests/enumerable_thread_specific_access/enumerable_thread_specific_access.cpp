@@ -73,7 +73,7 @@ test(nvobj::pool<struct root> &pop)
 
 	std::thread t([&] {
 		tls->local() = 99;
-		pop.persist(&tls->local(), sizeof(&tls->local()));
+		pop.persist(&tls->local(), sizeof(tls->local()));
 
 		UT_ASSERT(tls->size() <= concurrency + 1);
 		UT_ASSERT(tls->local() == 99);
@@ -95,7 +95,7 @@ test_with_spin(nvobj::pool<struct root> &pop, size_t concurrency)
 
 	parallel_exec_with_sync(concurrency, [&](size_t thread_index) {
 		tls->local()++;
-		pop.persist(&tls->local(), sizeof(&tls->local()));
+		pop.persist(&tls->local(), sizeof(tls->local()));
 	});
 
 	/*
@@ -125,12 +125,12 @@ test_multiple_tls(nvobj::pool<struct root> &pop)
 
 	parallel_exec_with_sync(concurrency, [&](size_t thread_index) {
 		tls1->local() = thread_index;
-		pop.persist(&tls1->local(), sizeof(&tls1->local()));
+		pop.persist(&tls1->local(), sizeof(tls1->local()));
 	});
 
 	parallel_exec_with_sync(concurrency, [&](size_t thread_index) {
 		tls2->local() = thread_index;
-		pop.persist(&tls2->local(), sizeof(&tls2->local()));
+		pop.persist(&tls2->local(), sizeof(tls2->local()));
 	});
 
 	UT_ASSERT(tls1->size() == concurrency);
@@ -162,10 +162,10 @@ test_multiple_tls(nvobj::pool<struct root> &pop)
 
 	parallel_exec_with_sync(concurrency, [&](size_t thread_index) {
 		tls1->local() = thread_index;
-		pop.persist(&tls1->local(), sizeof(&tls1->local()));
+		pop.persist(&tls1->local(), sizeof(tls1->local()));
 
 		tls2->local() = thread_index;
-		pop.persist(&tls2->local(), sizeof(&tls2->local()));
+		pop.persist(&tls2->local(), sizeof(tls2->local()));
 	});
 
 	UT_ASSERT(tls1->size() == concurrency);

@@ -26,7 +26,7 @@ test(nvobj::pool<struct root> &pop)
 
 	parallel_exec(concurrency, [&](size_t thread_index) {
 		tls->local() = 99;
-		pop.persist(&tls->local(), sizeof(&tls->local()));
+		pop.persist(&tls->local(), sizeof(tls->local()));
 	});
 
 	UT_ASSERT(tls->size() <= concurrency);

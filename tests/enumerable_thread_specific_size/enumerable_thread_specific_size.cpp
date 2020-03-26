@@ -30,7 +30,7 @@ test(nvobj::pool<struct root> &pop, size_t batch_size)
 	for (size_t i = 0; i < num_batches; i++)
 		parallel_exec(batch_size, [&](size_t thread_index) {
 			tls->local();
-			pop.persist(&tls->local(), sizeof(&tls->local()));
+			pop.persist(&tls->local(), sizeof(tls->local()));
 		});
 
 	/* There was at most batch_size threads at any given time. */
@@ -52,7 +52,7 @@ test_with_spin(nvobj::pool<struct root> &pop, size_t batch_size)
 
 	parallel_exec_with_sync(batch_size, [&](size_t thread_index) {
 		tls->local() = thread_index;
-		pop.persist(&tls->local(), sizeof(&tls->local()));
+		pop.persist(&tls->local(), sizeof(tls->local()));
 	});
 
 	/*
@@ -78,7 +78,7 @@ test_clear_abort(nvobj::pool<struct root> &pop, size_t batch_size)
 
 	parallel_exec_with_sync(batch_size, [&](size_t thread_index) {
 		tls->local() = 2;
-		pop.persist(&tls->local(), sizeof(&tls->local()));
+		pop.persist(&tls->local(), sizeof(tls->local()));
 	});
 
 	/*

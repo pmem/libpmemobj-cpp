@@ -102,7 +102,7 @@ check_with_tx_abort_and_delete(nvobj::pool<struct root> &pop,
 
 	parallel_exec_with_sync(concurrency, [&](size_t thread_index) {
 		tls->local()++;
-		pop.persist(&tls->local(), sizeof(&tls->local()));
+		pop.persist(&tls->local(), sizeof(tls->local()));
 	});
 
 	for (auto &e : *tls) {

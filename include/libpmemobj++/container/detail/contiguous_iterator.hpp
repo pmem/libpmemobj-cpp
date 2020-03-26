@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2020, Intel Corporation */
 
 /**
  * @file
@@ -146,7 +146,7 @@ struct contiguous_iterator {
 	/**
 	 * Element access operator.
 	 */
-	Reference operator[](std::size_t n)
+	Reference operator[](std::ptrdiff_t n)
 	{
 		return ptr[n];
 	}
@@ -230,7 +230,7 @@ struct range_snapshotting_iterator
 	 *
 	 * Adds element to a transaction.
 	 */
-	reference operator[](std::size_t n)
+	reference operator[](std::ptrdiff_t n)
 	{
 		detail::conditional_add_to_tx(&this->ptr[n], 1,
 					      POBJ_XADD_ASSUME_INITIALIZED);
@@ -380,7 +380,7 @@ struct basic_contiguous_iterator
 	 *
 	 * Adds range containing specified element to a transaction.
 	 */
-	reference operator[](std::size_t n)
+	reference operator[](std::ptrdiff_t n)
 	{
 		detail::conditional_add_to_tx(&this->ptr[n], 1,
 					      POBJ_XADD_ASSUME_INITIALIZED);

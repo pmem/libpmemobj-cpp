@@ -224,6 +224,13 @@ if (TEST_ARRAY)
 	build_test(array_iterator array_iterator/array_iterator.cpp)
 	add_test_generic(NAME array_iterator TRACERS none pmemcheck)
 
+	build_test(array_iterator_noconv array_iterator/array_iterator_noconv.cpp)
+	check_cxx_compiler_flag(-Wno-sign-conversion NO_SIGN_CONVERSION_FLAG)
+	if (NO_SIGN_CONVERSION_FLAG)
+		target_compile_options(array_iterator_noconv PUBLIC -Wno-sign-conversion)
+	endif()
+	add_test_generic(NAME array_iterator_noconv TRACERS none)
+
 	if(NOT CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT)
 		build_test(array_modifiers array_modifiers/array_modifiers.cpp)
 		add_test_generic(NAME array_modifiers TRACERS none pmemcheck memcheck)

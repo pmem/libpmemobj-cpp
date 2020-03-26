@@ -188,12 +188,50 @@ struct Testcase5 {
 	}
 };
 
+struct Testcase6 {
+	typedef pmem::obj::array<int, 5> C;
+	C c{{0, 1, 2, 3, 4}};
+
+	void
+	run()
+	{
+		C::iterator i;
+		i = c.begin();
+
+		UT_ASSERT(i[0] == 0);
+		UT_ASSERT(i[0LL] == 0);
+		UT_ASSERT(i[0U] == 0);
+		UT_ASSERT(i[0ULL] == 0);
+
+		C::const_iterator j;
+		j = c.cbegin();
+
+		UT_ASSERT(j[0] == 0);
+		UT_ASSERT(j[0LL] == 0);
+		UT_ASSERT(j[0U] == 0);
+		UT_ASSERT(j[0ULL] == 0);
+
+		UT_ASSERT(i == j);
+
+		C::range_snapshotting_iterator k;
+		k = c.range(0, 2).begin();
+
+		UT_ASSERT(k[0] == 0);
+		UT_ASSERT(k[0LL] == 0);
+		UT_ASSERT(k[0U] == 0);
+		UT_ASSERT(k[0ULL] == 0);
+
+		UT_ASSERT(i == k);
+	}
+};
+
 struct root {
 	pmem::obj::persistent_ptr<Testcase1> r1;
 	pmem::obj::persistent_ptr<Testcase2> r2;
 	pmem::obj::persistent_ptr<Testcase3> r3;
 	pmem::obj::persistent_ptr<Testcase4> r4;
 	pmem::obj::persistent_ptr<Testcase5> r5;
+	pmem::obj::persistent_ptr<Testcase6> r6;
 };
 
 void
@@ -211,6 +249,8 @@ run(pmem::obj::pool<root> &pop)
 				pmem::obj::make_persistent<Testcase4>();
 			pop.root()->r5 =
 				pmem::obj::make_persistent<Testcase5>();
+			pop.root()->r6 =
+				pmem::obj::make_persistent<Testcase6>();
 		});
 
 		pmem::obj::transaction::run(pop, [&] {
@@ -219,6 +259,7 @@ run(pmem::obj::pool<root> &pop)
 			pop.root()->r3->run();
 			pop.root()->r4->run();
 			pop.root()->r5->run();
+			pop.root()->r6->run();
 		});
 	} catch (...) {
 		UT_ASSERT(0);

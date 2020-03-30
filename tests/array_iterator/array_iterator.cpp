@@ -35,7 +35,7 @@ struct Test1 {
 
 		swap(it, it2);
 
-		it2[c.size() - 1] = 10;
+		it2[static_cast<std::ptrdiff_t>(c.size() - 1)] = 10;
 		it[20] = 20;
 
 		UT_ASSERT(c[c.size() - 1] == 10);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ struct Test1 {
 
 		swap(it, it2);
 
-		it2[c.size() - 1] = 10;
+		it2[static_cast<std::ptrdiff_t>(c.size() - 1)] = 10;
 		it[20] = 20;
 
 		UT_ASSERT(c[c.size() - 1] == 10);

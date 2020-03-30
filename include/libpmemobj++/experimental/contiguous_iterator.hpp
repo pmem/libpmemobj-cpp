@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,7 +178,7 @@ struct contiguous_iterator {
 	/**
 	 * Element access operator.
 	 */
-	Reference operator[](std::size_t n)
+	Reference operator[](std::ptrdiff_t n)
 	{
 		return ptr[n];
 	}
@@ -326,7 +326,7 @@ struct range_snapshotting_iterator
 	 *
 	 * Adds element to a transaction.
 	 */
-	reference operator[](std::size_t n)
+	reference operator[](std::ptrdiff_t n)
 	{
 		detail::conditional_add_to_tx(&this->ptr[n]);
 		return base_type::operator[](n);
@@ -465,7 +465,7 @@ struct basic_contiguous_iterator
 	 *
 	 * Adds range containing specified element to a transaction.
 	 */
-	reference operator[](std::size_t n)
+	reference operator[](std::ptrdiff_t n)
 	{
 		detail::conditional_add_to_tx(&this->ptr[n]);
 		return base_type::operator[](n);

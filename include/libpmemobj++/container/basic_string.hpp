@@ -354,14 +354,14 @@ private:
 			pmem::detail::is_input_iterator<InputIt>::value>::type>
 	pointer assign_sso_data(InputIt first, InputIt last);
 	pointer assign_sso_data(size_type count, value_type ch);
-	pointer assign_sso_data(basic_string &&other);
+	pointer move_sso_data(basic_string &&other);
 	template <
 		typename InputIt,
 		typename Enable = typename std::enable_if<
 			pmem::detail::is_input_iterator<InputIt>::value>::type>
 	pointer assign_large_data(InputIt first, InputIt last);
 	pointer assign_large_data(size_type count, value_type ch);
-	pointer assign_large_data(basic_string &&other);
+	pointer move_large_data(basic_string &&other);
 	pool_base get_pool() const;
 	void check_pmem() const;
 	void check_tx_stage_work() const;
@@ -641,13 +641,14 @@ template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(basic_string &&other)
 {
 	check_pmem_tx();
-	sso._size = 0;
 
-	allocate(other.size());
-	initialize(std::move(other));
-
-	if (other.is_sso_used())
-		other.initialize(0U, value_type('\0'));
+	if (other.size() <= sso_capacity) {
+		enable_sso();
+		move_sso_data(std::move(other));
+	} else {
+		detail::create<non_sso_type>(&non_sso_data());
+		move_large_data(std::move(other));
+	}
 }
 
 /**
@@ -989,10 +990,15 @@ basic_string<CharT, Traits>::assign(basic_string &&other)
 	auto pop = get_pool();
 
 	transaction::run(pop, [&] {
-		replace_content(std::move(other));
+		destroy_data();
 
-		if (other.is_sso_used())
-			other.initialize(0U, value_type('\0'));
+		if (other.size() <= sso_capacity) {
+			enable_sso();
+			move_sso_data(std::move(other));
+		} else {
+			detail::create<non_sso_type>(&non_sso_data());
+			move_large_data(std::move(other));
+		}
 	});
 
 	return *this;
@@ -3802,7 +3808,6 @@ basic_string<CharT, Traits>::get_size(const basic_string &other) const
  * parameters. Allowed parameters are:
  * - size_type count, CharT value
  * - InputIt first, InputIt last
- * - basic_string &&
  */
 template <typename CharT, typename Traits>
 template <typename... Args>
@@ -3829,7 +3834,6 @@ basic_string<CharT, Traits>::replace_content(Args &&... args)
  * non_sso.data or sso.data. Allowed parameters are:
  * - size_type count, CharT value
  * - InputIt first, InputIt last
- * - basic_string &&
  *
  * @pre must be called in transaction scope.
  * @pre memory must be allocated before initialization.
@@ -3841,13 +3845,8 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	auto size = get_size(std::forward<Args>(args)...);
-
 	if (is_sso_used()) {
-		auto ptr = assign_sso_data(std::forward<Args>(args)...);
-		set_sso_size(size);
-
-		return ptr;
+		return assign_sso_data(std::forward<Args>(args)...);
 	} else {
 		return assign_large_data(std::forward<Args>(args)...);
 	}
@@ -3904,6 +3903,8 @@ basic_string<CharT, Traits>::assign_sso_data(InputIt first, InputIt last)
 
 	sso_data()._data[size] = value_type('\0');
 
+	set_sso_size(size);
+
 	return &sso_data()[0];
 }
 
@@ -3922,6 +3923,8 @@ basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
 
 	sso_data()._data[count] = value_type('\0');
 
+	set_sso_size(count);
+
 	return &sso_data()[0];
 }
 
@@ -3930,11 +3933,16 @@ basic_string<CharT, Traits>::assign_sso_data(size_type count, value_type ch)
  */
 template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_sso_data(basic_string &&other)
+basic_string<CharT, Traits>::move_sso_data(basic_string &&other)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	return assign_sso_data(other.cbegin(), other.cend());
+	auto ptr = assign_sso_data(other.cbegin(), other.cend());
+
+	if (other.is_sso_used())
+		other.initialize(0U, value_type('\0'));
+
+	return ptr;
 }
 
 /**
@@ -3980,12 +3988,17 @@ basic_string<CharT, Traits>::assign_large_data(size_type count, value_type ch)
  */
 template <typename CharT, typename Traits>
 typename basic_string<CharT, Traits>::pointer
-basic_string<CharT, Traits>::assign_large_data(basic_string &&other)
+basic_string<CharT, Traits>::move_large_data(basic_string &&other)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	if (other.is_sso_used())
-		return assign_large_data(other.cbegin(), other.cend());
+	if (other.is_sso_used()) {
+		auto ptr = assign_large_data(other.cbegin(), other.cend());
+
+		other.initialize(0U, value_type('\0'));
+
+		return ptr;
+	}
 
 	non_sso_data() = std::move(other.non_sso_data());
 

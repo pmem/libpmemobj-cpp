@@ -217,6 +217,9 @@ board_element::~board_element()
 	} catch (const pmem::transaction_scope_error &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
 		std::terminate();
+	} catch (const pmem::transaction_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		std::terminate();
 	}
 }
 

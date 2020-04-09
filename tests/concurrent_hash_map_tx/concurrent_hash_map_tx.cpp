@@ -358,8 +358,28 @@ test_tx_singlethread(nvobj::pool<root> &pop)
 
 	UT_ASSERT(static_cast<int>(map->size()) == number_of_inserts);
 
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->free_data();
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	verify_elements(pop, number_of_inserts);
+
+	try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->free_data();
+			pmem::obj::delete_persistent<persistent_map_type>(map);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
 	pmem::obj::transaction::run(pop, [&] {
-		pmem::obj::delete_persistent<persistent_map_type>(map);
 		pmem::obj::delete_persistent<persistent_map_type>(map2);
 	});
 }

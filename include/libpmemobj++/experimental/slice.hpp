@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, Intel Corporation
+ * Copyright 2018-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -137,7 +137,8 @@ public:
 		if (idx >= size())
 			throw std::out_of_range("pmem::obj::slice");
 
-		return it_begin[idx];
+		return it_begin[static_cast<typename std::iterator_traits<
+			Iterator>::difference_type>(idx)];
 	}
 
 	/**
@@ -146,7 +147,8 @@ public:
 	 */
 	reference operator[](size_type idx)
 	{
-		return it_begin[idx];
+		return it_begin[static_cast<typename std::iterator_traits<
+			Iterator>::difference_type>(idx)];
 	}
 
 	size_type

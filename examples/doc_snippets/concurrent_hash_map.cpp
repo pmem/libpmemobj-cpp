@@ -20,7 +20,7 @@ using namespace pmem::obj;
 using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
-const bool remove_hashmap = true;
+const bool remove_hashmap = false;
 
 // This is basic example and we only need to use concurrent_hash_map. Hence we
 // will correlate memory pool root object with single instance of persistent
@@ -29,6 +29,8 @@ struct root {
 	persistent_ptr<hashmap_type> pptr;
 };
 
+// Before running this example, run:
+// pmempool create obj --layout="concurrent_hash_map" --size 1G path_to_a_pool
 int
 main(int argc, char *argv[])
 {
@@ -40,21 +42,29 @@ main(int argc, char *argv[])
 
 		auto path = argv[1];
 
-		pop = pool<root>::open(path, "concurrent_hash_map example");
+		try {
+			pop = pool<root>::open(path, "concurrent_hash_map");
+		} catch (pmem::pool_error &e) {
+			std::cerr << e.what() << std::endl;
+			return -1;
+		}
+
 		auto r = pop.root()->pptr;
 
 		if (r == nullptr) {
-			// Logic when file didn't exist when open() was called.
-			// After the pool was created, we have to allocate
-			// object of hashmap_type and attach it to the root
-			// object.
+			// Logic when file was first opened. First, we have to
+			// allocate object of hashmap_type and attach it to the
+			// root object.
 			pmem::obj::transaction::run(pop, [&] {
 				r = make_persistent<hashmap_type>();
 			});
+
+			r->runtime_initialize();
 		} else {
-			// Logic when file already exists. After opening of the
-			// pool we have to call runtime_initialize() function in
-			// order to recalculate mask and check for consistentcy.
+			// Logic when hash_map already exists. After opening of
+			// the pool we have to call runtime_initialize()
+			// function in order to recalculate mask and check for
+			// consistentcy.
 
 			r->runtime_initialize();
 
@@ -165,8 +175,8 @@ main(int argc, char *argv[])
 			});
 		}
 		pop.close();
-	} catch (...) {
-		std::cerr << "Exception occured!" << std::endl;
+	} catch (std::exception &e) {
+		std::cerr << "Exception occured: " << e.what() << std::endl;
 		try {
 			pop.close();
 		} catch (const std::logic_error &e) {

@@ -285,6 +285,8 @@ public:
 	size_type find_last_not_of(CharT ch, size_type pos = npos) const
 		noexcept;
 
+	void swap(basic_string &other);
+
 	/* Special value. The exact meaning depends on the context. */
 	static const size_type npos = static_cast<size_type>(-1);
 
@@ -3986,6 +3988,38 @@ basic_string<CharT, Traits>::move_data(basic_string &&other)
 }
 
 /**
+ * Swap the content of persistent strings.
+ */
+template <typename CharT, typename Traits>
+void
+basic_string<CharT, Traits>::swap(basic_string &other)
+{
+	pool_base pb = get_pool();
+	transaction::run(pb, [&] {
+		if (is_sso_used() && other.is_sso_used()) {
+			sso_data().swap(other.sso_data());
+			pmem::obj::swap(sso._size, other.sso._size);
+		} else if (!is_sso_used() && !other.is_sso_used()) {
+			non_sso_data().swap(other.non_sso_data());
+		} else {
+			basic_string *_short, *_long;
+			if (size() > other.size()) {
+				_short = &other;
+				_long = this;
+			} else {
+				_short = this;
+				_long = &other;
+			}
+
+			std::basic_string<CharT, Traits> tmp(_short->c_str(),
+							     _short->size());
+			*_short = *_long;
+			*_long = tmp;
+		}
+	});
+}
+
+/**
  * Return pool_base instance and assert that object is on pmem.
  */
 template <typename CharT, typename Traits>
@@ -4569,6 +4603,16 @@ operator>=(const basic_string<CharT, Traits> &lhs,
 	   const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) >= 0;
+}
+
+/**
+ * Swap the content of persistent strings.
+ */
+template <class CharT, class Traits>
+void
+swap(basic_string<CharT, Traits> &lhs, basic_string<CharT, Traits> &rhs)
+{
+	return lhs.swap(rhs);
 }
 
 } /* namespace obj */

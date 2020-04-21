@@ -36,6 +36,11 @@
 
 set -e
 
+if [ "${SKIP_VALGRIND_BUILD}" ]; then
+	echo "Variable 'SKIP_VALGRIND_BUILD' is set; skipping building valgrind (pmem's fork)"
+	exit
+fi
+
 git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind
 # pmem-3.15: Merge pull request #73 from kkajrewicz/fix-memcheck

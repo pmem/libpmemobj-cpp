@@ -344,6 +344,9 @@ if (TEST_STRING)
 	build_test(string_modifiers string_modifiers/string_modifiers.cpp)
 	add_test_generic(NAME string_modifiers TRACERS none memcheck pmemcheck)
 
+	build_test(string_swap string_modifiers/string_swap.cpp)
+	add_test_generic(NAME string_swap TRACERS none memcheck pmemcheck)
+
 	build_test(string_snapshot string_snapshot/string_snapshot.cpp)
 	add_test_generic(NAME string_snapshot TRACERS none memcheck pmemcheck)
 

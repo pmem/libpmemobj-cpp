@@ -11,7 +11,7 @@ namespace nvobj = pmem::obj;
 using S = pmem::obj::string;
 
 struct root {
-	nvobj::persistent_ptr<S> s, s1, str;
+	nvobj::persistent_ptr<S> s, s1, str, str2;
 };
 
 /**
@@ -290,9 +290,11 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 
 		nvobj::transaction::run(pop, [&] {
 			r->str = nvobj::make_persistent<S>("ABCDEF");
+			r->str2 = nvobj::make_persistent<S>("ABCDEF");
 		});
 
 		auto &str = *r->str;
+		auto &expected_str = *r->str2;
 
 		assert_tx_abort(pop, s, [&] { s.append(str); });
 		verify_string(s, expected);
@@ -391,6 +393,14 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 			s.replace(s.cend(), s.cend(), str.cbegin(), str.cend());
 		});
 		verify_string(s, expected);
+
+		assert_tx_abort(pop, s, [&] { s.swap(str); });
+		verify_string(s, expected);
+		verify_string(str, expected_str);
+
+		assert_tx_abort(pop, s, [&] { pmem::obj::swap(s, str); });
+		verify_string(s, expected);
+		verify_string(str, expected_str);
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

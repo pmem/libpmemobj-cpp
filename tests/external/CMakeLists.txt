@@ -371,8 +371,11 @@ if (TEST_STRING)
 	# XXX: port libcxx test basic_string/string.nonmembers/string_oplt=/string_view_string.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string_operator==/string_string_view.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string_operator==/string_view_string.pass
-	# XXX: port libcxx test basic_string/string.nonmembers/string.special/swap.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string.special/swap_noexcept.pass
+
+	build_test(string_libcxx_swap libcxx/basic_string/string.nonmembers/string.special/swap.pass.cpp)
+	add_test_generic(NAME string_libcxx_swap TRACERS none pmemcheck memcheck)
+
 	# XXX: port libcxx test basic_string/string.nonmembers/string.io/stream_extract.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string.io/stream_insert.pass
 	# XXX: port libcxx test basic_string/string.nonmembers/string.io/get_line.pass
@@ -486,7 +489,9 @@ if (TEST_STRING)
 
 	# XXX: port libcxx test basic_string/types.pass
 	# XXX: port libcxx test basic_string/traits_mismatch.fail
-	# XXX: port libcxx test basic_string/string.modifiers/string_swap/swap.pass
+
+	build_test(string_libcxx_modifiers_swap libcxx/basic_string/string.modifiers/string_swap/swap.pass.cpp)
+	add_test_generic(NAME string_libcxx_modifiers_swap TRACERS none pmemcheck memcheck)
 
 	build_test(string_libcxx_modifiers_erase_iter libcxx/basic_string/string.modifiers/string_erase/iter.pass.cpp)
 	add_test_generic(NAME string_libcxx_modifiers_erase_iter TRACERS none pmemcheck memcheck)

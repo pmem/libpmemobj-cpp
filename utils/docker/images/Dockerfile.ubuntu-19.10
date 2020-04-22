@@ -38,6 +38,10 @@
 FROM ubuntu:19.10
 MAINTAINER szymon.romik@intel.com
 
+# Additional parameters to build docker without building components
+ARG SKIP_VALGRIND_BUILD
+ARG SKIP_PMDK_BUILD
+
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update the Apt cache and install basic tools

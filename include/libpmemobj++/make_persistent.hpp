@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,6 +132,9 @@ make_persistent(Args &&... args)
  * This function can be used to *transactionally* free an object. Calls the
  * object's destructor before freeing memory. Cannot be used for array
  * types.
+ *
+ * To ensure that proper recovery is possible, ptr should be set to null
+ * within the same transaction.
  *
  * @param[in,out] ptr persistent pointer to an object that is not an
  * array.

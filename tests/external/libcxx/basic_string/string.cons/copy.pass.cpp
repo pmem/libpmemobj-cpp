@@ -19,6 +19,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj.h>
 
 namespace nvobj = pmem::obj;
 
@@ -52,6 +53,29 @@ test(U &s1, pmem::obj::pool<root> &pop, nvobj::persistent_ptr<S> &ptr)
 		UT_ASSERT(s2.c_str() == s2.cdata());
 		UT_ASSERT(s2.c_str() == static_cast<const S &>(s2).data());
 	});
+
+	nvobj::transaction::run(pop, [&] {
+		s2.free_data();
+		s2 = s1;
+	});
+
+	UT_ASSERT(s1.size() == s2.size());
+	UT_ASSERT(T::compare(s2.c_str(), s1.c_str(), s1.size()) == 0);
+	UT_ASSERT(s2.capacity() >= s2.size());
+
+	nvobj::transaction::run(pop, [&] {
+		UT_ASSERT(s2.c_str() == s2.data());
+		UT_ASSERT(s2.c_str() == s2.cdata());
+		UT_ASSERT(s2.c_str() == static_cast<const S &>(s2).data());
+	});
+
+	nvobj::transaction::run(pop, [&] {
+		s2.free_data();
+		s2.free_data();
+	});
+
+	UT_ASSERT(s2.size() == 0);
+	UT_ASSERT(s2.capacity() == s2.sso_capacity);
 
 	nvobj::transaction::run(pop, [&] { nvobj::delete_persistent<S>(ptr); });
 }
@@ -106,6 +130,7 @@ run(pmem::obj::pool<root> &pop)
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 }
 
 void

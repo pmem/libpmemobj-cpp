@@ -41,7 +41,7 @@ REPO_NAME="libpmemobj-cpp"
 ORIGIN="https://${GITHUB_TOKEN}@github.com/${BOT_NAME}/${REPO_NAME}"
 UPSTREAM="https://github.com/pmem/${REPO_NAME}"
 # master or stable-* branch
-TARGET_BRANCH=${TRAVIS_BRANCH}
+TARGET_BRANCH=${CI_BRANCH}
 VERSION=${TARGET_BRANCHES[$TARGET_BRANCH]}
 
 if [ -z $VERSION ]; then

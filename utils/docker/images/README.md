@@ -5,13 +5,13 @@ development process vehicles and part of continuous integration process.
 
 Images built out of those recipes may by used with docker or podman as
 development environment.
-Only those used on travis are fully tested on a daily basis.
-In case of any problem, patches and github issues are welcome.
+Only those used on Travis/Github Actions are fully tested on a daily basis.
+In case of any problem, patches and Github issues are welcome.
 
 # How to build docker image
 
 ```sh
-docker build --build-arg https_proxy=https://proxy.com:port --build-arg http_proxy=http://proxy.com:port -t libpmemobj-cpp:debian-unstable -f ./Dockerfile.debian-unstable .
+docker build --build-arg https_proxy=http://proxy.com:port --build-arg http_proxy=http://proxy.com:port -t libpmemobj-cpp:debian-unstable -f ./Dockerfile.debian-unstable .
 ```
 
 # How to use docker image

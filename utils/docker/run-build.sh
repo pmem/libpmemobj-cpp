@@ -37,13 +37,14 @@
 
 set -e
 
+source `dirname $0`/prepare-for-build.sh
+
 CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 TESTS_LONG=${TESTS_LONG:-OFF}
 TESTS_TBB=${TESTS_TBB:-ON}
+INSTALL_DIR=/tmp/libpmemobj-cpp
 
 export PMREORDER_STACKTRACE_DEPTH=20
-
-./prepare-for-build.sh
 
 function cleanup() {
 	find . -name ".coverage" -exec rm {} \;
@@ -90,11 +91,9 @@ function sudo_password() {
 sudo_password mkdir /mnt/pmem
 sudo_password chmod 0777 /mnt/pmem
 sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
+mkdir $INSTALL_DIR
 
 cd $WORKDIR
-INSTALL_DIR=/tmp/libpmemobj-cpp
-
-mkdir $INSTALL_DIR
 
 ###############################################################################
 # BUILD tests_clang_debug_cpp17 llvm
@@ -380,4 +379,3 @@ if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
 	cd ..
 	rm -rf doc_update
 fi
-

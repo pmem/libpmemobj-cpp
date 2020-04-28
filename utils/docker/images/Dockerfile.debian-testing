@@ -30,13 +30,23 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of debian-unstable
+# Dockerfile - a 'recipe' for Docker to build an image of debian-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
 FROM debian:testing
 MAINTAINER szymon.romik@intel.com
+
+# Set required environment variables
+ENV OS debian
+ENV OS_VER testing
+ENV PACKAGE_MANAGER deb
+ENV NOTTY 1
+
+# Additional parameters to build docker without building components
+ARG SKIP_VALGRIND_BUILD
+ARG SKIP_PMDK_BUILD
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -90,9 +100,3 @@ ENV USER user
 ENV USERPASS pass
 RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
 USER $USER
-
-# Set required environment variables
-ENV OS debian
-ENV OS_VER testing
-ENV PACKAGE_MANAGER deb
-ENV NOTTY 1

@@ -82,6 +82,11 @@ if [[ "$command" == "" ]]; then
 	esac
 fi
 
+# Only check style on Ubuntu, since it has req. clang-format version (and only if it isn't explicitly turned off)
+if [ "${CHECK_CPP_STYLE}" != "OFF" ] && [ "${CHECK_CPP_STYLE}" != "0" ] && [ "${OS}" == "ubuntu"]; then
+	CHECK_CPP_STYLE=ON;
+fi
+
 if [ "$COVERAGE" == "1" ]; then
 	docker_opts="${docker_opts} `bash <(curl -s https://codecov.io/env)`";
 fi
@@ -128,7 +133,7 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env GITHUB_TOKEN=$GITHUB_TOKEN \
 	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
-	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON} \
+	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-OFF} \
 	--env TESTS_LONG=${TESTS_LONG:-OFF} \
 	--env TESTS_TBB=${TESTS_TBB:-ON} \
 	--env TZ='Europe/Warsaw' \

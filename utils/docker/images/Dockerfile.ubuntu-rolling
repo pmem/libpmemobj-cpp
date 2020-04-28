@@ -28,7 +28,7 @@ RUN apt-get update \
 	asciidoc \
 	autoconf \
 	clang \
-	clang-format \
+	clang-format-9 \
 	cmake \
 	curl \
 	debhelper \

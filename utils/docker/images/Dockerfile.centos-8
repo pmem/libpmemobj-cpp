@@ -38,6 +38,16 @@
 FROM centos:8
 MAINTAINER szymon.romik@intel.com
 
+# Set required environment variables
+ENV OS centos
+ENV OS_VER 8
+ENV PACKAGE_MANAGER rpm
+ENV NOTTY 1
+
+# Additional parameters to build docker without building components
+ARG SKIP_VALGRIND_BUILD
+ARG SKIP_PMDK_BUILD
+
 RUN dnf update -y
 RUN dnf install -y epel-release
 RUN dnf install -y 'dnf-command(config-manager)'
@@ -103,10 +113,3 @@ RUN useradd -m $USER
 RUN echo $USERPASS | passwd $USER --stdin
 RUN gpasswd wheel -a $USER
 USER $USER
-
-# Set required environment variables
-ENV OS centos
-ENV OS_VER 8
-ENV PACKAGE_MANAGER rpm
-ENV NOTTY 1
-

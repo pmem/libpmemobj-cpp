@@ -62,6 +62,7 @@ RUN dnf update -y \
 	daxctl-devel \
 	doxygen \
 	gcc \
+	gcc-c++ \
 	gdb \
 	git \
 	hub \

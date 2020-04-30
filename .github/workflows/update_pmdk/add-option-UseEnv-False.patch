@@ -1,0 +1,25 @@
+From 4ff7f9f4cf17a219fc23479b7c4b2f51e2e8c592 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C5=81ukasz=20Stolarczuk?= <lukasz.stolarczuk@intel.com>
+Date: Thu, 30 Apr 2020 13:26:02 +0200
+Subject: [PATCH] add option UseEnv=False
+
+---
+ ports/pmdk/portfile.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ports/pmdk/portfile.cmake b/ports/pmdk/portfile.cmake
+index 4445749c4..ba2cc5093 100644
+--- a/ports/pmdk/portfile.cmake
++++ b/ports/pmdk/portfile.cmake
+@@ -18,7 +18,7 @@ vcpkg_from_github(
+ vcpkg_build_msbuild(
+     PROJECT_PATH ${SOURCE_PATH}/src/PMDK.sln
+     TARGET "Solution Items\\libpmem,Solution Items\\libpmemlog,Solution Items\\libpmemblk,Solution Items\\libpmemobj,Solution Items\\libpmempool,Solution Items\\Tools\\pmempool"
+-    OPTIONS /p:SRCVERSION=${PMDK_VERSION}
++    OPTIONS /p:SRCVERSION=${PMDK_VERSION} /p:UseEnv=False
+ )
+ 
+ set(DEBUG_ARTIFACTS_PATH ${SOURCE_PATH}/src/x64/Debug)
+-- 
+2.20.1
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -139,6 +139,10 @@ make_persistent_array_example()
 		// transactionally delete arrays , ~compound_type() is called
 		delete_persistent<compound_type[]>(proot->comp, 20);
 		delete_persistent<compound_type[3]>(arr1);
+
+		// set pointer to null so that after restart it's known whether
+		// compound_type is still allocated or not
+		proot->comp = nullptr;
 	});
 
 	// throws an transaction_scope_error exception

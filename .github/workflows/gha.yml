@@ -87,6 +87,12 @@ jobs:
        - name: Clone the git repo
          uses: actions/checkout@v1
 
+       - name: Use old vcpkg for pmdk to build properly
+         working-directory: C:/vcpkg
+         run: |
+            git fetch --unshallow --tags
+            git checkout 6709d3d7d0cba96508ba3606f810ab562ea32556
+
        - name: Install PMDK
          run: |
             vcpkg install pmdk:x64-windows

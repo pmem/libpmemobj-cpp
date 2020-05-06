@@ -739,14 +739,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Destructor. </p>
-<p>Note that free_data may throw an <a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">transaction_free_error</a> when freeing underlying array failed. It is recommended to call free_data manually before object destruction.</p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">rethrows</td><td>destructor exception. </td></tr>
-    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">transaction_free_error</a></td><td>when freeing underlying array failed. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Note that free_data may throw a <a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">transaction_free_error</a> when freeing underlying array failed. It is recommended to call free_data manually before object destruction, otherwise application can be terminated on failure. </p>
 
 </div>
 </div>

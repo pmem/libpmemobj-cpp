@@ -118,8 +118,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abb89253cf63f449a6c28800038c45624"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#abb89253cf63f449a6c28800038c45624">basic_string</a> (std::initializer_list&lt; CharT &gt; ilist)</td></tr>
 <tr class="memdesc:abb89253cf63f449a6c28800038c45624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the container with the contents of the initializer list init.  <a href="#abb89253cf63f449a6c28800038c45624">More...</a><br /></td></tr>
 <tr class="separator:abb89253cf63f449a6c28800038c45624"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad5d808b3b047b0f1cd656a787a7f00a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#aad5d808b3b047b0f1cd656a787a7f00a">~basic_string</a> ()</td></tr>
-<tr class="memdesc:aad5d808b3b047b0f1cd656a787a7f00a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#aad5d808b3b047b0f1cd656a787a7f00a">More...</a><br /></td></tr>
+<tr class="memitem:aad5d808b3b047b0f1cd656a787a7f00a"><td class="memItemLeft" align="right" valign="top"><a id="aad5d808b3b047b0f1cd656a787a7f00a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#aad5d808b3b047b0f1cd656a787a7f00a">~basic_string</a> ()</td></tr>
+<tr class="memdesc:aad5d808b3b047b0f1cd656a787a7f00a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
 <tr class="separator:aad5d808b3b047b0f1cd656a787a7f00a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0c917521b02d15c7eb501b9294a6fb4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#af0c917521b02d15c7eb501b9294a6fb4">operator=</a> (const <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a> &amp;other)</td></tr>
 <tr class="memdesc:af0c917521b02d15c7eb501b9294a6fb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy assignment operator.  <a href="#af0c917521b02d15c7eb501b9294a6fb4">More...</a><br /></td></tr>
@@ -271,6 +272,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d5d61e34fbfe9984a9fe7fd2b573201"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a0d5d61e34fbfe9984a9fe7fd2b573201">clear</a> ()</td></tr>
 <tr class="memdesc:a0d5d61e34fbfe9984a9fe7fd2b573201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all characters from the string transactionally.  <a href="#a0d5d61e34fbfe9984a9fe7fd2b573201">More...</a><br /></td></tr>
 <tr class="separator:a0d5d61e34fbfe9984a9fe7fd2b573201"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a16762a9c7bc2ac7ad669353d135fc8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a8a16762a9c7bc2ac7ad669353d135fc8">free_data</a> ()</td></tr>
+<tr class="memdesc:a8a16762a9c7bc2ac7ad669353d135fc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a string and frees all allocated persistent memory for data transactionally.  <a href="#a8a16762a9c7bc2ac7ad669353d135fc8">More...</a><br /></td></tr>
+<tr class="separator:a8a16762a9c7bc2ac7ad669353d135fc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a216b7b43e4a7c168486a47be750e8ea1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a216b7b43e4a7c168486a47be750e8ea1">erase</a> (size_type index=0, size_type count=npos)</td></tr>
 <tr class="memdesc:a216b7b43e4a7c168486a47be750e8ea1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove characters from string starting at index transactionally.  <a href="#a216b7b43e4a7c168486a47be750e8ea1">More...</a><br /></td></tr>
 <tr class="separator:a216b7b43e4a7c168486a47be750e8ea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1074,28 +1078,6 @@ template&lt;typename CharT, typename Traits &gt; </div>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="aad5d808b3b047b0f1cd656a787a7f00a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad5d808b3b047b0f1cd656a787a7f00a">&#9670;&nbsp;</a></span>~basic_string()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename CharT , typename Traits &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::~<a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Destructor. </p>
-<p>XXX: implement free_data() </p>
 
 </div>
 </div>
@@ -4429,6 +4411,39 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">func</td><td>callback function to call on internal pointer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8a16762a9c7bc2ac7ad669353d135fc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a16762a9c7bc2ac7ad669353d135fc8">&#9670;&nbsp;</a></span>free_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::free_data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears the content of a string and frees all allocated persistent memory for data transactionally. </p>
+<dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a58239620ad3391a77f92dc75ee22f3f6">size()</a> == 0 </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1basic__string.html#ae579458f6caf92ca83d48eeff93bf3fa">capacity()</a> == 0 </dd>
+<dd>
+<a class="el" href="classpmem_1_1obj_1_1basic__string.html#a5809ebb560eed8884b5713527e0bae48">data()</a> == nullptr</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing of underlying structure failed. </td></tr>
   </table>
   </dd>
 </dl>

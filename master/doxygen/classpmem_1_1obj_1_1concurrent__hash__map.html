@@ -143,9 +143,11 @@ template&lt;typename I &gt; </td></tr>
 <tr class="memitem:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a595cebdbdb8c398fc1819810c0c1fb6d">clear</a> ()</td></tr>
 <tr class="memdesc:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear hash map content Not thread safe.  <a href="#a595cebdbdb8c398fc1819810c0c1fb6d">More...</a><br /></td></tr>
 <tr class="separator:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52c9f358e07869c1db977f9ef53110e9"><td class="memItemLeft" align="right" valign="top"><a id="a52c9f358e07869c1db977f9ef53110e9"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">~concurrent_hash_map</a> ()</td></tr>
-<tr class="memdesc:a52c9f358e07869c1db977f9ef53110e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear table and destroy it. <br /></td></tr>
+<tr class="memitem:a5bfa5210cdb1478e396abd30079e75db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">free_data</a> ()</td></tr>
+<tr class="memdesc:a5bfa5210cdb1478e396abd30079e75db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called.  <a href="#a5bfa5210cdb1478e396abd30079e75db">More...</a><br /></td></tr>
+<tr class="separator:a5bfa5210cdb1478e396abd30079e75db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52c9f358e07869c1db977f9ef53110e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">~concurrent_hash_map</a> ()</td></tr>
+<tr class="memdesc:a52c9f358e07869c1db977f9ef53110e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called.  <a href="#a52c9f358e07869c1db977f9ef53110e9">More...</a><br /></td></tr>
 <tr class="separator:a52c9f358e07869c1db977f9ef53110e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61f6e9c07c17e495e4f30795b489baae"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a61f6e9c07c17e495e4f30795b489baae">begin</a> ()</td></tr>
 <tr class="separator:a61f6e9c07c17e495e4f30795b489baae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -294,6 +296,37 @@ template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename
 
 <p>Construct empty table with n preallocated buckets. </p>
 <p>This number serves also as initial concurrency level. </p>
+
+</div>
+</div>
+<a id="a52c9f358e07869c1db977f9ef53110e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52c9f358e07869c1db977f9ef53110e9">&#9670;&nbsp;</a></span>~concurrent_hash_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::~<a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. </p>
+<p>Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
+<p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Should be called before concurrent_hash_map destructor is called.">free_data()</a> was called (unless it was called in a transaction and that transaction aborted). </p>
 
 </div>
 </div>
@@ -931,6 +964,44 @@ template&lt;typename K , typename  = typename std::enable_if&lt;			  concurrent_
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if called inside transaction </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5bfa5210cdb1478e396abd30079e75db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bfa5210cdb1478e396abd30079e75db">&#9670;&nbsp;</a></span>free_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a>&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::free_data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. </p>
+<p>Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
+<p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Should be called before concurrent_hash_map destructor is called.">free_data()</a> was called (unless this was done in a transaction and transaction aborted).</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::transaction_error</td><td>in case of PMDK transaction failure </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">pmem::transaction_free_error</a></td><td>when freeing underlying memory failed. </td></tr>
   </table>
   </dd>
 </dl>

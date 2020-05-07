@@ -10,8 +10,8 @@ set -e
 
 PACKAGE_MANAGER=$1
 
-# tag: 1.8, 31.01.2020
-PMDK_VERSION="1.8"
+# common: 1.9, 03.07.2020
+PMDK_VERSION="1.9"
 
 if [ "${SKIP_PMDK_BUILD}" ]; then
 	echo "Variable 'SKIP_PMDK_BUILD' is set; skipping building PMDK"

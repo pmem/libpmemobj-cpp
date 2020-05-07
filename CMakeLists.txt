@@ -57,6 +57,7 @@ option(TESTS_TBB "enable tests which require TBB" OFF)
 option(TESTS_COMPATIBILITY "enable compatibility tests (requires internet connection)" OFF)
 
 option(TEST_ARRAY "enable testing of pmem::obj::array" ON)
+option(TEST_MAP "enable testing of pmem::obj::map" OFF)
 option(TEST_VECTOR "enable testing of pmem::obj::vector" ON)
 option(TEST_STRING "enable testing of pmem::obj::string (depends on TEST_VECTOR)" ON)
 option(TEST_CONCURRENT_HASHMAP "enable testing of pmem::obj::concurrent_hash_map (depends on TEST_STRING)" ON)

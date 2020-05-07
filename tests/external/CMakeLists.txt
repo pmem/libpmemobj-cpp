@@ -22,6 +22,117 @@ function(add_test_expect_failure name)
 	set_tests_properties(${name}_fail_expected PROPERTIES WILL_FAIL TRUE)
 endfunction()
 
+if (TEST_MAP)
+	# build_test(array_at libcxx/map/contains.pass.cpp)
+	# add_test_generic(NAME map_contains TRACERS none)
+
+	# build_test(array_at libcxx/map/types.pass.cpp)
+	# add_test_generic(NAME map_types TRACERS none)
+
+	# build_test(array_at libcxx/map/map.access/empty.pass.cpp)
+	# add_test_generic(NAME map_empty TRACERS none)
+
+	# build_test(array_at libcxx/map/map.access/iterator.pass.cpp)
+	# add_test_generic(NAME map_iterator TRACERS none)
+
+	# build_test(array_at libcxx/map/map.access/max_size.pass.cpp)
+	# add_test_generic(NAME map_max_size TRACERS none)
+
+	# build_test(array_at libcxx/map/map.access/size.pass.cpp)
+	# add_test_generic(NAME map_size TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/alloc.pass.cpp)
+	# add_test_generic(NAME map_alloc TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/assign_initializer_list.pass.cpp)
+	# add_test_generic(NAME map_assign_initializer_list TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/compare_alloc.pass.cpp)
+	# add_test_generic(NAME map_compare_alloc TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/compare.pass.cpp)
+	# add_test_generic(NAME map_compare TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/copy_alloc.pass.cpp)
+	# add_test_generic(NAME map_copy_alloc TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/copy_assign.pass.cpp)
+	# add_test_generic(NAME map_copy_assign TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/copy.pass.cpp)
+	# add_test_generic(NAME map_copy TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/default.pass.cpp)
+	# add_test_generic(NAME map_default TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/default_recursive.pass.cpp)
+	# add_test_generic(NAME map_default_recursive TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/dtor_noexcept.pass.cpp)
+	# add_test_generic(NAME map_dtor_noexcept TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/initializer_list_compare_alloc.pass.cpp)
+	# add_test_generic(NAME map_initializer_list_compare_alloc TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/initializer_list_compare.pass.cpp)
+	# add_test_generic(NAME map_initializer_list_compare TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/initializer_list.pass.cpp)
+	# add_test_generic(NAME map_initializer_list TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/iter_iter_comp_alloc.pass.cpp)
+	# add_test_generic(NAME map_iter_iter_comp_alloc TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/iter_iter.pass.cpp)
+	# add_test_generic(NAME map_iter_iter TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/move_alloc.pass.cpp)
+	# add_test_generic(NAME map_move_alloc TRACERS none)
+
+	# build_test(array_at libcxx/map/map.cons/move.pass.cpp)
+	# add_test_generic(NAME map_move TRACERS none)
+
+	# build_test(array_at libcxx/map/map.modifiers/clear.pass.cpp)
+	# add_test_generic(NAME map_clear TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/emplace.pass.cpp)
+	# add_test_generic(NAME map_emplace TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/erase_iter_iter.pass.cpp)
+	# add_test_generic(NAME map_erase_iter_iter TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/erase_key.pass.cpp)
+	# add_test_generic(NAME map_erase_key TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/insert_cv.pass.cpp)
+	# add_test_generic(NAME map_insert_cv TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/insert_initializer_list.pass.cpp)
+	# add_test_generic(NAME map_insert_initializer_list TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/insert_iter_iter.pass.cpp)
+	# add_test_generic(NAME maps_insert_iter_iter TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/insert_rv.pass.cpp)
+	# add_test_generic(NAME map_insert_rt TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.modifiers/try.emplace.pass.cpp)
+	# add_test_generic(NAME map_try_emplace TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.ops/count_transparent.pass.cpp)
+	# add_test_generic(NAME map_count_transparent TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.ops/equal_range_transparent.pass.cpp)
+	# add_test_generic(NAME map_equal_range_transparent TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.special/member_swap.pass.cpp)
+	# add_test_generic(NAME map_member_swap TRACERS none pmemcheck memcheck)
+
+	# build_test(array_at libcxx/map/map.special/non_member_swap.pass.cpp)
+	# add_test_generic(NAME map_non_member_swap TRACERS none pmemcheck memcheck)
+endif()
+
+
 if (TEST_ARRAY)
 	build_test(array_at libcxx/array/at.pass.cpp)
 	add_test_generic(NAME array_at TRACERS none)

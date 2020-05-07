@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019, Intel Corporation
+ * Copyright 2016-2020, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -194,6 +194,9 @@ make_persistent(allocation_flag flag = allocation_flag::none())
  * objects. Calls the objects' destructors before freeing memory.
  * This overload only participates in overload resolution if T is an array.
  *
+ * To ensure that proper recovery is possible, ptr should be set to null after
+ * delete_persistent call and within the same transaction.
+ *
  * @param[in,out] ptr persistent pointer to an array of objects.
  * @param[in] N the size of the array.
  *
@@ -237,6 +240,9 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
  * This function can be used to *transactionally* free an array of
  * objects. Calls the objects' destructors before freeing memory.
  * This overload only participates in overload resolution if T is an array.
+ *
+ * To ensure that proper recovery is possible, ptr should be set to null after
+ * delete_persistent call and within the same transaction.
  *
  * @param[in,out] ptr persistent pointer to an array of objects.
  *

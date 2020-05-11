@@ -86,11 +86,6 @@ function(build_test_ext)
 endfunction()
 
 function(build_test name)
-	# skip posix tests
-	if(${name} MATCHES "posix$" AND WIN32)
-		return()
-	endif()
-
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 
@@ -210,7 +205,7 @@ function(add_test_common name tracer testcase cmake_script)
 
 	# if test was not build
 	if (NOT TARGET ${name})
-		return()
+		message(FATAL_ERROR "${executable} not build.")
 	endif()
 
 	# skip all valgrind tests on windows

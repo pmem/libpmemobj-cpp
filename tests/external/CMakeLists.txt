@@ -1032,3 +1032,146 @@ if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	build_test_ext(NAME segment_vector_vector_fixedsize_libcxx_types SRC_FILES libcxx/vector/types.pass.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_libcxx_types TRACERS none)
 endif()
+
+if (TEST_CONCURRENT_MAP)
+	# build_test(map_contains libcxx/map/contains.pass.cpp)
+	# add_test_generic(NAME map_contains TRACERS none pmemcheck memcheck)
+
+	# build_test(map_types libcxx/map/types.pass.cpp)
+	# add_test_generic(NAME map_types TRACERS none pmemcheck memcheck)
+
+	# build_test(map_empty libcxx/map/map.access/empty.pass.cpp)
+	# add_test_generic(NAME map_empty TRACERS none pmemcheck memcheck)
+
+	# build_test(map_iterator libcxx/map/map.access/iterator.pass.cpp)
+	# add_test_generic(NAME map_iterator TRACERS none pmemcheck memcheck)
+
+	# build_test(map_max_size libcxx/map/map.access/max_size.pass.cpp)
+	# add_test_generic(NAME map_max_size TRACERS none pmemcheck memcheck)
+
+	# build_test(map_size libcxx/map/map.access/size.pass.cpp)
+	# add_test_generic(NAME map_size TRACERS none pmemcheck memcheck)
+
+	# build_test(map_alloc libcxx/map/map.cons/alloc.pass.cpp)
+	# add_test_generic(NAME map_alloc TRACERS none pmemcheck memcheck)
+
+	# build_test(map_assign_initializer_list libcxx/map/map.cons/assign_initializer_list.pass.cpp)
+	# add_test_generic(NAME map_assign_initializer_list TRACERS none pmemcheck memcheck)
+
+	# build_test(map_compare_alloc libcxx/map/map.cons/compare_alloc.pass.cpp)
+	# add_test_generic(NAME map_compare_alloc TRACERS none pmemcheck memcheck)
+
+	# build_test(map_compare libcxx/map/map.cons/compare.pass.cpp)
+	# add_test_generic(NAME map_compare TRACERS none pmemcheck memcheck)
+
+	# build_test(map_copy_alloc libcxx/map/map.cons/copy_alloc.pass.cpp)
+	# add_test_generic(NAME map_copy_alloc TRACERS none pmemcheck memcheck)
+
+	# build_test(map_copy_assign libcxx/map/map.cons/copy_assign.pass.cpp)
+	# add_test_generic(NAME map_copy_assign TRACERS none pmemcheck memcheck)
+
+	# build_test(map_copy libcxx/map/map.cons/copy.pass.cpp)
+	# add_test_generic(NAME map_copy TRACERS none pmemcheck memcheck)
+
+	# build_test(map_default libcxx/map/map.cons/default.pass.cpp)
+	# add_test_generic(NAME map_default TRACERS none pmemcheck memcheck)
+
+	# build_test(map_default_recursive libcxx/map/map.cons/default_recursive.pass.cpp)
+	# add_test_generic(NAME map_default_recursive TRACERS none pmemcheck memcheck)
+
+	# build_test(map_dtor_noexcept libcxx/map/map.cons/dtor_noexcept.pass.cpp)
+	# add_test_generic(NAME map_dtor_noexcept TRACERS none pmemcheck memcheck)
+
+	# build_test(map_initializer_list_compare_alloc libcxx/map/map.cons/initializer_list_compare_alloc.pass.cpp)
+	# add_test_generic(NAME map_initializer_list_compare_alloc TRACERS none pmemcheck memcheck)
+
+	# build_test(map_initializer_list_compare libcxx/map/map.cons/initializer_list_compare.pass.cpp)
+	# add_test_generic(NAME map_initializer_list_compare TRACERS none pmemcheck memcheck)
+
+	# build_test(map_initializer_list libcxx/map/map.cons/initializer_list.pass.cpp)
+	# add_test_generic(NAME map_initializer_list TRACERS none pmemcheck memcheck)
+
+	# build_test(map_iter_iter_comp_alloc libcxx/map/map.cons/iter_iter_comp_alloc.pass.cpp)
+	# add_test_generic(NAME map_iter_iter_comp_alloc TRACERS none pmemcheck memcheck)
+
+	# build_test(map_iter_iter libcxx/map/map.cons/iter_iter.pass.cpp)
+	# add_test_generic(NAME map_iter_iter TRACERS none pmemcheck memcheck)
+
+	# build_test(map_move_alloc libcxx/map/map.cons/move_alloc.pass.cpp)
+	# add_test_generic(NAME map_move_alloc TRACERS none pmemcheck memcheck)
+
+	# build_test(map_move_assign libcxx/map/map.cons/move_assign.pass.cpp)
+	# add_test_generic(NAME map_move_assign TRACERS none pmemcheck memcheck)
+
+	# build_test(map_move libcxx/map/map.cons/move.pass.cpp)
+	# add_test_generic(NAME map_move TRACERS none pmemcheck memcheck)
+
+	# build_test(map_clear libcxx/map/map.modifiers/clear.pass.cpp)
+	# add_test_generic(NAME map_clear TRACERS none pmemcheck memcheck)
+
+	# build_test(map_emplace libcxx/map/map.modifiers/emplace.pass.cpp)
+	# add_test_generic(NAME map_emplace TRACERS none pmemcheck memcheck)
+
+	# build_test(map_erase_iter_iter libcxx/map/map.modifiers/erase_iter_iter.pass.cpp)
+	# add_test_generic(NAME map_erase_iter_iter TRACERS none pmemcheck memcheck)
+
+	# build_test(map_erase_key libcxx/map/map.modifiers/erase_key.pass.cpp)
+	# add_test_generic(NAME map_erase_key TRACERS none pmemcheck memcheck)
+
+	# build_test(map_insert_cv libcxx/map/map.modifiers/insert_cv.pass.cpp)
+	# add_test_generic(NAME map_insert_cv TRACERS none pmemcheck memcheck)
+
+	# build_test(map_insert_initializer_list libcxx/map/map.modifiers/insert_initializer_list.pass.cpp)
+	# add_test_generic(NAME map_insert_initializer_list TRACERS none pmemcheck memcheck)
+
+	# build_test(maps_insert_iter_iter libcxx/map/map.modifiers/insert_iter_iter.pass.cpp)
+	# add_test_generic(NAME maps_insert_iter_iter TRACERS none pmemcheck memcheck)
+
+	# build_test(map_insert_rv libcxx/map/map.modifiers/insert_rv.pass.cpp)
+	# add_test_generic(NAME map_insert_rv TRACERS none pmemcheck memcheck)
+
+	# build_test(map_try_emplace libcxx/map/map.modifiers/try.emplace.pass.cpp)
+	# add_test_generic(NAME map_try_emplace TRACERS none pmemcheck memcheck)
+
+	# build_test(map_count libcxx/map/map.ops/count.pass.cpp)
+	# add_test_generic(NAME map_count TRACERS none pmemcheck memcheck)
+
+	# build_test(map_count0 libcxx/map/map.ops/count0.pass.cpp)
+	# add_test_generic(NAME map_count0 TRACERS none pmemcheck memcheck)
+
+	# build_test(map_count_transparent libcxx/map/map.ops/count_transparent.pass.cpp)
+	# add_test_generic(NAME map_count_transparent TRACERS none pmemcheck memcheck)
+
+	# build_test(map_equal_range libcxx/map/map.ops/equal_range.pass.cpp)
+	# add_test_generic(NAME map_equal_range TRACERS none pmemcheck memcheck)
+
+	# build_test(map_equal_range0 libcxx/map/map.ops/equal_range0.pass.cpp)
+	# add_test_generic(NAME map_equal_range0 TRACERS none pmemcheck memcheck)
+
+	# build_test(map_equal_range_transparent libcxx/map/map.ops/equal_range_transparent.pass.cpp)
+	# add_test_generic(NAME map_equal_range_transparent TRACERS none pmemcheck memcheck)
+
+	# build_test(map_find libcxx/map/map.ops/find.pass.cpp)
+	# add_test_generic(NAME map_find TRACERS none pmemcheck memcheck)
+
+	# build_test(map_find0 libcxx/map/map.ops/find0.pass.cpp)
+	# add_test_generic(NAME map_find0 TRACERS none pmemcheck memcheck)
+
+	# build_test(map_lower_bound libcxx/map/map.ops/lower_bound.pass.cpp)
+	# add_test_generic(NAME map_lower_bound TRACERS none pmemcheck memcheck)
+
+	# build_test(map_lower_bound0 libcxx/map/map.ops/lower_bound0.pass.cpp)
+	# add_test_generic(NAME map_lower_bound0 TRACERS none pmemcheck memcheck)
+
+	# build_test(map_upper_bound libcxx/map/map.ops/upper_bound.pass.cpp)
+	# add_test_generic(NAME map_upper_bound TRACERS none pmemcheck memcheck)
+
+	# build_test(map_upper_bound0 libcxx/map/map.ops/upper_bound0.pass.cpp)
+	# add_test_generic(NAME map_upper_bound0 TRACERS none pmemcheck memcheck)
+
+	# build_test(map_member_swap libcxx/map/map.special/member_swap.pass.cpp)
+	# add_test_generic(NAME map_member_swap TRACERS none pmemcheck memcheck)
+
+	# build_test(map_non_member_swap libcxx/map/map.special/non_member_swap.pass.cpp)
+	# add_test_generic(NAME map_non_member_swap TRACERS none pmemcheck memcheck)
+endif()

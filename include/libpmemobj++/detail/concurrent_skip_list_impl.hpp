@@ -1712,12 +1712,24 @@ public:
 	}
 
 	/**
-	 * Returns the allocator associated with the container.
+	 * Returns a const reference to the allocator associated with the
+	 * container.
 	 *
-	 * @return The associated allocator.
+	 * @return Const reference to the associated allocator.
 	 */
-	allocator_type
+	const allocator_type &
 	get_allocator() const
+	{
+		return _node_allocator;
+	}
+
+	/**
+	 * Returns a reference to the allocator associated with the container.
+	 *
+	 * @return Reference to the associated allocator.
+	 */
+	allocator_type &
+	get_allocator()
 	{
 		return _node_allocator;
 	}
@@ -1864,13 +1876,23 @@ public:
 	}
 
 	/**
-	 * Returns the function object that compares the keys, which is a copy
-	 * of this container's constructor argument comp.
+	 * Returns a const reference to the object that compares the keys.
 	 *
-	 * @return The key comparison function object.
+	 * @return Const reference to the key comparison function object.
 	 */
-	key_compare
+	const key_compare &
 	key_comp() const
+	{
+		return _compare;
+	}
+
+	/**
+	 * Returns a reference to the object that compares the keys.
+	 *
+	 * @return Reference to the key comparison function object.
+	 */
+	key_compare &
+	key_comp()
 	{
 		return _compare;
 	}
@@ -2010,7 +2032,7 @@ private:
 	template <typename K, typename pointer_type, typename comparator>
 	persistent_node_ptr
 	internal_find_position(size_type level, pointer_type &prev,
-			       const K &key, comparator cmp) const
+			       const K &key, const comparator &cmp) const
 	{
 		assert(level < prev->height());
 		persistent_node_ptr next = prev->next(level);

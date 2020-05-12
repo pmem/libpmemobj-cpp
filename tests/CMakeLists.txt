@@ -800,6 +800,11 @@ if(TEST_CONCURRENT_MAP)
 	build_test(concurrent_map_singlethread concurrent_map_singlethread/concurrent_map_singlethread.cpp)
 	add_test_generic(NAME concurrent_map_singlethread TRACERS none memcheck pmemcheck)
 
+
+	build_test(concurrent_map_insert_reopen concurrent_map_insert_reopen/concurrent_map_insert_reopen.cpp)
+	add_test_generic(NAME concurrent_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck drd helgrind
+			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
+
 	if(PMREORDER_SUPPORTED)
 		build_test(concurrent_map_pmreorder_simple concurrent_map_pmreorder_simple/concurrent_map_pmreorder_simple.cpp)
 		add_test_generic(NAME concurrent_map_pmreorder_simple CASE 0 TRACERS none

@@ -76,7 +76,7 @@ public:
 	 *
 	 * @throw transaction_scope_error if called outside of an active
 	 * transaction.
-	 * @throw rethrow exception from T constructor.
+	 * @throw rethrows exception from T constructor.
 	 */
 	void
 	construct(pointer p, const_reference t)
@@ -100,7 +100,7 @@ public:
 	 *
 	 * @throw transaction_scope_error if called outside of an active
 	 * transaction.
-	 * @throw rethrow exception from T constructor.
+	 * @throw rethrows exception from T constructor.
 	 */
 	template <typename... Args>
 	void

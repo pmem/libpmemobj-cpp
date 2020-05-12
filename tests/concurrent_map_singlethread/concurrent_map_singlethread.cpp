@@ -121,7 +121,7 @@ tx_alloc_wrapper(nvobj::pool_base &pop, nvobj::persistent_ptr<U> &ptr,
 }
 
 /*
- * ctor_test -- (internal) test constrcutors
+ * ctor_test -- (internal) test constructors
  * pmem::obj::concurrent_map<nvobj::p<int>, nvobj::p<int> >
  */
 void

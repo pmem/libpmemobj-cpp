@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2020, Intel Corporation */
 
 #ifndef PMEMOBJ_CONCURRENT_MAP_HPP
 #define PMEMOBJ_CONCURRENT_MAP_HPP

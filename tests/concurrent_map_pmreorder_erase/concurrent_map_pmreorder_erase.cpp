@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2020, Intel Corporation */
 
 /*
  * concurrent_map_pmreorder_erase.cpp --
@@ -134,8 +134,8 @@ check_consistency(nvobj::pool<root> &pop)
 
 } /* namespace */
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
 	if (argc != 3 || strchr("coe", argv[1][0]) == nullptr)
 		UT_FATAL("usage: %s <c|o|e> file-name", argv[0]);
@@ -170,6 +170,10 @@ main(int argc, char *argv[])
 	}
 
 	pop.close();
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

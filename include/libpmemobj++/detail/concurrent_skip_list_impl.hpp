@@ -2127,20 +2127,7 @@ private:
 			[&](const next_array_type &next_nodes)
 				-> persistent_node_ptr & {
 				obj::pool_base pop = get_pool_base();
-#if 0
-				obj::transaction::run(pop, [&] {
-					tls_entry.ptr = create_node(
-						std::forward_as_tuple(
-							height,
-							next_nodes.data()),
-						std::forward_as_tuple(
-							std::forward<Args>(
-								args)...));
 
-					++(tls_entry.size_diff);
-					tls_entry.insert_stage = in_progress;
-				});
-#else
 				obj::transaction::manual tx(pop);
 				tls_entry.ptr = create_node(
 					std::forward_as_tuple(
@@ -2151,7 +2138,7 @@ private:
 				++(tls_entry.size_diff);
 				tls_entry.insert_stage = in_progress;
 				obj::transaction::commit();
-#endif
+
 				assert(tls_entry.ptr != nullptr);
 				return tls_entry.ptr;
 			});

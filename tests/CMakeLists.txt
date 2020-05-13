@@ -800,6 +800,14 @@ if(TEST_CONCURRENT_MAP)
 	build_test(concurrent_map_singlethread concurrent_map_singlethread/concurrent_map_singlethread.cpp)
 	add_test_generic(NAME concurrent_map_singlethread TRACERS none memcheck pmemcheck)
 
+	message(WARNING "${CMAKE_BUILD_TYPE}")
+
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND TESTS_CONCURRENT_GDB)
+		build_test(concurrent_map_mt_gdb concurrent_map_mt_gdb/concurrent_map_mt_gdb.cpp)
+		add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 0)
+		add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 1)
+		add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 2)
+	endif()
 
 	build_test(concurrent_map_insert_reopen concurrent_map_insert_reopen/concurrent_map_insert_reopen.cpp)
 	add_test_generic(NAME concurrent_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck drd helgrind

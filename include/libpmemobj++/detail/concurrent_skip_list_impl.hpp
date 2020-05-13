@@ -2260,7 +2260,7 @@ private:
 		 * not null after the crash the recovery procedure can correctly
 		 * handle it.
 		 */
-		new_node = nullptr;
+		// new_node = nullptr;
 #if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 		pop.persist(&new_node, sizeof(new_node));
 #endif

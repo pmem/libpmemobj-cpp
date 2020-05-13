@@ -7,7 +7,7 @@
  *
  */
 
-#include "../concurrent_hash_map/concurrent_hash_map_test.hpp"
+#include <libpmemobj++/experimental/concurrent_map.hpp>
 #include "unittest.hpp"
 
 template <typename MapType>
@@ -18,6 +18,17 @@ check_size(MapType *map, size_t expected_size)
 	UT_ASSERT(std::distance(map->begin(), map->end()) ==
 		  int(expected_size));
 }
+
+namespace nvobj = pmem::obj;
+
+typedef nvobj::experimental::concurrent_map<nvobj::p<int>, nvobj::p<int>>
+	persistent_map_type;
+
+struct root {
+	nvobj::persistent_ptr<persistent_map_type> cons;
+};
+
+static const std::string LAYOUT = "XXX";
 
 /*
  * insert_reopen_test -- (internal) test insert operations and verify
@@ -51,6 +62,9 @@ insert_reopen_test(nvobj::pool<root> &pop, std::string path,
 		});
 
 		check_size(map.get(), expected_size);
+
+		map->insert(value_type(expected_size + 1, 1));
+		map->unsafe_erase(expected_size + 1);
 
 		pop.close();
 	}

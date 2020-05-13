@@ -159,8 +159,17 @@ function(execute_common expect_success output_file name)
     else()
         execute_process(COMMAND ${cmd}
             RESULT_VARIABLE res
-            OUTPUT_FILE ${BIN_DIR}/${TEST_NAME}.out
-            ERROR_FILE ${BIN_DIR}/${TEST_NAME}.err)
+            OUTPUT_FILE ${BIN_DIR}/tmp.out
+            ERROR_FILE ${BIN_DIR}/tmp.err)
+
+            file(READ ${BIN_DIR}/tmp.out OUT_FILE)
+            file(READ ${BIN_DIR}/tmp.err ERR_FILE)
+
+            file(APPEND ${BIN_DIR}/${TEST_NAME}.out ${OUT_FILE})
+            file(APPEND ${BIN_DIR}/${TEST_NAME}.err ${ERR_FILE})
+
+            file(REMOVE ${BIN_DIR}/tmp.out)
+            file(REMOVE ${BIN_DIR}/tmp.err)
     endif()
 
     print_logs()

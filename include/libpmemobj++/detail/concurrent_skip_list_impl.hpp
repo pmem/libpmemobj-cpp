@@ -1909,7 +1909,6 @@ private:
 		obj::p<difference_type> size_diff;
 		obj::p<insert_stage_type> insert_stage;
 
-	private:
 		char reserved[64 - sizeof(ptr) - sizeof(size_diff) -
 			      sizeof(insert_stage)];
 	};
@@ -2255,15 +2254,11 @@ private:
 			prev_nodes[level]->set_next(pop, level, new_node);
 		}
 
-		/*
-		 * We do not require to persist new_node below. If new_node is
-		 * not null after the crash the recovery procedure can correctly
-		 * handle it.
-		 */
-		// new_node = nullptr;
-#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		new_node = nullptr;
+		/* We need to persist the node pointer. Otherwise, on a restart,
+		 * this pointer might be not null but the node can be already
+		 * deleted. */
 		pop.persist(&new_node, sizeof(new_node));
-#endif
 
 		++_size;
 

@@ -103,6 +103,12 @@ test_erase(nvobj::pool<root> &pop)
 
 	UT_ASSERTeq(persistent_map->count(elements[i]), 0);
 	check_exist(persistent_map, elements[i], false);
+
+    persistent_map->emplace(elements[i], elements[i]);
+    check_exist(persistent_map, elements[i], true);
+
+    persistent_map->unsafe_erase(elements[i]);
+    check_exist(persistent_map, elements[i], false);
 }
 
 void

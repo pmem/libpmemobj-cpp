@@ -62,13 +62,24 @@ gen_key(persistent_map_type_int &, int i)
 	return i;
 }
 
+template <typename MapType>
+void
+check_sorted(MapType *map)
+{
+	using value_type = typename MapType::value_type;
+	UT_ASSERT(std::is_sorted(
+		map->begin(), map->end(),
+		[](const value_type &lhs, const value_type &rhs) {
+			return lhs.first < rhs.first;
+		}));
+}
+
 /*
  * emplace_and_lookup_test -- (internal) test emplace and lookup operations
  */
 template <typename MapType>
 void
-emplace_and_lookup_test(nvobj::pool<root> &pop,
-			nvobj::persistent_ptr<MapType> &map)
+emplace_and_lookup_test(nvobj::pool<root> &pop, MapType *map)
 {
 	const size_t NUMBER_ITEMS_INSERT = 50;
 
@@ -107,18 +118,13 @@ emplace_and_lookup_test(nvobj::pool<root> &pop,
 		}
 	});
 
-	using value_type = typename MapType::value_type;
-	UT_ASSERT(std::is_sorted(
-		map->begin(), map->end(),
-		[](const value_type &lhs, const value_type &rhs) {
-			return lhs.first < rhs.first;
-		}));
+	check_sorted(map);
 
 	UT_ASSERT(map->size() == TOTAL_ITEMS);
 
 	UT_ASSERT(std::distance(map->begin(), map->end()) == int(TOTAL_ITEMS));
 
-	UT_ASSERT(std::is_sorted(map->begin(), map->end()));
+	check_sorted(map);
 
 	map->runtime_initialize();
 
@@ -140,8 +146,7 @@ emplace_and_lookup_test(nvobj::pool<root> &pop,
  */
 template <typename MapType>
 void
-emplace_and_lookup_duplicates_test(nvobj::pool<root> &pop,
-				   nvobj::persistent_ptr<MapType> &map)
+emplace_and_lookup_duplicates_test(nvobj::pool<root> &pop, MapType *map)
 {
 	const size_t NUMBER_ITEMS_INSERT = 50;
 
@@ -185,12 +190,7 @@ emplace_and_lookup_duplicates_test(nvobj::pool<root> &pop,
 		t.join();
 	}
 
-	using value_type = typename MapType::value_type;
-	UT_ASSERT(std::is_sorted(
-		map->begin(), map->end(),
-		[](const value_type &lhs, const value_type &rhs) {
-			return lhs.first < rhs.first;
-		}));
+	check_sorted(map);
 
 	for (auto &e : *map) {
 		UT_ASSERT(e.first == e.second);
@@ -201,7 +201,7 @@ emplace_and_lookup_duplicates_test(nvobj::pool<root> &pop,
 	UT_ASSERT(std::distance(map->begin(), map->end()) ==
 		  static_cast<int>(NUMBER_ITEMS_INSERT));
 
-	UT_ASSERT(std::is_sorted(map->cbegin(), map->cend()));
+	check_sorted(map);
 }
 }
 
@@ -229,11 +229,11 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	emplace_and_lookup_test(pop, pop.root()->cons1);
-	emplace_and_lookup_duplicates_test(pop, pop.root()->cons1);
+	emplace_and_lookup_test(pop, pop.root()->cons1.get());
+	emplace_and_lookup_duplicates_test(pop, pop.root()->cons1.get());
 
-	emplace_and_lookup_test(pop, pop.root()->cons2);
-	emplace_and_lookup_duplicates_test(pop, pop.root()->cons2);
+	emplace_and_lookup_test(pop, pop.root()->cons2.get());
+	emplace_and_lookup_duplicates_test(pop, pop.root()->cons2.get());
 
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<persistent_map_type_int>(

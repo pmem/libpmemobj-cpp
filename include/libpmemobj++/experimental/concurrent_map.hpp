@@ -6,6 +6,7 @@
 
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/detail/concurrent_skip_list_impl.hpp>
+#include <libpmemobj++/detail/pair.hpp>
 
 namespace pmem
 {
@@ -22,7 +23,7 @@ public:
 	using key_type = Key;
 	using mapped_type = Value;
 	using compare_type = KeyCompare;
-	using value_type = std::pair<const key_type, mapped_type>;
+	using value_type = pair<const key_type, mapped_type>;
 	using reference = value_type &;
 	using const_reference = const value_type &;
 	using allocator_type = Allocator;

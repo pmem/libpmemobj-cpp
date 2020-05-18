@@ -27,6 +27,13 @@ namespace pmem
 namespace detail
 {
 
+#ifndef NDEBUG
+inline void
+try_insert_node_finish_marker()
+{
+}
+#endif
+
 template <typename T>
 inline void
 store_with_release(persistent_pool_ptr<T> &dst, persistent_pool_ptr<T> src)
@@ -2253,6 +2260,10 @@ private:
 			       next_nodes[level]);
 			prev_nodes[level]->set_next(pop, level, new_node);
 		}
+
+#ifndef NDEBUG
+		try_insert_node_finish_marker();
+#endif
 
 		new_node = nullptr;
 		/* We need to persist the node pointer. Otherwise, on a restart,

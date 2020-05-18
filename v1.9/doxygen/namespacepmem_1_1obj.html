@@ -1263,6 +1263,7 @@ template&lt;typename T &gt; </div>
 
 <p>Transactionally free an object of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>. </p>
 <p>This function can be used to <em>transactionally</em> free an object. Calls the object's destructor before freeing memory. Cannot be used for array types.</p>
+<p>To ensure that proper recovery is possible, ptr should be set to null after delete_persistent call and within the same transaction.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an object that is not an array.</td></tr>
@@ -1309,6 +1310,7 @@ template&lt;typename T &gt; </div>
 
 <p>Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>. </p>
 <p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. This overload only participates in overload resolution if T is an array.</p>
+<p>To ensure that proper recovery is possible, ptr should be set to null after delete_persistent call and within the same transaction.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an array of objects. </td></tr>
@@ -1346,6 +1348,7 @@ template&lt;typename T &gt; </div>
 
 <p>Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>. </p>
 <p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. This overload only participates in overload resolution if T is an array.</p>
+<p>To ensure that proper recovery is possible, ptr should be set to null after delete_persistent call and within the same transaction.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an array of objects.</td></tr>

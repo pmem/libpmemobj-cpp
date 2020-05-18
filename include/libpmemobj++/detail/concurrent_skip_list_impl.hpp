@@ -80,7 +80,7 @@ allocator_copy_assignment(MyAlloc &, OtherAlloc &, std::false_type)
 }
 
 /**
- *  Move assignment implementation for allocator if
+ * Move assignment implementation for allocator if
  * propagate_on_container_move_assignment == true_type.
  */
 template <typename MyAlloc, typename OtherAlloc>
@@ -92,7 +92,7 @@ allocator_move_assignment(MyAlloc &my_allocator, OtherAlloc &other_allocator,
 }
 
 /**
- *  Move assignment implementation for allocator if
+ * Move assignment implementation for allocator if
  * propagate_on_container_move_assignment == false_type.
  */
 template <typename MyAlloc, typename OtherAlloc>

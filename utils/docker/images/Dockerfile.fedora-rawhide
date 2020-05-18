@@ -38,6 +38,12 @@
 FROM fedora:rawhide
 MAINTAINER szymom.romik@intel.com
 
+# Set required environment variables
+ENV OS fedora
+ENV OS_VER rawhide
+ENV PACKAGE_MANAGER rpm
+ENV NOTTY 1
+
 # Additional parameters to build docker without building components
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
@@ -56,6 +62,7 @@ RUN dnf update -y \
 	daxctl-devel \
 	doxygen \
 	gcc \
+	gcc-c++ \
 	gdb \
 	git \
 	hub \
@@ -100,10 +107,3 @@ RUN useradd -m $USER
 RUN echo "$USER:$USERPASS" | chpasswd
 RUN gpasswd wheel -a $USER
 USER $USER
-
-# Set required environment variables
-ENV OS fedora
-ENV OS_VER rawhide
-ENV PACKAGE_MANAGER rpm
-ENV NOTTY 1
-

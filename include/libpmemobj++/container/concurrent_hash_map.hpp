@@ -2287,6 +2287,9 @@ public:
 	void
 	free_data()
 	{
+		if (!this->tls_ptr)
+			return;
+
 		auto pop = get_pool_base();
 
 		transaction::run(pop, [&] {

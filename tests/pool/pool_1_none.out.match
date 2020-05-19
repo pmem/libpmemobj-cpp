@@ -1,1 +1,2 @@
+$(nW)testfile: file size $(N) mode $(N)
 $(nW)testfile: pool::open: Success

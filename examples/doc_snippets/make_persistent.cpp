@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2018, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /*
  * make_persistent.cpp -- C++ documentation snippets.
@@ -52,6 +52,10 @@ make_persistent_example()
 
 		// transactionally delete the object, ~compound_type() is called
 		delete_persistent<compound_type>(proot->comp);
+
+		// set pointer to null so that after restart it's known whether
+		// compound_type is still allocated or not
+		proot->comp = nullptr;
 	});
 
 	// throws an transaction_scope_error exception
@@ -110,6 +114,10 @@ make_persistent_array_example()
 		// transactionally delete arrays , ~compound_type() is called
 		delete_persistent<compound_type[]>(proot->comp, 20);
 		delete_persistent<compound_type[3]>(arr1);
+
+		// set pointer to null so that after restart it's known whether
+		// compound_type is still allocated or not
+		proot->comp = nullptr;
 	});
 
 	// throws an transaction_scope_error exception

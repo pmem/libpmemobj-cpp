@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -103,6 +103,9 @@ make_persistent(Args &&... args)
  * This function can be used to *transactionally* free an object. Calls the
  * object's destructor before freeing memory. Cannot be used for array
  * types.
+ *
+ * To ensure that proper recovery is possible, ptr should be set to null after
+ * delete_persistent call and within the same transaction.
  *
  * @param[in,out] ptr persistent pointer to an object that is not an
  * array.

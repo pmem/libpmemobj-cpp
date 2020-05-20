@@ -1,6 +1,8 @@
 var searchData=
 [
   ['p',['p',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj']]],
+  ['p_3c_20difference_5ftype_20_3e',['p&lt; difference_type &gt;',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj']]],
+  ['p_3c_20insert_5fstage_5ftype_20_3e',['p&lt; insert_stage_type &gt;',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj']]],
   ['p_3c_20size_5ftype_20_3e',['p&lt; size_type &gt;',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj']]],
   ['p_3c_20std_3a_3aatomic_3c_20size_5ft_20_3e_20_3e',['p&lt; std::atomic&lt; size_t &gt; &gt;',['../classpmem_1_1obj_1_1p.html',1,'pmem::obj']]],
   ['persistent_5fptr',['persistent_ptr',['../classpmem_1_1obj_1_1persistent__ptr.html',1,'pmem::obj']]],

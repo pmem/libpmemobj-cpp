@@ -161,7 +161,14 @@ template&lt;typename T &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td>the pointer to where the object will be constructed. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>the object reference for copy construction. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>the object reference for copy construction.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>exception from T constructor. </td></tr>
   </table>
   </dd>
 </dl>
@@ -211,7 +218,14 @@ template&lt;typename... Args&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">p</td><td>the pointer to where the object will be constructed. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>parameters passed to the object's constructor. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>parameters passed to the object's constructor.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction. </td></tr>
+    <tr><td class="paramname">rethrows</td><td>exception from T constructor. </td></tr>
   </table>
   </dd>
 </dl>

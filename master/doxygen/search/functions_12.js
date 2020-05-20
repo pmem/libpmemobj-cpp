@@ -1,7 +1,14 @@
 var searchData=
 [
-  ['uncaught_5fexception_5fcounter',['uncaught_exception_counter',['../classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html#a428794f47019507d935505acfc560057',1,'pmem::obj::transaction::automatic::uncaught_exception_counter']]],
-  ['unlock',['unlock',['../classpmem_1_1obj_1_1mutex.html#a90f3344fcfc15236a6762fe35cad1522',1,'pmem::obj::mutex::unlock()'],['../classpmem_1_1obj_1_1shared__mutex.html#a6e7235073e03684262572fa3873706a8',1,'pmem::obj::shared_mutex::unlock()'],['../classpmem_1_1obj_1_1timed__mutex.html#a2f0776c6adbc4b2650216a62fe4a6caf',1,'pmem::obj::timed_mutex::unlock()']]],
-  ['unlock_5fshared',['unlock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#a103d7133acda9ad85e8298a3ca5c4fb0',1,'pmem::obj::shared_mutex']]],
-  ['unsafe_5fget',['unsafe_get',['../classpmem_1_1obj_1_1experimental_1_1v.html#a06b3e62f73d57551228c244800e0a3eb',1,'pmem::obj::experimental::v']]]
+  ['thread_5fid_5ftype',['thread_id_type',['../structpmem_1_1detail_1_1thread__id__type.html#ae6994bc90b1f2ef57adbff122222d37d',1,'pmem::detail::thread_id_type']]],
+  ['timed_5fmutex',['timed_mutex',['../classpmem_1_1obj_1_1timed__mutex.html#a432952ca0affc6baab420fceda7c37b4',1,'pmem::obj::timed_mutex::timed_mutex()'],['../classpmem_1_1obj_1_1timed__mutex.html#a72c61d0dd7d100d7d494da1111f502cc',1,'pmem::obj::timed_mutex::timed_mutex(const timed_mutex &amp;)=delete']]],
+  ['timedlock_5fimpl',['timedlock_impl',['../classpmem_1_1obj_1_1timed__mutex.html#ad3661edbe31f8f2d1b536f8182f2b879',1,'pmem::obj::timed_mutex']]],
+  ['timepoint_5fto_5ftimespec',['timepoint_to_timespec',['../namespacepmem_1_1detail.html#af01e97a9018816a35f80bd32f50b66a8',1,'pmem::detail']]],
+  ['tls_5frestore',['tls_restore',['../classpmem_1_1detail_1_1concurrent__skip__list.html#a6f7ecb3b94325da4ab98af89af79799e',1,'pmem::detail::concurrent_skip_list']]],
+  ['try_5femplace',['try_emplace',['../classpmem_1_1detail_1_1concurrent__skip__list.html#acd7c482dc978e488e306d5dc6fcd14fa',1,'pmem::detail::concurrent_skip_list::try_emplace(const key_type &amp;k, Args &amp;&amp;... args)'],['../classpmem_1_1detail_1_1concurrent__skip__list.html#ad614034918785ab4e003cbe2142c2282',1,'pmem::detail::concurrent_skip_list::try_emplace(key_type &amp;&amp;k, Args &amp;&amp;... args)'],['../classpmem_1_1detail_1_1concurrent__skip__list.html#a731a846634822804cf6880ddfbd75674',1,'pmem::detail::concurrent_skip_list::try_emplace(K &amp;&amp;k, Args &amp;&amp;... args)']]],
+  ['try_5finsert_5fnode',['try_insert_node',['../classpmem_1_1detail_1_1concurrent__skip__list.html#ad3dea52fdc48f3544f1a4e8b35308ecd',1,'pmem::detail::concurrent_skip_list']]],
+  ['try_5flock',['try_lock',['../classpmem_1_1obj_1_1mutex.html#ac5200a1d71568e37cf177142c2de6578',1,'pmem::obj::mutex::try_lock()'],['../classpmem_1_1obj_1_1shared__mutex.html#af144d333c724830c62d8a337021a5e48',1,'pmem::obj::shared_mutex::try_lock()'],['../classpmem_1_1obj_1_1timed__mutex.html#ac4e729766548fb54c3597a0532b42a5a',1,'pmem::obj::timed_mutex::try_lock()']]],
+  ['try_5flock_5ffor',['try_lock_for',['../classpmem_1_1obj_1_1timed__mutex.html#addfc0dcd69f92ecbc76239ef6fefe5ee',1,'pmem::obj::timed_mutex']]],
+  ['try_5flock_5fshared',['try_lock_shared',['../classpmem_1_1obj_1_1shared__mutex.html#af161f61d3c651d5242ea998ea0a6b4f9',1,'pmem::obj::shared_mutex']]],
+  ['try_5flock_5funtil',['try_lock_until',['../classpmem_1_1obj_1_1timed__mutex.html#a3f6bf8bc19debd3e569cc921e0653149',1,'pmem::obj::timed_mutex']]]
 ];

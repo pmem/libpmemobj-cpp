@@ -328,7 +328,10 @@ public:
 	}
 
 	/** Copy constructor. */
-	skip_list_iterator(const skip_list_iterator &other) = default;
+	skip_list_iterator(const skip_list_iterator &other)
+	    : pool_uuid(other.pool_uuid), node(other.node)
+	{
+	}
 
 	/** Copy constructor for const iterator from non-const iterator */
 	template <typename U = void,

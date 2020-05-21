@@ -6,6 +6,10 @@
 //
 //===----------------------------------------------------------------------===//
 //
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 // XFAIL: c++98, c++03, c++11
 
 // <map>
@@ -26,11 +30,12 @@
 #include "test_macros.h"
 #include "is_transparent.h"
 
-int main(int, char**)
+int
+run(pmem::obj::pool<root> &pop)
 {
     {
     typedef std::map<int, double, transparent_less> M;
-    assert(M().count(C2Int{5}) == 0);
+    assert(M().count(C2Int{5}) == 0); // TODO(kfilipek): TBD
     }
     {
     typedef std::map<int, double, transparent_less_not_referenceable> M;
@@ -38,4 +43,30 @@ int main(int, char**)
     }
 
   return 0;
+}
+
+static void
+test(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(path, "count0.pass",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+
+	run(pop);
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

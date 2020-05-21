@@ -2010,8 +2010,9 @@ private:
 		obj::p<difference_type> size_diff;
 		obj::p<insert_stage_type> insert_stage;
 
-		char reserved[64 - sizeof(ptr) - sizeof(size_diff) -
-			      sizeof(insert_stage)];
+		char reserved[64 - sizeof(decltype(ptr)) -
+			      sizeof(decltype(size_diff)) -
+			      sizeof(decltype(insert_stage))];
 	};
 	static_assert(sizeof(tls_entry_type) == 64,
 		      "The size of tls_entry_type should be 64 bytes.");

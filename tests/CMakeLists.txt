@@ -821,7 +821,7 @@ if(TEST_CONCURRENT_MAP)
 		else()
 			message(WARNING "Skipping concurrent_map_mt_gdb test because it is non-debug build")
 		endif()
-	else()
+	elseif(TESTS_CONCURRENT_GDB)
 		message(WARNING "Skipping concurrent_map_mt_gdb test because GDB was not found")
 	endif()
 

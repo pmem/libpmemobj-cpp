@@ -2861,6 +2861,9 @@ private:
 			on_init_size += static_cast<size_t>(last_run_size);
 		});
 		_size = on_init_size;
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
+		VALGRIND_PMC_DO_FLUSH(&_size, sizeof(_size));
+#endif
 	}
 
 	void

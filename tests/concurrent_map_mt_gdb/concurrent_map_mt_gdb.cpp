@@ -147,32 +147,40 @@ struct test_case_0 : public test_case {
 
 		/* two threads trying to insert the same element and one reader
 		 */
-		parallel_exec(3, [&](size_t thread_id) {
-			if (thread_id == 0) {
-				gdb_sync1();
+		parallel_xexec(
+			3,
+			[&](size_t thread_id,
+			    std::function<void(void)> syncthreads) {
+				syncthreads();
 
-				r1 = map->emplace(gen_key(*map, mt_insert_key),
-						  gen_key(*map, mt_insert_key));
-			} else if (thread_id == 1) {
-				while (loop_sync_1) {
-					gdb_sync2();
-				};
+				if (thread_id == 0) {
+					gdb_sync1();
 
-				r2 = map->emplace(gen_key(*map, mt_insert_key),
-						  gen_key(*map, mt_insert_key));
-			} else {
-				while (loop_sync_2) {
-					gdb_sync3();
-				};
+					r1 = map->emplace(
+						gen_key(*map, mt_insert_key),
+						gen_key(*map, mt_insert_key));
+				} else if (thread_id == 1) {
+					while (loop_sync_1) {
+						gdb_sync2();
+					};
 
-				pop.root()->reader_status =
-					map->count(gen_key(*map,
-							   mt_insert_key)) == 1;
-				pop.persist(pop.root()->reader_status);
-			}
+					r2 = map->emplace(
+						gen_key(*map, mt_insert_key),
+						gen_key(*map, mt_insert_key));
+				} else {
+					while (loop_sync_2) {
+						gdb_sync3();
+					};
 
-			gdb_sync_exit();
-		});
+					pop.root()->reader_status =
+						map->count(gen_key(
+							*map, mt_insert_key)) ==
+						1;
+					pop.persist(pop.root()->reader_status);
+				}
+
+				gdb_sync_exit();
+			});
 	}
 
 	void
@@ -236,32 +244,40 @@ struct test_case_1_2 : public test_case {
 
 		/* two threads trying to insert the same element and one reader
 		 */
-		parallel_exec(3, [&](size_t thread_id) {
-			if (thread_id == 0) {
-				gdb_sync1();
+		parallel_xexec(
+			3,
+			[&](size_t thread_id,
+			    std::function<void(void)> syncthreads) {
+				syncthreads();
 
-				r1 = map->emplace(gen_key(*map, mt_insert_key),
-						  gen_key(*map, mt_insert_key));
-			} else if (thread_id == 1) {
-				while (loop_sync_1) {
-					gdb_sync2();
-				};
+				if (thread_id == 0) {
+					gdb_sync1();
 
-				r2 = map->emplace(gen_key(*map, mt_insert_key),
-						  gen_key(*map, mt_insert_key));
-			} else {
-				while (loop_sync_2) {
-					gdb_sync3();
-				};
+					r1 = map->emplace(
+						gen_key(*map, mt_insert_key),
+						gen_key(*map, mt_insert_key));
+				} else if (thread_id == 1) {
+					while (loop_sync_1) {
+						gdb_sync2();
+					};
 
-				pop.root()->reader_status =
-					map->count(gen_key(*map,
-							   mt_insert_key)) == 1;
-				pop.persist(pop.root()->reader_status);
-			}
+					r2 = map->emplace(
+						gen_key(*map, mt_insert_key),
+						gen_key(*map, mt_insert_key));
+				} else {
+					while (loop_sync_2) {
+						gdb_sync3();
+					};
 
-			gdb_sync_exit();
-		});
+					pop.root()->reader_status =
+						map->count(gen_key(
+							*map, mt_insert_key)) ==
+						1;
+					pop.persist(pop.root()->reader_status);
+				}
+
+				gdb_sync_exit();
+			});
 	}
 
 	void

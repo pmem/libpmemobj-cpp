@@ -11,8 +11,8 @@
 // Class helper to test pmem::obj containers
 //
 
-#ifndef __PRIVATE_CONSTRUCTOR__H
-#define __PRIVATE_CONSTRUCTOR__H
+#ifndef LIBPMEMOBJ_CPP_TESTS
+#define LIBPMEMOBJ_CPP_TESTS
 
 #include <iostream>
 

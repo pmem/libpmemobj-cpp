@@ -1605,7 +1605,7 @@ public:
 	 * denotes a type. They allow calling this function without constructing
 	 * an instance of Key.
 	 *
-	 * @param[in] x alternative value to compare to the keys.
+	 * @param[in] key alternative value to compare to the keys.
 	 *
 	 * @return Number of elements with key that compares equivalent to the
 	 * specified argument.
@@ -1956,7 +1956,7 @@ public:
 	 * valid and denotes a type. They allow calling this function without
 	 * constructing an instance of Key.
 	 *
-	 * @param[in] x alternative value that can be compared to Key.
+	 * @param[in] key alternative value that can be compared to Key.
 	 *
 	 * @return std::pair containing a pair of iterators defining the wanted
 	 * range: the first pointing to the first element that is not less than
@@ -2182,7 +2182,7 @@ private:
 	 * @param[out] next_nodes array of pointers to successor nodes on each
 	 * level.
 	 * @param[in] key inserted key.
-	 * @param[in] comp comparator functor used for the search.
+	 * @param[in] cmp comparator functor used for the search.
 	 */
 	template <typename K, typename comparator>
 	void
@@ -2488,6 +2488,7 @@ private:
 	 * which cmp(element, key) is false.
 	 *
 	 * @param[in] key key value to compare the elements to.
+	 * @param[in] cmp comparator functor used for the search.
 	 *
 	 * @return Iterator pointing to the first element for which
 	 * cmp(element, key) is false. If no such element is found, a
@@ -2513,6 +2514,7 @@ private:
 	 * which cmp(element, key) is false.
 	 *
 	 * @param[in] key key value to compare the elements to.
+	 * @param[in] cmp comparator functor used for the search.
 	 *
 	 * @return Iterator pointing to the first element for which
 	 * cmp(element, key) is false. If no such element is found, a

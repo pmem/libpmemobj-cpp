@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <map>
 
@@ -13,325 +18,337 @@
 //       iterator upper_bound(const key_type& k);
 // const_iterator upper_bound(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+#include "unittest.hpp"
 
-#include "test_macros.h"
-#include "min_allocator.h"
-#include "private_constructor.h"
+#include <libpmemobj++/experimental/concurrent_map.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-int main(int, char**)
+#include "../private_constructor.h"
+
+namespace nvobj = pmem::obj;
+namespace nvobjex = pmem::obj::experimental;
+
+using C = nvobjex::concurrent_map<int, double>;
+using C2 = nvobjex::concurrent_map<int, double, std::less<>>;
+using C3 = nvobjex::concurrent_map<PrivateConstructor, double, std::less<>>;
+
+struct root {
+	nvobj::persistent_ptr<C> s;
+	nvobj::persistent_ptr<C2> s2;
+	nvobj::persistent_ptr<C3> s3;
+};
+
+int
+run(pmem::obj::pool<root> &pop)
 {
-    {
-    typedef std::pair<const int, double> V;
-    typedef std::map<int, double> M;
-    {
-        typedef M::iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(7, 6),
-            V(9, 7),
-            V(11, 8),
-            V(13, 9),
-            V(15, 10),
-            V(17, 11),
-            V(19, 12)
-        };
-        M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.upper_bound(5);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(7);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(9);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(11);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(13);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(15);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(17);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(19);
-        assert(r == next(m.begin(), 8));
-        r = m.upper_bound(4);
-        assert(r == next(m.begin(), 0));
-        r = m.upper_bound(6);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(8);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(10);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(12);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(14);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(16);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(18);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(20);
-        assert(r == next(m.begin(), 8));
-    }
-    {
-        typedef M::const_iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(7, 6),
-            V(9, 7),
-            V(11, 8),
-            V(13, 9),
-            V(15, 10),
-            V(17, 11),
-            V(19, 12)
-        };
-        const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.upper_bound(5);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(7);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(9);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(11);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(13);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(15);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(17);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(19);
-        assert(r == next(m.begin(), 8));
-        r = m.upper_bound(4);
-        assert(r == next(m.begin(), 0));
-        r = m.upper_bound(6);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(8);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(10);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(12);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(14);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(16);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(18);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(20);
-        assert(r == next(m.begin(), 8));
-    }
-    }
+	auto robj = pop.root();
+	{
+		typedef std::pair<const int, double> V;
+		typedef C M;
+		{
+			typedef M::iterator R;
+			V ar[] = {V(5, 5),  V(7, 6),   V(9, 7),	  V(11, 8),
+				  V(13, 9), V(15, 10), V(17, 11), V(19, 12)};
+			pmem::obj::transaction::run(pop, [&] {
+				robj->s = nvobj::make_persistent<M>(
+					ar, ar + sizeof(ar) / sizeof(ar[0]));
+			});
+			auto &m = *robj->s;
+			R r = m.upper_bound(5);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(7);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(9);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(11);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(13);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(15);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(17);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(19);
+			assert(r == next(m.begin(), 8));
+			r = m.upper_bound(4);
+			assert(r == next(m.begin(), 0));
+			r = m.upper_bound(6);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(8);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(10);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(12);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(14);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(16);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(18);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(20);
+			assert(r == next(m.begin(), 8));
+		}
+		{
+			typedef M::const_iterator R;
+			V ar[] = {V(5, 5),  V(7, 6),   V(9, 7),	  V(11, 8),
+				  V(13, 9), V(15, 10), V(17, 11), V(19, 12)};
+			pmem::obj::transaction::run(pop, [&] {
+				robj->s = nvobj::make_persistent<M>(
+					ar, ar + sizeof(ar) / sizeof(ar[0]));
+			});
+			const auto m = *robj->s;
+			// const M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+			R r = m.upper_bound(5);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(7);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(9);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(11);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(13);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(15);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(17);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(19);
+			assert(r == next(m.begin(), 8));
+			r = m.upper_bound(4);
+			assert(r == next(m.begin(), 0));
+			r = m.upper_bound(6);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(8);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(10);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(12);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(14);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(16);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(18);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(20);
+			assert(r == next(m.begin(), 8));
+		}
+	}
 #if TEST_STD_VER >= 11
-    {
-    typedef std::pair<const int, double> V;
-    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
-    {
-        typedef M::iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(7, 6),
-            V(9, 7),
-            V(11, 8),
-            V(13, 9),
-            V(15, 10),
-            V(17, 11),
-            V(19, 12)
-        };
-        M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.upper_bound(5);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(7);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(9);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(11);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(13);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(15);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(17);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(19);
-        assert(r == next(m.begin(), 8));
-        r = m.upper_bound(4);
-        assert(r == next(m.begin(), 0));
-        r = m.upper_bound(6);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(8);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(10);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(12);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(14);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(16);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(18);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(20);
-        assert(r == next(m.begin(), 8));
-    }
-    {
-        typedef M::const_iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(7, 6),
-            V(9, 7),
-            V(11, 8),
-            V(13, 9),
-            V(15, 10),
-            V(17, 11),
-            V(19, 12)
-        };
-        const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.upper_bound(5);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(7);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(9);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(11);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(13);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(15);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(17);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(19);
-        assert(r == next(m.begin(), 8));
-        r = m.upper_bound(4);
-        assert(r == next(m.begin(), 0));
-        r = m.upper_bound(6);
-        assert(r == next(m.begin(), 1));
-        r = m.upper_bound(8);
-        assert(r == next(m.begin(), 2));
-        r = m.upper_bound(10);
-        assert(r == next(m.begin(), 3));
-        r = m.upper_bound(12);
-        assert(r == next(m.begin(), 4));
-        r = m.upper_bound(14);
-        assert(r == next(m.begin(), 5));
-        r = m.upper_bound(16);
-        assert(r == next(m.begin(), 6));
-        r = m.upper_bound(18);
-        assert(r == next(m.begin(), 7));
-        r = m.upper_bound(20);
-        assert(r == next(m.begin(), 8));
-    }
-    }
+	{
+		typedef std::pair<const int, double> V;
+		typedef std::map<int, double, std::less<int>, min_allocator<V>>
+			M;
+		{
+			typedef M::iterator R;
+			V ar[] = {V(5, 5),  V(7, 6),   V(9, 7),	  V(11, 8),
+				  V(13, 9), V(15, 10), V(17, 11), V(19, 12)};
+			M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+			R r = m.upper_bound(5);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(7);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(9);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(11);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(13);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(15);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(17);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(19);
+			assert(r == next(m.begin(), 8));
+			r = m.upper_bound(4);
+			assert(r == next(m.begin(), 0));
+			r = m.upper_bound(6);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(8);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(10);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(12);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(14);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(16);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(18);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(20);
+			assert(r == next(m.begin(), 8));
+		}
+		{
+			typedef M::const_iterator R;
+			V ar[] = {V(5, 5),  V(7, 6),   V(9, 7),	  V(11, 8),
+				  V(13, 9), V(15, 10), V(17, 11), V(19, 12)};
+			const M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+			R r = m.upper_bound(5);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(7);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(9);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(11);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(13);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(15);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(17);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(19);
+			assert(r == next(m.begin(), 8));
+			r = m.upper_bound(4);
+			assert(r == next(m.begin(), 0));
+			r = m.upper_bound(6);
+			assert(r == next(m.begin(), 1));
+			r = m.upper_bound(8);
+			assert(r == next(m.begin(), 2));
+			r = m.upper_bound(10);
+			assert(r == next(m.begin(), 3));
+			r = m.upper_bound(12);
+			assert(r == next(m.begin(), 4));
+			r = m.upper_bound(14);
+			assert(r == next(m.begin(), 5));
+			r = m.upper_bound(16);
+			assert(r == next(m.begin(), 6));
+			r = m.upper_bound(18);
+			assert(r == next(m.begin(), 7));
+			r = m.upper_bound(20);
+			assert(r == next(m.begin(), 8));
+		}
+	}
 #endif
 #if TEST_STD_VER > 11
-    {
-    typedef std::pair<const int, double> V;
-    typedef std::map<int, double, std::less<>> M;
-    typedef M::iterator R;
-    V ar[] =
-    {
-        V(5, 5),
-        V(7, 6),
-        V(9, 7),
-        V(11, 8),
-        V(13, 9),
-        V(15, 10),
-        V(17, 11),
-        V(19, 12)
-    };
-    M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-    R r = m.upper_bound(5);
-    assert(r == next(m.begin(), 1));
-    r = m.upper_bound(7);
-    assert(r == next(m.begin(), 2));
-    r = m.upper_bound(9);
-    assert(r == next(m.begin(), 3));
-    r = m.upper_bound(11);
-    assert(r == next(m.begin(), 4));
-    r = m.upper_bound(13);
-    assert(r == next(m.begin(), 5));
-    r = m.upper_bound(15);
-    assert(r == next(m.begin(), 6));
-    r = m.upper_bound(17);
-    assert(r == next(m.begin(), 7));
-    r = m.upper_bound(19);
-    assert(r == next(m.begin(), 8));
-    r = m.upper_bound(4);
-    assert(r == next(m.begin(), 0));
-    r = m.upper_bound(6);
-    assert(r == next(m.begin(), 1));
-    r = m.upper_bound(8);
-    assert(r == next(m.begin(), 2));
-    r = m.upper_bound(10);
-    assert(r == next(m.begin(), 3));
-    r = m.upper_bound(12);
-    assert(r == next(m.begin(), 4));
-    r = m.upper_bound(14);
-    assert(r == next(m.begin(), 5));
-    r = m.upper_bound(16);
-    assert(r == next(m.begin(), 6));
-    r = m.upper_bound(18);
-    assert(r == next(m.begin(), 7));
-    r = m.upper_bound(20);
-    assert(r == next(m.begin(), 8));
-    }
+	{
+		typedef std::pair<const int, double> V;
+		typedef std::map<int, double, std::less<>> M;
+		typedef M::iterator R;
+		V ar[] = {V(5, 5),  V(7, 6),   V(9, 7),	  V(11, 8),
+			  V(13, 9), V(15, 10), V(17, 11), V(19, 12)};
+		M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+		R r = m.upper_bound(5);
+		assert(r == next(m.begin(), 1));
+		r = m.upper_bound(7);
+		assert(r == next(m.begin(), 2));
+		r = m.upper_bound(9);
+		assert(r == next(m.begin(), 3));
+		r = m.upper_bound(11);
+		assert(r == next(m.begin(), 4));
+		r = m.upper_bound(13);
+		assert(r == next(m.begin(), 5));
+		r = m.upper_bound(15);
+		assert(r == next(m.begin(), 6));
+		r = m.upper_bound(17);
+		assert(r == next(m.begin(), 7));
+		r = m.upper_bound(19);
+		assert(r == next(m.begin(), 8));
+		r = m.upper_bound(4);
+		assert(r == next(m.begin(), 0));
+		r = m.upper_bound(6);
+		assert(r == next(m.begin(), 1));
+		r = m.upper_bound(8);
+		assert(r == next(m.begin(), 2));
+		r = m.upper_bound(10);
+		assert(r == next(m.begin(), 3));
+		r = m.upper_bound(12);
+		assert(r == next(m.begin(), 4));
+		r = m.upper_bound(14);
+		assert(r == next(m.begin(), 5));
+		r = m.upper_bound(16);
+		assert(r == next(m.begin(), 6));
+		r = m.upper_bound(18);
+		assert(r == next(m.begin(), 7));
+		r = m.upper_bound(20);
+		assert(r == next(m.begin(), 8));
+	}
 
-    {
-    typedef PrivateConstructor PC;
-    typedef std::map<PC, double, std::less<>> M;
-    typedef M::iterator R;
+	{
+		typedef PrivateConstructor PC;
+		typedef std::map<PC, double, std::less<>> M;
+		typedef M::iterator R;
 
-    M m;
-    m [ PC::make(5)  ] = 5;
-    m [ PC::make(7)  ] = 6;
-    m [ PC::make(9)  ] = 7;
-    m [ PC::make(11) ] = 8;
-    m [ PC::make(13) ] = 9;
-    m [ PC::make(15) ] = 10;
-    m [ PC::make(17) ] = 11;
-    m [ PC::make(19) ] = 12;
+		M m;
+		m[PC::make(5)] = 5;
+		m[PC::make(7)] = 6;
+		m[PC::make(9)] = 7;
+		m[PC::make(11)] = 8;
+		m[PC::make(13)] = 9;
+		m[PC::make(15)] = 10;
+		m[PC::make(17)] = 11;
+		m[PC::make(19)] = 12;
 
-    R r = m.upper_bound(5);
-    assert(r == next(m.begin(), 1));
-    r = m.upper_bound(7);
-    assert(r == next(m.begin(), 2));
-    r = m.upper_bound(9);
-    assert(r == next(m.begin(), 3));
-    r = m.upper_bound(11);
-    assert(r == next(m.begin(), 4));
-    r = m.upper_bound(13);
-    assert(r == next(m.begin(), 5));
-    r = m.upper_bound(15);
-    assert(r == next(m.begin(), 6));
-    r = m.upper_bound(17);
-    assert(r == next(m.begin(), 7));
-    r = m.upper_bound(19);
-    assert(r == next(m.begin(), 8));
-    r = m.upper_bound(4);
-    assert(r == next(m.begin(), 0));
-    r = m.upper_bound(6);
-    assert(r == next(m.begin(), 1));
-    r = m.upper_bound(8);
-    assert(r == next(m.begin(), 2));
-    r = m.upper_bound(10);
-    assert(r == next(m.begin(), 3));
-    r = m.upper_bound(12);
-    assert(r == next(m.begin(), 4));
-    r = m.upper_bound(14);
-    assert(r == next(m.begin(), 5));
-    r = m.upper_bound(16);
-    assert(r == next(m.begin(), 6));
-    r = m.upper_bound(18);
-    assert(r == next(m.begin(), 7));
-    r = m.upper_bound(20);
-    assert(r == next(m.begin(), 8));
-    }
+		R r = m.upper_bound(5);
+		assert(r == next(m.begin(), 1));
+		r = m.upper_bound(7);
+		assert(r == next(m.begin(), 2));
+		r = m.upper_bound(9);
+		assert(r == next(m.begin(), 3));
+		r = m.upper_bound(11);
+		assert(r == next(m.begin(), 4));
+		r = m.upper_bound(13);
+		assert(r == next(m.begin(), 5));
+		r = m.upper_bound(15);
+		assert(r == next(m.begin(), 6));
+		r = m.upper_bound(17);
+		assert(r == next(m.begin(), 7));
+		r = m.upper_bound(19);
+		assert(r == next(m.begin(), 8));
+		r = m.upper_bound(4);
+		assert(r == next(m.begin(), 0));
+		r = m.upper_bound(6);
+		assert(r == next(m.begin(), 1));
+		r = m.upper_bound(8);
+		assert(r == next(m.begin(), 2));
+		r = m.upper_bound(10);
+		assert(r == next(m.begin(), 3));
+		r = m.upper_bound(12);
+		assert(r == next(m.begin(), 4));
+		r = m.upper_bound(14);
+		assert(r == next(m.begin(), 5));
+		r = m.upper_bound(16);
+		assert(r == next(m.begin(), 6));
+		r = m.upper_bound(18);
+		assert(r == next(m.begin(), 7));
+		r = m.upper_bound(20);
+		assert(r == next(m.begin(), 8));
+	}
 #endif
 
-  return 0;
+	return 0;
+}
+
+static void
+test(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(path, "upper_bound.pass",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+	try {
+		run(pop);
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

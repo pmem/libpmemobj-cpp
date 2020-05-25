@@ -13,250 +13,272 @@
 //       iterator find(const key_type& k);
 // const_iterator find(const key_type& k) const;
 
-#include <map>
-#include <cassert>
+#include "unittest.hpp"
 
-#include "test_macros.h"
-#include "min_allocator.h"
-#include "private_constructor.h"
-#include "is_transparent.h"
+#include <libpmemobj++/experimental/concurrent_map.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-int main(int, char**)
+#include "../is_transparent.h"
+#include "../private_constructor.h"
+
+namespace nvobj = pmem::obj;
+namespace nvobjex = pmem::obj::experimental;
+
+using C = nvobjex::concurrent_map<int, double>;
+using C1 = nvobjex::concurrent_map<int, double, std::less<>>;
+using C2 = nvobjex::concurrent_map<PrivateConstructor, double, std::less<>>;
+
+struct root {
+	nvobj::persistent_ptr<C> s;
+	nvobj::persistent_ptr<C1> s1;
+	nvobj::persistent_ptr<C2> s2;
+};
+
+int
+run(pmem::obj::pool<root> &pop)
 {
-    {
-    typedef std::pair<const int, double> V;
-    typedef std::map<int, double> M;
-    {
-        typedef M::iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.find(5);
-        assert(r == m.begin());
-        r = m.find(6);
-        assert(r == next(m.begin()));
-        r = m.find(7);
-        assert(r == next(m.begin(), 2));
-        r = m.find(8);
-        assert(r == next(m.begin(), 3));
-        r = m.find(9);
-        assert(r == next(m.begin(), 4));
-        r = m.find(10);
-        assert(r == next(m.begin(), 5));
-        r = m.find(11);
-        assert(r == next(m.begin(), 6));
-        r = m.find(12);
-        assert(r == next(m.begin(), 7));
-        r = m.find(4);
-        assert(r == next(m.begin(), 8));
-    }
-    {
-        typedef M::const_iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.find(5);
-        assert(r == m.begin());
-        r = m.find(6);
-        assert(r == next(m.begin()));
-        r = m.find(7);
-        assert(r == next(m.begin(), 2));
-        r = m.find(8);
-        assert(r == next(m.begin(), 3));
-        r = m.find(9);
-        assert(r == next(m.begin(), 4));
-        r = m.find(10);
-        assert(r == next(m.begin(), 5));
-        r = m.find(11);
-        assert(r == next(m.begin(), 6));
-        r = m.find(12);
-        assert(r == next(m.begin(), 7));
-        r = m.find(4);
-        assert(r == next(m.begin(), 8));
-    }
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::pair<const int, double> V;
-    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
-    {
-        typedef M::iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.find(5);
-        assert(r == m.begin());
-        r = m.find(6);
-        assert(r == next(m.begin()));
-        r = m.find(7);
-        assert(r == next(m.begin(), 2));
-        r = m.find(8);
-        assert(r == next(m.begin(), 3));
-        r = m.find(9);
-        assert(r == next(m.begin(), 4));
-        r = m.find(10);
-        assert(r == next(m.begin(), 5));
-        r = m.find(11);
-        assert(r == next(m.begin(), 6));
-        r = m.find(12);
-        assert(r == next(m.begin(), 7));
-        r = m.find(4);
-        assert(r == next(m.begin(), 8));
-    }
-    {
-        typedef M::const_iterator R;
-        V ar[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        const M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-        R r = m.find(5);
-        assert(r == m.begin());
-        r = m.find(6);
-        assert(r == next(m.begin()));
-        r = m.find(7);
-        assert(r == next(m.begin(), 2));
-        r = m.find(8);
-        assert(r == next(m.begin(), 3));
-        r = m.find(9);
-        assert(r == next(m.begin(), 4));
-        r = m.find(10);
-        assert(r == next(m.begin(), 5));
-        r = m.find(11);
-        assert(r == next(m.begin(), 6));
-        r = m.find(12);
-        assert(r == next(m.begin(), 7));
-        r = m.find(4);
-        assert(r == next(m.begin(), 8));
-    }
-    }
+	auto robj = pop.root();
+	{
+		typedef std::pair<const int, double> V;
+		typedef C M;
+		{
+			typedef M::iterator R;
+			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
+				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+			pmem::obj::transaction::run(pop, [&] {
+				robj->s = nvobj::make_persistent<C>(
+					ar, ar + sizeof(ar) / sizeof(ar[0]));
+			});
+			auto &m = *robj->s;
+			R r = m.find(5);
+			UT_ASSERT(r == m.begin());
+			r = m.find(6);
+			UT_ASSERT(r == next(m.begin()));
+			r = m.find(7);
+			UT_ASSERT(r == next(m.begin(), 2));
+			r = m.find(8);
+			UT_ASSERT(r == next(m.begin(), 3));
+			r = m.find(9);
+			UT_ASSERT(r == next(m.begin(), 4));
+			r = m.find(10);
+			UT_ASSERT(r == next(m.begin(), 5));
+			r = m.find(11);
+			UT_ASSERT(r == next(m.begin(), 6));
+			r = m.find(12);
+			UT_ASSERT(r == next(m.begin(), 7));
+			r = m.find(4);
+			UT_ASSERT(r == next(m.begin(), 8));
+		}
+		{
+			typedef M::const_iterator R;
+			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
+				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+			pmem::obj::transaction::run(pop, [&] {
+				robj->s = nvobj::make_persistent<C>(
+					ar, ar + sizeof(ar) / sizeof(ar[0]));
+			});
+			const auto &m = *robj->s;
+			R r = m.find(5);
+			UT_ASSERT(r == m.begin());
+			r = m.find(6);
+			UT_ASSERT(r == next(m.begin()));
+			r = m.find(7);
+			UT_ASSERT(r == next(m.begin(), 2));
+			r = m.find(8);
+			UT_ASSERT(r == next(m.begin(), 3));
+			r = m.find(9);
+			UT_ASSERT(r == next(m.begin(), 4));
+			r = m.find(10);
+			UT_ASSERT(r == next(m.begin(), 5));
+			r = m.find(11);
+			UT_ASSERT(r == next(m.begin(), 6));
+			r = m.find(12);
+			UT_ASSERT(r == next(m.begin(), 7));
+			r = m.find(4);
+			UT_ASSERT(r == next(m.begin(), 8));
+		}
+	}
+#ifdef XXX // XXX: Implement min_allocator
+	{
+		typedef std::pair<const int, double> V;
+		typedef std::map<int, double, std::less<int>, min_allocator<V>>
+			M;
+		{
+			typedef M::iterator R;
+			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
+				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+			M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+			R r = m.find(5);
+			assert(r == m.begin());
+			r = m.find(6);
+			assert(r == next(m.begin()));
+			r = m.find(7);
+			assert(r == next(m.begin(), 2));
+			r = m.find(8);
+			assert(r == next(m.begin(), 3));
+			r = m.find(9);
+			assert(r == next(m.begin(), 4));
+			r = m.find(10);
+			assert(r == next(m.begin(), 5));
+			r = m.find(11);
+			assert(r == next(m.begin(), 6));
+			r = m.find(12);
+			assert(r == next(m.begin(), 7));
+			r = m.find(4);
+			assert(r == next(m.begin(), 8));
+		}
+		{
+			typedef M::const_iterator R;
+			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
+				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+			const M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+			R r = m.find(5);
+			assert(r == m.begin());
+			r = m.find(6);
+			assert(r == next(m.begin()));
+			r = m.find(7);
+			assert(r == next(m.begin(), 2));
+			r = m.find(8);
+			assert(r == next(m.begin(), 3));
+			r = m.find(9);
+			assert(r == next(m.begin(), 4));
+			r = m.find(10);
+			assert(r == next(m.begin(), 5));
+			r = m.find(11);
+			assert(r == next(m.begin(), 6));
+			r = m.find(12);
+			assert(r == next(m.begin(), 7));
+			r = m.find(4);
+			assert(r == next(m.begin(), 8));
+		}
+	}
 #endif
-#if TEST_STD_VER > 11
-    {
-    typedef std::pair<const int, double> V;
-    typedef std::map<int, double, std::less<>> M;
-    typedef M::iterator R;
+	{
+		typedef std::pair<const int, double> V;
+		typedef C1 M;
+		typedef M::iterator R;
 
-    V ar[] =
-    {
-        V(5, 5),
-        V(6, 6),
-        V(7, 7),
-        V(8, 8),
-        V(9, 9),
-        V(10, 10),
-        V(11, 11),
-        V(12, 12)
-    };
-    M m(ar, ar+sizeof(ar)/sizeof(ar[0]));
-    R r = m.find(5);
-    assert(r == m.begin());
-    r = m.find(6);
-    assert(r == next(m.begin()));
-    r = m.find(7);
-    assert(r == next(m.begin(), 2));
-    r = m.find(8);
-    assert(r == next(m.begin(), 3));
-    r = m.find(9);
-    assert(r == next(m.begin(), 4));
-    r = m.find(10);
-    assert(r == next(m.begin(), 5));
-    r = m.find(11);
-    assert(r == next(m.begin(), 6));
-    r = m.find(12);
-    assert(r == next(m.begin(), 7));
-    r = m.find(4);
-    assert(r == next(m.begin(), 8));
+		V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
+			  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+		// M m(ar, ar + sizeof(ar) / sizeof(ar[0]));
+		pmem::obj::transaction::run(pop, [&] {
+			robj->s1 = nvobj::make_persistent<C1>(
+				ar, ar + sizeof(ar) / sizeof(ar[0]));
+		});
+		auto &m = *robj->s1;
+		R r = m.find(5);
+		UT_ASSERT(r == m.begin());
+		r = m.find(6);
+		UT_ASSERT(r == next(m.begin()));
+		r = m.find(7);
+		UT_ASSERT(r == next(m.begin(), 2));
+		r = m.find(8);
+		UT_ASSERT(r == next(m.begin(), 3));
+		r = m.find(9);
+		UT_ASSERT(r == next(m.begin(), 4));
+		r = m.find(10);
+		UT_ASSERT(r == next(m.begin(), 5));
+		r = m.find(11);
+		UT_ASSERT(r == next(m.begin(), 6));
+		r = m.find(12);
+		UT_ASSERT(r == next(m.begin(), 7));
+		r = m.find(4);
+		UT_ASSERT(r == next(m.begin(), 8));
 
-    r = m.find(C2Int(5));
-    assert(r == m.begin());
-    r = m.find(C2Int(6));
-    assert(r == next(m.begin()));
-    r = m.find(C2Int(7));
-    assert(r == next(m.begin(), 2));
-    r = m.find(C2Int(8));
-    assert(r == next(m.begin(), 3));
-    r = m.find(C2Int(9));
-    assert(r == next(m.begin(), 4));
-    r = m.find(C2Int(10));
-    assert(r == next(m.begin(), 5));
-    r = m.find(C2Int(11));
-    assert(r == next(m.begin(), 6));
-    r = m.find(C2Int(12));
-    assert(r == next(m.begin(), 7));
-    r = m.find(C2Int(4));
-    assert(r == next(m.begin(), 8));
-    }
+		r = m.find(C2Int(5));
+		UT_ASSERT(r == m.begin());
+		r = m.find(C2Int(6));
+		UT_ASSERT(r == next(m.begin()));
+		r = m.find(C2Int(7));
+		UT_ASSERT(r == next(m.begin(), 2));
+		r = m.find(C2Int(8));
+		UT_ASSERT(r == next(m.begin(), 3));
+		r = m.find(C2Int(9));
+		UT_ASSERT(r == next(m.begin(), 4));
+		r = m.find(C2Int(10));
+		UT_ASSERT(r == next(m.begin(), 5));
+		r = m.find(C2Int(11));
+		UT_ASSERT(r == next(m.begin(), 6));
+		r = m.find(C2Int(12));
+		UT_ASSERT(r == next(m.begin(), 7));
+		r = m.find(C2Int(4));
+		UT_ASSERT(r == next(m.begin(), 8));
+	}
 
-    {
-    typedef PrivateConstructor PC;
-    typedef std::map<PC, double, std::less<>> M;
-    typedef M::iterator R;
+	{
+		typedef PrivateConstructor PC;
+		typedef C2 M;
+		typedef M::iterator R;
 
-    M m;
-    m [ PC::make(5)  ] = 5;
-    m [ PC::make(6)  ] = 6;
-    m [ PC::make(7)  ] = 7;
-    m [ PC::make(8)  ] = 8;
-    m [ PC::make(9)  ] = 9;
-    m [ PC::make(10) ] = 10;
-    m [ PC::make(11) ] = 11;
-    m [ PC::make(12) ] = 12;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s2 = nvobj::make_persistent<C2>(); });
+		// M m;
+		auto &m = *robj->s2;
+		// m.insert({PC::make(5), 5});
+		// m.insert({PC::make(6), 6});
+		// m.insert({PC::make(7), 7});
+		// m.insert({PC::make(8), 8});
+		for (int i = 5; i <= 12; i++) {
+			m.insert({PC::make(i), i});
+		}
+		// m[PC::make(6)] = 6;
+		// m[PC::make(7)] = 7;
+		// m[PC::make(8)] = 8;
+		// m[PC::make(9)] = 9;
+		// m[PC::make(10)] = 10;
+		// m[PC::make(11)] = 11;
+		// m[PC::make(12)] = 12;
 
-    R r = m.find(5);
-    assert(r == m.begin());
-    r = m.find(6);
-    assert(r == next(m.begin()));
-    r = m.find(7);
-    assert(r == next(m.begin(), 2));
-    r = m.find(8);
-    assert(r == next(m.begin(), 3));
-    r = m.find(9);
-    assert(r == next(m.begin(), 4));
-    r = m.find(10);
-    assert(r == next(m.begin(), 5));
-    r = m.find(11);
-    assert(r == next(m.begin(), 6));
-    r = m.find(12);
-    assert(r == next(m.begin(), 7));
-    r = m.find(4);
-    assert(r == next(m.begin(), 8));
-    }
-#endif
+		R r = m.find(5);
+		UT_ASSERT(r == m.begin());
+		r = m.find(6);
+		UT_ASSERT(r == next(m.begin()));
+		r = m.find(7);
+		UT_ASSERT(r == next(m.begin(), 2));
+		r = m.find(8);
+		UT_ASSERT(r == next(m.begin(), 3));
+		r = m.find(9);
+		UT_ASSERT(r == next(m.begin(), 4));
+		r = m.find(10);
+		UT_ASSERT(r == next(m.begin(), 5));
+		r = m.find(11);
+		UT_ASSERT(r == next(m.begin(), 6));
+		r = m.find(12);
+		UT_ASSERT(r == next(m.begin(), 7));
+		r = m.find(4);
+		UT_ASSERT(r == next(m.begin(), 8));
+	}
 
-  return 0;
+	return 0;
+}
+
+static void
+test(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(
+			path, "find.pass", PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+	try {
+		run(pop);
+	} catch (std::exception &e) {
+		UT_FATAL("!run: %s", e.what());
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

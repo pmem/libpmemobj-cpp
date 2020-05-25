@@ -11,8 +11,8 @@
 // Class helper to test pmem::obj containers
 //
 
-#ifndef __PRIVATE_CONSTRUCTOR__H
-#define __PRIVATE_CONSTRUCTOR__H
+#ifndef LIBPMEMOBJ_CPP_TESTS_PRIVATE_CONSTRUCTOR_H
+#define LIBPMEMOBJ_CPP_TESTS_PRIVATE_CONSTRUCTOR_H
 
 #include <iostream>
 
@@ -32,4 +32,4 @@ bool operator < ( int lhs, const PrivateConstructor &rhs ) { return lhs < rhs.ge
 
 std::ostream & operator << ( std::ostream &os, const PrivateConstructor &foo ) { return os << foo.get (); }
 
-#endif
+#endif // LIBPMEMOBJ_CPP_TESTS_PRIVATE_CONSTRUCTOR_H

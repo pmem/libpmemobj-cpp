@@ -11,10 +11,9 @@
 // testing transparent
 //
 
-#ifndef TRANSPARENT_H
-#define TRANSPARENT_H
+#ifndef LIBPMEMOBJ_CPP_TESTS_TRANSPARENT_H
+#define LIBPMEMOBJ_CPP_TESTS_TRANSPARENT_H
 
-// #include "test_macros.h"
 #include "unittest.hpp"
 
 struct transparent_less
@@ -82,4 +81,4 @@ bool operator <(int          rhs,   const C2Int& lhs) { return rhs       < lhs.g
 bool operator <(const C2Int& rhs,   const C2Int& lhs) { return rhs.get() < lhs.get(); }
 bool operator <(const C2Int& rhs,            int lhs) { return rhs.get() < lhs; }
 
-#endif  // TRANSPARENT_H
+#endif  // LIBPMEMOBJ_CPP_TESTS_TRANSPARENT_H

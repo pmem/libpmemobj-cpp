@@ -6,6 +6,10 @@
 //
 //===----------------------------------------------------------------------===//
 //
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 // XFAIL: c++98, c++03, c++11
 
 // <map>
@@ -19,25 +23,80 @@
 // equal_range shall not participate in overload resolution unless the
 // qualified-id Compare::is_transparent is valid and denotes a type
 
+#include "unittest.hpp"
 
-#include <map>
-#include <cassert>
+#include <libpmemobj++/experimental/concurrent_map.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-#include "test_macros.h"
-#include "is_transparent.h"
+#include "../is_transparent.h"
 
-int main(int, char**)
+namespace nvobj = pmem::obj;
+namespace nvobjex = pmem::obj::experimental;
+
+using C = nvobjex::concurrent_map<int, double, transparent_less>;
+using C2 = nvobjex::concurrent_map<int, double,
+				   transparent_less_not_referenceable>;
+
+struct root {
+	nvobj::persistent_ptr<C> s;
+	nvobj::persistent_ptr<C2> s2;
+};
+
+int
+run(pmem::obj::pool<root> &pop)
 {
-    {
-    typedef std::map<int, double, transparent_less> M;
-    M example;
-    assert(example.upper_bound(C2Int{5}) == example.end());
-    }
-    {
-    typedef std::map<int, double, transparent_less_not_referenceable> M;
-    M example;
-    assert(example.upper_bound(C2Int{5}) == example.end());
-    }
+	auto robj = pop.root();
+	{
+		typedef C M;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s = nvobj::make_persistent<M>(); });
+		M &example = *robj->s;
+		UT_ASSERT(example.upper_bound(C2Int{5}) == example.end());
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
+	}
+	{
+		typedef C2 M;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s2 = nvobj::make_persistent<M>(); });
+		M &example = *robj->s2;
+		UT_ASSERT(example.upper_bound(C2Int{5}) == example.end());
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
+	}
 
-  return 0;
+	return 0;
+}
+
+static void
+test(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(path, "upper_bound.pass",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+	try {
+		run(pop);
+		pop.close();
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

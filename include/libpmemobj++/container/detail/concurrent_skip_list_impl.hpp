@@ -445,8 +445,12 @@ public:
 	size_t
 	operator()()
 	{
+		/* rnd_generator_type should be thread-safe random number
+		 * generator. */
 		static rnd_generator_type gen;
-		static std::geometric_distribution<size_t> d;
+		/* std::geometric_distribution is not thread-safe. We mark it as
+		 * a thread_local to avoid data races. */
+		static thread_local std::geometric_distribution<size_t> d;
 
 		return (d(gen) % MAX_LEVEL) + 1;
 	}

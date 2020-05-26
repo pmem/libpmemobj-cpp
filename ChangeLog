@@ -1,3 +1,27 @@
+Tue May 26 2020 Szymon Romik <szymon.romik@intel.com>
+
+	* Version 1.10-rc1
+
+	This release introduces a new experimental container - persistent
+	concurrent map (based on concurrent skiplist implementation).
+
+	It also introduces some optimizations for existing containers and minor
+	bug fixes.
+
+	New features:
+	- concurrent_map container
+	- swap() method for basic_string
+
+	Optimizations:
+	- optimized clear() and erase() for trivial types in segment_vector
+	- optimized move constructor and assignement for basic_string
+
+	Bug Fixes:
+	- fixed free_data() in concurrent_hash_map
+
+	Other changes:
+	- issue templates for Github interface
+
 Fri Jan 31 2020 Szymon Romik <szymon.romik@intel.com>
 
 	* Version 1.9

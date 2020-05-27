@@ -368,17 +368,7 @@ test_multiple_pool(nvobj::pool<root> &pop1, const std::string &path)
 
 	UT_ASSERT(v2_initialized == 2 * NUM_ELEMENTS);
 
-	std::thread test_thread([&]() {
-		for (size_t i = 0; i < NUM_ELEMENTS; i++) {
-			auto oid = pmemobj_oid(&(*r1->vec_obj_ptr)[i]);
-			UT_ASSERT(*(v_state::get<v_data2>(oid)->val) == VALUE);
-		}
-	});
-
-	std::thread close_pool_thread([&]() { pop2.close(); });
-
-	test_thread.join();
-	close_pool_thread.join();
+	pop2.close();
 
 	UT_ASSERT(v2_initialized == NUM_ELEMENTS);
 

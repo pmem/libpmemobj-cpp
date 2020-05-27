@@ -827,7 +827,8 @@ if(TEST_CONCURRENT_MAP)
 
 	build_test(concurrent_map_insert_reopen concurrent_map_insert_reopen/concurrent_map_insert_reopen.cpp)
 	# XXX: Add helgrind tracer for this test when we will fix false-positive with lock order
-	add_test_generic(NAME concurrent_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck drd
+	# XXX: Add drd tracer after issue https://github.com/pmem/libpmemobj-cpp/issues/770 will be resolved
+	add_test_generic(NAME concurrent_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 
 	if(PMREORDER_SUPPORTED)

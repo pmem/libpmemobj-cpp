@@ -1,6 +1,6 @@
-Wed May 27 2020 Szymon Romik <szymon.romik@intel.com>
+Thu May 28 2020 Szymon Romik <szymon.romik@intel.com>
 
-	* Version 1.10-rc2
+	* Version 1.10
 
 	This release introduces a new experimental container - persistent
 	concurrent map (based on concurrent skiplist implementation).

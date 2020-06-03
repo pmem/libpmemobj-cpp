@@ -3,7 +3,7 @@
 # Copyright 2016-2020, Intel Corporation
 
 #
-# push-image.sh - pushes the Docker image tagged with OS-VER to the Docker Hub.
+# push-image.sh - pushes the Docker image tagged with IMAGE_VER-OS-OS_VER to the Docker Hub.
 #
 # The script utilizes $DOCKERHUB_USER and $DOCKERHUB_PASSWORD variables to
 # log in to the Docker Hub. The variables can be set in the CI's configuration
@@ -12,13 +12,18 @@
 
 set -e
 
+if [[ -z "$IMAGE_VER" ]]; then
+	echo "IMAGE_VER environment variable is not set - a version of docker image, usually related to project's release tag"
+	exit 1
+fi
+
 if [[ -z "$OS" ]]; then
-	echo "OS environment variable is not set"
+	echo "OS environment variable is not set - OS name, e.g. Fedora"
 	exit 1
 fi
 
 if [[ -z "$OS_VER" ]]; then
-	echo "OS_VER environment variable is not set"
+	echo "OS_VER environment variable is not set - OS's version, e.g. 31"
 	exit 1
 fi
 
@@ -27,9 +32,9 @@ if [[ -z "${DOCKERHUB_REPO}" ]]; then
 	exit 1
 fi
 
-TAG="1.10-${OS}-${OS_VER}"
+TAG="${IMAGE_VER}-${OS}-${OS_VER}"
 
-# Check if the image tagged with ${DOCKERHUB_REPO}:1.10-OS-VER exists locally
+# Check if the image tagged with ${DOCKERHUB_REPO}:${TAG} exists locally
 if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:${TAG}\$" \
 	'$1":"$2 ~ pattern') ]]
 then

@@ -24,6 +24,7 @@ jobs:
       DOCKERHUB_PASSWORD:      ${{ secrets.DOCKERHUB_PASSWORD }}
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
+      IMAGE_VER:      1.11
     strategy:
       matrix:
         CONFIG: ["N=1 OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1",

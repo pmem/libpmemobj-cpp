@@ -41,13 +41,19 @@ if [[ -z "$OS" || -z "$OS_VER" ]]; then
 	exit 1
 fi
 
+if [[ -z "$IMAGE_VER" ]]; then
+	echo "IMAGE_VER environment variable is not set - a version of docker image, usually related to project's release tag"
+	exit 1
+fi
+
 if [[ -z "$HOST_WORKDIR" ]]; then
 	echo "ERROR: The variable HOST_WORKDIR has to contain a path to " \
 		"the root of this project on the host machine"
 	exit 1
 fi
 
-imageName=${DOCKERHUB_REPO}:1.10-${OS}-${OS_VER}
+TAG=${IMAGE_VER}-${OS}-${OS_VER}
+imageName=${DOCKERHUB_REPO}:${TAG}
 containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
 if [[ "$command" == "" ]]; then

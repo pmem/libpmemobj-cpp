@@ -44,11 +44,18 @@ if [[ -z "$OS" || -z "$OS_VER" ]]; then
 	exit 1
 fi
 
+if [[ -z "$IMAGE_VER" ]]; then
+	echo "IMAGE_VER environment variable is not set - a version of docker image, usually related to project's release tag"
+	exit 1
+fi
+
 if [[ -z "$HOST_WORKDIR" ]]; then
 	echo "ERROR: The variable HOST_WORKDIR has to contain a path to " \
 		"the root of this project on the host machine"
 	exit 1
 fi
+
+TAG=${IMAGE_VER}-${OS}-${OS_VER}
 
 # Find all the commits for the current build
 if [ -n "$CI_COMMIT_RANGE" ]; then
@@ -104,4 +111,4 @@ done
 
 # Getting here means rebuilding the Docker image is not required.
 # Pull the image from Docker Hub.
-docker pull ${DOCKERHUB_REPO}:1.10-${OS}-${OS_VER}
+docker pull ${DOCKERHUB_REPO}:${TAG}

@@ -4,7 +4,7 @@
 
 #
 # run-build.sh - is called inside a Docker container; prepares the environment
-#                and starts a build of libpmemobj-cpp.
+#                and starts builds of libpmemobj-cpp.
 #
 
 set -e
@@ -18,13 +18,6 @@ INSTALL_DIR=/tmp/libpmemobj-cpp
 
 export PMREORDER_STACKTRACE_DEPTH=20
 
-function cleanup() {
-	find . -name ".coverage" -exec rm {} \;
-	find . -name "coverage.xml" -exec rm {} \;
-	find . -name "*.gcov" -exec rm {} \;
-	find . -name "*.gcda" -exec rm {} \;
-}
-
 function upload_codecov() {
 	clang_used=$(cmake -LA -N . | grep CMAKE_CXX_COMPILER | grep clang | wc -c)
 
@@ -34,9 +27,15 @@ function upload_codecov() {
 		gcovexe="gcov"
 	fi
 
+	# run gcov exe, using their bash (set flag and remove parsed coverage files)
 	# the output is redundant in this case, i.e. we rely on parsed report from codecov on github
 	bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe" > /dev/null
-	cleanup
+
+	# cleanup files that are not needed anymore
+	find . -name ".coverage" -exec rm {} \;
+	find . -name "coverage.xml" -exec rm {} \;
+	find . -name "*.gcov" -exec rm {} \;
+	find . -name "*.gcda" -exec rm {} \;
 }
 
 function compile_example_standalone() {
@@ -60,15 +59,8 @@ function sudo_password() {
 	echo $USERPASS | sudo -Sk $*
 }
 
-sudo_password mkdir /mnt/pmem
-sudo_password chmod 0777 /mnt/pmem
-sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
-mkdir $INSTALL_DIR
-
-cd $WORKDIR
-
 ###############################################################################
-# BUILD tests_clang_debug_cpp17 llvm
+# BUILD tests_clang_debug_cpp17_no_valgrind llvm
 ###############################################################################
 function tests_clang_debug_cpp17_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
@@ -102,8 +94,9 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
+
 ###############################################################################
-# BUILD tests_clang_release_cpp11 llvm
+# BUILD tests_clang_release_cpp11_no_valgrind llvm
 ###############################################################################
 function tests_clang_release_cpp11_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
@@ -135,8 +128,9 @@ function tests_clang_release_cpp11_no_valgrind() {
 	rm -rf build
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
+
 ###############################################################################
-# BUILD tests_gcc_debug_cpp14
+# BUILD build_gcc_debug_cpp14 (no tests)
 ###############################################################################
 function build_gcc_debug_cpp14() {
 	mkdir build
@@ -245,6 +239,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	sudo_password mv tmp_valgrind_pc $VALGRIND_PC_PATH
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
+
 ###############################################################################
 # BUILD tests_package
 ###############################################################################
@@ -306,7 +301,7 @@ function tests_package() {
 }
 
 ###############################################################################
-# BUILD test findLIBPMEMOBJ.cmake
+# BUILD tests_findLIBPMEMOBJ.cmake (pkg-config not set, try to find libpmemobj "manually")
 ###############################################################################
 function tests_findLIBPMEMOBJ_cmake()
 {
@@ -332,7 +327,15 @@ function tests_findLIBPMEMOBJ_cmake()
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
-#Run build steps passed as script arguments
+# Main:
+sudo_password mkdir /mnt/pmem
+sudo_password chmod 0777 /mnt/pmem
+sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
+mkdir $INSTALL_DIR
+
+cd $WORKDIR
+
+# Run all build steps passed as script arguments
 build_steps=$@
 for build in $build_steps
 do
@@ -341,7 +344,7 @@ done
 
 rm -r $INSTALL_DIR
 
-# Trigger auto doc update on master
+# Trigger auto doc update
 if [[ "$AUTO_DOC_UPDATE" == "1" ]]; then
 	echo "Running auto doc update"
 

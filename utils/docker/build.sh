@@ -6,12 +6,11 @@
 # build-local.sh - runs a Docker container from a Docker image with environment
 #                  prepared for running libpmemobj-cpp builds and tests.
 #
-#
 # Notes:
 # - run this script from its location or set the variable 'HOST_WORKDIR' to
 #   where the root of this project is on the host machine,
 # - set variables 'OS' and 'OS_VER' properly to a system you want to build this
-#	repo on (for proper values take a look on the list of Dockerfiles at the
+#	repo on (for proper values take a look at the list of Dockerfiles at the
 #   utils/docker/images directory), e.g. OS=ubuntu, OS_VER=19.10.
 #
 

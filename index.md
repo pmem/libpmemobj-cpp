@@ -12,6 +12,7 @@ scoped and closure transactions, locking primitives and many others.
 Doxygen documentation is available:
 
 * for current [master](./master/doxygen/index.html)
+* for [v1.10](./v1.10/doxygen/index.html)
 * for [v1.9](./v1.9/doxygen/index.html)
 * for [v1.8](./v1.8/doxygen/index.html)
 * for [v1.7](./v1.7/doxygen/index.html)
@@ -25,6 +26,7 @@ seen on the ["releases" tab on the GitHub page](https://github.com/pmem/libpmemo
 
 | Version branch | First release date | Last patch release | Maintenance status |
 | -------------- | ------------------ | ------------------ | ------------------ |
+| stable-1.10 | May 28, 2020 | N/A | Full |
 | stable-1.9 | Jan 31, 2020 | N/A | Full |
 | stable-1.8 | Oct 3, 2019 | 1.8.1 (Jan 24, 2020) | Full |
 | stable-1.7 | Jun 26, 2019 | N/A | Full |

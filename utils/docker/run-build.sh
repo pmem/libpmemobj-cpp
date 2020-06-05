@@ -27,9 +27,12 @@ function upload_codecov() {
 		gcovexe="gcov"
 	fi
 
-	# run gcov exe, using their bash (set flag and remove parsed coverage files)
-	# the output is redundant in this case, i.e. we rely on parsed report from codecov on github
-	bash <(curl -s https://codecov.io/bash) -c -F $1 -x "$gcovexe" > /dev/null
+	# WA: pecific odecov script is downloaded
+	curl -s https://raw.githubusercontent.com/codecov/codecov-bash/master/codecov > .codecov
+	chmod +x .codecov
+	# run gcov exe, using their bash (remove parsed coverage files, set flag and exit 1 if not successful)
+	# the output is redundant, we rely on parsed report from codecov; it's disabled using -X parameter
+	./.codecov -c -F $1 -Z -X gcovout -x "$gcovexe"
 
 	# cleanup files that are not needed anymore
 	find . -name ".coverage" -exec rm {} \;

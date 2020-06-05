@@ -37,13 +37,11 @@ Possible statuses:
 1. Full maintenance:
 	* All/most of bugs fixed (if possible),
 	* Patch releases issued based on a number of fixes and their severity,
-	* Full validation efforts for patch releases, including *long tests* execution,
 	* At least one release at the end of the maintenance period,
 	* Full support for at least a year since the initial release.
 2. Limited scope:
 	* Only critical bugs (security, data integrity, etc.) will be backported,
 	* Patch versions will be released when needed (based on severity of found issues),
-	* Validation of patch releases will include at least public CI (Travis, AppVeyor, GitHub Actions); *long tests* may not be executed,
 	* Branch will remain in "limited maintenance" status based on the original release availability in popular distros,
 3. EOL:
 	* No support,

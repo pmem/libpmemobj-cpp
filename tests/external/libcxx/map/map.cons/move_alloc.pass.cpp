@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // UNSUPPORTED: c++98, c++03
 
@@ -60,9 +65,9 @@ int main(int, char**)
         };
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A(7));
         M m3(std::move(m1), A(7));
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A(7));
-        assert(m3.key_comp() == C(5));
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A(7));
+        UT_ASSERT(m3.key_comp() == C(5));
         LIBCPP_ASSERT(m1.empty());
     }
     {
@@ -99,9 +104,9 @@ int main(int, char**)
         };
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A(7));
         M m3(std::move(m1), A(5));
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A(5));
-        assert(m3.key_comp() == C(5));
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A(5));
+        UT_ASSERT(m3.key_comp() == C(5));
         LIBCPP_ASSERT(m1.empty());
     }
     {
@@ -138,9 +143,9 @@ int main(int, char**)
         };
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A(7));
         M m3(std::move(m1), A(5));
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A(5));
-        assert(m3.key_comp() == C(5));
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A(5));
+        UT_ASSERT(m3.key_comp() == C(5));
         LIBCPP_ASSERT(m1.empty());
     }
     {
@@ -166,32 +171,32 @@ int main(int, char**)
                 V(3, 3)
             };
             const size_t num = sizeof(a1)/sizeof(a1[0]);
-            assert(Counter_base::gConstructed == num);
+            UT_ASSERT(Counter_base::gConstructed == num);
 
             M m1(I(a1), I(a1+num), C(), A());
-            assert(Counter_base::gConstructed == num+3);
+            UT_ASSERT(Counter_base::gConstructed == num+3);
 
             M m2(m1);
-            assert(m2 == m1);
-            assert(Counter_base::gConstructed == num+6);
+            UT_ASSERT(m2 == m1);
+            UT_ASSERT(Counter_base::gConstructed == num+6);
 
             M m3(std::move(m1), A());
-            assert(m3 == m2);
+            UT_ASSERT(m3 == m2);
             LIBCPP_ASSERT(m1.empty());
-            assert(Counter_base::gConstructed >= (int)(num+6));
-            assert(Counter_base::gConstructed <= (int)(num+6+m1.size()));
+            UT_ASSERT(Counter_base::gConstructed >= (int)(num+6));
+            UT_ASSERT(Counter_base::gConstructed <= (int)(num+6+m1.size()));
 
             {
             M m4(std::move(m2), A(5));
-            assert(Counter_base::gConstructed >= (int)(num+6));
-            assert(Counter_base::gConstructed <= (int)(num+6+m1.size()+m2.size()));
-            assert(m4 == m3);
+            UT_ASSERT(Counter_base::gConstructed >= (int)(num+6));
+            UT_ASSERT(Counter_base::gConstructed <= (int)(num+6+m1.size()+m2.size()));
+            UT_ASSERT(m4 == m3);
             LIBCPP_ASSERT(m2.empty());
             }
-            assert(Counter_base::gConstructed >= (int)(num+3));
-            assert(Counter_base::gConstructed <= (int)(num+3+m1.size()+m2.size()));
+            UT_ASSERT(Counter_base::gConstructed >= (int)(num+3));
+            UT_ASSERT(Counter_base::gConstructed <= (int)(num+3+m1.size()+m2.size()));
         }
-        assert(Counter_base::gConstructed == 0);
+        UT_ASSERT(Counter_base::gConstructed == 0);
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
@@ -227,9 +232,9 @@ int main(int, char**)
         };
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A());
         M m3(std::move(m1), A());
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A());
-        assert(m3.key_comp() == C(5));
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A());
+        UT_ASSERT(m3.key_comp() == C(5));
         LIBCPP_ASSERT(m1.empty());
     }
     {
@@ -266,9 +271,9 @@ int main(int, char**)
         };
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A{});
         M m3(std::move(m1), A{});
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A{});
-        assert(m3.key_comp() == C(5));
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A{});
+        UT_ASSERT(m3.key_comp() == C(5));
         LIBCPP_ASSERT(m1.empty());
     }
 

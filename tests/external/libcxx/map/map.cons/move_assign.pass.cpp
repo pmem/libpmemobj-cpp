@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // UNSUPPORTED: c++98, c++03
 
@@ -60,10 +65,10 @@ int main(int, char**)
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A(7));
         M m3(C(3), A(7));
         m3 = std::move(m1);
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A(7));
-        assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A(7));
+        UT_ASSERT(m3.key_comp() == C(5));
+        UT_ASSERT(m1.empty());
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
@@ -100,10 +105,10 @@ int main(int, char**)
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A(7));
         M m3(C(3), A(5));
         m3 = std::move(m1);
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A(5));
-        assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A(5));
+        UT_ASSERT(m3.key_comp() == C(5));
+        UT_ASSERT(m1.empty());
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
@@ -140,10 +145,10 @@ int main(int, char**)
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A(7));
         M m3(C(3), A(5));
         m3 = std::move(m1);
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A(7));
-        assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A(7));
+        UT_ASSERT(m3.key_comp() == C(5));
+        UT_ASSERT(m1.empty());
     }
     {
         typedef std::pair<MoveOnly, MoveOnly> V;
@@ -180,10 +185,10 @@ int main(int, char**)
         M m2(I(a2), I(a2+sizeof(a2)/sizeof(a2[0])), C(5), A());
         M m3(C(3), A());
         m3 = std::move(m1);
-        assert(m3 == m2);
-        assert(m3.get_allocator() == A());
-        assert(m3.key_comp() == C(5));
-        assert(m1.empty());
+        UT_ASSERT(m3 == m2);
+        UT_ASSERT(m3.get_allocator() == A());
+        UT_ASSERT(m3.key_comp() == C(5));
+        UT_ASSERT(m1.empty());
     }
 
   return 0;

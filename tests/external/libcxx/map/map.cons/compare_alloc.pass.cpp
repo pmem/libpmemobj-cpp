@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <map>
 
@@ -26,29 +31,29 @@ int main(int, char**)
     typedef test_compare<std::less<int> > C;
     typedef test_allocator<std::pair<const int, double> > A;
     std::map<int, double, C, A> m(C(4), A(5));
-    assert(m.empty());
-    assert(m.begin() == m.end());
-    assert(m.key_comp() == C(4));
-    assert(m.get_allocator() == A(5));
+    UT_ASSERT(m.empty());
+    UT_ASSERT(m.begin() == m.end());
+    UT_ASSERT(m.key_comp() == C(4));
+    UT_ASSERT(m.get_allocator() == A(5));
     }
-#if TEST_STD_VER >= 11
+#ifdef XXX
     {
     typedef test_compare<std::less<int> > C;
     typedef min_allocator<std::pair<const int, double> > A;
     std::map<int, double, C, A> m(C(4), A());
-    assert(m.empty());
-    assert(m.begin() == m.end());
-    assert(m.key_comp() == C(4));
-    assert(m.get_allocator() == A());
+    UT_ASSERT(m.empty());
+    UT_ASSERT(m.begin() == m.end());
+    UT_ASSERT(m.key_comp() == C(4));
+    UT_ASSERT(m.get_allocator() == A());
     }
     {
     typedef test_compare<std::less<int> > C;
     typedef explicit_allocator<std::pair<const int, double> > A;
     std::map<int, double, C, A> m(C(4), A{});
-    assert(m.empty());
-    assert(m.begin() == m.end());
-    assert(m.key_comp() == C(4));
-    assert(m.get_allocator() == A{});
+    UT_ASSERT(m.empty());
+    UT_ASSERT(m.begin() == m.end());
+    UT_ASSERT(m.key_comp() == C(4));
+    UT_ASSERT(m.get_allocator() == A{});
     }
 #endif
 

@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <map>
 
@@ -12,21 +17,26 @@
 
 // map();
 
-#include <map>
+#include <libpmemobj++/experimental/concurrent_map.hpp>
 
-#include "test_macros.h"
+#include "unittest.hpp"
 
-struct X
-{
-    std::map<int, X> m;
-    std::map<int, X>::iterator i;
-    std::map<int, X>::const_iterator ci;
-    std::map<int, X>::reverse_iterator ri;
-    std::map<int, X>::const_reverse_iterator cri;
+namespace nvobj = pmem::obj;
+namespace nvobjex = pmem::obj::experimental;
+
+struct X {
+#ifdef XXX // Error: incomplete type/forward declaration of struct X
+	nvobjex::concurrent_map<int, X> m;
+	nvobjex::concurrent_map<int, X>::iterator i;
+	nvobjex::concurrent_map<int, X>::const_iterator ci;
+	nvobjex::concurrent_map<int, X>::reverse_iterator ri;
+	nvobjex::concurrent_map<int, X>::const_reverse_iterator cri;
+#endif
 };
 
-int main(int, char**)
+int
+main(int, char **)
 {
 
-  return 0;
+	return 0;
 }

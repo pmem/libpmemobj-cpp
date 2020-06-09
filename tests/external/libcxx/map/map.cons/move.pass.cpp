@@ -5,6 +5,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // UNSUPPORTED: c++98, c++03
 
@@ -30,15 +35,15 @@ int main(int, char**)
         typedef test_allocator<V> A;
         std::map<int, double, C, A> mo(C(5), A(7));
         std::map<int, double, C, A> m = std::move(mo);
-        assert(m.get_allocator() == A(7));
-        assert(m.key_comp() == C(5));
-        assert(m.size() == 0);
-        assert(distance(m.begin(), m.end()) == 0);
+        UT_ASSERT(m.get_allocator() == A(7));
+        UT_ASSERT(m.key_comp() == C(5));
+        UT_ASSERT(m.size() == 0);
+        UT_ASSERT(distance(m.begin(), m.end()) == 0);
 
-        assert(mo.get_allocator() == A(test_alloc_base::moved_value));
-        assert(mo.key_comp() == C(5));
-        assert(mo.size() == 0);
-        assert(distance(mo.begin(), mo.end()) == 0);
+        UT_ASSERT(mo.get_allocator() == A(test_alloc_base::moved_value));
+        UT_ASSERT(mo.key_comp() == C(5));
+        UT_ASSERT(mo.size() == 0);
+        UT_ASSERT(distance(mo.begin(), mo.end()) == 0);
     }
     {
         V ar[] =
@@ -57,33 +62,33 @@ int main(int, char**)
         typedef test_allocator<V> A;
         std::map<int, double, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A(7));
         std::map<int, double, C, A> m = std::move(mo);
-        assert(m.get_allocator() == A(7));
-        assert(m.key_comp() == C(5));
-        assert(m.size() == 3);
-        assert(distance(m.begin(), m.end()) == 3);
-        assert(*m.begin() == V(1, 1));
-        assert(*next(m.begin()) == V(2, 1));
-        assert(*next(m.begin(), 2) == V(3, 1));
+        UT_ASSERT(m.get_allocator() == A(7));
+        UT_ASSERT(m.key_comp() == C(5));
+        UT_ASSERT(m.size() == 3);
+        UT_ASSERT(distance(m.begin(), m.end()) == 3);
+        UT_ASSERT(*m.begin() == V(1, 1));
+        UT_ASSERT(*next(m.begin()) == V(2, 1));
+        UT_ASSERT(*next(m.begin(), 2) == V(3, 1));
 
-        assert(mo.get_allocator() == A(test_alloc_base::moved_value));
-        assert(mo.key_comp() == C(5));
-        assert(mo.size() == 0);
-        assert(distance(mo.begin(), mo.end()) == 0);
+        UT_ASSERT(mo.get_allocator() == A(test_alloc_base::moved_value));
+        UT_ASSERT(mo.key_comp() == C(5));
+        UT_ASSERT(mo.size() == 0);
+        UT_ASSERT(distance(mo.begin(), mo.end()) == 0);
     }
     {
         typedef test_compare<std::less<int> > C;
         typedef min_allocator<V> A;
         std::map<int, double, C, A> mo(C(5), A());
         std::map<int, double, C, A> m = std::move(mo);
-        assert(m.get_allocator() == A());
-        assert(m.key_comp() == C(5));
-        assert(m.size() == 0);
-        assert(distance(m.begin(), m.end()) == 0);
+        UT_ASSERT(m.get_allocator() == A());
+        UT_ASSERT(m.key_comp() == C(5));
+        UT_ASSERT(m.size() == 0);
+        UT_ASSERT(distance(m.begin(), m.end()) == 0);
 
-        assert(mo.get_allocator() == A());
-        assert(mo.key_comp() == C(5));
-        assert(mo.size() == 0);
-        assert(distance(mo.begin(), mo.end()) == 0);
+        UT_ASSERT(mo.get_allocator() == A());
+        UT_ASSERT(mo.key_comp() == C(5));
+        UT_ASSERT(mo.size() == 0);
+        UT_ASSERT(distance(mo.begin(), mo.end()) == 0);
     }
     {
         V ar[] =
@@ -102,18 +107,18 @@ int main(int, char**)
         typedef min_allocator<V> A;
         std::map<int, double, C, A> mo(ar, ar+sizeof(ar)/sizeof(ar[0]), C(5), A());
         std::map<int, double, C, A> m = std::move(mo);
-        assert(m.get_allocator() == A());
-        assert(m.key_comp() == C(5));
-        assert(m.size() == 3);
-        assert(distance(m.begin(), m.end()) == 3);
-        assert(*m.begin() == V(1, 1));
-        assert(*next(m.begin()) == V(2, 1));
-        assert(*next(m.begin(), 2) == V(3, 1));
+        UT_ASSERT(m.get_allocator() == A());
+        UT_ASSERT(m.key_comp() == C(5));
+        UT_ASSERT(m.size() == 3);
+        UT_ASSERT(distance(m.begin(), m.end()) == 3);
+        UT_ASSERT(*m.begin() == V(1, 1));
+        UT_ASSERT(*next(m.begin()) == V(2, 1));
+        UT_ASSERT(*next(m.begin(), 2) == V(3, 1));
 
-        assert(mo.get_allocator() == A());
-        assert(mo.key_comp() == C(5));
-        assert(mo.size() == 0);
-        assert(distance(mo.begin(), mo.end()) == 0);
+        UT_ASSERT(mo.get_allocator() == A());
+        UT_ASSERT(mo.key_comp() == C(5));
+        UT_ASSERT(mo.size() == 0);
+        UT_ASSERT(distance(mo.begin(), mo.end()) == 0);
     }
 
   return 0;

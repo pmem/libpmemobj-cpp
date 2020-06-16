@@ -47,8 +47,10 @@ GH_PAGES_NAME="gh-pages-for-${TARGET_BRANCH}"
 git checkout -B $GH_PAGES_NAME upstream/gh-pages
 git clean -dfx
 
-# Clean old content, since some files might have been deleted
-rm -r ./$VERSION
+# Clean old content (if exists), since some files might have been deleted
+if [[ -d ./$VERSION ]]; then
+	rm -r ./$VERSION
+fi
 mkdir -p ./$VERSION/doxygen/
 
 cp -r ../cpp_html/* ./$VERSION/doxygen/

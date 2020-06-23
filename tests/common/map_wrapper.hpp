@@ -26,7 +26,7 @@ erase(container_t<int, double> &m, int pos)
 /* if radix tree is defined */
 #elif defined RADIX
 
-#include <libpmemobj++/experimental/radix.hpp >
+#include <libpmemobj++/experimental/radix_tree.hpp >
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 

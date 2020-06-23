@@ -245,6 +245,18 @@ Log2(uint64_t x)
 }
 #endif
 
+static inline uint8_t
+mssb_index64(uint64_t value)
+{
+	return ((uint8_t)(63 - __builtin_clzll(value)));
+}
+
+static inline uint8_t
+mssb_index(uint32_t value)
+{
+	return ((uint8_t)(31 - __builtin_clz(value)));
+}
+
 } /* namespace detail */
 
 } /* namespace pmem */

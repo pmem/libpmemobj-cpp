@@ -867,6 +867,14 @@ if(TEST_CONCURRENT_MAP)
 	endif()
 endif()
 
+if (TEST_RADIX_TREE)
+	build_test(radix radix/radix.cpp)
+	add_test_generic(NAME radix TRACERS none memcheck pmemcheck)
+
+	build_test(radix_basic radix/radix_basic.cpp)
+	add_test_generic(NAME radix_basic TRACERS none memcheck pmemcheck)
+endif()
+
 add_subdirectory(external)
 
 if (TESTS_COMPATIBILITY)

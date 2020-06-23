@@ -6,6 +6,10 @@
 
 #include <string>
 
+#if __cpp_lib_string_view
+#include <string_view>
+#endif
+
 namespace pmem
 {
 

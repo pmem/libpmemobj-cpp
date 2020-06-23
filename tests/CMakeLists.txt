@@ -864,6 +864,9 @@ if(TEST_CONCURRENT_MAP)
 	endif()
 endif()
 
+build_test(radix radix/radix.cpp)
+add_test_generic(NAME radix TRACERS none memcheck pmemcheck)
+
 add_subdirectory(external)
 
 if (TESTS_COMPATIBILITY)

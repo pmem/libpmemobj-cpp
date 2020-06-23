@@ -13,8 +13,6 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-#include <libpmemobj++/detail/pair.hpp>
-#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/string_view.hpp>
 
 #include <string>
@@ -43,29 +41,25 @@ public:
 
 	class accessor {
 	public:
-		accessor(obj::slice<char *> memory, inline_string &v)
-		    : memory(memory), v(v)
+		accessor(char *mem_begin, inline_string &v)
+		    : mem_begin(mem_begin), v(v)
 		{
 		}
 
 		view_type
 		get() const
 		{
-			return {memory.begin(), v.size_};
+			return {mem_begin, v.size_};
 		}
 
 		accessor &
 		assign(view_type rhs)
 		{
-			if (rhs.size() > memory.size())
-				throw std::out_of_range(
-					"inline_vector::accessor::assign");
-
 			auto pop = obj::pool_base(pmemobj_pool_by_ptr(&v));
 
 			obj::transaction::run(pop, [&] {
 				std::copy(rhs.data(), rhs.data() + rhs.size(),
-					  memory.begin());
+					  mem_begin);
 				v.size_ = rhs.size();
 			});
 
@@ -73,7 +67,7 @@ public:
 		}
 
 	private:
-		const obj::slice<char *> memory;
+		char *mem_begin;
 		inline_string &v;
 	};
 

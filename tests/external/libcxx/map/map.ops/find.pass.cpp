@@ -30,6 +30,14 @@
 #include "../is_transparent.h"
 #include "../private_constructor.h"
 
+/* Windows has a max macro which collides with std::numeric_limits::min */
+#if defined(min) && defined(_WIN32)
+#undef min
+#endif
+#if defined(max) && defined(_WIN32)
+#undef max
+#endif
+
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
@@ -117,15 +125,17 @@ run(pmem::obj::pool<root> &pop)
 		{
 			typedef M::iterator R;
 
-			V ar[] = {
-				V(-5, -5),
-				V(-6, -6),
-				V(-7, -7),
-				V(std::numeric_limits<int>::min(), std::numeric_limits<int>::min()),
-				V(9, 9),
-				V(10, 10),
-				V(11, 11),
-				V(12, 12)};
+			V ar[] = {V(-5, -5),
+				  V(-6, -6),
+				  V(-7, -7),
+				  V(std::numeric_limits<int>::min(),
+				    std::numeric_limits<int>::min()),
+				  V(9, 9),
+				  V(10, 10),
+				  V(11, 11),
+				  V(12, 12),
+				  V(std::numeric_limits<int>::max(),
+				    std::numeric_limits<int>::max())};
 			pmem::obj::transaction::run(pop, [&] {
 				robj->s = nvobj::make_persistent<M>(
 					ar, ar + sizeof(ar) / sizeof(ar[0]));
@@ -147,8 +157,10 @@ run(pmem::obj::pool<root> &pop)
 			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.find(12);
 			UT_ASSERT(r == std::next(m.begin(), 7));
-			r = m.find(4);
+			r = m.find(std::numeric_limits<int>::max());
 			UT_ASSERT(r == std::next(m.begin(), 8));
+			r = m.find(4);
+			UT_ASSERT(r == std::next(m.begin(), 9));
 			pmem::obj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<M>(robj->s);
 			});

@@ -62,26 +62,26 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(m.begin()->first == 0);
-		UT_ASSERT(m.begin()->second == DefaultOnly());
+		UT_ASSERT(m.begin()->MAP_KEY == 0);
+		UT_ASSERT(m.begin()->MAP_VALUE == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 1);
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->MAP_KEY == 1);
+		UT_ASSERT(std::next(m.begin())->MAP_VALUE == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(!r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->MAP_KEY == 1);
+		UT_ASSERT(std::next(m.begin())->MAP_VALUE == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
@@ -99,24 +99,24 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(m.begin()->first == 2);
-		UT_ASSERT(m.begin()->second == Emplaceable());
+		UT_ASSERT(m.begin()->MAP_KEY == 2);
+		UT_ASSERT(m.begin()->MAP_VALUE == Emplaceable());
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple(2, 3.5));
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(m.begin()->first == 1);
-		UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+		UT_ASSERT(m.begin()->MAP_KEY == 1);
+		UT_ASSERT(m.begin()->MAP_VALUE == Emplaceable(2, 3.5));
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple(2, 3.5));
 		UT_ASSERT(!r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(m.begin()->first == 1);
-		UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+		UT_ASSERT(m.begin()->MAP_KEY == 1);
+		UT_ASSERT(m.begin()->MAP_VALUE == Emplaceable(2, 3.5));
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 	}
@@ -130,8 +130,8 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(m.begin()->first == 2);
-		UT_ASSERT(m.begin()->second == 3.5);
+		UT_ASSERT(m.begin()->MAP_KEY == 2);
+		UT_ASSERT(m.begin()->MAP_VALUE == 3.5);
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
 	}
@@ -148,26 +148,26 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(m.begin()->first == 0);
-		UT_ASSERT(m.begin()->second == DefaultOnly());
+		UT_ASSERT(m.begin()->MAP_KEY == 0);
+		UT_ASSERT(m.begin()->MAP_VALUE == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 1);
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->MAP_KEY == 1);
+		UT_ASSERT(std::next(m.begin())->MAP_VALUE == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(!r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->MAP_KEY == 1);
+		UT_ASSERT(std::next(m.begin())->MAP_VALUE == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 	}
 	UT_ASSERT(DefaultOnly::count == 0);
@@ -184,24 +184,24 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(m.begin()->first == 2);
-		UT_ASSERT(m.begin()->second == Emplaceable());
+		UT_ASSERT(m.begin()->MAP_KEY == 2);
+		UT_ASSERT(m.begin()->MAP_VALUE == Emplaceable());
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple(2, 3.5));
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(m.begin()->first == 1);
-		UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+		UT_ASSERT(m.begin()->MAP_KEY == 1);
+		UT_ASSERT(m.begin()->MAP_VALUE == Emplaceable(2, 3.5));
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple(2, 3.5));
 		UT_ASSERT(!r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(m.begin()->first == 1);
-		UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+		UT_ASSERT(m.begin()->MAP_KEY == 1);
+		UT_ASSERT(m.begin()->MAP_VALUE == Emplaceable(2, 3.5));
 	}
 	{
 		typedef std::map<int, double, std::less<int>,
@@ -213,8 +213,8 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(m.begin()->first == 2);
-		UT_ASSERT(m.begin()->second == 3.5);
+		UT_ASSERT(m.begin()->MAP_KEY == 2);
+		UT_ASSERT(m.begin()->MAP_VALUE == 3.5);
 	}
 #endif
 

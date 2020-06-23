@@ -114,7 +114,7 @@ string_view::size() const noexcept
 	return _size;
 }
 
-const char &string_view::operator[](ptrdiff_t p) const noexcept
+inline const char &string_view::operator[](ptrdiff_t p) const noexcept
 {
 	return data()[p];
 }
@@ -142,7 +142,7 @@ string_view::compare(const string_view &other) noexcept
 }
 #endif
 
-} /* namesapce pmem */
 } /* namespace obj */
+} /* namespace pmem */
 
 #endif /* LIBPMEMOBJ_CPP_STRING_VIEW */

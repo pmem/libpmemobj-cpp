@@ -66,6 +66,7 @@ option(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::segment_
 option(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(TEST_ENUMERABLE_THREAD_SPECIFIC "enable testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::experimental::concurrent_map (depends on TEST_STRING)" ON)
+option(TEST_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 
 option(INSTALL_ARRAY "enable installation of pmem::obj::array" ON)
 option(INSTALL_VECTOR "enable installation of pmem::obj::vector" ON)
@@ -73,6 +74,7 @@ option(INSTALL_STRING "enable installation of pmem::obj::string (depends on INST
 option(INSTALL_CONCURRENT_HASHMAP "enable installation of pmem::obj::concurrent_hash_map (depends on INSTALL_STRING and INSTALL_SEGMENT_VECTOR)" ON)
 option(INSTALL_SEGMENT_VECTOR "enable installation of pmem::obj::segment_vector" ON)
 option(INSTALL_CONCURRENT_MAP "enable installation of pmem::obj::experimental::concurrent_map (depends on INSTALL_STRING)" ON)
+option(INSTALL_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
@@ -239,7 +241,10 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "concurrent_hash_map.hpp" EXCLUDE
 	PATTERN "segment_vector.hpp" EXCLUDE
 	PATTERN "enumerable_thread_specific.hpp" EXCLUDE
-	PATTERN "concurrent_map.hpp" EXCLUDE)
+	PATTERN "concurrent_map.hpp" EXCLUDE
+	PATTERN "inline_string.hpp" EXCLUDE
+	PATTERN "bytes_view.hpp" EXCLUDE
+	PATTERN "radix_tree.hpp" EXCLUDE)
 
 if(INSTALL_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")
@@ -271,6 +276,12 @@ endif()
 if(INSTALL_CONCURRENT_MAP)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "concurrent_map.hpp")
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
+endif()
+
+if(INSTALL_RADIX_TREE)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "bytes_view.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "inline_string.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "radix_tree.hpp")
 endif()
 
 

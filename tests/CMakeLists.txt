@@ -832,6 +832,10 @@ if(TEST_CONCURRENT_MAP)
 	build_test(concurrent_map_tx concurrent_map_tx/concurrent_map_tx.cpp)
 	add_test_generic(NAME concurrent_map_tx TRACERS none memcheck pmemcheck)
 
+	# XXX: Fix concurrent_map exceptions
+	# build_test_ext(NAME concurrent_map_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	# add_test_generic(NAME concurrent_map_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)
+
 	if(TESTS_CONCURRENT_GDB AND GDB_FOUND)
 		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 			build_test(concurrent_map_mt_gdb concurrent_map_mt_gdb/concurrent_map_mt_gdb.cpp)
@@ -879,6 +883,17 @@ if(TEST_CONCURRENT_MAP)
 	else()
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
+endif()
+
+if (TEST_RADIX_TREE)
+	build_test(radix_tx_abort radix/radix_tx_abort.cpp)
+	add_test_generic(NAME radix_tx_abort TRACERS none memcheck pmemcheck)
+
+	build_test(radix_basic radix/radix_basic.cpp)
+	add_test_generic(NAME radix_basic TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME radix_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)
 endif()
 
 add_subdirectory(external)

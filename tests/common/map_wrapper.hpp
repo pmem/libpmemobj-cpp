@@ -29,8 +29,8 @@ erase(container_t<int, double> &m, int pos)
 /* if radix tree is defined */
 #elif defined LIBPMEMOBJ_CPP_TESTS_RADIX
 
-#include <libpmemobj++/experimental/bytes_view.hpp>
-#include <libpmemobj++/experimental/radix.hpp>
+#include <libpmemobj++/experimental/radix_tree.hpp>
+
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
@@ -40,7 +40,7 @@ struct test_bytes_view;
 template <typename T>
 struct test_bytes_view<
 	T, typename std::enable_if<!std::is_signed<T>::value>::type> {
-	using type = nvobjex::big_endian_bytes_view<T>;
+	using type = pmem::detail::bytes_view<T>;
 };
 
 struct test_bytes_view_int {

@@ -1178,3 +1178,17 @@ if (TEST_CONCURRENT_MAP)
 	# build_test(map_libcxx_non_member_swap libcxx/map/map.special/non_member_swap.pass.cpp)
 	# add_test_generic(NAME map_libcxx_non_member_swap TRACERS none pmemcheck memcheck)
 endif()
+
+if (TEST_RADIX_TREE)
+	build_test_ext(NAME radix_libcxx_iterator SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_iterator TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_erase_key SRC_FILES libcxx/map/map.modifiers/erase_key.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_erase_key TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_count SRC_FILES libcxx/map/map.ops/count.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_count TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_find SRC_FILES libcxx/map/map.ops/find.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_find TRACERS none pmemcheck memcheck)
+endif()

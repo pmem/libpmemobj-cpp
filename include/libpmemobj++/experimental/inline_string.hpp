@@ -23,6 +23,9 @@ namespace pmem
 namespace obj
 {
 
+namespace experimental
+{
+
 class inline_string {
 	template <bool>
 	class accessor;
@@ -100,6 +103,7 @@ private:
 	};
 };
 
+}
 }
 }
 

@@ -70,19 +70,19 @@ run(pmem::obj::pool<root> &pop)
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->first == 1);
+		UT_ASSERT(std::next(m.begin())->second == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(!r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->first == 1);
+		UT_ASSERT(std::next(m.begin())->second == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
@@ -156,19 +156,19 @@ run(pmem::obj::pool<root> &pop)
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->first == 1);
+		UT_ASSERT(std::next(m.begin())->second == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 		r = m.emplace(std::piecewise_construct,
 			      std::forward_as_tuple(1),
 			      std::forward_as_tuple());
 		UT_ASSERT(!r.second);
-		UT_ASSERT(r.first == next(m.begin()));
+		UT_ASSERT(r.first == std::next(m.begin()));
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(next(m.begin())->first == 1);
-		UT_ASSERT(next(m.begin())->second == DefaultOnly());
+		UT_ASSERT(std::next(m.begin())->first == 1);
+		UT_ASSERT(std::next(m.begin())->second == DefaultOnly());
 		UT_ASSERT(DefaultOnly::count == 2);
 	}
 	UT_ASSERT(DefaultOnly::count == 0);

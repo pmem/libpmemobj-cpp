@@ -35,7 +35,7 @@ test_default_ctor()
 }
 
 /**
- * Test T range constructor from ints.
+ * Test T range constructor from T::value_type.
  *
  * Call range constructor for volatile instance of
  * T. Expect pmem::pool_error exception is thrown.
@@ -44,7 +44,8 @@ template <typename T>
 void
 test_iter_iter_ctor()
 {
-	int a[] = {0, 1, 2, 3, 4, 5};
+	using V = typename T::value_type;
+	V a[] = {V(), V(), V(), V(), V()};
 
 	bool exception_thrown = false;
 	try {
@@ -145,7 +146,7 @@ test_copy_ctor(nvobj::pool_base pop, nvobj::persistent_ptr<T> &ptr)
 }
 
 /**
- * Test T initializer list constructor from ints.
+ * Test T initializer list constructor from T::value_type.
  *
  * Call initializer list constructor for volatile instance of
  * T. Expect pmem::pool_error exception is thrown.
@@ -154,9 +155,10 @@ template <typename T>
 void
 test_initializer_list_ctor()
 {
+	using V = typename T::value_type;
 	bool exception_thrown = false;
 	try {
-		T v(std::initializer_list<int>{1, 2, 3, 4});
+		T v(std::initializer_list<V>{V(), V(), V(), V()});
 		(void)v;
 		UT_ASSERT(0);
 	} catch (pmem::pool_error &) {

@@ -361,7 +361,21 @@ public:
 				"refusing to allocate memory outside of transaction scope");
 
 		/* allocate raw memory, no object construction */
-		return pmemobj_tx_alloc(1 /* void size */ * cnt, 0);
+		pointer ptr = pmemobj_tx_alloc(1 /* void size */ * cnt, 0);
+
+		if (ptr == nullptr) {
+			if (errno == ENOMEM) {
+				throw pmem::transaction_out_of_memory(
+					"Failed to allocate persistent memory object")
+					.with_pmemobj_errormsg();
+			} else {
+				throw pmem::transaction_alloc_error(
+					"Failed to allocate persistent memory object")
+					.with_pmemobj_errormsg();
+			}
+		}
+
+		return ptr;
 	}
 
 	/**

@@ -245,6 +245,40 @@ Log2(uint64_t x)
 }
 #endif
 
+#ifndef _MSC_VER
+
+static inline uint8_t
+mssb_index64(unsigned long long value)
+{
+	return ((uint8_t)(63 - __builtin_clzll(value)));
+}
+
+static inline uint8_t
+mssb_index(unsigned int value)
+{
+	return ((uint8_t)(31 - __builtin_clz(value)));
+}
+
+#else
+
+static __inline uint8_t
+mssb_index64(unsigned long value)
+{
+	unsigned long ret;
+	_BitScanReverse(&ret, value);
+	return (uint8_t)ret;
+}
+
+static __inline uint8_t
+util_mssb_index64(uint64_t value)
+{
+	unsigned long ret;
+	_BitScanReverse64(&ret, value);
+	return (uint8_t)ret;
+}
+
+#endif
+
 } /* namespace detail */
 
 } /* namespace pmem */

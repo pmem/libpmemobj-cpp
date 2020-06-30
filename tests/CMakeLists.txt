@@ -233,6 +233,9 @@ add_test_generic(NAME defrag TRACERS none pmemcheck memcheck)
 build_test(string_view string_view/string_view.cpp)
 add_test_generic(NAME string_view TRACERS none memcheck)
 
+build_test(inline_string inline_string/inline_string.cpp)
+add_test_generic(NAME inline_string TRACERS none memcheck pmemcheck)
+
 if(WIN32)
 	build_test(ctl_win ctl_win/ctl_win.cpp)
 	add_test_generic(NAME ctl_win CASE 0 TRACERS none

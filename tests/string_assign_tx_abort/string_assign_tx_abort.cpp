@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2019-2020, Intel Corporation */
 
+#include "transaction_helpers.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/container/string.hpp>
@@ -29,23 +30,6 @@ check_string(nvobj::persistent_ptr<pmem::obj::basic_string<CharT>> &ptr,
 
 	for (unsigned i = 0; i < count; ++i)
 		UT_ASSERTeq(ptr->const_at(i), value);
-}
-
-void
-assert_tx_abort(pmem::obj::pool<struct root> &pop, std::function<void(void)> f)
-{
-	bool exception_thrown = false;
-	try {
-		nvobj::transaction::run(pop, [&] {
-			f();
-			nvobj::transaction::abort(EINVAL);
-		});
-	} catch (pmem::manual_tx_abort &) {
-		exception_thrown = true;
-	} catch (std::exception &e) {
-		UT_FATALexc(e);
-	}
-	UT_ASSERT(exception_thrown);
 }
 
 /**

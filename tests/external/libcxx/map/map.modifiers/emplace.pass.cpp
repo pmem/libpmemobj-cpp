@@ -15,151 +15,247 @@
 // template <class... Args>
 //   pair<iterator, bool> emplace(Args&&... args);
 
-#include <map>
-#include <cassert>
+#include "map_wrapper.hpp"
+#include "unittest.hpp"
+
+#include <functional>
 #include <tuple>
 
-#include "test_macros.h"
-#include "../../../Emplaceable.h"
-#include "DefaultOnly.h"
-#include "min_allocator.h"
+#include <libpmemobj++/experimental/concurrent_map.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-int main(int, char**)
+namespace nvobj = pmem::obj;
+namespace nvobjex = pmem::obj::experimental;
+
+class Emplaceable {
+	Emplaceable(const Emplaceable &);
+	Emplaceable &operator=(const Emplaceable &);
+
+	int int_;
+	double double_;
+
+public:
+	Emplaceable() : int_(0), double_(0)
+	{
+	}
+	Emplaceable(int i, double d) : int_(i), double_(d)
+	{
+	}
+	Emplaceable(Emplaceable &&x) : int_(x.int_), double_(x.double_)
+	{
+		x.int_ = 0;
+		x.double_ = 0;
+	}
+	Emplaceable &
+	operator=(Emplaceable &&x)
+	{
+		int_ = x.int_;
+		x.int_ = 0;
+		double_ = x.double_;
+		x.double_ = 0;
+		return *this;
+	}
+
+	bool
+	operator==(const Emplaceable &x) const
+	{
+		return int_ == x.int_ && double_ == x.double_;
+	}
+	bool
+	operator<(const Emplaceable &x) const
+	{
+		return int_ < x.int_ || (int_ == x.int_ && double_ < x.double_);
+	}
+
+	int
+	get() const
+	{
+		return int_;
+	}
+};
+
+using container = container_t<int, double>;
+using container2 = container_t<int, Emplaceable>;
+
+struct root {
+	nvobj::persistent_ptr<container> s;
+	nvobj::persistent_ptr<container2> s2;
+};
+
+int
+run(pmem::obj::pool<root> &pop)
 {
-    {
-        typedef std::map<int, DefaultOnly> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        assert(DefaultOnly::count == 0);
-        R r = m.emplace();
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(m.begin()->first == 0);
-        assert(m.begin()->second == DefaultOnly());
-        assert(DefaultOnly::count == 1);
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple());
-        assert(r.second);
-        assert(r.first == next(m.begin()));
-        assert(m.size() == 2);
-        assert(next(m.begin())->first == 1);
-        assert(next(m.begin())->second == DefaultOnly());
-        assert(DefaultOnly::count == 2);
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple());
-        assert(!r.second);
-        assert(r.first == next(m.begin()));
-        assert(m.size() == 2);
-        assert(next(m.begin())->first == 1);
-        assert(next(m.begin())->second == DefaultOnly());
-        assert(DefaultOnly::count == 2);
-    }
-    assert(DefaultOnly::count == 0);
-    {
-        typedef std::map<int, Emplaceable> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        R r = m.emplace(std::piecewise_construct, std::forward_as_tuple(2),
-                                                  std::forward_as_tuple());
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(m.begin()->first == 2);
-        assert(m.begin()->second == Emplaceable());
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple(2, 3.5));
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 2);
-        assert(m.begin()->first == 1);
-        assert(m.begin()->second == Emplaceable(2, 3.5));
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple(2, 3.5));
-        assert(!r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 2);
-        assert(m.begin()->first == 1);
-        assert(m.begin()->second == Emplaceable(2, 3.5));
-    }
-    {
-        typedef std::map<int, double> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        R r = m.emplace(M::value_type(2, 3.5));
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(m.begin()->first == 2);
-        assert(m.begin()->second == 3.5);
-    }
-    {
-        typedef std::map<int, DefaultOnly, std::less<int>, min_allocator<std::pair<const int, DefaultOnly>>> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        assert(DefaultOnly::count == 0);
-        R r = m.emplace();
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(m.begin()->first == 0);
-        assert(m.begin()->second == DefaultOnly());
-        assert(DefaultOnly::count == 1);
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple());
-        assert(r.second);
-        assert(r.first == next(m.begin()));
-        assert(m.size() == 2);
-        assert(next(m.begin())->first == 1);
-        assert(next(m.begin())->second == DefaultOnly());
-        assert(DefaultOnly::count == 2);
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple());
-        assert(!r.second);
-        assert(r.first == next(m.begin()));
-        assert(m.size() == 2);
-        assert(next(m.begin())->first == 1);
-        assert(next(m.begin())->second == DefaultOnly());
-        assert(DefaultOnly::count == 2);
-    }
-    assert(DefaultOnly::count == 0);
-    {
-        typedef std::map<int, Emplaceable, std::less<int>, min_allocator<std::pair<const int, Emplaceable>>> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        R r = m.emplace(std::piecewise_construct, std::forward_as_tuple(2),
-                                                  std::forward_as_tuple());
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(m.begin()->first == 2);
-        assert(m.begin()->second == Emplaceable());
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple(2, 3.5));
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 2);
-        assert(m.begin()->first == 1);
-        assert(m.begin()->second == Emplaceable(2, 3.5));
-        r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
-                                                std::forward_as_tuple(2, 3.5));
-        assert(!r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 2);
-        assert(m.begin()->first == 1);
-        assert(m.begin()->second == Emplaceable(2, 3.5));
-    }
-    {
-        typedef std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>> M;
-        typedef std::pair<M::iterator, bool> R;
-        M m;
-        R r = m.emplace(M::value_type(2, 3.5));
-        assert(r.second);
-        assert(r.first == m.begin());
-        assert(m.size() == 1);
-        assert(m.begin()->first == 2);
-        assert(m.begin()->second == 3.5);
-    }
+	// {
+	//     typedef std::map<int, DefaultOnly> M;
+	//     typedef std::pair<M::iterator, bool> R;
+	//     M m;
+	//     UT_ASSERT(DefaultOnly::count == 0);
+	//     R r = m.emplace();
+	//     UT_ASSERT(r.second);
+	//     UT_ASSERT(r.first == m.begin());
+	//     UT_ASSERT(m.size() == 1);
+	//     UT_ASSERT(m.begin()->first == 0);
+	//     UT_ASSERT(m.begin()->second == DefaultOnly());
+	//     UT_ASSERT(DefaultOnly::count == 1);
+	//     r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
+	//                                             std::forward_as_tuple());
+	//     UT_ASSERT(r.second);
+	//     UT_ASSERT(r.first == next(m.begin()));
+	//     UT_ASSERT(m.size() == 2);
+	//     UT_ASSERT(next(m.begin())->first == 1);
+	//     UT_ASSERT(next(m.begin())->second == DefaultOnly());
+	//     UT_ASSERT(DefaultOnly::count == 2);
+	//     r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
+	//                                             std::forward_as_tuple());
+	//     UT_ASSERT(!r.second);
+	//     UT_ASSERT(r.first == next(m.begin()));
+	//     UT_ASSERT(m.size() == 2);
+	//     UT_ASSERT(next(m.begin())->first == 1);
+	//     UT_ASSERT(next(m.begin())->second == DefaultOnly());
+	//     UT_ASSERT(DefaultOnly::count == 2);
+	// }
+	// UT_ASSERT(DefaultOnly::count == 0);
+	auto robj = pop.root();
+	{
+		typedef container2 M;
+		typedef std::pair<M::iterator, bool> R;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s2 = nvobj::make_persistent<M>(); });
+		// auto &m = *robj->s;
+		// R r = m.emplace(std::piecewise_construct,
+		// std::forward_as_tuple(2), 		std::forward_as_tuple());
+		// UT_ASSERT(r.second);
+		// UT_ASSERT(r.first == m.begin());
+		// UT_ASSERT(m.size() == 1);
+		// UT_ASSERT(m.begin()->first == 2);
+		// // UT_ASSERT(m.begin()->second == Emplaceable());
+		// r = m.emplace(std::piecewise_construct,
+		// std::forward_as_tuple(1), 	      std::forward_as_tuple(2, 3.5));
+		// UT_ASSERT(r.second);
+		// UT_ASSERT(r.first == m.begin());
+		// UT_ASSERT(m.size() == 2);
+		// UT_ASSERT(m.begin()->first == 1);
+		// UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+		// r = m.emplace(std::piecewise_construct,
+		// std::forward_as_tuple(1), 	      std::forward_as_tuple(2, 3.5));
+		// UT_ASSERT(!r.second);
+		// UT_ASSERT(r.first == m.begin());
+		// UT_ASSERT(m.size() == 2);
+		// UT_ASSERT(m.begin()->first == 1);
+		// UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
+	}
+	{
+		typedef container M;
+		typedef std::pair<M::iterator, bool> R;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s = nvobj::make_persistent<M>(); });
+		auto &m = *robj->s;
+		R r = m.emplace(M::value_type(2, 3.5));
+		UT_ASSERT(r.second);
+		UT_ASSERT(r.first == m.begin());
+		UT_ASSERT(m.size() == 1);
+		UT_ASSERT(m.begin()->first == 2);
+		UT_ASSERT(m.begin()->second == 3.5);
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
+	}
+	// {
+	//     typedef std::map<int, DefaultOnly, std::less<int>,
+	//     min_allocator<std::pair<const int, DefaultOnly>>> M; typedef
+	//     std::pair<M::iterator, bool> R; M m; UT_ASSERT(DefaultOnly::count
+	//     == 0); R r = m.emplace(); UT_ASSERT(r.second); UT_ASSERT(r.first
+	//     == m.begin()); UT_ASSERT(m.size() == 1);
+	//     UT_ASSERT(m.begin()->first == 0); UT_ASSERT(m.begin()->second ==
+	//     DefaultOnly()); UT_ASSERT(DefaultOnly::count == 1); r =
+	//     m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
+	//                                             std::forward_as_tuple());
+	//     UT_ASSERT(r.second);
+	//     UT_ASSERT(r.first == next(m.begin()));
+	//     UT_ASSERT(m.size() == 2);
+	//     UT_ASSERT(next(m.begin())->first == 1);
+	//     UT_ASSERT(next(m.begin())->second == DefaultOnly());
+	//     UT_ASSERT(DefaultOnly::count == 2);
+	//     r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
+	//                                             std::forward_as_tuple());
+	//     UT_ASSERT(!r.second);
+	//     UT_ASSERT(r.first == next(m.begin()));
+	//     UT_ASSERT(m.size() == 2);
+	//     UT_ASSERT(next(m.begin())->first == 1);
+	//     UT_ASSERT(next(m.begin())->second == DefaultOnly());
+	//     UT_ASSERT(DefaultOnly::count == 2);
+	// }
+	// UT_ASSERT(DefaultOnly::count == 0);
+	// {
+	//     typedef std::map<int, Emplaceable, std::less<int>,
+	//     min_allocator<std::pair<const int, Emplaceable>>> M; typedef
+	//     std::pair<M::iterator, bool> R; M m; R r =
+	//     m.emplace(std::piecewise_construct, std::forward_as_tuple(2),
+	//                                               std::forward_as_tuple());
+	//     UT_ASSERT(r.second);
+	//     UT_ASSERT(r.first == m.begin());
+	//     UT_ASSERT(m.size() == 1);
+	//     UT_ASSERT(m.begin()->first == 2);
+	//     UT_ASSERT(m.begin()->second == Emplaceable());
+	//     r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
+	//                                             std::forward_as_tuple(2, 3.5));
+	//     UT_ASSERT(r.second);
+	//     UT_ASSERT(r.first == m.begin());
+	//     UT_ASSERT(m.size() == 2);
+	//     UT_ASSERT(m.begin()->first == 1);
+	//     UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+	//     r = m.emplace(std::piecewise_construct, std::forward_as_tuple(1),
+	//                                             std::forward_as_tuple(2, 3.5));
+	//     UT_ASSERT(!r.second);
+	//     UT_ASSERT(r.first == m.begin());
+	//     UT_ASSERT(m.size() == 2);
+	//     UT_ASSERT(m.begin()->first == 1);
+	//     UT_ASSERT(m.begin()->second == Emplaceable(2, 3.5));
+	// }
+	// {
+	//     typedef std::map<int, double, std::less<int>,
+	//     min_allocator<std::pair<const int, double>>> M; typedef
+	//     std::pair<M::iterator, bool> R; M m; R r =
+	//     m.emplace(M::value_type(2, 3.5)); UT_ASSERT(r.second);
+	//     UT_ASSERT(r.first == m.begin());
+	//     UT_ASSERT(m.size() == 1);
+	//     UT_ASSERT(m.begin()->first == 2);
+	//     UT_ASSERT(m.begin()->second == 3.5);
+	// }
 
-  return 0;
+	return 0;
+}
+
+static void
+test(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(path, "emplace.pass",
+						    PMEMOBJ_MIN_POOL,
+						    S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+	try {
+		run(pop);
+		pop.close();
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

@@ -19,6 +19,7 @@
 
 #include "../is_transparent.h"
 #include "../private_constructor.h"
+#include "map_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/concurrent_map.hpp>
@@ -36,9 +37,9 @@ using less_type = std::less<>;
 using less_type = transparent_less;
 #endif
 
-using C = nvobjex::concurrent_map<int, double>;
-using C2 = nvobjex::concurrent_map<int, double, less_type>;
-using C3 = nvobjex::concurrent_map<PrivateConstructor, double, less_type>;
+using C = container_t<int, double>;
+using C2 = container_t<int, double, less_type>;
+using C3 = container_t<PrivateConstructor, double, less_type>;
 struct root {
 	nvobj::persistent_ptr<C> s;
 	nvobj::persistent_ptr<C2> s2;
@@ -51,15 +52,16 @@ run(pmem::obj::pool<root> &pop)
 	{
 		auto robj = pop.root();
 
-		typedef std::pair<const int, double> V;
+		typedef C::value_type V;
 		typedef C M;
 		{
 			typedef M::size_type R;
 			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
 				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
 			pmem::obj::transaction::run(pop, [&] {
-				robj->s = nvobj::make_persistent<C>(
-					ar, ar + sizeof(ar) / sizeof(ar[0]));
+				robj->s = nvobj::make_persistent<C>();
+				for (auto &e : ar)
+					robj->s->emplace(e);
 			});
 			const auto &m = *robj->s;
 			R r = m.count(5);
@@ -126,15 +128,16 @@ run(pmem::obj::pool<root> &pop)
 	{
 		auto robj = pop.root();
 
-		typedef std::pair<const int, double> V;
+		typedef C2::value_type V;
 		typedef C2 M;
 		typedef M::size_type R;
 
 		V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
 			  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
 		pmem::obj::transaction::run(pop, [&] {
-			robj->s2 = nvobj::make_persistent<C2>(
-				ar, ar + sizeof(ar) / sizeof(ar[0]));
+			robj->s2 = nvobj::make_persistent<C2>();
+			for (auto &e : ar)
+				robj->s2->emplace(e);
 		});
 		const auto &m = *robj->s2;
 		R r = m.count(5);
@@ -156,6 +159,7 @@ run(pmem::obj::pool<root> &pop)
 		r = m.count(4);
 		UT_ASSERTeq(r, 0);
 
+#ifndef RADIX
 		r = m.count(C2Int(5));
 		UT_ASSERTeq(r, 1);
 		r = m.count(C2Int(6));
@@ -174,18 +178,22 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERTeq(r, 1);
 		r = m.count(C2Int(4));
 		UT_ASSERTeq(r, 0);
+#endif
+
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<C2>(robj->s2); });
 	}
 	{
 		auto robj = pop.root();
 
-		typedef PrivateConstructor PC;
-		typedef C3 M;
-		typedef M::size_type R;
-
 		pmem::obj::transaction::run(
 			pop, [&] { robj->s3 = nvobj::make_persistent<C3>(); });
+
+		// radix does not support heterogenous count
+#ifndef RADIX
+		typedef C3 M;
+		typedef PrivateConstructor PC;
+		typedef M::size_type R;
 		auto &m = *robj->s3;
 
 		m.insert({PC::make(5), 5});
@@ -215,6 +223,8 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERTeq(r, 1);
 		r = m.count(4);
 		UT_ASSERTeq(r, 0);
+#endif
+
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<C3>(robj->s3); });
 	}

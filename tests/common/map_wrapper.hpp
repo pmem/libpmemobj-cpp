@@ -14,8 +14,8 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-template <typename T, typename U>
-using container_t = nvobjex::concurrent_map<T, U>;
+template <typename T, typename U, typename Comparator = std::less<T>>
+using container_t = nvobjex::concurrent_map<T, U, Comparator>;
 
 container_t<int, double>::size_type
 erase(container_t<int, double> &m, int pos)
@@ -26,11 +26,19 @@ erase(container_t<int, double> &m, int pos)
 /* if radix tree is defined */
 #elif defined RADIX
 
-#include <libpmemobj++/experimental/radix.hpp >
+#include <libpmemobj++/experimental/radix.hpp>
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-template <typename T>
-using container_t = pexp::radix_tree<T>;
+/* The third param is comparator but radix does not support that */
+template <typename T, typename U, typename Ignore = void>
+using container_t = nvobjex::radix_tree<T, U>;
+
+template <typename C, typename... Args>
+auto
+erase(C &m, Args &&... args) -> decltype(m.erase(std::forward<Args>(args)...))
+{
+	return m.erase(std::forward<Args>(args)...);
+}
 
 #endif

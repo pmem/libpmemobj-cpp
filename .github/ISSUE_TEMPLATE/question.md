@@ -1,7 +1,7 @@
 ---
 name: Question
 about: Do you have question regarding libpmemobj-cpp? Don't hesitate to ask.
-labels: "question"
+labels: "Type: Question"
 ---
 # QUESTION: <!-- fill the title of question -->
 

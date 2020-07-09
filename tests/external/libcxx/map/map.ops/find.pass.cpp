@@ -19,6 +19,7 @@
 //       iterator find(const key_type& k);
 // const_iterator find(const key_type& k) const;
 
+#include "map_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/concurrent_map.hpp>
@@ -33,10 +34,9 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using C = nvobjex::concurrent_map<int, double>;
-using C1 = nvobjex::concurrent_map<int, double, transparent_less>;
-using C2 =
-	nvobjex::concurrent_map<PrivateConstructor, double, transparent_less>;
+using C = container_t<int, double>;
+using C1 = container_t<int, double, transparent_less>;
+using C2 = container_t<PrivateConstructor, double, transparent_less>;
 struct root {
 	nvobj::persistent_ptr<C> s;
 	nvobj::persistent_ptr<C1> s1;
@@ -48,35 +48,36 @@ run(pmem::obj::pool<root> &pop)
 {
 	auto robj = pop.root();
 	{
-		typedef std::pair<const int, double> V;
 		typedef C M;
+		typedef M::value_type V;
 		{
 			typedef M::iterator R;
 			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
 				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
 			pmem::obj::transaction::run(pop, [&] {
-				robj->s = nvobj::make_persistent<C>(
-					ar, ar + sizeof(ar) / sizeof(ar[0]));
+				robj->s = nvobj::make_persistent<M>();
+				for (auto &e : ar)
+					robj->s->emplace(e);
 			});
 			auto &m = *robj->s;
 			R r = m.find(5);
 			UT_ASSERT(r == m.begin());
 			r = m.find(6);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.find(7);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.find(8);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.find(9);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.find(10);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.find(11);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.find(12);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.find(4);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 			pmem::obj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<M>(robj->s);
 			});
@@ -86,28 +87,28 @@ run(pmem::obj::pool<root> &pop)
 			V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
 				  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
 			pmem::obj::transaction::run(pop, [&] {
-				robj->s = nvobj::make_persistent<C>(
-					ar, ar + sizeof(ar) / sizeof(ar[0]));
+				for (auto &e : ar)
+					robj->s->emplace(e);
 			});
 			const auto &m = *robj->s;
 			R r = m.find(5);
 			UT_ASSERT(r == m.begin());
 			r = m.find(6);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.find(7);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.find(8);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.find(9);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.find(10);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.find(11);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.find(12);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.find(4);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 			pmem::obj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<M>(robj->s);
 			});
@@ -126,21 +127,21 @@ run(pmem::obj::pool<root> &pop)
 			R r = m.find(5);
 			UT_ASSERT(r == m.begin());
 			r = m.find(6);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.find(7);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.find(8);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.find(9);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.find(10);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.find(11);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.find(12);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.find(4);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 		}
 		{
 			typedef M::const_iterator R;
@@ -150,77 +151,81 @@ run(pmem::obj::pool<root> &pop)
 			R r = m.find(5);
 			UT_ASSERT(r == m.begin());
 			r = m.find(6);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.find(7);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.find(8);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.find(9);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.find(10);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.find(11);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.find(12);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.find(4);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 		}
 	}
 #endif
 	{
-		typedef std::pair<const int, double> V;
 		typedef C1 M;
+		typedef M::value_type V;
 		typedef M::iterator R;
 
 		V ar[] = {V(5, 5), V(6, 6),   V(7, 7),	 V(8, 8),
 			  V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
 		pmem::obj::transaction::run(pop, [&] {
-			robj->s1 = nvobj::make_persistent<C1>(
-				ar, ar + sizeof(ar) / sizeof(ar[0]));
+			robj->s1 = nvobj::make_persistent<M>();
+			for (auto &e : ar)
+				robj->s1->emplace(e);
 		});
 		auto &m = *robj->s1;
 		R r = m.find(5);
 		UT_ASSERT(r == m.begin());
 		r = m.find(6);
-		UT_ASSERT(r == next(m.begin()));
+		UT_ASSERT(r == std::next(m.begin()));
 		r = m.find(7);
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.find(8);
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.find(9);
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.find(10);
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.find(11);
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.find(12);
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.find(4);
-		UT_ASSERT(r == next(m.begin(), 8));
+		UT_ASSERT(r == std::next(m.begin(), 8));
 
+#ifndef RADIX
 		r = m.find(C2Int(5));
 		UT_ASSERT(r == m.begin());
 		r = m.find(C2Int(6));
-		UT_ASSERT(r == next(m.begin()));
+		UT_ASSERT(r == std::next(m.begin()));
 		r = m.find(C2Int(7));
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.find(C2Int(8));
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.find(C2Int(9));
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.find(C2Int(10));
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.find(C2Int(11));
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.find(C2Int(12));
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.find(C2Int(4));
-		UT_ASSERT(r == next(m.begin(), 8));
+		UT_ASSERT(r == std::next(m.begin(), 8));
+#endif
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s1); });
 	}
 
+#ifndef RADIX
 	{
 		typedef PrivateConstructor PC;
 		typedef C2 M;
@@ -236,24 +241,25 @@ run(pmem::obj::pool<root> &pop)
 		R r = m.find(5);
 		UT_ASSERT(r == m.begin());
 		r = m.find(6);
-		UT_ASSERT(r == next(m.begin()));
+		UT_ASSERT(r == std::next(m.begin()));
 		r = m.find(7);
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.find(8);
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.find(9);
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.find(10);
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.find(11);
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.find(12);
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.find(4);
-		UT_ASSERT(r == next(m.begin(), 8));
+		UT_ASSERT(r == std::next(m.begin(), 8));
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 	}
+#endif
 	return 0;
 }
 

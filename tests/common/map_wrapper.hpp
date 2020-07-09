@@ -6,6 +6,9 @@
  * structures
  */
 
+#ifndef LIBPMEMOBJ_CPP_TESTS_MAP_WRAPPER_HPP
+#define LIBPMEMOBJ_CPP_TESTS_MAP_WRAPPER_HPP
+
 /* if concurrent map is defined */
 #ifdef CONCURRENT_MAP
 
@@ -14,8 +17,8 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-template <typename T, typename U>
-using container_t = nvobjex::concurrent_map<T, U>;
+template <typename T, typename U, typename Comparator = std::less<T>>
+using container_t = nvobjex::concurrent_map<T, U, Comparator>;
 
 container_t<int, double>::size_type
 erase(container_t<int, double> &m, int pos)
@@ -26,11 +29,59 @@ erase(container_t<int, double> &m, int pos)
 /* if radix tree is defined */
 #elif defined RADIX
 
-#include <libpmemobj++/experimental/radix.hpp >
+#include <libpmemobj++/experimental/bytes_view.hpp>
+#include <libpmemobj++/experimental/radix.hpp>
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
+template <typename T, typename Enable = void>
+struct test_bytes_view;
+
 template <typename T>
-using container_t = pexp::radix_tree<T>;
+struct test_bytes_view<
+	T, typename std::enable_if<!std::is_signed<T>::value>::type> {
+	using type = nvobjex::big_endian_bytes_view<T>;
+};
+
+struct test_bytes_view_int {
+	test_bytes_view_int(const int *v)
+	    : v((unsigned)(*v + std::numeric_limits<int>::max() / 2))
+	{
+	}
+
+	size_t
+	size() const
+	{
+		return sizeof(int);
+	}
+
+	char operator[](std::ptrdiff_t p) const
+	{
+		return reinterpret_cast<const char *>(
+			&v)[(ptrdiff_t)(size()) - p - 1];
+	}
+
+	unsigned v;
+};
+
+template <typename T>
+struct test_bytes_view<
+	T, typename std::enable_if<std::is_signed<T>::value>::type> {
+	using type = test_bytes_view_int;
+};
+
+/* The third param is comparator but radix does not support that */
+template <typename T, typename U, typename Ignore = void>
+using container_t =
+	nvobjex::radix_tree<T, U, typename test_bytes_view<T>::type>;
+
+template <typename C, typename... Args>
+auto
+erase(C &m, Args &&... args) -> decltype(m.erase(std::forward<Args>(args)...))
+{
+	return m.erase(std::forward<Args>(args)...);
+}
+
+#endif
 
 #endif

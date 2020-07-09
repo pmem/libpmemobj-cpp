@@ -1133,12 +1133,12 @@ if (TEST_CONCURRENT_MAP)
 	# build_test(map_libcxx_try_emplace libcxx/map/map.modifiers/try.emplace.pass.cpp)
 	# add_test_generic(NAME map_libcxx_try_emplace TRACERS none pmemcheck memcheck)
 
-	build_test(map_libcxx_count libcxx/map/map.ops/count.pass.cpp)
+	build_test_ext(NAME map_libcxx_count SRC_FILES libcxx/map/map.ops/count.pass.cpp BUILD_OPTIONS -DCONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_count TRACERS none pmemcheck memcheck)
 
 	# Test map with std::less<void> avaialable from C++14. Rest of the tests use custom implementation based on std::less.
 	if (CXX_STANDARD GREATER 11)
-		build_test_ext(NAME map_libcxx_count_std_less SRC_FILES libcxx/map/map.ops/count.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_USE_STD_LESS)
+		build_test_ext(NAME map_libcxx_count_std_less SRC_FILES libcxx/map/map.ops/count.pass.cpp BUILD_OPTIONS -DCONCURRENT_MAP -DLIBPMEMOBJ_CPP_TESTS_USE_STD_LESS)
 		add_test_generic(NAME map_libcxx_count_std_less TRACERS none pmemcheck memcheck)
 	endif()
 
@@ -1154,7 +1154,7 @@ if (TEST_CONCURRENT_MAP)
 	build_test(map_libcxx_equal_range_transparent libcxx/map/map.ops/equal_range_transparent.pass.cpp)
 	add_test_generic(NAME map_libcxx_equal_range_transparent TRACERS none pmemcheck memcheck)
 
-	build_test(map_libcxx_find libcxx/map/map.ops/find.pass.cpp)
+	build_test_ext(NAME map_libcxx_find SRC_FILES libcxx/map/map.ops/find.pass.cpp BUILD_OPTIONS -DCONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_find TRACERS none pmemcheck memcheck)
 
 	build_test(map_libcxx_find0 libcxx/map/map.ops/find0.pass.cpp)
@@ -1178,3 +1178,12 @@ if (TEST_CONCURRENT_MAP)
 	# build_test(map_libcxx_non_member_swap libcxx/map/map.special/non_member_swap.pass.cpp)
 	# add_test_generic(NAME map_libcxx_non_member_swap TRACERS none pmemcheck memcheck)
 endif()
+
+build_test_ext(NAME radix_libcxx_erase_key SRC_FILES libcxx/map/map.modifiers/erase_key.pass.cpp BUILD_OPTIONS -DRADIX)
+add_test_generic(NAME radix_libcxx_erase_key TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME radix_libcxx_count SRC_FILES libcxx/map/map.ops/count.pass.cpp BUILD_OPTIONS -DRADIX)
+add_test_generic(NAME radix_libcxx_count TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME radix_libcxx_find SRC_FILES libcxx/map/map.ops/find.pass.cpp BUILD_OPTIONS -DRADIX)
+add_test_generic(NAME radix_libcxx_find TRACERS none pmemcheck memcheck)

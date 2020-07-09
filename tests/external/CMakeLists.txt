@@ -1136,6 +1136,11 @@ if (TEST_CONCURRENT_MAP)
 	build_test(map_libcxx_count libcxx/map/map.ops/count.pass.cpp)
 	add_test_generic(NAME map_libcxx_count TRACERS none pmemcheck memcheck)
 
+	if (CXX_STANDARD GREATER 11)
+		build_test_ext(NAME map_libcxx_count_std_less SRC_FILES libcxx/map/map.ops/count.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_USE_STD_LESS)
+		add_test_generic(NAME map_libcxx_count_std_less TRACERS none pmemcheck memcheck)
+	endif()
+
 	build_test(map_libcxx_count0 libcxx/map/map.ops/count0.pass.cpp)
 	add_test_generic(NAME map_libcxx_count0 TRACERS none pmemcheck memcheck)
 

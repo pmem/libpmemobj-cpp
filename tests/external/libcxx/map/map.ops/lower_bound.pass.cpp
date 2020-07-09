@@ -33,16 +33,13 @@ namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
 using C = nvobjex::concurrent_map<int, double>;
-#ifdef XXX // Implement generic std::less
-using C2 = nvobjex::concurrent_map<int, double, std::less<>>;
-using C3 = nvobjex::concurrent_map<PrivateConstructor, double, std::less<>>;
-#endif
+using C2 = nvobjex::concurrent_map<int, double, transparent_less>;
+using C3 =
+	nvobjex::concurrent_map<PrivateConstructor, double, transparent_less>;
 struct root {
 	nvobj::persistent_ptr<C> s;
-#ifdef XXX // Implement generic std::less
 	nvobj::persistent_ptr<C2> s2;
 	nvobj::persistent_ptr<C3> s3;
-#endif
 };
 
 int
@@ -234,7 +231,6 @@ run(pmem::obj::pool<root> &pop)
 		}
 	}
 #endif
-#ifdef XXX // Implement generic std::less
 	{
 		typedef std::pair<const int, double> V;
 		typedef C2 M;
@@ -373,7 +369,6 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
 	}
-#endif
 	return 0;
 }
 

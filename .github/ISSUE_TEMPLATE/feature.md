@@ -1,7 +1,7 @@
 ---
 name: Feature
 about: Feature your request
-labels: "enhancement"
+labels: "Type: Feature"
 ---
 # FEAT: <!-- fill the title of feature -->
 

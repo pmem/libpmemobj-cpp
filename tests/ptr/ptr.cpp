@@ -6,6 +6,7 @@
  *
  */
 
+#include "ptr.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/make_persistent.hpp>
@@ -19,85 +20,10 @@
 
 #define LAYOUT "cpp"
 
-namespace nvobj = pmem::obj;
-
 namespace
 {
 
-/*
- * test_null_ptr -- verifies if the pointer correctly behaves like a
- * nullptr-value
- */
-void
-test_null_ptr(nvobj::persistent_ptr<int> &f)
-{
-	UT_ASSERT(OID_IS_NULL(f.raw()));
-	UT_ASSERT((bool)f == false);
-	UT_ASSERT(!f);
-	UT_ASSERTeq(f.get(), nullptr);
-	UT_ASSERT(f == nullptr);
-}
-
-/*
- * get_temp -- returns a temporary persistent_ptr
- */
-nvobj::persistent_ptr<int>
-get_temp()
-{
-	nvobj::persistent_ptr<int> int_null = nullptr;
-
-	return int_null;
-}
-
-/*
- * test_ptr_operators_null -- verifies various operations on nullptr pointers
- */
-void
-test_ptr_operators_null()
-{
-	nvobj::persistent_ptr<int> int_default_null;
-	test_null_ptr(int_default_null);
-
-	nvobj::persistent_ptr<int> int_explicit_ptr_null = nullptr;
-	test_null_ptr(int_explicit_ptr_null);
-
-	nvobj::persistent_ptr<int> int_explicit_oid_null = OID_NULL;
-	test_null_ptr(int_explicit_oid_null);
-
-	nvobj::persistent_ptr<int> int_base = nullptr;
-	nvobj::persistent_ptr<int> int_same = int_base;
-	int_same = int_base;
-	test_null_ptr(int_same);
-
-	swap(int_base, int_same);
-
-	auto temp_ptr = get_temp();
-	test_null_ptr(temp_ptr);
-}
-
-const int TEST_INT = 10;
-const int TEST_ARR_SIZE = 10;
-const char TEST_CHAR = 'a';
-
-struct foo {
-	nvobj::p<int> bar;
-	nvobj::p<char> arr[TEST_ARR_SIZE];
-};
-
-struct nested {
-	nvobj::persistent_ptr<foo> inner;
-};
-
-struct root {
-	nvobj::persistent_ptr<foo> pfoo;
-	nvobj::persistent_ptr<nvobj::p<int>[TEST_ARR_SIZE]> parr;
-	nvobj::persistent_ptr_base arr[3];
-
-	/* This variable is unused, but it's here to check if the persistent_ptr
-	 * does not violate its own restrictions.
-	 */
-	nvobj::persistent_ptr<nested> outer;
-};
+using root = templated_root<nvobj::persistent_ptr, nvobj::persistent_ptr_base>;
 
 /*
  * test_ptr_atomic -- verifies the persistent ptr with the atomic C API
@@ -369,13 +295,13 @@ test(int argc, char *argv[])
 	nvobj::pool<root> pop;
 
 	try {
-		pop = nvobj::pool<struct root>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+		pop = nvobj::pool<root>::create(path, LAYOUT, PMEMOBJ_MIN_POOL,
+						S_IWUSR | S_IRUSR);
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_ptr_operators_null();
+	test_ptr_operators_null<nvobj::persistent_ptr>();
 	test_ptr_atomic(pop);
 	test_ptr_transactional(pop);
 	test_ptr_array(pop);

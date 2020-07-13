@@ -1,0 +1,6 @@
+Template parameter type has following requirements:
+- Is not polymorphic
+- Has no non-static data members of reference type
+- Satisfies Destructible requirement:
+  https://en.cppreference.com/w/cpp/named_req/Destructible
+- All non-static data members and base classes follow the same requirements

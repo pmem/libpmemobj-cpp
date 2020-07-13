@@ -37,6 +37,14 @@ add_check_whitespace(benchmarks-common ${CMAKE_CURRENT_SOURCE_DIR}/*.*pp)
 add_cppstyle(benchmarks-concurrent_hash_map ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map/*.*pp)
 add_check_whitespace(benchmarks-concurrent_hash_map ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map/*.*pp)
 
+add_cppstyle(benchmarks-self-relative-pointer ${CMAKE_CURRENT_SOURCE_DIR}/self_relative_pointer/*.*pp)
+add_check_whitespace(benchmarks-self-relative-pointer ${CMAKE_CURRENT_SOURCE_DIR}/self_relative_pointer/*.*pp)
+
 if (TEST_CONCURRENT_HASHMAP)
 	add_benchmark(concurrent_hash_map_insert_open concurrent_hash_map/insert_open.cpp)
+endif()
+
+if (TEST_SELF_RELATIVE_POINTER)
+	add_benchmark(self_relative_pointer_get self_relative_pointer/get.cpp)
+	add_benchmark(self_relative_pointer_assignment self_relative_pointer/assignment.cpp)
 endif()

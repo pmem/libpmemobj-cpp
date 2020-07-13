@@ -20,7 +20,7 @@ env:
     - OS=ubuntu OS_VER=19.10 TYPE=memcheck_drd
     - OS=ubuntu OS_VER=19.10 TYPE=package
     - OS=fedora OS_VER=31    TYPE=package
-    - OS=ubuntu OS_VER=19.10 TYPE=coverage
+    - OS=ubuntu OS_VER=19.10 TYPE=debug COVERAGE=1
     - OS=ubuntu OS_VER=19.10 TYPE=coverity
 
 before_install:

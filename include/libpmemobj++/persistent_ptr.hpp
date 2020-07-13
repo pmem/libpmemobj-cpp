@@ -131,12 +131,7 @@ public:
  * fat pointer and provides member access, dereference and array
  * access operators.
  *
- * Template parameter type has following requirements:
- * - Is not polymorphic
- * - Has no non-static data members of reference type
- * - Satisfies Destructible requirement:
- *   https://en.cppreference.com/w/cpp/named_req/Destructible
- * - All non-static data members and base classes follows the same requirements
+ * @includedoc doc_snippets/pointer_requirements.txt
  *
  * Even if all of the above requirements are met, type representation may vary
  * depending on ABI and compiler optimizations (as stated in [class.mem]: "the

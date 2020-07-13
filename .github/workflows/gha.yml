@@ -1,8 +1,9 @@
 #
-# The 'XXX_DISABLE_' suffix is used twice in this file to disable two actions:
-# 1) XXX_DISABLE_${CI_FILE_PUSH_IMAGE_TO_REPO} - disables pushing the rebuilt Docker image and
-# 2) XXX_DISABLE_AUTO_DOC_UPDATE - disables making pull requests with the update of documentation.
-# Those two actions are disabled, because they conflict with the same ones run on Travis.
+# The 'XXX_DISABLE_' suffix is used in this file to disable these actions:
+# 1) XXX_DISABLE_${CI_FILE_PUSH_IMAGE_TO_REPO} - disables pushing the rebuilt Docker image,
+# 2) XXX_DISABLE_AUTO_DOC_UPDATE - disables making pull requests with the update of documentation,
+# 3) XXX_DISABLE_COVERAGE - disables uploads of coverage reports.
+# They are disabled, because they conflict with the same ones run on Travis.
 # Only one CI (Travis or GitHub Actions) can run them at the time, so they can be enabled here,
 # when we decide to switch from Travis to GitHub Actions. The 'XXX_DISABLE_' suffix should be removed then.
 #
@@ -26,7 +27,7 @@ jobs:
       WORKDIR:        utils/docker
     strategy:
       matrix:
-        CONFIG: ["N=1 OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1 COVERAGE=1",
+        CONFIG: ["N=1 OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1 XXX_DISABLE_COVERAGE=1",
                  "N=2 OS=fedora OS_VER=31    TYPE=debug PUSH_IMAGE=1",
                  "N=3 OS=ubuntu OS_VER=19.10 TYPE=release",
                  "N=4 OS=fedora OS_VER=31    TYPE=release XXX_DISABLE_AUTO_DOC_UPDATE=1",

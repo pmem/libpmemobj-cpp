@@ -51,8 +51,7 @@ containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
 if [[ "$command" == "" ]]; then
 	case $TYPE in
-	debug|coverage)
-		[ "$TYPE" == "coverage" ] && COVERAGE=1
+	debug)
 		builds=(tests_gcc_debug_cpp14_no_valgrind
 				tests_clang_debug_cpp17_no_valgrind)
 		command="./run-build.sh ${builds[@]}";

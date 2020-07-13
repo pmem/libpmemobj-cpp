@@ -236,6 +236,12 @@ if(WIN32)
 			SCRIPT ctl/ctl_0.cmake)
 endif()
 
+build_test(self_relative_ptr self_relative_ptr/self_relative_ptr.cpp)
+add_test_generic(NAME self_relative_ptr TRACERS none pmemcheck)
+
+build_test(self_relative_ptr_arith ptr_arith/self_relative_ptr_arith.cpp)
+add_test_generic(NAME self_relative_ptr_arith TRACERS none pmemcheck)
+
 if (TEST_ARRAY)
 	build_test(array_algorithms array_algorithms/array_algorithms.cpp)
 	add_test_generic(NAME array_algorithms TRACERS none pmemcheck)

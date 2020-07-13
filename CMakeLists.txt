@@ -66,6 +66,7 @@ option(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::segment_
 option(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(TEST_ENUMERABLE_THREAD_SPECIFIC "enable testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::experimental::concurrent_map (depends on TEST_STRING)" ON)
+option(TEST_SELF_RELATIVE_POINTER "enable testing of pmem::obj::experimental::self_relative_ptr" ON)
 
 option(INSTALL_ARRAY "enable installation of pmem::obj::array" ON)
 option(INSTALL_VECTOR "enable installation of pmem::obj::vector" ON)
@@ -73,6 +74,7 @@ option(INSTALL_STRING "enable installation of pmem::obj::string (depends on INST
 option(INSTALL_CONCURRENT_HASHMAP "enable installation of pmem::obj::concurrent_hash_map (depends on INSTALL_STRING and INSTALL_SEGMENT_VECTOR)" ON)
 option(INSTALL_SEGMENT_VECTOR "enable installation of pmem::obj::segment_vector" ON)
 option(INSTALL_CONCURRENT_MAP "enable installation of pmem::obj::experimental::concurrent_map (depends on INSTALL_STRING)" ON)
+option(INSTALL_SELF_RELATIVE_POINTER "enable installation of pmem::obj::experimental::self_relative_ptr" ON)
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
@@ -277,6 +279,10 @@ if(INSTALL_CONCURRENT_MAP)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "enumerable_thread_specific.hpp")
 endif()
 
+if(INSTALL_SELF_RELATIVE_POINTER)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr_base.hpp")
+endif()
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 	FILES_MATCHING PATTERN "*.*pp")

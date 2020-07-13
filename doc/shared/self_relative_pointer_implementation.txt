@@ -1,0 +1,6 @@
+The current version uses an approach where we store offset=real_offset-1
+and zero offset (or real_offset equal one) is a null pointer.
+This is needed to support zero initialization.
+* real_offset = pointer - this;
+* pointer = real_offset + this;
+* or pointer = offset + this + 1;

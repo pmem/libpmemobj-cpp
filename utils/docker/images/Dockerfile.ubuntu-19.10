@@ -19,6 +19,7 @@ ENV NOTTY 1
 # Additional parameters to build docker without building components
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
+ARG SKIP_SCRIPTS_DOWNLOAD
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -66,6 +67,11 @@ RUN ./install-valgrind.sh
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh dpkg
+
+# Download scripts required in run-*.sh
+COPY download-scripts.sh download-scripts.sh
+COPY 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch
+RUN ./download-scripts.sh
 
 # Add user
 ENV USER user

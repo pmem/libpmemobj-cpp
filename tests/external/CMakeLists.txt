@@ -1043,8 +1043,8 @@ if (TEST_CONCURRENT_MAP)
 	# build_test(map_libcxx_empty libcxx/map/map.access/empty.pass.cpp)
 	# add_test_generic(NAME map_libcxx_empty TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_iterator libcxx/map/map.access/iterator.pass.cpp)
-	# add_test_generic(NAME map_libcxx_iterator TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_iterator SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DCONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_iterator TRACERS none pmemcheck memcheck)
 
 	# build_test(map_libcxx_max_size libcxx/map/map.access/max_size.pass.cpp)
 	# add_test_generic(NAME map_libcxx_max_size TRACERS none pmemcheck memcheck)

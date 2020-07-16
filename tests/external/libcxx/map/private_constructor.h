@@ -34,7 +34,7 @@ bool operator < ( int lhs, const PrivateConstructor &rhs ) { return lhs < rhs.ge
 
 std::ostream & operator << ( std::ostream &os, const PrivateConstructor &foo ) { return os << foo.get (); }
 
-#ifdef RADIX
+#ifdef LIBPMEMOBJ_CPP_TESTS_RADIX
 
 struct pc_bytes_view {
     pc_bytes_view(const PrivateConstructor* pc): v((unsigned) (pc->get() + std::numeric_limits<int>::max() / 2)) {}

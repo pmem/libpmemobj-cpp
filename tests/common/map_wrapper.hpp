@@ -10,7 +10,7 @@
 #define LIBPMEMOBJ_CPP_TESTS_MAP_WRAPPER_HPP
 
 /* if concurrent map is defined */
-#ifdef CONCURRENT_MAP
+#ifdef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP
 
 #include <libpmemobj++/experimental/concurrent_map.hpp>
 
@@ -27,7 +27,7 @@ erase(container_t<int, double> &m, int pos)
 }
 
 /* if radix tree is defined */
-#elif defined RADIX
+#elif defined LIBPMEMOBJ_CPP_TESTS_RADIX
 
 #include <libpmemobj++/experimental/bytes_view.hpp>
 #include <libpmemobj++/experimental/radix.hpp>

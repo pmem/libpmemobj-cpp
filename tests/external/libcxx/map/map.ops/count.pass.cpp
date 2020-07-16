@@ -157,7 +157,7 @@ run(pmem::obj::pool<root> &pop)
 		r = m.count(4);
 		UT_ASSERTeq(r, 0);
 
-#ifndef RADIX
+#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX
 		r = m.count(C2Int(5));
 		UT_ASSERTeq(r, 1);
 		r = m.count(C2Int(6));
@@ -188,7 +188,7 @@ run(pmem::obj::pool<root> &pop)
 			pop, [&] { robj->s3 = nvobj::make_persistent<C3>(); });
 
 		// radix does not support heterogenous count
-#ifndef RADIX
+#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX
 		typedef C3 M;
 		typedef PrivateConstructor PC;
 		typedef M::size_type R;

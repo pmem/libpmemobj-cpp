@@ -95,7 +95,8 @@ run(pmem::obj::pool<root> &pop)
 			UT_ASSERT((*i).second == 2.5);
 		}
 
-#ifndef CONCURRENT_MAP // XXX: concurrent map does not support reverse_it
+#ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map does not
+					    // support reverse_it
 		UT_ASSERT(static_cast<std::size_t>(std::distance(
 				  m.rbegin(), m.rend())) == m.size());
 
@@ -140,7 +141,8 @@ run(pmem::obj::pool<root> &pop)
 			UT_ASSERT((*i).second == 1);
 		}
 
-#ifndef CONCURRENT_MAP // XXX: concurrent map does not support reverse_it
+#ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map does not
+					    // support reverse_it
 		UT_ASSERT(static_cast<std::size_t>(std::distance(
 				  m.rbegin(), m.rend())) == m.size());
 		UT_ASSERT(static_cast<std::size_t>(std::distance(

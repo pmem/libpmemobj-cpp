@@ -239,7 +239,7 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.find(4);
 		UT_ASSERT(r == std::next(m.begin(), 8));
-#ifndef RADIX
+#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX
 		r = m.find(C2Int(5));
 		UT_ASSERT(r == m.begin());
 		r = m.find(C2Int(6));
@@ -263,7 +263,7 @@ run(pmem::obj::pool<root> &pop)
 			pop, [&] { nvobj::delete_persistent<M>(robj->s1); });
 	}
 	// radix does not support heterogenous count
-#ifndef RADIX
+#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX
 	{
 		typedef PrivateConstructor PC;
 		typedef C2 M;

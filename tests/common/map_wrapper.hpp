@@ -26,6 +26,14 @@ erase(container_t<int, double> &m, int pos)
 	return m.unsafe_erase(pos);
 }
 
+container_t<int, double>::iterator
+erase(container_t<int, double> &m,
+      const container_t<int, double>::iterator first,
+      const container_t<int, double>::iterator last)
+{
+	return m.unsafe_erase(first, last);
+}
+
 /* if radix tree is defined */
 #elif defined LIBPMEMOBJ_CPP_TESTS_RADIX
 

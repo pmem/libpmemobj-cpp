@@ -1115,8 +1115,8 @@ if (TEST_CONCURRENT_MAP)
 	build_test_ext(NAME map_libcxx_emplace SRC_FILES libcxx/map/map.modifiers/emplace.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_emplace TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_erase_iter_iter libcxx/map/map.modifiers/erase_iter_iter.pass.cpp)
-	# add_test_generic(NAME map_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_erase_iter_iter SRC_FILES libcxx/map/map.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME map_libcxx_erase_key SRC_FILES libcxx/map/map.modifiers/erase_key.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_erase_key TRACERS none pmemcheck memcheck)

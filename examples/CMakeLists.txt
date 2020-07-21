@@ -163,6 +163,8 @@ add_example(inline_string inline_string/inline_string.cpp)
 
 if (TEST_RADIX_TREE)
 	add_example(radix_tree_dot radix_tree/radix_tree_dot.cpp)
+	add_example(radix_tree_basic radix_tree/radix_tree_basic.cpp)
+	add_example(radix_tree_custom_key radix_tree/radix_tree_custom_key.cpp)
 endif()
 
 add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)

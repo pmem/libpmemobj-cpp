@@ -62,11 +62,13 @@ namespace experimental
  * BytesView should accept a pointer to the key type in a constructor and
  * provide operator[] and size methods. The declaration should be as following:
  *
+ * @code
  * struct BytesView {
  *  BytesView(const Type* t);
- *  const T& operator[](size_t pos) const;
- *  size_t size() const;
+ *  const T& operator[](size_t pos) const; // Must be const!
+ *  size_t size() const; // Must be const!
  * };
+ * @endcode
  *
  * By default, implementation for pmem::obj::inline_string and unsigned integral
  * types is provided. Note that integral types are assumed to be in
@@ -84,6 +86,9 @@ namespace experimental
  * swap() invalidates all references and iterators if inline_string is used as
  * value but does not invalidate iterators (except past-the-end iterator) nor
  * references to any other value_type.
+ *
+ * An example of custom BytesView implementation:
+ * @snippet radix_tree/radix_tree_custom_key.cpp bytes_view_example
  */
 template <typename Key, typename Value,
 	  typename BytesView = detail::bytes_view<Key>>

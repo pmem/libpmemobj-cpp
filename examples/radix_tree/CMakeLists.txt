@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright 2020, Intel Corporation
+
+cmake_minimum_required(VERSION 3.3)
+project(radix_tree CXX)
+
+set(CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 11)
+
+find_package(PkgConfig QUIET)
+if(PKG_CONFIG_FOUND)
+	pkg_check_modules(LIBPMEMOBJ++ REQUIRED libpmemobj++)
+else()
+	find_package(LIBPMEMOBJ++ REQUIRED)
+endif()
+
+link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS})
+
+add_executable(radix_tree_dot radix_tree_dot.cpp)
+target_include_directories(radix_tree_dot PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(radix_tree_dot ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

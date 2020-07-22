@@ -36,6 +36,9 @@ namespace obj
  * interface.
  *
  * The implementation is still missing some methods.
+ *
+ * Simple example of pmem::obj::string usage
+ * @snippet string/string.cpp string_example
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string {

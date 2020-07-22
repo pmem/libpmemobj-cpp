@@ -67,6 +67,9 @@ add_check_whitespace(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simpl
 add_cppstyle(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
 add_check_whitespace(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
 
+add_cppstyle(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
+add_check_whitespace(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
@@ -102,6 +105,10 @@ if (TEST_VECTOR)
 	else()
 		message(WARNING "skipping simplekv_rebuild example - it requires clang >= ${CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG}")
 	endif()
+endif()
+
+if (TEST_STRING)
+	add_example(string string/string.cpp)
 endif()
 
 if(CURSES_FOUND)

@@ -510,9 +510,6 @@ protected:
 	using iterator = skip_list_iterator<list_node_type, false>;
 	using const_iterator = skip_list_iterator<list_node_type, true>;
 
-	using reverse_iterator = std::reverse_iterator<iterator>;
-	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
 	static constexpr size_type MAX_LEVEL = traits_type::max_level;
 
 	using random_level_generator_type = geometric_level_generator<

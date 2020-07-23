@@ -66,9 +66,6 @@ public:
 	using const_pointer = typename base_type::const_pointer;
 	using iterator = typename base_type::iterator;
 	using const_iterator = typename base_type::const_iterator;
-	using reverse_iterator = typename base_type::reverse_iterator;
-	using const_reverse_iterator =
-		typename base_type::const_reverse_iterator;
 
 	/**
 	 * Default constructor.

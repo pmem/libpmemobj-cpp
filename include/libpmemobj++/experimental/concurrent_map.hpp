@@ -87,6 +87,15 @@ public:
 	}
 
 	/**
+	 * Construct the empty map
+	 */
+	explicit concurrent_map(const key_compare &comp,
+				const allocator_type &alloc = allocator_type())
+	    : base_type(comp, alloc)
+	{
+	}
+
+	/**
 	 * Constructs the map with the contents of the range [first, last).
 	 */
 	template <class InputIt>

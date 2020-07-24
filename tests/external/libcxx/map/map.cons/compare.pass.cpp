@@ -77,7 +77,6 @@ struct root {
 int
 run(pmem::obj::pool<root> &pop)
 {
-#ifdef XXX // XXX: Probably missing constructor
 	auto robj = pop.root();
 	{
 		pmem::obj::transaction::run(pop, [&] {
@@ -90,7 +89,6 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<CM>(robj->s); });
 	}
-#endif
 #ifdef XXX // XXX: implement min_allocator
 	{
 		typedef test_compare<std::less<int>> C;

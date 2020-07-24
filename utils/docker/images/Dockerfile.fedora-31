@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2016-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #
 
 # Pull base image
-FROM fedora:28
+FROM fedora:31
 MAINTAINER marcin.slusarz@intel.com
 
 # Install basic tools
@@ -97,7 +97,7 @@ USER $USER
 
 # Set required environment variables
 ENV OS fedora
-ENV OS_VER 28
+ENV OS_VER 31
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 

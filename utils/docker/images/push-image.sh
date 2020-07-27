@@ -27,9 +27,9 @@ if [[ -z "${DOCKERHUB_REPO}" ]]; then
 	exit 1
 fi
 
-TAG="1.10-${OS}-${OS_VER}"
+TAG="1.11-${OS}-${OS_VER}"
 
-# Check if the image tagged with ${DOCKERHUB_REPO}:1.10-OS-VER exists locally
+# Check if the image tagged with ${DOCKERHUB_REPO}:${TAG} exists locally
 if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:${TAG}\$" \
 	'$1":"$2 ~ pattern') ]]
 then

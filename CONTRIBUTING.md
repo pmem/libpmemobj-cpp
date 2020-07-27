@@ -14,7 +14,7 @@ Details such as OS and PMDK version are always appreciated.
 
 * See `.clang-format` file in the repository for details
 * Indent with tabs (width: 8)
-* Max 90 chars per line
+* Max 120 chars per line
 * Space before '*' and '&' (rather than after)
 
 If you want to check and format your source code properly you can use CMake's `DEVELOPER_MODE`

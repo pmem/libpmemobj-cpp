@@ -20,10 +20,10 @@ BraceWrapping:
   IndentBraces:			false
 BreakBeforeBraces: Custom
 BreakStringLiterals: false
+ColumnLimit: 120
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ContinuationIndentWidth: 8
 FixNamespaceComments: false
-IndentCaseLabels: false
 IndentCaseLabels: true
 IndentWidth: 8
 PointerAlignment: Right

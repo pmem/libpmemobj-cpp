@@ -1055,58 +1055,55 @@ if (TEST_CONCURRENT_MAP)
 	# build_test(map_libcxx_size libcxx/map/map.access/size.pass.cpp)
 	# add_test_generic(NAME map_libcxx_size TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_alloc libcxx/map/map.cons/alloc.pass.cpp)
+	# build_test_ext(NAME map_libcxx_alloc SRC_FILES libcxx/map/map.cons/alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_assign_initializer_list libcxx/map/map.cons/assign_initializer_list.pass.cpp)
-	# add_test_generic(NAME map_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_assign_initializer_list SRC_FILES libcxx/map/map.cons/assign_initializer_list.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_assign_initializer_list TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_compare_alloc libcxx/map/map.cons/compare_alloc.pass.cpp)
+	# build_test_ext(NAME map_libcxx_compare_alloc SRC_FILES libcxx/map/map.cons/compare_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_compare_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_compare libcxx/map/map.cons/compare.pass.cpp)
+	# build_test_ext(NAME map_libcxx_compare SRC_FILES libcxx/map/map.cons/compare.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_compare TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_copy_alloc libcxx/map/map.cons/copy_alloc.pass.cpp)
+	# build_test_ext(NAME map_libcxx_copy_alloc SRC_FILES libcxx/map/map.cons/copy_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_copy_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_copy_assign libcxx/map/map.cons/copy_assign.pass.cpp)
+	# build_test_ext(NAME map_libcxx_copy_assign SRC_FILES libcxx/map/map.cons/copy_assign.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_copy_assign TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_copy libcxx/map/map.cons/copy.pass.cpp)
+	# build_test_ext(NAME map_libcxx_copy SRC_FILES libcxx/map/map.cons/copy.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_copy TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_default libcxx/map/map.cons/default.pass.cpp)
-	# add_test_generic(NAME map_libcxx_default TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_default SRC_FILES libcxx/map/map.cons/default.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_default TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_default_recursive libcxx/map/map.cons/default_recursive.pass.cpp)
-	# add_test_generic(NAME map_libcxx_default_recursive TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_dtor_noexcept SRC_FILES libcxx/map/map.cons/dtor_noexcept.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_dtor_noexcept TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_dtor_noexcept libcxx/map/map.cons/dtor_noexcept.pass.cpp)
-	# add_test_generic(NAME map_libcxx_dtor_noexcept TRACERS none pmemcheck memcheck)
-
-	# build_test(map_libcxx_initializer_list_compare_alloc libcxx/map/map.cons/initializer_list_compare_alloc.pass.cpp)
+	# build_test_ext(NAME map_libcxx_initializer_list_compare_alloc SRC_FILES libcxx/map/map.cons/initializer_list_compare_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_initializer_list_compare_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_initializer_list_compare libcxx/map/map.cons/initializer_list_compare.pass.cpp)
+	# build_test_ext(NAME map_libcxx_initializer_list_compare SRC_FILES libcxx/map/map.cons/initializer_list_compare.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_initializer_list_compare TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_initializer_list libcxx/map/map.cons/initializer_list.pass.cpp)
-	# add_test_generic(NAME map_libcxx_initializer_list TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_initializer_list SRC_FILES libcxx/map/map.cons/initializer_list.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_initializer_list TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_iter_iter_comp_alloc libcxx/map/map.cons/iter_iter_comp_alloc.pass.cpp)
+	# build_test_ext(NAME map_libcxx_iter_iter_comp_alloc SRC_FILES libcxx/map/map.cons/iter_iter_comp_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_iter_iter_comp_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_iter_iter libcxx/map/map.cons/iter_iter.pass.cpp)
-	# add_test_generic(NAME map_libcxx_iter_iter TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_iter_iter SRC_FILES libcxx/map/map.cons/iter_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_iter_iter TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_move_alloc libcxx/map/map.cons/move_alloc.pass.cpp)
+	# build_test_ext(NAME map_libcxx_move_alloc SRC_FILES libcxx/map/map.cons/move_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_move_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_move_assign libcxx/map/map.cons/move_assign.pass.cpp)
+	# build_test_ext(NAME map_libcxx_move_assign SRC_FILES libcxx/map/map.cons/move_assign.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_move_assign TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_move libcxx/map/map.cons/move.pass.cpp)
+	# build_test_ext(NAME map_libcxx_move SRC_FILES libcxx/map/map.cons/move.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_move TRACERS none pmemcheck memcheck)
 
 	# build_test(map_libcxx_clear libcxx/map/map.modifiers/clear.pass.cpp)

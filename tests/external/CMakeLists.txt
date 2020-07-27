@@ -1064,8 +1064,8 @@ if (TEST_CONCURRENT_MAP)
 	# build_test_ext(NAME map_libcxx_compare_alloc SRC_FILES libcxx/map/map.cons/compare_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_compare_alloc TRACERS none pmemcheck memcheck)
 
-	# build_test_ext(NAME map_libcxx_compare SRC_FILES libcxx/map/map.cons/compare.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
-	# add_test_generic(NAME map_libcxx_compare TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_compare SRC_FILES libcxx/map/map.cons/compare.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_compare TRACERS none pmemcheck memcheck)
 
 	# build_test_ext(NAME map_libcxx_copy_alloc SRC_FILES libcxx/map/map.cons/copy_alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_copy_alloc TRACERS none pmemcheck memcheck)

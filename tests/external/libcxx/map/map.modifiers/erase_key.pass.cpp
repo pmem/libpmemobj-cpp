@@ -20,7 +20,6 @@
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/concurrent_map.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
  * Persistent_ptr atomic allocation functions for objects. The typical usage
  * examples would be:
- * @snippet doc_snippets/make_persistent.cpp make_atomic_example
+ * @snippet make_persistent/make_persistent.cpp make_atomic_example
  */
 
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ATOMIC_HPP

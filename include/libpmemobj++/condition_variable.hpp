@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -28,7 +28,7 @@ namespace obj
  * This class is an implementation of a PMEM-resident condition
  * variable which mimics in behavior the C++11 std::condition_variable. The
  * typical usage example would be:
- * @snippet doc_snippets/mutex.cpp cond_var_example
+ * @snippet mutex/mutex.cpp cond_var_example
  */
 class condition_variable {
 	typedef std::chrono::system_clock clock_type;

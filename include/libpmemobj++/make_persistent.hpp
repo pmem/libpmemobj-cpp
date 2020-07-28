@@ -5,7 +5,7 @@
  * @file
  * Persistent_ptr transactional allocation functions for objects. The typical
  * usage examples would be:
- * @snippet doc_snippets/make_persistent.cpp make_example
+ * @snippet make_persistent/make_persistent.cpp make_example
  */
 
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_HPP

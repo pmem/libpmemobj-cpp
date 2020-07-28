@@ -4,8 +4,6 @@
 #include <iostream>
 #include <libpmemobj++/container/string.hpp>
 
-#define LAYOUT "string_example"
-
 //! [string_example]
 using namespace pmem;
 using namespace pmem::obj;
@@ -78,28 +76,39 @@ example_with_object(pool<root> &pop)
 }
 //! [string_example]
 
+/* Before running this example, run:
+ * pmempool create obj --layout="string_example" example_pool
+ */
 int
 main()
 {
 	pool<root> pop;
 
-	/* create or open already existing pool */
+	/* open already existing pool */
 	try {
-		pop = pool<root>::open("example_pool", LAYOUT);
+		pop = pool<root>::open("example_pool", "string_example");
 	} catch (const pool_error &e) {
 		std::cerr << e.what() << std::endl;
 		std::cerr << "Pool not found" << std::endl;
 		return 1;
 	}
 
-	example_with_ptr(pop);
-	example_with_object(pop);
+	try {
+		example_with_ptr(pop);
+		example_with_object(pop);
+	} catch (const transaction_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 2;
+	} catch (const pool_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 3;
+	}
 
 	try {
 		pop.close();
 	} catch (const std::logic_error &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
-		return 2;
+		return 4;
 	}
 
 	return 0;

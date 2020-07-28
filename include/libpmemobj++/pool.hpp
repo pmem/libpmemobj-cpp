@@ -41,7 +41,7 @@ class persistent_ptr;
  * This class is a non-template version of pool. It is useful for places
  * where providing pool template argument is undesirable. The typical usage
  * example would be:
- * @snippet doc_snippets/pool.cpp pool_base_example
+ * @snippet pool/pool.cpp pool_base_example
  */
 class pool_base {
 public:
@@ -452,7 +452,7 @@ protected:
  * This class is the pmemobj pool handler. It provides basic primitives
  * for operations on pmemobj pools. The template parameter defines the
  * type of the root object within the pool. The typical usage example would be:
- * @snippet doc_snippets/pool.cpp pool_example
+ * @snippet pool/pool.cpp pool_example
  *
  * This API should not be mixed with C API. For example explicitly calling
  * pmemobj_set_user_data(pop) on pool which is handled by C++ pool object

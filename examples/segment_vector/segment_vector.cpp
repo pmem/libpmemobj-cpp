@@ -47,6 +47,9 @@ struct root {
 	persistent_ptr<seg_vec_fix_vec> pptr3;
 };
 
+/* Before running this example, run:
+ * pmempool create obj --layout="segment_vector_example" path_to_pool
+ */
 int
 main(int argc, char *argv[])
 {
@@ -58,7 +61,7 @@ main(int argc, char *argv[])
 	persistent_ptr<root> r;
 
 	try {
-		pop = pool<root>::open(path, "segment_vector example");
+		pop = pool<root>::open(path, "segment_vector_example");
 		r = pop.root();
 	} catch (const pmem::pool_error &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
@@ -150,5 +153,4 @@ main(int argc, char *argv[])
 	}
 	return 0;
 }
-
 //! [segment_vector_example]

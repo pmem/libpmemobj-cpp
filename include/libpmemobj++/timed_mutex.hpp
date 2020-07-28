@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -27,7 +27,7 @@ namespace obj
  * which mimics in behavior the C++11 std::timed_mutex. This class
  * satisfies all requirements of the TimedMutex and StandardLayoutType
  * concepts. The typical usage example would be:
- * @snippet doc_snippets/mutex.cpp timed_mutex_example
+ * @snippet mutex/mutex.cpp timed_mutex_example
  */
 class timed_mutex {
 	typedef std::chrono::system_clock clock_type;

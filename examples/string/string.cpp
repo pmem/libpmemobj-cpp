@@ -83,7 +83,7 @@ main()
 {
 	pool<root> pop;
 
-	/* create or open already existing pool */
+	/* open already existing pool */
 	try {
 		pop = pool<root>::open("example_pool", LAYOUT);
 	} catch (const pool_error &e) {

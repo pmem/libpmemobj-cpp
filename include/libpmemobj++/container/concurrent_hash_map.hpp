@@ -1615,7 +1615,8 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * while already holding an accessor to some element.
  *
  * The typical usage example would be:
- * @snippet doc_snippets/concurrent_hash_map.cpp concurrent_hash_map_example
+ * @snippet concurrent_hash_map/concurrent_hash_map.cpp
+ * concurrent_hash_map_example
  */
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>

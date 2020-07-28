@@ -5,13 +5,13 @@
  * segment_vector.cpp -- C++ documentation snippets.
  */
 
-//! [segment_vector_example]
 #include <iostream>
 #include <libpmemobj++/container/segment_vector.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
 
+//! [segment_vector_example]
 const int N_ELEMENTS = 4096;
 const int SEGMENT_SIZE = 1024;
 
@@ -150,5 +150,4 @@ main(int argc, char *argv[])
 	}
 	return 0;
 }
-
 //! [segment_vector_example]

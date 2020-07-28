@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2018, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /*
  * pool.cpp -- C++ documentation snippets.
  */
 
+#include <iostream>
 //! [pool_example]
 #include <fcntl.h>
 #include <libpmemobj++/p.hpp>
@@ -17,26 +18,26 @@ void
 pool_example()
 {
 
-	// pool root structure
+	/* pool root structure */
 	struct root {
 		p<int> some_array[42];
 		p<int> some_other_array[42];
 		p<double> some_variable;
 	};
 
-	// create a pmemobj pool
+	/* create a pmemobj pool */
 	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
 
-	// close a pmemobj pool
+	/* close a pmemobj pool */
 	pop.close();
 
-	// or open a pmemobj pool
+	/* or open a pmemobj pool */
 	pop = pool<root>::open("poolfile", "layout");
 
-	// typical usage schemes
+	/* typical usage schemes */
 	auto root_obj = pop.root();
 
-	// low-level memory manipulation
+	/* low-level memory manipulation */
 	root_obj->some_variable = 3.2;
 	pop.persist(root_obj->some_variable);
 
@@ -48,7 +49,7 @@ pool_example()
 
 	pop.close();
 
-	// check pool consistency
+	/* check pool consistency */
 	pool<root>::check("poolfile", "layout");
 }
 //! [pool_example]
@@ -71,20 +72,20 @@ pool_base_example()
 		p<int> some_variable;
 	};
 
-	// create a pmemobj pool
+	/* create a pmemobj pool */
 	auto pop = pool_base::create("poolfile", "", PMEMOBJ_MIN_POOL);
 
-	// close a pmemobj pool
+	/* close a pmemobj pool */
 	pop.close();
 
-	// or open a pmemobj pool
+	/* or open a pmemobj pool */
 	pop = pool_base::open("poolfile", "");
 
-	// no "root" object available in pool_base
+	/* no "root" object available in pool_base */
 	persistent_ptr<some_struct> pval;
 	make_persistent_atomic<some_struct>(pop, pval);
 
-	// low-level memory manipulation
+	/* low-level memory manipulation */
 	pval->some_variable = 3;
 	pop.persist(pval->some_variable);
 
@@ -95,7 +96,21 @@ pool_base_example()
 
 	pop.close();
 
-	// check pool consistency
+	/* check pool consistency */
 	pool_base::check("poolfile", "");
 }
 //! [pool_base_example]
+
+int
+main()
+{
+	try {
+		pool_example();
+		pool_base_example();
+	} catch (const std::exception &e) {
+		std::cerr << "Exception " << e.what() << std::endl;
+		return -1;
+	}
+
+	return 0;
+}

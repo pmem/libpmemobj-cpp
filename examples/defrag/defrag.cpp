@@ -2,6 +2,7 @@
 /* Copyright 2020, Intel Corporation */
 
 //! [defrag_usage_example]
+#include <iostream>
 #include <libpmemobj++/container/vector.hpp>
 #include <libpmemobj++/defrag.hpp>
 #include <libpmemobj++/persistent_ptr_base.hpp>
@@ -11,16 +12,15 @@
 
 using namespace pmem::obj;
 
-void
-defrag_example()
-{
-	struct root {
-		persistent_ptr<int> i;
-		persistent_ptr<vector<int>> v;
-		persistent_ptr<vector<double>> v2;
-	};
+struct root {
+	persistent_ptr<int> i;
+	persistent_ptr<vector<int>> v;
+	persistent_ptr<vector<double>> v2;
+};
 
-	auto pop = pool<root>::create("poolfile", "layout", PMEMOBJ_MIN_POOL);
+void
+defrag_example(pool<root> &pop)
+{
 	auto r = pop.root();
 
 	persistent_ptr<int> i_ptr;
@@ -80,3 +80,37 @@ defrag_example()
 		  << std::endl;
 }
 //! [defrag_usage_example]
+
+/* Before running this example, run:
+ * pmempool create obj --layout="defrag_example" example_pool
+ */
+int
+main()
+{
+	pool<root> pop;
+
+	/* open already existing pool */
+	try {
+		pop = pool<root>::open("example_pool", "defrag_example");
+	} catch (const pmem::pool_error &e) {
+		std::cerr << e.what() << std::endl;
+		std::cerr << "Pool not found" << std::endl;
+		return 1;
+	}
+
+	try {
+		defrag_example(pop);
+	} catch (const std::exception &e) {
+		std::cerr << "Exception " << e.what() << std::endl;
+		return -1;
+	}
+
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 2;
+	}
+
+	return 0;
+}

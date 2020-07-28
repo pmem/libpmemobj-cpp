@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -46,7 +46,7 @@ namespace obj
  * transaction.
  *
  * The typical usage example would be:
- * @snippet doc_snippets/transaction.cpp general_tx_example
+ * @snippet transaction/transaction.cpp general_tx_example
  */
 class transaction {
 public:
@@ -66,7 +66,7 @@ public:
 	 * acquired once again.
 	 *
 	 *The typical usage example would be:
-	 * @snippet doc_snippets/transaction.cpp manual_tx_example
+	 * @snippet transaction/transaction.cpp manual_tx_example
 	 */
 	class manual {
 	public:
@@ -173,7 +173,7 @@ public:
 	 * acquired once again.
 	 *
 	 * The typical usage example would be:
-	 * @snippet doc_snippets/transaction.cpp automatic_tx_example
+	 * @snippet transaction/transaction.cpp automatic_tx_example
 	 */
 	class automatic {
 	public:
@@ -522,7 +522,7 @@ public:
 	 * scope
 	 *
 	 * The typical usage example would be:
-	 * @snippet doc_snippets/transaction.cpp tx_callback_example
+	 * @snippet transaction/transaction.cpp tx_callback_example
 	 */
 	static void
 	register_callback(stage stg, std::function<void()> cb)

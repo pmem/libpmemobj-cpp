@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2019, Intel Corporation */
+/* Copyright 2016-2020, Intel Corporation */
 
 /**
  * @file
@@ -26,7 +26,7 @@ namespace obj
  * which mimics in behavior the C++11 std::mutex. This class
  * satisfies all requirements of the Mutex and StandardLayoutType
  * concepts. The typical usage example would be:
- * @snippet doc_snippets/mutex.cpp unique_guard_example
+ * @snippet mutex/mutex.cpp unique_guard_example
  */
 class mutex {
 public:

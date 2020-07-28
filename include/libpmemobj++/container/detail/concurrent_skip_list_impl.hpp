@@ -2155,7 +2155,7 @@ private:
 
 	/**
 	 * The method finds insert position for the given @arg key. It finds
-	 * successor and predecessr nodes on each level of the skip list.
+	 * successor and predecessor nodes on each level of the skip list.
 	 *
 	 * @param[out] prev_nodes array of pointers to predecessor nodes on each
 	 * level.
@@ -2178,7 +2178,7 @@ private:
 	}
 
 	/**
-	 * The method finds successor and predecessr nodes on each level of the
+	 * The method finds successor and predecessor nodes on each level of the
 	 * skip list for the given @arg key.
 	 *
 	 * @param[out] prev_nodes array of pointers to predecessor nodes on each

@@ -5,279 +5,294 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
 
 // <map>
 
-// class map
+#include "map_wrapper.hpp"
+#include "unittest.hpp"
 
-// template <class Key, class T, class Compare, class Allocator>
-//   void
-//   swap(map<Key, T, Compare, Allocator>& x, map<Key, T, Compare, Allocator>& y);
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/pool.hpp>
+#include <libpmemobj++/transaction.hpp>
 
-#include <map>
-#include <cassert>
-#include "test_macros.h"
-#include "test_allocator.h"
-#include "../../../test_compare.h"
-#include "min_allocator.h"
+using container = container_t<int, double>;
 
-int main(int, char**)
+struct root {
+	nvobj::persistent_ptr<container> m1;
+	nvobj::persistent_ptr<container> m2;
+	nvobj::persistent_ptr<container> m1_save;
+	nvobj::persistent_ptr<container> m2_save;
+};
+
+template <typename C>
+void
+containers_eq(const C &c1, const C &c2)
 {
-    typedef std::pair<const int, double> V;
-    {
-    typedef std::map<int, double> M;
-    {
-        M m1;
-        M m2;
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    {
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1;
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]));
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    {
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]));
-        M m2;
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    {
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]));
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]));
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    }
-    {
-        typedef test_allocator<V> A;
-        typedef test_compare<std::less<int> > C;
-        typedef std::map<int, double, C, A> M;
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]), C(1), A(1, 1));
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]), C(2), A(1, 2));
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-        assert(m1.key_comp() == C(2));
-        assert(m1.get_allocator().get_id() == 1); // not swapped
-        assert(m2.key_comp() == C(1));
-        assert(m2.get_allocator().get_id() == 2);
-    }
-    {
-        typedef other_allocator<V> A;
-        typedef test_compare<std::less<int> > C;
-        typedef std::map<int, double, C, A> M;
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]), C(1), A(1));
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]), C(2), A(2));
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-        assert(m1.key_comp() == C(2));
-        assert(m1.get_allocator() == A(2));
-        assert(m2.key_comp() == C(1));
-        assert(m2.get_allocator() == A(1));
-    }
-#if TEST_STD_VER >= 11
-    {
-    typedef std::map<int, double, std::less<int>, min_allocator<V>> M;
-    {
-        M m1;
-        M m2;
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    {
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1;
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]));
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    {
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]));
-        M m2;
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    {
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]));
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]));
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-    }
-    }
-    {
-        typedef min_allocator<V> A;
-        typedef test_compare<std::less<int> > C;
-        typedef std::map<int, double, C, A> M;
-        V ar1[] =
-        {
-            V(1, 1),
-            V(2, 2),
-            V(3, 3),
-            V(4, 4)
-        };
-        V ar2[] =
-        {
-            V(5, 5),
-            V(6, 6),
-            V(7, 7),
-            V(8, 8),
-            V(9, 9),
-            V(10, 10),
-            V(11, 11),
-            V(12, 12)
-        };
-        M m1(ar1, ar1+sizeof(ar1)/sizeof(ar1[0]), C(1), A());
-        M m2(ar2, ar2+sizeof(ar2)/sizeof(ar2[0]), C(2), A());
-        M m1_save = m1;
-        M m2_save = m2;
-        swap(m1, m2);
-        assert(m1 == m2_save);
-        assert(m2 == m1_save);
-        assert(m1.key_comp() == C(2));
-        assert(m1.get_allocator() == A());
-        assert(m2.key_comp() == C(1));
-        assert(m2.get_allocator() == A());
-    }
-#endif
+#if XXX // implement operator==
+	UT_ASSERT(c1 == c2);
+#else
+	UT_ASSERTeq(c1.size(), c2.size());
+	for (const auto &e : c1) {
+		auto it = c2.find(e.first);
 
-  return 0;
+		UT_ASSERT(it != c2.end());
+		UT_ASSERT(it->first == e.first);
+		UT_ASSERT(it->second == e.second);
+	}
+#endif
+}
+
+void
+run(nvobj::pool<root> pop)
+{
+	auto robj = pop.root();
+
+	typedef std::pair<const int, double> V;
+	{
+		typedef container M;
+		{
+			pmem::obj::transaction::run(pop, [&] {
+				robj->m1 = nvobj::make_persistent<M>();
+				robj->m2 = nvobj::make_persistent<M>();
+				robj->m1_save =
+					nvobj::make_persistent<M>(*robj->m1);
+				robj->m2_save =
+					nvobj::make_persistent<M>(*robj->m2);
+			});
+
+			swap(*robj->m1, *robj->m2);
+
+			containers_eq(*robj->m1, *robj->m2_save);
+			containers_eq(*robj->m2, *robj->m1_save);
+
+			pmem::obj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<M>(robj->m1);
+				nvobj::delete_persistent<M>(robj->m2);
+				nvobj::delete_persistent<M>(robj->m1_save);
+				nvobj::delete_persistent<M>(robj->m2_save);
+			});
+		}
+		{
+			V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+				   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+
+			pmem::obj::transaction::run(pop, [&] {
+				robj->m1 = nvobj::make_persistent<M>();
+				robj->m2 = nvobj::make_persistent<M>(
+					ar2,
+					ar2 + sizeof(ar2) / sizeof(ar2[0]));
+				robj->m1_save =
+					nvobj::make_persistent<M>(*robj->m1);
+				robj->m2_save =
+					nvobj::make_persistent<M>(*robj->m2);
+			});
+
+			swap(*robj->m1, *robj->m2);
+
+			containers_eq(*robj->m1, *robj->m2_save);
+			containers_eq(*robj->m2, *robj->m1_save);
+
+			pmem::obj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<M>(robj->m1);
+				nvobj::delete_persistent<M>(robj->m2);
+				nvobj::delete_persistent<M>(robj->m1_save);
+				nvobj::delete_persistent<M>(robj->m2_save);
+			});
+		}
+		{
+			V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+
+			pmem::obj::transaction::run(pop, [&] {
+				robj->m1 = nvobj::make_persistent<M>(
+					ar1,
+					ar1 + sizeof(ar1) / sizeof(ar1[0]));
+				robj->m2 = nvobj::make_persistent<M>();
+				robj->m1_save =
+					nvobj::make_persistent<M>(*robj->m1);
+				robj->m2_save =
+					nvobj::make_persistent<M>(*robj->m2);
+			});
+
+			swap(*robj->m1, *robj->m2);
+
+			containers_eq(*robj->m1, *robj->m2_save);
+			containers_eq(*robj->m2, *robj->m1_save);
+
+			pmem::obj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<M>(robj->m1);
+				nvobj::delete_persistent<M>(robj->m2);
+				nvobj::delete_persistent<M>(robj->m1_save);
+				nvobj::delete_persistent<M>(robj->m2_save);
+			});
+		}
+		{
+			V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+			V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+				   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+
+			pmem::obj::transaction::run(pop, [&] {
+				robj->m1 = nvobj::make_persistent<M>(
+					ar1,
+					ar1 + sizeof(ar1) / sizeof(ar1[0]));
+				robj->m2 = nvobj::make_persistent<M>(
+					ar2,
+					ar2 + sizeof(ar2) / sizeof(ar2[0]));
+				robj->m1_save =
+					nvobj::make_persistent<M>(*robj->m1);
+				robj->m2_save =
+					nvobj::make_persistent<M>(*robj->m2);
+			});
+
+			swap(*robj->m1, *robj->m2);
+
+			containers_eq(*robj->m1, *robj->m2_save);
+			containers_eq(*robj->m2, *robj->m1_save);
+
+			pmem::obj::transaction::run(pop, [&] {
+				nvobj::delete_persistent<M>(robj->m1);
+				nvobj::delete_persistent<M>(robj->m2);
+				nvobj::delete_persistent<M>(robj->m1_save);
+				nvobj::delete_persistent<M>(robj->m2_save);
+			});
+		}
+	}
+#if XXX // implement test_compare, test_allocator and min_allocator
+	{
+		typedef test_allocator<V> A;
+		typedef test_compare<std::less<int>> C;
+		typedef std::map<int, double, C, A> M;
+		V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+		V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+			   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+		M m1(ar1, ar1 + sizeof(ar1) / sizeof(ar1[0]), C(1), A(1, 1));
+		M m2(ar2, ar2 + sizeof(ar2) / sizeof(ar2[0]), C(2), A(1, 2));
+		M m1_save = m1;
+		M m2_save = m2;
+		swap(m1, m2);
+		assert(m1 == m2_save);
+		assert(m2 == m1_save);
+		assert(m1.key_comp() == C(2));
+		assert(m1.get_allocator().get_id() == 1); // not swapped
+		assert(m2.key_comp() == C(1));
+		assert(m2.get_allocator().get_id() == 2);
+	}
+	{
+		typedef other_allocator<V> A;
+		typedef test_compare<std::less<int>> C;
+		typedef std::map<int, double, C, A> M;
+		V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+		V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+			   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+		M m1(ar1, ar1 + sizeof(ar1) / sizeof(ar1[0]), C(1), A(1));
+		M m2(ar2, ar2 + sizeof(ar2) / sizeof(ar2[0]), C(2), A(2));
+		M m1_save = m1;
+		M m2_save = m2;
+		swap(m1, m2);
+		assert(m1 == m2_save);
+		assert(m2 == m1_save);
+		assert(m1.key_comp() == C(2));
+		assert(m1.get_allocator() == A(2));
+		assert(m2.key_comp() == C(1));
+		assert(m2.get_allocator() == A(1));
+	}
+	{
+		typedef std::map<int, double, std::less<int>, min_allocator<V>>
+			M;
+		{
+			M m1;
+			M m2;
+			M m1_save = m1;
+			M m2_save = m2;
+			swap(m1, m2);
+			assert(m1 == m2_save);
+			assert(m2 == m1_save);
+		}
+		{
+			V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+				   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+			M m1;
+			M m2(ar2, ar2 + sizeof(ar2) / sizeof(ar2[0]));
+			M m1_save = m1;
+			M m2_save = m2;
+			swap(m1, m2);
+			assert(m1 == m2_save);
+			assert(m2 == m1_save);
+		}
+		{
+			V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+			M m1(ar1, ar1 + sizeof(ar1) / sizeof(ar1[0]));
+			M m2;
+			M m1_save = m1;
+			M m2_save = m2;
+			swap(m1, m2);
+			assert(m1 == m2_save);
+			assert(m2 == m1_save);
+		}
+		{
+			V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+			V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+				   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+			M m1(ar1, ar1 + sizeof(ar1) / sizeof(ar1[0]));
+			M m2(ar2, ar2 + sizeof(ar2) / sizeof(ar2[0]));
+			M m1_save = m1;
+			M m2_save = m2;
+			swap(m1, m2);
+			assert(m1 == m2_save);
+			assert(m2 == m1_save);
+		}
+	}
+	{
+		typedef min_allocator<V> A;
+		typedef test_compare<std::less<int>> C;
+		typedef std::map<int, double, C, A> M;
+		V ar1[] = {V(1, 1), V(2, 2), V(3, 3), V(4, 4)};
+		V ar2[] = {V(5, 5), V(6, 6),   V(7, 7),	  V(8, 8),
+			   V(9, 9), V(10, 10), V(11, 11), V(12, 12)};
+		M m1(ar1, ar1 + sizeof(ar1) / sizeof(ar1[0]), C(1), A());
+		M m2(ar2, ar2 + sizeof(ar2) / sizeof(ar2[0]), C(2), A());
+		M m1_save = m1;
+		M m2_save = m2;
+		swap(m1, m2);
+		assert(m1 == m2_save);
+		assert(m2 == m1_save);
+		assert(m1.key_comp() == C(2));
+		assert(m1.get_allocator() == A());
+		assert(m2.key_comp() == C(1));
+		assert(m2.get_allocator() == A());
+	}
+#endif
+}
+
+static void
+test(int argc, char *argv[])
+{
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+
+	const char *path = argv[1];
+
+	pmem::obj::pool<root> pop;
+	try {
+		pop = pmem::obj::pool<root>::create(
+			path, "non_member_swap.pass", PMEMOBJ_MIN_POOL,
+			S_IWUSR | S_IRUSR);
+	} catch (...) {
+		UT_FATAL("!pmemobj_create: %s", path);
+	}
+	try {
+		run(pop);
+		pop.close();
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

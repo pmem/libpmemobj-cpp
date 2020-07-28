@@ -70,11 +70,17 @@ add_check_whitespace(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
 add_cppstyle(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
 add_check_whitespace(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
 
+add_cppstyle(examples-v ${CMAKE_CURRENT_SOURCE_DIR}/v/*.*pp)
+add_check_whitespace(examples-v ${CMAKE_CURRENT_SOURCE_DIR}/v/*.*pp)
+
+add_custom_target(examples)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
 	add_executable(example-${name} ${srcs})
 	target_link_libraries(example-${name} ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+	add_dependencies(examples example-${name})
 endfunction()
 
 if(PKG_CONFIG_FOUND)
@@ -105,6 +111,10 @@ if (TEST_VECTOR)
 	else()
 		message(WARNING "skipping simplekv_rebuild example - it requires clang >= ${CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG}")
 	endif()
+endif()
+
+if (TEST_VECTOR)
+	add_example(slab slab/slab.cpp)
 endif()
 
 if (TEST_STRING)
@@ -156,11 +166,8 @@ add_example(map_cli map_cli/map_cli.cpp)
 
 add_example(array array/array.cpp)
 
-if (TEST_VECTOR)
-	add_example(slab slab/slab.cpp)
-endif()
+add_example(v v/v.cpp)
 
-add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)
 add_library(doc_snippets_persistent OBJECT doc_snippets/persistent.cpp)
 add_library(doc_snippets_make_persistent OBJECT doc_snippets/make_persistent.cpp)
 add_library(doc_snippets_mutex OBJECT doc_snippets/mutex.cpp)

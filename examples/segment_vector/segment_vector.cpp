@@ -150,5 +150,4 @@ main(int argc, char *argv[])
 	}
 	return 0;
 }
-
 //! [segment_vector_example]

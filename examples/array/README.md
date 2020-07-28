@@ -43,5 +43,4 @@ $ ./example-array file print myArray
 
 `$ ./example-array <file_name> print <array_name>`
 
-Example output can be seen in above example sections. 
-
+Example output can be seen in above example sections.

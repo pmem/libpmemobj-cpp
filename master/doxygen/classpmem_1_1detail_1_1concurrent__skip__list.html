@@ -315,7 +315,7 @@ Private Member Functions</h2></td></tr>
 <tr class="separator:afc68cda6170426f66ed2aaa67745f50b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada9a45ff580a1250f4e0c380b7a73e6e"><td class="memTemplParams" colspan="2">template&lt;typename K , typename comparator &gt; </td></tr>
 <tr class="memitem:ada9a45ff580a1250f4e0c380b7a73e6e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ada9a45ff580a1250f4e0c380b7a73e6e">fill_prev_next_arrays</a> (prev_array_type &amp;prev_nodes, next_array_type &amp;next_nodes, const K &amp;key, const comparator &amp;cmp)</td></tr>
-<tr class="memdesc:ada9a45ff580a1250f4e0c380b7a73e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The method finds successor and predecessr nodes on each level of the skip list for the given.  <a href="#ada9a45ff580a1250f4e0c380b7a73e6e">More...</a><br /></td></tr>
+<tr class="memdesc:ada9a45ff580a1250f4e0c380b7a73e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The method finds successor and predecessor nodes on each level of the skip list for the given.  <a href="#ada9a45ff580a1250f4e0c380b7a73e6e">More...</a><br /></td></tr>
 <tr class="separator:ada9a45ff580a1250f4e0c380b7a73e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8e3dcd48725ec3f1b2964f5f4c0d2ca"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:aa8e3dcd48725ec3f1b2964f5f4c0d2ca"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; iterator, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#aa8e3dcd48725ec3f1b2964f5f4c0d2ca">internal_unsafe_emplace</a> (Args &amp;&amp;... args)</td></tr>
@@ -1694,7 +1694,7 @@ template&lt;typename K , typename comparator &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>The method finds successor and predecessr nodes on each level of the skip list for the given. </p>
+<p>The method finds successor and predecessor nodes on each level of the skip list for the given. </p>
 <ul>
 <li>key.</li>
 </ul>
@@ -1910,7 +1910,7 @@ template&lt;typename K &gt; </div>
 
 <p>The method finds insert position for the given. </p>
 <ul>
-<li>key. It finds successor and predecessr nodes on each level of the skip list.</li>
+<li>key. It finds successor and predecessor nodes on each level of the skip list.</li>
 </ul>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -2499,22 +2499,14 @@ template&lt;typename K , typename pointer_type , typename comparator &gt; </div>
 <p>Finds position on the. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">level</td><td>using</td></tr>
-    <tr><td class="paramname">cmp</td><td></td></tr>
-    <tr><td class="paramname">level</td><td>- on which level search prev node </td></tr>
+    <tr><td class="paramname">level</td><td>using cmp </td></tr>
     <tr><td class="paramname">prev</td><td>- pointer to the start node to search </td></tr>
     <tr><td class="paramname">key</td><td>- key to search </td></tr>
     <tr><td class="paramname">cmp</td><td>- callable object to compare two objects (_compare member is default comparator) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>pointer to the node which is not satisfy the comparison with </dd></dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">key</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the node which is not satisfy the comparison with key. </dd></dl>
 
 </div>
 </div>

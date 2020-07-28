@@ -2125,14 +2125,13 @@ private:
 	}
 
 	/**
-	 * Finds position on the @param level using @param cmp
-	 * @param level - on which level search prev node
+	 * Finds position on the @param level using cmp
 	 * @param prev - pointer to the start node to search
 	 * @param key - key to search
 	 * @param cmp - callable object to compare two objects
 	 *  (_compare member is default comparator)
 	 * @returns pointer to the node which is not satisfy the comparison with
-	 * @param key
+	 * key.
 	 */
 	template <typename K, typename pointer_type, typename comparator>
 	persistent_node_ptr

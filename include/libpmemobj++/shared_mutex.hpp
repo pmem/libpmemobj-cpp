@@ -25,7 +25,7 @@ namespace obj
  * which mimics in behavior the C++11 std::mutex. This class
  * satisfies all requirements of the SharedMutex and StandardLayoutType
  * concepts. The typical usage would be:
- * @snippet doc_snippets/mutex.cpp shared_mutex_example
+ * @snippet mutex/mutex.cpp shared_mutex_example
  */
 class shared_mutex {
 public:

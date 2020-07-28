@@ -5,7 +5,7 @@
  * @file
  * Persistent_ptr allocation functions for arrays. The typical usage examples
  * would be:
- * @snippet doc_snippets/make_persistent.cpp make_array_example
+ * @snippet make_persistent/make_persistent.cpp make_array_example
  */
 
 #ifndef LIBPMEMOBJ_CPP_MAKE_PERSISTENT_ARRAY_HPP

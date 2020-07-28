@@ -5,7 +5,7 @@
  * concurrent_hash_map.cpp -- C++ documentation snippets.
  */
 
-//! [concurrent_hash_map_example]
+//! [concurrent_hash_map_ex]
 #include <iostream>
 #include <libpmemobj++/container/concurrent_hash_map.hpp>
 #include <libpmemobj++/p.hpp>
@@ -15,22 +15,23 @@
 
 using namespace pmem::obj;
 
-// In this example we will be using concurrent_hash_map with p<int> type for
-// both keys and values
+/* In this example we will be using concurrent_hash_map with p<int> type for
+ * both keys and values */
 using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
 const bool remove_hashmap = false;
 
-// This is basic example and we only need to use concurrent_hash_map. Hence we
-// will correlate memory pool root object with single instance of persistent
-// pointer to hasmap_type
+/* This is basic example and we only need to use concurrent_hash_map. Hence we
+ * will correlate memory pool root object with single instance of persistent
+ * pointer to hasmap_type */
 struct root {
 	persistent_ptr<hashmap_type> pptr;
 };
 
-// Before running this example, run:
-// pmempool create obj --layout="concurrent_hash_map" --size 1G path_to_a_pool
+/* Before running this example, run:
+ * pmempool create obj --layout="concurrent_hash_map" --size 1G path_to_a_pool
+ */
 int
 main(int argc, char *argv[])
 {
@@ -52,23 +53,23 @@ main(int argc, char *argv[])
 		auto r = pop.root()->pptr;
 
 		if (r == nullptr) {
-			// Logic when file was first opened. First, we have to
-			// allocate object of hashmap_type and attach it to the
-			// root object.
+			/* Logic when file was first opened. First, we have to
+			 * allocate object of hashmap_type and attach it to the
+			 * root object. */
 			pmem::obj::transaction::run(pop, [&] {
 				r = make_persistent<hashmap_type>();
 			});
 
 			r->runtime_initialize();
 		} else {
-			// Logic when hash_map already exists. After opening of
-			// the pool we have to call runtime_initialize()
-			// function in order to recalculate mask and check for
-			// consistentcy.
+			/* Logic when hash_map already exists. After opening of
+			 * the pool we have to call runtime_initialize()
+			 * function in order to recalculate mask and check for
+			 * consistentcy. */
 
 			r->runtime_initialize();
 
-			// defragment the whole pool at the beginning
+			/* defragment the whole pool at the beginning */
 			try {
 				r->defragment();
 			} catch (const pmem::defrag_error &e) {
@@ -83,8 +84,8 @@ main(int argc, char *argv[])
 		std::vector<std::thread> threads;
 		threads.reserve(static_cast<size_t>(THREADS_NUM));
 
-		// Insert THREADS_NUM / 3 key-value pairs to the hashmap. This
-		// operation is thread-safe.
+		/* Insert THREADS_NUM / 3 key-value pairs to the hashmap. This
+		 * operation is thread-safe. */
 		for (int i = 0; i < THREADS_NUM / 3; ++i) {
 			threads.emplace_back([&]() {
 				for (int i = 0; i < 10 * THREADS_NUM; ++i) {
@@ -94,8 +95,8 @@ main(int argc, char *argv[])
 			});
 		}
 
-		// Erase THREADS_NUM /3 key-value pairs from the hashmap. This
-		// operation is thread-safe.
+		/* Erase THREADS_NUM /3 key-value pairs from the hashmap. This
+		 * operation is thread-safe. */
 		for (int i = 0; i < THREADS_NUM / 3; ++i) {
 			threads.emplace_back([&]() {
 				for (int i = 0; i < 10 * THREADS_NUM; ++i) {
@@ -104,8 +105,8 @@ main(int argc, char *argv[])
 			});
 		}
 
-		// Check if given key is in the hashmap. For the time of an
-		// accessor life, the read-write lock is taken on the item.
+		/* Check if given key is in the hashmap. For the time of an
+		 * accessor life, the read-write lock is taken on the item. */
 		for (int i = 0; i < THREADS_NUM / 3; ++i) {
 			threads.emplace_back([&]() {
 				for (int i = 0; i < 10 * THREADS_NUM; ++i) {
@@ -126,7 +127,7 @@ main(int argc, char *argv[])
 			t.join();
 		}
 		try {
-			// defragment the whole pool at the end
+			/* defragment the whole pool at the end */
 			map.defragment();
 		} catch (const pmem::defrag_error &e) {
 			std::cerr << "Defragmentation exception: " << e.what()
@@ -145,9 +146,9 @@ main(int argc, char *argv[])
 				  << std::endl;
 			throw;
 		}
-		// Erase remaining itemes in map. This function is not
-		// thread-safe, hence the function is being called only after
-		// thread execution has completed.
+		/* Erase remaining itemes in map. This function is not
+		 * thread-safe, hence the function is being called only after
+		 * thread execution has completed. */
 		try {
 			map.clear();
 		} catch (const pmem::transaction_out_of_memory &e) {
@@ -160,15 +161,15 @@ main(int argc, char *argv[])
 			throw;
 		}
 
-		// If hash map is to be removed, free_data() method should be
-		// called first. Otherwise, if deallocating internal hash map
-		// metadata in a destructor fail program might terminate.
+		/* If hash map is to be removed, free_data() method should be
+		 * called first. Otherwise, if deallocating internal hash map
+		 * metadata in a destructor fail program might terminate. */
 		if (remove_hashmap) {
 			map.free_data();
 
-			// map.clear() // WRONG
-			// After free_data() concurrent hash map cannot be used
-			// anymore!
+			/* map.clear() // WRONG
+			 * After free_data() concurrent hash map cannot be used
+			 * anymore! */
 
 			transaction::run(pop, [&] {
 				delete_persistent<hashmap_type>(r);
@@ -186,5 +187,4 @@ main(int argc, char *argv[])
 	}
 	return 0;
 }
-
-//! [concurrent_hash_map_example]
+//! [concurrent_hash_map_ex]

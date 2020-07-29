@@ -151,7 +151,30 @@ run(nvobj::pool<root> pop)
 					nvobj::make_persistent<M>(*robj->m2);
 			});
 
+			std::unordered_map<int, typename M::iterator> its_1;
+			std::unordered_map<int, typename M::iterator> its_2;
+
+			for (auto it = robj->m1->begin(); it != robj->m1->end();
+			     ++it)
+				its_1.emplace(it->first, it);
+
+			for (auto it = robj->m2->begin(); it != robj->m2->end();
+			     ++it)
+				its_2.emplace(it->first, it);
+
 			robj->m1->swap(*robj->m2);
+
+			for (auto &e : its_1) {
+				auto m_it = e.second;
+				UT_ASSERT(e.first == m_it->first);
+				UT_ASSERT(e.first == m_it->second);
+			}
+
+			for (auto &e : its_2) {
+				auto m_it = e.second;
+				UT_ASSERT(e.first == m_it->first);
+				UT_ASSERT(e.first == m_it->second);
+			}
 
 			containers_eq(*robj->m1, *robj->m2_save);
 			containers_eq(*robj->m2, *robj->m1_save);

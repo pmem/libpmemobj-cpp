@@ -13,6 +13,7 @@
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
+#include <libpmemobj++/detail/pool_from_this.hpp>
 #include <libpmemobj++/detail/temp_value.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -37,7 +38,7 @@ namespace obj
  * interface.
  */
 template <typename T>
-class vector {
+class vector : private pool_from_this {
 public:
 	/* Member types */
 	using value_type = T;
@@ -232,7 +233,6 @@ private:
 			  InputIt>::type * = nullptr>
 	void construct_at_end(InputIt first, InputIt last);
 	void dealloc();
-	pool_base get_pool() const noexcept;
 	template <typename InputIt>
 	void internal_insert(size_type idx, InputIt first, InputIt last);
 	void realloc(size_type size);
@@ -2198,22 +2198,6 @@ vector<T>::dealloc()
 		_data = nullptr;
 		_capacity = 0;
 	}
-}
-
-/**
- * Private helper function.
- *
- * @return reference to pool_base object where vector resides.
- *
- * @pre underlying array must reside in persistent memory pool.
- */
-template <typename T>
-pool_base
-vector<T>::get_pool() const noexcept
-{
-	auto pop = pmemobj_pool_by_ptr(this);
-	assert(pop != nullptr);
-	return pool_base(pop);
 }
 
 /**

@@ -20,6 +20,7 @@
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/iterator_traits.hpp>
 #include <libpmemobj++/detail/life.hpp>
+#include <libpmemobj++/detail/pool_from_this.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/slice.hpp>
@@ -41,7 +42,7 @@ namespace obj
  * @snippet string/string.cpp string_example
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
-class basic_string {
+class basic_string : private pool_from_this {
 public:
 	/* Member types */
 	using traits_type = Traits;
@@ -367,7 +368,6 @@ private:
 			pmem::detail::is_input_iterator<InputIt>::value>::type>
 	pointer assign_large_data(InputIt first, InputIt last);
 	pointer assign_large_data(size_type count, value_type ch);
-	pool_base get_pool() const;
 	void check_pmem() const;
 	void check_tx_stage_work() const;
 	void check_pmem_tx() const;
@@ -4053,19 +4053,6 @@ basic_string<CharT, Traits>::swap(basic_string &other)
 			*_long = tmp;
 		}
 	});
-}
-
-/**
- * Return pool_base instance and assert that object is on pmem.
- */
-template <typename CharT, typename Traits>
-pool_base
-basic_string<CharT, Traits>::get_pool() const
-{
-	auto pop = pmemobj_pool_by_ptr(this);
-	assert(pop != nullptr);
-
-	return pool_base(pop);
 }
 
 /**

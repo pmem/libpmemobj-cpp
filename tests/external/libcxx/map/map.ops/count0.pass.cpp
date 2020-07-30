@@ -25,8 +25,7 @@
 // #include <map>
 // #include <cassert>
 
-#include "../is_transparent.h"
-#include "../private_constructor.h"
+#include "map_wrapper.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/concurrent_map.hpp>
@@ -35,12 +34,14 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
+#include "../is_transparent.h"
+#include "../private_constructor.h"
+
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using Type_A = nvobjex::concurrent_map<int, double, transparent_less>;
-using Type_B = nvobjex::concurrent_map<int, double,
-				       transparent_less_not_referenceable>;
+using Type_A = container_t<int, double, transparent_less>;
+using Type_B = container_t<int, double, transparent_less_not_referenceable>;
 
 struct root {
 	nvobj::persistent_ptr<Type_A> s;

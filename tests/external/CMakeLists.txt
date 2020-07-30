@@ -1043,17 +1043,32 @@ if (TEST_CONCURRENT_MAP)
 	# build_test(map_libcxx_types libcxx/map/types.pass.cpp)
 	# add_test_generic(NAME map_libcxx_types TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_empty libcxx/map/map.access/empty.pass.cpp)
-	# add_test_generic(NAME map_libcxx_empty TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_empty SRC_FILES libcxx/map/map.access/empty.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_empty TRACERS none pmemcheck memcheck)
+
+	# XXX: There is no empty() method in radix API
+	# build_test_ext(NAME map_libcxx_empty_radix SRC_FILES libcxx/map/map.access/empty.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	# add_test_generic(NAME map_libcxx_empty_radix TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME map_libcxx_iterator SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_iterator TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_max_size libcxx/map/map.access/max_size.pass.cpp)
-	# add_test_generic(NAME map_libcxx_max_size TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_iterator_radix SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME map_libcxx_iterator_radix TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_size libcxx/map/map.access/size.pass.cpp)
-	# add_test_generic(NAME map_libcxx_size TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_max_size SRC_FILES libcxx/map/map.access/max_size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_max_size TRACERS none pmemcheck memcheck)
+
+	# XXX: no member named 'difference_type'
+	# build_test_ext(NAME map_libcxx_max_size_radix SRC_FILES libcxx/map/map.access/max_size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	# add_test_generic(NAME map_libcxx_max_size_radix TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME map_libcxx_size SRC_FILES libcxx/map/map.access/size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_size TRACERS none pmemcheck memcheck)
+
+	# XXX: no member named 'insert'
+	# build_test_ext(NAME map_libcxx_size_radix SRC_FILES libcxx/map/map.access/size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	# add_test_generic(NAME map_libcxx_size_radix TRACERS none pmemcheck memcheck)
 
 	# build_test_ext(NAME map_libcxx_alloc SRC_FILES libcxx/map/map.cons/alloc.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_alloc TRACERS none pmemcheck memcheck)

@@ -1037,11 +1037,11 @@ if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 endif()
 
 if (TEST_CONCURRENT_MAP)
-	# build_test(map_libcxx_contains libcxx/map/contains.pass.cpp)
-	# add_test_generic(NAME map_libcxx_contains TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_contains SRC_FILES libcxx/map/contains.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_contains TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_types libcxx/map/types.pass.cpp)
-	# add_test_generic(NAME map_libcxx_types TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_types SRC_FILES libcxx/map/types.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_types TRACERS none pmemcheck memcheck)
 
 	# build_test(map_libcxx_empty libcxx/map/map.access/empty.pass.cpp)
 	# add_test_generic(NAME map_libcxx_empty TRACERS none pmemcheck memcheck)
@@ -1049,7 +1049,7 @@ if (TEST_CONCURRENT_MAP)
 	build_test_ext(NAME map_libcxx_iterator SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_iterator TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_max_size libcxx/map/map.access/max_size.pass.cpp)
+	# build_test_ext(NAME map_libcxx_max_size SRC_FILES libcxx/map/map.access/max_size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME map_libcxx_max_size TRACERS none pmemcheck memcheck)
 
 	# build_test(map_libcxx_size libcxx/map/map.access/size.pass.cpp)

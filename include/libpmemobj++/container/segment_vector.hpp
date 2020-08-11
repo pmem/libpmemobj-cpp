@@ -20,6 +20,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/utils.hpp>
 
 #include <vector>
 
@@ -633,7 +634,7 @@ private:
 	void construct_range(size_type idx, InputIt first, InputIt last);
 	void insert_gap(size_type idx, size_type count);
 	void shrink(size_type size_new);
-	pool_base get_pool() const noexcept;
+	pool_base get_pool();
 	void snapshot_data(size_type idx_first, size_type idx_last);
 
 	/* Data structure specific helper functions */
@@ -2635,11 +2636,9 @@ segment_vector<T, Policy>::shrink(size_type size_new)
  */
 template <typename T, typename Policy>
 pool_base
-segment_vector<T, Policy>::get_pool() const noexcept
+segment_vector<T, Policy>::get_pool()
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	assert(pop != nullptr);
-	return pool_base(pop);
+	return pmem::obj::pool_by_vptr(this);
 }
 
 /**

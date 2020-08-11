@@ -1172,9 +1172,9 @@ if (TEST_CONCURRENT_MAP)
 	build_test(map_libcxx_upper_bound0 libcxx/map/map.ops/upper_bound0.pass.cpp)
 	add_test_generic(NAME map_libcxx_upper_bound0 TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_member_swap libcxx/map/map.special/member_swap.pass.cpp)
-	# add_test_generic(NAME map_libcxx_member_swap TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_member_swap SRC_FILES libcxx/map/map.special/member_swap.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_member_swap TRACERS none pmemcheck memcheck)
 
-	# build_test(map_libcxx_non_member_swap libcxx/map/map.special/non_member_swap.pass.cpp)
-	# add_test_generic(NAME map_libcxx_non_member_swap TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME map_libcxx_non_member_swap SRC_FILES libcxx/map/map.special/non_member_swap.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_non_member_swap TRACERS none pmemcheck memcheck)
 endif()

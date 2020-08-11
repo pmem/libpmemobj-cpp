@@ -145,6 +145,15 @@ public:
 	}
 };
 
+/** Non-member swap */
+template <typename Key, typename Value, typename Comp, typename Allocator>
+void
+swap(concurrent_map<Key, Value, Comp, Allocator> &lhs,
+     concurrent_map<Key, Value, Comp, Allocator> &rhs)
+{
+	lhs.swap(rhs);
+}
+
 } /* namespace experimental */
 } /* namespace obj */
 } /* namespace pmem */

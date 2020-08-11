@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2020, Intel Corporation */
 
 /**
  * @file
@@ -18,6 +18,7 @@
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/utils.hpp>
 #include <libpmemobj/base.h>
 
 namespace pmem
@@ -686,12 +687,7 @@ private:
 	pool_base
 	_get_pool() const
 	{
-		auto pop = pmemobj_pool_by_ptr(this);
-		if (pop == nullptr)
-			throw pmem::pool_error(
-				"Object outside of pmemobj pool.");
-
-		return pool_base(pop);
+		return pmem::obj::pool_by_vptr(this);
 	}
 };
 

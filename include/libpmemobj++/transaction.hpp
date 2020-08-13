@@ -26,6 +26,15 @@ namespace obj
 {
 
 /**
+ * A structure that checks if it is possible to snapshot the specified memory.
+ * Can have specialization.
+ */
+template <typename T>
+struct can_do_snapshot {
+	static constexpr bool value = LIBPMEMOBJ_CPP_IS_TRIVIALLY_COPYABLE(T);
+};
+
+/**
  * C++ transaction handler class.
  *
  * This class is the pmemobj transaction handler. Scoped transactions
@@ -465,8 +474,7 @@ public:
 	 * supplied block of memory has to be within the pool registered in the
 	 * transaction. This function must be called during transaction. This
 	 * overload only participates in overload resolution of function
-	 * template if T satisfies requirements of
-	 * LIBPMEMOBJ_CPP_IS_TRIVIALLY_COPYABLE macro.
+	 * template if T satisfies requirements of can_do_snapshot traits.
 	 *
 	 * @param[in] addr pointer to the first object to be snapshotted.
 	 * @param[in] num number of elements to be snapshotted.
@@ -476,10 +484,9 @@ public:
 	 * @throw transaction_error when snapshotting failed or if function
 	 * wasn't called during transaction.
 	 */
-	template <
-		typename T,
-		typename std::enable_if<LIBPMEMOBJ_CPP_IS_TRIVIALLY_COPYABLE(T),
-					T>::type * = nullptr>
+	template <typename T,
+		  typename std::enable_if<can_do_snapshot<T>::value, T>::type
+			  * = nullptr>
 	static void
 	snapshot(const T *addr, size_t num = 1)
 	{

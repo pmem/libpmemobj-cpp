@@ -59,7 +59,7 @@ public:
 	/**
 	 * The self_relative_ptr difference type.
 	 */
-	using difference_type = std::ptrdiff_t;
+	using difference_type = typename base_type::difference_type;
 
 	/**
 	 * The type of the value pointed to by the self_relative_ptr.
@@ -145,19 +145,9 @@ public:
 	{
 	}
 
-	/**
-	 * Verify if element_type is not polymorphic
-	 */
-	void
-	verify_types()
-	{
-		static_assert(!std::is_polymorphic<element_type>::value,
-			      "Polymorphic types are not supported");
-	}
-
 	~self_relative_ptr()
 	{
-		verify_types();
+		verify_type();
 	}
 
 	/**
@@ -355,6 +345,17 @@ public:
 		detail::conditional_add_to_tx(this);
 		this->offset -= s * static_cast<difference_type>(sizeof(T));
 		return *this;
+	}
+
+protected:
+	/**
+	 * Verify if element_type is not polymorphic
+	 */
+	void
+	verify_type()
+	{
+		static_assert(!std::is_polymorphic<element_type>::value,
+			      "Polymorphic types are not supported");
 	}
 
 private:

@@ -245,7 +245,10 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "concurrent_hash_map.hpp" EXCLUDE
 	PATTERN "segment_vector.hpp" EXCLUDE
 	PATTERN "enumerable_thread_specific.hpp" EXCLUDE
-	PATTERN "concurrent_map.hpp" EXCLUDE)
+	PATTERN "concurrent_map.hpp" EXCLUDE
+	PATTERN "self_relative_ptr.hpp" EXCLUDE
+	PATTERN "self_relative_ptr_base.hpp" EXCLUDE
+	)
 
 if(INSTALL_ARRAY)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "array.hpp")

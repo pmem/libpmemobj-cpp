@@ -253,6 +253,8 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "inline_string.hpp" EXCLUDE
 	PATTERN "bytes_view.hpp" EXCLUDE
 	PATTERN "radix_tree.hpp" EXCLUDE
+	PATTERN "self_relative_ptr_base_impl.hpp" EXCLUDE
+	PATTERN "atomic_self_relative_ptr.hpp" EXCLUDE
 	)
 
 if(INSTALL_ARRAY)
@@ -290,6 +292,8 @@ endif()
 if(INSTALL_SELF_RELATIVE_POINTER)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr.hpp")
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr_base.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr_base_impl.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "atomic_self_relative_ptr.hpp")
 endif()
 
 if(INSTALL_RADIX_TREE)

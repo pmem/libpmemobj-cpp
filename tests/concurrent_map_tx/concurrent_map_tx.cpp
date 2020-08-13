@@ -110,7 +110,8 @@ test_tx_exception(nvobj::pool<root> &pop)
 
 		assert_tx_exception([&] { (void)map->try_emplace(0, 0); });
 
-		assert_tx_exception([&] { (void)map->unsafe_erase(0); });
+		assert_tx_exception(
+			[&] { (void)map->unsafe_erase(key_type(0)); });
 
 		assert_tx_exception(
 			[&] { (void)map->unsafe_erase(map->begin()); });

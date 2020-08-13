@@ -248,6 +248,9 @@ if (TEST_SELF_RELATIVE_POINTER)
 
 	build_test(self_relative_ptr_arith ptr_arith/self_relative_ptr_arith.cpp)
 	add_test_generic(NAME self_relative_ptr_arith TRACERS none memcheck pmemcheck)
+
+	build_test(self_relative_ptr_atomic self_relative_ptr_atomic/self_relative_ptr_atomic.cpp)
+	add_test_generic(NAME self_relative_ptr_atomic TRACERS none memcheck drd)
 endif()
 
 if (TEST_ARRAY)

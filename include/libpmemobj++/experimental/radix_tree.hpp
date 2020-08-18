@@ -112,15 +112,15 @@ public:
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 	radix_tree();
+
 	template <class InputIt>
 	radix_tree(InputIt first, InputIt last);
+	radix_tree(const radix_tree &m);
+	radix_tree(radix_tree &&m);
+	radix_tree(std::initializer_list<value_type> il);
 
-	// radix_tree(const radix_tree& m);
-	// radix_tree(radix_tree&& m);
-	// radix_tree(initializer_list<value_type> il);
-
-	// radix_tree& operator=(const radix_tree& m);
-	// radix_tree& operator=(radix_tree&& m)
+	radix_tree &operator=(const radix_tree &m);
+	radix_tree &operator=(radix_tree &&m);
 
 	~radix_tree();
 
@@ -205,8 +205,8 @@ public:
 	const_reverse_iterator rend() const;
 
 	/* capacity: */
-	// bool      empty()    const noexcept;
-	// size_type max_size() const noexcept;
+	bool empty() const noexcept;
+	size_type max_size() const noexcept;
 	uint64_t size() const noexcept;
 
 	void swap(radix_tree &rhs);
@@ -375,6 +375,8 @@ private:
 		std::tuple<Args2...> &second_args,
 		detail::index_sequence<I1...>, detail::index_sequence<I2...>);
 
+	static persistent_ptr<leaf> make_internal(const leaf &other);
+
 	tagged_node_ptr parent = nullptr;
 };
 
@@ -525,9 +527,8 @@ public:
 	radix_tree_iterator &operator++();
 	radix_tree_iterator &operator--();
 
-	// XXX:
-	// radix_tree_iterator operator++(int);
-	// radix_tree_iterator operator--(int);
+	radix_tree_iterator operator++(int);
+	radix_tree_iterator operator--(int);
 
 	template <bool C>
 	bool operator!=(const radix_tree_iterator<C> &rhs) const;
@@ -616,6 +617,82 @@ radix_tree<Key, Value, BytesView>::radix_tree(InputIt first, InputIt last)
 		emplace(*it);
 }
 
+/* Copy constructor, description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::radix_tree(const radix_tree &m)
+{
+	check_pmem();
+	check_tx_stage_work();
+
+	root = nullptr;
+	size_ = 0;
+
+	for (auto it = m.cbegin(); it != m.cend(); it++)
+		emplace(*it);
+}
+
+/* Move constructor, description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::radix_tree(radix_tree &&m)
+{
+	check_pmem();
+	check_tx_stage_work();
+
+	root = m.root;
+	size_ = m.size_;
+	m.root = nullptr;
+	m.size_ = 0;
+}
+
+/* description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::radix_tree(
+	std::initializer_list<value_type> il)
+    : radix_tree(il.begin(), il.end())
+{
+}
+
+/* description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView> &
+radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
+{
+	check_pmem();
+	check_tx_stage_work();
+
+	if (this != &other) {
+		clear();
+
+		root = nullptr;
+		size_ = 0;
+
+		for (auto it = other.cbegin(); it != other.cend(); it++)
+			emplace(*it);
+	}
+
+	return *this;
+}
+
+/* description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView> &
+radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
+{
+	check_pmem();
+	check_tx_stage_work();
+
+	if (this != &other) {
+		clear();
+
+		root = other.root;
+		size_ = other.size_;
+		other.root = nullptr;
+		other.size_ = 0;
+	}
+
+	return *this;
+}
+
 /**
  * Destructor.
  */
@@ -627,6 +704,28 @@ radix_tree<Key, Value, BytesView>::~radix_tree()
 	} catch (...) {
 		std::terminate();
 	}
+}
+
+/**
+ * Checks whether the container is empty.
+ *
+ * @return true if container is empty, false otherwise.
+ */
+template <typename Key, typename Value, typename BytesView>
+bool
+radix_tree<Key, Value, BytesView>::empty() const noexcept
+{
+	return size_ == 0;
+}
+
+/**
+ * @return maximum number of elements the container is able to hold
+ */
+template <typename Key, typename Value, typename BytesView>
+typename radix_tree<Key, Value, BytesView>::size_type
+radix_tree<Key, Value, BytesView>::max_size() const noexcept
+{
+	return std::numeric_limits<std::ptrdiff_t>::max();
 }
 
 /**
@@ -2073,6 +2172,32 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
 
 template <typename Key, typename Value, typename BytesView>
 template <bool IsConst>
+typename radix_tree<Key, Value,
+		    BytesView>::template radix_tree_iterator<IsConst>
+radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++(int)
+{
+	auto tmp = *this;
+
+	++(*this);
+
+	return tmp;
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <bool IsConst>
+typename radix_tree<Key, Value,
+		    BytesView>::template radix_tree_iterator<IsConst>
+radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--(int)
+{
+	auto tmp = *this;
+
+	--(*this);
+
+	return tmp;
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <bool IsConst>
 template <bool C>
 bool
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator!=(
@@ -2284,6 +2409,13 @@ radix_tree<Key, Value, BytesView>::leaf::make_internal(
 	new (val_dst) Value(std::forward<Args2>(std::get<I2>(second_args))...);
 
 	return ptr;
+}
+
+template <typename Key, typename Value, typename BytesView>
+persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
+radix_tree<Key, Value, BytesView>::leaf::make_internal(const leaf &other)
+{
+	return make_internal(other.key(), other.value());
 }
 
 /**

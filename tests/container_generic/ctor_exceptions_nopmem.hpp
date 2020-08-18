@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2018-2020, Intel Corporation */
 
-#ifndef LIBPMEMOBJ_CPP_TESTS_CTOR_EXCEPTIONS
-#define LIBPMEMOBJ_CPP_TESTS_CTOR_EXCEPTIONS
+#ifndef LIBPMEMOBJ_CPP_TESTS_CTOR_NOPMEM_EXCEPTIONS
+#define LIBPMEMOBJ_CPP_TESTS_CTOR_NOPMEM_EXCEPTIONS
 
 #include "unittest.hpp"
 

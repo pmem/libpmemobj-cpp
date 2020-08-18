@@ -902,6 +902,9 @@ if (TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME radix_ctor_exceptions_notx SRC_FILES map/map_ctor_exception_notx.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_ctor_exceptions_notx TRACERS none memcheck pmemcheck)
 endif()
 
 add_subdirectory(external)

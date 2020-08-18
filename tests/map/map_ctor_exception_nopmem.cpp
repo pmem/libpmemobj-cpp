@@ -30,12 +30,9 @@ test(int argc, char *argv[])
 	(void)r;
 	test_default_ctor<map_type>();
 	test_iter_iter_ctor<map_type>();
-
-#if !defined(LIBPMEMOBJ_CPP_TESTS_RADIX)
-	test_copy_ctor<map_type>(pop, r->pptr);
 	test_initializer_list_ctor<map_type>();
 	test_move_ctor<map_type>(pop, r->pptr);
-#endif
+	test_copy_ctor<map_type>(pop, r->pptr);
 
 	pop.close();
 }

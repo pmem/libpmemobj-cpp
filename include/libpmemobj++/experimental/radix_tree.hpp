@@ -115,9 +115,9 @@ public:
 	template <class InputIt>
 	radix_tree(InputIt first, InputIt last);
 
-	// radix_tree(const radix_tree& m);
-	// radix_tree(radix_tree&& m);
-	// radix_tree(initializer_list<value_type> il);
+	radix_tree(const radix_tree &m);
+	radix_tree(radix_tree &&m);
+	radix_tree(std::initializer_list<value_type> il);
 
 	// radix_tree& operator=(const radix_tree& m);
 	// radix_tree& operator=(radix_tree&& m)
@@ -205,8 +205,8 @@ public:
 	const_reverse_iterator rend() const;
 
 	/* capacity: */
-	// bool      empty()    const noexcept;
-	// size_type max_size() const noexcept;
+	bool empty() const noexcept;
+	size_type max_size() const noexcept;
 	uint64_t size() const noexcept;
 
 	void swap(radix_tree &rhs);
@@ -616,6 +616,41 @@ radix_tree<Key, Value, BytesView>::radix_tree(InputIt first, InputIt last)
 		emplace(*it);
 }
 
+/* Copy constructor, description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::radix_tree(const radix_tree &m)
+{
+	check_pmem();
+	check_tx_stage_work();
+
+	root = nullptr;
+	size_ = 0;
+
+	for (auto it = m.cbegin(); it != m.cend(); it++)
+		emplace(*it);
+}
+
+/* Move constructor, description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::radix_tree(radix_tree &&m)
+{
+	check_pmem();
+	check_tx_stage_work();
+
+	root = m.root;
+	size = m.size_;
+	m.root = nullptr;
+	m.size_ = 0;
+}
+
+/* description todo */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::radix_tree(
+	std::initializer_list<value_type> il)
+    : radix_tree(il.begin(), il.end())
+{
+}
+
 /**
  * Destructor.
  */
@@ -627,6 +662,29 @@ radix_tree<Key, Value, BytesView>::~radix_tree()
 	} catch (...) {
 		std::terminate();
 	}
+}
+
+/**
+ * Checks whether the container is empty.
+ *
+ * @return true if container is empty, false otherwise.
+ */
+template <typename Key, typename Value, typename BytesView>
+bool
+radix_tree<Key, Value, BytesView>::empty() const noexcept
+{
+	return size_ == 0;
+}
+
+/**
+ * @return maximum number of elements the container is able to hold due to PMDK
+ * limitations.
+ */
+template <typename Key, typename Value, typename BytesView>
+typename radix_tree<Key, Value, BytesView>::size_type
+radix_tree<Key, Value, BytesView>::max_size() const noexcept
+{
+	return PMEMOBJ_MAX_ALLOC_SIZE / sizeof(value_type);
 }
 
 /**

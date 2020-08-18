@@ -112,3 +112,4 @@ have the well-known STL-like interface and they work with STL algorithms.
  * vector with STL-like interface - [pmem::obj::vector](@ref pmem::obj::vector)
  * segment_vector with std::vector-like interface (no STL counterpart) - [pmem::obj::segment_vector](@ref pmem::obj::segment_vector)
  * concurrent_hash_map (no STL counterpart) - [pmem::obj::concurrent_hash_map](@ref pmem::obj::concurrent_hash_map)
+ * radix_tree (partially compatible with std::map) - [pmem::obj::experimental::radix_tree](@ref pmem::obj::experimental::radix_tree)

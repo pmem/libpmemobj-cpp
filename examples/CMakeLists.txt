@@ -70,6 +70,12 @@ add_check_whitespace(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
 add_cppstyle(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
 add_check_whitespace(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
 
+add_cppstyle(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_string/*.*pp)
+add_check_whitespace(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_string/*.*pp)
+
+add_cppstyle(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
+add_check_whitespace(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
@@ -158,6 +164,14 @@ add_example(array array/array.cpp)
 
 if (TEST_VECTOR)
 	add_example(slab slab/slab.cpp)
+endif()
+
+add_example(inline_string inline_string/inline_string.cpp)
+
+if (TEST_RADIX_TREE)
+	add_example(radix_tree_dot radix_tree/radix_tree_dot.cpp)
+	add_example(radix_tree_basic radix_tree/radix_tree_basic.cpp)
+	add_example(radix_tree_custom_key radix_tree/radix_tree_custom_key.cpp)
 endif()
 
 add_library(doc_snippets_v OBJECT doc_snippets/v.cpp)

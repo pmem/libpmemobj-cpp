@@ -24,6 +24,7 @@
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/utils.hpp>
 
 namespace pmem
 {
@@ -4062,10 +4063,7 @@ template <typename CharT, typename Traits>
 pool_base
 basic_string<CharT, Traits>::get_pool() const
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	assert(pop != nullptr);
-
-	return pool_base(pop);
+	return pmem::obj::pool_by_vptr(this);
 }
 
 /**

@@ -524,7 +524,14 @@ public:
 	reference operator*() const;
 	pointer operator->() const;
 
-	template <typename T>
+	template <typename V = Value,
+		  typename Enable = typename std::enable_if<
+			  std::is_same<V, inline_string>::value>::type>
+	void assign_val(string_view rhs);
+
+	template <typename T, typename V = Value,
+		  typename Enable = typename std::enable_if<
+			  !std::is_same<V, inline_string>::value>::type>
 	void assign_val(T &&rhs);
 
 	radix_tree_iterator &operator++();
@@ -1994,23 +2001,15 @@ typename radix_tree<Key, Value,
  */
 template <typename Key, typename Value, typename BytesView>
 template <bool IsConst>
-template <typename T>
+template <typename V, typename Enable>
 void
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
-	T &&rhs)
+	string_view rhs)
 {
-	/* Number of bytes from the beginning of the leaf to the beginning of
-	 * the value string. */
-	auto occupied =
-		static_cast<size_type>((char *)&leaf_->value() - (char *)leaf_);
-	auto free_space =
-		pmemobj_alloc_usable_size(pmemobj_oid(leaf_)) - occupied;
-
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
-	if (real_size<Value>::value(rhs) <= free_space) {
-		transaction::run(
-			pop, [&] { leaf_->value() = std::forward<T>(rhs); });
+	if (rhs.size() <= leaf_->value().capacity()) {
+		transaction::run(pop, [&] { leaf_->value() = rhs; });
 	} else {
 		tagged_node_ptr *slot;
 
@@ -2026,12 +2025,22 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 
 		transaction::run(pop, [&] {
 			*slot = leaf::make(old_leaf->parent, old_leaf->key(),
-					   std::forward<T>(rhs));
+					   rhs);
 			delete_persistent<typename radix_tree::leaf>(old_leaf);
 		});
 
 		leaf_ = slot->get_leaf();
 	}
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <bool IsConst>
+template <typename T, typename V, typename Enable>
+void
+radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
+	T &&rhs)
+{
+	leaf_->value() = std::forward<T>(rhs);
 }
 
 template <typename Key, typename Value, typename BytesView>

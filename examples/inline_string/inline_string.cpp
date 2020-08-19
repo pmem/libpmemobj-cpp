@@ -72,9 +72,7 @@ assign_and_print_object(pmem::obj::pool<root> pop)
 
 	auto new_value = "some new, longer value";
 
-	if (pmemobj_alloc_usable_size(pmemobj_oid(r->o.get())) -
-		    sizeof(Object) >=
-	    strlen(new_value) + sizeof('\0')) {
+	if (r->o->s.capacity() >= strlen(new_value)) {
 		/* If there is enough capacity, we can assign the new value. */
 		r->o->s.assign(new_value);
 	} else {

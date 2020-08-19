@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['count',['count',['../classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html#acac793b83518ebfb42b91bb1ae4f9826',1,'pmem::obj::transaction::automatic::uncaught_exception_counter']]]
+  ['byte',['byte',['../structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html#a881076f91c2ff6982dff27317595572a',1,'pmem::obj::experimental::radix_tree::node']]]
 ];

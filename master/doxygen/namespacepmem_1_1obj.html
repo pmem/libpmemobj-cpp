@@ -157,6 +157,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html">standard_alloc_policy&lt; void &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Void specialization of the standard allocation policy.  <a href="classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1string__view.html">string_view</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Our brief std::string_view implementation.  <a href="classpmem_1_1obj_1_1string__view.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1timed__mutex.html">timed_mutex</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory resident <a class="el" href="classpmem_1_1obj_1_1timed__mutex.html" title="Persistent memory resident timed_mutex implementation.">timed_mutex</a> implementation.  <a href="classpmem_1_1obj_1_1timed__mutex.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2365,49 +2368,8 @@ template&lt;typename T , typename Policy &gt; </div>
 
 </div>
 </div>
-<a id="a26c3d5b212ac54fbc0d5ad9e9ce5685b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26c3d5b212ac54fbc0d5ad9e9ce5685b">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[5/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Policy &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool pmem::obj::operator&lt; </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Comparison operator. </p>
-<p>Compares the contents of two containers lexicographically.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, SegmentPolicy, StoragePolicy&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is std::vector&lt;T&gt;.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically less than contents of rhs, false otherwise. </dd></dl>
-
-</div>
-</div>
 <a id="a49fd05c4944d079ea05dd0cb5b203b75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49fd05c4944d079ea05dd0cb5b203b75">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a49fd05c4944d079ea05dd0cb5b203b75">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[5/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2444,6 +2406,47 @@ template&lt;typename T , typename Y &gt; </div>
 
 <p>Less than operator. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the uuid_lo of lhs is less than the uuid_lo of rhs, should they be equal, the offsets are compared. Returns false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a26c3d5b212ac54fbc0d5ad9e9ce5685b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26c3d5b212ac54fbc0d5ad9e9ce5685b">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[6/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Policy &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pmem::obj::operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Comparison operator. </p>
+<p>Compares the contents of two containers lexicographically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, SegmentPolicy, StoragePolicy&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is std::vector&lt;T&gt;.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically less than contents of rhs, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -2652,8 +2655,49 @@ template&lt;typename T , typename Policy &gt; </div>
 
 </div>
 </div>
+<a id="a48591ec64f0a18f0f81c9c7c79b265a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48591ec64f0a18f0f81c9c7c79b265a3">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[5/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Y &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pmem::obj::operator&lt;= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; Y &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Less or equal than operator. </p>
+<p>See less than operator for comparison rules. </p>
+
+</div>
+</div>
 <a id="a433769b18c43b2b1ca9fcb25c62b203f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a433769b18c43b2b1ca9fcb25c62b203f">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[5/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a433769b18c43b2b1ca9fcb25c62b203f">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[6/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2694,7 +2738,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div>
 </div>
 <a id="a84f62693161b852a8a897973f0ea67cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a84f62693161b852a8a897973f0ea67cb">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a84f62693161b852a8a897973f0ea67cb">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[7/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2731,47 +2775,6 @@ template&lt;typename T , typename Policy &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically lesser than or equal to contents of rhs, false otherwise. </dd></dl>
-
-</div>
-</div>
-<a id="a48591ec64f0a18f0f81c9c7c79b265a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a48591ec64f0a18f0f81c9c7c79b265a3">&#9670;&nbsp;</a></span>operator&lt;=() <span class="overload">[7/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Y &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool pmem::obj::operator&lt;= </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt; const &amp;&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; Y &gt; const &amp;&#160;</td>
-          <td class="paramname"><em>rhs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Less or equal than operator. </p>
-<p>See less than operator for comparison rules. </p>
 
 </div>
 </div>
@@ -3403,49 +3406,8 @@ template&lt;typename T , typename Policy &gt; </div>
 
 </div>
 </div>
-<a id="acfe18f4fe61e0fbe10034f84a4b3a691"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acfe18f4fe61e0fbe10034f84a4b3a691">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[6/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Policy &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool pmem::obj::operator&gt; </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Comparison operator. </p>
-<p>Compares the contents of two containers lexicographically.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is std::vector&lt;T&gt;. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically greater than contents of rhs, false otherwise. </dd></dl>
-
-</div>
-</div>
 <a id="a4b2a880e3da360c959414e7ea9268456"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b2a880e3da360c959414e7ea9268456">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[7/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b2a880e3da360c959414e7ea9268456">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[6/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3482,6 +3444,47 @@ template&lt;typename T , typename Y &gt; </div>
 
 <p>Greater than operator. </p>
 <p>See less than operator for comparison rules. </p>
+
+</div>
+</div>
+<a id="acfe18f4fe61e0fbe10034f84a4b3a691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfe18f4fe61e0fbe10034f84a4b3a691">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[7/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Policy &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pmem::obj::operator&gt; </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Comparison operator. </p>
+<p>Compares the contents of two containers lexicographically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is std::vector&lt;T&gt;. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically greater than contents of rhs, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -3690,49 +3693,8 @@ template&lt;typename T , typename Policy &gt; </div>
 
 </div>
 </div>
-<a id="aed237e8ec30fc8cd3efbf780eb476125"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed237e8ec30fc8cd3efbf780eb476125">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[6/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Policy &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool pmem::obj::operator&gt;= </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Comparison operator. </p>
-<p>Compares the contents of two containers lexicographically.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is std::vector&lt;T&gt;. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically greater than or equal to contents of rhs, false otherwise. </dd></dl>
-
-</div>
-</div>
 <a id="a696298dbdd381bae03541da80cbe485d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a696298dbdd381bae03541da80cbe485d">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[7/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a696298dbdd381bae03541da80cbe485d">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[6/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3769,6 +3731,47 @@ template&lt;typename T , typename Y &gt; </div>
 
 <p>Greater or equal than operator. </p>
 <p>See less than operator for comparison rules. </p>
+
+</div>
+</div>
+<a id="aed237e8ec30fc8cd3efbf780eb476125"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed237e8ec30fc8cd3efbf780eb476125">&#9670;&nbsp;</a></span>operator&gt;=() <span class="overload">[7/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Policy &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pmem::obj::operator&gt;= </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Comparison operator. </p>
+<p>Compares the contents of two containers lexicographically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is std::vector&lt;T&gt;. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically greater than or equal to contents of rhs, false otherwise. </dd></dl>
 
 </div>
 </div>

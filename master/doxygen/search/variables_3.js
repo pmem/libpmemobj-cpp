@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['result',['result',['../classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7',1,'pmem::defrag_error']]]
+  ['on_5finit_5fsize',['on_init_size',['../classpmem_1_1detail_1_1concurrent__skip__list.html#aa5de4a38ce837e21f0bfca796142fadc',1,'pmem::detail::concurrent_skip_list']]]
 ];

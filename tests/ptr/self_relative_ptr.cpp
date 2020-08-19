@@ -112,6 +112,20 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 	}
 }
 
+void
+test_base_ptr_assignment()
+{
+	int tmp;
+
+	self_relative_ptr_base ptr1 = &tmp;
+	self_relative_ptr_base ptr2 = nullptr;
+
+	ptr1 = ptr2;
+
+	UT_ASSERT(ptr1.to_void_pointer() == nullptr);
+	UT_ASSERT(ptr2.to_void_pointer() == nullptr);
+}
+
 } /* namespace */
 
 static void
@@ -138,6 +152,7 @@ test(int argc, char *argv[])
 	test_ptr_array(pop);
 	test_offset(pop);
 	test_base_ptr_casting(pop);
+	test_base_ptr_assignment();
 
 	pop.close();
 }

@@ -70,7 +70,7 @@ public:
 	 * @param ptr volatile pointer, pointing to persistent memory.
 	 */
 	self_relative_ptr_base(void *ptr) noexcept
-	    : offset(pointer_to_offset(static_cast<byte_ptr_type>(ptr)))
+	    : offset(pointer_to_offset(ptr))
 	{
 	}
 
@@ -80,7 +80,7 @@ public:
 	 * @param r pointer to the same type.
 	 */
 	self_relative_ptr_base(self_relative_ptr_base const &r) noexcept
-	    : offset(r.offset + distance_between_self(r))
+	    : offset(pointer_to_offset(r))
 	{
 	}
 
@@ -100,7 +100,7 @@ public:
 		if (this == &r)
 			return *this;
 		detail::conditional_add_to_tx(this);
-		offset = r.offset + distance_between_self(r);
+		offset = pointer_to_offset(r);
 		return *this;
 	}
 
@@ -218,13 +218,29 @@ protected:
 	}
 
 	/**
-	 * Self distance between two relative pointers
+	 * Conversion self_relative_ptr_base to offset from itself
 	 */
 	difference_type
-	distance_between_self(const self_relative_ptr_base &ptr)
+	pointer_to_offset(const self_relative_ptr_base &ptr) const noexcept
 	{
-		return reinterpret_cast<const_byte_ptr_type>(&ptr) -
+		/*
+		This version without branches is vectorization-friendly.
+		mask = is_null() should not create a branch in the code.
+		In this line, we just assign 0 or 1 to the mask variable.
+
+		This code is equal:
+		return ptr.is_null()
+			? nullptr_offset
+			: ptr.offset + this->distance_between_self(ptr);
+		*/
+		uintptr_t mask = ptr.is_null();
+		--mask;
+		difference_type distance_between_self =
+			reinterpret_cast<const_byte_ptr_type>(&ptr) -
 			reinterpret_cast<const_byte_ptr_type>(this);
+		distance_between_self &=
+			reinterpret_cast<difference_type &>(mask);
+		return ptr.offset + distance_between_self;
 	}
 
 	/**
@@ -233,10 +249,23 @@ protected:
 	difference_type
 	pointer_to_offset(void *ptr) const noexcept
 	{
+		/*
+		This version without branches is vectorization-friendly.
+		mask = ptr == nullptr should not create a branch in the code.
+		In this line, we just assign 0 or 1 to the mask variable.
+
+		This code is equal:
 		if (ptr == nullptr)
-			return nullptr_offset;
-		return static_cast<byte_ptr_type>(ptr) -
+		    return nullptr_offset
+		else
+		    return ptr - this - 1;
+		*/
+		uintptr_t mask = ptr == nullptr;
+		--mask;
+		difference_type new_offset = static_cast<byte_ptr_type>(ptr) -
 			reinterpret_cast<const_byte_ptr_type>(this) - 1;
+		new_offset &= reinterpret_cast<difference_type &>(mask);
+		return new_offset;
 	}
 
 	/* The offset from self */

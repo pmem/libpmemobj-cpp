@@ -20,6 +20,8 @@
 
 #include "unittest.hpp"
 
+#include "map_wrapper.hpp"
+
 #include <libpmemobj++/experimental/concurrent_map.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -32,10 +34,9 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using C = nvobjex::concurrent_map<int, double>;
-using C2 = nvobjex::concurrent_map<int, double, transparent_less>;
-using C3 =
-	nvobjex::concurrent_map<PrivateConstructor, double, transparent_less>;
+using C = container_t<int, double>;
+using C2 = container_t<int, double, transparent_less>;
+using C3 = container_t<PrivateConstructor, double, transparent_less>;
 struct root {
 	nvobj::persistent_ptr<C> s;
 	nvobj::persistent_ptr<C2> s2;
@@ -61,37 +62,37 @@ run(pmem::obj::pool<root> &pop)
 			R r = m.lower_bound(5);
 			UT_ASSERT(r == m.begin());
 			r = m.lower_bound(7);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.lower_bound(9);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(11);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(13);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(15);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(17);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(19);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(4);
-			UT_ASSERT(r == next(m.begin(), 0));
+			UT_ASSERT(r == std::next(m.begin(), 0));
 			r = m.lower_bound(6);
-			UT_ASSERT(r == next(m.begin(), 1));
+			UT_ASSERT(r == std::next(m.begin(), 1));
 			r = m.lower_bound(8);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(10);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(12);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(14);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(16);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(18);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(20);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 			pmem::obj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<M>(robj->s);
 			});
@@ -108,37 +109,37 @@ run(pmem::obj::pool<root> &pop)
 			R r = m.lower_bound(5);
 			UT_ASSERT(r == m.begin());
 			r = m.lower_bound(7);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.lower_bound(9);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(11);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(13);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(15);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(17);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(19);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(4);
-			UT_ASSERT(r == next(m.begin(), 0));
+			UT_ASSERT(r == std::next(m.begin(), 0));
 			r = m.lower_bound(6);
-			UT_ASSERT(r == next(m.begin(), 1));
+			UT_ASSERT(r == std::next(m.begin(), 1));
 			r = m.lower_bound(8);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(10);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(12);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(14);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(16);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(18);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(20);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 			pmem::obj::transaction::run(pop, [&] {
 				nvobj::delete_persistent<M>(robj->s);
 			});
@@ -157,37 +158,37 @@ run(pmem::obj::pool<root> &pop)
 			R r = m.lower_bound(5);
 			UT_ASSERT(r == m.begin());
 			r = m.lower_bound(7);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.lower_bound(9);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(11);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(13);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(15);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(17);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(19);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(4);
-			UT_ASSERT(r == next(m.begin(), 0));
+			UT_ASSERT(r == std::next(m.begin(), 0));
 			r = m.lower_bound(6);
-			UT_ASSERT(r == next(m.begin(), 1));
+			UT_ASSERT(r == std::next(m.begin(), 1));
 			r = m.lower_bound(8);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(10);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(12);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(14);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(16);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(18);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(20);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 		}
 		{
 			typedef M::const_iterator R;
@@ -197,37 +198,37 @@ run(pmem::obj::pool<root> &pop)
 			R r = m.lower_bound(5);
 			UT_ASSERT(r == m.begin());
 			r = m.lower_bound(7);
-			UT_ASSERT(r == next(m.begin()));
+			UT_ASSERT(r == std::next(m.begin()));
 			r = m.lower_bound(9);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(11);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(13);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(15);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(17);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(19);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(4);
-			UT_ASSERT(r == next(m.begin(), 0));
+			UT_ASSERT(r == std::next(m.begin(), 0));
 			r = m.lower_bound(6);
-			UT_ASSERT(r == next(m.begin(), 1));
+			UT_ASSERT(r == std::next(m.begin(), 1));
 			r = m.lower_bound(8);
-			UT_ASSERT(r == next(m.begin(), 2));
+			UT_ASSERT(r == std::next(m.begin(), 2));
 			r = m.lower_bound(10);
-			UT_ASSERT(r == next(m.begin(), 3));
+			UT_ASSERT(r == std::next(m.begin(), 3));
 			r = m.lower_bound(12);
-			UT_ASSERT(r == next(m.begin(), 4));
+			UT_ASSERT(r == std::next(m.begin(), 4));
 			r = m.lower_bound(14);
-			UT_ASSERT(r == next(m.begin(), 5));
+			UT_ASSERT(r == std::next(m.begin(), 5));
 			r = m.lower_bound(16);
-			UT_ASSERT(r == next(m.begin(), 6));
+			UT_ASSERT(r == std::next(m.begin(), 6));
 			r = m.lower_bound(18);
-			UT_ASSERT(r == next(m.begin(), 7));
+			UT_ASSERT(r == std::next(m.begin(), 7));
 			r = m.lower_bound(20);
-			UT_ASSERT(r == next(m.begin(), 8));
+			UT_ASSERT(r == std::next(m.begin(), 8));
 		}
 	}
 #endif
@@ -246,76 +247,79 @@ run(pmem::obj::pool<root> &pop)
 		R r = m.lower_bound(5);
 		UT_ASSERT(r == m.begin());
 		r = m.lower_bound(7);
-		UT_ASSERT(r == next(m.begin()));
+		UT_ASSERT(r == std::next(m.begin()));
 		r = m.lower_bound(9);
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.lower_bound(11);
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.lower_bound(13);
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.lower_bound(15);
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.lower_bound(17);
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.lower_bound(19);
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.lower_bound(4);
-		UT_ASSERT(r == next(m.begin(), 0));
+		UT_ASSERT(r == std::next(m.begin(), 0));
 		r = m.lower_bound(6);
-		UT_ASSERT(r == next(m.begin(), 1));
+		UT_ASSERT(r == std::next(m.begin(), 1));
 		r = m.lower_bound(8);
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.lower_bound(10);
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.lower_bound(12);
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.lower_bound(14);
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.lower_bound(16);
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.lower_bound(18);
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.lower_bound(20);
-		UT_ASSERT(r == next(m.begin(), 8));
-
+		UT_ASSERT(r == std::next(m.begin(), 8));
+#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX // XXX: radix tree does provide heterogenous
+				   // methods.
 		r = m.lower_bound(C2Int(5));
 		UT_ASSERT(r == m.begin());
 		r = m.lower_bound(C2Int(7));
-		UT_ASSERT(r == next(m.begin()));
+		UT_ASSERT(r == std::next(m.begin()));
 		r = m.lower_bound(C2Int(9));
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.lower_bound(C2Int(11));
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.lower_bound(C2Int(13));
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.lower_bound(C2Int(15));
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.lower_bound(C2Int(17));
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.lower_bound(C2Int(19));
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.lower_bound(C2Int(4));
-		UT_ASSERT(r == next(m.begin(), 0));
+		UT_ASSERT(r == std::next(m.begin(), 0));
 		r = m.lower_bound(C2Int(6));
-		UT_ASSERT(r == next(m.begin(), 1));
+		UT_ASSERT(r == std::next(m.begin(), 1));
 		r = m.lower_bound(C2Int(8));
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.lower_bound(C2Int(10));
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.lower_bound(C2Int(12));
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.lower_bound(C2Int(14));
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.lower_bound(C2Int(16));
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.lower_bound(C2Int(18));
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.lower_bound(C2Int(20));
-		UT_ASSERT(r == next(m.begin(), 8));
+		UT_ASSERT(r == std::next(m.begin(), 8));
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
+#endif
 	}
-
+#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX // XXX: radix tree does provide heterogenous
+				   // methods.
 	{
 		typedef PrivateConstructor PC;
 		typedef C3 M;
@@ -335,40 +339,41 @@ run(pmem::obj::pool<root> &pop)
 		R r = m.lower_bound(5);
 		UT_ASSERT(r == m.begin());
 		r = m.lower_bound(7);
-		UT_ASSERT(r == next(m.begin()));
+		UT_ASSERT(r == std::next(m.begin()));
 		r = m.lower_bound(9);
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.lower_bound(11);
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.lower_bound(13);
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.lower_bound(15);
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.lower_bound(17);
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.lower_bound(19);
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.lower_bound(4);
-		UT_ASSERT(r == next(m.begin(), 0));
+		UT_ASSERT(r == std::next(m.begin(), 0));
 		r = m.lower_bound(6);
-		UT_ASSERT(r == next(m.begin(), 1));
+		UT_ASSERT(r == std::next(m.begin(), 1));
 		r = m.lower_bound(8);
-		UT_ASSERT(r == next(m.begin(), 2));
+		UT_ASSERT(r == std::next(m.begin(), 2));
 		r = m.lower_bound(10);
-		UT_ASSERT(r == next(m.begin(), 3));
+		UT_ASSERT(r == std::next(m.begin(), 3));
 		r = m.lower_bound(12);
-		UT_ASSERT(r == next(m.begin(), 4));
+		UT_ASSERT(r == std::next(m.begin(), 4));
 		r = m.lower_bound(14);
-		UT_ASSERT(r == next(m.begin(), 5));
+		UT_ASSERT(r == std::next(m.begin(), 5));
 		r = m.lower_bound(16);
-		UT_ASSERT(r == next(m.begin(), 6));
+		UT_ASSERT(r == std::next(m.begin(), 6));
 		r = m.lower_bound(18);
-		UT_ASSERT(r == next(m.begin(), 7));
+		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.lower_bound(20);
-		UT_ASSERT(r == next(m.begin(), 8));
+		UT_ASSERT(r == std::next(m.begin(), 8));
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
 	}
+#endif
 	return 0;
 }
 

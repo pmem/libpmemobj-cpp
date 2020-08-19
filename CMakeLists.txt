@@ -67,6 +67,7 @@ option(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::segmen
 option(TEST_ENUMERABLE_THREAD_SPECIFIC "enable testing of pmem::obj::experimental::enumerable_thread_specific" ON)
 option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::experimental::concurrent_map (depends on TEST_STRING)" ON)
 option(TEST_SELF_RELATIVE_POINTER "enable testing of pmem::obj::experimental::self_relative_ptr" ON)
+option(TEST_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 
 option(INSTALL_ARRAY "enable installation of pmem::obj::array" ON)
 option(INSTALL_VECTOR "enable installation of pmem::obj::vector" ON)
@@ -75,6 +76,7 @@ option(INSTALL_CONCURRENT_HASHMAP "enable installation of pmem::obj::concurrent_
 option(INSTALL_SEGMENT_VECTOR "enable installation of pmem::obj::segment_vector" ON)
 option(INSTALL_CONCURRENT_MAP "enable installation of pmem::obj::experimental::concurrent_map (depends on INSTALL_STRING)" ON)
 option(INSTALL_SELF_RELATIVE_POINTER "enable installation of pmem::obj::experimental::self_relative_ptr" ON)
+option(INSTALL_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
@@ -248,6 +250,9 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	PATTERN "concurrent_map.hpp" EXCLUDE
 	PATTERN "self_relative_ptr.hpp" EXCLUDE
 	PATTERN "self_relative_ptr_base.hpp" EXCLUDE
+	PATTERN "inline_string.hpp" EXCLUDE
+	PATTERN "bytes_view.hpp" EXCLUDE
+	PATTERN "radix_tree.hpp" EXCLUDE
 	)
 
 if(INSTALL_ARRAY)
@@ -286,6 +291,13 @@ if(INSTALL_SELF_RELATIVE_POINTER)
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr.hpp")
 	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "self_relative_ptr_base.hpp")
 endif()
+
+if(INSTALL_RADIX_TREE)
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "bytes_view.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "inline_string.hpp")
+	install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} FILES_MATCHING PATTERN "radix_tree.hpp")
+endif()
+
 
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 	FILES_MATCHING PATTERN "*.*pp")

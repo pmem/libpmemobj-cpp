@@ -96,6 +96,12 @@ add_check_whitespace(examples-transaction ${CMAKE_CURRENT_SOURCE_DIR}/transactio
 
 add_custom_target(examples)
 
+add_cppstyle(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_string/*.*pp)
+add_check_whitespace(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_string/*.*pp)
+
+add_cppstyle(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
+add_check_whitespace(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
+
 function(add_example name)
 	set(srcs ${ARGN})
 	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
@@ -140,6 +146,12 @@ endif()
 
 if (TEST_STRING)
 	add_example(string string/string.cpp)
+endif()
+
+if (TEST_RADIX_TREE)
+	add_example(radix_tree_dot radix_tree/radix_tree_dot.cpp)
+	add_example(radix_tree_basic radix_tree/radix_tree_basic.cpp)
+	add_example(radix_tree_custom_key radix_tree/radix_tree_custom_key.cpp)
 endif()
 
 if(CURSES_FOUND)
@@ -202,3 +214,5 @@ add_example(make_persistent make_persistent/make_persistent.cpp)
 add_example(persistent persistent/persistent.cpp)
 
 add_example(transaction transaction/transaction.cpp)
+
+add_example(inline_string inline_string/inline_string.cpp)

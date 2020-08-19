@@ -88,11 +88,11 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(i == k);
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++i) {
-			UT_ASSERT((*i).first == j);
-			UT_ASSERT((*i).second == 1);
-			(*i).second = 2.5;
-			pop.persist((*i).second);
-			UT_ASSERT((*i).second == 2.5);
+			UT_ASSERT((*i).MAP_KEY == j);
+			UT_ASSERT((*i).MAP_VALUE == 1);
+			(*i).MAP_VALUE = 2.5;
+			pop.persist((*i).MAP_VALUE);
+			UT_ASSERT((*i).MAP_VALUE == 2.5);
 		}
 
 #ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map does not
@@ -104,11 +104,11 @@ run(pmem::obj::pool<root> &pop)
 		ri = m.rbegin();
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++ri) {
-			UT_ASSERT((*ri).first == (int)m.size() - j + 1);
-			UT_ASSERT((*ri).second == 2.5);
-			(*ri).second = 3.5;
-			pop.persist((*ri).second);
-			UT_ASSERT((*ri).second == 3.5);
+			UT_ASSERT((*ri).MAP_KEY == (int)m.size() - j + 1);
+			UT_ASSERT((*ri).MAP_VALUE == 2.5);
+			(*ri).MAP_VALUE = 3.5;
+			pop.persist((*ri).MAP_VALUE);
+			UT_ASSERT((*ri).MAP_VALUE == 3.5);
 		}
 #endif
 
@@ -137,8 +137,8 @@ run(pmem::obj::pool<root> &pop)
 		i = m.begin();
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++i) {
-			UT_ASSERT((*i).first == j);
-			UT_ASSERT((*i).second == 1);
+			UT_ASSERT((*i).MAP_KEY == j);
+			UT_ASSERT((*i).MAP_VALUE == 1);
 		}
 
 #ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map does not
@@ -152,8 +152,8 @@ run(pmem::obj::pool<root> &pop)
 		ri = m.rbegin();
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++ri) {
-			UT_ASSERT((*ri).first == (int)m.size() - j + 1);
-			UT_ASSERT((*ri).second == 1);
+			UT_ASSERT((*ri).MAP_KEY == (int)m.size() - j + 1);
+			UT_ASSERT((*ri).MAP_VALUE == 1);
 		}
 #endif
 
@@ -183,10 +183,10 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(i == k);
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++i) {
-			UT_ASSERT((*i).first == j);
-			UT_ASSERT((*i).second == 1);
-			(*i).second = 2.5;
-			UT_ASSERT((*i).second == 2.5);
+			UT_ASSERT((*i).MAP_KEY == j);
+			UT_ASSERT((*i).MAP_VALUE == 1);
+			(*i).MAP_VALUE = 2.5;
+			UT_ASSERT((*i).MAP_VALUE == 2.5);
 		}
 	}
 	{
@@ -211,8 +211,8 @@ run(pmem::obj::pool<root> &pop)
 		i = m.begin();
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++i) {
-			UT_ASSERT((*i).first == j);
-			UT_ASSERT((*i).second == 1);
+			UT_ASSERT((*i).MAP_KEY == j);
+			UT_ASSERT((*i).MAP_VALUE == 1);
 		}
 	}
 #endif

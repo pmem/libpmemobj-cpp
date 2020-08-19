@@ -19,6 +19,7 @@
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/utils.hpp>
 #include <libpmemobj/base.h>
 
 #include <algorithm>
@@ -232,7 +233,7 @@ private:
 			  InputIt>::type * = nullptr>
 	void construct_at_end(InputIt first, InputIt last);
 	void dealloc();
-	pool_base get_pool() const noexcept;
+	pool_base get_pool() const;
 	template <typename InputIt>
 	void internal_insert(size_type idx, InputIt first, InputIt last);
 	void realloc(size_type size);
@@ -2209,11 +2210,9 @@ vector<T>::dealloc()
  */
 template <typename T>
 pool_base
-vector<T>::get_pool() const noexcept
+vector<T>::get_pool() const
 {
-	auto pop = pmemobj_pool_by_ptr(this);
-	assert(pop != nullptr);
-	return pool_base(pop);
+	return pmem::obj::pool_by_vptr(this);
 }
 
 /**

@@ -24,7 +24,8 @@
 
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/concurrent_map.hpp>
+#include "map_wrapper.hpp"
+
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pool.hpp>
@@ -35,9 +36,8 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using C = nvobjex::concurrent_map<int, double, transparent_less>;
-using C2 = nvobjex::concurrent_map<int, double,
-				   transparent_less_not_referenceable>;
+using C = container_t<int, double, transparent_less>;
+using C2 = container_t<int, double, transparent_less_not_referenceable>;
 
 struct root {
 	nvobj::persistent_ptr<C> s;

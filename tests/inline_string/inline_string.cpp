@@ -19,7 +19,8 @@ namespace
 {
 
 struct Object {
-	Object(int d, nvobj::string_view s) : data(d), s(s)
+	template <typename... Args>
+	Object(int d, Args &&... args) : data(d), s(std::forward<Args>(args)...)
 	{
 	}
 
@@ -32,6 +33,7 @@ struct Object {
 struct root {
 	nvobj::persistent_ptr<Object> o1;
 	nvobj::persistent_ptr<Object> o2;
+	nvobj::persistent_ptr<Object> o3;
 };
 
 void
@@ -39,7 +41,7 @@ test_inline_string(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
 
-	const auto req_capacity = 100;
+	const size_t req_capacity = 100;
 
 	try {
 		nvobj::transaction::run(pop, [&] {
@@ -50,9 +52,17 @@ test_inline_string(nvobj::pool<struct root> &pop)
 			r->o2 = static_cast<nvobj::persistent_ptr<Object>>(
 				allocator.allocate(sizeof(Object) +
 						   req_capacity));
+			r->o3 = static_cast<nvobj::persistent_ptr<Object>>(
+				allocator.allocate(sizeof(Object) +
+						   req_capacity));
 
-			new (r->o1.get()) Object(1, "abcd");
-			new (r->o2.get()) Object(2, "xxxxxxx");
+			new (r->o1.get()) Object(1, req_capacity);
+			new (r->o2.get()) Object(2, req_capacity);
+			new (r->o3.get())
+				Object(3, std::string(req_capacity, 'a'));
+
+			r->o1->s.assign("abcd");
+			r->o2->s.assign("xxxxxxx");
 		});
 	} catch (...) {
 		UT_ASSERT(0);
@@ -60,6 +70,7 @@ test_inline_string(nvobj::pool<struct root> &pop)
 
 	UT_ASSERTeq(r->o1->data, 1);
 	UT_ASSERTeq(r->o2->data, 2);
+	UT_ASSERTeq(r->o3->data, 3);
 
 	UT_ASSERT(nvobj::string_view(r->o1->s).compare("abcd") == 0);
 	UT_ASSERT(r->o1->s.size() == 4);
@@ -67,8 +78,11 @@ test_inline_string(nvobj::pool<struct root> &pop)
 
 	UT_ASSERT(nvobj::string_view(r->o1->s).data()[4] == '\0');
 	UT_ASSERT(nvobj::string_view(r->o2->s).data()[7] == '\0');
-
 	UT_ASSERT(nvobj::string_view(r->o2->s).compare("xxxxxxx") == 0);
+
+	UT_ASSERT(r->o3->s.capacity() == r->o3->s.size());
+	UT_ASSERT(nvobj::string_view(r->o3->s).compare(
+			  std::string(req_capacity, 'a')) == 0);
 
 	try {
 		nvobj::transaction::run(pop, [&] {

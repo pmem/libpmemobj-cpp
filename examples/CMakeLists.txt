@@ -152,6 +152,7 @@ if (TEST_RADIX_TREE)
 	add_example(radix_tree_dot radix_tree/radix_tree_dot.cpp)
 	add_example(radix_tree_basic radix_tree/radix_tree_basic.cpp)
 	add_example(radix_tree_custom_key radix_tree/radix_tree_custom_key.cpp)
+	add_example(radix_tree_inline_string radix_tree/radix_tree_inline_string.cpp)
 endif()
 
 if(CURSES_FOUND)

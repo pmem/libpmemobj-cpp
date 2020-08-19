@@ -37,11 +37,11 @@ containers_eq(const C &c1, const C &c2)
 #else
 	UT_ASSERTeq(c1.size(), c2.size());
 	for (const auto &e : c1) {
-		auto it = c2.find(e.first);
+		auto it = c2.find(e.MAP_KEY);
 
 		UT_ASSERT(it != c2.end());
-		UT_ASSERT(it->first == e.first);
-		UT_ASSERT(it->second == e.second);
+		UT_ASSERT(it->MAP_KEY == e.MAP_KEY);
+		UT_ASSERT(it->MAP_VALUE == e.MAP_VALUE);
 	}
 #endif
 }

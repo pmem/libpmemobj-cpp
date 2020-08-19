@@ -78,7 +78,7 @@ is_defragmentable() noexcept
  * only from one pmem::obj::pool instance.
  *
  * The typical usage example would be:
- * @snippet doc_snippets/defrag.cpp defrag_usage_example
+ * @snippet defrag/defrag.cpp defrag_usage_example
  */
 class defrag {
 public:

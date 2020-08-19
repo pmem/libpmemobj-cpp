@@ -135,7 +135,7 @@ public:
  *
  * This type does NOT manage the life-cycle of the object. The typical usage
  * example would be:
- * @snippet doc_snippets/persistent.cpp persistent_ptr_example
+ * @snippet persistent/persistent.cpp persistent_ptr_example
  *
  * Casting to persistent_ptr_base can be easily done from any persistent_ptr<T>
  * objects, but when casting between convertible objects be advised to use
@@ -146,7 +146,7 @@ public:
  * to the second (convertible) type, the offset will not be re-calculated.
  *
  * Below you can find an example how to and how NOT to cast persistent_ptr's:
- * @snippet doc_snippets/persistent.cpp persistent_ptr_casting_example
+ * @snippet persistent/persistent.cpp persistent_ptr_casting_example
  */
 template <typename T>
 class persistent_ptr : public persistent_ptr_base {

@@ -4,7 +4,13 @@
 /**
  * @file
  * Implementation of persistent radix tree.
- * Based on: https://github.com/pmem/pmdk/blob/master/src/libpmemobj/critnib.h
+ * Based on: https://github.com/pmem/vmemcache/blob/master/src/critnib.h
+ *
+ * The implementation is a variation of a PATRICIA trie - the internal
+ * nodes do not store the path explicitly, but only a position at which
+ * the keys differ. Keys are stored entirely in leafs.
+ *
+ * More info about radix tree: https://en.wikipedia.org/wiki/Radix_tree
  */
 
 #ifndef LIBPMEMOBJ_CPP_RADIX_HPP
@@ -47,20 +53,20 @@ namespace experimental
 {
 
 /**
- * Radix tree is an associative, ordered container. It's API is similar
+ * Radix tree is an associative, ordered container. Its API is similar
  * to the API of std::map.
  *
  * Unlike std::map radix tree does not use comparison (std::less or equivalent)
- * to locate elements. Instead a keys is mapped to a sequence of bytes using
+ * to locate elements. Instead, keys are mapped to a sequence of bytes using
  * user-provided BytesView type. The key's bytes uniquely define the position of
  * an element. In some way, it is similar to a hash table (BytesView can be
  * treated as a hash function) but with sorted elements.
  *
- * The elements ordering is defined based on the BytesView mapping. The byte
+ * The elements' ordering is defined based on the BytesView mapping. The byte
  * sequences are compared using a function equivalent to std::string::compare.
  *
  * BytesView should accept a pointer to the key type in a constructor and
- * provide operator[] and size methods. The declaration should be as following:
+ * provide operator[] and size method. The declaration should be as following:
  *
  * @code
  * struct BytesView {
@@ -74,18 +80,16 @@ namespace experimental
  * types is provided. Note that integral types are assumed to be in
  * little-endian.
  *
- * Iterators and reference are stable (are not invalidated by inserts or erases
+ * Iterators and references are stable (are not invalidated by inserts or erases
  * of other elements nor by assigning to the value) for all value types except
  * inline_string.
  *
- * In case of inline_string, iterators and reference are not invalidated by
- * other inserts or erases but might be invalidated by assigning new value to
- * the element. Using (*find(K)).second = "new_value" might invalidate other
+ * In case of inline_string, iterators and references are not invalidated by
+ * other inserts or erases, but might be invalidated by assigning new value to
+ * the element. Using find(K).assign_val("new_value") may invalidate other
  * iterators and references to the element with key K.
  *
- * swap() invalidates all references and iterators if inline_string is used as
- * value but does not invalidate iterators (except past-the-end iterator) nor
- * references to any other value_type.
+ * swap() invalidates all references and iterators.
  *
  * An example of custom BytesView implementation:
  * @snippet radix_tree/radix_tree_custom_key.cpp bytes_view_example
@@ -722,6 +726,9 @@ template <typename K>
 BytesView
 radix_tree<Key, Value, BytesView>::bytes_view(const K &key)
 {
+	/* bytes_view accepts const pointer instead of reference to make sure
+	 * there is no implicit conversion to a temporary type (and hence
+	 * dangling references). */
 	return BytesView(&key);
 }
 

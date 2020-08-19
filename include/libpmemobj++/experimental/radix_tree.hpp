@@ -4,7 +4,13 @@
 /**
  * @file
  * Implementation of persistent radix tree.
- * Based on: https://github.com/pmem/pmdk/blob/master/src/libpmemobj/critnib.h
+ * Based on: https://github.com/pmem/vmemcache/blob/master/src/critnib.h
+ *
+ * The implementation is a variation of a PATRICIA trie - the internal
+ * nodes do not store the path explicitly, but only a position at which
+ * the keys differ. Keys are stored entirely in leafs.
+ *
+ * More info about radix tree: https://en.wikipedia.org/wiki/Radix_tree
  */
 
 #ifndef LIBPMEMOBJ_CPP_RADIX_HPP
@@ -80,12 +86,10 @@ namespace experimental
  *
  * In case of inline_string, iterators and reference are not invalidated by
  * other inserts or erases but might be invalidated by assigning new value to
- * the element. Using (*find(K)).second = "new_value" might invalidate other
+ * the element. Using find(K).assign_val("new_value") might invalidate other
  * iterators and references to the element with key K.
  *
- * swap() invalidates all references and iterators if inline_string is used as
- * value but does not invalidate iterators (except past-the-end iterator) nor
- * references to any other value_type.
+ * swap() invalidates all references and iterators.
  *
  * An example of custom BytesView implementation:
  * @snippet radix_tree/radix_tree_custom_key.cpp bytes_view_example
@@ -722,6 +726,9 @@ template <typename K>
 BytesView
 radix_tree<Key, Value, BytesView>::bytes_view(const K &key)
 {
+	/* bytes_view accepts const pointer instead of reference to make sure
+	 * there are is no implicit conversion to a temporary type (and hence
+	 * dangling references). */
 	return BytesView(&key);
 }
 

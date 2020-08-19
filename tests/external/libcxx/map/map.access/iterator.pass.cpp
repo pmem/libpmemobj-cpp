@@ -233,6 +233,64 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(!(cii != ii1));
 	}
 #endif
+
+	/* Test bidirectional iterator requirements. */
+	{
+		typedef std::pair<const int, double> V;
+		V ar[] = {V(1, 1), V(2, 1), V(3, 1), V(4, 1),
+			  V(5, 1), V(6, 1), V(7, 1), V(8, 1)};
+		pmem::obj::transaction::run(pop, [&] {
+			robj->s2 = nvobj::make_persistent<const_M>(
+				ar, ar + sizeof(ar) / sizeof(ar[0]));
+		});
+
+		const auto &m = robj->s2->m;
+
+		/* Test ++a */
+		auto it = m.begin();
+#ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map it--
+		UT_ASSERT((*(++it)).MAP_KEY == 2);
+		it = m.begin();
+		UT_ASSERT((++it)->MAP_KEY == 2);
+		UT_ASSERT(++(--m.end()) == m.end());
+#endif
+		it = m.begin();
+		auto it2 = ++it;
+		UT_ASSERT(it == it2);
+
+		/* Test a++ */
+		it = m.begin();
+		it2 = it++;
+		UT_ASSERT(it2 == m.begin());
+#ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map it--
+		UT_ASSERT(--it == it2);
+#endif
+		it = ++m.begin();
+		UT_ASSERT((*it++).MAP_KEY == 2);
+		UT_ASSERT((*it).MAP_KEY == 3);
+
+#ifndef LIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP // XXX: concurrent map it--
+		/* Test --a */
+		UT_ASSERT((*(--m.end())).MAP_KEY == 8);
+		UT_ASSERT(--(++m.begin()) == m.begin());
+		it = m.end();
+		it2 = --it;
+		UT_ASSERT(it == it2);
+
+		/* Test a-- */
+		it = m.end();
+		it2 = it--;
+		UT_ASSERT(it2 == m.end());
+		UT_ASSERT(++it == it2);
+		it = --m.end();
+		UT_ASSERT((*it--).MAP_KEY == 8);
+		UT_ASSERT((*it).MAP_KEY == 7);
+#endif
+
+		pmem::obj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<const_M>(robj->s2);
+		});
+	}
 }
 
 static void

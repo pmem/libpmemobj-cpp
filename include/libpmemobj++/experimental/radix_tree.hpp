@@ -26,6 +26,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/utils.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -652,8 +653,12 @@ template <typename Key, typename Value, typename BytesView>
 void
 radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
 {
-	size_.swap(rhs.size_);
-	root.swap(rhs.root);
+	auto pop = pool_by_vptr(this);
+
+	transaction::run(pop, [&] {
+		this->size_.swap(rhs.size_);
+		this->root.swap(rhs.root);
+	});
 }
 
 /*

@@ -41,11 +41,11 @@ containers_eq(const C &c1, const C &c2)
 #else
 	UT_ASSERTeq(c1.size(), c2.size());
 	for (const auto &e : c1) {
-		auto it = c2.find(e.first);
+		auto it = c2.find(e.MAP_KEY);
 
 		UT_ASSERT(it != c2.end());
-		UT_ASSERT(it->first == e.first);
-		UT_ASSERT(it->second == e.second);
+		UT_ASSERT(it->MAP_KEY == e.MAP_KEY);
+		UT_ASSERT(it->MAP_VALUE == e.MAP_VALUE);
 	}
 #endif
 }
@@ -156,24 +156,24 @@ run(nvobj::pool<root> pop)
 
 			for (auto it = robj->m1->begin(); it != robj->m1->end();
 			     ++it)
-				its_1.emplace(it->first, it);
+				its_1.emplace(it->MAP_KEY, it);
 
 			for (auto it = robj->m2->begin(); it != robj->m2->end();
 			     ++it)
-				its_2.emplace(it->first, it);
+				its_2.emplace(it->MAP_KEY, it);
 
 			robj->m1->swap(*robj->m2);
 
 			for (auto &e : its_1) {
 				auto m_it = e.second;
-				UT_ASSERT(e.first == m_it->first);
-				UT_ASSERT(e.first == m_it->second);
+				UT_ASSERT(e.first == m_it->MAP_KEY);
+				UT_ASSERT(e.first == m_it->MAP_VALUE);
 			}
 
 			for (auto &e : its_2) {
 				auto m_it = e.second;
-				UT_ASSERT(e.first == m_it->first);
-				UT_ASSERT(e.first == m_it->second);
+				UT_ASSERT(e.first == m_it->MAP_KEY);
+				UT_ASSERT(e.first == m_it->MAP_VALUE);
 			}
 
 			containers_eq(*robj->m1, *robj->m2_save);

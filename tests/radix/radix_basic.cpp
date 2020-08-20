@@ -382,8 +382,8 @@ test_erase(nvobj::pool<root> &pop)
 		r->radix_str = nvobj::make_persistent<container_string>();
 	});
 
-	std::unordered_set<std::string> set = {
-		"ab", "a", "acxxxa", "acxxxb", "acxxxx", "acxxxy", "acxxxz"};
+	std::unordered_set<std::string> set = {"b", "acxxx", "acxxxa",
+					       "acxxx!"};
 
 	/* Used for testing iterator stability. */
 	std::unordered_map<std::string, typename container_string::iterator>
@@ -414,19 +414,10 @@ test_erase(nvobj::pool<root> &pop)
 		}
 	};
 
-	/* Force internal node removal. */
-	erase("acxxxy");
-	erase("acxxxz");
 	erase("acxxxa");
-
-	/* At this point "acxxx" parent should have 2 children - "acxxx" and
-	 * "acxxxb". It should NOT be removed. */
-
-	erase("acxxxb");
-
-	erase("acxxxx");
-	erase("ab");
-	erase("a");
+	erase("acxxx!");
+	erase("acxxx");
+	erase("b");
 
 	UT_ASSERT(r->radix_str->size() == 0);
 

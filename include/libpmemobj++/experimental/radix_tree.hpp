@@ -834,6 +834,10 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const_key_reference k,
 	auto leaf_key = bytes_view(leaf->key());
 	auto diff = prefix_diff(key, leaf_key);
 
+	/* Key exists. */
+	if (diff == key.size() && leaf_key.size() == key.size())
+		return {iterator(leaf, &root), false};
+
 	auto n = root;
 	auto child_slot = &root;
 	auto prev = n;
@@ -873,13 +877,6 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const_key_reference k,
 	/* New key is a prefix of the leaf key or they are equal. We need to add
 	 * leaf ptr to internal node. */
 	if (diff == key.size()) {
-		// XXX we can just return leaf before the second loop.
-		if (n.is_leaf() &&
-		    bytes_view(n.get_leaf()->key()).size() == key.size()) {
-			/* Key exists. */
-			return {iterator(child_slot->get_leaf(), &root), false};
-		}
-
 		if (!n.is_leaf() && path_length_equal(key.size(), n)) {
 			if (n->embedded_entry)
 				return {iterator(n->embedded_entry.get_leaf(),

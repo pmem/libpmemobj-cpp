@@ -1,8 +1,6 @@
 #
 # The 'XXX_DISABLE_' suffix is used in this file to disable these actions:
-# 1) XXX_DISABLE_${CI_FILE_PUSH_IMAGE_TO_REPO} - disables pushing the rebuilt Docker image,
-# 2) XXX_DISABLE_AUTO_DOC_UPDATE - disables making pull requests with the update of documentation,
-# 3) XXX_DISABLE_COVERAGE - disables uploads of coverage reports.
+# 1) XXX_DISABLE_COVERAGE - disables uploads of coverage reports.
 # They are disabled, because they conflict with the same ones run on Travis.
 # Only one CI (Travis or GitHub Actions) can run them at the time, so they can be enabled here,
 # when we decide to switch from Travis to GitHub Actions. The 'XXX_DISABLE_' suffix should be removed then.
@@ -23,6 +21,7 @@ jobs:
     env:
       DOCKERHUB_USER:          ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_PASSWORD:      ${{ secrets.DOCKERHUB_PASSWORD }}
+      DOC_UPDATE_GITHUB_TOKEN: ${{ secrets.DOC_UPDATE_GITHUB_TOKEN }}
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     strategy:
@@ -30,7 +29,7 @@ jobs:
         CONFIG: ["N=1 OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1",
                  "N=2 OS=fedora OS_VER=31    TYPE=debug PUSH_IMAGE=1",
                  "N=3 OS=ubuntu OS_VER=19.10 TYPE=release",
-                 "N=4 OS=fedora OS_VER=31    TYPE=release XXX_DISABLE_AUTO_DOC_UPDATE=1",
+                 "N=4 OS=fedora OS_VER=31    TYPE=release AUTO_DOC_UPDATE=1",
                  "N=5 OS=ubuntu OS_VER=19.10 TYPE=valgrind",
                  "N=6 OS=ubuntu OS_VER=19.10 TYPE=memcheck_drd",
                  "N=7 OS=ubuntu OS_VER=19.10 TYPE=package",
@@ -50,7 +49,7 @@ jobs:
          run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
 
        - name: Push the image
-         run: cd $WORKDIR && source ./set-vars.sh && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f XXX_DISABLE_${CI_FILE_PUSH_IMAGE_TO_REPO} ]]; then images/push-image.sh $OS-$OS_VER; fi"
+         run: cd $WORKDIR && source ./set-vars.sh && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f ${CI_FILE_PUSH_IMAGE_TO_REPO} ]]; then images/push-image.sh $OS-$OS_VER; fi"
 
   windows:
     name: Windows

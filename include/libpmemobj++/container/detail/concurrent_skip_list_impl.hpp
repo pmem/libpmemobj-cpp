@@ -1814,27 +1814,9 @@ public:
 	}
 
 	/**
-	 * Returns a const reference to the allocator associated with the
-	 * container.
-	 *
-	 * @return Const reference to the associated allocator.
+	 * XXX: Implement get_allocator() interface.
+	 * Related with: https://github.com/pmem/libpmemobj-cpp/issues/827
 	 */
-	const allocator_type &
-	get_allocator() const
-	{
-		return _node_allocator;
-	}
-
-	/**
-	 * Returns a reference to the allocator associated with the container.
-	 *
-	 * @return Reference to the associated allocator.
-	 */
-	allocator_type &
-	get_allocator()
-	{
-		return _node_allocator;
-	}
 
 	/**
 	 * Exchanges the contents of the container with those of other

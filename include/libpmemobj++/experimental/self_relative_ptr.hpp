@@ -71,9 +71,6 @@ public:
 	 */
 	using reference = T &;
 
-	static_assert(!std::is_polymorphic<element_type>::value,
-		      "Polymorphic types are not supported");
-
 	/*
 	 * Constructors
 	 */
@@ -126,7 +123,7 @@ public:
 	 * Copy constructor
 	 */
 	self_relative_ptr(const self_relative_ptr &ptr) noexcept
-	    : self_relative_ptr_base(self_offset(ptr.get()))
+	    : self_relative_ptr_base(ptr)
 	{
 	}
 
@@ -146,6 +143,21 @@ public:
 	self_relative_ptr(self_relative_ptr<U> const &r) noexcept
 	    : self_relative_ptr_base(self_offset(static_cast<T *>(r.get())))
 	{
+	}
+
+	/**
+	 * Verify if element_type is not polymorphic
+	 */
+	void
+	verify_types()
+	{
+		static_assert(!std::is_polymorphic<element_type>::value,
+			      "Polymorphic types are not supported");
+	}
+
+	~self_relative_ptr()
+	{
+		verify_types();
 	}
 
 	/**
@@ -237,9 +249,7 @@ public:
 	self_relative_ptr &
 	operator=(const self_relative_ptr &r)
 	{
-		detail::conditional_add_to_tx(this);
-		this->offset = self_offset(r.get());
-
+		this->base_type::operator=(r);
 		return *this;
 	}
 

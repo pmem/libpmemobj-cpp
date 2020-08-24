@@ -254,14 +254,15 @@ private:
 	template <typename K1, typename K2>
 	static bool keys_equal(const K1 &k1, const K2 &k2);
 	template <typename K1, typename K2>
-	static int compare(const K1 &k1, const K2 &k2);
+	static int compare(const K1 &k1, const K2 &k2, byten_t offset = 0);
 	template <bool Direction, typename Iterator>
 	static leaf *next_leaf(Iterator child, tagged_node_ptr parent);
 	template <bool Direction>
 	static leaf *find_leaf(tagged_node_ptr n);
 	static unsigned slice_index(char k, uint8_t shift);
 	template <typename K1, typename K2>
-	static byten_t prefix_diff(const K1 &lhs, const K2 &rhs);
+	static byten_t prefix_diff(const K1 &lhs, const K2 &rhs,
+				   byten_t offset = 0);
 	leaf *any_lower_leaf(tagged_node_ptr n, size_type min_depth) const;
 	template <typename K>
 	leaf *descend(const K &key) const;
@@ -777,9 +778,10 @@ radix_tree<Key, Value, BytesView>::keys_equal(const K1 &k1, const K2 &k2)
 template <typename Key, typename Value, typename BytesView>
 template <typename K1, typename K2>
 int
-radix_tree<Key, Value, BytesView>::compare(const K1 &k1, const K2 &k2)
+radix_tree<Key, Value, BytesView>::compare(const K1 &k1, const K2 &k2,
+					   byten_t offset)
 {
-	auto ret = prefix_diff(k1, k2);
+	auto ret = prefix_diff(k1, k2, offset);
 
 	if (ret != (std::min)(k1.size(), k2.size()))
 		return (unsigned char)(k1[ret]) - (unsigned char)(k2[ret]);
@@ -793,10 +795,11 @@ radix_tree<Key, Value, BytesView>::compare(const K1 &k1, const K2 &k2)
 template <typename Key, typename Value, typename BytesView>
 template <typename K1, typename K2>
 typename radix_tree<Key, Value, BytesView>::byten_t
-radix_tree<Key, Value, BytesView>::prefix_diff(const K1 &lhs, const K2 &rhs)
+radix_tree<Key, Value, BytesView>::prefix_diff(const K1 &lhs, const K2 &rhs,
+					       byten_t offset)
 {
 	byten_t diff;
-	for (diff = 0; diff < (std::min)(lhs.size(), rhs.size()); diff++) {
+	for (diff = offset; diff < (std::min)(lhs.size(), rhs.size()); diff++) {
 		if (lhs[diff] != rhs[diff])
 			return diff;
 	}
@@ -1277,36 +1280,97 @@ template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
 {
-	// XXX: optimize this function (todo: refactor out emplace code)
+	auto key = bytes_view(k);
+	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
 	if (!root)
 		return end();
 
-	auto key = bytes_view(k);
+	/*
+	 * Need to descend the tree twice. First to find a leaf that
+	 * represents a subtree that shares a common prefix with the key.
+	 * This is needed to find out the actual labels between nodes (they
+	 * are not known due to a possible path compression). Second time to
+	 * find the place for the new element.
+	 */
 	auto leaf = descend(key);
+	auto leaf_key = bytes_view(leaf->key());
+	auto diff = prefix_diff(key, leaf_key);
 
-	auto it = const_iterator(leaf, &root);
+	/* Key exists. */
+	if (diff == key.size() && leaf_key.size() == key.size())
+		return const_iterator(leaf, &root);
 
-	/* Iterate until greater or equal element is found. */
-	while (it != end() && compare(bytes_view(it->key()), key) < 0)
-		++it;
+	auto n = root;
+	auto child_slot = &root;
+	auto prev = n;
 
-	if (it == end())
-		return end();
+	auto min_key_len = (std::min)(leaf_key.size(), key.size());
+	bitn_t sh = 8;
 
-	/* Find the *first* element greater or equal to key. */
-	auto tmp = it;
-
-	if (it == begin())
-		return begin();
-
-	--tmp;
-	while (it != begin() && compare(bytes_view(tmp->key()), key) >= 0) {
-		it = tmp;
-		--tmp;
+	/* If key differs from leaf_key at some point (neither is a prefix of
+	 * another) we will descend to the point of divergence. Otherwise we
+	 * will look for a node which represents the prefix. */
+	if (diff < min_key_len) {
+		auto at =
+			static_cast<unsigned char>(leaf_key[diff] ^ key[diff]);
+		sh = pmem::detail::mssb_index((uint32_t)at) & SLICE_MASK;
 	}
 
-	return it;
+	/* Descend into the tree again. */
+	while (n && !n.is_leaf() &&
+	       (n->byte < diff || (n->byte == diff && n->bit >= sh))) {
+		prev = n;
+		child_slot = &n->child[slice_index(key[n->byte], n->bit)];
+		n = *child_slot;
+	}
+
+	if (!n) {
+		leaf = next_leaf<node::direction::Forward>(
+			prev->template make_iterator<node::direction::Forward>(
+				child_slot),
+			prev);
+
+		return const_iterator(leaf, &root);
+	}
+
+	/* The looked-for key is a prefix of the leaf key. */
+	if (diff == key.size()) {
+		/* The target node must be the smallest leaf within n subtree.
+		 * Key represented by a path from root to n is larger than the
+		 * looked-for key. Additionally keys under right siblings of n
+		 * are > key and keys under left siblings are < key. */
+		leaf = find_leaf<node::direction::Forward>(n);
+
+		return const_iterator(leaf, &root);
+	}
+
+	/* Leaf's key is a prefix of the looked-for key. */
+	if (diff == leaf_key.size()) {
+		/* Leaf's key is the biggest key less than the looked-for key.
+		 * The target node must be the next leaf. */
+		return ++const_iterator(leaf, &root);
+	}
+
+	/* n is the point of divergence. */
+	assert(diff < leaf_key.size() && diff < key.size());
+
+	if (compare(key, leaf_key, diff) < 0) {
+		/* The target node must be within n subtree. The left siblings
+		 * of n are all less than the looked-for key. */
+		leaf = find_leaf<node::direction::Forward>(n);
+
+		return const_iterator(leaf, &root);
+	}
+
+	/* Since looked-for key is larger than n, the target node must be within
+	 * subtree of a right sibling of n. */
+	leaf = next_leaf<node::direction::Forward>(
+		prev->template make_iterator<node::direction::Forward>(
+			child_slot),
+		prev);
+
+	return const_iterator(leaf, &root);
 }
 
 /**

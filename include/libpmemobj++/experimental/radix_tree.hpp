@@ -262,7 +262,7 @@ private:
 	static unsigned slice_index(char k, uint8_t shift);
 	template <typename K1, typename K2>
 	static byten_t prefix_diff(const K1 &lhs, const K2 &rhs);
-	leaf *bottom_leaf(tagged_node_ptr n) const;
+	leaf *any_leaf(tagged_node_ptr n, size_type min_depth) const;
 	template <typename K>
 	leaf *descend(const K &key) const;
 	static void print_rec(std::ostream &os, radix_tree::tagged_node_ptr n);
@@ -672,15 +672,22 @@ radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
 
 /*
  * Find a bottom (leftmost) leaf in a subtree.
+ *
+ * @param min_depth specifies minimum depth of the leaf. If the
+ * tree is shorter than min_depth, a bottom leaf is returned.
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::bottom_leaf(
-	typename radix_tree<Key, Value, BytesView>::tagged_node_ptr n) const
+radix_tree<Key, Value, BytesView>::any_leaf(
+	typename radix_tree<Key, Value, BytesView>::tagged_node_ptr n,
+	size_type min_depth) const
 {
 	assert(n);
 
 	while (!n.is_leaf()) {
+		if (n->embedded_entry && n->byte >= min_depth)
+			return n->embedded_entry.get_leaf();
+
 		for (size_t i = 0; i < SLNODES; i++) {
 			tagged_node_ptr m;
 			if ((m = n->child[i])) {
@@ -716,13 +723,13 @@ radix_tree<Key, Value, BytesView>::descend(const K &key) const
 {
 	auto n = root;
 
-	while (!n.is_leaf() && n->byte < key.size()) {
+	while (n && !n.is_leaf() && n->byte < key.size()) {
 		auto nn = n->child[slice_index(key[n->byte], n->bit)];
 
 		if (nn)
 			n = nn;
 		else {
-			n = bottom_leaf(n);
+			n = any_leaf(n, key.size());
 			break;
 		}
 	}
@@ -730,7 +737,7 @@ radix_tree<Key, Value, BytesView>::descend(const K &key) const
 	/* This can happen when key is a prefix of some leaf or when the node at
 	 * which the keys diverge isn't a leaf */
 	if (!n.is_leaf())
-		n = bottom_leaf(n);
+		n = any_leaf(n, key.size());
 
 	return n.get_leaf();
 }
@@ -878,10 +885,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const_key_reference k,
 	 * leaf ptr to internal node. */
 	if (diff == key.size()) {
 		if (!n.is_leaf() && path_length_equal(key.size(), n)) {
-			if (n->embedded_entry)
-				return {iterator(n->embedded_entry.get_leaf(),
-						 &root),
-					false};
+			assert(!n->embedded_entry);
 
 			transaction::run(
 				pop, [&] { n->embedded_entry = make_leaf(n); });

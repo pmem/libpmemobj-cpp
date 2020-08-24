@@ -1146,7 +1146,6 @@ radix_tree<Key, Value, BytesView>::try_emplace(const_key_reference k,
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory
  * failed.
- * @throw pmem::transaction_scope_error if called inside transaction.
  * @throw rethrows constructor exception.
  */
 template <typename Key, typename Value, typename BytesView>

@@ -28,32 +28,49 @@ using string_view = std::string_view;
 	If C++17's std::string_view implementation is not available, this one is
    used to avoid unnecessary string copying.
 */
-class string_view {
+template <typename CharT, typename Traits = std::char_traits<CharT>>
+class basic_string_view {
 public:
-	string_view() noexcept;
-	string_view(const char *data, size_t size);
-	string_view(const std::string &s);
-	string_view(const char *data);
+	/* Member types */
+	using traits_type = Traits;
+	using value_type = CharT;
+	using size_type = std::size_t;
+	using difference_type = std::ptrdiff_t;
+	using reference = value_type &;
+	using const_reference = const value_type &;
+	using pointer = value_type *;
+	using const_pointer = const value_type *;
 
-	string_view(const string_view &rhs) noexcept = default;
-	string_view &operator=(const string_view &rhs) noexcept = default;
+	basic_string_view() noexcept;
+	basic_string_view(const char *data, size_t size);
+	basic_string_view(const std::string &s);
+	basic_string_view(const char *data);
+
+	basic_string_view(const basic_string_view &rhs) noexcept = default;
+	basic_string_view &operator=(const basic_string_view &rhs) noexcept = default;
 
 	const char *data() const noexcept;
 	std::size_t size() const noexcept;
 
 	const char &operator[](size_t p) const noexcept;
 
-	int compare(const string_view &other) noexcept;
+	int compare(const basic_string_view &other) noexcept;
 
 private:
-	const char *_data;
-	std::size_t _size;
+	const value_type *__data;
+	size_type __size;
 };
 
+using string_view = pmem::obj::basic_string_view<char>;
+using wstring_view = pmem::obj::basic_string_view<wchar_t>;
+using u16string_view = basic_string_view<char16_t>;
+using u32string_view = basic_string_view<char32_t>;
 /**
  * Default constructor with empty data.
  */
-inline string_view::string_view() noexcept : _data(""), _size(0)
+template <typename CharT, typename Traits>
+inline basic_string_view<CharT, Traits>::basic_string_view() noexcept
+    : __data(nullptr), __size(0)
 {
 }
 
@@ -64,8 +81,9 @@ inline string_view::string_view() noexcept : _data(""), _size(0)
  *				it can contain null characters
  * @param[in] size length of the given data
  */
-inline string_view::string_view(const char *data, size_t size)
-    : _data(data), _size(size)
+template <typename CharT, typename Traits>
+inline basic_string_view<CharT, Traits>::basic_string_view(const char *data, size_t size)
+    : __data(data), __size(size)
 {
 }
 
@@ -74,8 +92,9 @@ inline string_view::string_view(const char *data, size_t size)
  *
  * @param[in] s reference to the string to initialize with
  */
-inline string_view::string_view(const std::string &s)
-    : _data(s.c_str()), _size(s.size())
+template <typename CharT, typename Traits>
+inline basic_string_view<CharT, Traits>::basic_string_view(const std::string &s)
+    : __data(s.c_str()), __size(s.size())
 {
 }
 
@@ -87,8 +106,9 @@ inline string_view::string_view(const std::string &s)
  *				it has to end with the terminating null
  *character
  */
-inline string_view::string_view(const char *data)
-    : _data(data), _size(std::char_traits<char>::length(data))
+template <typename CharT, typename Traits>
+inline basic_string_view<CharT, Traits>::basic_string_view(const char *data)
+    : __data(data), __size(std::char_traits<char>::length(data))
 {
 }
 
@@ -98,10 +118,11 @@ inline string_view::string_view(const char *data)
  *
  * @return pointer to C-like string (char *), it may not end with null character
  */
+template <typename CharT, typename Traits>
 inline const char *
-string_view::data() const noexcept
+basic_string_view<CharT, Traits>::data() const noexcept
 {
-	return _data;
+	return __data;
 }
 
 /**
@@ -109,10 +130,11 @@ string_view::data() const noexcept
  *
  * @return pointer to C-like string (char *), it may not end with null character
  */
+template <typename CharT, typename Traits>
 inline std::size_t
-string_view::size() const noexcept
+basic_string_view<CharT, Traits>::size() const noexcept
 {
-	return _size;
+	return __size;
 }
 
 /**
@@ -120,7 +142,8 @@ string_view::size() const noexcept
  *
  * @return reference to a char
  */
-inline const char &string_view::operator[](size_t p) const noexcept
+template <typename CharT, typename Traits>
+inline const char &basic_string_view<CharT, Traits>::operator[](size_t p) const noexcept
 {
 	return data()[p];
 }
@@ -133,8 +156,9 @@ inline const char &string_view::operator[](size_t p) const noexcept
  *			positive value if this is lexicographically greater than
  *other, negative value if this is lexicographically less than other.
  */
+template <typename CharT, typename Traits>
 inline int
-string_view::compare(const string_view &other) noexcept
+basic_string_view<CharT, Traits>::compare(const basic_string_view &other) noexcept
 {
 	int ret = std::char_traits<char>::compare(
 		data(), other.data(), (std::min)(size(), other.size()));

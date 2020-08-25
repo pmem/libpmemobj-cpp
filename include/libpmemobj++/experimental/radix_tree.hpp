@@ -221,7 +221,7 @@ public:
 					const radix_tree<K, V, BV> &tree);
 
 private:
-	using byten_t = uint32_t;
+	using byten_t = uint64_t;
 	using bitn_t = uint8_t;
 
 	/* Size of a chunk which differentiates subtrees of a node */
@@ -2390,10 +2390,9 @@ struct bytes_view<T,
 #endif
 	}
 
-	char operator[](std::ptrdiff_t p) const
+	char operator[](std::size_t p) const
 	{
-		return reinterpret_cast<const char *>(
-			k)[static_cast<ptrdiff_t>(size()) - p - 1];
+		return reinterpret_cast<const char *>(k)[size() - p - 1];
 	}
 
 	constexpr size_t

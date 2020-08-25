@@ -60,10 +60,9 @@ struct test_bytes_view_int {
 		return sizeof(int);
 	}
 
-	char operator[](std::ptrdiff_t p) const
+	char operator[](std::size_t p) const
 	{
-		return reinterpret_cast<const char *>(
-			&v)[(ptrdiff_t)(size()) - p - 1];
+		return reinterpret_cast<const char *>(&v)[size() - p - 1];
 	}
 
 	unsigned v;

@@ -156,7 +156,7 @@ test_copy_ctor(nvobj::pool_base &pop)
 		nvobj::persistent_ptr<T> pptr2 = nullptr;
 		nvobj::transaction::run(pop, [&] {
 			pptr2 = pmemobj_tx_alloc(sizeof(T),
-						pmem::detail::type_num<T>());
+						 pmem::detail::type_num<T>());
 			if (pptr2 == nullptr)
 				UT_ASSERT(0);
 		});

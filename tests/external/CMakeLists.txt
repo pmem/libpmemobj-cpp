@@ -1180,9 +1180,8 @@ if (TEST_CONCURRENT_MAP)
 endif()
 
 if (TEST_RADIX_TREE)
-	# XXX: no member named 'difference_type'
-	# build_test_ext(NAME radix_libcxx_max_size SRC_FILES libcxx/map/map.access/max_size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_max_size TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_max_size SRC_FILES libcxx/map/map.access/max_size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_max_size TRACERS none pmemcheck memcheck)
 
 	# XXX: no member named 'insert'
 	# build_test_ext(NAME radix_libcxx_size SRC_FILES libcxx/map/map.access/size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
@@ -1191,11 +1190,11 @@ if (TEST_RADIX_TREE)
 	build_test_ext(NAME radix_libcxx_iterator SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_iterator TRACERS none pmemcheck memcheck)
 
-	# XXX: There is no empty() method in radix API
+	# XXX: no member named 'insert'
 	# build_test_ext(NAME radix_libcxx_empty SRC_FILES libcxx/map/map.access/empty.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	# add_test_generic(NAME radix_libcxx_empty TRACERS none pmemcheck memcheck)
 
-	# XXX: There is no empty() method in radix API
+	# XXX: cannot convert "C2Int" to const int&"
 	# build_test_ext(NAME radix_libcxx_count0 SRC_FILES libcxx/map/map.ops/count0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	# add_test_generic(NAME radix_libcxx_count0 TRACERS none pmemcheck memcheck)
 

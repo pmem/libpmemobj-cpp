@@ -13,6 +13,7 @@
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/experimental/inline_string.hpp>
+#include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/p.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -277,14 +278,15 @@ void swap(radix_tree<Key, Value, BytesView> &lhs,
 
 template <typename Key, typename Value, typename BytesView>
 struct radix_tree<Key, Value, BytesView>::tagged_node_ptr {
-	tagged_node_ptr();
-	tagged_node_ptr(const tagged_node_ptr &rhs);
-	tagged_node_ptr(std::nullptr_t);
+	tagged_node_ptr() = default;
+	tagged_node_ptr(const tagged_node_ptr &rhs) = default;
 
+	tagged_node_ptr(std::nullptr_t);
 	tagged_node_ptr(const persistent_ptr<leaf> &ptr);
 	tagged_node_ptr(const persistent_ptr<node> &ptr);
 
-	tagged_node_ptr &operator=(const tagged_node_ptr &rhs);
+	tagged_node_ptr &operator=(const tagged_node_ptr &rhs) = default;
+
 	tagged_node_ptr &operator=(std::nullptr_t);
 	tagged_node_ptr &operator=(const persistent_ptr<leaf> &rhs);
 	tagged_node_ptr &operator=(const persistent_ptr<node> &rhs);
@@ -307,11 +309,11 @@ struct radix_tree<Key, Value, BytesView>::tagged_node_ptr {
 	explicit operator bool() const noexcept;
 
 private:
-	static constexpr unsigned IS_LEAF = 1;
+	static constexpr uintptr_t IS_LEAF = 1;
+	void *add_tag(radix_tree::leaf *ptr) const;
+	void *remove_tag(void *ptr) const;
 
-	uint64_t get() const noexcept;
-
-	p<uint64_t> off;
+	self_relative_ptr_base ptr;
 };
 
 /**
@@ -1591,66 +1593,25 @@ radix_tree<Key, Value, BytesView>::slice_index(char b, uint8_t bit)
 template <typename Key, typename Value, typename BytesView>
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::tagged_node_ptr(
 	std::nullptr_t)
+    : ptr(nullptr)
 {
-	this->off = 0;
-}
-
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::tagged_node_ptr::tagged_node_ptr()
-{
-	this->off = 0;
-}
-
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::tagged_node_ptr::tagged_node_ptr(
-	const tagged_node_ptr &rhs)
-{
-	if (!rhs) {
-		this->off = 0;
-	} else {
-		this->off = rhs.get() - reinterpret_cast<uint64_t>(this);
-		off |= unsigned(rhs.is_leaf());
-	}
-}
-
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::tagged_node_ptr &
-radix_tree<Key, Value, BytesView>::tagged_node_ptr::operator=(
-	const tagged_node_ptr &rhs)
-{
-	if (!rhs) {
-		this->off = 0;
-	} else {
-		this->off = rhs.get() - reinterpret_cast<uint64_t>(this);
-		off |= unsigned(rhs.is_leaf());
-	}
-
-	return *this;
+	assert(!(bool)*this);
 }
 
 template <typename Key, typename Value, typename BytesView>
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::tagged_node_ptr(
 	const persistent_ptr<leaf> &ptr)
+    : ptr(add_tag(ptr.get()))
 {
-	if (!ptr) {
-		this->off = 0;
-	} else {
-		off = reinterpret_cast<uint64_t>(ptr.get()) -
-			reinterpret_cast<uint64_t>(this);
-		off |= unsigned(IS_LEAF);
-	}
+	assert(get_leaf() == ptr.get());
 }
 
 template <typename Key, typename Value, typename BytesView>
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::tagged_node_ptr(
 	const persistent_ptr<node> &ptr)
+    : ptr(ptr.get())
 {
-	if (!ptr) {
-		this->off = 0;
-	} else {
-		off = reinterpret_cast<uint64_t>(ptr.get()) -
-			reinterpret_cast<uint64_t>(this);
-	}
+	assert(get_node() == ptr.get());
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1658,7 +1619,8 @@ typename radix_tree<Key, Value, BytesView>::tagged_node_ptr &
 	radix_tree<Key, Value, BytesView>::tagged_node_ptr::operator=(
 		std::nullptr_t)
 {
-	this->off = 0;
+	ptr = nullptr;
+	assert(!(bool)*this);
 
 	return *this;
 }
@@ -1668,13 +1630,8 @@ typename radix_tree<Key, Value, BytesView>::tagged_node_ptr &
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::operator=(
 	const persistent_ptr<leaf> &rhs)
 {
-	if (!rhs) {
-		this->off = 0;
-	} else {
-		off = reinterpret_cast<uint64_t>(rhs.get()) -
-			reinterpret_cast<uint64_t>(this);
-		off |= unsigned(IS_LEAF);
-	}
+	ptr = add_tag(rhs.get());
+	assert(get_leaf() == rhs.get());
 
 	return *this;
 }
@@ -1684,12 +1641,8 @@ typename radix_tree<Key, Value, BytesView>::tagged_node_ptr &
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::operator=(
 	const persistent_ptr<node> &rhs)
 {
-	if (!rhs) {
-		this->off = 0;
-	} else {
-		off = reinterpret_cast<uint64_t>(rhs.get()) -
-			reinterpret_cast<uint64_t>(this);
-	}
+	ptr = rhs.get();
+	assert(get_node() == rhs.get());
 
 	return *this;
 }
@@ -1699,7 +1652,7 @@ bool
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::operator==(
 	const radix_tree::tagged_node_ptr &rhs) const
 {
-	return get() == rhs.get() || (!*this && !rhs);
+	return ptr.to_byte_pointer() == rhs.ptr.to_byte_pointer();
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1730,16 +1683,32 @@ template <typename Key, typename Value, typename BytesView>
 void
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::swap(tagged_node_ptr &rhs)
 {
-	tagged_node_ptr tmp = rhs;
-	rhs = *this;
-	*this = tmp;
+	ptr.swap(rhs.ptr);
+}
+
+template <typename Key, typename Value, typename BytesView>
+void *
+radix_tree<Key, Value, BytesView>::tagged_node_ptr::add_tag(
+	radix_tree::leaf *ptr) const
+{
+	auto tagged = reinterpret_cast<uintptr_t>(ptr) | uintptr_t(IS_LEAF);
+	return reinterpret_cast<radix_tree::leaf *>(tagged);
+}
+
+template <typename Key, typename Value, typename BytesView>
+void *
+radix_tree<Key, Value, BytesView>::tagged_node_ptr::remove_tag(void *ptr) const
+{
+	auto untagged = reinterpret_cast<uintptr_t>(ptr) & ~uintptr_t(IS_LEAF);
+	return reinterpret_cast<void *>(untagged);
 }
 
 template <typename Key, typename Value, typename BytesView>
 bool
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::is_leaf() const
 {
-	return off & unsigned(IS_LEAF);
+	auto value = reinterpret_cast<uintptr_t>(ptr.to_void_pointer());
+	return value & uintptr_t(IS_LEAF);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1747,7 +1716,8 @@ typename radix_tree<Key, Value, BytesView>::leaf *
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::get_leaf() const
 {
 	assert(is_leaf());
-	return reinterpret_cast<radix_tree::leaf *>(get());
+	return static_cast<radix_tree::leaf *>(
+		remove_tag(ptr.to_void_pointer()));
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1755,14 +1725,14 @@ typename radix_tree<Key, Value, BytesView>::node *
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::get_node() const
 {
 	assert(!is_leaf());
-	return reinterpret_cast<radix_tree::node *>(get());
+	return static_cast<radix_tree::node *>(ptr.to_void_pointer());
 }
 
 template <typename Key, typename Value, typename BytesView>
 radix_tree<Key, Value, BytesView>::tagged_node_ptr::operator bool() const
 	noexcept
 {
-	return (off & ~uint64_t(IS_LEAF)) != 0;
+	return remove_tag(ptr.to_void_pointer()) != nullptr;
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1771,13 +1741,6 @@ typename radix_tree<Key, Value, BytesView>::node *
 	noexcept
 {
 	return get_node();
-}
-
-template <typename Key, typename Value, typename BytesView>
-uint64_t
-radix_tree<Key, Value, BytesView>::tagged_node_ptr::get() const noexcept
-{
-	return reinterpret_cast<uint64_t>(this) + (off & ~uint64_t(IS_LEAF));
 }
 
 template <typename Key, typename Value, typename BytesView>

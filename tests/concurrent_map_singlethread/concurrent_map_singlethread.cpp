@@ -122,127 +122,6 @@ tx_alloc_wrapper(nvobj::pool_base &pop, nvobj::persistent_ptr<U> &ptr,
 }
 
 /*
- * ctor_test -- (internal) test constructors
- * pmem::obj::concurrent_map<nvobj::p<int>, nvobj::p<int> >
- */
-void
-ctor_test(nvobj::pool<root> &pop)
-{
-	auto &map1 = pop.root()->map1;
-	auto &map2 = pop.root()->map2;
-
-	tx_alloc_wrapper<persistent_map_type>(pop, map1);
-	UT_ASSERT(map1->empty());
-	UT_ASSERT(map1->size() == size_t(0));
-
-	for (int i = 0; i < 300; i++) {
-		auto ret = map1->insert(value_type(i, i));
-		UT_ASSERT(ret.second == true);
-		UT_ASSERT(ret.first->first == i);
-		UT_ASSERT(ret.first->second == i);
-	}
-
-	tx_alloc_wrapper<persistent_map_type>(pop, map2, map1->begin(),
-					      map1->end());
-
-	UT_ASSERT(!map2->empty());
-	UT_ASSERT(map1->size() == map2->size());
-
-	verify_elements(*map2, 300);
-
-	pmem::detail::destroy<persistent_map_type>(*map2);
-	tx_alloc_wrapper<persistent_map_type>(pop, map2, *map1);
-
-	UT_ASSERT(map1->size() == map2->size());
-
-	verify_elements(*map2, 300);
-
-	pmem::detail::destroy<persistent_map_type>(*map2);
-	tx_alloc_wrapper<persistent_map_type>(pop, map2, std::move(*map1));
-
-	verify_elements(*map2, 300);
-
-	pmem::detail::destroy<persistent_map_type>(*map2);
-	tx_alloc_wrapper<persistent_map_type>(
-		pop, map2,
-		std::initializer_list<value_type>{value_type(0, 0),
-						  value_type(1, 1)});
-
-	verify_elements(*map2, 2);
-
-	pmem::detail::destroy<persistent_map_type>(*map1);
-	pmem::detail::destroy<persistent_map_type>(*map2);
-}
-
-/*
- * assignment_test -- (internal) test assignment operators
- * pmem::obj::concurrent_map<nvobj::p<int>, nvobj::p<int> >
- */
-void
-assignment_test(nvobj::pool<root> &pop)
-{
-	auto &map1 = pop.root()->map1;
-	auto &map2 = pop.root()->map2;
-
-	tx_alloc_wrapper<persistent_map_type>(pop, map1);
-	tx_alloc_wrapper<persistent_map_type>(pop, map2);
-
-	UT_ASSERT(map1->empty());
-
-	for (int i = 0; i < 50; i++) {
-		auto ret = map1->insert(value_type(i, i));
-		UT_ASSERT(ret.second == true);
-	}
-
-	verify_elements(*map1, 50);
-
-	for (int i = 0; i < 300; i++) {
-		auto ret = map2->insert(value_type(i, i));
-		UT_ASSERT(ret.second == true);
-	}
-
-	*map1 = *map2;
-
-	verify_elements(*map1, 300);
-
-	for (int i = 300; i < 350; i++) {
-		auto ret = map1->insert(value_type(i, i));
-		UT_ASSERT(ret.second == true);
-	}
-
-	verify_elements(*map1, 350);
-	verify_elements(*map2, 300);
-
-	map2->clear();
-
-	*map1 = *map2;
-
-	UT_ASSERT(map1->size() == 0);
-	UT_ASSERT(std::distance(map1->begin(), map1->end()) == 0);
-	UT_ASSERT(map2->size() == 0);
-	UT_ASSERT(std::distance(map2->begin(), map2->end()) == 0);
-
-	for (int i = 0; i < 350; i++) {
-		UT_ASSERT(map1->count(i) == 0);
-		UT_ASSERT(map2->count(i) == 0);
-	}
-
-	for (int i = 0; i < 100; i++) {
-		auto ret = map1->insert(value_type(i, i));
-		UT_ASSERT(ret.second == true);
-	}
-
-	verify_elements(*map1, 100);
-
-	*map2 = std::move(*map1);
-
-	verify_elements(*map2, 100);
-
-	pmem::detail::destroy<persistent_map_type>(*map1);
-	pmem::detail::destroy<persistent_map_type>(*map2);
-}
-
-/*
  * swap_test -- (internal) test swap method
  * pmem::obj::concurrent_map<nvobj::p<int>, nvobj::p<int> >
  */
@@ -803,9 +682,6 @@ test(int argc, char *argv[])
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
-
-	ctor_test(pop);
-	assignment_test(pop);
 
 	access_test(pop);
 	swap_test(pop);

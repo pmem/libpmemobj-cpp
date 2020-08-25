@@ -120,6 +120,14 @@ function(build_test_tbb name)
 	target_link_libraries(${name} ${TBB_LIBRARIES})
 endfunction()
 
+# Function to build test with atomic
+function(build_test_atomic name)
+	build_test(${name} ${ARGN})
+	if(CLANG)
+		target_link_libraries(${name} atomic)
+	endif()
+endfunction()
+
 # Function to build a TBB test with mocked pmemobj_defrag() function
 function(build_test_tbb_defrag name)
 	build_test_tbb(${name} ${ARGN})

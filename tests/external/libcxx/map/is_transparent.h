@@ -14,7 +14,24 @@
 #ifndef LIBPMEMOBJ_CPP_TESTS_TRANSPARENT_H
 #define LIBPMEMOBJ_CPP_TESTS_TRANSPARENT_H
 
+/* Windows has a max macro which collides with std::numeric_limits::max */
+#if defined(max) && defined(_WIN32)
+#undef max
+#endif
+
 #include "unittest.hpp"
+
+struct C2Int { // comparable to int
+    C2Int() : i_(0) {}
+    C2Int(int i): i_(i) {}
+    int get () const { return i_; }
+private:
+    int i_;
+    };
+
+bool operator <(int          rhs,   const C2Int& lhs) { return rhs       < lhs.get(); }
+bool operator <(const C2Int& rhs,   const C2Int& lhs) { return rhs.get() < lhs.get(); }
+bool operator <(const C2Int& rhs,            int lhs) { return rhs.get() < lhs; }
 
 struct transparent_less
 {
@@ -36,16 +53,33 @@ struct transparent_less_not_referenceable
     using is_transparent = void () const &;  // it's a type; a weird one, but a type
 };
 
-struct C2Int { // comparable to int
-    C2Int() : i_(0) {}
-    C2Int(int i): i_(i) {}
-    int get () const { return i_; }
-private:
-    int i_;
-    };
+struct heterogenous_bytes_view
+{
+    heterogenous_bytes_view(const int *value)
+	{
+		v = (unsigned)(*value + (std::numeric_limits<int>::max)() + 1);
+	}
 
-bool operator <(int          rhs,   const C2Int& lhs) { return rhs       < lhs.get(); }
-bool operator <(const C2Int& rhs,   const C2Int& lhs) { return rhs.get() < lhs.get(); }
-bool operator <(const C2Int& rhs,            int lhs) { return rhs.get() < lhs; }
+    heterogenous_bytes_view(const C2Int *value) 
+    {
+		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
+    }
+
+	size_t
+	size() const
+	{
+		return sizeof(int);
+	}
+
+	char operator[](std::size_t p) const
+	{
+		return reinterpret_cast<const char *>(
+			&v)[size() - p - 1];
+	}
+
+	unsigned v;
+
+    using is_transparent = void;
+};
 
 #endif  // LIBPMEMOBJ_CPP_TESTS_TRANSPARENT_H

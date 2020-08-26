@@ -49,12 +49,6 @@ try_insert_node_finish_marker()
 }
 #endif
 
-template <typename Compare>
-using is_transparent = typename Compare::is_transparent;
-
-template <typename Compare>
-using has_is_transparent = detail::supports<Compare, is_transparent>;
-
 /**
  * Copy assignment implementation for allocator if
  * propagate_on_container_copy_assignment == true_type

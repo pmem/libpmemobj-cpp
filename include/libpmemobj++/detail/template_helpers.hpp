@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2020, Intel Corporation */
 
 /**
  * @file
@@ -37,6 +37,12 @@ struct supports_impl<T, void_t<Checks<T>...>, Checks...> {
 
 template <typename T, template <typename> class... Checks>
 using supports = typename supports_impl<T, void, Checks...>::type;
+
+template <typename Compare>
+using is_transparent = typename Compare::is_transparent;
+
+template <typename Compare>
+using has_is_transparent = detail::supports<Compare, is_transparent>;
 
 } /* namespace detail */
 

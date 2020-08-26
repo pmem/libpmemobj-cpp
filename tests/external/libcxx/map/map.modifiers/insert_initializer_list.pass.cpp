@@ -17,6 +17,7 @@
 
 // void insert(initializer_list<value_type> il);
 
+#include "../is_transparent.h"
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
 
@@ -28,7 +29,7 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using container = container_t<int, double>;
+using container = container_t<int, double, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
@@ -39,7 +40,11 @@ run(pmem::obj::pool<root> &pop)
 {
 	auto robj = pop.root();
 	{
+#ifdef LIBPMEMOBJ_CPP_TESTS_RADIX
+		typedef std::pair<const int, double> V;
+#else
 		typedef pmem::detail::pair<const int, double> V;
+#endif
 		pmem::obj::transaction::run(pop, [&] {
 			robj->s = nvobj::make_persistent<container>(
 				std::initializer_list<V>({{1, 1},
@@ -56,10 +61,13 @@ run(pmem::obj::pool<root> &pop)
 			{2, 2},
 		});
 		UT_ASSERT(m.size() == 3);
-		UT_ASSERT(distance(m.begin(), m.end()) == 3);
-		UT_ASSERT(*m.begin() == V(1, 1));
-		UT_ASSERT(*next(m.begin()) == V(2, 1));
-		UT_ASSERT(*next(m.begin(), 2) == V(3, 1));
+		UT_ASSERT(std::distance(m.begin(), m.end()) == 3);
+		UT_ASSERT(m.begin()->MAP_KEY == 1);
+		UT_ASSERT(m.begin()->MAP_VALUE == 1);
+		UT_ASSERT(std::next(m.begin())->MAP_KEY == 2);
+		UT_ASSERT(std::next(m.begin())->MAP_VALUE == 1);
+		UT_ASSERT(std::next(m.begin(), 2)->MAP_KEY == 3);
+		UT_ASSERT(std::next(m.begin(), 2)->MAP_VALUE == 1);
 		pmem::obj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container>(robj->s);
 		});

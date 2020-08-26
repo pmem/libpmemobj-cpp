@@ -48,6 +48,71 @@ test_emplace(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 template <typename Container, int ValueRepeats>
 void
+test_insert_or_assign(nvobj::pool<root> &pop,
+		      nvobj::persistent_ptr<Container> &ptr)
+{
+	auto value_f = [](unsigned v) {
+		return value<Container>(v, ValueRepeats);
+	};
+
+	nvobj::transaction::run(
+		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
+
+	UT_ASSERTeq(ptr->size(), 0);
+
+	assert_tx_abort(pop, [&] {
+		auto it = ptr->insert_or_assign(key<Container>(0),
+						value<Container>(0));
+		UT_ASSERT(it.second);
+		UT_ASSERT(it.first->key() == key<Container>(0));
+		UT_ASSERT(it.first->value() == value<Container>(0));
+
+		UT_ASSERTeq(ptr->size(), 1);
+	});
+
+	UT_ASSERTeq(ptr->size(), 0);
+
+	assert_tx_abort(pop, [&] {
+		for (unsigned i = 0; i < 1024; i++) {
+			auto it = ptr->insert_or_assign(key<Container>(i),
+							value<Container>(i));
+			UT_ASSERT(it.second);
+			UT_ASSERT(it.first->key() == key<Container>(i));
+			UT_ASSERT(it.first->value() == value<Container>(i));
+		}
+
+		UT_ASSERTeq(ptr->size(), 1024);
+	});
+
+	UT_ASSERTeq(ptr->size(), 0);
+
+	for (unsigned i = 0; i < 10; i++)
+		ptr->insert_or_assign(key<Container>(i), value<Container>(i));
+
+	verify_elements(ptr, 10, key<Container>, value_f);
+
+	assert_tx_abort(pop, [&] {
+		for (unsigned i = 0; i < 10; i++) {
+			auto it = ptr->insert_or_assign(
+				key<Container>(i), value<Container>(i + 1));
+			UT_ASSERT(it.second);
+			UT_ASSERT(it.first->key() == key<Container>(i));
+			UT_ASSERT(it.first->value() == value<Container>(i + 1));
+		}
+
+		UT_ASSERTeq(ptr->size(), 10);
+	});
+
+	verify_elements(ptr, 10, key<Container>, value_f);
+
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
+
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+}
+
+template <typename Container, int ValueRepeats>
+void
 test_assign(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 {
 	auto value_f = [](unsigned v) {
@@ -361,6 +426,9 @@ test(int argc, char *argv[])
 	test_assign_root<container_int_string, 1024>(pop,
 						     pop.root()->radix_int_str);
 	test_erase<container_int_string, 1024>(pop, pop.root()->radix_int_str);
+
+	test_insert_or_assign<container_string, 1>(pop, pop.root()->radix_str);
+	test_insert_or_assign<container_int, 1>(pop, pop.root()->radix_int);
 
 	pop.close();
 }

@@ -34,7 +34,7 @@ namespace nvobjex = pmem::obj::experimental;
 #ifdef LIBPMEMOBJ_CPP_TESTS_USE_STD_LESS
 using less_type = std::less<>;
 #else
-using less_type = transparent_less;
+using less_type = TRANSPARENT_COMPARE;
 #endif
 
 using C = container_t<int, double>;

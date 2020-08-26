@@ -42,18 +42,19 @@ namespace pmem
 namespace detail
 {
 
+/* XXX: move to template_helpers */
+template <typename Compare>
+using is_transparent = typename Compare::is_transparent;
+
+template <typename Compare>
+using has_is_transparent = detail::supports<Compare, is_transparent>;
+
 #ifndef NDEBUG
 inline void
 try_insert_node_finish_marker()
 {
 }
 #endif
-
-template <typename Compare>
-using is_transparent = typename Compare::is_transparent;
-
-template <typename Compare>
-using has_is_transparent = detail::supports<Compare, is_transparent>;
 
 /**
  * Copy assignment implementation for allocator if

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2020, Intel Corporation */
 
 /**
  * @file
@@ -16,6 +16,12 @@ namespace pmem
 
 namespace detail
 {
+
+/* template <typename Compare>
+using is_transparent = typename Compare::is_transparent;
+
+template <typename Compare>
+using has_is_transparent = detail::supports<Compare, is_transparent>; */
 
 template <typename... Ts>
 struct make_void {

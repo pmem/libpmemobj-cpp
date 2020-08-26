@@ -3,6 +3,7 @@
 
 #include "radix.hpp"
 
+#include <algorithm>
 #include <random>
 #include <unordered_map>
 #include <unordered_set>
@@ -326,6 +327,41 @@ generate_compressed_tree(nvobj::persistent_ptr<container_string> ptr,
 	}
 }
 
+static void
+verify_bounds(nvobj::persistent_ptr<container_string> ptr,
+	      const std::vector<std::string> &keys)
+{
+	for (size_t i = 0; i < keys.size() - 1; i++) {
+		/* generate key k for which k < keys[i] && k >= keys[i - 1] */
+		auto k = keys[i];
+		k[k.size() - 1]--;
+
+		if (i > 0)
+			UT_ASSERT(k > keys[i - 1]);
+
+		auto it = ptr->upper_bound(k);
+		UT_ASSERT(it->key() == keys[i]);
+
+		it = ptr->lower_bound(k);
+		UT_ASSERT(it->key() == keys[i]);
+	}
+}
+
+static void
+verify_bounds_key(nvobj::persistent_ptr<container_string> ptr,
+		  const std::vector<std::string> &keys, const std::string &key)
+{
+	auto expected = std::lower_bound(keys.begin(), keys.end(), key);
+	auto actual = ptr->lower_bound(key);
+	UT_ASSERT((expected == keys.end() && actual == ptr->end()) ||
+		  actual->key() == *expected);
+
+	expected = std::upper_bound(keys.begin(), keys.end(), key);
+	actual = ptr->upper_bound(key);
+	UT_ASSERT((expected == keys.end() && actual == ptr->end()) ||
+		  actual->key() == *expected);
+}
+
 void
 test_compression(nvobj::pool<root> &pop)
 {
@@ -347,6 +383,8 @@ test_compression(nvobj::pool<root> &pop)
 	std::sort(test_keys.begin(), test_keys.end());
 	UT_ASSERT(test_keys == keys);
 
+	verify_bounds(r->radix_str, keys);
+
 	for (size_t i = 1; i < keys.size() - 1; i++) {
 		/* Key consists of segments like this:
 		 * N-path-M-path ... where N, M is child number.
@@ -359,10 +397,34 @@ test_compression(nvobj::pool<root> &pop)
 
 		/* flip some bit at the end (part of a compression) */
 		k[idx] = 0;
+		verify_bounds_key(r->radix_str, keys, k);
 		auto lb = r->radix_str->lower_bound(k);
 		auto rb = r->radix_str->upper_bound(k);
 		UT_ASSERT(lb == rb);
 		UT_ASSERT(r->radix_str->find(keys[i]) == lb);
+
+		k[idx] = std::numeric_limits<char>::max();
+		verify_bounds_key(r->radix_str, keys, k);
+
+		k = keys[i];
+		k[1] = 0;
+		verify_bounds_key(r->radix_str, keys, k);
+
+		k = keys[i];
+		k[1] = std::numeric_limits<char>::max();
+		verify_bounds_key(r->radix_str, keys, k);
+
+		k = keys[i] + "postfix";
+		verify_bounds_key(r->radix_str, keys, k);
+
+		k = keys[i].substr(0, k.size() - compressed_path_len - 1);
+		verify_bounds_key(r->radix_str, keys, k);
+
+		k = keys[i].substr(0, k.size() - compressed_path_len);
+		verify_bounds_key(r->radix_str, keys, k);
+
+		k = keys[i].substr(0, k.size() - 1);
+		verify_bounds_key(r->radix_str, keys, k);
 	}
 
 	nvobj::transaction::run(pop, [&] {
@@ -544,10 +606,10 @@ test_pre_post_fixes(nvobj::pool<root> &pop)
 		if (i % 2 == 0)
 			elements.push_back(
 				elements.back() +
-				std::string(1, char(generator() % 128)));
+				std::string(1, char(generator() % 127 + 1)));
 		else {
 			auto str = elements.back();
-			str.back() |= (-(char(generator() % 128)));
+			str.back() |= (-(char(generator() % 127 + 1)));
 			elements.push_back(str);
 		}
 	}
@@ -572,6 +634,8 @@ test_pre_post_fixes(nvobj::pool<root> &pop)
 		if (ret.second)
 			its.emplace(elements[i - 1], ret.first);
 	}
+
+	verify_bounds(r->radix_str, s_elements);
 
 	UT_ASSERTeq(r->radix_str->size(), num_elements);
 	unsigned i = 0;

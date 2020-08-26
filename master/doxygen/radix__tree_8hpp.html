@@ -81,6 +81,7 @@ $(function() {
 <div class="textblock"><code>#include &lt;<a class="el" href="allocator_8hpp_source.html">libpmemobj++/allocator.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="string_8hpp_source.html">libpmemobj++/container/string.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="inline__string_8hpp_source.html">libpmemobj++/experimental/inline_string.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="self__relative__ptr_8hpp_source.html">libpmemobj++/experimental/self_relative_ptr.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="make__persistent_8hpp_source.html">libpmemobj++/make_persistent.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="p_8hpp_source.html">libpmemobj++/p.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="persistent__ptr_8hpp_source.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</code><br />
@@ -88,6 +89,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="pool_8hpp_source.html">libpmemobj++/pool.hpp</a>&gt;</code><br />
 <code>#include &lt;libpmemobj++/string_view.hpp&gt;</code><br />
 <code>#include &lt;<a class="el" href="transaction_8hpp_source.html">libpmemobj++/transaction.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="utils_8hpp_source.html">libpmemobj++/utils.hpp</a>&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
@@ -143,7 +145,9 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of persistent radix tree. </p>
-<p>Based on: <a href="https://github.com/pmem/pmdk/blob/master/src/libpmemobj/critnib.h">https://github.com/pmem/pmdk/blob/master/src/libpmemobj/critnib.h</a> </p>
+<p>Based on: <a href="https://github.com/pmem/vmemcache/blob/master/src/critnib.h">https://github.com/pmem/vmemcache/blob/master/src/critnib.h</a></p>
+<p>The implementation is a variation of a PATRICIA trie - the internal nodes do not store the path explicitly, but only a position at which the keys differ. Keys are stored entirely in leaves.</p>
+<p>More info about radix tree: <a href="https://en.wikipedia.org/wiki/Radix_tree">https://en.wikipedia.org/wiki/Radix_tree</a> </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

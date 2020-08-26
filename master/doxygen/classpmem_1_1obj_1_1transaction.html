@@ -120,7 +120,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aae32a7ede01bfcf20672433263267387"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">run</a> (<a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;<a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a>, std::function&lt; void()&gt; tx, Locks &amp;... locks)</td></tr>
 <tr class="memdesc:aae32a7ede01bfcf20672433263267387"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a closure-like transaction and lock <code>locks</code>.  <a href="#aae32a7ede01bfcf20672433263267387">More...</a><br /></td></tr>
 <tr class="separator:aae32a7ede01bfcf20672433263267387"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a723ac1809dae102c7ef8a84196d94862"><td class="memTemplParams" colspan="2">template&lt;typename T , typename std::enable_if&lt; LIBPMEMOBJ_CPP_IS_TRIVIALLY_COPYABLE(T), T &gt;::type *  = nullptr&gt; </td></tr>
+<tr class="memitem:a723ac1809dae102c7ef8a84196d94862"><td class="memTemplParams" colspan="2">template&lt;typename T , typename std::enable_if&lt; detail::can_do_snapshot&lt; T &gt;::value, T &gt;::type *  = nullptr&gt; </td></tr>
 <tr class="memitem:a723ac1809dae102c7ef8a84196d94862"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction.html#a723ac1809dae102c7ef8a84196d94862">snapshot</a> (const T *addr, size_t num=1)</td></tr>
 <tr class="memdesc:a723ac1809dae102c7ef8a84196d94862"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes a “snapshot” of given elements of type T number (1 by default), located at the given address ptr in the virtual memory space and saves it to the undo log.  <a href="#a723ac1809dae102c7ef8a84196d94862">More...</a><br /></td></tr>
 <tr class="separator:a723ac1809dae102c7ef8a84196d94862"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -471,7 +471,7 @@ template&lt;typename... Locks&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename std::enable_if&lt; LIBPMEMOBJ_CPP_IS_TRIVIALLY_COPYABLE(T), T &gt;::type *  = nullptr&gt; </div>
+template&lt;typename T , typename std::enable_if&lt; detail::can_do_snapshot&lt; T &gt;::value, T &gt;::type *  = nullptr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -502,7 +502,7 @@ template&lt;typename T , typename std::enable_if&lt; LIBPMEMOBJ_CPP_IS_TRIVIALLY
 </div><div class="memdoc">
 
 <p>Takes a “snapshot” of given elements of type T number (1 by default), located at the given address ptr in the virtual memory space and saves it to the undo log. </p>
-<p>The application is then free to directly modify the object in that memory range. In case of a failure or abort, all the changes within this range will be rolled back. The supplied block of memory has to be within the pool registered in the transaction. This function must be called during transaction. This overload only participates in overload resolution of function template if T satisfies requirements of LIBPMEMOBJ_CPP_IS_TRIVIALLY_COPYABLE macro.</p>
+<p>The application is then free to directly modify the object in that memory range. In case of a failure or abort, all the changes within this range will be rolled back. The supplied block of memory has to be within the pool registered in the transaction. This function must be called during transaction. This overload only participates in overload resolution of function template if T is either a trivially copyable type or some PMDK provided type.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">addr</td><td>pointer to the first object to be snapshotted. </td></tr>

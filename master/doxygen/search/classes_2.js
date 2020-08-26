@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['can_5fdo_5fsnapshot',['can_do_snapshot',['../structpmem_1_1detail_1_1can__do__snapshot.html',1,'pmem::detail']]],
+  ['can_5fdo_5fsnapshot_3c_20std_3a_3aatomic_3c_20obj_3a_3aexperimental_3a_3aself_5frelative_5fptr_3c_20t_20_3e_20_3e_20_3e',['can_do_snapshot&lt; std::atomic&lt; obj::experimental::self_relative_ptr&lt; T &gt; &gt; &gt;',['../structpmem_1_1detail_1_1can__do__snapshot_3_01std_1_1atomic_3_01obj_1_1experimental_1_1self__relative__ptr_3_01T_01_4_01_4_01_4.html',1,'pmem::detail']]],
   ['concurrent_5fhash_5fmap',['concurrent_hash_map',['../classpmem_1_1obj_1_1concurrent__hash__map.html',1,'pmem::obj']]],
   ['concurrent_5fmap',['concurrent_map',['../classpmem_1_1obj_1_1experimental_1_1concurrent__map.html',1,'pmem::obj::experimental']]],
   ['concurrent_5fskip_5flist',['concurrent_skip_list',['../classpmem_1_1detail_1_1concurrent__skip__list.html',1,'pmem::detail']]],

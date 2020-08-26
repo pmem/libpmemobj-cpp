@@ -69,6 +69,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">pmem::obj::experimental Namespace Reference</div>  </div>
@@ -98,12 +99,15 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent self-relative pointer class.  <a href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr__base.html">self_relative_ptr_base</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> base (non-template) class  <a href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr__base.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html">v</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html" title="pmem::obj::experimental::v - volatile resides on pmem class.">pmem::obj::experimental::v</a> - volatile resides on pmem class.  <a href="classpmem_1_1obj_1_1experimental_1_1v.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:af58574af7907e31bc547b8b79afbb9cc"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#af58574af7907e31bc547b8b79afbb9cc">self_relative_ptr_base</a> = <a class="el" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">pmem::detail::self_relative_ptr_base_impl</a>&lt; std::ptrdiff_t &gt;</td></tr>
+<tr class="memdesc:af58574af7907e31bc547b8b79afbb9cc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> base (non-template) class  <a href="#af58574af7907e31bc547b8b79afbb9cc">More...</a><br /></td></tr>
+<tr class="separator:af58574af7907e31bc547b8b79afbb9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -238,7 +242,26 @@ template&lt;typename T &gt; </td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Experimental implementations. </p>
 <p>It contains implementations, which are not yet ready to be used in production. They may be not finished, not fully tested or still in discussion. It is located within <a class="el" href="namespacepmem_1_1obj.html" title="Main libpmemobj namespace.">pmem::obj</a> namespace. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="af58574af7907e31bc547b8b79afbb9cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af58574af7907e31bc547b8b79afbb9cc">&#9670;&nbsp;</a></span>self_relative_ptr_base</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacepmem_1_1obj_1_1experimental.html#af58574af7907e31bc547b8b79afbb9cc">pmem::obj::experimental::self_relative_ptr_base</a> = typedef <a class="el" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">pmem::detail::self_relative_ptr_base_impl</a>&lt;std::ptrdiff_t&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> base (non-template) class </p>
+<p>Implements some of the functionality of the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> class. It defines all applicable conversions from and to a self_relative_ptr_base.</p>
+<p>It can be used e.g. as a parameter, where <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> of any template type is required. It is similar to self_relative_ptr&lt;void&gt; (it can point to whatever type), but it can be used when you want to have pointer to some unspecified <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> (with self_relative_ptr&lt;void&gt; it can't be done, because: self_relative_ptr&lt;T&gt;* does not convert to self_relative_ptr&lt;void&gt;*). </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="aef13d66f1b1afa0f40b422baf5325aba"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aef13d66f1b1afa0f40b422baf5325aba">&#9670;&nbsp;</a></span>operator-()</h2>
 

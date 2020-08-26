@@ -4,7 +4,13 @@
 /**
  * @file
  * Implementation of persistent radix tree.
- * Based on: https://github.com/pmem/pmdk/blob/master/src/libpmemobj/critnib.h
+ * Based on: https://github.com/pmem/vmemcache/blob/master/src/critnib.h
+ *
+ * The implementation is a variation of a PATRICIA trie - the internal
+ * nodes do not store the path explicitly, but only a position at which
+ * the keys differ. Keys are stored entirely in leaves.
+ *
+ * More info about radix tree: https://en.wikipedia.org/wiki/Radix_tree
  */
 
 #ifndef LIBPMEMOBJ_CPP_RADIX_HPP
@@ -21,6 +27,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/utils.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -48,20 +55,20 @@ namespace experimental
 {
 
 /**
- * Radix tree is an associative, ordered container. It's API is similar
+ * Radix tree is an associative, ordered container. Its API is similar
  * to the API of std::map.
  *
  * Unlike std::map radix tree does not use comparison (std::less or equivalent)
- * to locate elements. Instead a keys is mapped to a sequence of bytes using
+ * to locate elements. Instead, keys are mapped to a sequence of bytes using
  * user-provided BytesView type. The key's bytes uniquely define the position of
  * an element. In some way, it is similar to a hash table (BytesView can be
  * treated as a hash function) but with sorted elements.
  *
- * The elements ordering is defined based on the BytesView mapping. The byte
+ * The elements' ordering is defined based on the BytesView mapping. The byte
  * sequences are compared using a function equivalent to std::string::compare.
  *
  * BytesView should accept a pointer to the key type in a constructor and
- * provide operator[] and size methods. The declaration should be as following:
+ * provide operator[] and size method. The declaration should be as following:
  *
  * @code
  * struct BytesView {
@@ -75,18 +82,16 @@ namespace experimental
  * types is provided. Note that integral types are assumed to be in
  * little-endian.
  *
- * Iterators and reference are stable (are not invalidated by inserts or erases
+ * Iterators and references are stable (are not invalidated by inserts or erases
  * of other elements nor by assigning to the value) for all value types except
  * inline_string.
  *
- * In case of inline_string, iterators and reference are not invalidated by
- * other inserts or erases but might be invalidated by assigning new value to
- * the element. Using (*find(K)).second = "new_value" might invalidate other
+ * In case of inline_string, iterators and references are not invalidated by
+ * other inserts or erases, but might be invalidated by assigning new value to
+ * the element. Using find(K).assign_val("new_value") may invalidate other
  * iterators and references to the element with key K.
  *
- * swap() invalidates all references and iterators if inline_string is used as
- * value but does not invalidate iterators (except past-the-end iterator) nor
- * references to any other value_type.
+ * swap() invalidates all references and iterators.
  *
  * An example of custom BytesView implementation:
  * @snippet radix_tree/radix_tree_custom_key.cpp bytes_view_example
@@ -217,7 +222,7 @@ public:
 					const radix_tree<K, V, BV> &tree);
 
 private:
-	using byten_t = uint32_t;
+	using byten_t = uint64_t;
 	using bitn_t = uint8_t;
 
 	/* Size of a chunk which differentiates subtrees of a node */
@@ -401,7 +406,7 @@ struct radix_tree<Key, Value, BytesView>::node {
 	 */
 	tagged_node_ptr embedded_entry;
 
-	/* Children can be both leafs and internal nodes. */
+	/* Children can be both leaves and internal nodes. */
 	tagged_node_ptr child[SLNODES];
 
 	/**
@@ -521,7 +526,14 @@ public:
 	reference operator*() const;
 	pointer operator->() const;
 
-	template <typename T>
+	template <typename V = Value,
+		  typename Enable = typename std::enable_if<
+			  std::is_same<V, inline_string>::value>::type>
+	void assign_val(string_view rhs);
+
+	template <typename T, typename V = Value,
+		  typename Enable = typename std::enable_if<
+			  !std::is_same<V, inline_string>::value>::type>
 	void assign_val(T &&rhs);
 
 	radix_tree_iterator &operator++();
@@ -650,8 +662,12 @@ template <typename Key, typename Value, typename BytesView>
 void
 radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
 {
-	size_.swap(rhs.size_);
-	root.swap(rhs.root);
+	auto pop = pool_by_vptr(this);
+
+	transaction::run(pop, [&] {
+		this->size_.swap(rhs.size_);
+		this->root.swap(rhs.root);
+	});
 }
 
 /*
@@ -724,6 +740,9 @@ template <typename K>
 BytesView
 radix_tree<Key, Value, BytesView>::bytes_view(const K &key)
 {
+	/* bytes_view accepts const pointer instead of reference to make sure
+	 * there is no implicit conversion to a temporary type (and hence
+	 * dangling references). */
 	return BytesView(&key);
 }
 
@@ -1945,23 +1964,15 @@ typename radix_tree<Key, Value,
  */
 template <typename Key, typename Value, typename BytesView>
 template <bool IsConst>
-template <typename T>
+template <typename V, typename Enable>
 void
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
-	T &&rhs)
+	string_view rhs)
 {
-	/* Number of bytes from the beginning of the leaf to the beginning of
-	 * the value string. */
-	auto occupied =
-		static_cast<size_type>((char *)&leaf_->value() - (char *)leaf_);
-	auto free_space =
-		pmemobj_alloc_usable_size(pmemobj_oid(leaf_)) - occupied;
-
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
-	if (real_size<Value>::value(rhs) <= free_space) {
-		transaction::run(
-			pop, [&] { leaf_->value() = std::forward<T>(rhs); });
+	if (rhs.size() <= leaf_->value().capacity()) {
+		transaction::run(pop, [&] { leaf_->value() = rhs; });
 	} else {
 		tagged_node_ptr *slot;
 
@@ -1977,12 +1988,22 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 
 		transaction::run(pop, [&] {
 			*slot = leaf::make(old_leaf->parent, old_leaf->key(),
-					   std::forward<T>(rhs));
+					   rhs);
 			delete_persistent<typename radix_tree::leaf>(old_leaf);
 		});
 
 		leaf_ = slot->get_leaf();
 	}
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <bool IsConst>
+template <typename T, typename V, typename Enable>
+void
+radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
+	T &&rhs)
+{
+	leaf_->value() = std::forward<T>(rhs);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2332,10 +2353,9 @@ struct bytes_view<T,
 #endif
 	}
 
-	char operator[](std::ptrdiff_t p) const
+	char operator[](std::size_t p) const
 	{
-		return reinterpret_cast<const char *>(
-			k)[static_cast<ptrdiff_t>(size()) - p - 1];
+		return reinterpret_cast<const char *>(k)[size() - p - 1];
 	}
 
 	constexpr size_t

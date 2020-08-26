@@ -1231,4 +1231,10 @@ if (TEST_RADIX_TREE)
 	# XXX: radix tree does provide heterogenous methods.
 	# build_test_ext(NAME radix_libcxx_upper_bound0 SRC_FILES libcxx/map/map.ops/upper_bound0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	# add_test_generic(NAME radix_libcxx_upper_bound0 TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_member_swap SRC_FILES libcxx/map/map.special/member_swap.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_member_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_non_member_swap SRC_FILES libcxx/map/map.special/non_member_swap.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_non_member_swap TRACERS none pmemcheck memcheck)
 endif()

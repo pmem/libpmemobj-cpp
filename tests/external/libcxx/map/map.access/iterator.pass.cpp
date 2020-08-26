@@ -105,7 +105,9 @@ run(pmem::obj::pool<root> &pop)
 		for (int j = 1; static_cast<std::size_t>(j) <= m.size();
 		     ++j, ++ri) {
 			UT_ASSERT((*ri).MAP_KEY == (int)m.size() - j + 1);
+			UT_ASSERT(ri->MAP_KEY == (int)m.size() - j + 1);
 			UT_ASSERT((*ri).MAP_VALUE == 2.5);
+			UT_ASSERT(ri->MAP_VALUE == 2.5);
 			(*ri).MAP_VALUE = 3.5;
 			pop.persist((*ri).MAP_VALUE);
 			UT_ASSERT((*ri).MAP_VALUE == 3.5);

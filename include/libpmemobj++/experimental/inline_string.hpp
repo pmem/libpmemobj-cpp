@@ -55,7 +55,7 @@ public:
 	 *
 	 * @throw pool_error if inline_string doesn't reside on pmem.
 	 */
-	inline_string(string_view v) : size_(v.size())
+	inline_string(string_view v) : size_(v.size()), capacity_(v.size())
 	{
 		if (nullptr == pmemobj_pool_by_ptr(this))
 			throw pmem::pool_error("Invalid pool handle.");
@@ -67,11 +67,25 @@ public:
 	}
 
 	/**
+	 * Constructs empty inline_string with specified capacity.
+	 *
+	 * @throw pool_error if inline_string doesn't reside on pmem.
+	 */
+	inline_string(size_type capacity) : size_(0), capacity_(capacity)
+	{
+		if (nullptr == pmemobj_pool_by_ptr(this))
+			throw pmem::pool_error("Invalid pool handle.");
+
+		data()[static_cast<ptrdiff_t>(size_)] = '\0';
+	}
+
+	/**
 	 * Copy constructor
 	 *
 	 * @throw pool_error if inline_string doesn't reside on pmem.
 	 */
-	inline_string(const inline_string &rhs) : size_(rhs.size())
+	inline_string(const inline_string &rhs)
+	    : size_(rhs.size()), capacity_(rhs.capacity())
 	{
 		if (nullptr == pmemobj_pool_by_ptr(this))
 			throw pmem::pool_error("Invalid pool handle.");
@@ -91,9 +105,12 @@ public:
 		if (this == &rhs)
 			return *this;
 
-		return assign(string_view(rhs));
+		return assign(rhs);
 	}
 
+	/**
+	 * Assignment operator from string_view.
+	 */
 	inline_string &
 	operator=(string_view rhs)
 	{
@@ -116,6 +133,19 @@ public:
 		return size_;
 	}
 
+	/**
+	 * @return number of characters that can be held in the inline_string.
+	 *
+	 * The space actually occupied by inline_string is equal to
+	 * sizeof(inline_string) + capacity() + sizeof('\0') and cannot be
+	 * expanded.
+	 */
+	size_type
+	capacity() const noexcept
+	{
+		return capacity_;
+	}
+
 	/** @return pointer to the data (equal to (this + 1)) */
 	pointer
 	data() noexcept
@@ -133,13 +163,16 @@ public:
 	/**
 	 * Transactionally assign content of string_view.
 	 *
-	 * It does not check whether there is enough capacity - it's
-	 * user responsibility.
+	 * @throw std::out_of_range if rhs is larger than capacity.
 	 */
 	inline_string &
 	assign(string_view rhs)
 	{
 		auto pop = obj::pool_base(pmemobj_pool_by_ptr(this));
+
+		if (rhs.size() > capacity())
+			throw std::out_of_range(
+				"inline_string capacity exceeded.");
 
 		auto initialized_mem =
 			(std::min)(rhs.size(), size()) + 1 /* sizeof('\0') */;
@@ -167,6 +200,7 @@ public:
 
 private:
 	obj::p<uint64_t> size_;
+	obj::p<uint64_t> capacity_;
 };
 
 /**

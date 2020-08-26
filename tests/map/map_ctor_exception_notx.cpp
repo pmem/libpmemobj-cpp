@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2020, Intel Corporation */
 
-#include "container_generic/ctor_exceptions_nopmem.hpp"
+#include "container_generic/ctor_exceptions_notx.hpp"
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
 
@@ -19,20 +19,16 @@ test(int argc, char *argv[])
 	if (argc < 2) {
 		UT_FATAL("usage: %s file-name", argv[0]);
 	}
-
 	auto path = argv[1];
-	auto pop = nvobj::pool<root>::create(path, "map_ctor_exceptions_nopmem",
+	auto pop = nvobj::pool<root>::create(path, "map_ctor_exceptions_notx",
 					     PMEMOBJ_MIN_POOL * 2,
 					     S_IWUSR | S_IRUSR);
 
-	auto r = pop.root();
-
-	(void)r;
-	test_default_ctor<map_type>();
-	test_iter_iter_ctor<map_type>();
-	test_initializer_list_ctor<map_type>();
-	test_move_ctor<map_type>(pop, r->pptr);
-	test_copy_ctor<map_type>(pop, r->pptr);
+	test_copy_ctor<map_type>(pop);
+	test_default_ctor<map_type>(pop);
+	test_initializer_list_ctor<map_type>(pop);
+	test_iter_iter_ctor<map_type>(pop);
+	test_move_ctor<map_type>(pop);
 
 	pop.close();
 }

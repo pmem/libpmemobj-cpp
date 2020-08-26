@@ -850,6 +850,15 @@ if(TEST_CONCURRENT_MAP)
 	# build_test_ext(NAME concurrent_map_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	# add_test_generic(NAME concurrent_map_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME concurrent_map_ctor_exceptions_notx SRC_FILES map/map_ctor_exception_notx.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME concurrent_map_ctor_exceptions_notx TRACERS none memcheck)
+
+	build_test_ext(NAME concurrent_map_txabort SRC_FILES map/map_txabort.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME concurrent_map_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME concurrent_map_ctor_and_assignment SRC_FILES map/map_ctor_and_assignment.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME concurrent_map_ctor_and_assignment TRACERS none memcheck pmemcheck)
+
 	if(TESTS_CONCURRENT_GDB AND GDB_FOUND)
 		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 			build_test(concurrent_map_mt_gdb concurrent_map_mt_gdb/concurrent_map_mt_gdb.cpp)
@@ -908,6 +917,15 @@ if (TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME radix_ctor_exceptions_notx SRC_FILES map/map_ctor_exception_notx.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_ctor_exceptions_notx TRACERS none memcheck)
+
+	build_test_ext(NAME radix_txabort SRC_FILES map/map_txabort.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_txabort TRACERS none memcheck pmemcheck)
+
+	build_test_ext(NAME radix_ctor_and_assignment SRC_FILES map/map_ctor_and_assignment.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_ctor_and_assignment TRACERS none memcheck pmemcheck)
 
 	if (TESTS_LONG)
 		build_test(radix_large radix/radix_large.cpp)

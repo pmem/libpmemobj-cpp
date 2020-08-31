@@ -19,6 +19,9 @@
 #undef max
 #endif
 
+#include <limits>
+#include <libpmemobj++/p.hpp>
+
 #include "unittest.hpp"
 
 struct C2Int { // comparable to int
@@ -26,12 +29,64 @@ struct C2Int { // comparable to int
     C2Int(int i): i_(i) {}
     int get () const { return i_; }
 private:
-    int i_;
+    pmem::obj::p<int> i_;
     };
 
 bool operator <(int          rhs,   const C2Int& lhs) { return rhs       < lhs.get(); }
 bool operator <(const C2Int& rhs,   const C2Int& lhs) { return rhs.get() < lhs.get(); }
 bool operator <(const C2Int& rhs,            int lhs) { return rhs.get() < lhs; }
+
+class Moveable {
+	Moveable &operator=(const Moveable &);
+
+	pmem::obj::p<int> int_;
+	pmem::obj::p<double> double_;
+
+public:
+	Moveable() : int_(0), double_(0)
+	{
+	}
+	Moveable(int i, double d) : int_(i), double_(d)
+	{
+	}
+	Moveable(Moveable &&x) : int_(x.int_), double_(x.double_)
+	{
+		x.int_ = -1;
+		x.double_ = -1;
+	}
+    Moveable(const Moveable &) = default;
+	Moveable &
+	operator=(Moveable &&x)
+	{
+		int_ = x.int_;
+		x.int_ = -1;
+		double_ = x.double_;
+		x.double_ = -1;
+		return *this;
+	}
+
+	bool
+	operator==(const Moveable &x) const
+	{
+		return int_ == x.int_ && double_ == x.double_;
+	}
+	bool
+	operator<(const Moveable &x) const
+	{
+		return int_ < x.int_ || (int_ == x.int_ && double_ < x.double_);
+	}
+
+	int
+	get() const
+	{
+		return int_;
+	}
+	bool
+	moved() const
+	{
+		return int_ == -1;
+	}
+};
 
 struct transparent_less
 {
@@ -61,6 +116,11 @@ struct heterogenous_bytes_view
 	}
 
     heterogenous_bytes_view(const C2Int *value) 
+    {
+		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
+    }
+
+    heterogenous_bytes_view(const Moveable *value) 
     {
 		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
     }

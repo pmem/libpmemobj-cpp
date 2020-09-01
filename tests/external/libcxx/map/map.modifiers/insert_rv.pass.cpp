@@ -21,6 +21,7 @@
 // template <class P>
 //   pair<iterator, bool> insert(P&& p);
 
+#include "../is_transparent.h"
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
 
@@ -79,9 +80,11 @@ public:
 };
 
 using container = container_t<int, MoveOnly>;
+using container2 = container_t<C2Int, int, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
+	nvobj::persistent_ptr<container2> s2;
 };
 
 template <class Container, class Pair>
@@ -99,29 +102,70 @@ do_insert_rv_test(pmem::obj::pool<root> &pop)
 	UT_ASSERT(r.second);
 	UT_ASSERT(r.first == m.begin());
 	UT_ASSERT(m.size() == 1);
-	UT_ASSERT(r.first->first == 2);
-	UT_ASSERT(r.first->second == 2);
+	UT_ASSERT(r.first->MAP_KEY == 2);
+	UT_ASSERT(r.first->MAP_VALUE == 2);
 
 	r = m.insert(P(1, 1));
 	UT_ASSERT(r.second);
 	UT_ASSERT(r.first == m.begin());
 	UT_ASSERT(m.size() == 2);
-	UT_ASSERT(r.first->first == 1);
-	UT_ASSERT(r.first->second == 1);
+	UT_ASSERT(r.first->MAP_KEY == 1);
+	UT_ASSERT(r.first->MAP_VALUE == 1);
 
 	r = m.insert(P(3, 3));
 	UT_ASSERT(r.second);
 	UT_ASSERT(m.size() == 3);
-	UT_ASSERT(r.first->first == 3);
-	UT_ASSERT(r.first->second == 3);
+	UT_ASSERT(r.first->MAP_KEY == 3);
+	UT_ASSERT(r.first->MAP_VALUE == 3);
 
 	r = m.insert(P(3, 3));
 	UT_ASSERT(!r.second);
 	UT_ASSERT(m.size() == 3);
-	UT_ASSERT(r.first->first == 3);
-	UT_ASSERT(r.first->second == 3);
+	UT_ASSERT(r.first->MAP_KEY == 3);
+	UT_ASSERT(r.first->MAP_VALUE == 3);
 	pmem::obj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<M>(robj->s); });
+}
+
+void
+do_insert_rv_template_test(pmem::obj::pool<root> &pop)
+{
+	auto robj = pop.root();
+	typedef container2 M;
+	typedef std::pair<int, int> P;
+	typedef std::pair<typename M::iterator, bool> R;
+
+	pmem::obj::transaction::run(
+		pop, [&] { robj->s2 = nvobj::make_persistent<M>(); });
+	auto &m = *robj->s2;
+
+	R r = m.insert(P(2, 2));
+	UT_ASSERT(r.second);
+	UT_ASSERT(r.first == m.begin());
+	UT_ASSERT(m.size() == 1);
+	UT_ASSERT(r.first->MAP_KEY.get() == 2);
+	UT_ASSERT(r.first->MAP_VALUE == 2);
+
+	r = m.insert(P(1, 1));
+	UT_ASSERT(r.second);
+	UT_ASSERT(r.first == m.begin());
+	UT_ASSERT(m.size() == 2);
+	UT_ASSERT(r.first->MAP_KEY.get() == 1);
+	UT_ASSERT(r.first->MAP_VALUE == 1);
+
+	r = m.insert(P(3, 3));
+	UT_ASSERT(r.second);
+	UT_ASSERT(m.size() == 3);
+	UT_ASSERT(r.first->MAP_KEY.get() == 3);
+	UT_ASSERT(r.first->MAP_VALUE == 3);
+
+	r = m.insert(P(3, 3));
+	UT_ASSERT(!r.second);
+	UT_ASSERT(m.size() == 3);
+	UT_ASSERT(r.first->MAP_KEY.get() == 3);
+	UT_ASSERT(r.first->MAP_VALUE == 3);
+	pmem::obj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 }
 
 int
@@ -129,6 +173,8 @@ run(pmem::obj::pool<root> &pop)
 {
 	do_insert_rv_test<container, std::pair<int, MoveOnly>>(pop);
 	do_insert_rv_test<container, std::pair<const int, MoveOnly>>(pop);
+
+	do_insert_rv_template_test(pop);
 
 #ifdef XXX // XXX: Implement min_allocator class
 	{
@@ -152,27 +198,27 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 1);
-		UT_ASSERT(r.first->first == 2);
-		UT_ASSERT(r.first->second == 2);
+		UT_ASSERT(r.first->MAP_KEY == 2);
+		UT_ASSERT(r.first->MAP_VALUE == 2);
 
 		r = m.insert({1, MoveOnly(1)});
 		UT_ASSERT(r.second);
 		UT_ASSERT(r.first == m.begin());
 		UT_ASSERT(m.size() == 2);
-		UT_ASSERT(r.first->first == 1);
-		UT_ASSERT(r.first->second == 1);
+		UT_ASSERT(r.first->MAP_KEY == 1);
+		UT_ASSERT(r.first->MAP_VALUE == 1);
 
 		r = m.insert({3, MoveOnly(3)});
 		UT_ASSERT(r.second);
 		UT_ASSERT(m.size() == 3);
-		UT_ASSERT(r.first->first == 3);
-		UT_ASSERT(r.first->second == 3);
+		UT_ASSERT(r.first->MAP_KEY == 3);
+		UT_ASSERT(r.first->MAP_VALUE == 3);
 
 		r = m.insert({3, MoveOnly(3)});
 		UT_ASSERT(!r.second);
 		UT_ASSERT(m.size() == 3);
-		UT_ASSERT(r.first->first == 3);
-		UT_ASSERT(r.first->second == 3);
+		UT_ASSERT(r.first->MAP_KEY == 3);
+		UT_ASSERT(r.first->MAP_VALUE == 3);
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
 	}

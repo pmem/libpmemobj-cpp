@@ -95,7 +95,7 @@ test_insert_or_assign(nvobj::pool<root> &pop,
 		for (unsigned i = 0; i < 10; i++) {
 			auto it = ptr->insert_or_assign(
 				key<Container>(i), value<Container>(i + 1));
-			UT_ASSERT(it.second);
+			UT_ASSERT(!it.second);
 			UT_ASSERT(it.first->key() == key<Container>(i));
 			UT_ASSERT(it.first->value() == value<Container>(i + 1));
 		}

@@ -48,6 +48,50 @@ test_emplace(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 template <typename Container, int ValueRepeats>
 void
+test_try_emplace(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
+{
+	auto value_f = [](unsigned v) {
+		return value<Container>(v, ValueRepeats);
+	};
+
+	nvobj::transaction::run(
+		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
+
+	UT_ASSERTeq(ptr->size(), 0);
+
+	assert_tx_abort(pop, [&] {
+		auto it = ptr->try_emplace(key<Container>(0), value_f(0));
+		UT_ASSERT(it.second);
+		UT_ASSERT(it.first->key() == key<Container>(0));
+		UT_ASSERT(it.first->value() == value_f(0));
+
+		UT_ASSERTeq(ptr->size(), 1);
+	});
+
+	UT_ASSERTeq(ptr->size(), 0);
+
+	assert_tx_abort(pop, [&] {
+		for (unsigned i = 0; i < 1024; i++) {
+			auto it = ptr->try_emplace(key<Container>(i),
+						   value<Container>(i));
+			UT_ASSERT(it.second);
+			UT_ASSERT(it.first->key() == key<Container>(i));
+			UT_ASSERT(it.first->value() == value_f(i));
+		}
+
+		UT_ASSERTeq(ptr->size(), 1024);
+	});
+
+	UT_ASSERTeq(ptr->size(), 0);
+
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
+
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+}
+
+template <typename Container, int ValueRepeats>
+void
 test_insert_or_assign(nvobj::pool<root> &pop,
 		      nvobj::persistent_ptr<Container> &ptr)
 {
@@ -95,7 +139,7 @@ test_insert_or_assign(nvobj::pool<root> &pop,
 		for (unsigned i = 0; i < 10; i++) {
 			auto it = ptr->insert_or_assign(
 				key<Container>(i), value<Container>(i + 1));
-			UT_ASSERT(it.second);
+			UT_ASSERT(!it.second);
 			UT_ASSERT(it.first->key() == key<Container>(i));
 			UT_ASSERT(it.first->value() == value<Container>(i + 1));
 		}
@@ -478,6 +522,9 @@ test(int argc, char *argv[])
 	test_insert_or_assign<container_int, 1>(pop, pop.root()->radix_int);
 
 	test_insert<container_int_int, 1>(pop, pop.root()->radix_int_int);
+
+	test_try_emplace<container_string, 1>(pop, pop.root()->radix_str);
+	test_try_emplace<container_int, 1>(pop, pop.root()->radix_int);
 
 	pop.close();
 }

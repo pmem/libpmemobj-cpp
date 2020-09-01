@@ -40,7 +40,7 @@ namespace nvobjex = pmem::obj::experimental;
 
 using container = container_t<int, Moveable, TRANSPARENT_COMPARE>;
 using container2 = container_t<Moveable, Moveable, TRANSPARENT_COMPARE>;
-using container3 = container_t<C2Int, C2Int, TRANSPARENT_COMPARE>;
+using container3 = container_t<C2Int, Moveable, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
@@ -126,8 +126,7 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.first->MAP_KEY == mvkey1);	  // key
 		UT_ASSERT(r.first->MAP_VALUE.get() == 4); // value
 
-		/* XXX: try_emplace */
-		/*Moveable mvkey2(3, 3.0);
+		Moveable mvkey2(3, 3.0);
 		Moveable mv2(5, 5.0);
 		r = m.insert_or_assign(std::move(mvkey2), std::move(mv2));
 		UT_ASSERT(m.size() == 11);
@@ -135,7 +134,7 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(mv2.moved());			  // was moved from
 		UT_ASSERT(mvkey2.moved());		  // was moved from
 		UT_ASSERT(r.first->MAP_KEY.get() == 3);	  // key
-		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value*/
+		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value
 
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
@@ -221,22 +220,26 @@ run(pmem::obj::pool<root> &pop)
 		R r;
 
 		for (int i = 0; i < 10; i++)
-			m.emplace(C2Int{i}, C2Int{i});
+			m.emplace(C2Int{i}, Moveable{i, 20.0});
 		UT_ASSERT(m.size() == 10);
 
 		for (int i = 0; i < 10; i++) {
-			r = m.insert_or_assign(i, i + 1);
+			Moveable mv{i + 1, 10.0};
+			r = m.insert_or_assign(i, std::move(mv));
 			UT_ASSERT(!r.second);
 			UT_ASSERT(r.first->MAP_KEY.get() == i);
 			UT_ASSERT(r.first->MAP_VALUE.get() == i + 1);
+			UT_ASSERT(mv.moved());
+			UT_ASSERT(m.size() == 10);
 		}
-		UT_ASSERT(m.size() == 10);
 
 		for (int i = 10; i < 20; i++) {
-			r = m.insert_or_assign(i, i);
+			Moveable mv{i, 10.0};
+			r = m.insert_or_assign(i, std::move(mv));
 			UT_ASSERT(r.second);
 			UT_ASSERT(r.first->MAP_KEY.get() == i);
 			UT_ASSERT(r.first->MAP_VALUE.get() == i);
+			UT_ASSERT(mv.moved());
 		}
 		UT_ASSERT(m.size() == 20);
 

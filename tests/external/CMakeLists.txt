@@ -1210,23 +1210,20 @@ if (TEST_RADIX_TREE)
 	build_test_ext(NAME radix_libcxx_find SRC_FILES libcxx/map/map.ops/find.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_find TRACERS none pmemcheck memcheck)
 
-	# XXX: radix tree does provide heterogenous methods.
-	# build_test_ext(NAME radix_libcxx_find0 SRC_FILES libcxx/map/map.ops/find0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_find0 TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_find0 SRC_FILES libcxx/map/map.ops/find0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_find0 TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_lower_bound SRC_FILES libcxx/map/map.ops/lower_bound.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_lower_bound TRACERS none pmemcheck memcheck)
 
-	# XXX: radix tree does provide heterogenous methods.
-	# build_test_ext(NAME radix_libcxx_lower_bound0 SRC_FILES libcxx/map/map.ops/lower_bound0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_lower_bound0 TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_lower_bound0 SRC_FILES libcxx/map/map.ops/lower_bound0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_lower_bound0 TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_upper_bound SRC_FILES libcxx/map/map.ops/upper_bound.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_upper_bound TRACERS none pmemcheck memcheck)
 
-	# XXX: radix tree does provide heterogenous methods.
-	# build_test_ext(NAME radix_libcxx_upper_bound0 SRC_FILES libcxx/map/map.ops/upper_bound0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_upper_bound0 TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_upper_bound0 SRC_FILES libcxx/map/map.ops/upper_bound0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_upper_bound0 TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_member_swap SRC_FILES libcxx/map/map.special/member_swap.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_member_swap TRACERS none pmemcheck memcheck)
@@ -1242,6 +1239,9 @@ if (TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_libcxx_insert_cv SRC_FILES libcxx/map/map.modifiers/insert_cv.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_insert_cv TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_insert_rv SRC_FILES libcxx/map/map.modifiers/insert_rv.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_insert_rv TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_insert_initializer_list SRC_FILES libcxx/map/map.modifiers/insert_initializer_list.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_insert_initializer_list TRACERS none pmemcheck memcheck)

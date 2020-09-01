@@ -11,9 +11,8 @@
 
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/transaction.hpp>
-
 #include <libpmemobj++/string_view.hpp>
+#include <libpmemobj++/transaction.hpp>
 
 #include <string>
 

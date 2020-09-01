@@ -14,6 +14,7 @@
 #define LAYOUT "cpp"
 
 namespace nvobj = pmem::obj;
+namespace nvobjex = pmem::obj::experimental;
 
 namespace
 {
@@ -41,7 +42,8 @@ test_inline_string(nvobj::pool<struct root> &pop)
 {
 	auto r = pop.root();
 
-	const size_t req_capacity = 100;
+	const nvobjex::inline_string::size_type req_capacity = 100;
+	nvobj::string_view test_view("abcdefgh");
 
 	try {
 		nvobj::transaction::run(pop, [&] {
@@ -108,11 +110,29 @@ test_inline_string(nvobj::pool<struct root> &pop)
 	UT_ASSERT(nvobj::string_view(r->o1->s).compare("abcd") == 0);
 	UT_ASSERT(nvobj::string_view(r->o2->s).compare("xxxxxxx") == 0);
 
+	r->o1->s = test_view;
+	UT_ASSERT(test_view.compare(r->o1->s) == 0);
+
+	nvobj::string_view new_view = (nvobj::string_view)r->o1->s;
+	UT_ASSERT(new_view.compare(test_view) == 0);
+
+	try {
+		std::basic_string<std::string::value_type> str(
+			r->o1->s.capacity() + 5, 'x');
+
+		nvobj::string_view v1(str.data(), str.length());
+		nvobj::transaction::run(pop, [&] { r->o1->s = str; });
+	} catch (std::out_of_range &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
 	r->o1->s.assign("");
 
 	try {
 		nvobj::transaction::run(pop, [&] {
 			r->o1->s.assign("aaaa");
+			r->o1->s = r->o1->s;
 
 			UT_ASSERT(nvobj::string_view(r->o1->s).compare(
 					  "aaaa") == 0);
@@ -162,6 +182,20 @@ test_ctor_exception_nopmem(nvobj::pool<struct root> &pop)
 		}
 	});
 }
+
+void
+test_ctor_exception(void)
+{
+	try {
+		int capacity = 10;
+		nvobjex::inline_string(
+			static_cast<nvobjex::inline_string::size_type>(
+				capacity));
+	} catch (pmem::pool_error &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
 }
 
 static void
@@ -183,7 +217,7 @@ test(int argc, char *argv[])
 
 	test_inline_string(pop);
 	test_ctor_exception_nopmem(pop);
-
+	test_ctor_exception();
 	pop.close();
 }
 

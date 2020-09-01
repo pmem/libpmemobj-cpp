@@ -164,14 +164,14 @@ public:
 	void insert(std::initializer_list<value_type> il);
 	// insert_return_type insert(node_type&& nh);
 	// iterator insert(const_iterator hint, node_type&& nh);
-	// template <class... Args>
-	//     pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
-	// template <class... Args>
-	//     iterator try_emplace(const_iterator hint, const key_type& k,
-	//     Args&&... args);
-	// template <class... Args>
-	//     iterator try_emplace(const_iterator hint, key_type&& k, Args&&...
-	//     args);
+	template <class... Args>
+	std::pair<iterator, bool> try_emplace(key_type &&k, Args &&... args);
+	template <class... Args>
+	iterator try_emplace(const_iterator hint, const_key_reference k,
+			     Args &&... args);
+	template <class... Args>
+	iterator try_emplace(const_iterator hint, key_type &&k,
+			     Args &&... args);
 	template <
 		typename M,
 		typename = typename std::enable_if<
@@ -198,8 +198,11 @@ public:
 	iterator erase(const_iterator pos);
 	iterator erase(const_iterator first, const_iterator last);
 	size_type erase(const_key_reference k);
-	// template <typename K>
-	// size_type erase(K&& k);
+	/*template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	size_type erase(K &&k);*/
 
 	void clear();
 
@@ -212,13 +215,19 @@ public:
 
 	iterator find(const_key_reference k);
 	const_iterator find(const_key_reference k) const;
-	// template <typename K>
-	// const_iterator find(K&& k) const;
+	/*template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	const_iterator find(K &&k) const;*/
 
 	iterator lower_bound(const_key_reference k);
 	const_iterator lower_bound(const_key_reference k) const;
-	// template <typename K>
-	// const_iterator lower_bound(K&& k) const;
+	/*template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	const_iterator lower_bound(K &&k) const;*/
 
 	iterator upper_bound(const_key_reference k);
 	const_iterator upper_bound(const_key_reference k) const;
@@ -1296,6 +1305,42 @@ radix_tree<Key, Value, BytesView>::insert(std::initializer_list<value_type> il)
 	insert(il.begin(), il.end());
 }
 
+/* desc todo */
+template <typename Key, typename Value, typename BytesView>
+template <class... Args>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::try_emplace(key_type &&k, Args &&... args)
+{
+	return internal_emplace(k, [&](tagged_node_ptr parent) {
+		size_++;
+		return leaf::make(parent, std::move(k),
+				  std::forward<Args>(args)...);
+	});
+}
+
+/* desc todo */
+/* XXX: use hint */
+template <typename Key, typename Value, typename BytesView>
+template <class... Args>
+typename radix_tree<Key, Value, BytesView>::iterator
+radix_tree<Key, Value, BytesView>::try_emplace(const_iterator hint,
+					       const_key_reference k,
+					       Args &&... args)
+{
+	return try_emplace(k, std::forward<Args>(args)...).first;
+}
+
+/* desc todo */
+/* XXX: use hint */
+template <typename Key, typename Value, typename BytesView>
+template <class... Args>
+typename radix_tree<Key, Value, BytesView>::iterator
+radix_tree<Key, Value, BytesView>::try_emplace(const_iterator hint,
+					       key_type &&k, Args &&... args)
+{
+	return try_emplace(std::move(k), std::forward<Args>(args)...).first;
+}
+
 /* desc */
 template <typename Key, typename Value, typename BytesView>
 template <typename M, typename>
@@ -1403,6 +1448,15 @@ radix_tree<Key, Value, BytesView>::find(const_key_reference k) const
 {
 	return const_iterator(internal_find(k), &root);
 }
+
+/* desc */
+/*template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::const_iterator
+radix_tree<Key, Value, BytesView>::find(K &&k) const
+{
+	return const_iterator(internal_find(std::move(k)), &root);
+}*/
 
 template <typename Key, typename Value, typename BytesView>
 template <typename K>
@@ -1580,6 +1634,22 @@ radix_tree<Key, Value, BytesView>::erase(const_key_reference k)
 	return 1;
 }
 
+/* desc */
+/*template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::size_type
+radix_tree<Key, Value, BytesView>::erase(K &&k)
+{
+	auto it = find(std::move(k));
+
+	if (it == end())
+		return 0;
+
+	erase(it);
+
+	return 1;
+}*/
+
 /**
  * Returns an iterator pointing to the first element that is not less
  * than (i.e. greater or equal to) key.
@@ -1644,6 +1714,14 @@ radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k)
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
 			&root);
 }
+
+/*template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::const_iterator
+radix_tree<Key, Value, BytesView>::lower_bound(K &&k) const
+{
+	...
+}*/
 
 /**
  * Returns an iterator pointing to the first element that is greater

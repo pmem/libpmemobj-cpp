@@ -1236,4 +1236,7 @@ if (TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_libcxx_insert_or_assign SRC_FILES libcxx/map/map.modifiers/insert_or_assign.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_insert_or_assign TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_try_emplace SRC_FILES libcxx/map/map.modifiers/try.emplace.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_try_emplace TRACERS none pmemcheck memcheck)
 endif()

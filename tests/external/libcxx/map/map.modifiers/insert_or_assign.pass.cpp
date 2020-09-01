@@ -124,8 +124,7 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r.first->MAP_KEY == mvkey1);	  // key
 		UT_ASSERT(r.first->MAP_VALUE.get() == 4); // value
 
-		/* XXX: try_emplace */
-		/*Moveable mvkey2(3, 3.0);
+		Moveable mvkey2(3, 3.0);
 		Moveable mv2(5, 5.0);
 		r = m.try_emplace(std::move(mvkey2), std::move(mv2));
 		UT_ASSERT(m.size() == 11);
@@ -133,7 +132,7 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(mv2.moved());			  // was moved from
 		UT_ASSERT(mvkey2.moved());		  // was moved from
 		UT_ASSERT(r.first->MAP_KEY.get() == 3);	  // key
-		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value*/
+		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value
 
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });

@@ -1026,6 +1026,25 @@ test_tx_callback_outiside_tx()
 		UT_ASSERT(0);
 	}
 }
+
+void
+test_tx_error_handling(nvobj::pool<root> &pop)
+{
+	nvobj::transaction::run(pop, [&] {
+		nvobj::transaction::register_callback(
+			nvobj::transaction::stage::oncommit, [&] {
+				try {
+					nvobj::transaction::run(
+						pop, [&] { UT_ASSERT(0); });
+					UT_ASSERT(0);
+				} catch (pmem::transaction_scope_error &) {
+
+				} catch (...) {
+					UT_ASSERT(0);
+				}
+			});
+	});
+}
 }
 
 static void
@@ -1067,6 +1086,8 @@ test(int argc, char *argv[])
 	test_tx_callback_scope<nvobj::transaction::automatic>(pop, fake_commit);
 
 	test_tx_callback_outiside_tx();
+
+	test_tx_error_handling(pop);
 
 	pop.close();
 }

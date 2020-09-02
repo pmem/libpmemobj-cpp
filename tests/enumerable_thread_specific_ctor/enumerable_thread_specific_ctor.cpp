@@ -44,7 +44,7 @@ test(int argc, char *argv[])
 		parallel_exec(concurrency, [&](size_t thread_index) {
 			r->pptr1->local() = thread_index;
 			pop.persist(&r->pptr1->local(),
-				    sizeof(&r->pptr1->local()));
+				    sizeof(r->pptr1->local()));
 		});
 
 		nvobj::transaction::run(pop, [&] {

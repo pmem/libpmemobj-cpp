@@ -26,6 +26,8 @@ struct Object {
 
 	Object(const Object &o) = default;
 
+	Object &operator=(const Object &o) = default;
+
 	nvobj::p<int> data;
 	nvobj::experimental::inline_string s;
 };

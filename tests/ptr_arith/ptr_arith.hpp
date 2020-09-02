@@ -102,7 +102,7 @@ test_arith(nvobj::pool_base &pop)
 	for (int i = TEST_ARR_SIZE; i > 0; --i)
 		UT_ASSERTeq(*(parr_end - i), TEST_ARR_SIZE - i);
 
-	UT_OUT("%d", parr_end - parr_vsize);
+	UT_OUT("%ld", parr_end - parr_vsize);
 	UT_ASSERTeq(parr_end - parr_vsize, TEST_ARR_SIZE);
 
 	/* check ostream operator */

@@ -63,7 +63,7 @@ main(int argc, char *argv[])
 	try {
 		pop = pool<root>::open(path, "segment_vector_example");
 		r = pop.root();
-	} catch (const pmem::pool_error &e) {
+	} catch (const std::exception &e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
 		return 1;
 	}

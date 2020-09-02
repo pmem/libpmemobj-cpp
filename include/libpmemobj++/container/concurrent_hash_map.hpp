@@ -1737,6 +1737,11 @@ protected:
 			acquire(base, h, writer);
 		}
 
+		bucket_accessor(const bucket_accessor &other) = delete;
+
+		bucket_accessor &
+		operator=(const bucket_accessor &other) = delete;
+
 		/**
 		 * Find a bucket by masked hashcode, optionally rehash, and
 		 * acquire the lock

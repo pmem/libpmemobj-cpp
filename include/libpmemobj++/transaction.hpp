@@ -19,6 +19,12 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/tx_base.h>
 
+#ifndef LIBPMEMOBJ_CPP_TX_FAILURE_ABORT
+#define LIBPMEMOBJ_CPP_TX_FAILURE_EVENT return_error
+#else
+#define LIBPMEMOBJ_CPP_TX_FAILURE_EVENT abort
+#endif
+
 namespace pmem
 {
 
@@ -52,6 +58,10 @@ namespace obj
  * This class also exposes a closure-like transaction API, which is the
  * preferred way of handling transactions.
  *
+ * Transactions can be configured using transaction::options structure. It
+ * allows to change transaction's behavior on failure. See
+ * transaction::failure_behavior for more details.
+ *
  * This API should NOT be mixed with C transactions API. One issue is that
  * C++ callbacks registered using transaction::register_callback() would not
  * be called if C++ transaction is created inside C transaction.
@@ -63,6 +73,37 @@ namespace obj
  */
 class transaction {
 public:
+	class manual;
+
+	/** Specifies failure event in case of a transaction error */
+	enum class failure_behavior {
+		abort = POBJ_TX_FAILURE_ABORT, /**< each transactional function
+						* will abort the transaction on
+						* error. */
+		return_error =
+			POBJ_TX_FAILURE_RETURN /**< transactional functions will
+						* throw an exception but will
+						* leave the transaction in work
+						* stage. */
+	};
+
+	/**
+	 * options structure which can be used to control transaction
+	 * behavior.
+	 */
+	struct options {
+		/** Controls behavior of a transaction in case of errors. It can
+		 * be failure_behavior::abort or failure_behavior::return_error
+		 * . This setting is inherited by inner transactions.
+		 * 'return_error' is the default behavior (unless
+		 * LIBPMEMOBJ_CPP_TX_FAILURE_ABORT macro is defined). It is not
+		 * possible to start an 'abort' transaction within
+		 * 'return_error' transaction. */
+		::pmem::obj::transaction::failure_behavior failure_behavior =
+			::pmem::obj::transaction::failure_behavior::
+				LIBPMEMOBJ_CPP_TX_FAILURE_EVENT;
+	};
+
 	/**
 	 * C++ manual scope transaction class.
 	 *
@@ -90,6 +131,7 @@ public:
 		 * new transaction. The list of locks may be empty.
 		 *
 		 * @param[in,out] pop pool object.
+		 * @param[in] opts options for controlling transaction behavior
 		 * @param[in,out] locks locks of obj::mutex or
 		 *	obj::shared_mutex type.
 		 *
@@ -97,24 +139,50 @@ public:
 		 * function or locks adding failed.
 		 */
 		template <typename... L>
-		manual(obj::pool_base &pop, L &... locks)
+		manual(obj::pool_base &pop, options opts, L &... locks)
 		{
 			int ret = 0;
 
-			if (pmemobj_tx_stage() == TX_STAGE_NONE) {
+			bool nested = pmemobj_tx_stage() == TX_STAGE_WORK;
+
+			if (nested) {
+				if (opts.failure_behavior ==
+					    failure_behavior::abort &&
+				    pmemobj_tx_get_failure_behavior() ==
+					    POBJ_TX_FAILURE_RETURN)
+					throw pmem::transaction_error(
+						"Cannot start transaction with failure_behavior::abort. Outer transaction was configured with failure_behavior::return_error");
+
+				ret = pmemobj_tx_begin(pop.handle(), nullptr,
+						       TX_PARAM_NONE);
+
+			} else if (pmemobj_tx_stage() == TX_STAGE_NONE) {
 				ret = pmemobj_tx_begin(pop.handle(), nullptr,
 						       TX_PARAM_CB,
 						       transaction::c_callback,
 						       nullptr, TX_PARAM_NONE);
 			} else {
-				ret = pmemobj_tx_begin(pop.handle(), nullptr,
-						       TX_PARAM_NONE);
+				throw pmem::transaction_scope_error(
+					"Cannot start transaction in stage different than WORK or NONE");
 			}
 
 			if (ret != 0)
 				throw pmem::transaction_error(
 					"failed to start transaction")
 					.with_pmemobj_errormsg();
+
+			pmemobj_tx_set_failure_behavior(
+				(pobj_tx_failure_behavior)
+					opts.failure_behavior);
+
+			/*
+			 * Even if opts.failure_behavior is set to return_error
+			 * we have to abort the transaction if there is an
+			 * active exception in the outer most transaction.
+			 */
+			should_abort_on_failure = opts.failure_behavior ==
+					failure_behavior::abort ||
+				!nested;
 
 			auto err = add_lock(locks...);
 
@@ -127,6 +195,12 @@ public:
 			}
 		}
 
+		template <typename... L>
+		manual(obj::pool_base &pop, L &... locks)
+		    : manual(pop, options{}, locks...)
+		{
+		}
+
 		/**
 		 * Destructor.
 		 *
@@ -137,8 +211,12 @@ public:
 		~manual() noexcept
 		{
 			/* normal exit or with an active exception */
-			if (pmemobj_tx_stage() == TX_STAGE_WORK)
-				pmemobj_tx_abort(ECANCELED);
+			if (pmemobj_tx_stage() == TX_STAGE_WORK) {
+				if (should_abort_on_failure)
+					pmemobj_tx_abort(ECANCELED);
+				else
+					pmemobj_tx_commit();
+			}
 
 			(void)pmemobj_tx_end();
 		}
@@ -162,6 +240,9 @@ public:
 		 * Deleted move assignment operator.
 		 */
 		manual &operator=(manual &&p) = delete;
+
+	private:
+		bool should_abort_on_failure;
 	};
 
 /*
@@ -201,6 +282,30 @@ public:
 		 * defined. This is a C++17 feature.
 		 *
 		 * @param[in,out] pop pool object.
+		 * @param[in] opts options for controlling transaction behavior.
+		 * @param[in,out] locks locks of obj::mutex or
+		 *	obj::shared_mutex type.
+		 *
+		 * @throw pmem::transaction_error when pmemobj_tx_begin
+		 * function or locks adding failed.
+		 */
+		template <typename... L>
+		automatic(obj::pool_base &pop, options opts, L &... locks)
+		    : tx_worker(pop, opts, locks...)
+		{
+		}
+
+		/**
+		 * RAII constructor with pmem resident locks.
+		 *
+		 * Start pmemobj transaction and add list of locks to
+		 * new transaction. The list of locks may be empty.
+		 *
+		 * This class is only available if the
+		 * `__cpp_lib_uncaught_exceptions` feature macro is
+		 * defined. This is a C++17 feature.
+		 *
+		 * @param[in,out] pop pool object.
 		 * @param[in,out] locks locks of obj::mutex or
 		 *	obj::shared_mutex type.
 		 *
@@ -209,7 +314,7 @@ public:
 		 */
 		template <typename... L>
 		automatic(obj::pool_base &pop, L &... locks)
-		    : tx_worker(pop, locks...)
+		    : automatic(pop, options{}, locks...)
 		{
 		}
 
@@ -405,61 +510,61 @@ public:
 	static void
 	run(pool_base &pool, std::function<void()> tx, Locks &... locks)
 	{
-		int ret = 0;
+		run(pool, options{}, tx, locks...);
+	}
 
-		if (pmemobj_tx_stage() == TX_STAGE_NONE) {
-			ret = pmemobj_tx_begin(pool.handle(), nullptr,
-					       TX_PARAM_CB,
-					       transaction::c_callback, nullptr,
-					       TX_PARAM_NONE);
-		} else {
-			ret = pmemobj_tx_begin(pool.handle(), nullptr,
-					       TX_PARAM_NONE);
-		}
+	/**
+	 * Execute a closure-like transaction and lock `locks`.
+	 *
+	 * The locks have to be persistent memory resident locks. An
+	 * attempt to lock the locks will be made. If any of the
+	 * specified locks is already locked, the method will block.
+	 * The locks are held until the end of the transaction. The
+	 * transaction does not have to be committed manually. Manual
+	 * aborts will end the transaction with an active exception.
+	 *
+	 * If an exception is thrown within the transaction, it gets aborted
+	 * and the exception is rethrown. Therefore extra care has to be taken
+	 * with proper error handling.
+	 *
+	 * The locks are held for the entire duration of the transaction. They
+	 * are released at the end of the scope, so within the `catch` block,
+	 * they are already unlocked. If the cleanup action requires access to
+	 * data within a critical section, the locks have to be manually
+	 * acquired once again.
+	 *
+	 * @param[in,out] pool the pool in which the transaction will take
+	 *	place.
+	 * @param[in] tx an std::function<void ()> which will perform
+	 *	operations within this transaction.
+	 * @param[in] opts optional options object which affects transaction
+	 *	behavior.
+	 * @param[in,out] locks locks to be taken for the duration of
+	 *	the transaction.
+	 *
+	 * @throw transaction_error on any error pertaining the execution
+	 *	of the transaction.
+	 * @throw manual_tx_abort on manual transaction abort.
+	 */
+	template <typename... Locks>
+	static void
+	run(pool_base &pool, options opts, std::function<void()> tx,
+	    Locks &... locks)
+	{
+		manual worker(pool, opts, locks...);
 
-		if (ret != 0)
-			throw pmem::transaction_error(
-				"failed to start transaction")
-				.with_pmemobj_errormsg();
-
-		auto err = add_lock(locks...);
-
-		if (err) {
-			pmemobj_tx_abort(err);
-			(void)pmemobj_tx_end();
-			throw pmem::transaction_error(
-				"failed to add a lock to the transaction")
-				.with_pmemobj_errormsg();
-		}
-
-		try {
-			tx();
-		} catch (manual_tx_abort &) {
-			(void)pmemobj_tx_end();
-			throw;
-		} catch (...) {
-			/* first exception caught */
-			if (pmemobj_tx_stage() == TX_STAGE_WORK)
-				pmemobj_tx_abort(ECANCELED);
-
-			/* waterfall tx_end for outer tx */
-			(void)pmemobj_tx_end();
-			throw;
-		}
+		tx();
 
 		auto stage = pmemobj_tx_stage();
 
 		if (stage == TX_STAGE_WORK) {
 			pmemobj_tx_commit();
 		} else if (stage == TX_STAGE_ONABORT) {
-			(void)pmemobj_tx_end();
 			throw pmem::transaction_error("transaction aborted");
 		} else if (stage == TX_STAGE_NONE) {
 			throw pmem::transaction_error(
 				"transaction ended prematurely");
 		}
-
-		(void)pmemobj_tx_end();
 	}
 
 	template <typename... Locks>

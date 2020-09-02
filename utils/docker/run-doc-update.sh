@@ -2,56 +2,66 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright 2018-2020, Intel Corporation
 
+#
+# run-doc-update.sh - is called inside a Docker container,
+#                     build docs and automatically update manpages
+#                     and doxygen files on gh-pages
+#
+
 set -e
 
 source `dirname $0`/valid-branches.sh
 
-BOT_NAME="pmem-bot"
-USER_NAME="pmem"
+BOT_NAME=${DOC_UPDATE_BOT_NAME:-"pmem-bot"}
+DOC_REPO_OWNER="${DOC_REPO_OWNER:-"pmem"}"
 REPO_NAME="libpmemobj-cpp"
+ARTIFACTS_DIR=$(mktemp -d -t ARTIFACTS-XXX)
 
 ORIGIN="https://${DOC_UPDATE_GITHUB_TOKEN}@github.com/${BOT_NAME}/${REPO_NAME}"
-UPSTREAM="https://github.com/pmem/${REPO_NAME}"
+UPSTREAM="https://github.com/${DOC_REPO_OWNER}/${REPO_NAME}"
 # master or stable-* branch
 TARGET_BRANCH=${CI_BRANCH}
 VERSION=${TARGET_BRANCHES[$TARGET_BRANCH]}
+export GITHUB_TOKEN=${DOC_UPDATE_GITHUB_TOKEN}
 
 if [ -z $VERSION ]; then
-	echo "Target location for branch $TARGET_BRANCH is not defined."
+	echo "Target location for branch ${TARGET_BRANCH} is not defined."
 	exit 1
 fi
-
+REPO_DIR=$(mktemp -d -t pmemkv-XXX)
+pushd ${REPO_DIR}
 # Clone repo
-git clone ${ORIGIN}
-cd ${REPO_NAME}
+git clone ${ORIGIN} ${REPO_DIR}
+cd ${REPO_DIR}
 git remote add upstream ${UPSTREAM}
 
 git config --local user.name ${BOT_NAME}
 git config --local user.email "${BOT_NAME}@intel.com"
+hub config --global hub.protocol https
 
 git remote update
 git checkout -B ${TARGET_BRANCH} upstream/${TARGET_BRANCH}
 
 # Build docs
-mkdir build
-cd build
+mkdir -p ${REPO_DIR}/build
+cd ${REPO_DIR}/build
 
-cmake -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF ..
+cmake .. -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF
 make -j$(nproc) doc
-cp -R doc/cpp_html ../..
+cp -r ${REPO_DIR}/build/doc/cpp_html ${ARTIFACTS_DIR}/
 
-cd ..
+cd ${REPO_DIR}
 
 # Checkout gh-pages and copy docs
 GH_PAGES_NAME="gh-pages-for-${TARGET_BRANCH}"
-git checkout -B $GH_PAGES_NAME upstream/gh-pages
+git checkout -B ${GH_PAGES_NAME} upstream/gh-pages
 git clean -dfx
 
 # Clean old content, since some files might have been deleted
-rm -rf ./$VERSION
-mkdir -p ./$VERSION/doxygen/
+rm -r ./${VERSION}
+mkdir -p ./${VERSION}/doxygen/
 
-cp -r ../cpp_html/* ./$VERSION/doxygen/
+cp -fr ${ARTIFACTS_DIR}/cpp_html/* ./${VERSION}/doxygen/
 
 # Add and push changes.
 # git commit command may fail if there is nothing to commit.
@@ -59,10 +69,11 @@ cp -r ../cpp_html/* ./$VERSION/doxygen/
 # changes which were reverted).
 git add -A
 git commit -m "doc: automatic gh-pages docs update" && true
-git push -f ${ORIGIN} $GH_PAGES_NAME
+git push -f ${ORIGIN} ${GH_PAGES_NAME}
 
 # Makes pull request.
 # When there is already an open PR or there are no changes an error is thrown, which we ignore.
-hub pull-request -f -b ${USER_NAME}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} -m "doc: automatic gh-pages docs update" && true
+hub pull-request -f -b ${DOC_REPO_OWNER}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} -m "doc: automatic gh-pages docs update" && true
 
+popd
 exit 0

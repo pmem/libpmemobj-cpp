@@ -34,6 +34,8 @@ struct A {
 		c = rhs.c;
 	}
 
+	A &operator=(const A &) = default;
+
 	int a;
 	int b;
 	int c;

@@ -30,6 +30,8 @@ struct v_data1 {
 
 	v_data1(const v_data1 &rhs) = delete;
 
+	v_data1 &operator=(const v_data1 &rhs) = delete;
+
 	~v_data1()
 	{
 		volatile_object_state = volatile_object_state_type::destroyed;

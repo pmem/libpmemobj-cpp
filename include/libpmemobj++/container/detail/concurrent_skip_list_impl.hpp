@@ -358,6 +358,13 @@ public:
 		return tmp;
 	}
 
+	skip_list_iterator &
+	operator=(const skip_list_iterator &other)
+	{
+		node = other.node;
+		return *this;
+	}
+
 private:
 	explicit skip_list_iterator(node_type *n) : node(n)
 	{

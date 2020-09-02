@@ -21,3 +21,20 @@
    obj:*libunwind*
    ...
 }
+<<<<<<< HEAD
+=======
+{
+   libunwind calls glibc's setcontext on some architectures, e.g. ppc
+   Memcheck:Addr8
+   fun:setcontext*
+   ...
+}
+{
+   libunwind exception suppresion
+   Memcheck:Param
+   write(buf)
+   ...
+   obj:*libunwind*
+   ...
+}
+>>>>>>> c0b28965 (tests: add libunwind suppresion)

@@ -279,6 +279,8 @@ private:
 	template <typename K>
 	std::tuple<tagged_node_ptr *, tagged_node_ptr>
 	descend(const K &k, byten_t diff, bitn_t sh);
+	template <bool Lower, typename K>
+	const_iterator internal_bound(const K &k) const;
 
 	void check_pmem();
 	void check_tx_stage_work();
@@ -1317,19 +1319,10 @@ radix_tree<Key, Value, BytesView>::erase(const_key_reference k)
 	return 1;
 }
 
-/**
- * Returns an iterator pointing to the first element that is not less
- * than (i.e. greater or equal to) key.
- *
- * @param[in] k key value to compare the elements to.
- *
- * @return Iterator pointing to the first element that is not less than
- * key. If no such element is found, a past-the-end iterator is
- * returned.
- */
 template <typename Key, typename Value, typename BytesView>
+template <bool Lower, typename K>
 typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
+radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 {
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
@@ -1350,8 +1343,12 @@ radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
 	auto sh = bit_diff(leaf_key, key, diff);
 
 	/* Key exists. */
-	if (diff == key.size() && leaf_key.size() == key.size())
-		return const_iterator(leaf, &root);
+	if (diff == key.size() && leaf_key.size() == key.size()) {
+		if (Lower)
+			return const_iterator(leaf, &root);
+		else
+			return ++const_iterator(leaf, &root);
+	}
 
 	/* Descend into the tree again. */
 	const tagged_node_ptr *slot;
@@ -1413,6 +1410,23 @@ radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
  * returned.
  */
 template <typename Key, typename Value, typename BytesView>
+typename radix_tree<Key, Value, BytesView>::const_iterator
+radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
+{
+	return internal_bound<true>(k);
+}
+
+/**
+ * Returns an iterator pointing to the first element that is not less
+ * than (i.e. greater or equal to) key.
+ *
+ * @param[in] k key value to compare the elements to.
+ *
+ * @return Iterator pointing to the first element that is not less than
+ * key. If no such element is found, a past-the-end iterator is
+ * returned.
+ */
+template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::iterator
 radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k)
 {
@@ -1435,17 +1449,7 @@ template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::upper_bound(const_key_reference k) const
 {
-	auto key = bytes_view(k);
-	auto it = lower_bound(k);
-
-	if (it == end())
-		return end();
-
-	// XXX: optimize -> it's 2 comparisons
-	if (keys_equal(bytes_view(it->key()), key))
-		++it;
-
-	return it;
+	return internal_bound<false>(k);
 }
 
 /**

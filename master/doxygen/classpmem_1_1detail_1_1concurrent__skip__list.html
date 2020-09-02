@@ -270,14 +270,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae046954775af39f61e769ae5b60071be"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ae046954775af39f61e769ae5b60071be">empty</a> () const</td></tr>
 <tr class="memdesc:ae046954775af39f61e769ae5b60071be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the container has no elements, i.e.  <a href="#ae046954775af39f61e769ae5b60071be">More...</a><br /></td></tr>
 <tr class="separator:ae046954775af39f61e769ae5b60071be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64d5c4bcda49bb5125d10048fe61303c"><td class="memItemLeft" align="right" valign="top">const allocator_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a64d5c4bcda49bb5125d10048fe61303c">get_allocator</a> () const</td></tr>
-<tr class="memdesc:a64d5c4bcda49bb5125d10048fe61303c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a const reference to the allocator associated with the container.  <a href="#a64d5c4bcda49bb5125d10048fe61303c">More...</a><br /></td></tr>
-<tr class="separator:a64d5c4bcda49bb5125d10048fe61303c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a976eee6fade6c93a4b3a7850f0851e10"><td class="memItemLeft" align="right" valign="top">allocator_type &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a976eee6fade6c93a4b3a7850f0851e10">get_allocator</a> ()</td></tr>
-<tr class="memdesc:a976eee6fade6c93a4b3a7850f0851e10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reference to the allocator associated with the container.  <a href="#a976eee6fade6c93a4b3a7850f0851e10">More...</a><br /></td></tr>
-<tr class="separator:a976eee6fade6c93a4b3a7850f0851e10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c9e74642157dc47d42291fa72b27215"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a2c9e74642157dc47d42291fa72b27215">swap</a> (<a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">concurrent_skip_list</a> &amp;other)</td></tr>
-<tr class="memdesc:a2c9e74642157dc47d42291fa72b27215"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exchanges the contents of the container with those of other transactionally.  <a href="#a2c9e74642157dc47d42291fa72b27215">More...</a><br /></td></tr>
+<tr class="memdesc:a2c9e74642157dc47d42291fa72b27215"><td class="mdescLeft">&#160;</td><td class="mdescRight">XXX: Implement get_allocator() interface.  <a href="#a2c9e74642157dc47d42291fa72b27215">More...</a><br /></td></tr>
 <tr class="separator:a2c9e74642157dc47d42291fa72b27215"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e8e34898520a23c937dbd1e2dbbb5e7"><td class="memItemLeft" align="right" valign="top">std::pair&lt; iterator, iterator &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a7e8e34898520a23c937dbd1e2dbbb5e7">equal_range</a> (const key_type &amp;key)</td></tr>
 <tr class="memdesc:a7e8e34898520a23c937dbd1e2dbbb5e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a range containing all elements with the given key in the container.  <a href="#a7e8e34898520a23c937dbd1e2dbbb5e7">More...</a><br /></td></tr>
@@ -306,7 +300,7 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:a0e6add27cbb06843dcdffc087da74251"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="#a0e6add27cbb06843dcdffc087da74251">More...</a><br /></td></tr>
 <tr class="separator:a0e6add27cbb06843dcdffc087da74251"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acedf9b88b9e8602c2219e21986309b7b"><td class="memTemplParams" colspan="2">template&lt;typename K , typename pointer_type , typename comparator &gt; </td></tr>
-<tr class="memitem:acedf9b88b9e8602c2219e21986309b7b"><td class="memTemplItemLeft" align="right" valign="top">persistent_node_ptr&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#acedf9b88b9e8602c2219e21986309b7b">internal_find_position</a> (size_type level, pointer_type &amp;prev, const K &amp;key, const comparator &amp;cmp) const</td></tr>
+<tr class="memitem:acedf9b88b9e8602c2219e21986309b7b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#acedf9b88b9e8602c2219e21986309b7b">internal_find_position</a> (size_type level, pointer_type &amp;prev, const K &amp;key, const comparator &amp;cmp) const</td></tr>
 <tr class="memdesc:acedf9b88b9e8602c2219e21986309b7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds position on the.  <a href="#acedf9b88b9e8602c2219e21986309b7b">More...</a><br /></td></tr>
 <tr class="separator:acedf9b88b9e8602c2219e21986309b7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc68cda6170426f66ed2aaa67745f50b"><td class="memTemplParams" colspan="2">template&lt;typename K &gt; </td></tr>
@@ -346,7 +340,7 @@ template&lt;typename K , typename PrepareNode &gt; </td></tr>
 <tr class="memitem:a08ea96e8b9d72d140c64bd1aaf1c5531"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a08ea96e8b9d72d140c64bd1aaf1c5531">internal_get_bound</a> (const K &amp;key, const comparator &amp;cmp)</td></tr>
 <tr class="memdesc:a08ea96e8b9d72d140c64bd1aaf1c5531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element from the list for which cmp(element, key) is false.  <a href="#a08ea96e8b9d72d140c64bd1aaf1c5531">More...</a><br /></td></tr>
 <tr class="separator:a08ea96e8b9d72d140c64bd1aaf1c5531"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bdca0808a03d59470e309c3d42319ac"><td class="memItemLeft" align="right" valign="top">std::pair&lt; persistent_node_ptr, persistent_node_ptr &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a9bdca0808a03d59470e309c3d42319ac">internal_extract</a> (const_iterator it)</td></tr>
+<tr class="memitem:a9bdca0808a03d59470e309c3d42319ac"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a9bdca0808a03d59470e309c3d42319ac">internal_extract</a> (const_iterator it)</td></tr>
 <tr class="separator:a9bdca0808a03d59470e309c3d42319ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacfd012db9c1bbfd69cb04cc81d77564"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">obj::pool_base</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#aacfd012db9c1bbfd69cb04cc81d77564">get_pool_base</a> () const</td></tr>
 <tr class="memdesc:aacfd012db9c1bbfd69cb04cc81d77564"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the persistent memory pool where hashmap resides.  <a href="#aacfd012db9c1bbfd69cb04cc81d77564">More...</a><br /></td></tr>
@@ -357,14 +351,14 @@ size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <tr class="separator:ac5a500ba9a4e67dc7e81423c38a4ba43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ca89db7d91286b69dff4b242a519945"><td class="memTemplParams" colspan="2"><a id="a0ca89db7d91286b69dff4b242a519945"></a>
 template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a0ca89db7d91286b69dff4b242a519945"><td class="memTemplItemLeft" align="right" valign="top">persistent_node_ptr&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a0ca89db7d91286b69dff4b242a519945">create_node</a> (Args &amp;&amp;... args)</td></tr>
+<tr class="memitem:a0ca89db7d91286b69dff4b242a519945"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a0ca89db7d91286b69dff4b242a519945">create_node</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:a0ca89db7d91286b69dff4b242a519945"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates new node. <br /></td></tr>
 <tr class="separator:a0ca89db7d91286b69dff4b242a519945"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ad65a2ba32ea7c275dc0c65c368b385"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a8ad65a2ba32ea7c275dc0c65c368b385">create_dummy_head</a> ()</td></tr>
 <tr class="memdesc:a8ad65a2ba32ea7c275dc0c65c368b385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates dummy head.  <a href="#a8ad65a2ba32ea7c275dc0c65c368b385">More...</a><br /></td></tr>
 <tr class="separator:a8ad65a2ba32ea7c275dc0c65c368b385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2593256a87c1dc863962f57b4da0b2c"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:ac2593256a87c1dc863962f57b4da0b2c"><td class="memTemplItemLeft" align="right" valign="top">persistent_node_ptr&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac2593256a87c1dc863962f57b4da0b2c">creates_dummy_node</a> (size_type height, Args &amp;&amp;... args)</td></tr>
+<tr class="memitem:ac2593256a87c1dc863962f57b4da0b2c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac2593256a87c1dc863962f57b4da0b2c">creates_dummy_node</a> (size_type height, Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:ac2593256a87c1dc863962f57b4da0b2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates new node, value_type should be constructed separately.  <a href="#ac2593256a87c1dc863962f57b4da0b2c">More...</a><br /></td></tr>
 <tr class="separator:ac2593256a87c1dc863962f57b4da0b2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f7ecb3b94325da4ab98af89af79799e"><td class="memItemLeft" align="right" valign="top"><a id="a6f7ecb3b94325da4ab98af89af79799e"></a>
@@ -1247,7 +1241,7 @@ template&lt;typename... Args&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">persistent_node_ptr <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::creates_dummy_node </td>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a> <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::creates_dummy_node </td>
           <td>(</td>
           <td class="paramtype">size_type&#160;</td>
           <td class="paramname"><em>height</em>, </td>
@@ -1961,66 +1955,6 @@ template&lt;typename Traits&gt; </div>
 
 </div>
 </div>
-<a id="a64d5c4bcda49bb5125d10048fe61303c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64d5c4bcda49bb5125d10048fe61303c">&#9670;&nbsp;</a></span>get_allocator() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Traits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const allocator_type&amp; <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::get_allocator </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns a const reference to the allocator associated with the container. </p>
-<dl class="section return"><dt>Returns</dt><dd>Const reference to the associated allocator. </dd></dl>
-
-</div>
-</div>
-<a id="a976eee6fade6c93a4b3a7850f0851e10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a976eee6fade6c93a4b3a7850f0851e10">&#9670;&nbsp;</a></span>get_allocator() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Traits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">allocator_type&amp; <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::get_allocator </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns a reference to the allocator associated with the container. </p>
-<dl class="section return"><dt>Returns</dt><dd>Reference to the associated allocator. </dd></dl>
-
-</div>
-</div>
 <a id="aacfd012db9c1bbfd69cb04cc81d77564"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aacfd012db9c1bbfd69cb04cc81d77564">&#9670;&nbsp;</a></span>get_pool_base()</h2>
 
@@ -2429,7 +2363,7 @@ template&lt;typename Traits&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;persistent_node_ptr, persistent_node_ptr&gt; <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::internal_extract </td>
+          <td class="memname">std::pair&lt;<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>&gt; <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::internal_extract </td>
           <td>(</td>
           <td class="paramtype">const_iterator&#160;</td>
           <td class="paramname"><em>it</em></td><td>)</td>
@@ -2460,7 +2394,7 @@ template&lt;typename K , typename pointer_type , typename comparator &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">persistent_node_ptr <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::internal_find_position </td>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a> <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::internal_find_position </td>
           <td>(</td>
           <td class="paramtype">size_type&#160;</td>
           <td class="paramname"><em>level</em>, </td>
@@ -2497,16 +2431,21 @@ template&lt;typename K , typename pointer_type , typename comparator &gt; </div>
 </div><div class="memdoc">
 
 <p>Finds position on the. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<ul>
+<li>level using </li>
+<li>cmp <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">level</td><td>using cmp </td></tr>
+    <tr><td class="paramname">level</td><td>- on which level search prev node </td></tr>
     <tr><td class="paramname">prev</td><td>- pointer to the start node to search </td></tr>
     <tr><td class="paramname">key</td><td>- key to search </td></tr>
     <tr><td class="paramname">cmp</td><td>- callable object to compare two objects (_compare member is default comparator) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>pointer to the node which is not satisfy the comparison with key. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the node which is not satisfy the comparison with </dd></dl>
+</li>
+<li>key </li>
+</ul>
 
 </div>
 </div>
@@ -3100,8 +3039,8 @@ template&lt;typename Traits&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Exchanges the contents of the container with those of other transactionally. </p>
-<p>Does not invoke any move, copy, or swap operations on individual elements.</p>
+<p>XXX: Implement get_allocator() interface. </p>
+<p>Related with: <a href="https://github.com/pmem/libpmemobj-cpp/issues/827Exchanges">https://github.com/pmem/libpmemobj-cpp/issues/827Exchanges</a> the contents of the container with those of other transactionally. Does not invoke any move, copy, or swap operations on individual elements.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>

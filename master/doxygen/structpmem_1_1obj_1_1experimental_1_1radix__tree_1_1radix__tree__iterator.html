@@ -82,10 +82,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad5fdaf776fa3c5e51476847529c01a55"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:ad5fdaf776fa3c5e51476847529c01a55"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html#ad5fdaf776fa3c5e51476847529c01a55">assign_val</a> (T &amp;&amp;rhs)</td></tr>
-<tr class="memdesc:ad5fdaf776fa3c5e51476847529c01a55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles assignment to the value.  <a href="#ad5fdaf776fa3c5e51476847529c01a55">More...</a><br /></td></tr>
-<tr class="separator:ad5fdaf776fa3c5e51476847529c01a55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb98209ba30d953c680174f50c028692"><td class="memTemplParams" colspan="2">template&lt;typename V  = Value, typename Enable  = typename std::enable_if&lt;			  std::is_same&lt;V, inline_string&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:aeb98209ba30d953c680174f50c028692"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html#aeb98209ba30d953c680174f50c028692">assign_val</a> (<a class="el" href="classpmem_1_1obj_1_1string__view.html">string_view</a> rhs)</td></tr>
+<tr class="memdesc:aeb98209ba30d953c680174f50c028692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles assignment to the value.  <a href="#aeb98209ba30d953c680174f50c028692">More...</a><br /></td></tr>
+<tr class="separator:aeb98209ba30d953c680174f50c028692"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Key, typename Value, typename BytesView = detail::bytes_view&lt;Key&gt;&gt;<br />
@@ -95,8 +95,8 @@ struct pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;::radix
 <p>Radix tree iterator supports multipass and bidirectional iteration. </p>
 <p>If Value type is <a class="el" href="classpmem_1_1obj_1_1experimental_1_1inline__string.html" title="This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation...">inline_string</a>, calling (*it).second = "new_value" might cause reallocation and invalidate iterators to that element. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad5fdaf776fa3c5e51476847529c01a55"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5fdaf776fa3c5e51476847529c01a55">&#9670;&nbsp;</a></span>assign_val()</h2>
+<a id="aeb98209ba30d953c680174f50c028692"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb98209ba30d953c680174f50c028692">&#9670;&nbsp;</a></span>assign_val()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -105,12 +105,12 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 <div class="memtemplate">
 template&lt;bool IsConst&gt; </div>
 <div class="memtemplate">
-template&lt;typename T &gt; </div>
+template&lt;typename V , typename Enable &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">radix_tree_iterator</a>&lt; IsConst &gt;::assign_val </td>
           <td>(</td>
-          <td class="paramtype">T &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1string__view.html">string_view</a>&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td></td>
         </tr>

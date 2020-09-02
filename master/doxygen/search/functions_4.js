@@ -10,7 +10,6 @@ var searchData=
   ['delete_5fpersistent_5fatomic',['delete_persistent_atomic',['../namespacepmem_1_1obj.html#a2009e20a7365ba802a5f1acbff2f2336',1,'pmem::obj::delete_persistent_atomic(typename detail::pp_if_array&lt; T &gt;::type &amp;ptr, std::size_t)'],['../namespacepmem_1_1obj.html#a774f709132747433efe83cf8060186a3',1,'pmem::obj::delete_persistent_atomic(typename detail::pp_if_size_array&lt; T &gt;::type &amp;ptr)'],['../namespacepmem_1_1obj.html#a2aa55bbcf44c93a0ca9a8965cded6e40',1,'pmem::obj::delete_persistent_atomic(typename detail::pp_if_not_array&lt; T &gt;::type &amp;ptr) noexcept']]],
   ['destroy',['destroy',['../classpmem_1_1obj_1_1object__traits.html#a7149caf1374071bfe6c6af99bf5d9f3b',1,'pmem::obj::object_traits']]],
   ['disable_5fsso',['disable_sso',['../classpmem_1_1obj_1_1basic__string.html#ac6eb24cd86a293d8cbcb9b8a3b46b2f4',1,'pmem::obj::basic_string']]],
-  ['distance_5fbetween',['distance_between',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr__base.html#a9e38bc7ac4b25a4a5c9a3d769751c21a',1,'pmem::obj::experimental::self_relative_ptr_base']]],
-  ['distance_5fbetween_5fself',['distance_between_self',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr__base.html#aa5bd7030279aeaf8448a2b6d61c5b985',1,'pmem::obj::experimental::self_relative_ptr_base']]],
+  ['distance_5fbetween',['distance_between',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a1ea6a340a0bed6771e811c9264fd8131',1,'pmem::detail::self_relative_ptr_base_impl']]],
   ['drain',['drain',['../classpmem_1_1obj_1_1pool__base.html#ad0c005d60a0dddba8d09d351e07c0ddf',1,'pmem::obj::pool_base']]]
 ];

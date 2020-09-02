@@ -27,3 +27,11 @@
    fun:setcontext*
    ...
 }
+{
+   libunwind exception suppresion
+   Memcheck:Param
+   write(buf)
+   ...
+   obj:*libunwind*
+   ...
+}

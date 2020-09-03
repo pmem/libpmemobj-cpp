@@ -49,7 +49,7 @@ public:
 
 	basic_string_view() noexcept;
 	basic_string_view(const CharT *data, size_type size);
-	basic_string_view(const std::string &s);
+	basic_string_view(const std::basic_string<CharT, Traits> &s);
 	basic_string_view(const CharT *data);
 
 	basic_string_view(const basic_string_view &rhs) noexcept = default;
@@ -96,12 +96,13 @@ inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data,
 }
 
 /**
- * Constructor initialized by the string *s*.
+ * Constructor initialized by the basic string *s*.
  *
  * @param[in] s reference to the string to initialize with
  */
 template <typename CharT, typename Traits>
-inline basic_string_view<CharT, Traits>::basic_string_view(const std::string &s)
+inline basic_string_view<CharT, Traits>::basic_string_view(
+	const std::basic_string<CharT, Traits> &s)
     : data_(s.c_str()), size_(s.size())
 {
 }

@@ -4,8 +4,8 @@
 
 #
 # run-doc-update.sh - is called inside a Docker container,
-#                     build docs and automatically update manpages
-#                     and doxygen files on gh-pages
+#                     build docs and automatically update
+#                     doxygen files on gh-pages
 #
 
 set -e
@@ -76,4 +76,3 @@ git push -f ${ORIGIN} ${GH_PAGES_NAME}
 hub pull-request -f -b ${DOC_REPO_OWNER}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} -m "doc: automatic gh-pages docs update" && true
 
 popd
-exit 0

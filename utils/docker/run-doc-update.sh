@@ -46,7 +46,7 @@ git checkout -B ${TARGET_BRANCH} upstream/${TARGET_BRANCH}
 mkdir -p ${REPO_DIR}/build
 cd ${REPO_DIR}/build
 
-cmake .. -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF
+cmake .. -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
 make -j$(nproc) doc
 cp -r ${REPO_DIR}/build/doc/cpp_html ${ARTIFACTS_DIR}/
 

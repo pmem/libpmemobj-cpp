@@ -859,6 +859,9 @@ if(TEST_CONCURRENT_MAP)
 	build_test_ext(NAME concurrent_map_ctor_and_assignment SRC_FILES map/map_ctor_and_assignment.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME concurrent_map_ctor_and_assignment TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME concurrent_map_find_lower_lower_eq SRC_FILES map/map_find_lower_lower_eq.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME concurrent_map_find_lower_lower_eq TRACERS none memcheck pmemcheck)
+
 	if(TESTS_CONCURRENT_GDB AND GDB_FOUND)
 		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 			build_test(concurrent_map_mt_gdb concurrent_map_mt_gdb/concurrent_map_mt_gdb.cpp)

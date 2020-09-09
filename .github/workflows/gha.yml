@@ -138,6 +138,7 @@ jobs:
                       -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
                       -DTESTS_USE_FORCED_PMEM=ON
                       -DTESTS_TBB=ON
+                      -DDEVELOPER_MODE=ON
 
        - name: Build
          run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal /m

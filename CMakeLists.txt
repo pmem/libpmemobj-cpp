@@ -207,17 +207,21 @@ if(CHECK_CPP_STYLE)
 endif()
 
 if(DEVELOPER_MODE)
-	add_flag(-Werror) # XXX: WX for windows
-	execute_process(COMMAND ${PERL_EXECUTABLE} -MText::Diff -e ""
-			ERROR_QUIET
-			RESULT_VARIABLE PERL_TEXT_DIFF_STATUS)
-	if (PERL_TEXT_DIFF_STATUS)
-		message(FATAL_ERROR "Text::Diff Perl module not found (install libtext-diff-perl or perl-Text-Diff)")
-	endif()
+	if(WIN32)
+		add_flag(-WX)
+	else()
+		add_flag(-Werror)
+		execute_process(COMMAND ${PERL_EXECUTABLE} -MText::Diff -e ""
+				ERROR_QUIET
+				RESULT_VARIABLE PERL_TEXT_DIFF_STATUS)
+		if (PERL_TEXT_DIFF_STATUS)
+			message(FATAL_ERROR "Text::Diff Perl module not found (install libtext-diff-perl or perl-Text-Diff)")
+		endif()
 
-	add_dependencies(checkers cppstyle)
-	add_dependencies(checkers check-whitespace)
-	add_dependencies(checkers check-license)
+		add_dependencies(checkers cppstyle)
+		add_dependencies(checkers check-whitespace)
+		add_dependencies(checkers check-license)
+	endif()
 endif(DEVELOPER_MODE)
 
 add_cppstyle(include ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/*.hpp)

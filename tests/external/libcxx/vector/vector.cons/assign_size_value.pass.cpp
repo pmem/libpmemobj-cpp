@@ -46,7 +46,7 @@ test(nvobj::pool<struct root> &pop, Vec &v)
 	try {
 		v.assign(5, 6);
 		UT_ASSERT(v.size() == 5);
-		std::all_of(v.begin(), v.end(), is6);
+		UT_ASSERT(std::all_of(v.begin(), v.end(), is6));
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}

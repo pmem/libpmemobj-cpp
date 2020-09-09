@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Volatile resides on pmem property template.
+ * Volatile residing on pmem property template.
  */
 
 #ifndef LIBPMEMOBJ_CPP_V_HPP
@@ -25,14 +25,17 @@ namespace experimental
 {
 
 /**
- * pmem::obj::experimental::v - volatile resides on pmem class.
+ * Volatile residing on pmem class.
  *
  * v class is a property-like template class that has to be used for all
  * volatile variables that reside on persistent memory.
  * This class ensures that the enclosed type is always properly initialized by
  * always calling the class default constructor exactly once per instance of the
  * application.
+ *
  * This class has 8 bytes of storage overhead.
+ *
+ * Example usage:
  * @snippet v/v.cpp v_property_example
  */
 template <typename T>

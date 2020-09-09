@@ -29,14 +29,18 @@ namespace pmem
 namespace obj
 {
 
+/*! \namespace pmem::obj::segment_vector_internal
+ * \brief Internal implementation of pmem's segment vector.
+ */
 namespace segment_vector_internal
 {
 /**
- * Iterator for segment_vector
+ * Iterator for segment_vector.
+ *
  * Since a constant iterator differs only in the type of references and
  * pointers returned by methods, is_const template parameter is
  * responsible for the differences between constant and non-constant
- * iterators
+ * iterators.
  */
 template <typename Container, bool is_const>
 class segment_iterator {
@@ -480,9 +484,11 @@ using exponential_size_vector_policy =
 							 SegmentType>;
 
 /**
- * Segment table is a data type with a vector-like interface
- * The difference is that it does not do reallocations and iterators are
- * not invalidated when adding new elements
+ * A persistent version of segment vector implementation.
+ *
+ * Segment table is a data type with a vector-like interface. Differences
+ * are: it does not do reallocations and iterators are not invalidated
+ * when adding new elements.
  *
  * @pre if SegmentType for policy is specified it must contain such functions
  * as: default constructor, destructor, assign, operator[], free_data,

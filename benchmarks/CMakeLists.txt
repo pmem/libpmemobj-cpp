@@ -2,7 +2,7 @@
 # Copyright 2020, Intel Corporation
 
 if(MSVC_VERSION)
-	add_flag(-W4)
+	add_flag(-W2)
 else()
 	add_flag(-Wall)
 endif()

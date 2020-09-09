@@ -11,14 +11,14 @@
 
 namespace nvobj = pmem::obj;
 
-using C = container_t<int>;
+using C = container_t<size_t>;
 
 struct root {
 	nvobj::persistent_ptr<C> v;
 };
 
 void
-check_vector(nvobj::pool<struct root> &pop, size_t count, int value)
+check_vector(nvobj::pool<struct root> &pop, size_t count, size_t value)
 {
 	auto r = pop.root();
 
@@ -98,8 +98,9 @@ test(int argc, char *argv[])
 	auto r = pop.root();
 
 	try {
-		nvobj::transaction::run(
-			pop, [&] { r->v = nvobj::make_persistent<C>(10U, 1); });
+		nvobj::transaction::run(pop, [&] {
+			r->v = nvobj::make_persistent<C>(10U, 1U);
+		});
 
 		test(pop);
 

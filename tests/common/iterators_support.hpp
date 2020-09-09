@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2020, Intel Corporation */
 
 /**
  * Canonical implementations of standard category iterators.
@@ -537,7 +537,7 @@ public:
 	counting_it &
 	operator+=(difference_type n)
 	{
-		m_inc += static_cast<size_t>(n);
+		m_inc += static_cast<Incrementable>(n);
 		return *this;
 	}
 

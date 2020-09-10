@@ -18,7 +18,7 @@ Up-to-date support/maintenance status of branches/releases is available on [pmem
 
 ## Requirements: ##
 - cmake >= 3.3
-- libpmemobj-dev(el) >= 1.8 (https://pmem.io/pmdk/)
+- libpmemobj-dev(el) >= 1.9 (https://pmem.io/pmdk/)
 - compiler with C++11 support:
 	- GCC >= 4.8.1 (C++11 is supported in GCC since version 4.8.1, but it does not support expanding variadic template variables in lambda expressions, which is required to build persistent containers and is possible with GCC >= 4.9.0. If you want to build libpmemobj-cpp without testing containers, use flag TEST_XXX=OFF (separate flag for each container))
 	- clang >= 3.3

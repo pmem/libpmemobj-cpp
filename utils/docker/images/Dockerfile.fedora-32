@@ -35,7 +35,7 @@
 #
 
 # Pull base image
-FROM fedora:31
+FROM fedora:32
 MAINTAINER marcin.slusarz@intel.com
 
 # Install basic tools
@@ -95,7 +95,7 @@ USER $USER
 
 # Set required environment variables
 ENV OS fedora
-ENV OS_VER 31
+ENV OS_VER 32
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 

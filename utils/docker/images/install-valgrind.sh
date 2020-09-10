@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2018, Intel Corporation
+# Copyright 2016-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,10 +38,12 @@ set -e
 
 git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind
-git checkout pmem-3.13
+# pmem-3.15: Merge pull request #81 from marcinslusarz/pmem-3.15
+git checkout 09f75f69683d862f8456f75484fcdc0dc5508900
+
 ./autogen.sh
 ./configure --prefix=/usr
-make
-make install
+make -j$(nproc)
+sudo make -j$(nproc) install
 cd ..
 rm -rf valgrind

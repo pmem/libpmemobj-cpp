@@ -262,8 +262,9 @@ namespace detail
 {
 
 /**
- * Not thread safe
- * Use in single threaded environment only
+ * can_do_snapshot atomic specialization for self_relative_ptr. Not thread safe.
+ *
+ * Use in a single threaded environment only.
  */
 template <typename T>
 struct can_do_snapshot<std::atomic<obj::experimental::self_relative_ptr<T>>> {

@@ -8,5 +8,6 @@ var searchData=
   ['node',['node',['../structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html',1,'pmem::obj::experimental::radix_tree']]],
   ['none',['none',['../structpmem_1_1obj_1_1allocation__flag.html#ae89f1ed6c125d3bd67fd33c0cff27c76',1,'pmem::obj::allocation_flag::none()'],['../structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350',1,'pmem::obj::allocation_flag_atomic::none()']]],
   ['notify_5fall',['notify_all',['../classpmem_1_1obj_1_1condition__variable.html#a7fe698f5498498eaf15251c0bb877405',1,'pmem::obj::condition_variable']]],
-  ['notify_5fone',['notify_one',['../classpmem_1_1obj_1_1condition__variable.html#ae8bb6885b36cd6b24961e33c5a184db9',1,'pmem::obj::condition_variable']]]
+  ['notify_5fone',['notify_one',['../classpmem_1_1obj_1_1condition__variable.html#ae8bb6885b36cd6b24961e33c5a184db9',1,'pmem::obj::condition_variable']]],
+  ['numeric_5flimits_3c_20pmem_3a_3aobj_3a_3ap_3c_20t_20_3e_20_3e',['numeric_limits&lt; pmem::obj::p&lt; T &gt; &gt;',['../structstd_1_1numeric__limits_3_01pmem_1_1obj_1_1p_3_01T_01_4_01_4.html',1,'std']]]
 ];

@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
 #
-# Copyright 2018, Intel Corporation
+# Copyright 2016-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,62 +30,72 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# install-libndctl.sh - installs libndctl
+# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
+#              environment prepared for running libpmemobj-cpp tests.
 #
 
-set -e
+# Pull base image
+FROM fedora:32
+MAINTAINER marcin.slusarz@intel.com
 
-OS=$1
+# Install basic tools
+RUN dnf update -y \
+ && dnf install -y \
+	autoconf \
+	automake \
+	clang \
+	cmake \
+	daxctl-devel \
+	doxygen \
+	gcc \
+	gdb \
+	git \
+	hub \
+	libunwind-devel \
+	make \
+	man \
+	ncurses-devel \
+	ndctl-devel \
+	open-sans-fonts \
+	passwd \
+	perl-Text-Diff \
+	rpm-build \
+	rpm-build-libs \
+	rpmdevtools \
+	SFML-devel \
+	sudo \
+	tar \
+	wget \
+	which \
+	json-c-devel \
+	kmod-devel \
+	libudev-devel \
+	asciidoc \
+	xmlto \
+	libuuid-devel \
+	libtool \
+	bash-completion \
+ && dnf clean all
 
-echo "==== clone ndctl repo ===="
-git clone https://github.com/pmem/ndctl.git
-cd ndctl
-git checkout tags/v60.1
+# Install valgrind
+COPY install-valgrind.sh install-valgrind.sh
+RUN ./install-valgrind.sh
 
-if [ "$OS" = "fedora" ]; then
+# Install pmdk
+COPY install-pmdk.sh install-pmdk.sh
+RUN ./install-pmdk.sh rpm
 
-echo "==== setup rpmbuild tree ===="
-rpmdev-setuptree
+# Add user
+ENV USER user
+ENV USERPASS pass
+RUN useradd -m $USER
+RUN echo $USERPASS | passwd $USER --stdin
+RUN gpasswd wheel -a $USER
+USER $USER
 
-RPMDIR=$HOME/rpmbuild/
-VERSION=$(./git-version)
-SPEC=./rhel/ndctl.spec
+# Set required environment variables
+ENV OS fedora
+ENV OS_VER 32
+ENV PACKAGE_MANAGER rpm
+ENV NOTTY 1
 
-echo "==== create source tarball ====="
-git archive --format=tar --prefix="ndctl-${VERSION}/" HEAD | gzip > "$RPMDIR/SOURCES/ndctl-${VERSION}.tar.gz"
-
-echo "==== build ndctl ===="
-./autogen.sh
-./configure
-make
-
-echo "==== update ndctl.spec ===="
-# XXX: pre-process ndctl.spec to remove dependency on libpmem
-# To be removed once ndctl v60 is available.
-sed -i -e "/pkgconfig(libpmem)/d" -e "s/--with-libpmem//g" $SPEC
-
-echo "==== build ndctl packages ===="
-rpmbuild -ba $SPEC
-
-echo "==== install ndctl packages ===="
-rpm -i $RPMDIR/RPMS/x86_64/*.rpm
-
-echo "==== cleanup ===="
-rm -rf $RPMDIR
-
-else
-
-echo "==== build ndctl ===="
-./autogen.sh
-./configure
-make
-
-echo "==== install ndctl ===="
-make install
-
-echo "==== cleanup ===="
-
-fi
-
-cd ..
-rm -rf ndctl

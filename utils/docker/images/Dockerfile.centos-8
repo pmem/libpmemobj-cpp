@@ -42,6 +42,7 @@ RUN dnf update -y \
 	json-c-devel \
 	keyutils-libs-devel \
 	kmod-devel \
+	libatomic \
 	libtool \
 	libudev-devel \
 	libunwind-devel \

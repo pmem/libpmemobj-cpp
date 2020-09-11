@@ -5,6 +5,7 @@
 
 #include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/string_view.hpp>
 
 namespace nvobj = pmem::obj;
 
@@ -39,6 +40,8 @@ check_access_out_of_tx(S &s)
 		s.crend();
 		s.cfront();
 		s.cback();
+		s.operator pmem::obj::basic_string_view<S::value_type,
+							S::traits_type>();
 
 		static_cast<const S &>(s)[0];
 		static_cast<const S &>(s).at(0);

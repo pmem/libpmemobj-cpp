@@ -68,13 +68,10 @@ public:
 	pointer data() noexcept;
 	const_pointer data() const noexcept;
 
-<<<<<<< Updated upstream
-=======
 	int compare(const basic_inline_string &rhs) const noexcept;
 
 	CharT &operator[](size_type p) noexcept;
 
->>>>>>> Stashed changes
 	basic_inline_string &assign(basic_string_view<CharT, Traits> rhs);
 
 private:
@@ -210,8 +207,6 @@ basic_inline_string<CharT, Traits>::data() const noexcept
 }
 
 /**
-<<<<<<< Updated upstream
-=======
  * Compares this inline_string with other. Works in the same way as
  * std::basic_string::compare.
  *
@@ -239,7 +234,6 @@ CharT &basic_inline_string<CharT, Traits>::operator[](size_type p) noexcept
 }
 
 /**
->>>>>>> Stashed changes
  * Transactionally assign content of basic_string_view.
  *
  * @throw std::out_of_range if rhs is larger than capacity.

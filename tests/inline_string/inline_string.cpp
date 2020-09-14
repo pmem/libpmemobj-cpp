@@ -96,6 +96,8 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).data()[4] == '\0');
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o2->s).data()[7] == '\0');
+	UT_ASSERT(r->o1->s[4] == '\0');
+	UT_ASSERT(r->o2->s[7] == '\0');
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o2->s).compare(bs2) == 0);
 
 	UT_ASSERT(r->o3->s.capacity() == r->o3->s.size());
@@ -105,6 +107,7 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 	try {
 		nvobj::transaction::run(pop, [&] {
 			*(r->o1) = *(r->o2);
+			UT_ASSERTeq(r->o1->s.compare(r->o2->s), 0);
 
 			UT_ASSERTeq(r->o1->data, 2);
 			UT_ASSERTeq(r->o2->data, 2);
@@ -181,6 +184,7 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 					  bs.data(), bs.length())) == 0);
 	}
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).data()[0] == '\0');
+	UT_ASSERT(r->o1->s[0] == '\0');
 
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<Object<T>>(r->o1);

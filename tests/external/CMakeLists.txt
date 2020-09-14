@@ -1183,20 +1183,17 @@ if (TEST_RADIX_TREE)
 	build_test_ext(NAME radix_libcxx_max_size SRC_FILES libcxx/map/map.access/max_size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_max_size TRACERS none pmemcheck memcheck)
 
-	# XXX: no member named 'insert'
-	# build_test_ext(NAME radix_libcxx_size SRC_FILES libcxx/map/map.access/size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_size TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_size SRC_FILES libcxx/map/map.access/size.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_size TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_iterator SRC_FILES libcxx/map/map.access/iterator.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_iterator TRACERS none pmemcheck memcheck)
 
-	# XXX: no member named 'insert'
-	# build_test_ext(NAME radix_libcxx_empty SRC_FILES libcxx/map/map.access/empty.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_empty TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_empty SRC_FILES libcxx/map/map.access/empty.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_empty TRACERS none pmemcheck memcheck)
 
-	# XXX: cannot convert "C2Int" to const int&"
-	# build_test_ext(NAME radix_libcxx_count0 SRC_FILES libcxx/map/map.ops/count0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
-	# add_test_generic(NAME radix_libcxx_count0 TRACERS none pmemcheck memcheck)
+	build_test_ext(NAME radix_libcxx_count0 SRC_FILES libcxx/map/map.ops/count0.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_count0 TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_emplace SRC_FILES libcxx/map/map.modifiers/emplace.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_emplace TRACERS none pmemcheck memcheck)
@@ -1236,4 +1233,19 @@ if (TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_libcxx_non_member_swap SRC_FILES libcxx/map/map.special/non_member_swap.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_non_member_swap TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_insert_or_assign SRC_FILES libcxx/map/map.modifiers/insert_or_assign.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_insert_or_assign TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_try_emplace SRC_FILES libcxx/map/map.modifiers/try.emplace.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_try_emplace TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_insert_cv SRC_FILES libcxx/map/map.modifiers/insert_cv.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_insert_cv TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_insert_initializer_list SRC_FILES libcxx/map/map.modifiers/insert_initializer_list.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_insert_initializer_list TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_insert_iter_iter SRC_FILES libcxx/map/map.modifiers/insert_iter_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_insert_iter_iter TRACERS none pmemcheck memcheck)
 endif()

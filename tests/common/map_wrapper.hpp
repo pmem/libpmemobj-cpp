@@ -30,6 +30,8 @@ erase(C &m, Args &&... args)
 
 #define MAP_KEY first
 #define MAP_VALUE second
+#define TRANSPARENT_COMPARE transparent_less
+#define TRANSPARENT_COMPARE_NOT_REFERENCEABLE transparent_less_not_referenceable
 
 /* if radix tree is defined */
 #elif defined LIBPMEMOBJ_CPP_TESTS_RADIX
@@ -75,9 +77,9 @@ struct test_bytes_view<
 };
 
 /* The third param is comparator but radix does not support that */
-template <typename T, typename U, typename Ignore = void>
-using container_t =
-	nvobjex::radix_tree<T, U, typename test_bytes_view<T>::type>;
+template <typename T, typename U,
+	  typename BytesView = typename test_bytes_view<T>::type>
+using container_t = nvobjex::radix_tree<T, U, BytesView>;
 
 template <typename C, typename... Args>
 auto
@@ -88,6 +90,8 @@ erase(C &m, Args &&... args) -> decltype(m.erase(std::forward<Args>(args)...))
 
 #define MAP_KEY key()
 #define MAP_VALUE value()
+#define TRANSPARENT_COMPARE heterogenous_bytes_view
+#define TRANSPARENT_COMPARE_NOT_REFERENCEABLE heterogenous_bytes_view
 
 #endif
 

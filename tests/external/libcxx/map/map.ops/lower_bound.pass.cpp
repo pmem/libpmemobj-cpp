@@ -35,8 +35,8 @@ namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
 using C = container_t<int, double>;
-using C2 = container_t<int, double, transparent_less>;
-using C3 = container_t<PrivateConstructor, double, transparent_less>;
+using C2 = container_t<int, double, TRANSPARENT_COMPARE>;
+using C3 = container_t<PrivateConstructor, double, TRANSPARENT_COMPARE>;
 struct root {
 	nvobj::persistent_ptr<C> s;
 	nvobj::persistent_ptr<C2> s2;

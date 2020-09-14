@@ -12,7 +12,6 @@ env:
     - GITHUB_REPO=pmem/libpmemobj-cpp
     - DOCKERHUB_REPO=pmem/libpmemobj-cpp
   matrix:
-    - OS=ubuntu OS_VER=19.10 TYPE=debug COVERAGE=1
     - OS=ubuntu OS_VER=19.10 TYPE=coverity
 
 before_install:

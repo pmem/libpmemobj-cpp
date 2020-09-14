@@ -68,6 +68,10 @@ public:
 	pointer data() noexcept;
 	const_pointer data() const noexcept;
 
+	int compare(const basic_inline_string &rhs) const noexcept;
+
+	const reference operator[](size_type p);
+
 	basic_inline_string &assign(basic_string_view<CharT, Traits> rhs);
 
 private:
@@ -200,6 +204,34 @@ typename basic_inline_string<CharT, Traits>::const_pointer
 basic_inline_string<CharT, Traits>::data() const noexcept
 {
 	return reinterpret_cast<const CharT *>(this + 1);
+}
+
+/**
+ * Compares this inline_string with other. Works in the same way as
+ * std::basic_string::compare.
+ *
+ * @return 0 if both character sequences compare equal,
+ *			positive value if this is lexicographically greater than
+ * other, negative value if this is lexicographically less than other.
+ */
+template <typename CharT, typename Traits>
+int
+basic_inline_string<CharT, Traits>::compare(
+	const basic_inline_string &rhs) const noexcept
+{
+	return basic_string_view<CharT, Traits>(data(), size()).compare(rhs);
+}
+
+/**
+ * Returns reference to a character at position @param[in] p
+ *
+ * @return reference to a char
+ */
+template <typename CharT, typename Traits>
+typename basic_inline_string<CharT, Traits>::reference
+	basic_inline_string<CharT, Traits>::operator[](size_type p)
+{
+	return data()[p];
 }
 
 /**

@@ -58,7 +58,9 @@ test_string_snapshot(pmem::obj::pool<struct root> &pop)
 		pmem::obj::transaction::run(pop, [&] {
 			auto data = r->short_str->data();
 			strcpy(data, short_c_str);
+			pmem::obj::string_view sv(*r->long_str);
 
+			UT_ASSERTeq(sv.compare(*r->long_str), 0);
 			UT_ASSERTeq(T::compare(r->short_str->cdata(),
 					       short_c_str,
 					       r->short_str->size()),

@@ -23,6 +23,7 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/pext.hpp>
 #include <libpmemobj++/slice.hpp>
+#include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj++/utils.hpp>
 
@@ -291,6 +292,8 @@ public:
 		noexcept;
 
 	void swap(basic_string &other);
+
+	operator basic_string_view<CharT, Traits>() const;
 
 	/* Special value. The exact meaning depends on the context. */
 	static const size_type npos = static_cast<size_type>(-1);
@@ -4054,6 +4057,15 @@ basic_string<CharT, Traits>::swap(basic_string &other)
 			*_long = tmp;
 		}
 	});
+}
+
+/**
+ * Return new view from this string object.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits>::operator basic_string_view<CharT, Traits>() const
+{
+	return basic_string_view<CharT, Traits>(cdata(), length());
 }
 
 /**

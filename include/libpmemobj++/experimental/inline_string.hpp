@@ -68,6 +68,13 @@ public:
 	pointer data() noexcept;
 	const_pointer data() const noexcept;
 
+<<<<<<< Updated upstream
+=======
+	int compare(const basic_inline_string &rhs) const noexcept;
+
+	CharT &operator[](size_type p) noexcept;
+
+>>>>>>> Stashed changes
 	basic_inline_string &assign(basic_string_view<CharT, Traits> rhs);
 
 private:
@@ -203,6 +210,36 @@ basic_inline_string<CharT, Traits>::data() const noexcept
 }
 
 /**
+<<<<<<< Updated upstream
+=======
+ * Compares this inline_string with other. Works in the same way as
+ * std::basic_string::compare.
+ *
+ * @return 0 if both character sequences compare equal,
+ *			positive value if this is lexicographically greater than
+ * other, negative value if this is lexicographically less than other.
+ */
+template <typename CharT, typename Traits>
+int
+basic_inline_string<CharT, Traits>::compare(
+	const basic_inline_string &rhs) const noexcept
+{
+	return basic_string_view<CharT, Traits>(data(), size()).compare(rhs);
+}
+
+/**
+ * Returns reference to a character at position @param[in] p
+ *
+ * @return reference to a char
+ */
+template <typename CharT, typename Traits>
+CharT &basic_inline_string<CharT, Traits>::operator[](size_type p) noexcept
+{
+	return data()[p];
+}
+
+/**
+>>>>>>> Stashed changes
  * Transactionally assign content of basic_string_view.
  *
  * @throw std::out_of_range if rhs is larger than capacity.

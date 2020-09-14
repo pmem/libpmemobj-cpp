@@ -85,6 +85,9 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacepmem_1_1obj_1_1experimental"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html">experimental</a></td></tr>
 <tr class="memdesc:namespacepmem_1_1obj_1_1experimental"><td class="mdescLeft">&#160;</td><td class="mdescRight">Experimental implementations. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacepmem_1_1obj_1_1segment__vector__internal"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1segment__vector__internal.html">segment_vector_internal</a></td></tr>
+<tr class="memdesc:namespacepmem_1_1obj_1_1segment__vector__internal"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal implementation of pmem's segment vector. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -143,7 +146,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The non-template pool base class.  <a href="classpmem_1_1obj_1_1pool__base.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Segment table is a data type with a vector-like interface The difference is that it does not do reallocations and iterators are not invalidated when adding new elements.  <a href="classpmem_1_1obj_1_1segment__vector.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of segment vector implementation.  <a href="classpmem_1_1obj_1_1segment__vector.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1shared__mutex.html">shared_mutex</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory resident <a class="el" href="classpmem_1_1obj_1_1shared__mutex.html" title="Persistent memory resident shared_mutex implementation.">shared_mutex</a> implementation.  <a href="classpmem_1_1obj_1_1shared__mutex.html#details">More...</a><br /></td></tr>
@@ -156,9 +159,6 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html">standard_alloc_policy&lt; void &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Void specialization of the standard allocation policy.  <a href="classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1string__view.html">string_view</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Our brief std::string_view implementation.  <a href="classpmem_1_1obj_1_1string__view.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1timed__mutex.html">timed_mutex</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory resident <a class="el" href="classpmem_1_1obj_1_1timed__mutex.html" title="Persistent memory resident timed_mutex implementation.">timed_mutex</a> implementation.  <a href="classpmem_1_1obj_1_1timed__mutex.html#details">More...</a><br /></td></tr>
@@ -2327,49 +2327,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a5175622e13aec283fb56ca7ccedacf9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5175622e13aec283fb56ca7ccedacf9b">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[4/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Policy &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool pmem::obj::operator&lt; </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Comparison operator. </p>
-<p>Compares the contents of two containers lexicographically.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically less than contents of rhs, false otherwise. </dd></dl>
-
-</div>
-</div>
 <a id="a49fd05c4944d079ea05dd0cb5b203b75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49fd05c4944d079ea05dd0cb5b203b75">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[5/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a49fd05c4944d079ea05dd0cb5b203b75">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[4/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2406,6 +2365,47 @@ template&lt;typename T , typename Y &gt; </div>
 
 <p>Less than operator. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if the uuid_lo of lhs is less than the uuid_lo of rhs, should they be equal, the offsets are compared. Returns false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a5175622e13aec283fb56ca7ccedacf9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5175622e13aec283fb56ca7ccedacf9b">&#9670;&nbsp;</a></span>operator&lt;() <span class="overload">[5/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Policy &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pmem::obj::operator&lt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Comparison operator. </p>
+<p>Compares the contents of two containers lexicographically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, Policy, SPolicy&gt;.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically less than contents of rhs, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -3365,49 +3365,8 @@ template&lt;typename T , typename Policy &gt; </div>
 
 </div>
 </div>
-<a id="a9305236fa00130f6d27bacd5fb93c4ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9305236fa00130f6d27bacd5fb93c4ee">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[5/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename Policy &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool pmem::obj::operator&gt; </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lhs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhs</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Comparison operator. </p>
-<p>Compares the contents of two containers lexicographically.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, SegmentPolicy, StoragePolicy&gt; </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is std::vector&lt;T&gt;.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically greater than contents of rhs, false otherwise. </dd></dl>
-
-</div>
-</div>
 <a id="a4b2a880e3da360c959414e7ea9268456"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b2a880e3da360c959414e7ea9268456">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b2a880e3da360c959414e7ea9268456">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[5/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3444,6 +3403,47 @@ template&lt;typename T , typename Y &gt; </div>
 
 <p>Greater than operator. </p>
 <p>See less than operator for comparison rules. </p>
+
+</div>
+</div>
+<a id="a9305236fa00130f6d27bacd5fb93c4ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9305236fa00130f6d27bacd5fb93c4ee">&#9670;&nbsp;</a></span>operator&gt;() <span class="overload">[6/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Policy &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool pmem::obj::operator&gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a>&lt; T, Policy &gt; &amp;&#160;</td>
+          <td class="paramname"><em>lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Comparison operator. </p>
+<p>Compares the contents of two containers lexicographically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>is pmem::obj::experimental::segment_vector&lt;T, SegmentPolicy, StoragePolicy&gt; </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>is std::vector&lt;T&gt;.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if contents of lhs are lexicographically greater than contents of rhs, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -4013,8 +4013,8 @@ template&lt;typename T , typename Policy &gt; </div>
 <p>Swaps the contents of lhs and rhs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Segment table is a data type with a vector-like interface The difference is that it does not do reall...">segment_vector</a>. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Segment table is a data type with a vector-like interface The difference is that it does not do reall...">segment_vector</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
   </table>
   </dd>
 </dl>

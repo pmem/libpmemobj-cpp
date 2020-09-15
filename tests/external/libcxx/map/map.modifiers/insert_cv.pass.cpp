@@ -17,6 +17,7 @@
 
 // pair<iterator, bool> insert(const value_type& v);
 
+#include "../is_transparent.h"
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
 
@@ -25,7 +26,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-using container = container_t<int, double>;
+using container = container_t<int, double, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
@@ -48,30 +49,30 @@ do_insert_cv_test(pmem::obj::pool<root> &pop)
 	UT_ASSERT(r.second);
 	UT_ASSERT(r.first == m.begin());
 	UT_ASSERT(m.size() == 1);
-	UT_ASSERT(r.first->first == 2);
-	UT_ASSERT(r.first->second == 2.5);
+	UT_ASSERT(r.first->MAP_KEY == 2);
+	UT_ASSERT(r.first->MAP_VALUE == 2.5);
 
 	const VT v2(1, 1.5);
 	r = m.insert(v2);
 	UT_ASSERT(r.second);
 	UT_ASSERT(r.first == m.begin());
 	UT_ASSERT(m.size() == 2);
-	UT_ASSERT(r.first->first == 1);
-	UT_ASSERT(r.first->second == 1.5);
+	UT_ASSERT(r.first->MAP_KEY == 1);
+	UT_ASSERT(r.first->MAP_VALUE == 1.5);
 
 	const VT v3(3, 3.5);
 	r = m.insert(v3);
 	UT_ASSERT(r.second);
 	UT_ASSERT(m.size() == 3);
-	UT_ASSERT(r.first->first == 3);
-	UT_ASSERT(r.first->second == 3.5);
+	UT_ASSERT(r.first->MAP_KEY == 3);
+	UT_ASSERT(r.first->MAP_VALUE == 3.5);
 
 	const VT v4(3, 4.5);
 	r = m.insert(v4);
 	UT_ASSERT(!r.second);
 	UT_ASSERT(m.size() == 3);
-	UT_ASSERT(r.first->first == 3);
-	UT_ASSERT(r.first->second == 3.5);
+	UT_ASSERT(r.first->MAP_KEY == 3);
+	UT_ASSERT(r.first->MAP_VALUE == 3.5);
 	pmem::obj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<M>(robj->s); });
 }

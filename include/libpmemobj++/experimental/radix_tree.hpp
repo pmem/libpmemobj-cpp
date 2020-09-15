@@ -18,6 +18,7 @@
 
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/container/string.hpp>
+#include <libpmemobj++/detail/template_helpers.hpp>
 #include <libpmemobj++/experimental/inline_string.hpp>
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/make_persistent.hpp>
@@ -132,70 +133,104 @@ public:
 	~radix_tree();
 
 	template <class... Args>
+	std::pair<iterator, bool> emplace(Args &&... args);
+
+	std::pair<iterator, bool> insert(const value_type &v);
+	std::pair<iterator, bool> insert(value_type &&v);
+	template <typename P,
+		  typename = typename std::enable_if<
+			  std::is_constructible<value_type, P &&>::value,
+			  P>::type>
+	std::pair<iterator, bool> insert(P &&p);
+	/* iterator insert(const_iterator position, const value_type &v); */
+	/* iterator insert(const_iterator position, value_type &&v); */
+	/* template <
+		typename P,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, P>::type>
+	iterator insert(const_iterator position, P &&p); */
+	template <class InputIterator>
+	void insert(InputIterator first, InputIterator last);
+	void insert(std::initializer_list<value_type> il);
+	// insert_return_type insert(node_type&& nh);
+	// iterator insert(const_iterator hint, node_type&& nh);
+
+	template <class... Args>
 	std::pair<iterator, bool> try_emplace(const_key_reference k,
 					      Args &&... args);
 	template <class... Args>
-	std::pair<iterator, bool> emplace(Args &&... args);
+	std::pair<iterator, bool> try_emplace(key_type &&k, Args &&... args);
+	/*template <class... Args>
+	iterator try_emplace(const_iterator hint, const_key_reference k,
+			     Args &&... args);*/
+	/*template <class... Args>
+	iterator try_emplace(const_iterator hint, key_type &&k,
+			     Args &&... args);*/
+	/* https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96976 */
+	template <typename K, typename BV = BytesView, class... Args>
+	auto try_emplace(K &&k, Args &&... args) -> typename std::enable_if<
+		detail::has_is_transparent<BV>::value &&
+			!std::is_same<typename std::remove_reference<K>::type,
+				      key_type>::value,
+		std::pair<iterator, bool>>::type;
 
-	// pair<iterator, bool> insert(const value_type& v);
-	// pair<iterator, bool> insert(value_type&& v);
-	// template <class P>
-	//     pair<iterator, bool> insert(P&& p);
-	// iterator insert(const_iterator position, const value_type& v);
-	// iterator insert(const_iterator position, value_type&& v);
-	// template <class P>
-	//     iterator insert(const_iterator position, P&& p);
-	// template <class InputIterator>
-	//     void insert(InputIterator first, InputIterator last);
-	// void insert(initializer_list<value_type> il);
-	// insert_return_type insert(node_type&& nh);
-	// iterator insert(const_iterator hint, node_type&& nh);
-	// template <class... Args>
-	//     pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
-	// template <class... Args>
-	//     iterator try_emplace(const_iterator hint, const key_type& k,
-	//     Args&&... args);
-	// template <class... Args>
-	//     iterator try_emplace(const_iterator hint, key_type&& k, Args&&...
-	//     args);
-	// template <class M>
-	//     pair<iterator, bool> insert_or_assign(const key_type& k, M&&
-	//     obj);
-	// template <class M>
-	//     pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
-	// template <class M>
-	//     iterator insert_or_assign(const_iterator hint, const key_type& k,
-	//     M&& obj);
-	// template <class M>
-	//     iterator insert_or_assign(const_iterator hint, key_type&& k, M&&
-	//     obj);
+	template <typename M>
+	std::pair<iterator, bool> insert_or_assign(const_key_reference k,
+						   M &&obj);
+	template <typename M>
+	std::pair<iterator, bool> insert_or_assign(key_type &&k, M &&obj);
+	/*template <typename M>
+	iterator insert_or_assign(const_iterator hint, const_key_reference k,
+				  M &&obj);*/
+	/*template <typename M>
+	iterator insert_or_assign(const_iterator hint, key_type &&k, M &&obj);*/
+	template <
+		typename M, typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	std::pair<iterator, bool> insert_or_assign(K &&k, M &&obj);
 
 	iterator erase(const_iterator pos);
 	iterator erase(const_iterator first, const_iterator last);
 	size_type erase(const_key_reference k);
-	// template <typename K>
-	// size_type erase(K&& k);
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	size_type erase(const K &k);
 
 	void clear();
 
 	size_type count(const_key_reference k) const;
-	// template <typename K>
-	// size_type count(K&& k) const;
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	size_type count(const K &k) const;
 
 	iterator find(const_key_reference k);
 	const_iterator find(const_key_reference k) const;
-	// template <typename K>
-	// const_iterator find(K&& k) const;
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	const_iterator find(const K &k) const;
 
 	iterator lower_bound(const_key_reference k);
 	const_iterator lower_bound(const_key_reference k) const;
-	// template <typename K>
-	// const_iterator lower_bound(K&& k) const;
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	const_iterator lower_bound(const K &k) const;
 
 	iterator upper_bound(const_key_reference k);
 	const_iterator upper_bound(const_key_reference k) const;
-	// template <typename K>
-	// const_iterator upper_bound(K&& k) const;
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	const_iterator upper_bound(const K &k) const;
 
 	iterator begin();
 	iterator end();
@@ -1173,6 +1208,12 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const_key_reference k,
  * std::forward_as_tuple(k),
  * std::forward_as_tuple(std::forward<Args>(args)...))
  *
+ * Unlike insert or emplace, this method do not move from rvalue arguments
+ * if the insertion does not happen, which makes it easy to manipulate maps
+ * whose values are move-only types. In addition, try_emplace treats the key and
+ * the arguments to the mapped_type separately, unlike emplace, which requires
+ * the arguments to construct a value_type (that is, a std::pair).
+ *
  * No iterators or references are invalidated.
  *
  * @param[in] k the key used both to look up and to insert if not found.
@@ -1252,6 +1293,288 @@ radix_tree<Key, Value, BytesView>::emplace(Args &&... args)
 }
 
 /**
+ * Inserts element if the tree doesn't already contain an element with an
+ * equivalent key.
+ *
+ * @param[in] v element value to insert.
+ *
+ * @return a pair consisting of an iterator to the inserted element (or
+ * to the element that prevented the insertion) and a bool denoting
+ * whether the insertion took place.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::insert(const value_type &v)
+{
+	return emplace(v);
+}
+
+/**
+ * Inserts element using move semantic if the tree doesn't already contain an
+ * element with an equivalent key.
+ *
+ * @param[in] v element value to insert.
+ *
+ * @return a pair consisting of an iterator to the inserted element (or
+ * to the element that prevented the insertion) and a bool denoting
+ * whether the insertion took place.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::insert(value_type &&v)
+{
+	return emplace(std::move(v));
+}
+
+/**
+ * Inserts element if the tree doesn't already contain an element with an
+ * equivalent key.
+ *
+ * This overload is equivalent to emplace(std::forward<P>(value)) and only
+ * participates in overload resolution
+ * if std::is_constructible<value_type, P&&>::value == true.
+ *
+ * @param[in] p element value to insert.
+ *
+ * @return a pair consisting of an iterator to the inserted element (or
+ * to the element that prevented the insertion) and a bool denoting
+ * whether the insertion took place.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename P, typename>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::insert(P &&p)
+{
+	return emplace(std::forward<P>(p));
+}
+
+/**
+ * Inserts elements from range [first, last).
+ *
+ * @param[in] first first iterator of inserted range.
+ * @param[in] last last iterator of inserted range.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename InputIterator>
+void
+radix_tree<Key, Value, BytesView>::insert(InputIterator first,
+					  InputIterator last)
+{
+	for (auto it = first; it != last; it++)
+		emplace(*it);
+}
+
+/**
+ * Inserts elements from initializer list il.
+ *
+ * @param[in] il initializer list to insert the values from.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::insert(std::initializer_list<value_type> il)
+{
+	insert(il.begin(), il.end());
+}
+
+/**
+ * If a key equivalent to k already exists in the container, does nothing.
+ * Otherwise, behaves like emplace except that the element is constructed
+ * as value_type(std::piecewise_construct, std::forward_as_tuple(std::move(k)),
+ * std::forward_as_tuple(std::forward<Args>(args)...)).
+ *
+ * Unlike insert or emplace, this method do not move from rvalue arguments
+ * if the insertion does not happen, which makes it easy to manipulate maps
+ * whose values are move-only types. In addition, try_emplace treats the key and
+ * the arguments to the mapped_type separately, unlike emplace, which requires
+ * the arguments to construct a value_type (that is, a std::pair).
+ *
+ * @param[in] k the key used both to look up and to insert if not found.
+ * @param[in] args arguments to forward to the constructor of the element.
+ *
+ * @return a pair consisting of an iterator to the inserted element (or
+ * to the element that prevented the insertion) and a bool denoting
+ * whether the insertion took place.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <class... Args>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::try_emplace(key_type &&k, Args &&... args)
+{
+	return internal_emplace(k, [&](tagged_node_ptr parent) {
+		size_++;
+		return leaf::make(parent, std::move(k),
+				  std::forward<Args>(args)...);
+	});
+}
+
+/**
+ * If a key equivalent to k already exists in the container, does nothing.
+ * Otherwise, behaves like emplace except that the element is constructed
+ * as value_type(std::piecewise_construct, std::forward_as_tuple(std::move(k)),
+ * std::forward_as_tuple(std::forward<Args>(args)...)).
+ *
+ * Unlike insert or emplace, this method do not move from rvalue arguments
+ * if the insertion does not happen, which makes it easy to manipulate maps
+ * whose values are move-only types. In addition, try_emplace treats the key and
+ * the arguments to the mapped_type separately, unlike emplace, which requires
+ * the arguments to construct a value_type (that is, a std::pair).
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k the key used both to look up and to insert if not found.
+ * @param[in] args arguments to forward to the constructor of the element.
+ *
+ * @return a pair consisting of an iterator to the inserted element (or
+ * to the element that prevented the insertion) and a bool denoting
+ * whether the insertion took place.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename BV, class... Args>
+auto
+radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
+	typename std::enable_if<
+		detail::has_is_transparent<BV>::value &&
+			!std::is_same<typename std::remove_reference<K>::type,
+				      key_type>::value,
+		std::pair<typename radix_tree<Key, Value, BytesView>::iterator,
+			  bool>>::type
+
+{
+	return internal_emplace(k, [&](tagged_node_ptr parent) {
+		size_++;
+		return leaf::make(parent, std::move(k),
+				  std::forward<Args>(args)...);
+	});
+}
+
+/**
+ * If a key equivalent to k already exists in the container, assigns
+ * std::forward<M>(obj) to the mapped_type corresponding to the key k. If the
+ * key does not exist, inserts the new value as if by insert, constructing it
+ * from value_type(k, std::forward<M>(obj)).
+ *
+ * @param[in] k the key used both to look up and to insert if not found.
+ * @param[in] obj the value to insert or assign.
+ *
+ * @return std::pair<iterator,bool> The bool component is true if the insertion
+ * took place and false if the assignment took place. The iterator component is
+ * pointing at the element that was inserted or updated.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename M>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::insert_or_assign(const_key_reference k,
+						    M &&obj)
+{
+	auto ret = try_emplace(k, std::forward<M>(obj));
+	if (!ret.second)
+		ret.first.assign_val(std::forward<M>(obj));
+	return ret;
+}
+
+/**
+ * If a key equivalent to k already exists in the container, assigns
+ * std::forward<M>(obj) to the mapped_type corresponding to the key k. If the
+ * key does not exist, inserts the new value as if by insert, constructing it
+ * from value_type(std::move(k), std::forward<M>(obj))
+ *
+ * @param[in] k the key used both to look up and to insert if not found
+ * @param[in] obj the value to insert or assign
+ *
+ * @return std::pair<iterator,bool> The bool component is true if the insertion
+ * took place and false if the assignment took place. The iterator component is
+ * pointing at the element that was inserted or updated.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename M>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::insert_or_assign(key_type &&k, M &&obj)
+{
+	auto ret = try_emplace(std::move(k), std::forward<M>(obj));
+	if (!ret.second)
+		ret.first.assign_val(std::forward<M>(obj));
+	return ret;
+}
+
+/**
+ * If a key equivalent to k already exists in the container, assigns
+ * std::forward<M>(obj) to the mapped_type corresponding to the key k. If the
+ * key does not exist, inserts the new value as if by insert, constructing it
+ * from value_type(std::forward<K>(k), std::forward<M>(obj)).
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k the key used both to look up and to insert if not found.
+ * @param[in] obj the value to insert or assign.
+ *
+ * @return std::pair<iterator,bool> The bool component is true if the insertion
+ * took place and false if the assignment took place. The iterator component is
+ * pointing at the element that was inserted or updated.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory
+ * failed.
+ * @throw rethrows constructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename M, typename K, typename>
+std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
+radix_tree<Key, Value, BytesView>::insert_or_assign(K &&k, M &&obj)
+{
+	auto ret = try_emplace(std::forward<K>(k), std::forward<M>(obj));
+	if (!ret.second)
+		ret.first.assign_val(std::forward<M>(obj));
+	return ret;
+}
+
+/**
  * Returns the number of elements with key that compares equivalent to
  * the specified argument.
  *
@@ -1263,6 +1586,26 @@ radix_tree<Key, Value, BytesView>::emplace(Args &&... args)
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::size_type
 radix_tree<Key, Value, BytesView>::count(const_key_reference k) const
+{
+	return internal_find(k) != nullptr ? 1 : 0;
+}
+
+/**
+ * Returns the number of elements with key that compares equivalent to
+ * the specified argument.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value of the element to count.
+ *
+ * @return Number of elements with key that compares equivalent to the
+ * specified argument.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::size_type
+radix_tree<Key, Value, BytesView>::count(const K &k) const
 {
 	return internal_find(k) != nullptr ? 1 : 0;
 }
@@ -1293,6 +1636,25 @@ radix_tree<Key, Value, BytesView>::find(const_key_reference k)
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::find(const_key_reference k) const
+{
+	return const_iterator(internal_find(k), &root);
+}
+
+/**
+ * Finds an element with key equivalent to key.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value of the element to search for.
+ *
+ * @return Const iterator to an element with key equivalent to key. If no such
+ * element is found, past-the-end iterator is returned.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::const_iterator
+radix_tree<Key, Value, BytesView>::find(const K &k) const
 {
 	return const_iterator(internal_find(k), &root);
 }
@@ -1463,7 +1825,37 @@ template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::size_type
 radix_tree<Key, Value, BytesView>::erase(const_key_reference k)
 {
-	auto it = find(k);
+	auto it = const_iterator(internal_find(k), &root);
+
+	if (it == end())
+		return 0;
+
+	erase(it);
+
+	return 1;
+}
+
+/**
+ * Removes the element (if one exists) with the key equivalent to key.
+ * References and iterators to the erased elements are invalidated.
+ * Other references and iterators are not affected.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value of the elements to remove.
+ *
+ * @return Number of elements removed.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw rethrows destructor exception.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::size_type
+radix_tree<Key, Value, BytesView>::erase(const K &k)
+{
+	auto it = const_iterator(internal_find(k), &root);
 
 	if (it == end())
 		return 0;
@@ -1590,6 +1982,27 @@ radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k)
 }
 
 /**
+ * Returns an iterator pointing to the first element that is not less
+ * than (i.e. greater or equal to) key.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value to compare the elements to.
+ *
+ * @return Iterator pointing to the first element that is not less than
+ * key. If no such element is found, a past-the-end iterator is
+ * returned.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::const_iterator
+radix_tree<Key, Value, BytesView>::lower_bound(const K &k) const
+{
+	return internal_bound<true>(k);
+}
+
+/**
  * Returns an iterator pointing to the first element that is greater
  * than key.
  *
@@ -1623,6 +2036,27 @@ radix_tree<Key, Value, BytesView>::upper_bound(const_key_reference k)
 	auto it = const_cast<const radix_tree *>(this)->upper_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
 			&root);
+}
+
+/**
+ * Returns an iterator pointing to the first element that is greater
+ * than key.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value to compare the elements to.
+ *
+ * @return Iterator pointing to the first element that is greater than
+ * key. If no such element is found, a past-the-end iterator is
+ * returned.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::const_iterator
+radix_tree<Key, Value, BytesView>::upper_bound(const K &k) const
+{
+	return internal_bound<false>(k);
 }
 
 /**
@@ -2248,6 +2682,11 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	}
 }
 
+/**
+ * Assign value to leaf pointed by the iterator.
+ *
+ * This function is transactional
+ */
 template <typename Key, typename Value, typename BytesView>
 template <bool IsConst>
 template <typename T, typename V, typename Enable>
@@ -2255,7 +2694,9 @@ void
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	T &&rhs)
 {
-	leaf_->value() = std::forward<T>(rhs);
+	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
+
+	transaction::run(pop, [&] { leaf_->value() = std::forward<T>(rhs); });
 }
 
 template <typename Key, typename Value, typename BytesView>

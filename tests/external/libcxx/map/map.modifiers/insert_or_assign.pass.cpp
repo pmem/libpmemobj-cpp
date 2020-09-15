@@ -15,16 +15,15 @@
 
 // class map
 
-// template <class... Args>
-//  pair<iterator, bool> try_emplace(const key_type& k, Args&&... args); //
-//  C++17
-// template <class... Args>
-//  pair<iterator, bool> try_emplace(key_type&& k, Args&&... args); // C++17
-// template <class... Args>
-//  iterator try_emplace(const_iterator hint, const key_type& k, Args&&...
-//  args); // C++17
-// template <class... Args>
-//  iterator try_emplace(const_iterator hint, key_type&& k, Args&&... args); //
+// template <class M>
+//  pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj); // C++17
+// template <class M>
+//  pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj); // C++17
+// template <class M>
+//  iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
+//  // C++17
+// template <class M>
+//  iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj); //
 //  C++17
 
 #include "../is_transparent.h"
@@ -53,60 +52,65 @@ int
 run(pmem::obj::pool<root> &pop)
 {
 	auto robj = pop.root();
-	{ // pair<iterator, bool> try_emplace(const key_type& k, Args&&...
-	  // args);
+	{ // pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
 		typedef container M;
 		typedef std::pair<M::iterator, bool> R;
+
 		pmem::obj::transaction::run(
 			pop, [&] { robj->s = nvobj::make_persistent<M>(); });
 		auto &m = *robj->s;
 		R r;
+
 		for (int i = 0; i < 20; i += 2)
 			m.emplace(i, Moveable(i, (double)i));
 		UT_ASSERT(m.size() == 10);
 
-		Moveable mv1(3, 3.0);
 		for (int i = 0; i < 20; i += 2) {
-			r = m.try_emplace(i, std::move(mv1));
+			Moveable mv(i + 1, i + 1);
+			r = m.insert_or_assign(i, std::move(mv));
 			UT_ASSERT(m.size() == 10);
 			UT_ASSERT(!r.second);		  // was not inserted
-			UT_ASSERT(!mv1.moved());	  // was not moved from
+			UT_ASSERT(mv.moved());		  // was moved from
 			UT_ASSERT(r.first->MAP_KEY == i); // key
+			UT_ASSERT(r.first->MAP_VALUE.get() == i + 1); // value
 		}
 
-		r = m.try_emplace(-1, std::move(mv1));
+		Moveable mv1(5, 5.0);
+		r = m.insert_or_assign(-1, std::move(mv1));
 		UT_ASSERT(m.size() == 11);
 		UT_ASSERT(r.second);			  // was inserted
 		UT_ASSERT(mv1.moved());			  // was moved from
 		UT_ASSERT(r.first->MAP_KEY == -1);	  // key
-		UT_ASSERT(r.first->MAP_VALUE.get() == 3); // value
+		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value
 
-		Moveable mv2(5, 3.0);
-		r = m.try_emplace(5, std::move(mv2));
+		Moveable mv2(9, 9.0);
+		r = m.insert_or_assign(3, std::move(mv2));
 		UT_ASSERT(m.size() == 12);
 		UT_ASSERT(r.second);			  // was inserted
 		UT_ASSERT(mv2.moved());			  // was moved from
-		UT_ASSERT(r.first->MAP_KEY == 5);	  // key
-		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value
+		UT_ASSERT(r.first->MAP_KEY == 3);	  // key
+		UT_ASSERT(r.first->MAP_VALUE.get() == 9); // value
 
-		Moveable mv3(-1, 3.0);
-		r = m.try_emplace(117, std::move(mv2));
+		Moveable mv3(-1, 5.0);
+		r = m.insert_or_assign(117, std::move(mv3));
 		UT_ASSERT(m.size() == 13);
 		UT_ASSERT(r.second);			   // was inserted
-		UT_ASSERT(mv2.moved());			   // was moved from
+		UT_ASSERT(mv3.moved());			   // was moved from
 		UT_ASSERT(r.first->MAP_KEY == 117);	   // key
 		UT_ASSERT(r.first->MAP_VALUE.get() == -1); // value
+
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
 	}
-
-	{ // pair<iterator, bool> try_emplace(key_type&& k, Args&&... args);
+	{ // pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
 		typedef container2 M;
 		typedef std::pair<M::iterator, bool> R;
+
 		pmem::obj::transaction::run(
 			pop, [&] { robj->s2 = nvobj::make_persistent<M>(); });
 		auto &m = *robj->s2;
 		R r;
+
 		for (int i = 0; i < 20; i += 2)
 			m.emplace(Moveable(i, (double)i),
 				  Moveable(i + 1, (double)i + 1));
@@ -114,62 +118,70 @@ run(pmem::obj::pool<root> &pop)
 
 		Moveable mvkey1(2, 2.0);
 		Moveable mv1(4, 4.0);
-		r = m.try_emplace(std::move(mvkey1), std::move(mv1));
+		r = m.insert_or_assign(std::move(mvkey1), std::move(mv1));
 		UT_ASSERT(m.size() == 10);
-		UT_ASSERT(!r.second);		       // was not inserted
-		UT_ASSERT(!mv1.moved());	       // was not moved from
-		UT_ASSERT(!mvkey1.moved());	       // was not moved from
-		UT_ASSERT(r.first->MAP_KEY == mvkey1); // key
+		UT_ASSERT(!r.second);			  // was not inserted
+		UT_ASSERT(!mvkey1.moved());		  // was not moved from
+		UT_ASSERT(mv1.moved());			  // was moved from
+		UT_ASSERT(r.first->MAP_KEY == mvkey1);	  // key
+		UT_ASSERT(r.first->MAP_VALUE.get() == 4); // value
 
 		Moveable mvkey2(3, 3.0);
-		r = m.try_emplace(std::move(mvkey2), std::move(mv1));
+		Moveable mv2(5, 5.0);
+		r = m.insert_or_assign(std::move(mvkey2), std::move(mv2));
 		UT_ASSERT(m.size() == 11);
 		UT_ASSERT(r.second);			  // was inserted
-		UT_ASSERT(mv1.moved());			  // was moved from
+		UT_ASSERT(mv2.moved());			  // was moved from
 		UT_ASSERT(mvkey2.moved());		  // was moved from
 		UT_ASSERT(r.first->MAP_KEY.get() == 3);	  // key
-		UT_ASSERT(r.first->MAP_VALUE.get() == 4); // value
+		UT_ASSERT(r.first->MAP_VALUE.get() == 5); // value
+
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 	}
-#ifdef XXX // XXX: implement try_emplace with hint
-	{  // iterator try_emplace(const_iterator hint, const key_type& k,
-	   // Args&&... args);
-		typedef container M;
+#ifdef XXX // XXX: implement insert_or_assign with hint
+	{  // iterator insert_or_assign(const_iterator hint, const key_type& k,
+	   // M&& obj);
+		typedef container3 M;
+
 		pmem::obj::transaction::run(
-			pop, [&] { robj->s = nvobj::make_persistent<M>(); });
-		auto &m = *robj->s;
+			pop, [&] { robj->s3 = nvobj::make_persistent<M>(); });
+		auto &m = *robj->s3;
 		M::iterator r;
+
 		for (int i = 0; i < 20; i += 2)
-			m.try_emplace(i, Moveable(i, (double)i));
+			m.emplace(i, Moveable(i, (double)i));
 		UT_ASSERT(m.size() == 10);
-		M::const_iterator it = m.find(2);
+		M::const_iterator it = m.find(C2Int{2});
 
 		Moveable mv1(3, 3.0);
-		for (int i = 0; i < 20; i += 2) {
-			r = m.try_emplace(it, i, std::move(mv1));
-			UT_ASSERT(m.size() == 10);
-			UT_ASSERT(!mv1.moved());    // was not moved from
-			UT_ASSERT(r->MAP_KEY == i); // key
-			UT_ASSERT(r->MAP_VALUE.get() == i); // value
-		}
-
-		r = m.try_emplace(it, 3, std::move(mv1));
-		UT_ASSERT(m.size() == 11);
+		C2Int k1{2};
+		r = m.insert_or_assign(it, k1, std::move(mv1));
+		UT_ASSERT(m.size() == 10);
 		UT_ASSERT(mv1.moved());		    // was moved from
-		UT_ASSERT(r->MAP_KEY == 3);	    // key
+		UT_ASSERT(r->MAP_KEY.get() == 2);   // key
 		UT_ASSERT(r->MAP_VALUE.get() == 3); // value
-		pmem::obj::transaction::run(
-			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
-	}
 
-	{ // iterator try_emplace(const_iterator hint, key_type&& k, Args&&...
-	  // args);
+		Moveable mv2(5, 5.0);
+		C2Int k2{3};
+		r = m.insert_or_assign(it, k2, std::move(mv2));
+		UT_ASSERT(m.size() == 11);
+		UT_ASSERT(mv2.moved());		    // was moved from
+		UT_ASSERT(r->MAP_KEY.get() == 3);   // key
+		UT_ASSERT(r->MAP_VALUE.get() == 5); // value
+
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
+	}
+	{ // iterator insert_or_assign(const_iterator hint, key_type&& k, M&&
+	  // obj);
 		typedef container2 M;
-		M::iterator r;
+
 		pmem::obj::transaction::run(
 			pop, [&] { robj->s2 = nvobj::make_persistent<M>(); });
 		auto &m = *robj->s2;
+		M::iterator r;
+
 		for (int i = 0; i < 20; i += 2)
 			m.emplace(Moveable(i, (double)i),
 				  Moveable(i + 1, (double)i + 1));
@@ -178,19 +190,22 @@ run(pmem::obj::pool<root> &pop)
 
 		Moveable mvkey1(2, 2.0);
 		Moveable mv1(4, 4.0);
-		r = m.try_emplace(it, std::move(mvkey1), std::move(mv1));
+		r = m.insert_or_assign(it, std::move(mvkey1), std::move(mv1));
 		UT_ASSERT(m.size() == 10);
-		UT_ASSERT(!mv1.moved());	 // was not moved from
-		UT_ASSERT(!mvkey1.moved());	 // was not moved from
-		UT_ASSERT(r->MAP_KEY == mvkey1); // key
+		UT_ASSERT(mv1.moved());		    // was moved from
+		UT_ASSERT(!mvkey1.moved());	    // was not moved from
+		UT_ASSERT(r->MAP_KEY == mvkey1);    // key
+		UT_ASSERT(r->MAP_VALUE.get() == 4); // value
 
 		Moveable mvkey2(3, 3.0);
-		r = m.try_emplace(it, std::move(mvkey2), std::move(mv1));
+		Moveable mv2(5, 5.0);
+		r = m.insert_or_assign(it, std::move(mvkey2), std::move(mv2));
 		UT_ASSERT(m.size() == 11);
-		UT_ASSERT(mv1.moved());		    // was moved from
+		UT_ASSERT(mv2.moved());		    // was moved from
 		UT_ASSERT(mvkey2.moved());	    // was moved from
 		UT_ASSERT(r->MAP_KEY.get() == 3);   // key
-		UT_ASSERT(r->MAP_VALUE.get() == 4); // value
+		UT_ASSERT(r->MAP_VALUE.get() == 5); // value
+
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 	}
@@ -210,17 +225,17 @@ run(pmem::obj::pool<root> &pop)
 
 		for (int i = 0; i < 10; i++) {
 			Moveable mv{i + 1, 10.0};
-			r = m.try_emplace(i, std::move(mv));
+			r = m.insert_or_assign(i, std::move(mv));
 			UT_ASSERT(!r.second);
 			UT_ASSERT(r.first->MAP_KEY.get() == i);
-			UT_ASSERT(r.first->MAP_VALUE.get() == i);
-			UT_ASSERT(!mv.moved());
+			UT_ASSERT(r.first->MAP_VALUE.get() == i + 1);
+			UT_ASSERT(mv.moved());
 			UT_ASSERT(m.size() == 10);
 		}
 
 		for (int i = 10; i < 20; i++) {
 			Moveable mv{i, 10.0};
-			r = m.try_emplace(i, std::move(mv));
+			r = m.insert_or_assign(i, std::move(mv));
 			UT_ASSERT(r.second);
 			UT_ASSERT(r.first->MAP_KEY.get() == i);
 			UT_ASSERT(r.first->MAP_VALUE.get() == i);
@@ -231,6 +246,7 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
 	}
+
 	return 0;
 }
 
@@ -244,9 +260,9 @@ test(int argc, char *argv[])
 
 	pmem::obj::pool<root> pop;
 	try {
-		pop = pmem::obj::pool<root>::create(path, "try.emplace.pass",
-						    PMEMOBJ_MIN_POOL,
-						    S_IWUSR | S_IRUSR);
+		pop = pmem::obj::pool<root>::create(
+			path, "insert_or_assign.pass", PMEMOBJ_MIN_POOL,
+			S_IWUSR | S_IRUSR);
 	} catch (...) {
 		UT_FATAL("!pmemobj_create: %s", path);
 	}

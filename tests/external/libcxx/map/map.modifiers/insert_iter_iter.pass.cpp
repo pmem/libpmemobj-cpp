@@ -18,6 +18,7 @@
 // template <class InputIterator>
 //   void insert(InputIterator first, InputIterator last);
 
+#include "../is_transparent.h"
 #include "iterators_support.hpp"
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
@@ -27,7 +28,7 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-using container = container_t<int, double>;
+using container = container_t<int, double, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
@@ -51,12 +52,12 @@ run(pmem::obj::pool<root> &pop)
 			 test_support::input_it<P *>(
 				 ar + sizeof(ar) / sizeof(ar[0])));
 		UT_ASSERT(m.size() == 3);
-		UT_ASSERT(m.begin()->first == 1);
-		UT_ASSERT(m.begin()->second == 1);
-		UT_ASSERT(next(m.begin())->first == 2);
-		UT_ASSERT(next(m.begin())->second == 1);
-		UT_ASSERT(next(m.begin(), 2)->first == 3);
-		UT_ASSERT(next(m.begin(), 2)->second == 1);
+		UT_ASSERT(m.begin()->MAP_KEY == 1);
+		UT_ASSERT(m.begin()->MAP_VALUE == 1);
+		UT_ASSERT(std::next(m.begin())->MAP_KEY == 2);
+		UT_ASSERT(std::next(m.begin())->MAP_VALUE == 1);
+		UT_ASSERT(std::next(m.begin(), 2)->MAP_KEY == 3);
+		UT_ASSERT(std::next(m.begin(), 2)->MAP_VALUE == 1);
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
 	}

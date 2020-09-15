@@ -192,11 +192,13 @@ public:
 
 	iterator erase(const_iterator pos);
 	iterator erase(const_iterator first, const_iterator last);
-	size_type erase(const_key_reference k);
-	template <
-		typename K,
-		typename = typename std::enable_if<
-			detail::has_is_transparent<BytesView>::value, K>::type>
+	size_type erase(const key_type &k);
+	template <typename K,
+		  typename = typename std::enable_if<
+			  detail::has_is_transparent<BytesView>::value &&
+				  !std::is_same<K, iterator>::value &&
+				  !std::is_same<K, const_iterator>::value,
+			  K>::type>
 	size_type erase(const K &k);
 
 	void clear();
@@ -214,6 +216,11 @@ public:
 		typename K,
 		typename = typename std::enable_if<
 			detail::has_is_transparent<BytesView>::value, K>::type>
+	iterator find(const K &k);
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
 	const_iterator find(const K &k) const;
 
 	iterator lower_bound(const_key_reference k);
@@ -222,10 +229,20 @@ public:
 		typename K,
 		typename = typename std::enable_if<
 			detail::has_is_transparent<BytesView>::value, K>::type>
+	iterator lower_bound(const K &k);
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
 	const_iterator lower_bound(const K &k) const;
 
 	iterator upper_bound(const_key_reference k);
 	const_iterator upper_bound(const_key_reference k) const;
+	template <
+		typename K,
+		typename = typename std::enable_if<
+			detail::has_is_transparent<BytesView>::value, K>::type>
+	iterator upper_bound(const K &k);
 	template <
 		typename K,
 		typename = typename std::enable_if<
@@ -1630,7 +1647,7 @@ radix_tree<Key, Value, BytesView>::find(const_key_reference k)
  *
  * @param[in] k key value of the element to search for.
  *
- * @return Iterator to an element with key equivalent to key. If no such
+ * @return Const iterator to an element with key equivalent to key. If no such
  * element is found, past-the-end iterator is returned.
  */
 template <typename Key, typename Value, typename BytesView>
@@ -1638,6 +1655,25 @@ typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::find(const_key_reference k) const
 {
 	return const_iterator(internal_find(k), &root);
+}
+
+/**
+ * Finds an element with key equivalent to key.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value of the element to search for.
+ *
+ * @return Iterator to an element with key equivalent to key. If no such
+ * element is found, past-the-end iterator is returned.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::iterator
+radix_tree<Key, Value, BytesView>::find(const K &k)
+{
+	return iterator(internal_find(k), &root);
 }
 
 /**
@@ -1951,7 +1987,7 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
  *
  * @param[in] k key value to compare the elements to.
  *
- * @return Iterator pointing to the first element that is not less than
+ * @return Const iterator pointing to the first element that is not less than
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
@@ -1996,6 +2032,29 @@ radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k)
  */
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::iterator
+radix_tree<Key, Value, BytesView>::lower_bound(const K &k)
+{
+	auto it = const_cast<const radix_tree *>(this)->lower_bound(k);
+	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
+			&root);
+}
+
+/**
+ * Returns an iterator pointing to the first element that is not less
+ * than (i.e. greater or equal to) key.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value to compare the elements to.
+ *
+ * @return Const iterator pointing to the first element that is not less than
+ * key. If no such element is found, a past-the-end iterator is
+ * returned.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
 typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::lower_bound(const K &k) const
 {
@@ -2008,7 +2067,7 @@ radix_tree<Key, Value, BytesView>::lower_bound(const K &k) const
  *
  * @param[in] k key value to compare the elements to.
  *
- * @return Iterator pointing to the first element that is greater than
+ * @return Const iterator pointing to the first element that is greater than
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
@@ -2048,6 +2107,29 @@ radix_tree<Key, Value, BytesView>::upper_bound(const_key_reference k)
  * @param[in] k key value to compare the elements to.
  *
  * @return Iterator pointing to the first element that is greater than
+ * key. If no such element is found, a past-the-end iterator is
+ * returned.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename>
+typename radix_tree<Key, Value, BytesView>::iterator
+radix_tree<Key, Value, BytesView>::upper_bound(const K &k)
+{
+	auto it = const_cast<const radix_tree *>(this)->upper_bound(k);
+	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
+			&root);
+}
+
+/**
+ * Returns an iterator pointing to the first element that is greater
+ * than key.
+ *
+ * This overload only participates in overload resolution if BytesView struct
+ * has a type member named is_transparent.
+ *
+ * @param[in] k key value to compare the elements to.
+ *
+ * @return Const iterator pointing to the first element that is greater than
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */

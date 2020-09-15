@@ -54,7 +54,8 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { robj->s = nvobj::make_persistent<M>(); });
 		M &example = *robj->s;
-		UT_ASSERT(example.find(C2Int{5}) == example.end());
+		M::iterator result = example.find(C2Int{5});
+		UT_ASSERT(result == example.end());
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
 	}
@@ -66,6 +67,16 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(example.find(C2Int{5}) == example.end());
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s1); });
+	}
+	{
+		typedef C M;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s = nvobj::make_persistent<M>(); });
+		M &example = *robj->s;
+		M::const_iterator result = example.find(C2Int{5});
+		UT_ASSERT(result == example.end());
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
 	}
 
 	return 0;

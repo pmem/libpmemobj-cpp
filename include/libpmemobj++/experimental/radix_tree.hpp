@@ -1457,7 +1457,8 @@ radix_tree<Key, Value, BytesView>::try_emplace(key_type &&k, Args &&... args)
 /**
  * If a key equivalent to k already exists in the container, does nothing.
  * Otherwise, behaves like emplace except that the element is constructed
- * as value_type(std::piecewise_construct, std::forward_as_tuple(std::move(k)),
+ * as value_type(std::piecewise_construct,
+ * std::forward_as_tuple(std::forward<K>(k)),
  * std::forward_as_tuple(std::forward<Args>(args)...)).
  *
  * Unlike insert or emplace, this method do not move from rvalue arguments
@@ -1495,7 +1496,7 @@ radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
 {
 	return internal_emplace(k, [&](tagged_node_ptr parent) {
 		size_++;
-		return leaf::make(parent, std::move(k),
+		return leaf::make(parent, std::forward<K>(k),
 				  std::forward<Args>(args)...);
 	});
 }

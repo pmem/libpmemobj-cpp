@@ -37,7 +37,7 @@ test_iterators(nvobj::pool<root> &pop)
 		r->radix_str->try_emplace("b", "b");
 	});
 
-	auto it = r->radix_int->find("a");
+	container_int::const_iterator it = r->radix_int->find("a");
 	UT_ASSERT(nvobj::string_view(it->key()).compare(std::string("a")) == 0);
 	UT_ASSERTeq(it->value(), 3);
 
@@ -76,7 +76,9 @@ test_iterators(nvobj::pool<root> &pop)
 	UT_ASSERT(nvobj::string_view(it->key()).compare(std::string("a")) == 0);
 	UT_ASSERTeq(it->value(), 3);
 
-	(*it).value() = 4;
+	auto non_const_it = r->radix_int->find((*it).key());
+	(*non_const_it).value() = 4;
+
 	UT_ASSERT(nvobj::string_view(it->key()).compare(std::string("a")) == 0);
 	UT_ASSERTeq(it->value(), 4);
 
@@ -688,6 +690,45 @@ test_assign_inline_string(nvobj::pool<root> &pop)
 	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 }
 
+void
+test_inline_string_u8t_key(nvobj::pool<root> &pop)
+{
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->radix_inline_s_u8t =
+			nvobj::make_persistent<container_inline_s_u8t>();
+	});
+	auto &m = *r->radix_inline_s_u8t;
+
+	UT_ASSERT(m.size() == 0);
+
+	for (unsigned i = 0; i < 10; i++) {
+		auto key = std::basic_string<uint8_t>(i + 10, 99);
+		auto ret = m.try_emplace(key, i);
+		UT_ASSERT(ret.second);
+		UT_ASSERT(key.compare(ret.first->key().data()) == 0);
+		UT_ASSERT(ret.first->value() == i);
+		UT_ASSERT(m.size() == i + 1);
+	}
+
+	for (unsigned i = 0; i < 10; i++) {
+		auto key = std::basic_string<uint8_t>(i + 10, 99);
+		auto ret = m.insert_or_assign(key, i + 1);
+		UT_ASSERT(!ret.second);
+		UT_ASSERT(key.compare(ret.first->key().data()) == 0);
+		UT_ASSERT(ret.first->value() == i + 1);
+		UT_ASSERT(m.size() == 10);
+	}
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_inline_s_u8t>(
+			r->radix_inline_s_u8t);
+	});
+
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+}
+
 static void
 test(int argc, char *argv[])
 {
@@ -719,6 +760,7 @@ test(int argc, char *argv[])
 	test_pre_post_fixes(pop);
 	test_assign_inline_string(pop);
 	test_compression(pop);
+	test_inline_string_u8t_key(pop);
 
 	pop.close();
 }

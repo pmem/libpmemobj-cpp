@@ -108,9 +108,6 @@ public:
 	using mapped_type = Value;
 	using value_type = std::pair<const key_type, mapped_type>;
 	using size_type = std::size_t;
-	using const_key_reference = typename std::conditional<
-		std::is_same<Key, inline_string>::value, string_view,
-		const key_type &>::type;
 	using reference = value_type &;
 	using const_reference = const value_type &;
 	using iterator = radix_tree_iterator<false>;
@@ -156,12 +153,12 @@ public:
 	// iterator insert(const_iterator hint, node_type&& nh);
 
 	template <class... Args>
-	std::pair<iterator, bool> try_emplace(const_key_reference k,
+	std::pair<iterator, bool> try_emplace(const key_type &k,
 					      Args &&... args);
 	template <class... Args>
 	std::pair<iterator, bool> try_emplace(key_type &&k, Args &&... args);
 	/*template <class... Args>
-	iterator try_emplace(const_iterator hint, const_key_reference k,
+	iterator try_emplace(const_iterator hint, const key_type &k,
 			     Args &&... args);*/
 	/*template <class... Args>
 	iterator try_emplace(const_iterator hint, key_type &&k,
@@ -175,12 +172,11 @@ public:
 		std::pair<iterator, bool>>::type;
 
 	template <typename M>
-	std::pair<iterator, bool> insert_or_assign(const_key_reference k,
-						   M &&obj);
+	std::pair<iterator, bool> insert_or_assign(const key_type &k, M &&obj);
 	template <typename M>
 	std::pair<iterator, bool> insert_or_assign(key_type &&k, M &&obj);
 	/*template <typename M>
-	iterator insert_or_assign(const_iterator hint, const_key_reference k,
+	iterator insert_or_assign(const_iterator hint, const key_type &k,
 				  M &&obj);*/
 	/*template <typename M>
 	iterator insert_or_assign(const_iterator hint, key_type &&k, M &&obj);*/
@@ -192,7 +188,7 @@ public:
 
 	iterator erase(const_iterator pos);
 	iterator erase(const_iterator first, const_iterator last);
-	size_type erase(const_key_reference k);
+	size_type erase(const key_type &k);
 	template <
 		typename K,
 		typename = typename std::enable_if<
@@ -201,15 +197,15 @@ public:
 
 	void clear();
 
-	size_type count(const_key_reference k) const;
+	size_type count(const key_type &k) const;
 	template <
 		typename K,
 		typename = typename std::enable_if<
 			detail::has_is_transparent<BytesView>::value, K>::type>
 	size_type count(const K &k) const;
 
-	iterator find(const_key_reference k);
-	const_iterator find(const_key_reference k) const;
+	iterator find(const key_type &k);
+	const_iterator find(const key_type &k) const;
 	template <
 		typename K,
 		typename = typename std::enable_if<
@@ -221,8 +217,8 @@ public:
 			detail::has_is_transparent<BytesView>::value, K>::type>
 	const_iterator find(const K &k) const;
 
-	iterator lower_bound(const_key_reference k);
-	const_iterator lower_bound(const_key_reference k) const;
+	iterator lower_bound(const key_type &k);
+	const_iterator lower_bound(const key_type &k) const;
 	template <
 		typename K,
 		typename = typename std::enable_if<
@@ -234,8 +230,8 @@ public:
 			detail::has_is_transparent<BytesView>::value, K>::type>
 	const_iterator lower_bound(const K &k) const;
 
-	iterator upper_bound(const_key_reference k);
-	const_iterator upper_bound(const_key_reference k) const;
+	iterator upper_bound(const key_type &k);
+	const_iterator upper_bound(const key_type &k) const;
 	template <
 		typename K,
 		typename = typename std::enable_if<
@@ -1246,7 +1242,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 template <typename Key, typename Value, typename BytesView>
 template <class... Args>
 std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::try_emplace(const_key_reference k,
+radix_tree<Key, Value, BytesView>::try_emplace(const key_type &k,
 					       Args &&... args)
 {
 	return internal_emplace(k, [&](tagged_node_ptr parent) {
@@ -1519,8 +1515,7 @@ radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
 template <typename Key, typename Value, typename BytesView>
 template <typename M>
 std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert_or_assign(const_key_reference k,
-						    M &&obj)
+radix_tree<Key, Value, BytesView>::insert_or_assign(const key_type &k, M &&obj)
 {
 	auto ret = try_emplace(k, std::forward<M>(obj));
 	if (!ret.second)
@@ -1600,7 +1595,7 @@ radix_tree<Key, Value, BytesView>::insert_or_assign(K &&k, M &&obj)
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::count(const_key_reference k) const
+radix_tree<Key, Value, BytesView>::count(const key_type &k) const
 {
 	return internal_find(k) != nullptr ? 1 : 0;
 }
@@ -1635,7 +1630,7 @@ radix_tree<Key, Value, BytesView>::count(const K &k) const
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::find(const_key_reference k)
+radix_tree<Key, Value, BytesView>::find(const key_type &k)
 {
 	return iterator(internal_find(k), &root);
 }
@@ -1650,7 +1645,7 @@ radix_tree<Key, Value, BytesView>::find(const_key_reference k)
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::find(const_key_reference k) const
+radix_tree<Key, Value, BytesView>::find(const key_type &k) const
 {
 	return const_iterator(internal_find(k), &root);
 }
@@ -1857,7 +1852,7 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator first,
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::erase(const_key_reference k)
+radix_tree<Key, Value, BytesView>::erase(const key_type &k)
 {
 	auto it = const_iterator(internal_find(k), &root);
 
@@ -1991,7 +1986,7 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
+radix_tree<Key, Value, BytesView>::lower_bound(const key_type &k) const
 {
 	return internal_bound<true>(k);
 }
@@ -2008,7 +2003,7 @@ radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k) const
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const_key_reference k)
+radix_tree<Key, Value, BytesView>::lower_bound(const key_type &k)
 {
 	auto it = const_cast<const radix_tree *>(this)->lower_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
@@ -2071,7 +2066,7 @@ radix_tree<Key, Value, BytesView>::lower_bound(const K &k) const
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::upper_bound(const_key_reference k) const
+radix_tree<Key, Value, BytesView>::upper_bound(const key_type &k) const
 {
 	return internal_bound<false>(k);
 }
@@ -2088,7 +2083,7 @@ radix_tree<Key, Value, BytesView>::upper_bound(const_key_reference k) const
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::upper_bound(const_key_reference k)
+radix_tree<Key, Value, BytesView>::upper_bound(const key_type &k)
 {
 	auto it = const_cast<const radix_tree *>(this)->upper_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
@@ -3122,15 +3117,19 @@ swap(radix_tree<Key, Value, BytesView> &lhs,
 
 namespace detail
 {
-template <>
-struct bytes_view<obj::experimental::inline_string> {
-	bytes_view(const obj::experimental::inline_string *s) : s(*s)
+template <typename CharT>
+struct bytes_view<obj::experimental::basic_inline_string<CharT>> {
+	template <
+		typename C,
+		typename Enable = typename std::enable_if<std::is_constructible<
+			obj::basic_string_view<CharT>, C>::value>::type>
+	bytes_view(const C *s) : s(*s)
 	{
 	}
 
 	char operator[](std::size_t p) const
 	{
-		return s[p];
+		return static_cast<char>(s[p]);
 	}
 
 	size_t
@@ -3139,7 +3138,9 @@ struct bytes_view<obj::experimental::inline_string> {
 		return s.size();
 	}
 
-	obj::string_view s;
+	obj::basic_string_view<CharT> s;
+
+	using is_transparent = void;
 };
 
 template <typename T>

@@ -288,15 +288,16 @@ struct real_size {
 /**
  * A helper trait which calculates required memory capacity for a type.
  *
- * Inline_string requires capacity of sizeof(inline_string) + size of the
- * data itself.
+ * Inline_string requires capacity of sizeof(basic_inline_string<CharT>) + size
+ * of the data itself.
  */
-template <>
-struct real_size<inline_string> {
+template <typename CharT>
+struct real_size<basic_inline_string<CharT>> {
 	static size_t
-	value(const string_view &s)
+	value(const basic_string_view<CharT> &s)
 	{
-		return sizeof(inline_string) + s.size() + 1 /* sizeof('\0') */;
+		return sizeof(basic_inline_string<CharT>) + s.size() +
+			1 /* sizeof('\0') */;
 	}
 };
 } /* namespace experimental */

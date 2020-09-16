@@ -121,7 +121,7 @@ inline basic_string_view<CharT, Traits>::basic_string_view(
  */
 template <typename CharT, typename Traits>
 inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
-    : data_(data), size_(std::char_traits<char>::length(data))
+    : data_(data), size_(std::char_traits<CharT>::length(data))
 {
 }
 

@@ -24,12 +24,16 @@ using container_int_int =
 using container_int_string =
 	nvobjex::radix_tree<unsigned, nvobjex::inline_string>;
 
+using container_inline_s_u8t = nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>, nvobj::p<unsigned>>;
+
 struct root {
 	nvobj::persistent_ptr<container_int> radix_int;
 	nvobj::persistent_ptr<container_string> radix_str;
 
 	nvobj::persistent_ptr<container_int_int> radix_int_int;
 	nvobj::persistent_ptr<container_int_string> radix_int_str;
+
+	nvobj::persistent_ptr<container_inline_s_u8t> radix_inline_s_u8t;
 };
 
 template <typename Container,

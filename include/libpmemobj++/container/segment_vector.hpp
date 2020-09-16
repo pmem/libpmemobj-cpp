@@ -370,7 +370,7 @@ segment_iterator<Container, is_const>::operator>(
 	const segment_iterator<Container, C> &rhs) const
 {
 	if (table != rhs.table)
-		throw std::invalid_argument("segment_iterator::operator<");
+		throw std::invalid_argument("segment_iterator::operator>");
 
 	return index > rhs.index;
 }
@@ -393,7 +393,7 @@ segment_iterator<Container, is_const>::operator<=(
 	const segment_iterator<Container, C> &rhs) const
 {
 	if (table != rhs.table)
-		throw std::invalid_argument("segment_iterator::operator<");
+		throw std::invalid_argument("segment_iterator::operator<=");
 
 	return index <= rhs.index;
 }
@@ -416,7 +416,7 @@ segment_iterator<Container, is_const>::operator>=(
 	const segment_iterator<Container, C> &rhs) const
 {
 	if (table != rhs.table)
-		throw std::invalid_argument("segment_iterator::operator<");
+		throw std::invalid_argument("segment_iterator::operator>=");
 
 	return index >= rhs.index;
 }

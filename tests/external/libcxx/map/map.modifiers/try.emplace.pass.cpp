@@ -42,11 +42,13 @@ namespace nvobjex = pmem::obj::experimental;
 using container = container_t<int, Moveable, TRANSPARENT_COMPARE>;
 using container2 = container_t<Moveable, Moveable, TRANSPARENT_COMPARE>;
 using container3 = container_t<C2Int, Moveable, TRANSPARENT_COMPARE>;
+using container4 = container_t<nvobj::string, Moveable, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
 	nvobj::persistent_ptr<container2> s2;
 	nvobj::persistent_ptr<container3> s3;
+	nvobj::persistent_ptr<container4> s4;
 };
 
 int
@@ -230,6 +232,44 @@ run(pmem::obj::pool<root> &pop)
 
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
+	}
+	{
+		typedef container4 M;
+		typedef std::pair<M::iterator, bool> R;
+
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s4 = nvobj::make_persistent<M>(); });
+		auto &m = *robj->s4;
+		R r;
+
+		UT_ASSERT(m.size() == 0);
+
+		size_t j = 0;
+		for (int i = 0; i < 10; i++) {
+			Moveable mv{i, 10.0};
+			auto key = std::string(j++, 'x');
+			r = m.try_emplace(key, std::move(mv));
+			UT_ASSERT(r.second);
+			UT_ASSERT(r.first->MAP_KEY.compare(key) == 0);
+			UT_ASSERT(r.first->MAP_VALUE.get() == i);
+			UT_ASSERT(mv.moved());
+			UT_ASSERT(m.size() == j);
+		}
+
+		j = 0;
+		for (int i = 0; i < 10; i++) {
+			Moveable mv{i + 1, 10.0};
+			auto key = std::string(j++, 'x');
+			r = m.try_emplace(key, std::move(mv));
+			UT_ASSERT(!r.second);
+			UT_ASSERT(r.first->MAP_KEY.compare(key) == 0);
+			UT_ASSERT(r.first->MAP_VALUE.get() == i);
+			UT_ASSERT(!mv.moved());
+		}
+		UT_ASSERT(m.size() == 10);
+
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s4); });
 	}
 	return 0;
 }

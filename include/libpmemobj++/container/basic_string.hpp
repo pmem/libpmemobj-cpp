@@ -3882,21 +3882,21 @@ basic_string<CharT, Traits>::initialize(Args &&... args)
 }
 
 /**
- * Allocate storage for container of capacity bytes.
- * Based on capacity determine if sso or large string is used.
+ * Allocate storage for container of n elements.
+ * Based on n determine if sso or large string is used.
  *
  * @pre data must be uninitialized.
  * @pre must be called in transaction scope.
  *
- * @param[in] capacity bytes to allocate.
+ * @param[in] n elements to allocate.
  */
 template <typename CharT, typename Traits>
 void
-basic_string<CharT, Traits>::allocate(size_type capacity)
+basic_string<CharT, Traits>::allocate(size_type n)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
-	if (capacity <= sso_capacity) {
+	if (n <= sso_capacity) {
 		enable_sso();
 	} else {
 		disable_sso();
@@ -3910,7 +3910,7 @@ basic_string<CharT, Traits>::allocate(size_type capacity)
 		detail::conditional_add_to_tx(&non_sso_data(), 1,
 					      POBJ_XADD_NO_SNAPSHOT);
 		detail::create<non_sso_type>(&non_sso_data());
-		non_sso_data().reserve(capacity + 1);
+		non_sso_data().reserve(n + 1);
 	}
 }
 

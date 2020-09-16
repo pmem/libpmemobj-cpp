@@ -21,6 +21,7 @@
 
 #include <limits>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 #include "unittest.hpp"
 
@@ -123,6 +124,16 @@ struct heterogenous_bytes_view
     heterogenous_bytes_view(const Moveable *value) 
     {
 		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
+    }
+
+	heterogenous_bytes_view(const std::string *value) 
+    {
+		v = (unsigned)(value->length() + (std::numeric_limits<int>::max)() + 1);
+    }
+
+	heterogenous_bytes_view(const pmem::obj::string *value) 
+    {
+		v = (unsigned)(value->length() + (std::numeric_limits<int>::max)() + 1);
     }
 
 	size_t

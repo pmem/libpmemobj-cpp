@@ -298,8 +298,8 @@ private:
 	p<uint64_t> size_;
 
 	/* helper functions */
-	template <typename F, class... Args>
-	std::pair<iterator, bool> internal_emplace(const_key_reference k, F &&);
+	template <typename K, typename F, class... Args>
+	std::pair<iterator, bool> internal_emplace(const K &, F &&);
 	template <typename K>
 	leaf *internal_find(const K &k) const;
 
@@ -1096,10 +1096,9 @@ radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
 }
 
 template <typename Key, typename Value, typename BytesView>
-template <typename F, class... Args>
+template <typename K, typename F, class... Args>
 std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::internal_emplace(const_key_reference k,
-						    F &&make_leaf)
+radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 {
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));

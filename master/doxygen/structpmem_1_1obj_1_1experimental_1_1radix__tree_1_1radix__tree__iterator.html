@@ -86,6 +86,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aeb98209ba30d953c680174f50c028692"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html#aeb98209ba30d953c680174f50c028692">assign_val</a> (<a class="el" href="classstring__view.html">string_view</a> rhs)</td></tr>
 <tr class="memdesc:aeb98209ba30d953c680174f50c028692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles assignment to the value.  <a href="#aeb98209ba30d953c680174f50c028692">More...</a><br /></td></tr>
 <tr class="separator:aeb98209ba30d953c680174f50c028692"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa88d724d6d7835f1ecccf61431e99488"><td class="memTemplParams" colspan="2">template&lt;typename T , typename V  = Value, typename Enable  = typename std::enable_if&lt;			  !std::is_same&lt;V, inline_string&gt;::value&gt;::type&gt; </td></tr>
+<tr class="memitem:aa88d724d6d7835f1ecccf61431e99488"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html#aa88d724d6d7835f1ecccf61431e99488">assign_val</a> (T &amp;&amp;rhs)</td></tr>
+<tr class="memdesc:aa88d724d6d7835f1ecccf61431e99488"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign value to leaf pointed by the iterator.  <a href="#aa88d724d6d7835f1ecccf61431e99488">More...</a><br /></td></tr>
+<tr class="separator:aa88d724d6d7835f1ecccf61431e99488"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Key, typename Value, typename BytesView = detail::bytes_view&lt;Key&gt;&gt;<br />
@@ -93,10 +97,10 @@ template&lt;bool IsConst&gt;<br />
 struct pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;::radix_tree_iterator&lt; IsConst &gt;</h3>
 
 <p>Radix tree iterator supports multipass and bidirectional iteration. </p>
-<p>If Value type is <a class="el" href="classpmem_1_1obj_1_1experimental_1_1inline__string.html" title="This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation...">inline_string</a>, calling (*it).second = "new_value" might cause reallocation and invalidate iterators to that element. </p>
+<p>If Value type is inline_string, calling (*it).second = "new_value" might cause reallocation and invalidate iterators to that element. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aeb98209ba30d953c680174f50c028692"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb98209ba30d953c680174f50c028692">&#9670;&nbsp;</a></span>assign_val()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb98209ba30d953c680174f50c028692">&#9670;&nbsp;</a></span>assign_val() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -120,7 +124,34 @@ template&lt;typename V , typename Enable &gt; </div>
 <p>Handles assignment to the value. </p>
 <p>If there is enough capacity old content is overwritten (with a help of undo log). Otherwise a new leaf is allocated and the old one is freed.</p>
 <p>If reallocation happens, all other iterators to this element are invalidated.</p>
-<p>This function is useful when value_type is <a class="el" href="classpmem_1_1obj_1_1experimental_1_1inline__string.html" title="This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation...">inline_string</a>. </p>
+<p>This function is useful when value_type is inline_string. </p>
+
+</div>
+</div>
+<a id="aa88d724d6d7835f1ecccf61431e99488"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa88d724d6d7835f1ecccf61431e99488">&#9670;&nbsp;</a></span>assign_val() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+<div class="memtemplate">
+template&lt;bool IsConst&gt; </div>
+<div class="memtemplate">
+template&lt;typename T , typename V , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">radix_tree_iterator</a>&lt; IsConst &gt;::assign_val </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&amp;&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assign value to leaf pointed by the iterator. </p>
+<p>This function is transactional </p>
 
 </div>
 </div>

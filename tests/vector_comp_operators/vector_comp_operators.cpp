@@ -85,6 +85,70 @@ test_comp_operators(nvobj::pool<struct root> &pop)
 	UT_ASSERT(stdvec2 >= *(r->v2));
 	UT_ASSERT(stdvec3 > *(r->v1));
 
+#ifndef VECTOR
+	bool exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto empty = vector_type::iterator();
+			bool effect = r->v1->begin() < empty; /* should throw */
+			(void)effect;
+		});
+		UT_ASSERT(0);
+	} catch (std::invalid_argument &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto empty = vector_type::iterator();
+			bool effect = r->v1->begin() > empty; /* should throw */
+			(void)effect;
+		});
+		UT_ASSERT(0);
+	} catch (std::invalid_argument &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto empty = vector_type::iterator();
+			bool effect =
+				r->v1->begin() <= empty; /* should throw */
+			(void)effect;
+		});
+		UT_ASSERT(0);
+	} catch (std::invalid_argument &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+
+	exception_thrown = false;
+	try {
+		nvobj::transaction::run(pop, [&] {
+			auto empty = vector_type::iterator();
+			bool effect =
+				r->v1->begin() >= empty; /* should throw */
+			(void)effect;
+		});
+		UT_ASSERT(0);
+	} catch (std::invalid_argument &) {
+		exception_thrown = true;
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+	UT_ASSERT(exception_thrown);
+#endif
+
 	try {
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<vector_type>(r->v1);

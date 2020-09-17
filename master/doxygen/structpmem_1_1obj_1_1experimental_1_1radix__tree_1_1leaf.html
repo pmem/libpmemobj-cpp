@@ -83,7 +83,7 @@ $(function() {
 struct pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;::leaf</h3>
 
 <p>This is the structure which 'holds' key/value pair. </p>
-<p>The data is not stored as an object within this structure but rather just after the structure (using emplace new). This is done so that we can use <a class="el" href="classpmem_1_1obj_1_1experimental_1_1inline__string.html" title="This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation...">inline_string</a> and limit the number of allocations.</p>
+<p>The data is not stored as an object within this structure but rather just after the structure (using emplace new). This is done so that we can use inline_string and limit the number of allocations.</p>
 <p>Constructors of the leaf structure mimics those of std::pair&lt;const Key, Value&gt;. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>libpmemobj++/experimental/<a class="el" href="radix__tree_8hpp_source.html">radix_tree.hpp</a></li>

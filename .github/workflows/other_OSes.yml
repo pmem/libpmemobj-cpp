@@ -1,10 +1,10 @@
 
 name: CPP-other
-on:
-  schedule:
+on: [push, pull_request]
+  #schedule:
     # run this job at 01:00 UTC everyday
     # XXX: when checked it works properly, change to e.g. "every Monday"
-    - cron:  '0 1 * * *'
+    #- cron:  '0 1 * * *'
 
 env:
   REPO:           libpmemobj-cpp

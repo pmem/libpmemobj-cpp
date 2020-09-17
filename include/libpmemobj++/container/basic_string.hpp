@@ -82,6 +82,7 @@ public:
 	basic_string(const std::basic_string<CharT> &other);
 	basic_string(basic_string &&other);
 	basic_string(std::initializer_list<CharT> ilist);
+	basic_string(const basic_string_view<CharT, Traits> &bsv);
 
 	/* Destructor */
 	~basic_string();
@@ -677,6 +678,26 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 
 	allocate(ilist.size());
 	initialize(ilist.begin(), ilist.end());
+}
+
+/**
+ * Constructs the string from the basic_string_view.
+ *
+ * @param[in] bsv data from basic_string_view object.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for
+ * underlying storage in transaction failed.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
+ */
+template <typename CharT, typename Traits>
+basic_string<CharT, Traits>::basic_string(
+	const basic_string_view<CharT, Traits> &bsv)
+    : basic_string(bsv.data(), bsv.size())
+{
 }
 
 /**

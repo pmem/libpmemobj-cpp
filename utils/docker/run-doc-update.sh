@@ -28,7 +28,7 @@ if [ -z $VERSION ]; then
 	echo "Target location for branch ${TARGET_BRANCH} is not defined."
 	exit 1
 fi
-REPO_DIR=$(mktemp -d -t pmemkv-XXX)
+REPO_DIR=$(mktemp -d -t libpmemobjcpp-XXX)
 pushd ${REPO_DIR}
 # Clone repo
 git clone ${ORIGIN} ${REPO_DIR}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2016-2019, Intel Corporation
+# Copyright 2016-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,9 +34,10 @@
 # pull-or-rebuild-image.sh - rebuilds the Docker image used in the
 #                            current Travis build if necessary.
 #
-# The script rebuilds the Docker image if the Dockerfile for the current
-# OS version (Dockerfile.${OS}-${OS_VER}) or any .sh script from the directory
-# with Dockerfiles were modified and committed.
+# The script rebuilds the Docker image if:
+# 1. the Dockerfile for the current OS version (Dockerfile.${OS}-${OS_VER})
+#    or any .sh script in the Dockerfiles directory were modified and committed, or
+# 2. "rebuild" param was passed as a first argument to this script.
 #
 # If the Travis build is not of the "pull_request" type (i.e. in case of
 # merge after pull_request) and it succeed, the Docker image should be pushed
@@ -44,7 +45,7 @@
 # further scripts.
 #
 # If the Docker image does not have to be rebuilt, it will be pulled from
-# Docker Hub.
+# the Docker Hub.
 #
 
 set -e
@@ -75,6 +76,18 @@ if [[ -z "$HOST_WORKDIR" ]]; then
 	exit 1
 fi
 
+# Path to directory with Dockerfiles and image building scripts
+images_dir_name=images
+base_dir=utils/docker/$images_dir_name
+
+# If "rebuild" param is passed to the script, force rebuild
+if [[ "${1}" == "rebuild" ]]; then
+	pushd ${images_dir_name}
+	./build-image.sh ${DOCKERHUB_REPO} ${OS}-${OS_VER}
+	popd
+	exit 0
+fi
+
 # TRAVIS_COMMIT_RANGE is usually invalid for force pushes - ignore such values
 # when used with non-upstream repository
 if [ -n "$TRAVIS_COMMIT_RANGE" -a $TRAVIS_REPO_SLUG != "${GITHUB_REPO}" ]; then
@@ -101,10 +114,6 @@ files=$(for commit in $commits; do git diff-tree --no-commit-id --name-only \
 	-r $commit; done | sort -u)
 echo "Files modified within the commit range:"
 for file in $files; do echo $file; done
-
-# Path to directory with Dockerfiles and image building scripts
-images_dir_name=images
-base_dir=utils/docker/$images_dir_name
 
 # Check if committed file modifications require the Docker image to be rebuilt
 for file in $files; do

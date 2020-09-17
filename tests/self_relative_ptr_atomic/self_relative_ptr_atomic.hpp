@@ -27,8 +27,8 @@ template <bool volatile_atomic>
 void
 test_fetch()
 {
-	constexpr auto count_iterations = 300;
-	constexpr auto arr_size = CONCURRENCY * count_iterations;
+	constexpr size_t count_iterations = 300;
+	constexpr size_t arr_size = CONCURRENCY * count_iterations;
 	std::vector<int> vptr(arr_size, 0);
 
 	atomic_type<int, volatile_atomic> ptr{vptr.data()};

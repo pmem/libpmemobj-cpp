@@ -49,20 +49,20 @@ function usage {
 		"current directory."
 }
 
-# Check if the first and second argument is nonempty
-if [[ -z "$1" || -z "$2" ]]; then
+echo "Check if the first and second argument are nonempty: \"${1}\", \"${2}\""
+if [[ -z "${1}" || -z "${2}" ]]; then
 	usage
 	exit 1
 fi
 
-# Check if the file Dockerfile.OS-VER exists
+echo "Check if the file Dockerfile.${1}-${2} exists"
 if [[ ! -f "Dockerfile.$2" ]]; then
 	echo "ERROR: wrong argument."
 	usage
 	exit 1
 fi
 
-# Build a Docker image tagged with ${DOCKERHUB_REPO}:1.6-OS-VER
+echo "Build a Docker image tagged with ${DOCKERHUB_REPO}:1.6-${1}-${2}"
 docker build -t $1:1.6-$2 \
 	--build-arg http_proxy=$http_proxy \
 	--build-arg https_proxy=$https_proxy \

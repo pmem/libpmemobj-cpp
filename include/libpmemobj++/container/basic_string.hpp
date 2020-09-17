@@ -82,6 +82,9 @@ public:
 	basic_string(const std::basic_string<CharT> &other);
 	basic_string(basic_string &&other);
 	basic_string(std::initializer_list<CharT> ilist);
+	basic_string(const basic_string_view<CharT, Traits> &bsv);
+	template <class T>
+	basic_string(const T &t);
 
 	/* Destructor */
 	~basic_string();
@@ -677,6 +680,29 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 
 	allocate(ilist.size());
 	initialize(ilist.begin(), ilist.end());
+}
+
+/**
+ * Implicitly converts argument to a string view then initilizes
+ * the string with the content of string view.
+ *
+ * @param[in] t object (convertible to std::basic_string_view)
+ * to initialize the string with.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for
+ * underlying storage in transaction failed.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
+ */
+template <typename CharT, typename Traits>
+template <class T>
+basic_string<CharT, Traits>::basic_string(const T &t)
+{
+	basic_string_view<CharT, Traits> sv = t;
+	basic_string(sv.data(), sv.size());
 }
 
 /**

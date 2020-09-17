@@ -82,6 +82,19 @@ public:
 	basic_string(const std::basic_string<CharT> &other);
 	basic_string(basic_string &&other);
 	basic_string(std::initializer_list<CharT> ilist);
+	template <
+		class T,
+		typename Enable = typename std::enable_if<
+			std::is_convertible<const T &,
+					    pmem::obj::basic_string_view<
+						    CharT, Traits>>::value &&
+			!std::is_convertible<const T &, const CharT *>::value>>
+	basic_string(const T &t);
+	template <class T,
+		  typename Enable = typename std::enable_if<std::is_convertible<
+			  const T &,
+			  pmem::obj::basic_string_view<CharT, Traits>>::value>>
+	basic_string(const T &t, size_type pos, size_type n);
 
 	/* Destructor */
 	~basic_string();
@@ -93,6 +106,14 @@ public:
 	basic_string &operator=(const CharT *s);
 	basic_string &operator=(CharT ch);
 	basic_string &operator=(std::initializer_list<CharT> ilist);
+	template <
+		class T,
+		typename Enable = typename std::enable_if<
+			std::is_convertible<const T &,
+					    pmem::obj::basic_string_view<
+						    CharT, Traits>>::value &&
+			!std::is_convertible<const T &, const CharT *>::value>>
+	basic_string &operator=(const T &t);
 
 	/* Assignment methods */
 	basic_string &assign(size_type count, CharT ch);
@@ -490,21 +511,8 @@ basic_string<CharT, Traits>::basic_string(const basic_string &other,
 template <typename CharT, typename Traits>
 basic_string<CharT, Traits>::basic_string(const std::basic_string<CharT> &other,
 					  size_type pos, size_type count)
+    : basic_string(basic_string_view<CharT>(other), pos, count)
 {
-	check_pmem_tx();
-	sso._size = 0;
-
-	if (pos > other.size())
-		throw std::out_of_range("Index out of range.");
-
-	if (count == npos || pos + count > other.size())
-		count = other.size() - pos;
-
-	auto first = static_cast<difference_type>(pos);
-	auto last = first + static_cast<difference_type>(count);
-
-	allocate(count);
-	initialize(other.cbegin() + first, other.cbegin() + last);
 }
 
 /**
@@ -680,6 +688,74 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 }
 
 /**
+ * Implicitly converts argument to a string view then initilizes
+ * the string with the content of string view.
+ *
+ * @param[in] t object (convertible to std::basic_string_view)
+ * to initialize the string with.
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for
+ * underlying storage in transaction failed.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
+ */
+template <typename CharT, typename Traits>
+template <class T, typename Enable>
+basic_string<CharT, Traits>::basic_string(const T &t)
+{
+	check_pmem_tx();
+	sso._size = 0;
+
+	basic_string_view<CharT, Traits> sv = t;
+
+	allocate(sv.size());
+	initialize(sv.data(), sv.data() + sv.size());
+}
+
+/**
+ * Implicitly converts argument to a string view then initilizes
+ * the string with the subrange [pos, pos + n) of string view.
+ *
+ * @param[in] t object (convertible to std::basic_string_view)
+ * to initialize the string with.
+ * @param[in] pos position of the first character to include.
+ * @param[in] n characters to include
+ *
+ * @pre must be called in transaction scope.
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_alloc_error when allocating memory for
+ * underlying storage in transaction failed.
+ * @throw pmem::transaction_scope_error if constructor wasn't called in
+ * transaction.
+ */
+template <typename CharT, typename Traits>
+template <class T, typename Enable>
+basic_string<CharT, Traits>::basic_string(const T &t, size_type pos,
+					  size_type n)
+{
+	check_pmem_tx();
+	sso._size = 0;
+
+	basic_string_view<CharT, Traits> sv = t;
+
+	if (pos > sv.size())
+		throw std::out_of_range("Index out of range.");
+
+	if (n == npos || pos + n > sv.size())
+		n = sv.size() - pos;
+
+	auto first = pos;
+	auto last = first + n;
+
+	allocate(n);
+	initialize(sv.data() + first, sv.data() + last);
+}
+
+/**
  * Destructor.
  */
 template <typename CharT, typename Traits>
@@ -785,6 +861,24 @@ basic_string<CharT, Traits> &
 basic_string<CharT, Traits>::operator=(std::initializer_list<CharT> ilist)
 {
 	return assign(ilist);
+}
+
+/**
+ * Replace the contents with implicitly converted argument
+ * transactionally.
+ *
+ * @param[in] t object (convertible to basic_string_view).
+ *
+ * @throw pmem::transaction_alloc_error when allocating memory for
+ * underlying storage in transaction failed.
+ */
+template <typename CharT, typename Traits>
+template <class T, typename Enable>
+basic_string<CharT, Traits> &
+basic_string<CharT, Traits>::operator=(const T &t)
+{
+	basic_string_view<CharT, Traits> sv(t);
+	return assign(sv.data(), sv.size());
 }
 
 /**

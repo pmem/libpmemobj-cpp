@@ -26,7 +26,8 @@ jobs:
                  #"OS=archlinux-base OS_VER=latest",
                  "OS=debian OS_VER=testing",
                  "OS=debian OS_VER=unstable",
-                 "OS=fedora OS_VER=rawhide",
+                 # XXX: clang-format-9 is missing
+                 # "OS=fedora OS_VER=rawhide",
                  "OS=opensuse-leap OS_VER=latest",
                  # XXX: clang-format-9 is missing
                  #"OS=opensuse-tumbleweed OS_VER=latest",

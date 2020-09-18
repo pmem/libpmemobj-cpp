@@ -35,7 +35,7 @@
 #
 
 # Pull base image
-FROM ubuntu:19.04
+FROM ubuntu:20.04
 MAINTAINER marcin.slusarz@intel.com
 
 # Additional parameters to build docker without building components
@@ -96,6 +96,6 @@ USER $USER
 
 # Set required environment variables
 ENV OS ubuntu
-ENV OS_VER 19.04
+ENV OS_VER 20.04
 ENV PACKAGE_MANAGER deb
 ENV NOTTY 1

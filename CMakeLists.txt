@@ -1,5 +1,5 @@
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -181,7 +181,7 @@ if(DEVELOPER_MODE)
 		get_program_version(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
 		if(NOT (CLANG_FORMAT_VERSION VERSION_EQUAL CLANG_FORMAT_REQUIRED))
 			message(WARNING "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
-			unset(CLANG_FORMAT)
+			unset(CLANG_FORMAT CACHE)
 		endif()
 	else()
 		message(WARNING "clang-format not found - C++ sources will not be checked (needed version: ${CLANG_FORMAT_REQUIRED})")

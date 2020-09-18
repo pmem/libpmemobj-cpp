@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2020, Intel Corporation */
 
+/**
+ * @file
+ * Our partial std::string_view implementation.
+ */
+
 #ifndef LIBPMEMOBJ_CPP_STRING_VIEW
 #define LIBPMEMOBJ_CPP_STRING_VIEW
 
@@ -28,12 +33,12 @@ using u32string_view = std::basic_string_view<char32_t>;
 
 #else
 
-/*! \class string_view
-	\brief Our brief std::string_view implementation.
-
-	If C++17's std::string_view implementation is not available, this one is
-   used to avoid unnecessary string copying.
-*/
+/**
+ * Our partial std::string_view implementation.
+ *
+ * If C++17's std::string_view implementation is not available, this one is
+ * used to avoid unnecessary string copying.
+ */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string_view {
 public:
@@ -85,8 +90,8 @@ inline basic_string_view<CharT, Traits>::basic_string_view() noexcept
  * Constructor initialized by *data* and its *size*.
  *
  * @param[in] data pointer to the C-like string to initialize with,
- *				it can contain null characters
- * @param[in] size length of the given data
+ *	it can contain null characters.
+ * @param[in] size length of the given data.
  */
 template <typename CharT, typename Traits>
 inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data,
@@ -98,7 +103,7 @@ inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data,
 /**
  * Constructor initialized by the basic string *s*.
  *
- * @param[in] s reference to the string to initialize with
+ * @param[in] s reference to the string to initialize with.
  */
 template <typename CharT, typename Traits>
 inline basic_string_view<CharT, Traits>::basic_string_view(
@@ -112,8 +117,7 @@ inline basic_string_view<CharT, Traits>::basic_string_view(
  * using std::char_traits<char>::length().
  *
  * @param[in] data pointer to C-like string (char *) to initialize with,
- *				it has to end with the terminating null
- *character
+ *	it has to end with the terminating null character.
  */
 template <typename CharT, typename Traits>
 inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
@@ -125,7 +129,8 @@ inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
  * Returns pointer to data stored in this pmem::obj::string_view. It may not
  * contain the terminating null character.
  *
- * @return pointer to C-like string (char *), it may not end with null character
+ * @return pointer to C-like string (char *), it may not end with null
+ *	character.
  */
 template <typename CharT, typename Traits>
 inline const CharT *
@@ -137,7 +142,8 @@ basic_string_view<CharT, Traits>::data() const noexcept
 /**
  * Returns count of characters stored in this pmem::obj::string_view data.
  *
- * @return pointer to C-like string (char *), it may not end with null character
+ * @return pointer to C-like string (char *), it may not end with null
+ *	character.
  */
 template <typename CharT, typename Traits>
 inline typename basic_string_view<CharT, Traits>::size_type
@@ -147,9 +153,9 @@ basic_string_view<CharT, Traits>::size() const noexcept
 }
 
 /**
- * Returns reference to a character at position @param[in] p
+ * Returns reference to a character at position @param[in] p .
  *
- * @return reference to a char
+ * @return reference to a char.
  */
 template <typename CharT, typename Traits>
 inline const CharT &basic_string_view<CharT, Traits>::operator[](size_t p) const
@@ -163,8 +169,8 @@ inline const CharT &basic_string_view<CharT, Traits>::operator[](size_t p) const
  * std::basic_string::compare.
  *
  * @return 0 if both character sequences compare equal,
- *			positive value if this is lexicographically greater than
- *other, negative value if this is lexicographically less than other.
+ *	positive value if this is lexicographically greater than other,
+ *	negative value if this is lexicographically less than other.
  */
 template <typename CharT, typename Traits>
 inline int

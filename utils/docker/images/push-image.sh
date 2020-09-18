@@ -49,14 +49,15 @@ function usage {
 		"locally."
 }
 
-# Check if the first argument is nonempty
-if [[ -z "$1" ]]; then
+OS__OS_VER=${1}
+echo "Check if the first argument (OS-VER) is nonempty: \"${OS__OS_VER}\""
+if [[ -z "${OS__OS_VER}" ]]; then
 	usage
 	exit 1
 fi
 
-# Check if the image tagged with ${DOCKERHUB_REPO}:1.6-OS-VER exists locally
-if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:1.6-$1\$" \
+echo "Check if the image tagged with ${DOCKERHUB_REPO}:1.6-${OS__OS_VER} exists locally"
+if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:1.6-${OS__OS_VER}\$" \
 	'$1":"$2 ~ pattern') ]]
 then
 	echo "ERROR: wrong argument."
@@ -64,8 +65,8 @@ then
 	exit 1
 fi
 
-# Log in to the Docker Hub
+echo "Log in to the Docker Hub"
 docker login -u="$DOCKERHUB_USER" -p="$DOCKERHUB_PASSWORD"
 
-# Push the image to the repository
+echo "Push the image to the repository"
 docker push ${DOCKERHUB_REPO}:1.6-$1

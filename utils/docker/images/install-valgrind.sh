@@ -43,11 +43,12 @@ fi
 
 git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind
-# pmem-3.14: fix memcheck failure on Ubuntu-19.04
-git checkout 0965e35d7fd5c7941dc3f2a0c981cb8386c479d3
+# pmem-3.15: Merge pull request #81 from marcinslusarz/pmem-3.15
+git checkout 09f75f69683d862f8456f75484fcdc0dc5508900
+
 ./autogen.sh
 ./configure --prefix=/usr
-make
-make install
+make -j$(nproc)
+sudo make -j$(nproc) install
 cd ..
 rm -rf valgrind

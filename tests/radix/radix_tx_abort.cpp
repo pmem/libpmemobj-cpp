@@ -387,7 +387,7 @@ test_erase(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	auto value_f = [](unsigned v) {
 		return value<Container>(v, ValueRepeats);
 	};
-	const auto num_elements = 1024;
+	const unsigned int num_elements = 1024;
 
 	nvobj::transaction::run(pop, [&] {
 		ptr = nvobj::make_persistent<Container>();

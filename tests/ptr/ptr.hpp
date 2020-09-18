@@ -102,7 +102,7 @@ struct nested {
 template <template <typename U> class pointer, class pointer_base>
 struct templated_root {
 	pointer<foo> pfoo;
-	pointer<nvobj::p<int>[TEST_ARR_SIZE]> parr;
+	pointer<nvobj::p<int>[(long unsigned) TEST_ARR_SIZE]> parr;
 	pointer_base arr[3];
 
 	/* This variable is unused, but it's here to check if the persistent_ptr

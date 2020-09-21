@@ -247,8 +247,8 @@ basic_inline_string<CharT, Traits>::assign(basic_string_view<CharT, Traits> rhs)
 	if (rhs.size() > capacity())
 		throw std::out_of_range("inline_string capacity exceeded.");
 
-	auto initialized_mem =
-		(std::min)(rhs.size(), size()) + 1 /* sizeof('\0') */;
+	auto initialized_mem = (std::min)(rhs.size(), size()) * sizeof(CharT) +
+		sizeof(CharT) /* sizeof('\0') */;
 
 	obj::transaction::run(pop, [&] {
 		detail::conditional_add_to_tx(data(), initialized_mem);
@@ -256,7 +256,8 @@ basic_inline_string<CharT, Traits>::assign(basic_string_view<CharT, Traits> rhs)
 		if (rhs.size() > size())
 			detail::conditional_add_to_tx(
 				data() + initialized_mem,
-				rhs.size() - initialized_mem + 1,
+				rhs.size() * sizeof(CharT) - initialized_mem +
+					sizeof(CharT),
 				POBJ_XADD_NO_SNAPSHOT);
 
 		std::copy(rhs.data(),
@@ -296,7 +297,8 @@ struct real_size<inline_string> {
 	static size_t
 	value(const string_view &s)
 	{
-		return sizeof(inline_string) + s.size() + 1 /* sizeof('\0') */;
+		return sizeof(inline_string) + s.size() +
+			sizeof(inline_string::value_type) /* sizeof('\0') */;
 	}
 };
 } /* namespace experimental */

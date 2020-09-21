@@ -43,8 +43,7 @@ fi
 
 git clone https://github.com/pmem/pmdk
 cd pmdk
-# stable-1.6: common: fix typo
-git checkout d526eb00eade98ff1caa283751c2d2dc9cf276fb
+git checkout 1.6.1
 
 sudo make EXTRA_CFLAGS="-DUSE_COW_ENV" -j2 install prefix=/opt/pmdk
 

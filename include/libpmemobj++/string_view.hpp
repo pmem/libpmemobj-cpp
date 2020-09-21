@@ -177,7 +177,7 @@ inline int
 basic_string_view<CharT, Traits>::compare(
 	const basic_string_view &other) noexcept
 {
-	int ret = std::char_traits<CharT>::compare(
+	int ret = std::char_traits<Traits>::compare(
 		data(), other.data(), (std::min)(size(), other.size()));
 	if (ret != 0)
 		return ret;

@@ -1431,6 +1431,84 @@ public:
 	}
 
 	/**
+	 * Returns an iterator pointing to the first element that is not less
+	 * than (i.e. greater or equal to) key. Equivalent of lower_bound.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Iterator pointing to the first element that is not less than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	iterator
+	find_higher_eq(const key_type &key)
+	{
+		return internal_get_bound(key, _compare);
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that is not less
+	 * than (i.e. greater or equal to) key. Equivalent of lower_bound.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Iterator pointing to the first element that is not less than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	const_iterator
+	find_higher_eq(const key_type &key) const
+	{
+		return internal_get_bound(key, _compare);
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that compares not
+	 * less (i.e. greater or equal) to the value x. This overload only
+	 * participates in overload resolution if the qualified-id
+	 * Compare::is_transparent is valid and denotes a type. They allow
+	 * calling this function without constructing an instance of Key.
+	 * Equivalent of lower_bound.
+	 *
+	 * @param[in] x alternative value that can be compared to Key.
+	 *
+	 * @return Iterator pointing to the first element that is not less than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	iterator
+	find_higher_eq(const K &x)
+	{
+		return internal_get_bound(x, _compare);
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that compares not
+	 * less (i.e. greater or equal) to the value x. This overload only
+	 * participates in overload resolution if the qualified-id
+	 * Compare::is_transparent is valid and denotes a type. They allow
+	 * calling this function without constructing an instance of Key.
+	 * Equivalent of lower_bound.
+	 *
+	 * @param[in] x alternative value that can be compared to Key.
+	 *
+	 * @return Iterator pointing to the first element that is not less than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	const_iterator
+	find_higher_eq(const K &x) const
+	{
+		return internal_get_bound(x, _compare);
+	}
+
+	/**
 	 * Returns an iterator pointing to the first element that is greater
 	 * than key.
 	 *
@@ -1504,6 +1582,246 @@ public:
 	upper_bound(const K &x) const
 	{
 		return internal_get_bound(x, not_greater_compare(_compare));
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that is greater
+	 * than key. Equivalent of upper_bound.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Iterator pointing to the first element that is greater than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	iterator
+	find_higher(const key_type &key)
+	{
+		return internal_get_bound(key, not_greater_compare(_compare));
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that is greater
+	 * than key. Equivalent of upper_bound.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Iterator pointing to the first element that is greater than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	const_iterator
+	find_higher(const key_type &key) const
+	{
+		return internal_get_bound(key, not_greater_compare(_compare));
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that compares
+	 * greater to the value x. This overload only participates in overload
+	 * resolution if the qualified-id Compare::is_transparent is valid and
+	 * denotes a type. They allow calling this function without constructing
+	 * an instance of Key. Equivalent of upper_bound.
+	 *
+	 * @param[in] x alternative value that can be compared to Key.
+	 *
+	 * @return Iterator pointing to the first element that is greater than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	iterator
+	find_higher(const K &x)
+	{
+		return internal_get_bound(x, not_greater_compare(_compare));
+	}
+
+	/**
+	 * Returns an iterator pointing to the first element that compares
+	 * greater to the value x. This overload only participates in overload
+	 * resolution if the qualified-id Compare::is_transparent is valid and
+	 * denotes a type. They allow calling this function without constructing
+	 * an instance of Key. Equivalent of upper_bound.
+	 *
+	 * @param[in] x alternative value that can be compared to Key.
+	 *
+	 * @return Iterator pointing to the first element that is greater than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	const_iterator
+	find_higher(const K &x) const
+	{
+		return internal_get_bound(x, not_greater_compare(_compare));
+	}
+
+	/**
+	 * Returns an iterator pointing to the biggest element that is less
+	 * than key.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Iterator pointing to the biggest element that is less than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	iterator
+	find_lower(const key_type &key)
+	{
+		auto it = internal_get_biggest_less_than(key, _compare);
+		return iterator(
+			const_cast<typename iterator::node_ptr>(it.node));
+	}
+
+	/**
+	 * Returns a const iterator pointing to the biggest element that is less
+	 * than key.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Const iterator pointing to the biggest element that is less
+	 * than key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	const_iterator
+	find_lower(const key_type &key) const
+	{
+		return internal_get_biggest_less_than(key, _compare);
+	}
+
+	/**
+	 * Returns an iterator pointing to the biggest element that is less
+	 * than key. This overload only participates in overload
+	 * resolution if the qualified-id Compare::is_transparent is valid and
+	 * denotes a type. They allow calling this function without constructing
+	 * an instance of Key.
+	 *
+	 * @param[in] key alternative value that can be compared to Key.
+	 *
+	 * @return Iterator pointing to the biggest element that is less than
+	 * key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	iterator
+	find_lower(const K &key)
+	{
+		auto it = internal_get_biggest_less_than(key, _compare);
+		return iterator(
+			const_cast<typename iterator::node_ptr>(it.node));
+	}
+
+	/**
+	 * Returns a const iterator pointing to the biggest element that is less
+	 * than key. This overload only participates in overload
+	 * resolution if the qualified-id Compare::is_transparent is valid and
+	 * denotes a type. They allow calling this function without constructing
+	 * an instance of Key.
+	 *
+	 * @param[in] key alternative value that can be compared to Key.
+	 *
+	 * @return Const iterator pointing to the biggest element that is less
+	 * than key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	const_iterator
+	find_lower(const K &key) const
+	{
+		return internal_get_biggest_less_than(key, _compare);
+	}
+
+	/**
+	 * Returns an iterator pointing to the biggest element that is less
+	 * than or equal to key.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Iterator pointing to the biggest element that is less than
+	 * or equal to key. If no such element is found, a past-the-end iterator
+	 * is returned.
+	 */
+	iterator
+	find_lower_eq(const key_type &key)
+	{
+		auto it = internal_get_biggest_less_than(
+			key, not_greater_compare(_compare));
+		return iterator(
+			const_cast<typename iterator::node_ptr>(it.node));
+	}
+
+	/**
+	 * Returns a const iterator pointing to the biggest element that is less
+	 * than or equal to key.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 *
+	 * @return Const iterator pointing to the biggest element that is less
+	 * than or equal to key. If no such element is found, a past-the-end
+	 * iterator is returned.
+	 */
+	const_iterator
+	find_lower_eq(const key_type &key) const
+	{
+		return internal_get_biggest_less_than(
+			key, not_greater_compare(_compare));
+	}
+
+	/**
+	 * Returns an iterator pointing to the biggest element that is less
+	 * than or equal to key. This overload only participates in overload
+	 * resolution if the qualified-id Compare::is_transparent is valid and
+	 * denotes a type. They allow calling this function without constructing
+	 * an instance of Key.
+	 *
+	 * @param[in] key alternative value that can be compared to Key.
+	 *
+	 * @return Iterator pointing to the biggest element that is less than or
+	 * equal to key. If no such element is found, a past-the-end iterator is
+	 * returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	iterator
+	find_lower_eq(const K &key)
+	{
+		auto it = internal_get_biggest_less_than(
+			key, not_greater_compare(_compare));
+		return iterator(
+			const_cast<typename iterator::node_ptr>(it.node));
+	}
+
+	/**
+	 * Returns a const iterator pointing to the biggest element that is less
+	 * than or equal to key. This overload only participates in overload
+	 * resolution if the qualified-id Compare::is_transparent is valid and
+	 * denotes a type. They allow calling this function without constructing
+	 * an instance of Key.
+	 *
+	 * @param[in] key alternative value that can be compared to Key.
+	 *
+	 * @return Const iterator pointing to the biggest element that is less
+	 * than or equal to key. If no such element is found, a past-the-end
+	 * iterator is returned.
+	 */
+	template <typename K,
+		  typename = typename std::enable_if<
+			  has_is_transparent<key_compare>::value, K>::type>
+	const_iterator
+	find_lower_eq(const K &key) const
+	{
+		return internal_get_biggest_less_than(
+			key, not_greater_compare(_compare));
 	}
 
 	/**
@@ -2501,6 +2819,35 @@ private:
 		}
 
 		return iterator(next.get());
+	}
+
+	/**
+	 * Returns an iterator pointing to the last element from the list for
+	 * which cmp(element, key) is true.
+	 *
+	 * @param[in] key key value to compare the elements to.
+	 * @param[in] cmp comparator functor used for the search.
+	 *
+	 * @return Iterator pointing to the first element for which
+	 * cmp(element, key) is false. If no such element is found, a
+	 * past-the-end iterator is returned.
+	 */
+	template <typename K, typename comparator>
+	const_iterator
+	internal_get_biggest_less_than(const K &key,
+				       const comparator &cmp) const
+	{
+		const_node_ptr prev = dummy_head.get();
+		assert(prev->height() > 0);
+
+		for (size_type h = prev->height(); h > 0; --h) {
+			internal_find_position(h - 1, prev, key, cmp);
+		}
+
+		if (prev == dummy_head.get())
+			return end();
+
+		return const_iterator(prev);
 	}
 
 	iterator

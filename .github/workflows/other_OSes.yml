@@ -23,10 +23,8 @@ jobs:
       matrix:
         CONFIG: ["OS=centos OS_VER=8",
                  "OS=archlinux-base OS_VER=latest",
-                 # XXX: probably new doxygen (throwing doc warning, hence build error)
-                 #"OS=debian OS_VER=testing",
-                 # XXX: probably new doxygen (throwing doc warning, hence build error)
-                 #"OS=debian OS_VER=unstable",
+                 "OS=debian OS_VER=testing",
+                 "OS=debian OS_VER=unstable",
                  "OS=fedora OS_VER=rawhide",
                  "OS=opensuse-leap OS_VER=latest",
                  "OS=opensuse-tumbleweed OS_VER=latest",

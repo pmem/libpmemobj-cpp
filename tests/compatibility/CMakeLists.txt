@@ -12,6 +12,8 @@ function(add_libpmemobj_cpp version)
         CMAKE_ARGS  -DCMAKE_INSTALL_PREFIX=${COMPATIBILITY_TEST_HEADERS_LOCATION}/${version}
                     -DBUILD_TESTS=OFF
                     -DBUILD_EXAMPLES=OFF
+                    -DBUILD_DOC=OFF
+                    -DBUILD_BENCHMARKS=OFF
                     -DCMAKE_INSTALL_MESSAGE=NEVER
         GIT_TAG ${version}
     )

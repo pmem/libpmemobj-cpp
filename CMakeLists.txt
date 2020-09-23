@@ -205,7 +205,7 @@ add_custom_target(tests)
 
 if(DEVELOPER_MODE)
 	add_flag(-Werror) # XXX: WX for windows
-	find_program(CLANG_FORMAT NAMES clang-format clang-format-8.0)
+	find_program(CLANG_FORMAT NAMES clang-format clang-format-8 clang-format-8.0)
 	set(CLANG_FORMAT_REQUIRED "8.0")
 	if(CLANG_FORMAT)
 		get_program_version(${CLANG_FORMAT} CLANG_FORMAT_VERSION)

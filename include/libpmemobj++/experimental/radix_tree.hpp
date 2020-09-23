@@ -2953,8 +2953,8 @@ Value &
 radix_tree<Key, Value, BytesView>::leaf::value()
 {
 	auto key_dst = reinterpret_cast<char *>(this + 1);
-	auto val_dst = reinterpret_cast<Value *>(key_dst +
-						 real_size<Key>::value(key()));
+	auto val_dst = reinterpret_cast<Value *>(
+		key_dst + total_sizeof<Key>::value(key()));
 
 	return *reinterpret_cast<Value *>(val_dst);
 }
@@ -2972,7 +2972,7 @@ radix_tree<Key, Value, BytesView>::leaf::value() const
 {
 	auto key_dst = reinterpret_cast<const char *>(this + 1);
 	auto val_dst = reinterpret_cast<const Value *>(
-		key_dst + real_size<Key>::value(key()));
+		key_dst + total_sizeof<Key>::value(key()));
 
 	return *reinterpret_cast<const Value *>(val_dst);
 }
@@ -3055,8 +3055,9 @@ radix_tree<Key, Value, BytesView>::leaf::make_internal(
 	detail::index_sequence<I2...>)
 {
 	standard_alloc_policy<void> a;
-	auto key_size = real_size<Key>::value(std::get<I1>(first_args)...);
-	auto val_size = real_size<Value>::value(std::get<I2>(second_args)...);
+	auto key_size = total_sizeof<Key>::value(std::get<I1>(first_args)...);
+	auto val_size =
+		total_sizeof<Value>::value(std::get<I2>(second_args)...);
 	auto ptr = static_cast<persistent_ptr<leaf>>(
 		a.allocate(sizeof(leaf) + key_size + val_size));
 

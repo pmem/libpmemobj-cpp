@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['enable_5fif_3c_20noexcept_20_26_26_28sizeof_28t_29_3c_20libpmemobj_5fcpp_5fmax_5fstack_5falloc_5fsize_29_3e_3a_3atype_20_3e',['enable_if&lt; NoExcept &amp;&amp;(sizeof(T)&lt; LIBPMEMOBJ_CPP_MAX_STACK_ALLOC_SIZE)&gt;::type &gt;',['../structpmem_1_1detail_1_1temp__value_3_01T_00_01NoExcept_00_01typename_01std_1_1enable__if_3_01No1e19e4ee38376bcc8de0b8d6262631cf.html',1,'pmem::detail']]]
+  ['hash_3c_20pmem_3a_3aobj_3a_3ap_3c_20t_20_3e_20_3e_336',['hash&lt; pmem::obj::p&lt; T &gt; &gt;',['../structstd_1_1hash_3_01pmem_1_1obj_1_1p_3_01T_01_4_01_4.html',1,'std']]]
 ];

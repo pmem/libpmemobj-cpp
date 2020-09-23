@@ -121,7 +121,7 @@ inline basic_string_view<CharT, Traits>::basic_string_view(
  */
 template <typename CharT, typename Traits>
 inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
-    : data_(data), size_(std::char_traits<char>::length(data))
+    : data_(data), size_(Traits::length(data))
 {
 }
 
@@ -177,8 +177,8 @@ inline int
 basic_string_view<CharT, Traits>::compare(
 	const basic_string_view &other) noexcept
 {
-	int ret = std::char_traits<CharT>::compare(
-		data(), other.data(), (std::min)(size(), other.size()));
+	int ret = Traits::compare(data(), other.data(),
+				  (std::min)(size(), other.size()));
 	if (ret != 0)
 		return ret;
 	if (size() < other.size())

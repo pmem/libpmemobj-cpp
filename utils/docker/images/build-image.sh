@@ -57,6 +57,11 @@ if [[ -z "${OS__OS_VER}" ]]; then
 	exit 1
 fi
 
+if [[ -z "${DOCKERHUB_REPO}" ]]; then
+	echo "DOCKERHUB_REPO environment variable is not set"
+	exit 1
+fi
+
 echo "Check if the file Dockerfile.${OS__OS_VER} exists"
 if [[ ! -f "Dockerfile.${OS__OS_VER}" ]]; then
 	echo "Error: Dockerfile.${OS__OS_VER} does not exist."

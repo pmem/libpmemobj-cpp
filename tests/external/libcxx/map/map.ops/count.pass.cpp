@@ -32,14 +32,14 @@ namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
 #ifdef LIBPMEMOBJ_CPP_TESTS_USE_STD_LESS
-using less_type = std::less<>;
+#define TRANSPARENT_CMP std::less<>
 #else
-using less_type = TRANSPARENT_COMPARE;
+#define TRANSPARENT_CMP TRANSPARENT_COMPARE
 #endif
 
-using C = container_t<int, double>;
-using C2 = container_t<int, double, less_type>;
-using C3 = container_t<PrivateConstructor, double, less_type>;
+using C = container_t<int, double, TRANSPARENT_CMP>;
+using C2 = container_t<int, double, TRANSPARENT_CMP>;
+using C3 = container_t<PrivateConstructor, double, TRANSPARENT_CMP>;
 struct root {
 	nvobj::persistent_ptr<C> s;
 	nvobj::persistent_ptr<C2> s2;
@@ -157,7 +157,6 @@ run(pmem::obj::pool<root> &pop)
 		r = m.count(4);
 		UT_ASSERTeq(r, 0);
 
-#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX
 		r = m.count(C2Int(5));
 		UT_ASSERTeq(r, 1);
 		r = m.count(C2Int(6));
@@ -176,7 +175,6 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERTeq(r, 1);
 		r = m.count(C2Int(4));
 		UT_ASSERTeq(r, 0);
-#endif
 
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<C2>(robj->s2); });
@@ -187,8 +185,6 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { robj->s3 = nvobj::make_persistent<C3>(); });
 
-		// radix does not support heterogenous count
-#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX
 		typedef C3 M;
 		typedef PrivateConstructor PC;
 		typedef M::size_type R;
@@ -221,7 +217,6 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERTeq(r, 1);
 		r = m.count(4);
 		UT_ASSERTeq(r, 0);
-#endif
 
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<C3>(robj->s3); });

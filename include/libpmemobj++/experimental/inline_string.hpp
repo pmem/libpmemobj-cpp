@@ -42,6 +42,7 @@ namespace experimental
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_inline_string {
 public:
+	using traits_type = Traits;
 	using value_type = CharT;
 	using size_type = std::size_t;
 	using difference_type = std::ptrdiff_t;

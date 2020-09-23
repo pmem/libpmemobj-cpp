@@ -27,9 +27,12 @@
 #include <libpmemobj++/transaction.hpp>
 
 using container = container_t<int, double, TRANSPARENT_COMPARE>;
+using container2 =
+	container_t<pmem::obj::string, double, TRANSPARENT_COMPARE_STRING>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
+	nvobj::persistent_ptr<container2> s2;
 };
 
 int
@@ -284,6 +287,91 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(s == 1);
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s); });
+	}
+	{
+		typedef container2 M;
+		typedef M::size_type R;
+
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s2 = nvobj::make_persistent<M>(); });
+		auto &m = *robj->s2;
+
+		for (size_t i = 0; i < 5; i++) {
+			m.try_emplace(std::string(i, 'x'), i + 0.5);
+		}
+		UT_ASSERT(m.size() == 5);
+
+		R s = erase(m, std::string(5, 'x'));
+		UT_ASSERT(s == 0);
+		UT_ASSERT(m.size() == 5);
+		UT_ASSERT((*m.begin()).MAP_KEY.compare(std::string(0, 'x')) ==
+			  0);
+		UT_ASSERT((*m.begin()).MAP_VALUE == 0.5);
+		UT_ASSERT((*std::next(m.begin()))
+				  .MAP_KEY.compare(std::string(1, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin())).MAP_VALUE == 1.5);
+		UT_ASSERT((*std::next(m.begin(), 2))
+				  .MAP_KEY.compare(std::string(2, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 2)).MAP_VALUE == 2.5);
+		UT_ASSERT((*std::next(m.begin(), 3))
+				  .MAP_KEY.compare(std::string(3, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 3)).MAP_VALUE == 3.5);
+		UT_ASSERT((*std::next(m.begin(), 4))
+				  .MAP_KEY.compare(std::string(4, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 4)).MAP_VALUE == 4.5);
+
+		s = erase(m, std::string(0, 'x'));
+		UT_ASSERT(s == 1);
+		UT_ASSERT(m.size() == 4);
+		UT_ASSERT((*m.begin()).MAP_KEY.compare(std::string(1, 'x')) ==
+			  0);
+		UT_ASSERT((*m.begin()).MAP_VALUE == 1.5);
+		UT_ASSERT((*std::next(m.begin(), 1))
+				  .MAP_KEY.compare(std::string(2, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 1)).MAP_VALUE == 2.5);
+		UT_ASSERT((*std::next(m.begin(), 2))
+				  .MAP_KEY.compare(std::string(3, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 2)).MAP_VALUE == 3.5);
+		UT_ASSERT((*std::next(m.begin(), 3))
+				  .MAP_KEY.compare(std::string(4, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 3)).MAP_VALUE == 4.5);
+
+		s = erase(m, std::string(1, 'x'));
+		UT_ASSERT(s == 1);
+		UT_ASSERT(m.size() == 3);
+		UT_ASSERT((*m.begin()).MAP_KEY.compare(std::string(2, 'x')) ==
+			  0);
+		UT_ASSERT((*m.begin()).MAP_VALUE == 2.5);
+		UT_ASSERT((*std::next(m.begin(), 1))
+				  .MAP_KEY.compare(std::string(3, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 1)).MAP_VALUE == 3.5);
+		UT_ASSERT((*std::next(m.begin(), 2))
+				  .MAP_KEY.compare(std::string(4, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 2)).MAP_VALUE == 4.5);
+
+		s = erase(m, std::string(2, 'x'));
+		UT_ASSERT(s == 1);
+		UT_ASSERT(m.size() == 2);
+		UT_ASSERT((*m.begin()).MAP_KEY.compare(std::string(3, 'x')) ==
+			  0);
+		UT_ASSERT((*m.begin()).MAP_VALUE == 3.5);
+		UT_ASSERT((*std::next(m.begin(), 1))
+				  .MAP_KEY.compare(std::string(4, 'x')) == 0);
+		UT_ASSERT((*std::next(m.begin(), 1)).MAP_VALUE == 4.5);
+
+		s = erase(m, std::string(3, 'x'));
+		UT_ASSERT(s == 1);
+		UT_ASSERT(m.size() == 1);
+		UT_ASSERT((*m.begin()).MAP_KEY.compare(std::string(4, 'x')) ==
+			  0);
+		UT_ASSERT((*m.begin()).MAP_VALUE == 4.5);
+
+		s = erase(m, std::string(4, 'x'));
+		UT_ASSERT(s == 1);
+		UT_ASSERT(m.size() == 0);
+
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 	}
 #ifdef XXX // XXX: Implement min_alocator and generic std:less
 	{

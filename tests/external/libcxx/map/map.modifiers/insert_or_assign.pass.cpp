@@ -44,7 +44,8 @@ namespace nvobjex = pmem::obj::experimental;
 using container = container_t<int, Moveable, TRANSPARENT_COMPARE>;
 using container2 = container_t<Moveable, Moveable, TRANSPARENT_COMPARE>;
 using container3 = container_t<C2Int, Moveable, TRANSPARENT_COMPARE>;
-using container4 = container_t<nvobj::string, Moveable, TRANSPARENT_COMPARE>;
+using container4 =
+	container_t<nvobj::string, Moveable, TRANSPARENT_COMPARE_STRING>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;

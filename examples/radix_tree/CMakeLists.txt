@@ -31,3 +31,7 @@ target_link_libraries(radix_tree_custom_key ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_TH
 add_executable(radix_tree_inline_string radix_tree_inline_string.cpp)
 target_include_directories(radix_tree_inline_string PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
 target_link_libraries(radix_tree_inline_string ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(radix_tree_inline_string_uint8t_key radix_tree_inline_string_uint8t_key.cpp)
+target_include_directories(radix_tree_inline_string_uint8t_key PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(radix_tree_inline_string_uint8t_key ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

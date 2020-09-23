@@ -276,11 +276,45 @@ run(pmem::obj::pool<root> &pop)
 		UT_ASSERT(r == std::next(m.begin(), 7));
 		r = m.upper_bound(20);
 		UT_ASSERT(r == std::next(m.begin(), 8));
+
+		r = m.upper_bound(C2Int(5));
+		UT_ASSERT(r == std::next(m.begin(), 1));
+		r = m.upper_bound(C2Int(7));
+		UT_ASSERT(r == std::next(m.begin(), 2));
+		r = m.upper_bound(C2Int(9));
+		UT_ASSERT(r == std::next(m.begin(), 3));
+		r = m.upper_bound(C2Int(11));
+		UT_ASSERT(r == std::next(m.begin(), 4));
+		r = m.upper_bound(C2Int(13));
+		UT_ASSERT(r == std::next(m.begin(), 5));
+		r = m.upper_bound(C2Int(15));
+		UT_ASSERT(r == std::next(m.begin(), 6));
+		r = m.upper_bound(C2Int(17));
+		UT_ASSERT(r == std::next(m.begin(), 7));
+		r = m.upper_bound(C2Int(19));
+		UT_ASSERT(r == std::next(m.begin(), 8));
+		r = m.upper_bound(C2Int(4));
+		UT_ASSERT(r == std::next(m.begin(), 0));
+		r = m.upper_bound(C2Int(6));
+		UT_ASSERT(r == std::next(m.begin(), 1));
+		r = m.upper_bound(C2Int(8));
+		UT_ASSERT(r == std::next(m.begin(), 2));
+		r = m.upper_bound(C2Int(10));
+		UT_ASSERT(r == std::next(m.begin(), 3));
+		r = m.upper_bound(C2Int(12));
+		UT_ASSERT(r == std::next(m.begin(), 4));
+		r = m.upper_bound(C2Int(14));
+		UT_ASSERT(r == std::next(m.begin(), 5));
+		r = m.upper_bound((16));
+		UT_ASSERT(r == std::next(m.begin(), 6));
+		r = m.upper_bound(C2Int(18));
+		UT_ASSERT(r == std::next(m.begin(), 7));
+		r = m.upper_bound(C2Int(20));
+		UT_ASSERT(r == std::next(m.begin(), 8));
+
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s2); });
 	}
-#ifndef LIBPMEMOBJ_CPP_TESTS_RADIX // XXX: radix tree does provide heterogenous
-				   // methods.
 	{
 		typedef PrivateConstructor PC;
 		typedef C3 M;
@@ -334,7 +368,6 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s3); });
 	}
-#endif
 	return 0;
 }
 

@@ -159,11 +159,12 @@ template <typename Container, int ValueRepeats>
 void
 test_insert(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 {
-	using V = typename Container::value_type;
-
 	auto value_f = [](unsigned v) {
 		return value<Container>(v, ValueRepeats);
 	};
+
+	using V = std::pair<decltype(key<Container>(0)),
+			    decltype(value<Container>(0))>;
 
 	nvobj::transaction::run(
 		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
@@ -171,8 +172,7 @@ test_insert(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	UT_ASSERTeq(ptr->size(), 0);
 
 	assert_tx_abort(pop, [&] {
-		V v1(key<Container>(0), value_f(0));
-		auto it = ptr->insert(v1);
+		auto it = ptr->insert(V{key<Container>(0), value_f(0)});
 		UT_ASSERT(it.second);
 		UT_ASSERT(it.first->key() == key<Container>(0));
 		UT_ASSERT(it.first->value() == value_f(0));
@@ -184,8 +184,7 @@ test_insert(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 	assert_tx_abort(pop, [&] {
 		for (unsigned i = 0; i < 1024; i++) {
-			V v1(key<Container>(i), value_f(i));
-			auto it = ptr->insert(v1);
+			auto it = ptr->insert(V{key<Container>(i), value_f(i)});
 			UT_ASSERT(it.second);
 			UT_ASSERT(it.first->key() == key<Container>(i));
 			UT_ASSERT(it.first->value() == value_f(i));
@@ -496,6 +495,9 @@ test(int argc, char *argv[])
 	test_assign_internal_leaf<container_string, 1024>(
 		pop, pop.root()->radix_str);
 	test_erase_internal<container_string, 1024>(pop, pop.root()->radix_str);
+	test_insert<container_string, 1>(pop, pop.root()->radix_str);
+	test_insert_or_assign<container_string, 1>(pop, pop.root()->radix_str);
+	test_try_emplace<container_string, 1>(pop, pop.root()->radix_str);
 
 	test_emplace(pop, pop.root()->radix_int);
 	test_assign<container_int, 1>(pop, pop.root()->radix_int);
@@ -503,11 +505,18 @@ test(int argc, char *argv[])
 	test_erase<container_int, 1024>(pop, pop.root()->radix_int);
 	test_assign_internal_leaf<container_int, 1>(pop, pop.root()->radix_int);
 	test_erase_internal<container_int, 1024>(pop, pop.root()->radix_int);
+	test_insert<container_int, 1>(pop, pop.root()->radix_int);
+	test_insert_or_assign<container_int, 1>(pop, pop.root()->radix_int);
+	test_try_emplace<container_int, 1>(pop, pop.root()->radix_int);
 
 	test_emplace(pop, pop.root()->radix_int_int);
 	test_assign<container_int_int, 1>(pop, pop.root()->radix_int_int);
 	test_assign_root<container_int_int, 1>(pop, pop.root()->radix_int_int);
 	test_erase<container_int_int, 1>(pop, pop.root()->radix_int_int);
+	test_insert<container_int_int, 1>(pop, pop.root()->radix_int_int);
+	test_insert_or_assign<container_int_int, 1>(pop,
+						    pop.root()->radix_int_int);
+	test_try_emplace<container_int_int, 1>(pop, pop.root()->radix_int_int);
 
 	test_emplace(pop, pop.root()->radix_int_str);
 	test_assign<container_int_string, 1>(pop, pop.root()->radix_int_str);
@@ -517,14 +526,47 @@ test(int argc, char *argv[])
 	test_assign_root<container_int_string, 1024>(pop,
 						     pop.root()->radix_int_str);
 	test_erase<container_int_string, 1024>(pop, pop.root()->radix_int_str);
+	test_insert<container_int_string, 1>(pop, pop.root()->radix_int_str);
+	test_insert_or_assign<container_int_string, 1>(
+		pop, pop.root()->radix_int_str);
+	test_try_emplace<container_int_string, 1>(pop,
+						  pop.root()->radix_int_str);
 
-	test_insert_or_assign<container_string, 1>(pop, pop.root()->radix_str);
-	test_insert_or_assign<container_int, 1>(pop, pop.root()->radix_int);
+	test_emplace(pop, pop.root()->radix_inline_s_u8t);
+	test_assign<container_inline_s_u8t, 1>(pop,
+					       pop.root()->radix_inline_s_u8t);
+	test_assign<container_inline_s_u8t, 1024>(
+		pop, pop.root()->radix_inline_s_u8t);
+	test_assign_root<container_inline_s_u8t, 1>(
+		pop, pop.root()->radix_inline_s_u8t);
+	test_assign_root<container_inline_s_u8t, 1024>(
+		pop, pop.root()->radix_inline_s_u8t);
+	test_erase<container_inline_s_u8t, 1024>(
+		pop, pop.root()->radix_inline_s_u8t);
+	test_insert<container_inline_s_u8t, 1>(pop,
+					       pop.root()->radix_inline_s_u8t);
+	test_insert_or_assign<container_inline_s_u8t, 1>(
+		pop, pop.root()->radix_inline_s_u8t);
+	test_try_emplace<container_inline_s_u8t, 1>(
+		pop, pop.root()->radix_inline_s_u8t);
 
-	test_insert<container_int_int, 1>(pop, pop.root()->radix_int_int);
-
-	test_try_emplace<container_string, 1>(pop, pop.root()->radix_str);
-	test_try_emplace<container_int, 1>(pop, pop.root()->radix_int);
+	test_emplace(pop, pop.root()->radix_inline_s_wchart);
+	test_assign<container_inline_s_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_assign<container_inline_s_wchart, 1024>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_assign_root<container_inline_s_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_assign_root<container_inline_s_wchart, 1024>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_erase<container_inline_s_wchart, 1024>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_insert<container_inline_s_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_insert_or_assign<container_inline_s_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart);
+	test_try_emplace<container_inline_s_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart);
 
 	pop.close();
 }

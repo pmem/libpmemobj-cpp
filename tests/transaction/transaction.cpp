@@ -682,6 +682,38 @@ test_tx_automatic_destructor_throw(nvobj::pool<root> &pop)
 }
 
 /*
+ * test_tx_manual_no_commit -- test manual transaction with no commit
+ */
+void
+test_tx_manual_no_commit(nvobj::pool<root> &pop)
+{
+	auto rootp = pop.root();
+
+	try {
+		nvobj::transaction::manual tx(pop);
+		rootp->pfoo = nvobj::make_persistent<foo>();
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERT(rootp->pfoo == nullptr);
+
+	try {
+		nvobj::transaction::manual tx1(pop);
+		{
+			nvobj::transaction::manual tx2(pop);
+			rootp->pfoo = nvobj::make_persistent<foo>();
+		}
+
+		UT_ASSERT(rootp->pfoo == nullptr);
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	UT_ASSERT(rootp->pfoo == nullptr);
+}
+
+/*
  * test_tx_snapshot -- 1) Check if transaction_error is thrown, when snapshot()
  * is not called from transaction.
  * 2) Check if transaction_error is thrown, when internal call to
@@ -1077,6 +1109,8 @@ test(int argc, char *argv[])
 	test_tx_throw_no_abort_scope<nvobj::transaction::automatic>(pop);
 	test_tx_no_throw_abort_scope<nvobj::transaction::automatic>(pop);
 	test_tx_automatic_destructor_throw(pop);
+
+	test_tx_manual_no_commit(pop);
 
 	test_tx_snapshot(pop);
 

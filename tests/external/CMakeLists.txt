@@ -728,7 +728,9 @@ if (TEST_STRING)
 	build_test(string_libcxx_pointer_assignment libcxx/basic_string/string.cons/pointer_assignment.pass.cpp)
 	add_test_generic(NAME string_libcxx_pointer_assignment TRACERS none pmemcheck memcheck)
 
-	# XXX: port libcxx test basic_string/string.cons/string_view.pass
+	build_test(string_libcxx_string_view libcxx/basic_string/string.cons/string_view.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view TRACERS none pmemcheck memcheck)
+
 	# XXX: port libcxx test basic_string/string.cons/initializer_list_assignment.pass
 	# XXX: port libcxx test basic_string/string.cons/string_view.fail
 endif()

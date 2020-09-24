@@ -187,8 +187,17 @@ if(NOT WIN32)
 	add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
 endif()
 
-build_test(transaction transaction/transaction.cpp)
-add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
+build_test_ext(NAME transaction_common_flat SRC_FILES transaction/transaction.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_USE_FLAT_TRANSACTION)
+add_test_generic(NAME transaction_common_flat TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME transaction_common_basic SRC_FILES transaction/transaction.cpp)
+add_test_generic(NAME transaction_common_basic TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME transaction_flat SRC_FILES transaction/transaction_flat.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_USE_FLAT_TRANSACTION)
+add_test_generic(NAME transaction_flat TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME transaction_basic SRC_FILES transaction/transaction_basic.cpp)
+add_test_generic(NAME transaction_basic TRACERS none pmemcheck memcheck)
 
 if(VOLATILE_STATE_PRESENT)
 	build_test(volatile_state volatile_state/volatile_state.cpp)

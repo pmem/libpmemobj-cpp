@@ -125,10 +125,16 @@ main(int argc, char *argv[])
 		return 1;
 	} catch (const std::exception &e) {
 		std::cerr << "!exception: " << e.what() << std::endl;
-		pmem::obj::transaction::run(pop, [&] {
-			pmem::obj::delete_persistent<value_type>(
-				pop.root()->pptr, ARR_SIZE);
-		});
+		try {
+			pmem::obj::transaction::run(pop, [&] {
+				pmem::obj::delete_persistent<value_type>(
+					pop.root()->pptr, ARR_SIZE);
+			});
+		} catch (const pmem::transaction_error &e) {
+			std::cerr << "!transaction::run: " << e.what()
+				  << std::endl;
+			return 1;
+		}
 		try {
 			pop.close();
 		} catch (const std::logic_error &e) {

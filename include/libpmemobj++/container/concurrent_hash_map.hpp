@@ -2831,8 +2831,14 @@ public:
 		}
 
 		size_t max_index = mask().load(std::memory_order_acquire);
-		size_t start_index = (start_percent * max_index) / 100;
-		size_t end_index = (end_percent * max_index) / 100;
+		size_t start_index =
+			static_cast<size_t>((start_percent * max_index) / 100);
+		size_t end_index =
+			static_cast<size_t>((end_percent * max_index) / 100);
+
+		/* Make sure we do not use too big index, even in case of
+		 * rounding errors. */
+		end_index = (std::min)(end_index, max_index);
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 		ANNOTATE_HAPPENS_AFTER(&(this->my_mask));

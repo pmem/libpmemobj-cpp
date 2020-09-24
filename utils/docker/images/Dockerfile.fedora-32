@@ -7,12 +7,12 @@
 #
 
 # Pull base image
-FROM fedora:31
+FROM fedora:32
 MAINTAINER szymon.romik@intel.com
 
 # Set required environment variables
 ENV OS fedora
-ENV OS_VER 31
+ENV OS_VER 32
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 
@@ -32,6 +32,7 @@ RUN dnf update -y \
 	daxctl-devel \
 	doxygen \
 	gcc \
+	gcc-c++ \
 	gdb \
 	git \
 	hub \
@@ -47,6 +48,7 @@ RUN dnf update -y \
 	ndctl-devel \
 	open-sans-fonts \
 	pandoc \
+	passwd \
 	perl-Text-Diff \
 	rpm-build \
 	rpm-build-libs \

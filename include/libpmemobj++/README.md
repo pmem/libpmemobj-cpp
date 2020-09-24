@@ -77,7 +77,7 @@ bindings.
  * Atomic array allocations - make_persistent_array_atomic.hpp
  * Resides on persistent memory property - [p](@ref pmem::obj::p)
  * Persistent smart pointer - [persistent_ptr](@ref pmem::obj::persistent_ptr)
- * Persistent memory transactions - [transaction](@ref pmem::obj::transaction)
+ * Persistent memory transactions - [@ref pmem::obj::basic_transaction][@ref pmem::obj::flat_transaction]
  * Persistent memory resident mutex - [mutex](@ref pmem::obj::mutex)
  * Persistent memory pool - [pool](@ref pmem::obj::pool)
  * Defrag class - [defrag](@ref pmem::obj::defrag)

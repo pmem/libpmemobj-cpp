@@ -32,6 +32,7 @@ erase(C &m, Args &&... args)
 #define MAP_VALUE second
 #define TRANSPARENT_COMPARE transparent_less
 #define TRANSPARENT_COMPARE_NOT_REFERENCEABLE transparent_less_not_referenceable
+#define TRANSPARENT_COMPARE_STRING transparent_less
 
 /* if radix tree is defined */
 #elif defined LIBPMEMOBJ_CPP_TESTS_RADIX
@@ -92,6 +93,7 @@ erase(C &m, Args &&... args) -> decltype(m.erase(std::forward<Args>(args)...))
 #define MAP_VALUE value()
 #define TRANSPARENT_COMPARE heterogenous_bytes_view
 #define TRANSPARENT_COMPARE_NOT_REFERENCEABLE heterogenous_bytes_view
+#define TRANSPARENT_COMPARE_STRING pmem::detail::bytes_view<pmem::obj::string>
 
 #endif
 

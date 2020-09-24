@@ -24,12 +24,18 @@ using container_int_int =
 using container_int_string =
 	nvobjex::radix_tree<unsigned, nvobjex::inline_string>;
 
+using container_inline_s_wchart = nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>, nvobj::p<unsigned>>;
+using container_inline_s_u8t = nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>, nvobj::p<unsigned>>;
+
 struct root {
 	nvobj::persistent_ptr<container_int> radix_int;
 	nvobj::persistent_ptr<container_string> radix_str;
 
 	nvobj::persistent_ptr<container_int_int> radix_int_int;
 	nvobj::persistent_ptr<container_int_string> radix_int_str;
+
+	nvobj::persistent_ptr<container_inline_s_wchart> radix_inline_s_wchart;
+	nvobj::persistent_ptr<container_inline_s_u8t> radix_inline_s_u8t;
 };
 
 template <typename Container,
@@ -45,13 +51,17 @@ value(unsigned v, int repeats = 1)
 template <typename Container,
 	  typename Enable = typename std::enable_if<
 		  std::is_same<typename Container::mapped_type,
-			       nvobjex::inline_string>::value>::type>
-std::string
+			       typename nvobjex::basic_inline_string<typename Container::mapped_type::value_type>>::value>::type>
+std::basic_string<typename Container::mapped_type::value_type>
 value(unsigned v, int repeats = 1)
 {
-	auto s = std::string("");
-	for (int i = 0; i < repeats; i++)
-		s += std::to_string(v);
+	using CharT = typename Container::mapped_type::value_type;
+
+	auto s = std::basic_string<CharT>{};
+	for (int i = 0; i < repeats; i++) {
+		auto str = std::to_string(v);
+		s += std::basic_string<CharT>(s.begin(), s.end());
+	}
 
 	return s;
 }
@@ -68,17 +78,29 @@ key(unsigned v)
 template <typename Container,
 	  typename Enable = typename std::enable_if<
 		  std::is_same<typename Container::key_type,
-			       nvobjex::inline_string>::value>::type>
-std::string
+			       typename nvobjex::basic_inline_string<typename Container::key_type::value_type>>::value>::type>
+std::basic_string<typename Container::key_type::value_type>
 key(unsigned v)
 {
-	return std::to_string(v);
+	using CharT = typename Container::key_type::value_type;
+
+	auto s = std::to_string(v);
+
+	return std::basic_string<CharT>(s.begin(), s.end());
 }
 
+template <typename CharT, typename Traits>
 bool
-operator==(pmem::obj::string_view lhs, const std::string &rhs)
+operator==(pmem::obj::basic_string_view<CharT, Traits> lhs, const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) == 0;
+}
+
+template <typename CharT, typename Traits>
+bool
+operator==(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs, const std::basic_string<CharT, Traits> &rhs)
+{
+	return pmem::obj::basic_string_view<CharT, Traits>(lhs.data()).compare(rhs) == 0;
 }
 
 template <typename Container, typename K, typename F>

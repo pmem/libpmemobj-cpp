@@ -21,8 +21,10 @@
 
 #include <limits>
 #include <libpmemobj++/p.hpp>
+#include <libpmemobj++/container/string.hpp>
 
 #include "unittest.hpp"
+#include "private_constructor.h"
 
 struct C2Int { // comparable to int
     C2Int() : i_(0) {}
@@ -124,6 +126,11 @@ struct heterogenous_bytes_view
     {
 		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
     }
+
+	heterogenous_bytes_view(const PrivateConstructor *value)
+	{
+		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
+	}
 
 	size_t
 	size() const

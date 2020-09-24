@@ -688,6 +688,55 @@ test_assign_inline_string(nvobj::pool<root> &pop)
 	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 }
 
+void
+test_inline_string_u8t_key(nvobj::pool<root> &pop)
+{
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->radix_inline_s_u8t =
+			nvobj::make_persistent<container_inline_s_u8t>();
+	});
+	auto &m = *r->radix_inline_s_u8t;
+
+	UT_ASSERT(m.size() == 0);
+
+	for (unsigned i = 0; i < 10; i++) {
+		auto key = std::basic_string<uint8_t>(i + 10, 99);
+		auto ret = m.try_emplace(key, i);
+		UT_ASSERT(ret.second);
+		UT_ASSERT(key.compare(ret.first->key().data()) == 0);
+		UT_ASSERT(ret.first->value() == i);
+		UT_ASSERT(m.size() == i + 1);
+	}
+
+	for (unsigned i = 0; i < 10; i++) {
+		auto key = std::basic_string<uint8_t>(i + 10, 99);
+		auto ret = m.insert_or_assign(key, i + 1);
+		UT_ASSERT(!ret.second);
+		UT_ASSERT(key.compare(ret.first->key().data()) == 0);
+		UT_ASSERT(ret.first->value() == i + 1);
+		UT_ASSERT(m.size() == 10);
+	}
+
+	auto key = std::basic_string<uint8_t>(15, 99);
+	auto it = m.find(key);
+	UT_ASSERT(key.compare(it->key().data()) == 0);
+	UT_ASSERT(it->value() == 6);
+
+	it = m.erase(it);
+	UT_ASSERT(std::basic_string<uint8_t>(16, 99).compare(
+			  it->key().data()) == 0);
+	UT_ASSERT(it->value() == 7);
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_inline_s_u8t>(
+			r->radix_inline_s_u8t);
+	});
+
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+}
+
 static void
 test(int argc, char *argv[])
 {
@@ -719,6 +768,7 @@ test(int argc, char *argv[])
 	test_pre_post_fixes(pop);
 	test_assign_inline_string(pop);
 	test_compression(pop);
+	test_inline_string_u8t_key(pop);
 
 	pop.close();
 }

@@ -1114,6 +1114,9 @@ if (TEST_CONCURRENT_MAP)
 	build_test_ext(NAME map_libcxx_emplace SRC_FILES libcxx/map/map.modifiers/emplace.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_emplace TRACERS none pmemcheck memcheck)
 
+	build_test_ext(NAME map_libcxx_erase_iter SRC_FILES libcxx/map/map.modifiers/erase_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
+	add_test_generic(NAME map_libcxx_erase_iter TRACERS none pmemcheck memcheck)
+
 	build_test_ext(NAME map_libcxx_erase_iter_iter SRC_FILES libcxx/map/map.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_CONCURRENT_MAP)
 	add_test_generic(NAME map_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)
 
@@ -1199,6 +1202,9 @@ if (TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_libcxx_emplace SRC_FILES libcxx/map/map.modifiers/emplace.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_emplace TRACERS none pmemcheck memcheck)
+
+	build_test_ext(NAME radix_libcxx_erase_iter SRC_FILES libcxx/map/map.modifiers/erase_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_libcxx_erase_iter TRACERS none pmemcheck memcheck)
 
 	build_test_ext(NAME radix_libcxx_erase_iter_iter SRC_FILES libcxx/map/map.modifiers/erase_iter_iter.pass.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_libcxx_erase_iter_iter TRACERS none pmemcheck memcheck)

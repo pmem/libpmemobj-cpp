@@ -49,7 +49,6 @@ if [[ -z "$HOST_WORKDIR" ]]; then
 	exit 1
 fi
 
-
 imageName=${DOCKERHUB_REPO}:1.11-${OS}-${OS_VER}
 containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
@@ -144,7 +143,7 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env DOC_REPO_OWNER=$DOC_REPO_OWNER \
 	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
-	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON} \
+	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-OFF} \
 	--env TESTS_LONG=${TESTS_LONG:-OFF} \
 	--env TESTS_TBB=${TESTS_TBB:-ON} \
 	--env TZ='Europe/Warsaw' \

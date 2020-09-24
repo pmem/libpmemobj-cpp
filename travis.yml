@@ -12,7 +12,7 @@ env:
     - GITHUB_REPO=pmem/libpmemobj-cpp
     - DOCKERHUB_REPO=pmem/libpmemobj-cpp
   matrix:
-    - OS=ubuntu OS_VER=19.10 TYPE=coverity
+    - TYPE=coverity OS=ubuntu OS_VER=20.04
 
 before_install:
   - echo $TRAVIS_COMMIT_RANGE

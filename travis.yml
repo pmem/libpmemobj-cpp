@@ -12,16 +12,16 @@ env:
     - GITHUB_REPO=pmem/libpmemobj-cpp
     - DOCKERHUB_REPO=pmem/libpmemobj-cpp
   matrix:
-    - OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1
-    - OS=fedora OS_VER=31    TYPE=debug PUSH_IMAGE=1
-    - OS=ubuntu OS_VER=19.10 TYPE=release
-    - OS=fedora OS_VER=31    TYPE=release AUTO_DOC_UPDATE=1
-    - OS=ubuntu OS_VER=19.10 TYPE=valgrind
-    - OS=ubuntu OS_VER=19.10 TYPE=memcheck_drd
-    - OS=ubuntu OS_VER=19.10 TYPE=package
-    - OS=fedora OS_VER=31    TYPE=package
-    - OS=ubuntu OS_VER=19.10 TYPE=coverage
-    - OS=ubuntu OS_VER=19.10 TYPE=coverity
+    - TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1
+    - TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1
+    - TYPE=release OS=fedora OS_VER=32 AUTO_DOC_UPDATE=1
+    - TYPE=release OS=ubuntu OS_VER=20.04
+    - TYPE=valgrind OS=ubuntu OS_VER=20.04
+    - TYPE=memcheck_drd OS=ubuntu OS_VER=20.04
+    - TYPE=package OS=fedora OS_VER=32
+    - TYPE=package OS=ubuntu OS_VER=20.04
+    - TYPE=coverage OS=ubuntu OS_VER=20.04
+    - TYPE=coverity OS=ubuntu OS_VER=20.04
 
 before_install:
   - echo $TRAVIS_COMMIT_RANGE

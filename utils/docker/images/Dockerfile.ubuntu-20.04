@@ -30,63 +30,62 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
+# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
-FROM fedora:31
+FROM ubuntu:20.04
 MAINTAINER szymon.romik@intel.com
 
 # Set required environment variables
-ENV OS fedora
-ENV OS_VER 31
-ENV PACKAGE_MANAGER rpm
+ENV OS ubuntu
+ENV OS_VER 20.04
+ENV PACKAGE_MANAGER deb
 ENV NOTTY 1
 
 # Additional parameters to build docker without building components
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
+ENV DEBIAN_FRONTEND noninteractive
+
+# Update the Apt cache and install basic tools
+RUN apt-get update \
+ && apt-get install -y software-properties-common \
 	asciidoc \
 	autoconf \
-	automake \
-	bash-completion \
 	clang \
+	clang-format-9 \
 	cmake \
-	daxctl-devel \
+	curl \
+	debhelper \
+	devscripts \
 	doxygen \
 	gcc \
 	gdb \
 	git \
-	hub \
-	json-c-devel \
-	kmod-devel \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
-	man \
-	ncurses-devel \
-	ndctl-devel \
-	open-sans-fonts \
+	graphviz \
+	libdaxctl-dev \
+	libjson-c-dev \
+	libkmod-dev \
+	libncurses5-dev \
+	libndctl-dev \
+	libsfml-dev \
+	libtbb-dev \
+	libtext-diff-perl \
+	libudev-dev \
+	libunwind-dev \
+	llvm \
 	pandoc \
-	perl-Text-Diff \
-	rpm-build \
-	rpm-build-libs \
-	rpmdevtools \
-	SFML-devel \
+	pkg-config \
+	ruby \
 	sudo \
-	tar \
-	tbb-devel \
+	tzdata \
+	uuid-dev \
 	wget \
-	which \
-	xmlto \
- && dnf clean all
+	whois \
+ && rm -rf /var/lib/apt/lists/*
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
@@ -94,12 +93,10 @@ RUN ./install-valgrind.sh
 
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh rpm
+RUN ./install-pmdk.sh dpkg
 
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo "$USER:$USERPASS" | chpasswd
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
 USER $USER

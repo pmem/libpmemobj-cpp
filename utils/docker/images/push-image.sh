@@ -40,12 +40,12 @@
 
 set -e
 
-if [[ -z "$OS" ]]; then
+if [[ -z "${OS}" ]]; then
 	echo "OS environment variable is not set"
 	exit 1
 fi
 
-if [[ -z "$OS_VER" ]]; then
+if [[ -z "${OS_VER}" ]]; then
 	echo "OS_VER environment variable is not set"
 	exit 1
 fi
@@ -57,16 +57,16 @@ fi
 
 TAG="1.9-${OS}-${OS_VER}"
 
-# Check if the image tagged with ${DOCKERHUB_REPO}:1.9-OS-VER exists locally
+echo " Check if the image tagged with ${DOCKERHUB_REPO}:${TAG} exists locally"
 if [[ ! $(docker images -a | awk -v pattern="^${DOCKERHUB_REPO}:${TAG}\$" \
 	'$1":"$2 ~ pattern') ]]
 then
-	echo "ERROR: Docker image tagged ${DOCKERHUB_REPO}:${TAG} does not exists locally."
+	echo "ERROR: Docker image tagged ${DOCKERHUB_REPO}:${TAG} does not exist locally."
 	exit 1
 fi
 
-# Log in to the Docker Hub
-docker login -u="$DOCKERHUB_USER" -p="$DOCKERHUB_PASSWORD"
+echo "Log in to the Docker Hub"
+docker login -u="${DOCKERHUB_USER}" -p="${DOCKERHUB_PASSWORD}"
 
-# Push the image to the repository
+echo "Push the image to the repository"
 docker push ${DOCKERHUB_REPO}:${TAG}

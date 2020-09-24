@@ -114,14 +114,14 @@ inline basic_string_view<CharT, Traits>::basic_string_view(
 
 /**
  * Constructor initialized by *data*. Size of the data will be set
- * using std::char_traits<CharT>::length().
+ * using Traits::length().
  *
  * @param[in] data pointer to C-like string (char *) to initialize with,
  *	it has to end with the terminating null character.
  */
 template <typename CharT, typename Traits>
 inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
-    : data_(data), size_(std::char_traits<CharT>::length(data))
+    : data_(data), size_(std::char_traits<char>::length(data))
 {
 }
 

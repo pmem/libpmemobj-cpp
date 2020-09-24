@@ -17,9 +17,10 @@ git clone --recursive https://github.com/pmem/valgrind.git
 cd valgrind
 # pmem-3.15: Merge pull request #81 from marcinslusarz/pmem-3.15
 git checkout 09f75f69683d862f8456f75484fcdc0dc5508900
+
 ./autogen.sh
 ./configure --prefix=/usr
 make -j$(nproc)
-make -j$(nproc) install
+sudo make -j$(nproc) install
 cd ..
 rm -rf valgrind

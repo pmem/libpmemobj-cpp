@@ -126,7 +126,8 @@ RECURSIVE = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE =
+# temp_value.hpp: parsing error
+EXCLUDE = @CMAKE_SOURCE_DIR@/include/libpmemobj++/detail/temp_value.hpp
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include

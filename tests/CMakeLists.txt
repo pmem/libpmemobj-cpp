@@ -22,7 +22,7 @@ add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 if(MSVC_VERSION)
-	add_flag(-W3)
+	add_flag(-W2)
 
 	# disable warning C4996 - disable checking iterators
 	add_flag(-D_SCL_SECURE_NO_WARNINGS)

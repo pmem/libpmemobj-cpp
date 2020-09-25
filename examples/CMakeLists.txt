@@ -3,8 +3,10 @@
 
 if(MSVC_VERSION)
 	add_flag(-W2)
+	add_flag("-D_FORTIFY_SOURCE=2" RELEASE)
 else()
 	add_flag(-Wall)
+	add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
 endif()
 add_flag(-Wpointer-arith)
 add_flag(-Wsign-compare)
@@ -16,8 +18,6 @@ add_flag(-fno-common)
 
 add_flag(-ggdb DEBUG)
 add_flag(-DDEBUG DEBUG)
-
-add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)
 
 if(USE_ASAN)
 	add_sanitizer_flag(address)

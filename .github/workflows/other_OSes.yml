@@ -1,0 +1,45 @@
+
+name: CPP-other
+on:
+  schedule:
+    # run this job at 01:00 UTC everyday
+    # XXX: when checked it works properly, change to e.g. "every Monday"
+    - cron:  '0 1 * * *'
+
+env:
+  REPO:           libpmemobj-cpp
+  GITHUB_REPO:    pmem/libpmemobj-cpp
+  DOCKERHUB_REPO: pmem/libpmemobj-cpp
+
+jobs:
+  linux:
+    name: Linux-other
+    runs-on: ubuntu-latest
+    env:
+      HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
+      WORKDIR:        utils/docker
+      TYPE:           debug
+    strategy:
+      matrix:
+        CONFIG: ["OS=centos OS_VER=8",
+                 "OS=archlinux-base OS_VER=latest",
+                 "OS=debian OS_VER=testing",
+                 "OS=debian OS_VER=unstable",
+                 "OS=fedora OS_VER=rawhide",
+                 "OS=opensuse-leap OS_VER=latest",
+                 "OS=opensuse-tumbleweed OS_VER=latest",
+                 "OS=ubuntu OS_VER=rolling"]
+    steps:
+      - name: Print out the current date and time
+        run: date
+
+      - name: Clone the git repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+
+      - name: Pull or rebuild the image
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh rebuild
+
+      - name: Run the build
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh

@@ -23,7 +23,7 @@ mkdir -p /opt/scripts
 # Download codecov's bash script
 git clone https://github.com/codecov/codecov-bash
 cd codecov-bash
-git checkout $CODECOV_VERSION
+git checkout ${CODECOV_VERSION}
 
 git apply ../0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch
 mv -v codecov /opt/scripts/codecov

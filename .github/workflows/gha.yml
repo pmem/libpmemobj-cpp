@@ -2,9 +2,9 @@ name: CPP
 on: [push, pull_request]
 
 env:
-    REPO:           libpmemobj-cpp
-    GITHUB_REPO:    pmem/libpmemobj-cpp
-    DOCKERHUB_REPO: pmem/libpmemobj-cpp
+  REPO:           libpmemobj-cpp
+  GITHUB_REPO:    pmem/libpmemobj-cpp
+  DOCKERHUB_REPO: pmem/libpmemobj-cpp
 
 jobs:
   linux:
@@ -17,57 +17,58 @@ jobs:
       WORKDIR:        utils/docker
     strategy:
       matrix:
-        CONFIG: ["N=1 OS=ubuntu OS_VER=19.10 TYPE=debug PUSH_IMAGE=1",
-                 "N=2 OS=fedora OS_VER=31    TYPE=debug PUSH_IMAGE=1",
-                 "N=3 OS=ubuntu OS_VER=19.10 TYPE=release",
-                 "N=5 OS=ubuntu OS_VER=19.10 TYPE=valgrind",
-                 "N=6 OS=ubuntu OS_VER=19.10 TYPE=memcheck_drd",
-                 "N=7 OS=ubuntu OS_VER=19.10 TYPE=package",
-                 "N=8 OS=fedora OS_VER=31    TYPE=package",
-                 "N=9 OS=ubuntu OS_VER=19.10 TYPE=debug COVERAGE=1"]
+        CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
+                 "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
+                 "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
+                 "TYPE=release OS=fedora OS_VER=32",
+                 "TYPE=release OS=ubuntu OS_VER=20.04",
+                 "TYPE=valgrind OS=ubuntu OS_VER=20.04",
+                 "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04",
+                 "TYPE=package OS=fedora OS_VER=32",
+                 "TYPE=package OS=ubuntu OS_VER=20.04"]
     steps:
-       - name: Clone the git repo
-         uses: actions/checkout@v2
-         with:
-            fetch-depth: 50
+      - name: Clone the git repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
 
-       - name: Pull or rebuild the image
-         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh
+      - name: Pull or rebuild the image
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh
 
-       - name: Run the build
-         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
+      - name: Run the build
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
 
-       - name: Push the image
-         run: cd $WORKDIR && source ./set-vars.sh && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f ${CI_FILE_PUSH_IMAGE_TO_REPO} ]]; then images/push-image.sh $OS-$OS_VER; fi"
+      - name: Push the image
+        run: cd $WORKDIR && source ./set-vars.sh && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f ${CI_FILE_PUSH_IMAGE_TO_REPO} ]]; then images/push-image.sh $OS-$OS_VER; fi"
   doc:
-      name: build and publish docs
-      runs-on: ubuntu-latest
-      needs: linux
-      env:
-        DOC_UPDATE_GITHUB_TOKEN:   ${{ secrets.DOC_UPDATE_GITHUB_TOKEN }}
-        DOC_UPDATE_BOT_NAME:       ${{ secrets.DOC_UPDATE_BOT_NAME }}
-        DOC_REPO_OWNER:            ${{ secrets.DOC_REPO_OWNER }}
-        HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
-        WORKDIR:        utils/docker
-      if:
-        contains( 'refs/heads/master
-                  refs/heads/1.10
-                  refs/heads/1.9
-                  refs/heads/1.8
-                  refs/heads/1.7
-                  refs/heads/1.6
-                  refs/heads/1.5
-                  ' , github.ref)
-      strategy:
-        matrix:
-          CONFIG: ["TYPE=doc OS=fedora OS_VER=31"]
-      steps:
-         - name: Clone the git repo
-           uses: actions/checkout@v2
-           with:
-              fetch-depth: 50
-         - name: Run the build
-           run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
+    name: build and publish docs
+    runs-on: ubuntu-latest
+    needs: linux
+    env:
+      DOC_UPDATE_GITHUB_TOKEN:   ${{ secrets.DOC_UPDATE_GITHUB_TOKEN }}
+      DOC_UPDATE_BOT_NAME:       ${{ secrets.DOC_UPDATE_BOT_NAME }}
+      DOC_REPO_OWNER:            ${{ secrets.DOC_REPO_OWNER }}
+      HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
+      WORKDIR:        utils/docker
+    if:
+      contains( 'refs/heads/master
+                refs/heads/1.10
+                refs/heads/1.9
+                refs/heads/1.8
+                refs/heads/1.7
+                refs/heads/1.6
+                refs/heads/1.5
+                ' , github.ref)
+    strategy:
+      matrix:
+        CONFIG: ["TYPE=doc OS=fedora OS_VER=31"]
+    steps:
+      - name: Clone the git repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
+      - name: Run the build
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
   windows:
     name: Windows
     runs-on: windows-latest
@@ -85,63 +86,63 @@ jobs:
       matrix:
         CONFIG: [Debug, Release]
     steps:
-       - name: Update PATH
-         run: |
-           echo "::add-path::$Env:MSBUILD"
+      - name: Update PATH
+        run: |
+          echo "::add-path::$Env:MSBUILD"
 
-       - name: Cache vcpkg packages
-         uses: actions/cache@v1
-         id: cache-vcpkg-packages
-         with:
-            path: C:/vcpkg/packages
-            key:  vcpkg-packages-45e5a67
+      - name: Cache vcpkg packages
+        uses: actions/cache@v1
+        id: cache-vcpkg-packages
+        with:
+          path: C:/vcpkg/packages
+          key:  vcpkg-packages-45e5a67
 
-       - name: Cache vcpkg installed
-         uses: actions/cache@v1
-         id: cache-vcpkg-installed
-         with:
-            path: C:/vcpkg/installed
-            key:  vcpkg-installed-45e5a67
+      - name: Cache vcpkg installed
+        uses: actions/cache@v1
+        id: cache-vcpkg-installed
+        with:
+          path: C:/vcpkg/installed
+          key:  vcpkg-installed-45e5a67
 
-       - name: Clone the git repo
-         uses: actions/checkout@v2
-         with:
-            fetch-depth: 50
+      - name: Clone the git repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 50
 
-       - name: Install PMDK
-         run: |
-            vcpkg install pmdk:x64-windows
-            vcpkg install sfml:x64-windows
-            vcpkg install tbb:x64-windows
-            vcpkg update
-            vcpkg upgrade pmdk:x64-windows --no-dry-run
+      - name: Install PMDK
+        run: |
+          vcpkg install pmdk:x64-windows
+          vcpkg install sfml:x64-windows
+          vcpkg install tbb:x64-windows
+          vcpkg update
+          vcpkg upgrade pmdk:x64-windows --no-dry-run
 
-       - name: vcpkg integrate install
-         run: vcpkg integrate install
+      - name: vcpkg integrate install
+        run: vcpkg integrate install
 
-       - name: Configure
-         run: cmake . -Bbuild
-                      -G "${env:GENERATOR}"
-                      -A "${env:ARCH}"
-                      -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
-                      -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
-                      -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
-                      -DTESTS_USE_FORCED_PMEM=ON
-                      -DTESTS_TBB=ON
+      - name: Configure
+        run: cmake . -Bbuild
+                    -G "${env:GENERATOR}"
+                    -A "${env:ARCH}"
+                    -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
+                    -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
+                    -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
+                    -DTESTS_USE_FORCED_PMEM=ON
+                    -DTESTS_TBB=ON
 
-       - name: Build
-         run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal /m
+      - name: Build
+        run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.CONFIG }} /verbosity:minimal /m
 
-       - name: Tests
-         working-directory: build
-         run: ctest -C ${{ matrix.CONFIG }} --output-on-failure --timeout 540
+      - name: Tests
+        working-directory: build
+        run: ctest -C ${{ matrix.CONFIG }} --output-on-failure --timeout 540
 
-       - name: Install
-         working-directory: build
-         run: msbuild INSTALL.vcxproj /verbosity:minimal /m
+      - name: Install
+        working-directory: build
+        run: msbuild INSTALL.vcxproj /verbosity:minimal /m
 
-       - name: Examples
-         working-directory: examples/map_cli
-         run: |
-            cmake . -G "${env:GENERATOR}" -A "${env:ARCH}" -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}" -DCMAKE_PREFIX_PATH="${env:CMAKE_INSTALL_PREFIX}"
-            msbuild ALL_BUILD.vcxproj /verbosity:minimal /m
+      - name: Examples
+        working-directory: examples/map_cli
+        run: |
+          cmake . -G "${env:GENERATOR}" -A "${env:ARCH}" -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}" -DCMAKE_PREFIX_PATH="${env:CMAKE_INSTALL_PREFIX}"
+          msbuild ALL_BUILD.vcxproj /verbosity:minimal /m

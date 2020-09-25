@@ -202,7 +202,7 @@ if(CHECK_CPP_STYLE)
 			message(FATAL_ERROR "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
 		endif()
 	else()
-		message(WARNING "clang-format not found - C++ sources will not be checked (required version: ${CLANG_FORMAT_REQUIRED})")
+		message(FATAL_ERROR "CHECK_CPP_STYLE=ON, but clang-format not found (required version: ${CLANG_FORMAT_REQUIRED})")
 	endif()
 endif()
 

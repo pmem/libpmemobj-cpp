@@ -73,7 +73,12 @@ HIDE_UNDOC_CLASSES = YES
 # standard output by doxygen. If QUIET is set to YES this implies that the
 # messages are off.
 
-QUIET = YES
+QUIET = NO
+
+# The COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns
+# in which the alphabetical index list will be split.
+
+COLS_IN_ALPHA_INDEX = 1
 
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
@@ -121,7 +126,8 @@ RECURSIVE = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE =
+# temp_value.hpp: parsing error
+EXCLUDE = @CMAKE_SOURCE_DIR@/include/libpmemobj++/detail/temp_value.hpp
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include

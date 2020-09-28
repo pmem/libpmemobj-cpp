@@ -146,6 +146,7 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-OFF} \
 	--env TESTS_LONG=${TESTS_LONG:-OFF} \
 	--env TESTS_TBB=${TESTS_TBB:-ON} \
+	--env TESTS_PMREORDER=${TESTS_PMREORDER:-ON} \
 	--env TZ='Europe/Warsaw' \
 	--shm-size=4G \
 	-v $HOST_WORKDIR:$WORKDIR \

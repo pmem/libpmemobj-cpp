@@ -3,8 +3,8 @@
 
 include(../ctest_helpers.cmake)
 
-add_cppstyle(map_helpers ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/map/*.hpp)
-add_check_whitespace(map_helpers ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/map/*.hpp)
+add_cppstyle(map_helpers ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/map/*.h*)
+add_check_whitespace(map_helpers ${CMAKE_CURRENT_SOURCE_DIR}/libcxx/map/*.h*)
 
 function(add_test_expect_failure name)
 	set(srcs ${ARGN})

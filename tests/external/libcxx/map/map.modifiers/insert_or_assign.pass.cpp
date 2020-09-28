@@ -46,12 +46,15 @@ using container2 = container_t<Moveable, Moveable, TRANSPARENT_COMPARE>;
 using container3 = container_t<C2Int, Moveable, TRANSPARENT_COMPARE>;
 using container4 =
 	container_t<nvobj::string, Moveable, TRANSPARENT_COMPARE_STRING>;
+using container5 =
+	container_t<MoveableWrapper, MoveableWrapper, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
 	nvobj::persistent_ptr<container2> s2;
 	nvobj::persistent_ptr<container3> s3;
 	nvobj::persistent_ptr<container4> s4;
+	nvobj::persistent_ptr<container5> s5;
 };
 
 int
@@ -301,6 +304,43 @@ run(pmem::obj::pool<root> &pop)
 
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s4); });
+	}
+	{
+		typedef container5 M;
+		typedef std::pair<M::iterator, bool> R;
+
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s5 = nvobj::make_persistent<M>(); });
+		auto &m = *robj->s5;
+		R r;
+
+		for (int i = 0; i < 20; i += 2)
+			m.emplace(Moveable(i, (double)i),
+				  Moveable(i + 1, (double)i + 1));
+		UT_ASSERT(m.size() == 10);
+
+		Moveable mvkey1(2, 2.0);
+		Moveable mv1(4, 4.0);
+		r = m.insert_or_assign(std::move(mvkey1), std::move(mv1));
+		UT_ASSERT(m.size() == 10);
+		UT_ASSERT(!r.second);	    // was not inserted
+		UT_ASSERT(!mvkey1.moved()); // was not moved from
+		UT_ASSERT(mv1.moved());	    // was moved from
+		UT_ASSERT(r.first->MAP_KEY.get() == mvkey1);	// key
+		UT_ASSERT(r.first->MAP_VALUE.get().get() == 4); // value
+
+		Moveable mvkey2(3, 3.0);
+		Moveable mv2(5, 5.0);
+		r = m.insert_or_assign(std::move(mvkey2), std::move(mv2));
+		UT_ASSERT(m.size() == 11);
+		UT_ASSERT(r.second);			      // was inserted
+		UT_ASSERT(mv2.moved());			      // was moved from
+		UT_ASSERT(mvkey2.moved());		      // was moved from
+		UT_ASSERT(r.first->MAP_KEY.get().get() == 3); // key
+		UT_ASSERT(r.first->MAP_VALUE.get().get() == 5); // value
+
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s5); });
 	}
 	return 0;
 }

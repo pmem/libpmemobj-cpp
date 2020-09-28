@@ -132,7 +132,7 @@ do_insert_rv_template_test(pmem::obj::pool<root> &pop)
 {
 	auto robj = pop.root();
 	typedef container2 M;
-	typedef std::pair<int, int> P;
+	typedef container2::value_type P;
 	typedef std::pair<typename M::iterator, bool> R;
 
 	pmem::obj::transaction::run(

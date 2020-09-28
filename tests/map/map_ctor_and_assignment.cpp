@@ -36,13 +36,10 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-/* XXX: until insert implemented in radix */
-#if !defined(LIBPMEMOBJ_CPP_TESTS_RADIX)
 	auto r = pop.root();
 
 	ctor_test<map_type>(pop, r->pptr1, r->pptr2);
 	assignment_test<map_type>(pop, r->pptr1, r->pptr2);
-#endif
 
 	pop.close();
 }

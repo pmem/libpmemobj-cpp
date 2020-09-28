@@ -40,7 +40,7 @@ run(pmem::obj::pool<root> &pop)
 	auto robj = pop.root();
 	{
 		typedef container M;
-		typedef std::pair<int, double> P;
+		typedef container::value_type P;
 		P ar[] = {
 			P(1, 1), P(1, 1.5), P(1, 2),   P(2, 1), P(2, 1.5),
 			P(2, 2), P(3, 1),   P(3, 1.5), P(3, 2),

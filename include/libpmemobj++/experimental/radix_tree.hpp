@@ -126,6 +126,7 @@ public:
 
 	radix_tree &operator=(const radix_tree &m);
 	radix_tree &operator=(radix_tree &&m);
+	radix_tree &operator=(std::initializer_list<value_type> ilist);
 
 	~radix_tree();
 
@@ -780,12 +781,14 @@ radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
 {
 	check_pmem();
 
+	auto pop = pool_by_vptr(this);
+
 	if (this != &other) {
-		transaction::run(pool_by_vptr(this), [&] {
+		transaction::run(pop, [&] {
 			clear();
 
-			root = nullptr;
-			size_ = 0;
+			this->root = nullptr;
+			this->size_ = 0;
 
 			for (auto it = other.cbegin(); it != other.cend(); it++)
 				emplace(*it);
@@ -809,16 +812,50 @@ radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
 {
 	check_pmem();
 
+	auto pop = pool_by_vptr(this);
+
 	if (this != &other) {
-		transaction::run(pool_by_vptr(this), [&] {
+		transaction::run(pop, [&] {
 			clear();
 
-			root = other.root;
-			size_ = other.size_;
+			this->root = other.root;
+			this->size_ = other.size_;
 			other.root = nullptr;
 			other.size_ = 0;
 		});
 	}
+
+	return *this;
+}
+
+/**
+ * Replaces the contents with those identified by initializer list ilist
+ * transactionally.
+ *
+ * @param[in] ilist initializer list to use as data source.
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView> &
+radix_tree<Key, Value, BytesView>::operator=(
+	std::initializer_list<value_type> ilist)
+{
+	check_pmem();
+
+	auto pop = pool_by_vptr(this);
+
+	transaction::run(pop, [&] {
+		clear();
+
+		this->root = nullptr;
+		this->size_ = 0;
+
+		for (auto it = ilist.begin(); it != ilist.end(); it++)
+			emplace(*it);
+	});
 
 	return *this;
 }

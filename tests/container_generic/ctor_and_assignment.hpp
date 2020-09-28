@@ -50,9 +50,9 @@ ctor_test(nvobj::pool_base &pop, nvobj::persistent_ptr<T> &container1,
 
 	for (int i = 0; i < 300; i++) {
 		auto ret = container1->insert(V(i, i));
-		UT_ASSERT(ret.MAP_VALUE == true);
-		UT_ASSERT(ret.MAP_KEY->MAP_KEY == i);
-		UT_ASSERT(ret.MAP_KEY->MAP_VALUE == i);
+		UT_ASSERT(ret.second == true);
+		UT_ASSERT(ret.first->MAP_KEY == i);
+		UT_ASSERT(ret.first->MAP_VALUE == i);
 	}
 
 	tx_alloc_wrapper<T>(pop, container2, container1->begin(),
@@ -99,14 +99,14 @@ assignment_test(nvobj::pool_base &pop, nvobj::persistent_ptr<T> &container1,
 
 	for (int i = 0; i < 50; i++) {
 		auto ret = container1->insert(V(i, i));
-		UT_ASSERT(ret.MAP_VALUE == true);
+		UT_ASSERT(ret.second == true);
 	}
 
 	verify_elements<T>(*container1, 50);
 
 	for (int i = 0; i < 300; i++) {
 		auto ret = container2->insert(V(i, i));
-		UT_ASSERT(ret.MAP_VALUE == true);
+		UT_ASSERT(ret.second == true);
 	}
 
 	*container1 = *container2;
@@ -115,7 +115,7 @@ assignment_test(nvobj::pool_base &pop, nvobj::persistent_ptr<T> &container1,
 
 	for (int i = 300; i < 350; i++) {
 		auto ret = container1->insert(V(i, i));
-		UT_ASSERT(ret.MAP_VALUE == true);
+		UT_ASSERT(ret.second == true);
 	}
 
 	verify_elements<T>(*container1, 350);
@@ -137,7 +137,7 @@ assignment_test(nvobj::pool_base &pop, nvobj::persistent_ptr<T> &container1,
 
 	for (int i = 0; i < 100; i++) {
 		auto ret = container1->insert(V(i, i));
-		UT_ASSERT(ret.MAP_VALUE == true);
+		UT_ASSERT(ret.second == true);
 	}
 
 	verify_elements<T>(*container1, 100);

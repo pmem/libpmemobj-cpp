@@ -187,6 +187,17 @@ basic_string_view<CharT, Traits>::compare(const basic_string_view &other) const
 		return 1;
 	return 0;
 }
+
+/**
+ * Non-member equal operator.
+ */
+template <class CharT, class Traits>
+bool
+operator==(const basic_string_view<CharT, Traits> &lhs,
+	   const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) == 0;
+}
 #endif
 
 } /* namespace obj */

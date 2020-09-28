@@ -708,6 +708,9 @@ if (TEST_STRING)
 
 	# XXX: port libcxx test basic_string/string.capacity/max_size.pass
 	# XXX: port libcxx test basic_string/string.cons/string_view_assignment.pass
+	build_test(string_libcxx_string_view_assignment libcxx/basic_string/string.cons/string_view_assignment.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_assignment TRACERS none pmemcheck memcheck)
+
 	# XXX: port libcxx test basic_string/string.cons/T_size_size.pass
 
 	build_test(string_libcxx_brace_assignment libcxx/basic_string/string.cons/brace_assignment.pass.cpp)

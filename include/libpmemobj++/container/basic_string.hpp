@@ -559,10 +559,15 @@ basic_string<CharT, Traits>::basic_string(const CharT *s)
 	check_pmem_tx();
 	sso._size = 0;
 
-	auto length = traits_type::length(s);
+	if (s) {
+		auto length = traits_type::length(s);
 
-	allocate(length);
-	initialize(s, s + length);
+		allocate(length);
+		initialize(s, s + length);
+	} else {
+		allocate(0);
+		initialize(0U, value_type('\0'));
+	}
 }
 
 /**

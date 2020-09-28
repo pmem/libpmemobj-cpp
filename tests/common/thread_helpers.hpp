@@ -63,16 +63,19 @@ parallel_exec_with_sync(size_t concurrency, Function f)
 {
 	std::condition_variable cv;
 	std::mutex m;
-	size_t counter = 0;
+	std::unique_ptr<size_t> counter =
+		std::unique_ptr<size_t>(new size_t(0));
 
 	parallel_exec(concurrency, [&](size_t tid) {
 		f(tid);
 
 		{
 			std::unique_lock<std::mutex> lock(m);
-			counter++;
-			if (counter < concurrency)
-				cv.wait(lock);
+			(*counter)++;
+			if (*counter < concurrency)
+				cv.wait(lock, [&] {
+					return *counter >= concurrency;
+				});
 			else
 				/*
 				 * notify_call could be called outside of a lock

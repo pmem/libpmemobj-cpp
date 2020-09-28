@@ -90,6 +90,25 @@ public:
 	}
 };
 
+class MoveableWrapper {
+	Moveable mv_;
+
+public:
+	MoveableWrapper(Moveable &&mv) : mv_(std::move(mv))
+	{
+	}
+
+	Moveable
+	get() const
+	{
+		return mv_;
+	}
+};
+
+bool operator < ( const MoveableWrapper &lhs, const MoveableWrapper &rhs ) { return lhs.get() < rhs.get(); }
+bool operator < ( const MoveableWrapper &lhs, Moveable rhs ) { return lhs.get() < rhs; }
+bool operator < ( Moveable lhs, const MoveableWrapper &rhs ) { return lhs < rhs.get(); }
+
 struct transparent_less
 {
     template <class T, class U>
@@ -125,6 +144,11 @@ struct heterogenous_bytes_view
     heterogenous_bytes_view(const Moveable *value) 
     {
 		v = (unsigned)(value->get() + (std::numeric_limits<int>::max)() + 1);
+    }
+
+    heterogenous_bytes_view(const MoveableWrapper *value) 
+    {
+		v = (unsigned)(value->get().get() + (std::numeric_limits<int>::max)() + 1);
     }
 
 	heterogenous_bytes_view(const PrivateConstructor *value)

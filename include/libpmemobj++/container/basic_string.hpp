@@ -89,7 +89,7 @@ public:
 					    pmem::obj::basic_string_view<
 						    CharT, Traits>>::value &&
 			!std::is_convertible<const T &, const CharT *>::value>>
-	basic_string(const T &t);
+	explicit basic_string(const T &t);
 	template <class T,
 		  typename Enable = typename std::enable_if<std::is_convertible<
 			  const T &,

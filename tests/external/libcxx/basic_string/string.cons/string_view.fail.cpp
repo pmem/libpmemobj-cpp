@@ -9,15 +9,20 @@
 
 // <string>
 
-// explicit basic_string(basic_string_view<CharT, traits> sv, const Allocator& a = Allocator());
+// explicit basic_string(basic_string_view<CharT, traits> sv, const Allocator& a
+// = Allocator());
 
-#include <string>
-#include <string_view>
+#include <libpmemobj++/container/string.hpp>
+#include <libpmemobj++/string_view.hpp>
 
-void foo ( const string &s ) {}
-
-int main()
+void
+foo(const pmem::obj::string &s)
 {
-    std::string_view sv = "ABCDE";
-    foo(sv);    // requires implicit conversion from string_view to string
+}
+
+int
+main()
+{
+	pmem::obj::string_view sv = "ABCDE";
+	foo(sv); // requires implicit conversion from string_view to string
 }

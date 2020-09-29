@@ -14,6 +14,7 @@ function(add_test_expect_failure name)
 	add_check_whitespace(tests-external-${name} ${srcs})
 
 	add_executable(${name}_fail_expected ${srcs})
+	target_link_libraries(${name}_fail_expected ${LIBPMEMOBJ_LIBRARIES})
 	set_target_properties(${name}_fail_expected PROPERTIES
 				EXCLUDE_FROM_ALL TRUE
 				EXCLUDE_FROM_DEFAULT_BUILD TRUE)
@@ -732,7 +733,7 @@ if (TEST_STRING)
 	add_test_generic(NAME string_libcxx_string_view TRACERS none pmemcheck memcheck)
 
 	# XXX: port libcxx test basic_string/string.cons/initializer_list_assignment.pass
-	# XXX: port libcxx test basic_string/string.cons/string_view.fail
+	add_test_expect_failure(string_libcxx_string_view libcxx/basic_string/string.cons/string_view.fail.cpp)
 endif()
 
 if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)

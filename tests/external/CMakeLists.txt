@@ -733,6 +733,9 @@ if (TEST_STRING)
 
 	# XXX: port libcxx test basic_string/string.cons/initializer_list_assignment.pass
 	# XXX: port libcxx test basic_string/string.cons/string_view.fail
+	# build_test(string_libcxx_string_view_fail libcxx/basic_string/string.cons/string_view.fail.cpp)
+	add_test_expect_failure(string_libcxx_string_view_fail libcxx/basic_string/string.cons/string_view.fail.cpp)
+	# add_test_generic(NAME string_libcxx_string_view_fail TRACERS none pmemcheck memcheck)
 endif()
 
 if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)

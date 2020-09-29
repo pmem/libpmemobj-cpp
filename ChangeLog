@@ -1,6 +1,6 @@
-Fri Sep 25 2020 Szymon Romik <szymon.romik@intel.com>
+Tue Sep 29 2020 Szymon Romik <szymon.romik@intel.com>
 
-	* Version 1.11-rc1
+	* Version 1.11-rc2
 
 	This release introduces a new experimental container - persistent
 	radix_tree along with inline_string and string_view classes.
@@ -10,10 +10,15 @@ Fri Sep 25 2020 Szymon Romik <szymon.romik@intel.com>
 
 	New features:
 	- experimental radix_tree container (single-threaded sorted map)
-	- experimental inline_string class
-	- string_view class
+	- experimental inline_string class (class serves similar purpose to
+		pmem::obj::string, but keeps the data within the same allocation
+		as inline_string itself)
+	- string_view class (support for compilers older thatn C++17)
 	- experimental self_relative_ptr and std::atomic<self_relative_ptr>
-		specialization
+		specialization (persistent smart ptr which encapsulates the self
+		offseted pointer and provides member access, dereference and
+		array access operators - for some workloads it could be faster
+		alternative for persistent_ptr)
 
 	Optimizations:
 	- optimizations for concurrent_map with self_relative_ptr
@@ -23,7 +28,7 @@ Fri Sep 25 2020 Szymon Romik <szymon.romik@intel.com>
 	- conversion operator for basic_string class
 	- ported libcxx's sorted map tests
 	- lower and lower_eq methods for concurrent_map
-	- missing constructors for concurrent_map
+	- missing constructor for concurrent_map (comparator as an argument)
 
 Thu May 28 2020 Szymon Romik <szymon.romik@intel.com>
 

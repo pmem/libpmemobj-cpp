@@ -18,6 +18,7 @@
 
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/container/string.hpp>
+#include <libpmemobj++/detail/pair.hpp>
 #include <libpmemobj++/detail/template_helpers.hpp>
 #include <libpmemobj++/experimental/inline_string.hpp>
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
@@ -106,7 +107,7 @@ class radix_tree {
 public:
 	using key_type = Key;
 	using mapped_type = Value;
-	using value_type = std::pair<const key_type, mapped_type>;
+	using value_type = detail::pair<const key_type, mapped_type>;
 	using size_type = std::size_t;
 	using reference = value_type &;
 	using const_reference = const value_type &;
@@ -126,6 +127,7 @@ public:
 
 	radix_tree &operator=(const radix_tree &m);
 	radix_tree &operator=(radix_tree &&m);
+	radix_tree &operator=(std::initializer_list<value_type> ilist);
 
 	~radix_tree();
 
@@ -430,6 +432,11 @@ private:
 	static persistent_ptr<leaf> make_internal(K &&k, V &&v);
 	template <typename K, typename V>
 	static persistent_ptr<leaf> make_internal(const K &k, const V &v);
+
+	template <typename K, typename V>
+	static persistent_ptr<leaf> make_internal(detail::pair<K, V> &&p);
+	template <typename K, typename V>
+	static persistent_ptr<leaf> make_internal(const detail::pair<K, V> &p);
 
 	template <typename K, typename V>
 	static persistent_ptr<leaf> make_internal(std::pair<K, V> &&p);
@@ -780,12 +787,14 @@ radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
 {
 	check_pmem();
 
+	auto pop = pool_by_vptr(this);
+
 	if (this != &other) {
-		transaction::run(pool_by_vptr(this), [&] {
+		transaction::run(pop, [&] {
 			clear();
 
-			root = nullptr;
-			size_ = 0;
+			this->root = nullptr;
+			this->size_ = 0;
 
 			for (auto it = other.cbegin(); it != other.cend(); it++)
 				emplace(*it);
@@ -809,16 +818,50 @@ radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
 {
 	check_pmem();
 
+	auto pop = pool_by_vptr(this);
+
 	if (this != &other) {
-		transaction::run(pool_by_vptr(this), [&] {
+		transaction::run(pop, [&] {
 			clear();
 
-			root = other.root;
-			size_ = other.size_;
+			this->root = other.root;
+			this->size_ = other.size_;
 			other.root = nullptr;
 			other.size_ = 0;
 		});
 	}
+
+	return *this;
+}
+
+/**
+ * Replaces the contents with those identified by initializer list ilist
+ * transactionally.
+ *
+ * @param[in] ilist initializer list to use as data source.
+ *
+ * @throw pmem::pool_error if an object is not in persistent memory.
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw pmem::transaction_alloc_error when allocating new memory failed.
+ */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView> &
+radix_tree<Key, Value, BytesView>::operator=(
+	std::initializer_list<value_type> ilist)
+{
+	check_pmem();
+
+	auto pop = pool_by_vptr(this);
+
+	transaction::run(pop, [&] {
+		clear();
+
+		this->root = nullptr;
+		this->size_ = 0;
+
+		for (auto it = ilist.begin(); it != ilist.end(); it++)
+			emplace(*it);
+	});
 
 	return *this;
 }
@@ -3019,6 +3062,27 @@ radix_tree<Key, Value, BytesView>::leaf::make_internal(const K &k, const V &v)
 {
 	return make_internal(std::piecewise_construct, std::forward_as_tuple(k),
 			     std::forward_as_tuple(v));
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename V>
+persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
+radix_tree<Key, Value, BytesView>::leaf::make_internal(detail::pair<K, V> &&p)
+{
+	return make_internal(std::piecewise_construct,
+			     std::forward_as_tuple(std::forward<K>(p.first)),
+			     std::forward_as_tuple(std::forward<V>(p.second)));
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename V>
+persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
+radix_tree<Key, Value, BytesView>::leaf::make_internal(
+	const detail::pair<K, V> &p)
+{
+	return make_internal(std::piecewise_construct,
+			     std::forward_as_tuple(p.first),
+			     std::forward_as_tuple(p.second));
 }
 
 template <typename Key, typename Value, typename BytesView>

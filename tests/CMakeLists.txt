@@ -3,6 +3,10 @@
 
 include(ctest_helpers.cmake)
 
+## Setup
+add_custom_target(tests)
+
+# Checks for when DEVELOPER_MODE is ON
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.h
@@ -18,9 +22,9 @@ add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*pp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp)
-
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
+# Setting up compilation flags
 if(MSVC_VERSION)
 	add_flag(-W2)
 
@@ -50,19 +54,18 @@ add_flag(-fno-common)
 add_flag(-ggdb DEBUG)
 add_flag(-DDEBUG DEBUG)
 
-
-
 if(USE_ASAN)
-       add_sanitizer_flag(address)
+	add_sanitizer_flag(address)
 endif()
 if(USE_UBSAN)
-       add_sanitizer_flag(undefined)
+	add_sanitizer_flag(undefined)
 endif()
 
 if(COVERAGE)
-       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
+# Preparing additional libraries/executables and finding required packages
 find_packages()
 find_gdb()
 
@@ -73,6 +76,11 @@ endif()
 
 add_library(valgrind_internal STATIC valgrind_internal.cpp)
 
+add_executable(check_is_pmem check_is_pmem/check_is_pmem.cpp)
+target_link_libraries(check_is_pmem ${LIBPMEM_LIBRARIES})
+
+## Tests
+# tests using examples
 function(build_example_queue)
 	add_executable(ex-queue ../examples/queue/queue.cpp)
 	target_include_directories(ex-queue PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../examples)
@@ -85,14 +93,11 @@ function(build_example_pman)
 	target_link_libraries(ex-pman ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CURSES_LIBRARIES})
 endfunction()
 
-add_executable(check_is_pmem check_is_pmem/check_is_pmem.cpp)
-target_link_libraries(check_is_pmem ${LIBPMEM_LIBRARIES})
-
 if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
 	add_test_generic(NAME ex-queue CASE 0 TRACERS none)
 
-	if (CURSES_FOUND AND NOT WIN32)
+	if(CURSES_FOUND AND NOT WIN32)
 		build_example_pman()
 		add_test_generic(NAME ex-pman CASE 0 TRACERS none)
 	else()
@@ -103,6 +108,7 @@ elseif(BUILD_EXAMPLES)
 	skip_test("examples_tests" "SKIPPED_BECAUSE_OF_GCC_VARIADIC_TEMPLATE_BUG")
 endif()
 
+# common tests
 if(AGGREGATE_INITIALIZATION_AVAILABLE)
 	build_test(aggregate_initialization aggregate_initialization/aggregate_initialization.cpp)
 	add_test_generic(NAME aggregate_initialization TRACERS none pmemcheck)
@@ -123,10 +129,13 @@ add_test_generic(NAME make_persistent TRACERS none pmemcheck)
 build_test(make_persistent_atomic make_persistent_atomic/make_persistent_atomic.cpp)
 add_test_generic(NAME make_persistent_atomic TRACERS none pmemcheck)
 
-if (NOT WIN32)
+if(NOT WIN32)
 	build_test(mutex_posix mutex_posix/mutex_posix.cpp)
 	add_test_generic(NAME mutex_posix TRACERS drd helgrind pmemcheck)
 endif()
+
+build_test(pair pair/pair.cpp)
+add_test_generic(NAME pair TRACERS none memcheck)
 
 build_test(pool pool/pool.cpp)
 add_test_generic(NAME pool CASE 0 TRACERS none)
@@ -136,40 +145,6 @@ add_test_generic(NAME pool CASE 3 TRACERS none)
 add_test_generic(NAME pool CASE 4 TRACERS none)
 add_test_generic(NAME pool CASE 5 TRACERS none)
 
-build_test(pool_primitives pool_primitives/pool_primitives.cpp)
-add_test_generic(NAME pool_primitives CASE 0 TRACERS none pmemcheck
-		SCRIPT cmake/common_0.cmake)
-
-build_test(ptr ptr/ptr.cpp)
-add_test_generic(NAME ptr CASE 0 TRACERS none pmemcheck
-		SCRIPT cmake/common_0.cmake)
-
-build_test(pair pair/pair.cpp)
-add_test_generic(NAME pair TRACERS none memcheck)
-
-build_test(ptr_arith ptr_arith/ptr_arith.cpp)
-add_test_generic(NAME ptr_arith TRACERS memcheck pmemcheck)
-# XXX Bug: incompatibility between asan and custom library
-if (NOT USE_ASAN)
-	add_test_generic(NAME ptr_arith TRACERS none)
-endif()
-
-build_test(p_ext p_ext/p_ext.cpp)
-add_test_generic(NAME p_ext TRACERS none pmemcheck)
-
-if (NOT WIN32)
-	build_test(shared_mutex_posix shared_mutex_posix/shared_mutex_posix.cpp)
-	add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
-endif()
-
-build_test(transaction transaction/transaction.cpp)
-add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
-
-if (VOLATILE_STATE_PRESENT)
-	build_test(volatile_state volatile_state/volatile_state.cpp)
-	add_test_generic(NAME volatile_state TRACERS none pmemcheck memcheck drd helgrind)
-endif()
-
 if(WIN32)
 	build_test(pool_win pool_win/pool_win.cpp)
 	add_test_generic(NAME pool_win CASE 0 TRACERS none)
@@ -178,15 +153,48 @@ if(WIN32)
 	add_test_generic(NAME pool_win CASE 3 TRACERS none)
 endif()
 
+build_test(pool_cleanup pool_cleanup/pool_cleanup.cpp)
+add_test_generic(NAME pool_cleanup TRACERS none pmemcheck memcheck drd helgrind CASE 0)
+
+build_test(pool_primitives pool_primitives/pool_primitives.cpp)
+add_test_generic(NAME pool_primitives CASE 0 TRACERS none pmemcheck
+		SCRIPT cmake/common_0.cmake)
+
+build_test(ptr ptr/ptr.cpp)
+add_test_generic(NAME ptr CASE 0 TRACERS none pmemcheck
+		SCRIPT cmake/common_0.cmake)
+
+build_test(ptr_arith ptr_arith/ptr_arith.cpp)
+add_test_generic(NAME ptr_arith TRACERS memcheck pmemcheck)
+# XXX Bug: incompatibility between asan and custom library
+if(NOT USE_ASAN)
+	add_test_generic(NAME ptr_arith TRACERS none)
+endif()
+
+build_test(p_ext p_ext/p_ext.cpp)
+add_test_generic(NAME p_ext TRACERS none pmemcheck)
+
+if(NOT WIN32)
+	build_test(shared_mutex_posix shared_mutex_posix/shared_mutex_posix.cpp)
+	add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
+endif()
+
+build_test(transaction transaction/transaction.cpp)
+add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
+
+if(VOLATILE_STATE_PRESENT)
+	build_test(volatile_state volatile_state/volatile_state.cpp)
+	add_test_generic(NAME volatile_state TRACERS none pmemcheck memcheck drd helgrind)
+endif()
+
 build_test(v v/v.cpp)
 add_test_generic(NAME v CASE 0 TRACERS none memcheck SCRIPT cmake/common_0.cmake)
-
 
 if(NO_CHRONO_BUG)
 	build_test(cond_var cond_var/cond_var.cpp)
 	add_test_generic(NAME cond_var TRACERS none)
 
-	if (NOT WIN32)
+	if(NOT WIN32)
 		build_test(cond_var_posix cond_var_posix/cond_var_posix.cpp)
 		add_test_generic(NAME cond_var_posix TRACERS drd helgrind pmemcheck)
 	endif()
@@ -197,7 +205,7 @@ if(NO_CHRONO_BUG)
 	build_test(shared_mutex shared_mutex/shared_mutex.cpp)
 	add_test_generic(NAME shared_mutex TRACERS none)
 
-	if (NOT WIN32)
+	if(NOT WIN32)
 		build_test(timed_mtx_posix timed_mtx_posix/timed_mtx_posix.cpp)
 		add_test_generic(NAME timed_mtx_posix TRACERS drd helgrind pmemcheck)
 	endif()
@@ -220,15 +228,18 @@ else()
 	skip_test("make_persistent_array" "SKIPPED_BECAUSE_OF_CLANG_TEMPLATE_BUG")
 endif()
 
-build_test(pool_cleanup pool_cleanup/pool_cleanup.cpp)
-add_test_generic(NAME pool_cleanup TRACERS none pmemcheck memcheck drd helgrind CASE 0)
-
 build_test(iterator_traits iterator_traits/iterator_traits.cpp)
 add_test_generic(NAME iterator_traits TRACERS none)
 
 build_test(ctl ctl/ctl.cpp)
 add_test_generic(NAME ctl CASE 0 TRACERS none
 		SCRIPT ctl/ctl_0.cmake)
+
+if(WIN32)
+	build_test(ctl_win ctl_win/ctl_win.cpp)
+	add_test_generic(NAME ctl_win CASE 0 TRACERS none
+			SCRIPT ctl/ctl_0.cmake)
+endif()
 
 build_test(defrag defrag/defrag.cpp)
 add_test_generic(NAME defrag TRACERS none pmemcheck memcheck)
@@ -239,13 +250,7 @@ add_test_generic(NAME string_view TRACERS none memcheck)
 build_test(inline_string inline_string/inline_string.cpp)
 add_test_generic(NAME inline_string TRACERS none memcheck pmemcheck)
 
-if(WIN32)
-	build_test(ctl_win ctl_win/ctl_win.cpp)
-	add_test_generic(NAME ctl_win CASE 0 TRACERS none
-			SCRIPT ctl/ctl_0.cmake)
-endif()
-
-if (TEST_SELF_RELATIVE_POINTER)
+if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr ptr/self_relative_ptr.cpp)
 	add_test_generic(NAME self_relative_ptr TRACERS none memcheck pmemcheck)
 
@@ -259,7 +264,15 @@ if (TEST_SELF_RELATIVE_POINTER)
 	add_test_generic(NAME self_relative_ptr_atomic_pmem TRACERS none memcheck pmemcheck drd helgrind)
 endif()
 
-if (TEST_ARRAY)
+add_subdirectory(external)
+
+if(TESTS_COMPATIBILITY)
+	add_subdirectory(compatibility)
+endif()
+
+# Containers tests
+###################################### ARRAY ###################################
+if(TEST_ARRAY)
 	build_test(array_algorithms array_algorithms/array_algorithms.cpp)
 	add_test_generic(NAME array_algorithms TRACERS none pmemcheck)
 
@@ -271,7 +284,7 @@ if (TEST_ARRAY)
 
 	build_test(array_iterator_noconv array_iterator/array_iterator_noconv.cpp)
 	check_cxx_compiler_flag(-Wno-sign-conversion NO_SIGN_CONVERSION_FLAG)
-	if (NO_SIGN_CONVERSION_FLAG)
+	if(NO_SIGN_CONVERSION_FLAG)
 		target_compile_options(array_iterator_noconv PUBLIC -Wno-sign-conversion)
 	endif()
 	add_test_generic(NAME array_iterator_noconv TRACERS none)
@@ -291,8 +304,9 @@ if (TEST_ARRAY)
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
 endif()
-
-if (TEST_VECTOR)
+################################################################################
+###################################### VECTOR ##################################
+if(TEST_VECTOR)
 	build_test_ext(NAME vector_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DVECTOR)
 	add_test_generic(NAME vector_temp_value TRACERS none pmemcheck memcheck)
 
@@ -300,7 +314,7 @@ if (TEST_VECTOR)
 
 	# array-bounds warning is expected
 	check_cxx_compiler_flag(-Wno-array-bounds wno_array_bounds_flag)
-	if (wno_array_bounds_flag)
+	if(wno_array_bounds_flag)
 		target_compile_options(vector_assign_exceptions_length PUBLIC -Wno-array-bounds)
 	endif()
 
@@ -375,8 +389,9 @@ if (TEST_VECTOR)
 	build_test(defrag_vector defrag/defrag_vector.cpp)
 	add_test_generic(NAME defrag_vector TRACERS none pmemcheck memcheck)
 endif()
-
-if (TEST_STRING)
+################################################################################
+###################################### STRING ##################################
+if(TEST_STRING)
 	build_test(string_access string_access/string_access.cpp)
 	add_test_generic(NAME string_access TRACERS none memcheck pmemcheck)
 
@@ -401,7 +416,8 @@ if (TEST_STRING)
 	build_test(string_layout string_layout/string_layout.cpp)
 	add_test_generic(NAME string_layout TRACERS none)
 endif()
-
+################################################################################
+############################### CONCURRENT_HASHMAP #############################
 if(TEST_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_tx concurrent_hash_map_tx/concurrent_hash_map_tx.cpp)
 	add_test_generic(NAME concurrent_hash_map_tx TRACERS none memcheck pmemcheck)
@@ -507,7 +523,7 @@ if(TEST_CONCURRENT_HASHMAP)
 	build_test_ext(NAME concurrent_hash_map_insert_reopen_deprecated SRC_FILES concurrent_hash_map_insert_reopen/concurrent_hash_map_insert_reopen.cpp
 			BUILD_OPTIONS -DUSE_DEPRECATED_RUNTIME_INITIALIZE)
 	check_cxx_compiler_flag(-Wdeprecated-declarations deprecated_declarations)
-	if (deprecated_declarations)
+	if(deprecated_declarations)
 		target_compile_options(concurrent_hash_map_insert_reopen_deprecated PUBLIC -Wno-deprecated-declarations)
 	endif()
 	add_test_generic(NAME concurrent_hash_map_insert_reopen_deprecated TRACERS none)
@@ -537,6 +553,7 @@ if(TEST_CONCURRENT_HASHMAP)
 		message(WARNING "Skipping concurrent_hash_map_rehash_break test because GDB was not found")
 	endif()
 
+	# XXX: move this check to the top of the file, to potentially fail build earlier
 	if(NOT TESTS_TBB)
 		message(WARNING "Skipping concurrent_hash_map_tbb tests - disabled by cmake TESTS_TBB option")
 	elseif(NOT TBB_FOUND)
@@ -593,7 +610,8 @@ if(TEST_CONCURRENT_HASHMAP)
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
 endif()
-
+################################################################################
+################################# SEGMENT_VECTOR ###############################
 if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	build_test_ext(NAME segment_vector_array_expsize_temp_value SRC_FILES temp_value/temp_value.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_temp_value TRACERS none pmemcheck memcheck)
@@ -812,8 +830,9 @@ if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	build_test_ext(NAME segment_vector_vector_fixedsize_layout SRC_FILES vector_layout/vector_layout.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_layout TRACERS none)
 endif()
-
-if (TEST_ENUMERABLE_THREAD_SPECIFIC)
+################################################################################
+########################### ENUMERABLE_THREAD_SPECIFIC #########################
+if(TEST_ENUMERABLE_THREAD_SPECIFIC)
 	build_test(enumerable_thread_specific_access enumerable_thread_specific_access/enumerable_thread_specific_access.cpp)
 	add_test_generic(NAME enumerable_thread_specific_access CASE 0 TRACERS none memcheck pmemcheck drd helgrind
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
@@ -837,7 +856,8 @@ if (TEST_ENUMERABLE_THREAD_SPECIFIC)
 	add_test_generic(NAME enumerable_thread_specific_ctor CASE 0 TRACERS none memcheck pmemcheck
 			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
 endif()
-
+################################################################################
+################################## CONCURRENT_MAP ##############################
 if(TEST_CONCURRENT_MAP)
 	build_test(concurrent_map concurrent_map/concurrent_map.cpp)
 	# XXX: Add helgrind tracer for this test when we will fix false-positive with lock order
@@ -866,7 +886,7 @@ if(TEST_CONCURRENT_MAP)
 	add_test_generic(NAME concurrent_map_find_lower_lower_eq TRACERS none memcheck pmemcheck)
 
 	if(TESTS_CONCURRENT_GDB AND GDB_FOUND)
-		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 			build_test(concurrent_map_mt_gdb concurrent_map_mt_gdb/concurrent_map_mt_gdb.cpp)
 			add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 0)
 			add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 1)
@@ -913,8 +933,9 @@ if(TEST_CONCURRENT_MAP)
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
 endif()
-
-if (TEST_RADIX_TREE)
+################################################################################
+#################################### RADIX_TREE ################################
+if(TEST_RADIX_TREE)
 	build_test(radix_tx_abort radix/radix_tx_abort.cpp)
 	add_test_generic(NAME radix_tx_abort TRACERS none memcheck pmemcheck)
 
@@ -933,14 +954,9 @@ if (TEST_RADIX_TREE)
 	build_test_ext(NAME radix_ctor_and_assignment SRC_FILES map/map_ctor_and_assignment.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_ctor_and_assignment TRACERS none memcheck pmemcheck)
 
-	if (TESTS_LONG)
+	if(TESTS_LONG)
 		build_test(radix_large radix/radix_large.cpp)
 		add_test_generic(NAME radix_large TRACERS none)
 	endif()
 endif()
-
-add_subdirectory(external)
-
-if (TESTS_COMPATIBILITY)
-	add_subdirectory(compatibility)
-endif()
+################################################################################

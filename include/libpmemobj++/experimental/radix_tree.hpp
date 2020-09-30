@@ -2010,6 +2010,10 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 		return const_iterator(leaf, &root);
 	}
 
+	if (slot == &root) {
+		return const_iterator(nullptr, &root);
+	}
+
 	/* Since looked-for key is larger than *slot, the target node must be
 	 * within subtree of a right sibling of *slot. */
 	leaf = next_leaf<node::direction::Forward>(

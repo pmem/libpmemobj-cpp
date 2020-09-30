@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.10</span>
+   &#160;<span id="projectnumber">1.11-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -1995,7 +1995,7 @@ template&lt;class... Args&gt; </div>
 </div><div class="memdoc">
 
 <p>Inserts a new element into the container directly before pos. </p>
-<p>The element is constructed in-place. The arguments args... are forwarded to the constructor as std::forward&lt;Args&gt;(args).... If the new <a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> is greater than <a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a>, all iterators and references are invalidated. Otherwise, only the iterators and references before the insertion point remain valid. The past-the-end iterator is also invalidated. Note that standard allows args to be a self reference and internal emplace implementation handles this case by creating temporary element_type object. This object is being stored either on stack or on pmem, see <a class="el" href="structpmem_1_1detail_1_1temp__value.html" title="Template class for caching objects based on constructor&#39;s variadic template arguments and LIBPMEMOBJ_...">pmem::detail::temp_value</a> for details.</p>
+<p>The element is constructed in-place. The arguments args... are forwarded to the constructor as std::forward&lt;Args&gt;(args).... If the new <a class="el" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size()</a> is greater than <a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a>, all iterators and references are invalidated. Otherwise, only the iterators and references before the insertion point remain valid. The past-the-end iterator is also invalidated. Note that standard allows args to be a self reference and internal emplace implementation handles this case by creating temporary element_type object. This object is being stored either on stack or on pmem, see pmem::detail::temp_value for details.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>iterator before which the new element will be constructed. </td></tr>

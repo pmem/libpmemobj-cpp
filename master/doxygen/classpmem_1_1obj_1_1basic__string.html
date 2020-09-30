@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.10</span>
+   &#160;<span id="projectnumber">1.11-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -118,6 +118,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abb89253cf63f449a6c28800038c45624"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#abb89253cf63f449a6c28800038c45624">basic_string</a> (std::initializer_list&lt; CharT &gt; ilist)</td></tr>
 <tr class="memdesc:abb89253cf63f449a6c28800038c45624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the container with the contents of the initializer list init.  <a href="#abb89253cf63f449a6c28800038c45624">More...</a><br /></td></tr>
 <tr class="separator:abb89253cf63f449a6c28800038c45624"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="memTemplParams" colspan="2">template&lt;class T , typename Enable  = typename std::enable_if&lt;			std::is_convertible&lt;const T &amp;,					    pmem::obj::basic_string_view&lt;						    CharT, Traits&gt;&gt;::value &amp;&amp;			!std::is_convertible&lt;const T &amp;, const CharT *&gt;::value&gt;&gt; </td></tr>
+<tr class="memitem:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a5eaa536f14e9e8f4cadbd9fb9dca2be6">basic_string</a> (const T &amp;t)</td></tr>
+<tr class="memdesc:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicitly converts argument to a string view then initilizes the string with the content of string view.  <a href="#a5eaa536f14e9e8f4cadbd9fb9dca2be6">More...</a><br /></td></tr>
+<tr class="separator:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="memTemplParams" colspan="2">template&lt;class T , typename Enable  = typename std::enable_if&lt;std::is_convertible&lt;			  const T &amp;,			  pmem::obj::basic_string_view&lt;CharT, Traits&gt;&gt;::value&gt;&gt; </td></tr>
+<tr class="memitem:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a4b20a3482e95dad0dc13b0c9bfcd45d3">basic_string</a> (const T &amp;t, size_type pos, size_type n)</td></tr>
+<tr class="memdesc:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicitly converts argument to a string view then initilizes the string with the subrange [pos, pos + n) of string view.  <a href="#a4b20a3482e95dad0dc13b0c9bfcd45d3">More...</a><br /></td></tr>
+<tr class="separator:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad5d808b3b047b0f1cd656a787a7f00a"><td class="memItemLeft" align="right" valign="top"><a id="aad5d808b3b047b0f1cd656a787a7f00a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#aad5d808b3b047b0f1cd656a787a7f00a">~basic_string</a> ()</td></tr>
 <tr class="memdesc:aad5d808b3b047b0f1cd656a787a7f00a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
@@ -496,6 +504,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a9a41c749d04a48828b895bebac3a174b">operator basic_string_view&lt; CharT, Traits &gt;</a> () const</td></tr>
 <tr class="memdesc:a9a41c749d04a48828b895bebac3a174b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return new view from this string object. <br /></td></tr>
 <tr class="separator:a9a41c749d04a48828b895bebac3a174b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c1e1626dc1c3e0720017f9c05b5deaf"><td class="memTemplParams" colspan="2">template&lt;class T , typename Enable &gt; </td></tr>
+<tr class="memitem:a7c1e1626dc1c3e0720017f9c05b5deaf"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a7c1e1626dc1c3e0720017f9c05b5deaf">operator=</a> (const T &amp;t)</td></tr>
+<tr class="memdesc:a7c1e1626dc1c3e0720017f9c05b5deaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the contents with implicitly converted argument transactionally.  <a href="#a7c1e1626dc1c3e0720017f9c05b5deaf">More...</a><br /></td></tr>
+<tr class="separator:a7c1e1626dc1c3e0720017f9c05b5deaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8d78af7214c64616fec3071c1d4add0"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename Enable &gt; </td></tr>
 <tr class="memitem:af8d78af7214c64616fec3071c1d4add0"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; CharT, Traits &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#af8d78af7214c64616fec3071c1d4add0">assign</a> (InputIt first, InputIt last)</td></tr>
 <tr class="memdesc:af8d78af7214c64616fec3071c1d4add0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the contents with copies of elements in the range [first, last) transactionally.  <a href="#af8d78af7214c64616fec3071c1d4add0">More...</a><br /></td></tr>
@@ -538,7 +550,7 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:ab40709834aaff8b26cb56f363a692404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function which initializes memory based on provided parameters - forwards parameters to initialize function of either non_sso.data or sso.data.  <a href="#ab40709834aaff8b26cb56f363a692404">More...</a><br /></td></tr>
 <tr class="separator:ab40709834aaff8b26cb56f363a692404"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c7d33830c6bc6dce23bca2f16b815c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a6c7d33830c6bc6dce23bca2f16b815c8">allocate</a> (size_type <a class="el" href="classpmem_1_1obj_1_1basic__string.html#ae579458f6caf92ca83d48eeff93bf3fa">capacity</a>)</td></tr>
-<tr class="memdesc:a6c7d33830c6bc6dce23bca2f16b815c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate storage for container of capacity bytes.  <a href="#a6c7d33830c6bc6dce23bca2f16b815c8">More...</a><br /></td></tr>
+<tr class="memdesc:a6c7d33830c6bc6dce23bca2f16b815c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate storage for container of n elements.  <a href="#a6c7d33830c6bc6dce23bca2f16b815c8">More...</a><br /></td></tr>
 <tr class="separator:a6c7d33830c6bc6dce23bca2f16b815c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ffdc289e7c3d8d4f7a29b7218b73fac"><td class="memTemplParams" colspan="2">template&lt;typename InputIt , typename Enable  = typename std::enable_if&lt;			pmem::detail::is_input_iterator&lt;InputIt&gt;::value&gt;::type&gt; </td></tr>
 <tr class="memitem:a4ffdc289e7c3d8d4f7a29b7218b73fac"><td class="memTemplItemLeft" align="right" valign="top">pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a4ffdc289e7c3d8d4f7a29b7218b73fac">assign_sso_data</a> (InputIt first, InputIt last)</td></tr>
@@ -609,7 +621,7 @@ class pmem::obj::basic_string&lt; CharT, Traits &gt;</h3>
 <p>The implementation is still missing some methods.</p>
 <p>Simple example of pmem::obj::string usage </p><div class="fragment"><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem.html">pmem</a>;</div><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div><div class="line"></div><div class="line"><span class="comment">/* example object containing string */</span></div><div class="line"><span class="keyword">struct </span>example_object {</div><div class="line">    example_object(){};</div><div class="line">    example_object(<span class="keyword">const</span> <span class="keywordtype">char</span> *s) : string_inside(s){};</div><div class="line"></div><div class="line">    <span class="keywordtype">string</span> string_inside;</div><div class="line">};</div><div class="line"></div><div class="line"><span class="comment">/* pool root structure */</span></div><div class="line"><span class="keyword">struct </span>root {</div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;string&gt;</a> test_string = <span class="keyword">nullptr</span>;</div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;example_object&gt;</a> test_object = <span class="keyword">nullptr</span>;</div><div class="line">};</div><div class="line"></div><div class="line"><span class="comment">/* example with persistent_ptr&lt;string&gt; */</span></div><div class="line"><span class="keywordtype">void</span></div><div class="line">example_with_ptr(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;root&gt;</a> &amp;pop)</div><div class="line">{</div><div class="line">    <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (r-&gt;test_string == <span class="keyword">nullptr</span>) {</div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">            <span class="comment">/* note that allocation in transaction is made by</span></div><div class="line"><span class="comment">             * make_persistent */</span></div><div class="line">            r-&gt;test_string = make_persistent&lt;string&gt;(<span class="stringliteral">&quot;example1&quot;</span>);</div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    std::cout &lt;&lt; r-&gt;test_string-&gt;c_str() &lt;&lt; std::endl;</div><div class="line"></div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">        delete_persistent&lt;string&gt;(r-&gt;test_string);</div><div class="line">        r-&gt;test_string = <span class="keyword">nullptr</span>;</div><div class="line">    });</div><div class="line">}</div><div class="line"></div><div class="line"><span class="comment">/* example with object containing string */</span></div><div class="line"><span class="keywordtype">void</span></div><div class="line">example_with_object(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;root&gt;</a> &amp;pop)</div><div class="line">{</div><div class="line">    <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>();</div><div class="line"></div><div class="line">    <span class="keywordflow">if</span> (r-&gt;test_object == <span class="keyword">nullptr</span>) {</div><div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">            <span class="comment">/* WRONG:</span></div><div class="line"><span class="comment">             * r-&gt;test_object = make_persistent&lt;example_object&gt;();</span></div><div class="line"><span class="comment">             * r-&gt;test_object-&gt;string_inside = string(&quot;example2&quot;);</span></div><div class="line"><span class="comment">             */</span></div><div class="line"></div><div class="line">            <span class="comment">/* GOOD: */</span></div><div class="line">            r-&gt;test_object =</div><div class="line">                make_persistent&lt;example_object&gt;(<span class="stringliteral">&quot;example2&quot;</span>);</div><div class="line">            <span class="comment">/* OR:</span></div><div class="line"><span class="comment">             * r-&gt;test_object = make_persistent&lt;example_object&gt;();</span></div><div class="line"><span class="comment">             * r-&gt;test_object-&gt;string_inside.assign(&quot;example2&quot;);</span></div><div class="line"><span class="comment">             */</span></div><div class="line">        });</div><div class="line">    }</div><div class="line"></div><div class="line">    std::cout &lt;&lt; r-&gt;test_object-&gt;string_inside.c_str() &lt;&lt; std::endl;</div><div class="line"></div><div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div><div class="line">        delete_persistent&lt;example_object&gt;(r-&gt;test_object);</div><div class="line">        r-&gt;test_object = <span class="keyword">nullptr</span>;</div><div class="line">    });</div><div class="line">}</div></div><!-- fragment --></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a98702c0a0fd929a5c34ec888e0da286b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98702c0a0fd929a5c34ec888e0da286b">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[1/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a98702c0a0fd929a5c34ec888e0da286b">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[1/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -639,7 +651,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </div>
 </div>
 <a id="a633ff9c4aebd97eef56552235c35720b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a633ff9c4aebd97eef56552235c35720b">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[2/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a633ff9c4aebd97eef56552235c35720b">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[2/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -687,7 +699,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a02b8ceb5b6d4e848e80e5af399e47e1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02b8ceb5b6d4e848e80e5af399e47e1c">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[3/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a02b8ceb5b6d4e848e80e5af399e47e1c">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[3/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -743,7 +755,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="afd0ce3c5e8522d129ed84f10fe86ab53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd0ce3c5e8522d129ed84f10fe86ab53">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[4/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afd0ce3c5e8522d129ed84f10fe86ab53">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[4/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -799,7 +811,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a1b890a809d46656957f3d5f2d2c23627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b890a809d46656957f3d5f2d2c23627">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[5/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b890a809d46656957f3d5f2d2c23627">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[5/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -847,7 +859,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a42a213ad0bd7075cc6d749aa1d262b31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42a213ad0bd7075cc6d749aa1d262b31">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[6/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a42a213ad0bd7075cc6d749aa1d262b31">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[6/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -884,7 +896,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a62890a91cdc6045e1dcaef718b9a753a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62890a91cdc6045e1dcaef718b9a753a">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[7/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a62890a91cdc6045e1dcaef718b9a753a">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[7/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -935,7 +947,7 @@ template&lt;typename InputIt , typename Enable &gt; </div>
 </div>
 </div>
 <a id="a991e71d1734c547641f8a18df21d9404"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a991e71d1734c547641f8a18df21d9404">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[8/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a991e71d1734c547641f8a18df21d9404">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[8/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -973,7 +985,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="ad5c09e58393c80347d7c32aa5ac2d03c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5c09e58393c80347d7c32aa5ac2d03c">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[9/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5c09e58393c80347d7c32aa5ac2d03c">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[9/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1011,7 +1023,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a2c6999708905cf98e4b13701c48ed258"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c6999708905cf98e4b13701c48ed258">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[10/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c6999708905cf98e4b13701c48ed258">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[10/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1049,7 +1061,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="abb89253cf63f449a6c28800038c45624"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb89253cf63f449a6c28800038c45624">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[11/11]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abb89253cf63f449a6c28800038c45624">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[11/13]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1085,6 +1097,110 @@ template&lt;typename CharT, typename Traits &gt; </div>
 
 </div>
 </div>
+<a id="a5eaa536f14e9e8f4cadbd9fb9dca2be6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5eaa536f14e9e8f4cadbd9fb9dca2be6">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[12/13]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+<div class="memtemplate">
+template&lt;class T , typename Enable &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a> </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>t</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implicitly converts argument to a string view then initilizes the string with the content of string view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>object (convertible to std::basic_string_view) to initialize the string with.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pmem::pool_error</a></td><td>if an object is not in persistent memory. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating memory for underlying storage in transaction failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if constructor wasn't called in transaction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4b20a3482e95dad0dc13b0c9bfcd45d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b20a3482e95dad0dc13b0c9bfcd45d3">&#9670;&nbsp;</a></span>basic_string() <span class="overload">[13/13]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT , typename Traits &gt; </div>
+<div class="memtemplate">
+template&lt;class T , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::<a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a> </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>t</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_type&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Implicitly converts argument to a string view then initilizes the string with the subrange [pos, pos + n) of string view. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>object (convertible to std::basic_string_view) to initialize the string with. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position of the first character to include. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n</td><td>characters to include</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pmem::pool_error</a></td><td>if an object is not in persistent memory. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating memory for underlying storage in transaction failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">pmem::transaction_scope_error</a></td><td>if constructor wasn't called in transaction. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a6c7d33830c6bc6dce23bca2f16b815c8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6c7d33830c6bc6dce23bca2f16b815c8">&#9670;&nbsp;</a></span>allocate()</h2>
@@ -1101,7 +1217,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
           <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::allocate </td>
           <td>(</td>
           <td class="paramtype">size_type&#160;</td>
-          <td class="paramname"><em>capacity</em></td><td>)</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1112,14 +1228,14 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Allocate storage for container of capacity bytes. </p>
-<p>Based on capacity determine if sso or large string is used.</p>
+<p>Allocate storage for container of n elements. </p>
+<p>Based on n determine if sso or large string is used.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>data must be uninitialized. </dd>
 <dd>
 must be called in transaction scope.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">capacity</td><td>bytes to allocate. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n</td><td>elements to allocate. </td></tr>
   </table>
   </dd>
 </dl>
@@ -5547,7 +5663,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="af0c917521b02d15c7eb501b9294a6fb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0c917521b02d15c7eb501b9294a6fb4">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af0c917521b02d15c7eb501b9294a6fb4">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5582,7 +5698,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </div>
 </div>
 <a id="a8b77090055e1f70c22ee18fd5f3a1ac9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b77090055e1f70c22ee18fd5f3a1ac9">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b77090055e1f70c22ee18fd5f3a1ac9">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5617,7 +5733,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a4ce1668e206e3eb7a5819316d71c9b4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ce1668e206e3eb7a5819316d71c9b4d">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ce1668e206e3eb7a5819316d71c9b4d">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5652,7 +5768,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="ad705cebb0de86554996918ee896f89b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad705cebb0de86554996918ee896f89b5">&#9670;&nbsp;</a></span>operator=() <span class="overload">[4/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad705cebb0de86554996918ee896f89b5">&#9670;&nbsp;</a></span>operator=() <span class="overload">[4/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5686,7 +5802,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a5ec03d12d56b9799796ea78b98957eff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ec03d12d56b9799796ea78b98957eff">&#9670;&nbsp;</a></span>operator=() <span class="overload">[5/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ec03d12d56b9799796ea78b98957eff">&#9670;&nbsp;</a></span>operator=() <span class="overload">[5/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5720,7 +5836,7 @@ template&lt;typename CharT, typename Traits &gt; </div>
 </div>
 </div>
 <a id="a0e4b9db77e5e6fa23f9280971b3cc368"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e4b9db77e5e6fa23f9280971b3cc368">&#9670;&nbsp;</a></span>operator=() <span class="overload">[6/6]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e4b9db77e5e6fa23f9280971b3cc368">&#9670;&nbsp;</a></span>operator=() <span class="overload">[6/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -5741,6 +5857,42 @@ template&lt;typename CharT, typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ilist</td><td>initializer_list of characters.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating memory for underlying storage in transaction failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7c1e1626dc1c3e0720017f9c05b5deaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c1e1626dc1c3e0720017f9c05b5deaf">&#9670;&nbsp;</a></span>operator=() <span class="overload">[7/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;class T , typename Enable &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt;CharT, Traits&gt;&amp; <a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a>&lt; CharT, Traits &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>t</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace the contents with implicitly converted argument transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>object (convertible to <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html" title="Our partial std::string_view implementation.">basic_string_view</a>).</td></tr>
   </table>
   </dd>
 </dl>

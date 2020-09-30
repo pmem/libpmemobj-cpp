@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.10</span>
+   &#160;<span id="projectnumber">1.11-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -198,6 +198,20 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac9f895b664a9115a2bf252fe5b4f1fbb"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac9f895b664a9115a2bf252fe5b4f1fbb">lower_bound</a> (const K &amp;x) const</td></tr>
 <tr class="memdesc:ac9f895b664a9115a2bf252fe5b4f1fbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that compares not less (i.e.  <a href="#ac9f895b664a9115a2bf252fe5b4f1fbb">More...</a><br /></td></tr>
 <tr class="separator:ac9f895b664a9115a2bf252fe5b4f1fbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28d3c62930f64f3d311c40f70170ce12"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a28d3c62930f64f3d311c40f70170ce12">find_higher_eq</a> (const key_type &amp;key)</td></tr>
+<tr class="memdesc:a28d3c62930f64f3d311c40f70170ce12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#a28d3c62930f64f3d311c40f70170ce12">More...</a><br /></td></tr>
+<tr class="separator:a28d3c62930f64f3d311c40f70170ce12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75eb9c3ba2a4f68b568a1cdcd043316b"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a75eb9c3ba2a4f68b568a1cdcd043316b">find_higher_eq</a> (const key_type &amp;key) const</td></tr>
+<tr class="memdesc:a75eb9c3ba2a4f68b568a1cdcd043316b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#a75eb9c3ba2a4f68b568a1cdcd043316b">More...</a><br /></td></tr>
+<tr class="separator:a75eb9c3ba2a4f68b568a1cdcd043316b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e352d3444437b44bc4066da95c456b8"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:a0e352d3444437b44bc4066da95c456b8"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a0e352d3444437b44bc4066da95c456b8">find_higher_eq</a> (const K &amp;x)</td></tr>
+<tr class="memdesc:a0e352d3444437b44bc4066da95c456b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that compares not less (i.e.  <a href="#a0e352d3444437b44bc4066da95c456b8">More...</a><br /></td></tr>
+<tr class="separator:a0e352d3444437b44bc4066da95c456b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5a979407e796ea89af00c4988da0670"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:ab5a979407e796ea89af00c4988da0670"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ab5a979407e796ea89af00c4988da0670">find_higher_eq</a> (const K &amp;x) const</td></tr>
+<tr class="memdesc:ab5a979407e796ea89af00c4988da0670"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that compares not less (i.e.  <a href="#ab5a979407e796ea89af00c4988da0670">More...</a><br /></td></tr>
+<tr class="separator:ab5a979407e796ea89af00c4988da0670"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3da476e8cc35fc497d70a60a19e594f3"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a3da476e8cc35fc497d70a60a19e594f3">upper_bound</a> (const key_type &amp;key)</td></tr>
 <tr class="memdesc:a3da476e8cc35fc497d70a60a19e594f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#a3da476e8cc35fc497d70a60a19e594f3">More...</a><br /></td></tr>
 <tr class="separator:a3da476e8cc35fc497d70a60a19e594f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,6 +226,48 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad5ac21642d5dbdff2764d243038f7b2e"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ad5ac21642d5dbdff2764d243038f7b2e">upper_bound</a> (const K &amp;x) const</td></tr>
 <tr class="memdesc:ad5ac21642d5dbdff2764d243038f7b2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that compares greater to the value x.  <a href="#ad5ac21642d5dbdff2764d243038f7b2e">More...</a><br /></td></tr>
 <tr class="separator:ad5ac21642d5dbdff2764d243038f7b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ac66256e6966266b579d4937bc0b27d"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a1ac66256e6966266b579d4937bc0b27d">find_higher</a> (const key_type &amp;key)</td></tr>
+<tr class="memdesc:a1ac66256e6966266b579d4937bc0b27d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#a1ac66256e6966266b579d4937bc0b27d">More...</a><br /></td></tr>
+<tr class="separator:a1ac66256e6966266b579d4937bc0b27d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7825f2162c980e10d007e7e1f6b451f5"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a7825f2162c980e10d007e7e1f6b451f5">find_higher</a> (const key_type &amp;key) const</td></tr>
+<tr class="memdesc:a7825f2162c980e10d007e7e1f6b451f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#a7825f2162c980e10d007e7e1f6b451f5">More...</a><br /></td></tr>
+<tr class="separator:a7825f2162c980e10d007e7e1f6b451f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae77eb7f4dd3ba3d249db1c67c6d24001"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:ae77eb7f4dd3ba3d249db1c67c6d24001"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ae77eb7f4dd3ba3d249db1c67c6d24001">find_higher</a> (const K &amp;x)</td></tr>
+<tr class="memdesc:ae77eb7f4dd3ba3d249db1c67c6d24001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that compares greater to the value x.  <a href="#ae77eb7f4dd3ba3d249db1c67c6d24001">More...</a><br /></td></tr>
+<tr class="separator:ae77eb7f4dd3ba3d249db1c67c6d24001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade8a4abb1d8e337f920986479cbb93b8"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:ade8a4abb1d8e337f920986479cbb93b8"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ade8a4abb1d8e337f920986479cbb93b8">find_higher</a> (const K &amp;x) const</td></tr>
+<tr class="memdesc:ade8a4abb1d8e337f920986479cbb93b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that compares greater to the value x.  <a href="#ade8a4abb1d8e337f920986479cbb93b8">More...</a><br /></td></tr>
+<tr class="separator:ade8a4abb1d8e337f920986479cbb93b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62c8cebb7f2cf98632773acc937590f8"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a62c8cebb7f2cf98632773acc937590f8">find_lower</a> (const key_type &amp;key)</td></tr>
+<tr class="memdesc:a62c8cebb7f2cf98632773acc937590f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the biggest element that is less than key.  <a href="#a62c8cebb7f2cf98632773acc937590f8">More...</a><br /></td></tr>
+<tr class="separator:a62c8cebb7f2cf98632773acc937590f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f5aefaf56ac8830138a6d45e541dd3d"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a6f5aefaf56ac8830138a6d45e541dd3d">find_lower</a> (const key_type &amp;key) const</td></tr>
+<tr class="memdesc:a6f5aefaf56ac8830138a6d45e541dd3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a const iterator pointing to the biggest element that is less than key.  <a href="#a6f5aefaf56ac8830138a6d45e541dd3d">More...</a><br /></td></tr>
+<tr class="separator:a6f5aefaf56ac8830138a6d45e541dd3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae51b96b86afbd7ce91299e3718d740c5"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:ae51b96b86afbd7ce91299e3718d740c5"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ae51b96b86afbd7ce91299e3718d740c5">find_lower</a> (const K &amp;key)</td></tr>
+<tr class="memdesc:ae51b96b86afbd7ce91299e3718d740c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the biggest element that is less than key.  <a href="#ae51b96b86afbd7ce91299e3718d740c5">More...</a><br /></td></tr>
+<tr class="separator:ae51b96b86afbd7ce91299e3718d740c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3101c701a71618a451300f82ac552ff6"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:a3101c701a71618a451300f82ac552ff6"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a3101c701a71618a451300f82ac552ff6">find_lower</a> (const K &amp;key) const</td></tr>
+<tr class="memdesc:a3101c701a71618a451300f82ac552ff6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a const iterator pointing to the biggest element that is less than key.  <a href="#a3101c701a71618a451300f82ac552ff6">More...</a><br /></td></tr>
+<tr class="separator:a3101c701a71618a451300f82ac552ff6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf72a28d5cc02ad597728a5131f7d1ce"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#abf72a28d5cc02ad597728a5131f7d1ce">find_lower_eq</a> (const key_type &amp;key)</td></tr>
+<tr class="memdesc:abf72a28d5cc02ad597728a5131f7d1ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the biggest element that is less than or equal to key.  <a href="#abf72a28d5cc02ad597728a5131f7d1ce">More...</a><br /></td></tr>
+<tr class="separator:abf72a28d5cc02ad597728a5131f7d1ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab546e0e998b1d675a762ab5334294a2b"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ab546e0e998b1d675a762ab5334294a2b">find_lower_eq</a> (const key_type &amp;key) const</td></tr>
+<tr class="memdesc:ab546e0e998b1d675a762ab5334294a2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a const iterator pointing to the biggest element that is less than or equal to key.  <a href="#ab546e0e998b1d675a762ab5334294a2b">More...</a><br /></td></tr>
+<tr class="separator:ab546e0e998b1d675a762ab5334294a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b03b945d278504159ed54f641a9364f"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:a5b03b945d278504159ed54f641a9364f"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a5b03b945d278504159ed54f641a9364f">find_lower_eq</a> (const K &amp;key)</td></tr>
+<tr class="memdesc:a5b03b945d278504159ed54f641a9364f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the biggest element that is less than or equal to key.  <a href="#a5b03b945d278504159ed54f641a9364f">More...</a><br /></td></tr>
+<tr class="separator:a5b03b945d278504159ed54f641a9364f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e8ed3c1521c2b11375e0fcf3f9d5fdd"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:a1e8ed3c1521c2b11375e0fcf3f9d5fdd"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a1e8ed3c1521c2b11375e0fcf3f9d5fdd">find_lower_eq</a> (const K &amp;key) const</td></tr>
+<tr class="memdesc:a1e8ed3c1521c2b11375e0fcf3f9d5fdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a const iterator pointing to the biggest element that is less than or equal to key.  <a href="#a1e8ed3c1521c2b11375e0fcf3f9d5fdd">More...</a><br /></td></tr>
+<tr class="separator:a1e8ed3c1521c2b11375e0fcf3f9d5fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91107b1c17399ee3db02b08d3e272523"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a91107b1c17399ee3db02b08d3e272523">find</a> (const key_type &amp;key)</td></tr>
 <tr class="memdesc:a91107b1c17399ee3db02b08d3e272523"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#a91107b1c17399ee3db02b08d3e272523">More...</a><br /></td></tr>
 <tr class="separator:a91107b1c17399ee3db02b08d3e272523"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -340,6 +396,10 @@ template&lt;typename K , typename PrepareNode &gt; </td></tr>
 <tr class="memitem:a08ea96e8b9d72d140c64bd1aaf1c5531"><td class="memTemplItemLeft" align="right" valign="top">iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a08ea96e8b9d72d140c64bd1aaf1c5531">internal_get_bound</a> (const K &amp;key, const comparator &amp;cmp)</td></tr>
 <tr class="memdesc:a08ea96e8b9d72d140c64bd1aaf1c5531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element from the list for which cmp(element, key) is false.  <a href="#a08ea96e8b9d72d140c64bd1aaf1c5531">More...</a><br /></td></tr>
 <tr class="separator:a08ea96e8b9d72d140c64bd1aaf1c5531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a055313d527028329efa5beb7889c0d52"><td class="memTemplParams" colspan="2">template&lt;typename K , typename comparator &gt; </td></tr>
+<tr class="memitem:a055313d527028329efa5beb7889c0d52"><td class="memTemplItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a055313d527028329efa5beb7889c0d52">internal_get_biggest_less_than</a> (const K &amp;key, const comparator &amp;cmp) const</td></tr>
+<tr class="memdesc:a055313d527028329efa5beb7889c0d52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the last element from the list for which cmp(element, key) is true.  <a href="#a055313d527028329efa5beb7889c0d52">More...</a><br /></td></tr>
+<tr class="separator:a055313d527028329efa5beb7889c0d52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bdca0808a03d59470e309c3d42319ac"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a>, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">persistent_node_ptr</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a9bdca0808a03d59470e309c3d42319ac">internal_extract</a> (const_iterator it)</td></tr>
 <tr class="separator:a9bdca0808a03d59470e309c3d42319ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacfd012db9c1bbfd69cb04cc81d77564"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">obj::pool_base</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#aacfd012db9c1bbfd69cb04cc81d77564">get_pool_base</a> () const</td></tr>
@@ -1858,6 +1918,318 @@ template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_tran
 
 </div>
 </div>
+<a id="a1ac66256e6966266b579d4937bc0b27d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ac66256e6966266b579d4937bc0b27d">&#9670;&nbsp;</a></span>find_higher() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that is greater than key. </p>
+<p>Equivalent of upper_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a7825f2162c980e10d007e7e1f6b451f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7825f2162c980e10d007e7e1f6b451f5">&#9670;&nbsp;</a></span>find_higher() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that is greater than key. </p>
+<p>Equivalent of upper_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ae77eb7f4dd3ba3d249db1c67c6d24001"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae77eb7f4dd3ba3d249db1c67c6d24001">&#9670;&nbsp;</a></span>find_higher() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>x</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that compares greater to the value x. </p>
+<p>This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key. Equivalent of upper_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ade8a4abb1d8e337f920986479cbb93b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade8a4abb1d8e337f920986479cbb93b8">&#9670;&nbsp;</a></span>find_higher() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>x</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that compares greater to the value x. </p>
+<p>This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key. Equivalent of upper_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a28d3c62930f64f3d311c40f70170ce12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28d3c62930f64f3d311c40f70170ce12">&#9670;&nbsp;</a></span>find_higher_eq() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher_eq </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that is not less than (i.e. </p>
+<p>greater or equal to) key. Equivalent of lower_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a75eb9c3ba2a4f68b568a1cdcd043316b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75eb9c3ba2a4f68b568a1cdcd043316b">&#9670;&nbsp;</a></span>find_higher_eq() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher_eq </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that is not less than (i.e. </p>
+<p>greater or equal to) key. Equivalent of lower_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a0e352d3444437b44bc4066da95c456b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e352d3444437b44bc4066da95c456b8">&#9670;&nbsp;</a></span>find_higher_eq() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher_eq </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>x</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that compares not less (i.e. </p>
+<p>greater or equal) to the value x. This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key. Equivalent of lower_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ab5a979407e796ea89af00c4988da0670"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5a979407e796ea89af00c4988da0670">&#9670;&nbsp;</a></span>find_higher_eq() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_higher_eq </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>x</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that compares not less (i.e. </p>
+<p>greater or equal) to the value x. This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key. Equivalent of lower_bound.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
 <a id="afc68cda6170426f66ed2aaa67745f50b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afc68cda6170426f66ed2aaa67745f50b">&#9670;&nbsp;</a></span>find_insert_pos()</h2>
 
@@ -1914,6 +2286,314 @@ template&lt;typename K &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a62c8cebb7f2cf98632773acc937590f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62c8cebb7f2cf98632773acc937590f8">&#9670;&nbsp;</a></span>find_lower() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the biggest element that is less than key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the biggest element that is less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a6f5aefaf56ac8830138a6d45e541dd3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f5aefaf56ac8830138a6d45e541dd3d">&#9670;&nbsp;</a></span>find_lower() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a const iterator pointing to the biggest element that is less than key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the biggest element that is less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ae51b96b86afbd7ce91299e3718d740c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae51b96b86afbd7ce91299e3718d740c5">&#9670;&nbsp;</a></span>find_lower() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the biggest element that is less than key. </p>
+<p>This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the biggest element that is less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a3101c701a71618a451300f82ac552ff6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3101c701a71618a451300f82ac552ff6">&#9670;&nbsp;</a></span>find_lower() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a const iterator pointing to the biggest element that is less than key. </p>
+<p>This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the biggest element that is less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="abf72a28d5cc02ad597728a5131f7d1ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf72a28d5cc02ad597728a5131f7d1ce">&#9670;&nbsp;</a></span>find_lower_eq() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower_eq </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the biggest element that is less than or equal to key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the biggest element that is less than or equal to key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ab546e0e998b1d675a762ab5334294a2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab546e0e998b1d675a762ab5334294a2b">&#9670;&nbsp;</a></span>find_lower_eq() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower_eq </td>
+          <td>(</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a const iterator pointing to the biggest element that is less than or equal to key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the biggest element that is less than or equal to key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a5b03b945d278504159ed54f641a9364f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b03b945d278504159ed54f641a9364f">&#9670;&nbsp;</a></span>find_lower_eq() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower_eq </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the biggest element that is less than or equal to key. </p>
+<p>This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the biggest element that is less than or equal to key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a1e8ed3c1521c2b11375e0fcf3f9d5fdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e8ed3c1521c2b11375e0fcf3f9d5fdd">&#9670;&nbsp;</a></span>find_lower_eq() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename  = typename std::enable_if&lt;			  has_is_transparent&lt;key_compare&gt;::value, K&gt;::type&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::find_lower_eq </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a const iterator pointing to the biggest element that is less than or equal to key. </p>
+<p>This overload only participates in overload resolution if the qualified-id Compare::is_transparent is valid and denotes a type. They allow calling this function without constructing an instance of Key.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>alternative value that can be compared to Key.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the biggest element that is less than or equal to key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>
@@ -2446,6 +3126,56 @@ template&lt;typename K , typename pointer_type , typename comparator &gt; </div>
 </li>
 <li>key </li>
 </ul>
+
+</div>
+</div>
+<a id="a055313d527028329efa5beb7889c0d52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a055313d527028329efa5beb7889c0d52">&#9670;&nbsp;</a></span>internal_get_biggest_less_than()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Traits&gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename comparator &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const_iterator <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html">pmem::detail::concurrent_skip_list</a>&lt; Traits &gt;::internal_get_biggest_less_than </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const comparator &amp;&#160;</td>
+          <td class="paramname"><em>cmp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the last element from the list for which cmp(element, key) is true. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">key</td><td>key value to compare the elements to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cmp</td><td>comparator functor used for the search.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element for which cmp(element, key) is false. If no such element is found, a past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>

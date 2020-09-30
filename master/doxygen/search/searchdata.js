@@ -9,8 +9,7 @@ var indexSectionsWithContent =
   6: "bdefinprsv",
   7: "s",
   8: "os",
-  9: "l",
-  10: "l"
+  9: "l"
 };
 
 var indexSectionNames =
@@ -24,8 +23,7 @@ var indexSectionNames =
   6: "typedefs",
   7: "enums",
   8: "related",
-  9: "defines",
-  10: "pages"
+  9: "pages"
 };
 
 var indexSectionLabels =
@@ -39,7 +37,6 @@ var indexSectionLabels =
   6: "Typedefs",
   7: "Enumerations",
   8: "Friends",
-  9: "Macros",
-  10: "Pages"
+  9: "Pages"
 };
 

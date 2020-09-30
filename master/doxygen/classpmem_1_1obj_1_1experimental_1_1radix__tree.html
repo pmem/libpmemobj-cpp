@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.10</span>
+   &#160;<span id="projectnumber">1.11-rc2</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -119,6 +119,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7170673d1cafb1bb8cd2023294b9b848"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a7170673d1cafb1bb8cd2023294b9b848">operator=</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a> &amp;&amp;m)</td></tr>
 <tr class="memdesc:a7170673d1cafb1bb8cd2023294b9b848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <a href="#a7170673d1cafb1bb8cd2023294b9b848">More...</a><br /></td></tr>
 <tr class="separator:a7170673d1cafb1bb8cd2023294b9b848"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08f3b0590be38387ccda40c197a7a623"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a08f3b0590be38387ccda40c197a7a623">operator=</a> (std::initializer_list&lt; value_type &gt; ilist)</td></tr>
+<tr class="memdesc:a08f3b0590be38387ccda40c197a7a623"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces the contents with those identified by initializer list ilist transactionally.  <a href="#a08f3b0590be38387ccda40c197a7a623">More...</a><br /></td></tr>
+<tr class="separator:a08f3b0590be38387ccda40c197a7a623"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab26397f14dc5bc26f5a287ae695db236"><td class="memItemLeft" align="right" valign="top"><a id="ab26397f14dc5bc26f5a287ae695db236"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ab26397f14dc5bc26f5a287ae695db236">~radix_tree</a> ()</td></tr>
 <tr class="memdesc:ab26397f14dc5bc26f5a287ae695db236"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
@@ -146,49 +149,61 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acc7264d3d4ad274fa781e903b6f3d3d7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#acc7264d3d4ad274fa781e903b6f3d3d7">erase</a> (<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a> first, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a> last)</td></tr>
 <tr class="memdesc:acc7264d3d4ad274fa781e903b6f3d3d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the elements in the range [first; last), which must be a valid range in *this.  <a href="#acc7264d3d4ad274fa781e903b6f3d3d7">More...</a><br /></td></tr>
 <tr class="separator:acc7264d3d4ad274fa781e903b6f3d3d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dc10c2b8d836480333c8dd492f8e8fe"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a8dc10c2b8d836480333c8dd492f8e8fe">erase</a> (const_key_reference k)</td></tr>
-<tr class="memdesc:a8dc10c2b8d836480333c8dd492f8e8fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the element (if one exists) with the key equivalent to key.  <a href="#a8dc10c2b8d836480333c8dd492f8e8fe">More...</a><br /></td></tr>
-<tr class="separator:a8dc10c2b8d836480333c8dd492f8e8fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1de5fe22140a6c880577427faf904fdd"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:a9434590ce9311b2b3399d4693ad682eb"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a9434590ce9311b2b3399d4693ad682eb">erase</a> (const key_type &amp;k)</td></tr>
+<tr class="memdesc:a9434590ce9311b2b3399d4693ad682eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the element (if one exists) with the key equivalent to key.  <a href="#a9434590ce9311b2b3399d4693ad682eb">More...</a><br /></td></tr>
+<tr class="separator:a9434590ce9311b2b3399d4693ad682eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1de5fe22140a6c880577427faf904fdd"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			  detail::has_is_transparent&lt;BytesView&gt;::value &amp;&amp;				  !std::is_same&lt;K, iterator&gt;::value &amp;&amp;				  !std::is_same&lt;K, const_iterator&gt;::value,			  K&gt;::type&gt; </td></tr>
 <tr class="memitem:a1de5fe22140a6c880577427faf904fdd"><td class="memTemplItemLeft" align="right" valign="top">size_type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a1de5fe22140a6c880577427faf904fdd">erase</a> (const K &amp;k)</td></tr>
 <tr class="memdesc:a1de5fe22140a6c880577427faf904fdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the element (if one exists) with the key equivalent to key.  <a href="#a1de5fe22140a6c880577427faf904fdd">More...</a><br /></td></tr>
 <tr class="separator:a1de5fe22140a6c880577427faf904fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32845b930099664a1480674ec33c5c6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a32845b930099664a1480674ec33c5c6e">clear</a> ()</td></tr>
 <tr class="memdesc:a32845b930099664a1480674ec33c5c6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases all elements from the container transactionally.  <a href="#a32845b930099664a1480674ec33c5c6e">More...</a><br /></td></tr>
 <tr class="separator:a32845b930099664a1480674ec33c5c6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b3fd4476fff6e048fe396a775efb3b2"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a8b3fd4476fff6e048fe396a775efb3b2">count</a> (const_key_reference k) const</td></tr>
-<tr class="memdesc:a8b3fd4476fff6e048fe396a775efb3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements with key that compares equivalent to the specified argument.  <a href="#a8b3fd4476fff6e048fe396a775efb3b2">More...</a><br /></td></tr>
-<tr class="separator:a8b3fd4476fff6e048fe396a775efb3b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8d4100d2c377e1fb8669644c01772a0"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ae8d4100d2c377e1fb8669644c01772a0">count</a> (const key_type &amp;k) const</td></tr>
+<tr class="memdesc:ae8d4100d2c377e1fb8669644c01772a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements with key that compares equivalent to the specified argument.  <a href="#ae8d4100d2c377e1fb8669644c01772a0">More...</a><br /></td></tr>
+<tr class="separator:ae8d4100d2c377e1fb8669644c01772a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95c9a678b42e590f19a84f594b934f8f"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
 <tr class="memitem:a95c9a678b42e590f19a84f594b934f8f"><td class="memTemplItemLeft" align="right" valign="top">size_type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a95c9a678b42e590f19a84f594b934f8f">count</a> (const K &amp;k) const</td></tr>
 <tr class="memdesc:a95c9a678b42e590f19a84f594b934f8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements with key that compares equivalent to the specified argument.  <a href="#a95c9a678b42e590f19a84f594b934f8f">More...</a><br /></td></tr>
 <tr class="separator:a95c9a678b42e590f19a84f594b934f8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed927437c43395fa58497acc12f7bc5f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#aed927437c43395fa58497acc12f7bc5f">find</a> (const_key_reference k)</td></tr>
-<tr class="memdesc:aed927437c43395fa58497acc12f7bc5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#aed927437c43395fa58497acc12f7bc5f">More...</a><br /></td></tr>
-<tr class="separator:aed927437c43395fa58497acc12f7bc5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb1d1daf7dc8fba5dab542d395015464"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#adb1d1daf7dc8fba5dab542d395015464">find</a> (const_key_reference k) const</td></tr>
-<tr class="memdesc:adb1d1daf7dc8fba5dab542d395015464"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#adb1d1daf7dc8fba5dab542d395015464">More...</a><br /></td></tr>
-<tr class="separator:adb1d1daf7dc8fba5dab542d395015464"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2ebb3a335bda5157fd0a99938239905"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac2ebb3a335bda5157fd0a99938239905">find</a> (const key_type &amp;k)</td></tr>
+<tr class="memdesc:ac2ebb3a335bda5157fd0a99938239905"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#ac2ebb3a335bda5157fd0a99938239905">More...</a><br /></td></tr>
+<tr class="separator:ac2ebb3a335bda5157fd0a99938239905"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a405ec65a02b7eb2cd7bc836ab1a0f34f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a405ec65a02b7eb2cd7bc836ab1a0f34f">find</a> (const key_type &amp;k) const</td></tr>
+<tr class="memdesc:a405ec65a02b7eb2cd7bc836ab1a0f34f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#a405ec65a02b7eb2cd7bc836ab1a0f34f">More...</a><br /></td></tr>
+<tr class="separator:a405ec65a02b7eb2cd7bc836ab1a0f34f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac27d8ec5c5bfc4cd03938e02864ad05d"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:ac27d8ec5c5bfc4cd03938e02864ad05d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac27d8ec5c5bfc4cd03938e02864ad05d">find</a> (const K &amp;k)</td></tr>
+<tr class="memdesc:ac27d8ec5c5bfc4cd03938e02864ad05d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#ac27d8ec5c5bfc4cd03938e02864ad05d">More...</a><br /></td></tr>
+<tr class="separator:ac27d8ec5c5bfc4cd03938e02864ad05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb92b9121b0fdfcc9812eed38ea49d5b"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
 <tr class="memitem:aeb92b9121b0fdfcc9812eed38ea49d5b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#aeb92b9121b0fdfcc9812eed38ea49d5b">find</a> (const K &amp;k) const</td></tr>
 <tr class="memdesc:aeb92b9121b0fdfcc9812eed38ea49d5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds an element with key equivalent to key.  <a href="#aeb92b9121b0fdfcc9812eed38ea49d5b">More...</a><br /></td></tr>
 <tr class="separator:aeb92b9121b0fdfcc9812eed38ea49d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66e87896e0a47ba2d34582595c613ea5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a66e87896e0a47ba2d34582595c613ea5">lower_bound</a> (const_key_reference k)</td></tr>
-<tr class="memdesc:a66e87896e0a47ba2d34582595c613ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#a66e87896e0a47ba2d34582595c613ea5">More...</a><br /></td></tr>
-<tr class="separator:a66e87896e0a47ba2d34582595c613ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3467de85d2cef6a37012de2e538c4cb5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a3467de85d2cef6a37012de2e538c4cb5">lower_bound</a> (const_key_reference k) const</td></tr>
-<tr class="memdesc:a3467de85d2cef6a37012de2e538c4cb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#a3467de85d2cef6a37012de2e538c4cb5">More...</a><br /></td></tr>
-<tr class="separator:a3467de85d2cef6a37012de2e538c4cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac211fc9a4f541438333de6e464bcfe3b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac211fc9a4f541438333de6e464bcfe3b">lower_bound</a> (const key_type &amp;k)</td></tr>
+<tr class="memdesc:ac211fc9a4f541438333de6e464bcfe3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#ac211fc9a4f541438333de6e464bcfe3b">More...</a><br /></td></tr>
+<tr class="separator:ac211fc9a4f541438333de6e464bcfe3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab28c8b7280f57e5e7ac4e661ba2d6d79"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ab28c8b7280f57e5e7ac4e661ba2d6d79">lower_bound</a> (const key_type &amp;k) const</td></tr>
+<tr class="memdesc:ab28c8b7280f57e5e7ac4e661ba2d6d79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#ab28c8b7280f57e5e7ac4e661ba2d6d79">More...</a><br /></td></tr>
+<tr class="separator:ab28c8b7280f57e5e7ac4e661ba2d6d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a244df991c0a54c47cb871558aed6c64b"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:a244df991c0a54c47cb871558aed6c64b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a244df991c0a54c47cb871558aed6c64b">lower_bound</a> (const K &amp;k)</td></tr>
+<tr class="memdesc:a244df991c0a54c47cb871558aed6c64b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#a244df991c0a54c47cb871558aed6c64b">More...</a><br /></td></tr>
+<tr class="separator:a244df991c0a54c47cb871558aed6c64b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55d6c114ce6ca6a0036bcf94a68ec6c5"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
 <tr class="memitem:a55d6c114ce6ca6a0036bcf94a68ec6c5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a55d6c114ce6ca6a0036bcf94a68ec6c5">lower_bound</a> (const K &amp;k) const</td></tr>
 <tr class="memdesc:a55d6c114ce6ca6a0036bcf94a68ec6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is not less than (i.e.  <a href="#a55d6c114ce6ca6a0036bcf94a68ec6c5">More...</a><br /></td></tr>
 <tr class="separator:a55d6c114ce6ca6a0036bcf94a68ec6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae203ab9e2b96aa511b395b4f9ec211ec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ae203ab9e2b96aa511b395b4f9ec211ec">upper_bound</a> (const_key_reference k)</td></tr>
-<tr class="memdesc:ae203ab9e2b96aa511b395b4f9ec211ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#ae203ab9e2b96aa511b395b4f9ec211ec">More...</a><br /></td></tr>
-<tr class="separator:ae203ab9e2b96aa511b395b4f9ec211ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99290d3d52133f734c009d31512422d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a99290d3d52133f734c009d31512422d3">upper_bound</a> (const_key_reference k) const</td></tr>
-<tr class="memdesc:a99290d3d52133f734c009d31512422d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#a99290d3d52133f734c009d31512422d3">More...</a><br /></td></tr>
-<tr class="separator:a99290d3d52133f734c009d31512422d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70ecf681056632b25ed72c16e8cf27ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a70ecf681056632b25ed72c16e8cf27ad">upper_bound</a> (const key_type &amp;k)</td></tr>
+<tr class="memdesc:a70ecf681056632b25ed72c16e8cf27ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#a70ecf681056632b25ed72c16e8cf27ad">More...</a><br /></td></tr>
+<tr class="separator:a70ecf681056632b25ed72c16e8cf27ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b0c2f159bfddf5a1c5457dcff8a8c16"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4b0c2f159bfddf5a1c5457dcff8a8c16">upper_bound</a> (const key_type &amp;k) const</td></tr>
+<tr class="memdesc:a4b0c2f159bfddf5a1c5457dcff8a8c16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#a4b0c2f159bfddf5a1c5457dcff8a8c16">More...</a><br /></td></tr>
+<tr class="separator:a4b0c2f159bfddf5a1c5457dcff8a8c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acda60149a731dc0eaf1b7ebd5a75136c"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
+<tr class="memitem:acda60149a731dc0eaf1b7ebd5a75136c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#acda60149a731dc0eaf1b7ebd5a75136c">upper_bound</a> (const K &amp;k)</td></tr>
+<tr class="memdesc:acda60149a731dc0eaf1b7ebd5a75136c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#acda60149a731dc0eaf1b7ebd5a75136c">More...</a><br /></td></tr>
+<tr class="separator:acda60149a731dc0eaf1b7ebd5a75136c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb1425becb01b06c5d246125422603a1"><td class="memTemplParams" colspan="2">template&lt;typename K , typename  = typename std::enable_if&lt;			detail::has_is_transparent&lt;BytesView&gt;::value, K&gt;::type&gt; </td></tr>
 <tr class="memitem:aeb1425becb01b06c5d246125422603a1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#aeb1425becb01b06c5d246125422603a1">upper_bound</a> (const K &amp;k) const</td></tr>
 <tr class="memdesc:aeb1425becb01b06c5d246125422603a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator pointing to the first element that is greater than key.  <a href="#aeb1425becb01b06c5d246125422603a1">More...</a><br /></td></tr>
@@ -233,10 +248,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2290f1ae7fe23a55e58a333e9b5cedad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a2290f1ae7fe23a55e58a333e9b5cedad">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a2290f1ae7fe23a55e58a333e9b5cedad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Member swap.  <a href="#a2290f1ae7fe23a55e58a333e9b5cedad">More...</a><br /></td></tr>
 <tr class="separator:a2290f1ae7fe23a55e58a333e9b5cedad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00eb67f8874aef471c6575dc393f60a0"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
-<tr class="memitem:a00eb67f8874aef471c6575dc393f60a0"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a00eb67f8874aef471c6575dc393f60a0">try_emplace</a> (const_key_reference k, Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:a00eb67f8874aef471c6575dc393f60a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, does nothing.  <a href="#a00eb67f8874aef471c6575dc393f60a0">More...</a><br /></td></tr>
-<tr class="separator:a00eb67f8874aef471c6575dc393f60a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e3fc5e59af32f560692ba7486aa6991"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
+<tr class="memitem:a4e3fc5e59af32f560692ba7486aa6991"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4e3fc5e59af32f560692ba7486aa6991">try_emplace</a> (const key_type &amp;k, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a4e3fc5e59af32f560692ba7486aa6991"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, does nothing.  <a href="#a4e3fc5e59af32f560692ba7486aa6991">More...</a><br /></td></tr>
+<tr class="separator:a4e3fc5e59af32f560692ba7486aa6991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a364a07614f97c660b2bd730eee7f0a0f"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
 <tr class="memitem:a364a07614f97c660b2bd730eee7f0a0f"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a364a07614f97c660b2bd730eee7f0a0f">emplace</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:a364a07614f97c660b2bd730eee7f0a0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts a new element into the container constructed in-place with the given args if there is no element with the key in the container.  <a href="#a364a07614f97c660b2bd730eee7f0a0f">More...</a><br /></td></tr>
@@ -249,10 +264,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aad4f3c92d1bbd2a3246b36400884adaa"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#aad4f3c92d1bbd2a3246b36400884adaa">try_emplace</a> (key_type &amp;&amp;k, Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:aad4f3c92d1bbd2a3246b36400884adaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, does nothing.  <a href="#aad4f3c92d1bbd2a3246b36400884adaa">More...</a><br /></td></tr>
 <tr class="separator:aad4f3c92d1bbd2a3246b36400884adaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49c58603aa691a0be5f7c0b5d4821b10"><td class="memTemplParams" colspan="2">template&lt;typename M &gt; </td></tr>
-<tr class="memitem:a49c58603aa691a0be5f7c0b5d4821b10"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a49c58603aa691a0be5f7c0b5d4821b10">insert_or_assign</a> (const_key_reference k, M &amp;&amp;obj)</td></tr>
-<tr class="memdesc:a49c58603aa691a0be5f7c0b5d4821b10"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, assigns std::forward&lt;M&gt;(obj) to the mapped_type corresponding to the key k.  <a href="#a49c58603aa691a0be5f7c0b5d4821b10">More...</a><br /></td></tr>
-<tr class="separator:a49c58603aa691a0be5f7c0b5d4821b10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36973314dc8016972dd5b88bbc980899"><td class="memTemplParams" colspan="2">template&lt;typename M &gt; </td></tr>
+<tr class="memitem:a36973314dc8016972dd5b88bbc980899"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a36973314dc8016972dd5b88bbc980899">insert_or_assign</a> (const key_type &amp;k, M &amp;&amp;obj)</td></tr>
+<tr class="memdesc:a36973314dc8016972dd5b88bbc980899"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, assigns std::forward&lt;M&gt;(obj) to the mapped_type corresponding to the key k.  <a href="#a36973314dc8016972dd5b88bbc980899">More...</a><br /></td></tr>
+<tr class="separator:a36973314dc8016972dd5b88bbc980899"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a131e7cadc9a3b97c5ebf1f8587d8cd1f"><td class="memTemplParams" colspan="2">template&lt;typename M &gt; </td></tr>
 <tr class="memitem:a131e7cadc9a3b97c5ebf1f8587d8cd1f"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a131e7cadc9a3b97c5ebf1f8587d8cd1f">insert_or_assign</a> (key_type &amp;&amp;k, M &amp;&amp;obj)</td></tr>
 <tr class="memdesc:a131e7cadc9a3b97c5ebf1f8587d8cd1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, assigns std::forward&lt;M&gt;(obj) to the mapped_type corresponding to the key k.  <a href="#a131e7cadc9a3b97c5ebf1f8587d8cd1f">More...</a><br /></td></tr>
@@ -681,8 +696,8 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 
 </div>
 </div>
-<a id="a8b3fd4476fff6e048fe396a775efb3b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b3fd4476fff6e048fe396a775efb3b2">&#9670;&nbsp;</a></span>count() <span class="overload">[1/2]</span></h2>
+<a id="ae8d4100d2c377e1fb8669644c01772a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8d4100d2c377e1fb8669644c01772a0">&#9670;&nbsp;</a></span>count() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -692,7 +707,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::size_type <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::count </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -987,8 +1002,8 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 
 </div>
 </div>
-<a id="a8dc10c2b8d836480333c8dd492f8e8fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dc10c2b8d836480333c8dd492f8e8fe">&#9670;&nbsp;</a></span>erase() <span class="overload">[3/4]</span></h2>
+<a id="a9434590ce9311b2b3399d4693ad682eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9434590ce9311b2b3399d4693ad682eb">&#9670;&nbsp;</a></span>erase() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -998,7 +1013,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::size_type <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::erase </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1064,8 +1079,8 @@ template&lt;typename K , typename &gt; </div>
 
 </div>
 </div>
-<a id="aed927437c43395fa58497acc12f7bc5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed927437c43395fa58497acc12f7bc5f">&#9670;&nbsp;</a></span>find() <span class="overload">[1/3]</span></h2>
+<a id="ac2ebb3a335bda5157fd0a99938239905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2ebb3a335bda5157fd0a99938239905">&#9670;&nbsp;</a></span>find() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1075,7 +1090,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::find </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1093,8 +1108,8 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 
 </div>
 </div>
-<a id="adb1d1daf7dc8fba5dab542d395015464"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb1d1daf7dc8fba5dab542d395015464">&#9670;&nbsp;</a></span>find() <span class="overload">[2/3]</span></h2>
+<a id="a405ec65a02b7eb2cd7bc836ab1a0f34f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a405ec65a02b7eb2cd7bc836ab1a0f34f">&#9670;&nbsp;</a></span>find() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1104,7 +1119,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::find </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -1118,12 +1133,44 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator to an element with key equivalent to key. If no such element is found, past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ac27d8ec5c5bfc4cd03938e02864ad05d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac27d8ec5c5bfc4cd03938e02864ad05d">&#9670;&nbsp;</a></span>find() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::find </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>k</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Finds an element with key equivalent to key. </p>
+<p>This overload only participates in overload resolution if BytesView struct has a type member named is_transparent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">k</td><td>key value of the element to search for.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator to an element with key equivalent to key. If no such element is found, past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>
 <a id="aeb92b9121b0fdfcc9812eed38ea49d5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb92b9121b0fdfcc9812eed38ea49d5b">&#9670;&nbsp;</a></span>find() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb92b9121b0fdfcc9812eed38ea49d5b">&#9670;&nbsp;</a></span>find() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1353,8 +1400,8 @@ template&lt;typename P , typename &gt; </div>
 
 </div>
 </div>
-<a id="a49c58603aa691a0be5f7c0b5d4821b10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49c58603aa691a0be5f7c0b5d4821b10">&#9670;&nbsp;</a></span>insert_or_assign() <span class="overload">[1/3]</span></h2>
+<a id="a36973314dc8016972dd5b88bbc980899"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36973314dc8016972dd5b88bbc980899">&#9670;&nbsp;</a></span>insert_or_assign() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1366,7 +1413,7 @@ template&lt;typename M &gt; </div>
         <tr>
           <td class="memname">std::pair&lt;typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt;Key, Value, BytesView&gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool&gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::insert_or_assign </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em>, </td>
         </tr>
         <tr>
@@ -1507,8 +1554,8 @@ template&lt;typename M , typename K , typename &gt; </div>
 
 </div>
 </div>
-<a id="a66e87896e0a47ba2d34582595c613ea5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66e87896e0a47ba2d34582595c613ea5">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[1/3]</span></h2>
+<a id="ac211fc9a4f541438333de6e464bcfe3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac211fc9a4f541438333de6e464bcfe3b">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1518,7 +1565,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::lower_bound </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1537,8 +1584,8 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 
 </div>
 </div>
-<a id="a3467de85d2cef6a37012de2e538c4cb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3467de85d2cef6a37012de2e538c4cb5">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[2/3]</span></h2>
+<a id="ab28c8b7280f57e5e7ac4e661ba2d6d79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab28c8b7280f57e5e7ac4e661ba2d6d79">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1548,7 +1595,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::lower_bound </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -1563,12 +1610,45 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a244df991c0a54c47cb871558aed6c64b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a244df991c0a54c47cb871558aed6c64b">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::lower_bound </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>k</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that is not less than (i.e. </p>
+<p>greater or equal to) key.</p>
+<p>This overload only participates in overload resolution if BytesView struct has a type member named is_transparent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">k</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>
 <a id="a55d6c114ce6ca6a0036bcf94a68ec6c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55d6c114ce6ca6a0036bcf94a68ec6c5">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a55d6c114ce6ca6a0036bcf94a68ec6c5">&#9670;&nbsp;</a></span>lower_bound() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1596,7 +1676,7 @@ template&lt;typename K , typename &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the first element that is not less than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>
@@ -1629,7 +1709,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 </div>
 </div>
 <a id="ab41f35c1ca9da94aabecea54517437e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab41f35c1ca9da94aabecea54517437e3">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab41f35c1ca9da94aabecea54517437e3">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1661,7 +1741,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 </div>
 </div>
 <a id="a7170673d1cafb1bb8cd2023294b9b848"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7170673d1cafb1bb8cd2023294b9b848">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7170673d1cafb1bb8cd2023294b9b848">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1684,6 +1764,42 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pmem::pool_error</a></td><td>if an object is not in persistent memory. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a08f3b0590be38387ccda40c197a7a623"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08f3b0590be38387ccda40c197a7a623">&#9670;&nbsp;</a></span>operator=() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt; &amp; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">std::initializer_list&lt; value_type &gt;&#160;</td>
+          <td class="paramname"><em>ilist</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replaces the contents with those identified by initializer list ilist transactionally. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ilist</td><td>initializer list to use as data source.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1pool__error.html" title="Custom pool error class.">pmem::pool_error</a></td><td>if an object is not in persistent memory. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">pmem::transaction_alloc_error</a></td><td>when allocating new memory failed. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1825,7 +1941,7 @@ template&lt;typename K, typename BV , class... Args&gt; </div>
 </div><div class="memdoc">
 
 <p>If a key equivalent to k already exists in the container, does nothing. </p>
-<p>Otherwise, behaves like emplace except that the element is constructed as value_type(std::piecewise_construct, std::forward_as_tuple(std::move(k)), std::forward_as_tuple(std::forward&lt;Args&gt;(args)...)).</p>
+<p>Otherwise, behaves like emplace except that the element is constructed as value_type(std::piecewise_construct, std::forward_as_tuple(std::forward&lt;K&gt;(k)), std::forward_as_tuple(std::forward&lt;Args&gt;(args)...)).</p>
 <p>Unlike insert or emplace, this method do not move from rvalue arguments if the insertion does not happen, which makes it easy to manipulate maps whose values are move-only types. In addition, try_emplace treats the key and the arguments to the mapped_type separately, unlike emplace, which requires the arguments to construct a value_type (that is, a std::pair).</p>
 <p>This overload only participates in overload resolution if BytesView struct has a type member named is_transparent.</p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -1847,8 +1963,8 @@ template&lt;typename K, typename BV , class... Args&gt; </div>
 
 </div>
 </div>
-<a id="a00eb67f8874aef471c6575dc393f60a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00eb67f8874aef471c6575dc393f60a0">&#9670;&nbsp;</a></span>try_emplace() <span class="overload">[2/3]</span></h2>
+<a id="a4e3fc5e59af32f560692ba7486aa6991"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e3fc5e59af32f560692ba7486aa6991">&#9670;&nbsp;</a></span>try_emplace() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1860,7 +1976,7 @@ template&lt;class... Args&gt; </div>
         <tr>
           <td class="memname">std::pair&lt;typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt;Key, Value, BytesView&gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool&gt; <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::try_emplace </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em>, </td>
         </tr>
         <tr>
@@ -1952,8 +2068,8 @@ template&lt;class... Args&gt; </div>
 
 </div>
 </div>
-<a id="ae203ab9e2b96aa511b395b4f9ec211ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae203ab9e2b96aa511b395b4f9ec211ec">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[1/3]</span></h2>
+<a id="a70ecf681056632b25ed72c16e8cf27ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70ecf681056632b25ed72c16e8cf27ad">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1963,7 +2079,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::upper_bound </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1981,8 +2097,8 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 
 </div>
 </div>
-<a id="a99290d3d52133f734c009d31512422d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99290d3d52133f734c009d31512422d3">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[2/3]</span></h2>
+<a id="a4b0c2f159bfddf5a1c5457dcff8a8c16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b0c2f159bfddf5a1c5457dcff8a8c16">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1992,7 +2108,7 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">const_iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::upper_bound </td>
           <td>(</td>
-          <td class="paramtype">const_key_reference&#160;</td>
+          <td class="paramtype">const key_type &amp;&#160;</td>
           <td class="paramname"><em>k</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -2006,12 +2122,44 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="acda60149a731dc0eaf1b7ebd5a75136c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acda60149a731dc0eaf1b7ebd5a75136c">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+<div class="memtemplate">
+template&lt;typename K , typename &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a> <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::upper_bound </td>
+          <td>(</td>
+          <td class="paramtype">const K &amp;&#160;</td>
+          <td class="paramname"><em>k</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns an iterator pointing to the first element that is greater than key. </p>
+<p>This overload only participates in overload resolution if BytesView struct has a type member named is_transparent.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">k</td><td>key value to compare the elements to.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>
 <a id="aeb1425becb01b06c5d246125422603a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb1425becb01b06c5d246125422603a1">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb1425becb01b06c5d246125422603a1">&#9670;&nbsp;</a></span>upper_bound() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2038,7 +2186,7 @@ template&lt;typename K , typename &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Const iterator pointing to the first element that is greater than key. If no such element is found, a past-the-end iterator is returned. </dd></dl>
 
 </div>
 </div>

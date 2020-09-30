@@ -169,7 +169,9 @@ public:
 	template <typename K, typename BV = BytesView, class... Args>
 	auto try_emplace(K &&k, Args &&... args) -> typename std::enable_if<
 		detail::has_is_transparent<BV>::value &&
-			!std::is_same<typename std::remove_reference<K>::type,
+			!std::is_same<typename std::remove_const<
+					      typename std::remove_reference<
+						      K>::type>::type,
 				      key_type>::value,
 		std::pair<iterator, bool>>::type;
 
@@ -1366,7 +1368,7 @@ template <typename Key, typename Value, typename BytesView>
 std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
 radix_tree<Key, Value, BytesView>::insert(const value_type &v)
 {
-	return emplace(v);
+	return try_emplace(v.first, v.second);
 }
 
 /**
@@ -1388,7 +1390,7 @@ template <typename Key, typename Value, typename BytesView>
 std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
 radix_tree<Key, Value, BytesView>::insert(value_type &&v)
 {
-	return emplace(std::move(v));
+	return try_emplace(std::move(v.first), std::move(v.second));
 }
 
 /**
@@ -1436,7 +1438,7 @@ radix_tree<Key, Value, BytesView>::insert(InputIterator first,
 					  InputIterator last)
 {
 	for (auto it = first; it != last; it++)
-		emplace(*it);
+		try_emplace((*it).first, (*it).second);
 }
 
 /**
@@ -1526,7 +1528,9 @@ auto
 radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
 	typename std::enable_if<
 		detail::has_is_transparent<BV>::value &&
-			!std::is_same<typename std::remove_reference<K>::type,
+			!std::is_same<typename std::remove_const<
+					      typename std::remove_reference<
+						      K>::type>::type,
 				      key_type>::value,
 		std::pair<typename radix_tree<Key, Value, BytesView>::iterator,
 			  bool>>::type
@@ -3074,8 +3078,8 @@ persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
 radix_tree<Key, Value, BytesView>::leaf::make_internal(detail::pair<K, V> &&p)
 {
 	return make_internal(std::piecewise_construct,
-			     std::forward_as_tuple(std::forward<K>(p.first)),
-			     std::forward_as_tuple(std::forward<V>(p.second)));
+			     std::forward_as_tuple(std::move(p.first)),
+			     std::forward_as_tuple(std::move(p.second)));
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -3095,8 +3099,8 @@ persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
 radix_tree<Key, Value, BytesView>::leaf::make_internal(std::pair<K, V> &&p)
 {
 	return make_internal(std::piecewise_construct,
-			     std::forward_as_tuple(std::forward<K>(p.first)),
-			     std::forward_as_tuple(std::forward<V>(p.second)));
+			     std::forward_as_tuple(std::move(p.first)),
+			     std::forward_as_tuple(std::move(p.second)));
 }
 
 template <typename Key, typename Value, typename BytesView>

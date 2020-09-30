@@ -66,7 +66,7 @@ public:
 
 	const CharT &operator[](size_type p) const noexcept;
 
-	int compare(const basic_string_view &other) noexcept;
+	int compare(const basic_string_view &other) const noexcept;
 
 private:
 	const value_type *data_;
@@ -174,8 +174,8 @@ inline const CharT &basic_string_view<CharT, Traits>::operator[](size_t p) const
  */
 template <typename CharT, typename Traits>
 inline int
-basic_string_view<CharT, Traits>::compare(
-	const basic_string_view &other) noexcept
+basic_string_view<CharT, Traits>::compare(const basic_string_view &other) const
+	noexcept
 {
 	int ret = Traits::compare(data(), other.data(),
 				  (std::min)(size(), other.size()));
@@ -186,6 +186,17 @@ basic_string_view<CharT, Traits>::compare(
 	if (size() > other.size())
 		return 1;
 	return 0;
+}
+
+/**
+ * Non-member equal operator.
+ */
+template <class CharT, class Traits>
+bool
+operator==(const basic_string_view<CharT, Traits> &lhs,
+	   const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) == 0;
 }
 #endif
 

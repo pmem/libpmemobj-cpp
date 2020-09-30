@@ -11,6 +11,7 @@
 
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
 
@@ -66,16 +67,25 @@ public:
 	size_type size() const noexcept;
 	size_type capacity() const noexcept;
 
-	pointer data() noexcept;
+	pointer data();
 	const_pointer data() const noexcept;
+	const_pointer cdata() const noexcept;
 
 	int compare(const basic_inline_string &rhs) const noexcept;
 
-	CharT &operator[](size_type p) noexcept;
+	reference operator[](size_type p);
+	const_reference operator[](size_type p) const noexcept;
+
+	reference at(size_type p);
+	const_reference at(size_type p) const;
+
+	slice<pointer> range(size_type p, size_type count);
 
 	basic_inline_string &assign(basic_string_view<CharT, Traits> rhs);
 
 private:
+	pointer snapshotted_data(size_t p, size_t n);
+
 	obj::p<uint64_t> size_;
 	obj::p<uint64_t> capacity_;
 };
@@ -191,18 +201,40 @@ basic_inline_string<CharT, Traits>::capacity() const noexcept
 	return capacity_;
 }
 
-/** @return pointer to the data (equal to (this + 1)) */
+/**
+ * Returns pointer to the underlying data and if
+ * there is an active transaction add entire data to a
+ * transaction.
+ *
+ * @return pointer to the data (equal to (this + 1))
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
 template <typename CharT, typename Traits>
 typename basic_inline_string<CharT, Traits>::pointer
-basic_inline_string<CharT, Traits>::data() noexcept
+basic_inline_string<CharT, Traits>::data()
 {
-	return reinterpret_cast<CharT *>(this + 1);
+	return snapshotted_data(0, size_);
 }
 
 /** @return const_pointer to the data (equal to (this + 1)) */
 template <typename CharT, typename Traits>
 typename basic_inline_string<CharT, Traits>::const_pointer
 basic_inline_string<CharT, Traits>::data() const noexcept
+{
+	return cdata();
+}
+
+/**
+ * Returns const pointer to the underlying data. In contradiction to data(),
+ * cdata() will return const_pointer not depending on the const-qualification of
+ * the object it is called on.
+ *
+ * @return const_pointer to the data (equal to (this + 1))
+ */
+template <typename CharT, typename Traits>
+typename basic_inline_string<CharT, Traits>::const_pointer
+basic_inline_string<CharT, Traits>::cdata() const noexcept
 {
 	return reinterpret_cast<const CharT *>(this + 1);
 }
@@ -224,14 +256,110 @@ basic_inline_string<CharT, Traits>::compare(
 }
 
 /**
- * Returns reference to a character at position @param[in] p
+ * Returns reference to a character at position @param[in] p and snapshot it if
+ * there is an active transaction. No bounds checking is performed.
  *
- * @return reference to a char
+ * @return reference to a CharT
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename CharT, typename Traits>
-CharT &basic_inline_string<CharT, Traits>::operator[](size_type p) noexcept
+typename basic_inline_string<CharT, Traits>::reference
+	basic_inline_string<CharT, Traits>::operator[](size_type p)
 {
-	return data()[p];
+	return snapshotted_data(p, 1)[0];
+}
+
+/**
+ * Returns reference to a character at position @param[in] p
+ * No bounds checking is performed.
+ *
+ * @return const_reference to a CharT
+ */
+template <typename CharT, typename Traits>
+typename basic_inline_string<CharT, Traits>::const_reference
+	basic_inline_string<CharT, Traits>::operator[](size_type p) const
+	noexcept
+{
+	return cdata()[p];
+}
+
+/**
+ * Returns reference to a character at position @param[in] p with bounds
+ * checking and snapshot it if there is an active transaction.
+ *
+ * @return reference to a CharT
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ * @throw std::out_of_range if p is not within the range of the container.
+ */
+template <typename CharT, typename Traits>
+typename basic_inline_string<CharT, Traits>::reference
+basic_inline_string<CharT, Traits>::at(size_type p)
+{
+	if (p >= size())
+		throw std::out_of_range("basic_inline_string::at");
+
+	return snapshotted_data(p, 1)[0];
+}
+
+/**
+ * Returns reference to a character at position @param[in] p with bounds
+ * checking.
+ *
+ * @return const_reference to a CharT
+ *
+ * @throw std::out_of_range if p is not within the range of the container.
+ */
+template <typename CharT, typename Traits>
+typename basic_inline_string<CharT, Traits>::const_reference
+basic_inline_string<CharT, Traits>::at(size_type p) const
+{
+	if (p >= size())
+		throw std::out_of_range("basic_inline_string::at");
+
+	return cdata()[p];
+}
+
+/**
+ * Returns slice and snapshots (if there is an active transaction) requested
+ * range. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice from start to start + n.
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * container.
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
+template <typename CharT, typename Traits>
+slice<typename basic_inline_string<CharT, Traits>::pointer>
+basic_inline_string<CharT, Traits>::range(size_type start, size_type n)
+{
+	if (start + n > size())
+		throw std::out_of_range("basic_inline_string::range");
+
+	auto data = snapshotted_data(start, n);
+
+	return {data, data + n};
+}
+
+/**
+ * Return pointer to data at position p and if there is an active transaction
+ * snapshot elements from p to p + n.
+ */
+template <typename CharT, typename Traits>
+typename basic_inline_string<CharT, Traits>::pointer
+basic_inline_string<CharT, Traits>::snapshotted_data(size_t p, size_t n)
+{
+	assert(p + n <= size());
+
+	detail::conditional_add_to_tx(reinterpret_cast<CharT *>(this + 1) + p,
+				      n, POBJ_XADD_ASSUME_INITIALIZED);
+
+	return reinterpret_cast<CharT *>(this + 1) + p;
 }
 
 /**

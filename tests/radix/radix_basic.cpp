@@ -299,6 +299,106 @@ test_find(nvobj::pool<root> &pop)
 
 		UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 	}
+
+	{
+		auto r = pop.root();
+
+		nvobj::transaction::run(pop, [&] {
+			r->radix_str =
+				nvobj::make_persistent<container_string>();
+		});
+
+		r->radix_str->try_emplace("Y", "1");
+		r->radix_str->try_emplace("YB", "2");
+		r->radix_str->try_emplace("YC", "3");
+		r->radix_str->try_emplace("Z", "4");
+		r->radix_str->try_emplace("ZB", "5");
+		r->radix_str->try_emplace("ZC", "6");
+		r->radix_str->try_emplace("ZD", "7");
+
+		auto lb = r->radix_str->lower_bound("");
+		auto ub = r->radix_str->upper_bound("@@@@");
+
+		UT_ASSERT(std::distance(lb, ub) == 0);
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("ZZZZ");
+
+		UT_ASSERT(std::distance(lb, ub) == 7);
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("ZZZZ");
+
+		UT_ASSERT(std::distance(lb, ub) == 7);
+		r->radix_str->clear();
+
+		r->radix_str->try_emplace("A", "1");
+		r->radix_str->try_emplace("AB", "2");
+		r->radix_str->try_emplace("AC", "3");
+		r->radix_str->try_emplace("B", "4");
+		r->radix_str->try_emplace("BB", "5");
+		r->radix_str->try_emplace("BC", "6");
+		r->radix_str->try_emplace("BD", "7");
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("CCCC");
+
+		UT_ASSERT(std::distance(lb, ub) == 7);
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("ZZZZ");
+
+		UT_ASSERT(std::distance(lb, ub) == 7);
+		r->radix_str->clear();
+
+		r->radix_str->try_emplace("A", "1");
+		r->radix_str->try_emplace("AB", "2");
+		r->radix_str->try_emplace("AC", "3");
+		r->radix_str->try_emplace("C", "4");
+		r->radix_str->try_emplace("CB", "5");
+		r->radix_str->try_emplace("CC", "6");
+		r->radix_str->try_emplace("CD", "7");
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("BB");
+
+		UT_ASSERT(std::distance(lb, ub) == 3);
+		r->radix_str->clear();
+
+		r->radix_str->try_emplace("A", "1");
+		r->radix_str->try_emplace("AB", "2");
+		r->radix_str->try_emplace("AC", "3");
+		r->radix_str->try_emplace("Y", "4");
+		r->radix_str->try_emplace("YB", "5");
+		r->radix_str->try_emplace("YC", "6");
+		r->radix_str->try_emplace("YD", "7");
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("@@@@");
+
+		UT_ASSERT(std::distance(lb, ub) == 0);
+
+		char ch[] = {char((15 << 4)), 0};
+		r->radix_str->try_emplace(ch, "8");
+
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound("@@@@");
+
+		UT_ASSERT(std::distance(lb, ub) == 0);
+
+		char last_slot[] = {char((15 << 4) | 15), 0};
+		lb = r->radix_str->lower_bound("");
+		ub = r->radix_str->upper_bound(last_slot);
+
+		UT_ASSERTeq(std::distance(lb, ub), 8);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_string>(
+				r->radix_str);
+		});
+
+		UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	}
 }
 
 const auto compressed_path_len = 4;
@@ -511,6 +611,12 @@ test_binary_keys(nvobj::pool<root> &pop)
 		UT_ASSERT(ret.second);
 		its.emplace(i - 2, ret.first);
 	}
+
+	UT_ASSERT(std::distance(
+			  r->radix_int_int->lower_bound(0),
+			  r->radix_int_int->upper_bound(
+				  std::numeric_limits<uint16_t>::max() * 3)) ==
+		  std::numeric_limits<uint16_t>::max());
 
 	verify_elements(r->radix_int_int, std::numeric_limits<uint16_t>::max(),
 			kv_f, kv_f);

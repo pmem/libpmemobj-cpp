@@ -314,7 +314,7 @@ private:
 	template <typename K1, typename K2>
 	static byten_t prefix_diff(const K1 &lhs, const K2 &rhs,
 				   byten_t offset = 0);
-	leaf *any_lower_leaf(tagged_node_ptr n, size_type min_depth) const;
+	leaf *any_leftmost_leaf(tagged_node_ptr n, size_type min_depth) const;
 	template <typename K1, typename K2>
 	static bitn_t bit_diff(const K1 &leaf_key, const K2 &key, byten_t diff);
 	template <typename K>
@@ -942,14 +942,14 @@ radix_tree<Key, Value, BytesView>::parent_ref(tagged_node_ptr n)
 }
 
 /*
- * Find a leaf in a subtree of @param n.
+ * Find a leftmost leaf in a subtree of @param n.
  *
  * @param min_depth specifies minimum depth of the leaf. If the
  * tree is shorter than min_depth, a bottom leaf is returned.
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::any_lower_leaf(
+radix_tree<Key, Value, BytesView>::any_leftmost_leaf(
 	typename radix_tree<Key, Value, BytesView>::tagged_node_ptr n,
 	size_type min_depth) const
 {
@@ -987,7 +987,7 @@ radix_tree<Key, Value, BytesView>::common_prefix_leaf(const K &key) const
 		if (nn)
 			n = nn;
 		else {
-			n = any_lower_leaf(n, key.size());
+			n = any_leftmost_leaf(n, key.size());
 			break;
 		}
 	}
@@ -995,7 +995,7 @@ radix_tree<Key, Value, BytesView>::common_prefix_leaf(const K &key) const
 	/* This can happen when key is a prefix of some leaf or when the node at
 	 * which the keys diverge isn't a leaf */
 	if (!n.is_leaf())
-		n = any_lower_leaf(n, key.size());
+		n = any_leftmost_leaf(n, key.size());
 
 	return n.get_leaf();
 }
@@ -2008,6 +2008,10 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 	if (compare(key, leaf_key, diff) < 0) {
 		leaf = find_leaf<node::direction::Forward>(*slot);
 		return const_iterator(leaf, &root);
+	}
+
+	if (slot == &root) {
+		return const_iterator(nullptr, &root);
 	}
 
 	/* Since looked-for key is larger than *slot, the target node must be

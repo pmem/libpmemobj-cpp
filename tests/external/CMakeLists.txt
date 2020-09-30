@@ -51,11 +51,6 @@ if (TEST_ARRAY)
 	build_test(array_max_size libcxx/array/max_size.pass.cpp)
 	add_test_generic(NAME array_max_size TRACERS none)
 
-	if (MAX_ALIGN_TYPE_EXISTS)
-		build_test(array_size_and_alignment libcxx/array/size_and_alignment.pass.cpp)
-		add_test_generic(NAME array_size_and_alignment TRACERS none)
-	endif()
-
 	build_test(array_types libcxx/array/types.pass.cpp)
 	add_test_generic(NAME array_types TRACERS none)
 
@@ -75,13 +70,19 @@ if (TEST_ARRAY)
 	add_test_generic(NAME array_initializer_list TRACERS none)
 
 	if (MAX_ALIGN_TYPE_EXISTS)
+		build_test(array_size_and_alignment libcxx/array/size_and_alignment.pass.cpp)
+		add_test_generic(NAME array_size_and_alignment TRACERS none)
+
 		build_test(array_data_const libcxx/array/array.data/data_const.pass.cpp)
 		add_test_generic(NAME array_data_const TRACERS none)
-	endif()
 
-	if (MAX_ALIGN_TYPE_EXISTS)
 		build_test(array_data libcxx/array/array.data/data.pass.cpp)
 		add_test_generic(NAME array_data TRACERS none)
+	else()
+		message(WARNING "Skipping some array tests because max align type exists")
+		skip_test("array_size_and_alignment" "SKIPPED_BECAUSE_MAX_ALIGN_TYPE_EXISTS")
+		skip_test("array_data_const" "SKIPPED_BECAUSE_MAX_ALIGN_TYPE_EXISTS")
+		skip_test("array_data" "SKIPPED_BECAUSE_MAX_ALIGN_TYPE_EXISTS")
 	endif()
 
 	add_test_expect_failure(array_fill libcxx/array/array.fill/fill.fail.cpp)

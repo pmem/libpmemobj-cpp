@@ -190,6 +190,7 @@ test_shared_mutex_self_deadlock()
 	 * However:
 	 *  - pmemobj prior to 1.5.1 has a bug (see pmem/pmdk#3536) which
 	 *    corrupts mutex state by unlocking it when it shouldn't
+	 *	XXX: can we even use libpmemobj++ with pmdk < 1.5.1 ?
 	 *  - shared_mutexes (rwlocks), as implemented by pmemobj, do not detect
 	 *    self-deadlocks on Windows
 	 */

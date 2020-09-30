@@ -188,6 +188,49 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).data()[0] == '\0');
 	UT_ASSERT(r->o1->s[0] == '\0');
 
+	/* test operator[], at(size_t) and range(size_t, size_t)*/
+	r->o1->s.assign(bs1);
+	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).compare(bs1) == 0);
+	UT_ASSERT(r->o1->s.size() == 4);
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->o1->s[0] == bs1[0]);
+
+			r->o1->s[0] = bs1[1];
+			UT_ASSERT(r->o1->s[0] == bs1[1]);
+			UT_ASSERT(r->o1->s.size() == 4);
+
+			UT_ASSERT(r->o1->s.at(1) == bs1[1]);
+
+			r->o1->s.at(1) = bs1[2];
+			UT_ASSERT(r->o1->s[1] == bs1[2]);
+			UT_ASSERT(r->o1->s.size() == 4);
+
+			size_t cnt = 2;
+			for (auto &c : r->o1->s.range(2, 2)) {
+				c = bs1[3];
+				UT_ASSERT(r->o1->s.at(cnt++) == bs1[3]);
+			}
+			UT_ASSERT(r->o1->s.at(0) == bs1[1]);
+			UT_ASSERT(r->o1->s.at(1) == bs1[2]);
+			UT_ASSERT(r->o1->s.size() == 4);
+
+			nvobj::transaction::abort(0);
+			UT_ASSERT(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).compare(bs1) == 0);
+	UT_ASSERT(r->o1->s.size() == 4);
+
+	try {
+		r->o1->s.at(5);
+		UT_ASSERT(0);
+	} catch (std::out_of_range &e) {
+	}
+
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<Object<T>>(r->o1);
 		nvobj::delete_persistent<Object<T>>(r->o2);

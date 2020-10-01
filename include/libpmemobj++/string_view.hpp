@@ -77,6 +77,7 @@ using string_view = basic_string_view<char>;
 using wstring_view = basic_string_view<wchar_t>;
 using u16string_view = basic_string_view<char16_t>;
 using u32string_view = basic_string_view<char32_t>;
+
 /**
  * Default constructor with empty data.
  */
@@ -193,10 +194,205 @@ basic_string_view<CharT, Traits>::compare(const basic_string_view &other) const
  */
 template <class CharT, class Traits>
 bool
-operator==(const basic_string_view<CharT, Traits> &lhs,
-	   const basic_string_view<CharT, Traits> &rhs)
+operator==(basic_string_view<CharT, Traits> lhs,
+	   basic_string_view<CharT, Traits> rhs)
 {
+	if (lhs.size() != rhs.size())
+		return false;
 	return lhs.compare(rhs) == 0;
+}
+
+template <class CharT, class Traits>
+bool
+operator==(
+	basic_string_view<CharT, Traits> lhs,
+	typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
+{
+	if (lhs.size() != rhs.size())
+		return false;
+	return lhs.compare(rhs) == 0;
+}
+
+template <class CharT, class Traits>
+bool
+operator==(
+	typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
+	basic_string_view<CharT, Traits> rhs)
+{
+	if (lhs.size() != rhs.size())
+		return false;
+	return lhs.compare(rhs) == 0;
+}
+
+/**
+ * Non-member not equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator!=(basic_string_view<CharT, Traits> lhs,
+	   basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) != 0;
+}
+
+/**
+ * Non-member not equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator!=(
+	typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
+	basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) != 0;
+}
+
+/**
+ * Non-member not equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator!=(
+	basic_string_view<CharT, Traits> lhs,
+	typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
+{
+	return lhs.compare(rhs) != 0;
+}
+
+/**
+ * Non-member less than operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator<(basic_string_view<CharT, Traits> lhs,
+	  basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) < 0;
+}
+
+/**
+ * Non-member less than operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator<(typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
+	  basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) < 0;
+}
+
+/**
+ * Non-member less than operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator<(basic_string_view<CharT, Traits> lhs,
+	  typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
+{
+	return lhs.compare(rhs) < 0;
+}
+
+/**
+ * Non-member less or equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator<=(basic_string_view<CharT, Traits> lhs,
+	   basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) <= 0;
+}
+
+/**
+ * Non-member less or equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator<=(
+	basic_string_view<CharT, Traits> lhs,
+	typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
+{
+	return lhs.compare(rhs) <= 0;
+}
+
+/**
+ * Non-member less or equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator<=(
+	typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
+	basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) <= 0;
+}
+
+/**
+ * Non-member greater than operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator>(basic_string_view<CharT, Traits> lhs,
+	  basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) > 0;
+}
+
+/**
+ * Non-member greater than operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator>(typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
+	  basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) > 0;
+}
+
+/**
+ * Non-member greater than operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator>(basic_string_view<CharT, Traits> lhs,
+	  typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
+{
+	return lhs.compare(rhs) > 0;
+}
+
+/**
+ * Non-member greater or equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator>=(basic_string_view<CharT, Traits> lhs,
+	   basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) >= 0;
+}
+
+/**
+ * Non-member greater or equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator>=(
+	typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
+	basic_string_view<CharT, Traits> rhs)
+{
+	return lhs.compare(rhs) >= 0;
+}
+
+/**
+ * Non-member greater or equal operator.
+ */
+template <class CharT, class Traits>
+static bool
+operator>=(
+	basic_string_view<CharT, Traits> lhs,
+	typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
+{
+	return lhs.compare(rhs) >= 0;
 }
 #endif
 

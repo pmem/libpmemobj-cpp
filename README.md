@@ -27,6 +27,9 @@ Up-to-date support/maintenance status of branches/releases is available on [pmem
 	- clang format 9.0
 	- perl
 
+### Additional requirements: ###
+**radix_tree**: on Windows, Visual Studio in version at least 2017 is needed. Testing and/or installing radix_tree can be disable via CMake options.
+
 ## On Linux ##
 
 ```sh

@@ -41,8 +41,8 @@ if [[ ! -f "Dockerfile.${OS__OS_VER}" ]]; then
 	exit 1
 fi
 
-echo "Build a Docker image tagged with ${DOCKERHUB_REPO}:1.11-${OS__OS_VER}"
-docker build -t ${DOCKERHUB_REPO}:1.11-${OS__OS_VER} \
+echo "Build a Docker image tagged with ${DOCKERHUB_REPO}:1.12-${OS__OS_VER}"
+docker build -t ${DOCKERHUB_REPO}:1.12-${OS__OS_VER} \
 	--build-arg http_proxy=$http_proxy \
 	--build-arg https_proxy=$https_proxy \
 	-f Dockerfile.${OS__OS_VER} .

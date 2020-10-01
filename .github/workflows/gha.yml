@@ -52,6 +52,7 @@ jobs:
       WORKDIR:        utils/docker
     if:
       contains( 'refs/heads/master
+                refs/heads/1.11
                 refs/heads/1.10
                 refs/heads/1.9
                 refs/heads/1.8

@@ -198,6 +198,61 @@ operator==(const basic_string_view<CharT, Traits> &lhs,
 {
 	return lhs.compare(rhs) == 0;
 }
+
+/**
+ * Non-member not equal operator.
+ */
+template <class CharT, class Traits>
+bool
+operator!=(const basic_string_view<CharT, Traits> &lhs,
+	   const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) != 0;
+}
+
+/**
+ * Non-member less than operator.
+ */
+template <class CharT, class Traits>
+bool
+operator<(const basic_string_view<CharT, Traits> &lhs,
+	  const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) < 0;
+}
+
+/**
+ * Non-member less or equal operator.
+ */
+template <class CharT, class Traits>
+bool
+operator<=(const basic_string_view<CharT, Traits> &lhs,
+	   const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) <= 0;
+}
+
+/**
+ * Non-member greater than operator.
+ */
+template <class CharT, class Traits>
+bool
+operator>(const basic_string_view<CharT, Traits> &lhs,
+	  const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) > 0;
+}
+
+/**
+ * Non-member greater or equal operator.
+ */
+template <class CharT, class Traits>
+bool
+operator>=(const basic_string_view<CharT, Traits> &lhs,
+	   const basic_string_view<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) >= 0;
+}
 #endif
 
 } /* namespace obj */

@@ -179,29 +179,6 @@ if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_BENCHMARKS)
 
 	# XXX: required by tests only?
 	include(tbb)
-
-	# XXX: do we need this anymore?
-	# set variable ${LIBPMEMOBJ_VERSION_NUM}; it's used in some tests
-	if(LIBPMEMOBJ_VERSION AND LIBPMEMOBJ_VERSION MATCHES "[0-9]+[.][0-9]+.*")
-		string(REGEX REPLACE "\\+git.*" "" LIBPMEMOBJ_VERSION_SHORT ${LIBPMEMOBJ_VERSION})
-		string(REGEX REPLACE "-rc.*" "" LIBPMEMOBJ_VERSION_SHORT ${LIBPMEMOBJ_VERSION_SHORT})
-		string(REPLACE "." ";" VERSION_LIST ${LIBPMEMOBJ_VERSION_SHORT})
-		list(GET VERSION_LIST 0 LIBPMEMOBJ_VERSION_MAJOR)
-		list(GET VERSION_LIST 1 LIBPMEMOBJ_VERSION_MINOR)
-		list(LENGTH VERSION_LIST OBJ_VER_COMPS)
-		if(${OBJ_VER_COMPS} LESS 3)
-			list(APPEND VERSION_LIST "0")
-		endif()
-		list(GET VERSION_LIST 2 LIBPMEMOBJ_VERSION_PATCH)
-	else()
-		# XXX: will them skip?
-		message(WARNING "cannot detect libpmemobj version, some tests will be skipped")
-		# assume 0.0.0
-		set(LIBPMEMOBJ_VERSION_MAJOR 0)
-		set(LIBPMEMOBJ_VERSION_MINOR 0)
-		set(LIBPMEMOBJ_VERSION_PATCH 0)
-	endif()
-	math(EXPR LIBPMEMOBJ_VERSION_NUM "${LIBPMEMOBJ_VERSION_PATCH} + ${LIBPMEMOBJ_VERSION_MINOR} * 100 + ${LIBPMEMOBJ_VERSION_MAJOR} * 10000")
 endif()
 
 add_custom_target(checkers ALL)

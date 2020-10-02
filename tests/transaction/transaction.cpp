@@ -188,13 +188,10 @@ test_shared_mutex_self_deadlock()
 	 * Starting transaction with already taken shared_lock should fail.
 	 *
 	 * However:
-	 *  - pmemobj prior to 1.5.1 has a bug (see pmem/pmdk#3536) which
-	 *    corrupts mutex state by unlocking it when it shouldn't
-	 *	XXX: can we even use libpmemobj++ with pmdk < 1.5.1 ?
 	 *  - shared_mutexes (rwlocks), as implemented by pmemobj, do not detect
 	 *    self-deadlocks on Windows
 	 */
-#if TESTS_LIBPMEMOBJ_VERSION < 0x010501 || defined(_WIN32)
+#ifdef _WIN32
 	return false;
 #else
 	return true;

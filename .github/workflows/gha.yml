@@ -51,15 +51,14 @@ jobs:
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     if:
-      contains( 'refs/heads/master
+      contains('refs/heads/master
                 refs/heads/1.11
                 refs/heads/1.10
                 refs/heads/1.9
                 refs/heads/1.8
                 refs/heads/1.7
                 refs/heads/1.6
-                refs/heads/1.5
-                ' , github.ref)
+                refs/heads/1.5', github.ref)
     strategy:
       matrix:
         CONFIG: ["TYPE=doc OS=fedora OS_VER=31"]

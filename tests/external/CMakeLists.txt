@@ -739,6 +739,16 @@ if (TEST_STRING)
 
 	# XXX: port libcxx test basic_string/string.cons/initializer_list_assignment.pass
 	add_test_expect_failure(string_libcxx_string_view libcxx/basic_string/string.cons/string_view.fail.cpp)
+
+	# STRING_VIEW tests
+	build_test(string_libcxx_string_view_opeq_string_view libcxx/string.view/string.view.comparison/opeq.string_view.string_view.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_opeq_string_view TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_string_view_opeq_pointer libcxx/string.view/string.view.comparison/opeq.string_view.pointer.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_opeq_pointer TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_string_view_opeq_string libcxx/string.view/string.view.comparison/opeq.string_view.string.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_opeq_string TRACERS none pmemcheck memcheck)
 endif()
 
 if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)

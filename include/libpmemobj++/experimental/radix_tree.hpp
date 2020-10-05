@@ -3203,13 +3203,13 @@ struct bytes_view<T, typename std::enable_if<is_string<T>::value>::type> {
 
 	char operator[](std::size_t p) const
 	{
-		return static_cast<char>(s[p]);
+		return reinterpret_cast<const char *>(s.data())[p];
 	}
 
 	size_t
 	size() const
 	{
-		return s.size();
+		return s.size() * sizeof(CharT);
 	}
 
 	obj::basic_string_view<CharT, Traits> s;

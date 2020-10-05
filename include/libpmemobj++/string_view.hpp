@@ -193,7 +193,7 @@ basic_string_view<CharT, Traits>::compare(const basic_string_view &other) const
  * Non-member equal operator.
  */
 template <class CharT, class Traits>
-bool
+static bool
 operator==(basic_string_view<CharT, Traits> lhs,
 	   basic_string_view<CharT, Traits> rhs)
 {
@@ -203,7 +203,7 @@ operator==(basic_string_view<CharT, Traits> lhs,
 }
 
 template <class CharT, class Traits>
-bool
+static bool
 operator==(
 	basic_string_view<CharT, Traits> lhs,
 	typename std::common_type<basic_string_view<CharT, Traits>>::type rhs)
@@ -214,7 +214,7 @@ operator==(
 }
 
 template <class CharT, class Traits>
-bool
+static bool
 operator==(
 	typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
 	basic_string_view<CharT, Traits> rhs)

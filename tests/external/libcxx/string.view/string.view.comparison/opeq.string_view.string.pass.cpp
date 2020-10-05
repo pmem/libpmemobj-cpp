@@ -5,50 +5,60 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <string>
 
 // template<class charT, class traits, class Allocator>
 //   bool operator==(const charT* lhs, const basic_string<charT,traits> rhs);
 // template<class charT, class traits, class Allocator>
-//   bool operator==(const basic_string_view<charT,traits> lhs, const CharT* rhs);
+//   bool operator==(const basic_string_view<charT,traits> lhs, const CharT*
+//   rhs);
 
-#include <string_view>
+#include "unittest.hpp"
+
 #include <string>
-#include <cassert>
 
-#include "test_macros.h"
+#include <libpmemobj++/string_view.hpp>
 
 template <class S>
 void
 test(const std::string &lhs, S rhs, bool x)
 {
-    assert((lhs == rhs) == x);
-    assert((rhs == lhs) == x);
+	UT_ASSERT((lhs == rhs) == x);
+	UT_ASSERT((rhs == lhs) == x);
 }
 
-int main(int, char**)
+static void
+run(int argc, char *argv[])
 {
-    {
-    typedef std::string_view S;
-    test("", S(""), true);
-    test("", S("abcde"), false);
-    test("", S("abcdefghij"), false);
-    test("", S("abcdefghijklmnopqrst"), false);
-    test("abcde", S(""), false);
-    test("abcde", S("abcde"), true);
-    test("abcde", S("abcdefghij"), false);
-    test("abcde", S("abcdefghijklmnopqrst"), false);
-    test("abcdefghij", S(""), false);
-    test("abcdefghij", S("abcde"), false);
-    test("abcdefghij", S("abcdefghij"), true);
-    test("abcdefghij", S("abcdefghijklmnopqrst"), false);
-    test("abcdefghijklmnopqrst", S(""), false);
-    test("abcdefghijklmnopqrst", S("abcde"), false);
-    test("abcdefghijklmnopqrst", S("abcdefghij"), false);
-    test("abcdefghijklmnopqrst", S("abcdefghijklmnopqrst"), true);
-    }
-
-  return 0;
+	{
+		typedef pmem::obj::string_view S;
+		test("", S(""), true);
+		test("", S("abcde"), false);
+		test("", S("abcdefghij"), false);
+		test("", S("abcdefghijklmnopqrst"), false);
+		test("abcde", S(""), false);
+		test("abcde", S("abcde"), true);
+		test("abcde", S("abcdefghij"), false);
+		test("abcde", S("abcdefghijklmnopqrst"), false);
+		test("abcdefghij", S(""), false);
+		test("abcdefghij", S("abcde"), false);
+		test("abcdefghij", S("abcdefghij"), true);
+		test("abcdefghij", S("abcdefghijklmnopqrst"), false);
+		test("abcdefghijklmnopqrst", S(""), false);
+		test("abcdefghijklmnopqrst", S("abcde"), false);
+		test("abcdefghijklmnopqrst", S("abcdefghij"), false);
+		test("abcdefghijklmnopqrst", S("abcdefghijklmnopqrst"), true);
+	}
 }
 
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { run(argc, argv); });
+}

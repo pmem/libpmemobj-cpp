@@ -39,9 +39,7 @@ cd build
 PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug
 
 export COVERITY_SCAN_PROJECT_NAME="$CI_REPO_SLUG"
-[[ "$CI_EVENT_TYPE" == "cron" ]] \
-	&& export COVERITY_SCAN_BRANCH_PATTERN="master" \
-	|| export COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
+export COVERITY_SCAN_BRANCH_PATTERN="master"
 export COVERITY_SCAN_BUILD_COMMAND="make -j$(nproc)"
 
 #

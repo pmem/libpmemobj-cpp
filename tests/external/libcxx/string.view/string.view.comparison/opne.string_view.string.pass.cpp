@@ -27,17 +27,17 @@
 
 template <class S>
 void
-test(const std::string &lhs, S rhs, bool x)
+test(const std::basic_string<typename S::value_type> &lhs, S rhs, bool x)
 {
 	UT_ASSERT((lhs != rhs) == x);
 	UT_ASSERT((rhs != lhs) == x);
 }
 
 static void
-run(int argc, char *argv[])
+run()
 {
 	{
-		typedef pmem::obj::string_view S;
+		typedef pmem::obj::basic_string_view<char> S;
 		test("", S(""), false);
 		test("", S("abcde"), true);
 		test("", S("abcdefghij"), true);
@@ -57,8 +57,36 @@ run(int argc, char *argv[])
 	}
 }
 
+static void
+run_wchar_t()
+{
+	{
+		typedef pmem::obj::basic_string_view<wchar_t> S;
+		test(L"", S(L""), false);
+		test(L"", S(L"abcde"), true);
+		test(L"", S(L"abcdefghij"), true);
+		test(L"", S(L"abcdefghijklmnopqrst"), true);
+		test(L"abcde", S(L""), true);
+		test(L"abcde", S(L"abcde"), false);
+		test(L"abcde", S(L"abcdefghij"), true);
+		test(L"abcde", S(L"abcdefghijklmnopqrst"), true);
+		test(L"abcdefghij", S(L""), true);
+		test(L"abcdefghij", S(L"abcde"), true);
+		test(L"abcdefghij", S(L"abcdefghij"), false);
+		test(L"abcdefghij", S(L"abcdefghijklmnopqrst"), true);
+		test(L"abcdefghijklmnopqrst", S(L""), true);
+		test(L"abcdefghijklmnopqrst", S(L"abcde"), true);
+		test(L"abcdefghijklmnopqrst", S(L"abcdefghij"), true);
+		test(L"abcdefghijklmnopqrst", S(L"abcdefghijklmnopqrst"),
+		     false);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
-	return run_test([&] { run(argc, argv); });
+	return run_test([&] {
+		run();
+		run_wchar_t();
+	});
 }

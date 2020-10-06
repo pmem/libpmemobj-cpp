@@ -25,14 +25,14 @@ template <class S>
 void
 test(S lhs, S rhs, bool x)
 {
-    UT_ASSERT((lhs == rhs) == x);
-    UT_ASSERT((rhs == lhs) == x);
+	UT_ASSERT((lhs == rhs) == x);
+	UT_ASSERT((rhs == lhs) == x);
 }
 
 static void
 run(int argc, char *argv[])
 {
-    {
+	{
 		typedef pmem::obj::string_view S;
 		test(S(""), S(""), true);
 		test(S(""), S("abcde"), false);

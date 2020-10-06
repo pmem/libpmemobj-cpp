@@ -32,10 +32,10 @@ test(const S &lhs, const typename S::value_type *rhs, bool x, bool y)
 }
 
 static void
-run(int argc, char *argv[])
+run()
 {
 	{
-		typedef pmem::obj::string_view S;
+		typedef pmem::obj::basic_string_view<char> S;
 		test(S(""), "", false, false);
 		test(S(""), "abcde", true, false);
 		test(S(""), "abcdefghij", true, false);
@@ -56,8 +56,36 @@ run(int argc, char *argv[])
 	}
 }
 
+static void
+run_wchar_t()
+{
+	{
+		typedef pmem::obj::basic_string_view<wchar_t> S;
+		test(S(L""), L"", false, false);
+		test(S(L""), L"abcde", true, false);
+		test(S(L""), L"abcdefghij", true, false);
+		test(S(L""), L"abcdefghijklmnopqrst", true, false);
+		test(S(L"abcde"), L"", false, true);
+		test(S(L"abcde"), L"abcde", false, false);
+		test(S(L"abcde"), L"abcdefghij", true, false);
+		test(S(L"abcde"), L"abcdefghijklmnopqrst", true, false);
+		test(S(L"abcdefghij"), L"", false, true);
+		test(S(L"abcdefghij"), L"abcde", false, true);
+		test(S(L"abcdefghij"), L"abcdefghij", false, false);
+		test(S(L"abcdefghij"), L"abcdefghijklmnopqrst", true, false);
+		test(S(L"abcdefghijklmnopqrst"), L"", false, true);
+		test(S(L"abcdefghijklmnopqrst"), L"abcde", false, true);
+		test(S(L"abcdefghijklmnopqrst"), L"abcdefghij", false, true);
+		test(S(L"abcdefghijklmnopqrst"), L"abcdefghijklmnopqrst", false,
+		     false);
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
-	return run_test([&] { run(argc, argv); });
+	return run_test([&] {
+		run();
+		run_wchar_t();
+	});
 }

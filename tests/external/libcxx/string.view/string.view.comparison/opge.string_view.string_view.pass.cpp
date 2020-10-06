@@ -22,7 +22,7 @@
 #include <libpmemobj++/string_view.hpp>
 
 template <class S>
-void
+static void
 test(const S &lhs, const S &rhs, bool x, bool y)
 {
 	UT_ASSERT((lhs >= rhs) == x);

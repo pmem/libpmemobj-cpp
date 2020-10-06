@@ -51,17 +51,17 @@ jobs:
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     if:
-      contains( 'refs/heads/master
-                refs/heads/1.10
-                refs/heads/1.9
-                refs/heads/1.8
-                refs/heads/1.7
-                refs/heads/1.6
-                refs/heads/1.5
-                ' , github.ref)
+      contains('refs/heads/master
+                refs/heads/stable-1.11
+                refs/heads/stable-1.10
+                refs/heads/stable-1.9
+                refs/heads/stable-1.8
+                refs/heads/stable-1.7
+                refs/heads/stable-1.6
+                refs/heads/stable-1.5', github.ref)
     strategy:
       matrix:
-        CONFIG: ["TYPE=doc OS=fedora OS_VER=31"]
+        CONFIG: ["TYPE=doc OS=fedora OS_VER=32"]
     steps:
       - name: Clone the git repo
         uses: actions/checkout@v2

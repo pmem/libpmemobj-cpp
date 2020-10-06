@@ -1,4 +1,17 @@
-Tue Feb 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
+Tue Oct 07 2020 Szymon Romik <szymon.romik@intel.com>
+
+	* Version 1.5.2
+
+	This release fixes minor bugs and typos.
+
+	This is the last patch release for libpmemobjc-cpp 1.5 version.
+	Maintance of this version is no longer supported.
+
+	Notable changes:
+	- operator[] for contigous_iterator takea signed integral instead of
+		unsigned
+
+Tue Feb 19 2019 Marcin Ślusarz <marcin.slusarz@intel.com>
 
 	* Version 1.5.1
 

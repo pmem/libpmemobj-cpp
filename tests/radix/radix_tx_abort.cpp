@@ -247,8 +247,8 @@ test_assign(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 	/* Iterators and references for inline_string are not
 	 * stable. */
-	if (std::is_same<typename Container::mapped_type,
-			 nvobjex::inline_string>::value) {
+	if (pmem::detail::is_inline_string<
+		    typename Container::mapped_type>::value) {
 		it = ptr->find(key<Container>(test_key));
 	}
 
@@ -303,8 +303,8 @@ test_assign_internal_leaf(nvobj::pool<root> &pop,
 
 	/* Iterators and references for inline_string are not
 	 * stable. */
-	if (std::is_same<typename Container::mapped_type,
-			 nvobjex::inline_string>::value) {
+	if (pmem::detail::is_inline_string<
+		    typename Container::mapped_type>::value) {
 		it = ptr->find("");
 	}
 
@@ -322,8 +322,8 @@ test_assign_internal_leaf(nvobj::pool<root> &pop,
 
 	/* Iterators and references for inline_string are not
 	 * stable. */
-	if (std::is_same<typename Container::mapped_type,
-			 nvobjex::inline_string>::value) {
+	if (pmem::detail::is_inline_string<
+		    typename Container::mapped_type>::value) {
 		it = ptr->find("aaa");
 	}
 
@@ -366,8 +366,8 @@ test_assign_root(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 	/* Iterators and references for inline_string are not
 	 * stable. */
-	if (std::is_same<typename Container::mapped_type,
-			 nvobjex::inline_string>::value) {
+	if (pmem::detail::is_inline_string<
+		    typename Container::mapped_type>::value) {
 		it = ptr->find(key<Container>(0));
 	}
 
@@ -561,6 +561,22 @@ test(int argc, char *argv[])
 		pop, pop.root()->radix_inline_s_wchart);
 	test_try_emplace<container_inline_s_wchart, 1>(
 		pop, pop.root()->radix_inline_s_wchart);
+
+	test_emplace(pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_assign<container_inline_s_wchart_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_assign<container_inline_s_wchart_wchart, 1024>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_assign_root<container_inline_s_wchart_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_assign_root<container_inline_s_wchart_wchart, 1024>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_erase<container_inline_s_wchart_wchart, 1024>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_insert_or_assign<container_inline_s_wchart_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
+	test_try_emplace<container_inline_s_wchart_wchart, 1>(
+		pop, pop.root()->radix_inline_s_wchart_wchart);
 
 	pop.close();
 }

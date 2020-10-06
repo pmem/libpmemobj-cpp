@@ -809,31 +809,35 @@ test_inline_string_u8t_key(nvobj::pool<root> &pop)
 
 	for (unsigned i = 0; i < 10; i++) {
 		auto key = std::basic_string<uint8_t>(i + 10, 99);
-		auto ret = m.try_emplace(key, i);
+		auto ret = m.try_emplace(
+			key, std::basic_string<uint8_t>{uint8_t(i)});
 		UT_ASSERT(ret.second);
 		UT_ASSERT(key.compare(ret.first->key().data()) == 0);
-		UT_ASSERT(ret.first->value() == i);
+		UT_ASSERT(ret.first->value() ==
+			  std::basic_string<uint8_t>{uint8_t(i)});
 		UT_ASSERT(m.size() == i + 1);
 	}
 
 	for (unsigned i = 0; i < 10; i++) {
 		auto key = std::basic_string<uint8_t>(i + 10, 99);
-		auto ret = m.insert_or_assign(key, i + 1);
+		auto ret = m.insert_or_assign(
+			key, std::basic_string<uint8_t>{uint8_t(i + 1)});
 		UT_ASSERT(!ret.second);
 		UT_ASSERT(key.compare(ret.first->key().data()) == 0);
-		UT_ASSERT(ret.first->value() == i + 1);
+		UT_ASSERT(ret.first->value() ==
+			  std::basic_string<uint8_t>{uint8_t(i + 1)});
 		UT_ASSERT(m.size() == 10);
 	}
 
 	auto key = std::basic_string<uint8_t>(15, 99);
 	auto it = m.find(key);
 	UT_ASSERT(key.compare(it->key().data()) == 0);
-	UT_ASSERT(it->value() == 6);
+	UT_ASSERT(it->value() == std::basic_string<uint8_t>{uint8_t(6)});
 
 	it = m.erase(it);
 	UT_ASSERT(std::basic_string<uint8_t>(16, 99).compare(
 			  it->key().data()) == 0);
-	UT_ASSERT(it->value() == 7);
+	UT_ASSERT(it->value() == std::basic_string<uint8_t>{uint8_t(7)});
 
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<container_inline_s_u8t>(

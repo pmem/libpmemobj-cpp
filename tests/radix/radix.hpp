@@ -25,7 +25,8 @@ using container_int_string =
 	nvobjex::radix_tree<unsigned, nvobjex::inline_string>;
 
 using container_inline_s_wchart = nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>, nvobj::p<unsigned>>;
-using container_inline_s_u8t = nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>, nvobj::p<unsigned>>;
+using container_inline_s_wchart_wchart = nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>, nvobjex::basic_inline_string<wchar_t>>;
+using container_inline_s_u8t = nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>, nvobjex::basic_inline_string<uint8_t>>;
 
 struct root {
 	nvobj::persistent_ptr<container_int> radix_int;
@@ -35,6 +36,7 @@ struct root {
 	nvobj::persistent_ptr<container_int_string> radix_int_str;
 
 	nvobj::persistent_ptr<container_inline_s_wchart> radix_inline_s_wchart;
+	nvobj::persistent_ptr<container_inline_s_wchart_wchart> radix_inline_s_wchart_wchart;
 	nvobj::persistent_ptr<container_inline_s_u8t> radix_inline_s_u8t;
 };
 
@@ -60,7 +62,7 @@ value(unsigned v, int repeats = 1)
 	auto s = std::basic_string<CharT>{};
 	for (int i = 0; i < repeats; i++) {
 		auto str = std::to_string(v);
-		s += std::basic_string<CharT>(s.begin(), s.end());
+		s += std::basic_string<CharT>(str.begin(), str.end());
 	}
 
 	return s;
@@ -100,7 +102,7 @@ template <typename CharT, typename Traits>
 bool
 operator==(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs, const std::basic_string<CharT, Traits> &rhs)
 {
-	return pmem::obj::basic_string_view<CharT, Traits>(lhs.data()).compare(rhs) == 0;
+	return pmem::obj::basic_string_view<CharT, Traits>(lhs.data(), lhs.size()).compare(rhs) == 0;
 }
 
 template <typename Container, typename K, typename F>

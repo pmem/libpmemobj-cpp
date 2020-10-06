@@ -25,7 +25,7 @@
 #include <libpmemobj++/string_view.hpp>
 
 template <class S>
-void
+static void
 test(const typename S::value_type *lhs, const S &rhs, bool x, bool y)
 {
 	UT_ASSERT((lhs >= rhs) == x);

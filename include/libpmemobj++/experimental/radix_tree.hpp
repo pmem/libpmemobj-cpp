@@ -598,12 +598,14 @@ public:
 
 	template <typename V = Value,
 		  typename Enable = typename std::enable_if<
-			  std::is_same<V, inline_string>::value>::type>
-	void assign_val(string_view rhs);
+			  detail::is_inline_string<V>::value>::type>
+	void assign_val(basic_string_view<typename V::value_type,
+					  typename V::traits_type>
+				rhs);
 
 	template <typename T, typename V = Value,
 		  typename Enable = typename std::enable_if<
-			  !std::is_same<V, inline_string>::value>::type>
+			  !detail::is_inline_string<V>::value>::type>
 	void assign_val(T &&rhs);
 
 	radix_tree_iterator &operator++();
@@ -2777,7 +2779,7 @@ template <bool IsConst>
 template <typename V, typename Enable>
 void
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
-	string_view rhs)
+	basic_string_view<typename V::value_type, typename V::traits_type> rhs)
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 

@@ -98,8 +98,7 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).data()[4] == '\0');
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o2->s).data()[7] == '\0');
-	UT_ASSERT(r->o1->s[4] == '\0');
-	UT_ASSERT(r->o2->s[7] == '\0');
+	UT_ASSERT(r->o2->s.size() == 7);
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o2->s).compare(bs2) == 0);
 
 	UT_ASSERT(r->o3->s.capacity() == r->o3->s.size());
@@ -186,7 +185,60 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 					  bs.data(), bs.length())) == 0);
 	}
 	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).data()[0] == '\0');
-	UT_ASSERT(r->o1->s[0] == '\0');
+	UT_ASSERT(r->o1->s.size() == 0);
+
+	/* test operator[], at(size_t) and range(size_t, size_t)*/
+	r->o1->s.assign(bs1);
+	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).compare(bs1) == 0);
+	UT_ASSERT(r->o1->s.size() == 4);
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->o1->s[0] == bs1[0]);
+			r->o1->s[0] = bs1[1];
+			UT_ASSERT(r->o1->s[0] == bs1[1]);
+			UT_ASSERT(r->o1->s.size() == 4);
+
+			UT_ASSERT(r->o1->s[1] == bs1[1]);
+			r->o1->s.at(1) = bs1[2];
+			UT_ASSERT(r->o1->s[1] == bs1[2]);
+			UT_ASSERT(r->o1->s.size() == 4);
+
+			UT_ASSERT(r->o1->s.at(2) == bs1[2]);
+			UT_ASSERT(r->o1->s.at(3) == bs1[3]);
+			size_t cnt = 2;
+			for (auto &c : r->o1->s.range(2, 2)) {
+				c = bs1[3];
+				UT_ASSERT(r->o1->s.at(cnt++) == bs1[3]);
+			}
+			UT_ASSERT(r->o1->s.at(0) == bs1[1]);
+			UT_ASSERT(r->o1->s.at(1) == bs1[2]);
+			UT_ASSERT(r->o1->s.size() == 4);
+
+			nvobj::transaction::abort(0);
+			UT_ASSERT(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+	UT_ASSERT(nvobj::basic_string_view<T>(r->o1->s).compare(bs1) == 0);
+	UT_ASSERT(r->o1->s.size() == 4);
+
+	const auto &const_inline = r->o1->s;
+	UT_ASSERT(const_inline[0] == bs1[0]);
+	UT_ASSERT(const_inline.at(1) == bs1[1]);
+
+	try {
+		r->o1->s.at(5);
+		UT_ASSERT(0);
+	} catch (std::out_of_range &e) {
+	}
+
+	try {
+		r->o1->s.range(1, 4);
+		UT_ASSERT(0);
+	} catch (std::out_of_range &e) {
+	}
 
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<Object<T>>(r->o1);

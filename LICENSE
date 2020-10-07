@@ -41,6 +41,7 @@ following exceptions:
   * v1.8/doxygen/jquery.js
   * v1.9/doxygen/jquery.js
   * v1.10/doxygen/jquery.js
+  * v1.11/doxygen/jquery.js
   are dual licensed under the MIT or GPL Version 2 license
   (see: https://jquery.org/license).
 
@@ -52,6 +53,7 @@ following exceptions:
   * sizzle.js (included in v1.8/doxygen/jquery.js)
   * sizzle.js (included in v1.9/doxygen/jquery.js)
   * sizzle.js (included in v1.10/doxygen/jquery.js)
+  * sizzle.js (included in v1.11/doxygen/jquery.js)
   are released under the MIT, BSD and GPL licenses
   (see: https://github.com/jquery/sizzle/blob/master/LICENSE.txt).
 
@@ -63,6 +65,7 @@ following exceptions:
   * v1.8/doxygen/search/search.js
   * v1.9/doxygen/search/search.js
   * v1.10/doxygen/search/search.js
+  * v1.11/doxygen/search/search.js
   * master/doxygen/dynsections.js
   * v1.5/doxygen/dynsections.js
   * v1.6/doxygen/dynsections.js
@@ -70,4 +73,5 @@ following exceptions:
   * v1.8/doxygen/dynsections.js
   * v1.9/doxygen/dynsections.js
   * v1.10/doxygen/dynsections.js
+  * v1.11/doxygen/dynsections.js
   are licensed under the GPL.

@@ -847,6 +847,47 @@ test_inline_string_u8t_key(nvobj::pool<root> &pop)
 	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 }
 
+void
+test_inline_string_wchart_key(nvobj::pool<root> &pop)
+{
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->radix_inline_s_wchart =
+			nvobj::make_persistent<container_inline_s_wchart>();
+	});
+	auto &m = *r->radix_inline_s_wchart;
+
+	UT_ASSERT(m.size() == 0);
+
+	auto key1 = std::basic_string<wchar_t>(1, 256);
+	auto key2 = std::basic_string<wchar_t>(1, 0);
+	m.try_emplace(key1, 256U);
+	m.try_emplace(key2, 0U);
+	UT_ASSERT(m.size() == 2);
+	auto it = m.find(key1);
+	UT_ASSERT(it->value() == 256U);
+	it = m.find(key2);
+	UT_ASSERT(it->value() == 0U);
+
+	key1 = std::basic_string<wchar_t>(10, 257);
+	key2 = std::basic_string<wchar_t>(10, 1);
+	m.try_emplace(key1, 999U);
+	m.try_emplace(key2, 100U);
+	UT_ASSERT(m.size() == 4);
+	it = m.find(key1);
+	UT_ASSERT(it->value() == 999U);
+	it = m.find(key2);
+	UT_ASSERT(it->value() == 100U);
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_inline_s_wchart>(
+			r->radix_inline_s_wchart);
+	});
+
+	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+}
+
 static void
 test(int argc, char *argv[])
 {
@@ -879,6 +920,7 @@ test(int argc, char *argv[])
 	test_assign_inline_string(pop);
 	test_compression(pop);
 	test_inline_string_u8t_key(pop);
+	test_inline_string_wchart_key(pop);
 
 	pop.close();
 }

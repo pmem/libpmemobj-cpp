@@ -70,28 +70,30 @@ namespace experimental
  * sequences are compared using a function equivalent to std::string::compare.
  *
  * BytesView should accept a pointer to the key type in a constructor and
- * provide operator[] and size method. The declaration should be as following:
+ * provide operator[] (should return a byte at the specified position in the
+ * byte representation of value) and size (should return size of value in bytes)
+ * method. The declaration should be as following:
  *
  * @code
  * struct BytesView {
  *  BytesView(const Type* t);
- *  const T& operator[](size_t pos) const; // Must be const!
+ *  char operator[](size_t pos) const; // Must be const!
  *  size_t size() const; // Must be const!
  * };
  * @endcode
  *
- * By default, implementation for pmem::obj::inline_string and unsigned integral
- * types is provided. Note that integral types are assumed to be in
- * little-endian.
+ * By default, implementation for pmem::obj::basic_inline_string<CharT, Traits>
+ * and unsigned integral types is provided. Note that integral types are assumed
+ * to be in little-endian.
  *
  * Iterators and references are stable (are not invalidated by inserts or erases
  * of other elements nor by assigning to the value) for all value types except
- * inline_string.
+ * basic_inline_string<CharT, Traits>.
  *
- * In case of inline_string, iterators and references are not invalidated by
- * other inserts or erases, but might be invalidated by assigning new value to
- * the element. Using find(K).assign_val("new_value") may invalidate other
- * iterators and references to the element with key K.
+ * In case of basic_inline_string<CharT, Traits>, iterators and references are
+ * not invalidated by other inserts or erases, but might be invalidated by
+ * assigning new value to the element. Using find(K).assign_val("new_value") may
+ * invalidate other iterators and references to the element with key K.
  *
  * swap() invalidates all references and iterators.
  *
@@ -3209,13 +3211,13 @@ struct bytes_view<T, typename std::enable_if<is_string<T>::value>::type> {
 
 	char operator[](std::size_t p) const
 	{
-		return static_cast<char>(s[p]);
+		return reinterpret_cast<const char *>(s.data())[p];
 	}
 
 	size_t
 	size() const
 	{
-		return s.size();
+		return s.size() * sizeof(CharT);
 	}
 
 	obj::basic_string_view<CharT, Traits> s;

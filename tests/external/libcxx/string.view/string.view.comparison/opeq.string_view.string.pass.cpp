@@ -21,13 +21,18 @@
 
 #include "unittest.hpp"
 
-#include <string>
-
 #include <libpmemobj++/string_view.hpp>
 
-template <class S>
+#ifdef INTERNAL_STRING
+#include <libpmemobj++/container/basic_string.hpp>
+template <class S,
+	  class P = typename pmem::obj::basic_string<typename S::value_type>>
+#else
+#include <string>
+template <class S, class P = typename std::basic_string<typename S::value_type>>
+#endif
 void
-test(const std::basic_string<typename S::value_type> &lhs, S rhs, bool x)
+test(const P &lhs, S rhs, bool x)
 {
 	UT_ASSERT((lhs == rhs) == x);
 	UT_ASSERT((rhs == lhs) == x);

@@ -746,8 +746,11 @@ if (TEST_STRING)
 	build_test(string_libcxx_string_view_opeq_pointer libcxx/string.view/string.view.comparison/opeq.string_view.pointer.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_opeq_pointer TRACERS none pmemcheck memcheck)
 
-	build_test(string_libcxx_string_view_opeq_string libcxx/string.view/string.view.comparison/opeq.string_view.string.pass.cpp)
-	add_test_generic(NAME string_libcxx_string_view_opeq_string TRACERS none pmemcheck memcheck)
+	#build_test(string_libcxx_string_view_opeq_string libcxx/string.view/string.view.comparison/opeq.string_view.string.pass.cpp)
+	#add_test_generic(NAME string_libcxx_string_view_opeq_string TRACERS none pmemcheck memcheck)
+#VARIANT
+	build_test_ext(NAME string_libcxx_string_view_opeq_pmem_string SRC_FILES libcxx/string.view/string.view.comparison/opeq.string_view.string.pass.cpp BUILD_OPTIONS -DINTERNAL_STRING)
+	add_test_generic(NAME string_libcxx_string_view_opeq_pmem_string TRACERS none pmemcheck memcheck)
 
 	build_test(string_libcxx_string_view_opge_string_view libcxx/string.view/string.view.comparison/opge.string_view.string_view.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_opge_string_view TRACERS none pmemcheck memcheck)
@@ -791,8 +794,11 @@ if (TEST_STRING)
 	build_test(string_libcxx_string_view_opne_pointer libcxx/string.view/string.view.comparison/opne.string_view.pointer.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_opne_pointer TRACERS none pmemcheck memcheck)
 
-	build_test(string_libcxx_string_view_opne_string libcxx/string.view/string.view.comparison/opne.string_view.string.pass.cpp)
+	#build_test(string_libcxx_string_view_opne_string libcxx/string.view/string.view.comparison/opne.string_view.string.pass.cpp)
+	build_test_ext(NAME string_libcxx_string_view_opne_string SRC_FILES libcxx/string.view/string.view.comparison/opne.string_view.string.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_opne_string TRACERS none pmemcheck memcheck)
+
+	############## build_test_ext(NAME vector_libcxx_pop_back SRC_FILES libcxx/vector/vector.modifiers/pop_back.pass.cpp BUILD_OPTIONS -DVECTOR)
 endif()
 
 if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)

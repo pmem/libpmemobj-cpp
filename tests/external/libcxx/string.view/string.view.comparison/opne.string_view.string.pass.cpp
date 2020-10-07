@@ -77,7 +77,8 @@ run_wchar_t()
 		test(L"abcdefghijklmnopqrst", S(L""), true);
 		test(L"abcdefghijklmnopqrst", S(L"abcde"), true);
 		test(L"abcdefghijklmnopqrst", S(L"abcdefghij"), true);
-		test(L"abcdefghijklmnopqrst", S(L"abcdefghijklmnopqrst"), false);
+		test(L"abcdefghijklmnopqrst", S(L"abcdefghijklmnopqrst"),
+		     false);
 	}
 }
 

@@ -4,15 +4,16 @@ on: [push, pull_request]
 env:
   REPO:           libpmemobj-cpp
   GITHUB_REPO:    pmem/libpmemobj-cpp
-  DOCKERHUB_REPO: pmem/libpmemobj-cpp
 
 jobs:
   linux:
     name: Linux
     runs-on: ubuntu-latest
     env:
-      DOCKERHUB_USER:          ${{ secrets.DOCKERHUB_USER }}
-      DOCKERHUB_PASSWORD:      ${{ secrets.DOCKERHUB_PASSWORD }}
+      CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
+      # use pmem's Private Access Token to log in to GitHub Container Registry
+      CONTAINER_REG_USER:   pmem
+      CONTAINER_REG_PASS:   ${{ secrets.GH_CONTAINER_REG_PAT }}
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     strategy:

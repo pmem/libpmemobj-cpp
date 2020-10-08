@@ -42,7 +42,7 @@ if [[ -z "$HOST_WORKDIR" ]]; then
 	exit 1
 fi
 
-imageName=${DOCKERHUB_REPO}:1.12-${OS}-${OS_VER}
+imageName=${CONTAINER_REG}:1.12-${OS}-${OS_VER}
 containerName=libpmemobj-cpp-${OS}-${OS_VER}
 
 if [[ "$command" == "" ]]; then

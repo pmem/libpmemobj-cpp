@@ -10,7 +10,7 @@ services:
 env:
   global:
     - GITHUB_REPO=pmem/libpmemobj-cpp
-    - DOCKERHUB_REPO=pmem/libpmemobj-cpp
+    - CONTAINER_REG=ghcr.io/pmem/libpmemobj-cpp
   matrix:
     - TYPE=coverity OS=ubuntu OS_VER=20.04
 

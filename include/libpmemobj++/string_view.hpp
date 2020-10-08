@@ -10,6 +10,7 @@
 #define LIBPMEMOBJ_CPP_STRING_VIEW
 
 #include <algorithm>
+#include <cassert>
 #include <string>
 
 #if __cpp_lib_string_view
@@ -161,6 +162,7 @@ template <typename CharT, typename Traits>
 inline const CharT &basic_string_view<CharT, Traits>::operator[](size_t p) const
 	noexcept
 {
+	assert(p < size());
 	return data()[p];
 }
 

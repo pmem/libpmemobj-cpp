@@ -1,6 +1,5 @@
 
 name: CPP-coverity
-
 on:
   schedule:
     # run this job at 00:00 UTC everyday
@@ -9,7 +8,7 @@ on:
 env:
   REPO:           libpmemobj-cpp
   GITHUB_REPO:    pmem/libpmemobj-cpp
-  DOCKERHUB_REPO: pmem/libpmemobj-cpp
+  CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
 
 jobs:
   linux:

@@ -34,6 +34,11 @@ if(MSVC_VERSION)
 	add_flag(-bigobj)
 
 	add_flag("-D_FORTIFY_SOURCE=2" RELEASE)
+
+	# ommit function name ambiguity under MSVC++ compiler
+	if(MSVC_VERSION GREATER_EQUAL 1920)
+		add_flag(-Ob3)
+	endif()
 else()
 	add_flag(-Wall)
 	add_flag("-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2" RELEASE)

@@ -3,10 +3,10 @@
 # Copyright 2016-2020, Intel Corporation
 
 #
-# push-image.sh - pushes the Docker image tagged with OS-VER to the Docker Hub.
+# push-image.sh - pushes the Docker image tagged with OS-VER to the ${DOCKERHUB_REPO}.
 #
-# The script utilizes $DOCKERHUB_USER and $DOCKERHUB_PASSWORD variables to
-# log in to the Docker Hub. The variables can be set in the CI's configuration
+# The script utilizes ${GH_CONTAINER_REG_USER} and ${DOCKERHUB_PASSWORD} variables to
+# log in to the ${DOCKERHUB_REPO}. The variables can be set in the CI's configuration
 # for automated builds.
 #
 
@@ -37,8 +37,8 @@ then
 	exit 1
 fi
 
-echo "Log in to the Docker Hub"
-docker login -u="${DOCKERHUB_USER}" -p="${DOCKERHUB_PASSWORD}"
+echo "Log in to the repository"
+echo "${GH_CONTAINER_REG_PAT}" | docker login ghcr.io -u="${GH_CONTAINER_REG_USER}" --password-stdin
 
 echo "Push the image to the repository"
 docker push ${DOCKERHUB_REPO}:${TAG}

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2020, Intel Corporation
 
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.4)
 project(pman CXX)
 
 set(CXX_STANDARD_REQUIRED ON)

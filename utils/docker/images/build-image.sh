@@ -45,4 +45,5 @@ echo "Build a Docker image tagged with ${CONTAINER_REG}:1.12-${OS__OS_VER}"
 docker build -t ${CONTAINER_REG}:1.12-${OS__OS_VER} \
 	--build-arg http_proxy=$http_proxy \
 	--build-arg https_proxy=$https_proxy \
-	-f Dockerfile.${OS__OS_VER} .
+	-f Dockerfile.${OS__OS_VER} \
+	--cache-from ${DOCKERHUB_REPO}:1.12-${OS__OS_VER} .

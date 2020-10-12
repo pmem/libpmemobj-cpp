@@ -81,6 +81,11 @@ option(INSTALL_CONCURRENT_MAP "enable installation of pmem::obj::experimental::c
 option(INSTALL_SELF_RELATIVE_POINTER "enable installation of pmem::obj::experimental::self_relative_ptr" ON)
 option(INSTALL_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+endif(CCACHE_FOUND)
+
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.
 set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)

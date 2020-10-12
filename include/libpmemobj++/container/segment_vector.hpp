@@ -1071,7 +1071,7 @@ segment_vector<T, Policy>::assign(size_type count, const_reference value)
 		throw std::length_error("Assignable range exceeds max size.");
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (count > capacity())
 			internal_reserve(count);
 		else if (count < size())
@@ -1128,7 +1128,7 @@ segment_vector<T, Policy>::assign(InputIt first, InputIt last)
 		throw std::length_error("Assignable range exceeds max size.");
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (count > capacity())
 			internal_reserve(count);
 		else if (count < size())
@@ -1231,7 +1231,7 @@ segment_vector<T, Policy>::assign(segment_vector &&other)
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		_data = std::move(other._data);
 		_segments_used = other._segments_used;
 		other._segments_used = 0;
@@ -1767,7 +1767,7 @@ segment_vector<T, Policy>::reserve(size_type capacity_new)
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { internal_reserve(capacity_new); });
+	flat_transaction::run(pb, [&] { internal_reserve(capacity_new); });
 }
 
 /**
@@ -1805,7 +1805,7 @@ segment_vector<T, Policy>::shrink_to_fit()
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		for (size_type i = new_last + 1; i < _segments_used; ++i)
 			_data[i].free_data();
 		_segments_used = new_last + 1;
@@ -1829,7 +1829,7 @@ void
 segment_vector<T, Policy>::clear()
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { shrink(0); });
+	flat_transaction::run(pb, [&] { shrink(0); });
 	assert(segment_capacity_validation());
 }
 
@@ -1850,7 +1850,7 @@ void
 segment_vector<T, Policy>::free_data()
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		for (size_type i = 0; i < _segments_used; ++i)
 			_data[i].free_data();
 		_segments_used = 0;
@@ -1917,7 +1917,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, T &&value)
 	size_type idx = static_cast<size_type>(pos - cbegin());
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		insert_gap(idx, 1);
 		get(idx) = std::move(value);
 	});
@@ -1959,7 +1959,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, size_type count,
 	size_type idx = static_cast<size_type>(pos - cbegin());
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		insert_gap(idx, count);
 		for (size_type i = idx; i < idx + count; ++i)
 			get(i) = std::move(value);
@@ -2013,7 +2013,7 @@ segment_vector<T, Policy>::insert(const_iterator pos, InputIt first,
 	size_type gap_size = static_cast<size_type>(std::distance(first, last));
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		insert_gap(idx, gap_size);
 		for (size_type i = idx; i < idx + gap_size; ++i, ++first)
 			get(i) = *first;
@@ -2092,7 +2092,7 @@ segment_vector<T, Policy>::emplace(const_iterator pos, Args &&... args)
 	size_type idx = static_cast<size_type>(pos - cbegin());
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		detail::temp_value<value_type,
 				   noexcept(T(std::forward<Args>(args)...))>
 		tmp(std::forward<Args>(args)...);
@@ -2135,7 +2135,7 @@ segment_vector<T, Policy>::emplace_back(Args &&... args)
 	assert(size() < max_size());
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (size() == capacity())
 			internal_reserve(capacity() + 1);
 
@@ -2209,7 +2209,7 @@ segment_vector<T, Policy>::erase(const_iterator first, const_iterator last)
 		return iterator(this, idx);
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		size_type _size = size();
 
 		if (!std::is_trivially_destructible<T>::value ||
@@ -2311,7 +2311,7 @@ segment_vector<T, Policy>::pop_back()
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { shrink(size() - 1); });
+	flat_transaction::run(pb, [&] { shrink(size() - 1); });
 	assert(segment_capacity_validation());
 }
 
@@ -2343,7 +2343,7 @@ void
 segment_vector<T, Policy>::resize(size_type count)
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		size_type _size = size();
 		if (count < _size)
 			shrink(count);
@@ -2385,7 +2385,7 @@ void
 segment_vector<T, Policy>::resize(size_type count, const value_type &value)
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		size_type _size = size();
 		if (count < _size)
 			shrink(count);
@@ -2406,7 +2406,7 @@ void
 segment_vector<T, Policy>::swap(segment_vector &other)
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		_data.swap(other._data);
 		std::swap(_segments_used, other._segments_used);
 	});

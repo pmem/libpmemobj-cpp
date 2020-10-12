@@ -796,7 +796,7 @@ radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
 	auto pop = pool_by_vptr(this);
 
 	if (this != &other) {
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			clear();
 
 			this->root = nullptr;
@@ -827,7 +827,7 @@ radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
 	auto pop = pool_by_vptr(this);
 
 	if (this != &other) {
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			clear();
 
 			this->root = other.root;
@@ -928,7 +928,7 @@ radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
 {
 	auto pop = pool_by_vptr(this);
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		this->size_.swap(rhs.size_);
 		this->root.swap(rhs.root);
 	});
@@ -1149,7 +1149,8 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
 	if (!root) {
-		transaction::run(pop, [&] { this->root = make_leaf(nullptr); });
+		flat_transaction::run(pop,
+				      [&] { this->root = make_leaf(nullptr); });
 		return {iterator(root.get_leaf(), &root), true};
 	}
 
@@ -1184,7 +1185,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	if (!n) {
 		assert(diff < (std::min)(leaf_key.size(), key.size()));
 
-		transaction::run(pop, [&] { *slot = make_leaf(prev); });
+		flat_transaction::run(pop, [&] { *slot = make_leaf(prev); });
 		return {iterator(slot->get_leaf(), &root), true};
 	}
 
@@ -1194,7 +1195,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 		if (!n.is_leaf() && path_length_equal(key.size(), n)) {
 			assert(!n->embedded_entry);
 
-			transaction::run(
+			flat_transaction::run(
 				pop, [&] { n->embedded_entry = make_leaf(n); });
 
 			return {iterator(n->embedded_entry.get_leaf(), &root),
@@ -1204,7 +1205,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 		/* Path length from root to n is longer than key.size().
 		 * We have to allocate new internal node above n. */
 		tagged_node_ptr node;
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			node = make_persistent<radix_tree::node>(
 				parent_ref(n), diff, bitn_t(FIRST_NIB));
 			node->embedded_entry = make_leaf(node);
@@ -1222,7 +1223,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 		/* Leaf key is a prefix of the new key. We need to convert leaf
 		 * to a node. */
 		tagged_node_ptr node;
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			/* We have to add new node at the edge from parent to n
 			 */
 			node = make_persistent<radix_tree::node>(
@@ -1247,7 +1248,7 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	 * compressed and we have to "break" this compression and add a new
 	 * node. */
 	tagged_node_ptr node;
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		node = make_persistent<radix_tree::node>(parent_ref(n), diff,
 							 sh);
 		node->child[slice_index(leaf_key[diff], sh)] = n;
@@ -1336,7 +1337,7 @@ radix_tree<Key, Value, BytesView>::emplace(Args &&... args)
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 	std::pair<iterator, bool> ret;
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		auto leaf_ = leaf::make(nullptr, std::forward<Args>(args)...);
 		auto make_leaf = [&](tagged_node_ptr parent) {
 			leaf_->parent = parent;
@@ -1803,7 +1804,7 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		auto *leaf = pos.leaf_;
 		auto parent = leaf->parent;
 
@@ -1882,7 +1883,7 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator first,
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		while (first != last)
 			first = erase(first);
 	});
@@ -2790,7 +2791,7 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
 	if (rhs.size() <= leaf_->value().capacity()) {
-		transaction::run(pop, [&] { leaf_->value() = rhs; });
+		flat_transaction::run(pop, [&] { leaf_->value() = rhs; });
 	} else {
 		tagged_node_ptr *slot;
 
@@ -2804,7 +2805,7 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 
 		auto old_leaf = leaf_;
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			*slot = leaf::make(old_leaf->parent, old_leaf->key(),
 					   rhs);
 			delete_persistent<typename radix_tree::leaf>(old_leaf);
@@ -2828,7 +2829,8 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
-	transaction::run(pop, [&] { leaf_->value() = std::forward<T>(rhs); });
+	flat_transaction::run(pop,
+			      [&] { leaf_->value() = std::forward<T>(rhs); });
 }
 
 template <typename Key, typename Value, typename BytesView>

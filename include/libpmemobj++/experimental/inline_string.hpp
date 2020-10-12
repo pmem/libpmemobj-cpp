@@ -379,7 +379,7 @@ basic_inline_string<CharT, Traits>::assign(basic_string_view<CharT, Traits> rhs)
 	auto initialized_mem =
 		(std::min)(rhs.size(), size()) + 1 /* sizeof('\0') */;
 
-	obj::transaction::run(pop, [&] {
+	obj::flat_transaction::run(pop, [&] {
 		detail::conditional_add_to_tx(data(), initialized_mem);
 
 		if (rhs.size() > size())

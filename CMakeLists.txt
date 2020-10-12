@@ -50,6 +50,7 @@ option(CHECK_CPP_STYLE "check code style of C++ sources" OFF)
 option(TRACE_TESTS "more verbose test outputs" OFF)
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
+option(USE_CCACHE "Use ccache if it is avialable in the system" ON)
 
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1" OFF)
 option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
@@ -80,6 +81,12 @@ option(INSTALL_SEGMENT_VECTOR "enable installation of pmem::obj::segment_vector"
 option(INSTALL_CONCURRENT_MAP "enable installation of pmem::obj::experimental::concurrent_map (depends on INSTALL_STRING)" ON)
 option(INSTALL_SELF_RELATIVE_POINTER "enable installation of pmem::obj::experimental::self_relative_ptr" ON)
 option(INSTALL_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
+
+# Configure the ccache as compiler launcher
+find_program(CCACHE_FOUND ccache)
+if(USE_CCACHE AND CCACHE_FOUND)
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+endif()
 
 # Do not treat include directories from the interfaces
 # of consumed Imported Targets as SYSTEM by default.

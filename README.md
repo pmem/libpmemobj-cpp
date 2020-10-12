@@ -14,6 +14,9 @@ More implementation details can be found in [include/libpmemobj++/README.md](inc
 Latest releases can be found on the ["releases" tab](https://github.com/pmem/libpmemobj-cpp/releases).
 Up-to-date support/maintenance status of branches/releases is available on [pmem.io](https://pmem.io/libpmemobj-cpp).
 
+# Compatibility note #
+In libpmemobj 1.12 we introduced a new transaction handler type: [pmem::obj::flat_transaction](https://pmem.io/libpmemobj-cpp/master/doxygen/classpmem_1_1obj_1_1flat__transaction.html). By defining LIBPMEMOBJ_CPP_USE_FLAT_TRANSACTION you can make pmem::obj::transaction to be an alias to pmem::obj::flat_transaction. In 1.12 we have also changed the default behavior of containers' transactional methods. Now, in  case of any failure within such method, the outer transaction (if any) will not be immediately aborted. Instead, an exception will be thrown, which will lead to transaction abort only if it's not caught before tx scope ends. To change the behavior to the old one, you can set LIBPMEMOBJ_CPP_FLAT_TX_USE_FAILURE_RETURN macro to 0. Be aware that the old behavior can lead to segfaults in some cases (see tx_nested_struct_example in this [file](examples/transaction/transaction.cpp)).
+
 # How to build #
 
 ## Requirements: ##

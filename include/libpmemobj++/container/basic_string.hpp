@@ -906,7 +906,7 @@ basic_string<CharT, Traits>::assign(size_type count, CharT ch)
 {
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] { replace_content(count, ch); });
+	flat_transaction::run(pop, [&] { replace_content(count, ch); });
 
 	return *this;
 }
@@ -929,7 +929,7 @@ basic_string<CharT, Traits>::assign(const basic_string &other)
 
 	auto pop = get_pool();
 
-	transaction::run(
+	flat_transaction::run(
 		pop, [&] { replace_content(other.cbegin(), other.cend()); });
 
 	return *this;
@@ -979,7 +979,7 @@ basic_string<CharT, Traits>::assign(const basic_string &other, size_type pos,
 	auto first = static_cast<difference_type>(pos);
 	auto last = first + static_cast<difference_type>(count);
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		replace_content(other.cbegin() + first, other.cbegin() + last);
 	});
 
@@ -1030,7 +1030,7 @@ basic_string<CharT, Traits>::assign(const CharT *s, size_type count)
 {
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] { replace_content(s, s + count); });
+	flat_transaction::run(pop, [&] { replace_content(s, s + count); });
 
 	return *this;
 }
@@ -1051,7 +1051,7 @@ basic_string<CharT, Traits>::assign(const CharT *s)
 
 	auto length = traits_type::length(s);
 
-	transaction::run(pop, [&] { replace_content(s, s + length); });
+	flat_transaction::run(pop, [&] { replace_content(s, s + length); });
 
 	return *this;
 }
@@ -1074,7 +1074,7 @@ basic_string<CharT, Traits>::assign(InputIt first, InputIt last)
 {
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] { replace_content(first, last); });
+	flat_transaction::run(pop, [&] { replace_content(first, last); });
 
 	return *this;
 }
@@ -1097,7 +1097,7 @@ basic_string<CharT, Traits>::assign(basic_string &&other)
 
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		destroy_data();
 		move_data(std::move(other));
 	});
@@ -1633,7 +1633,7 @@ basic_string<CharT, Traits>::erase(size_type index, size_type count)
 	auto last = first + static_cast<difference_type>(count);
 
 	if (is_sso_used()) {
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			auto move_len = sz - index - count;
 			auto new_size = sz - count;
 
@@ -1760,7 +1760,7 @@ basic_string<CharT, Traits>::append(size_type count, CharT ch)
 	if (is_sso_used()) {
 		auto pop = get_pool();
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			if (new_size > sso_capacity) {
 				sso_to_large(new_size);
 
@@ -1943,7 +1943,7 @@ basic_string<CharT, Traits>::append(InputIt first, InputIt last)
 	if (is_sso_used()) {
 		auto pop = get_pool();
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			if (new_size > sso_capacity) {
 				/* 1) Cache C-style string in case of
 				 * self-append, because it will be destroyed
@@ -2360,7 +2360,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, size_type count,
 
 	auto index = static_cast<size_type>(std::distance(cbegin(), pos));
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		if (is_sso_used() && new_size <= sso_capacity) {
 			auto len = sz - index;
 
@@ -2431,7 +2431,7 @@ basic_string<CharT, Traits>::insert(const_iterator pos, InputIt first,
 
 	auto index = static_cast<size_type>(std::distance(cbegin(), pos));
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		if (is_sso_used() && new_size <= sso_capacity) {
 			auto len = sz - index;
 
@@ -2651,7 +2651,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
 
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		if (is_sso_used() && new_size <= sso_capacity) {
 			add_sso_to_tx(index, new_size - index + 1);
 
@@ -2867,7 +2867,7 @@ basic_string<CharT, Traits>::replace(const_iterator first, const_iterator last,
 
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		if (is_sso_used() && new_size <= sso_capacity) {
 			add_sso_to_tx(index, new_size - index + 1);
 
@@ -3748,7 +3748,7 @@ basic_string<CharT, Traits>::resize(size_type count, CharT ch)
 
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		if (count > sz) {
 			append(count - sz, ch);
 		} else if (is_sso_used()) {
@@ -3819,7 +3819,7 @@ basic_string<CharT, Traits>::reserve(size_type new_cap)
 	if (is_sso_used()) {
 		auto pop = get_pool();
 
-		transaction::run(pop, [&] { sso_to_large(new_cap); });
+		flat_transaction::run(pop, [&] { sso_to_large(new_cap); });
 	} else {
 		non_sso_data().reserve(new_cap + 1);
 	}
@@ -3848,7 +3848,7 @@ basic_string<CharT, Traits>::shrink_to_fit()
 	if (size() <= sso_capacity) {
 		auto pop = get_pool();
 
-		transaction::run(pop, [&] { large_to_sso(); });
+		flat_transaction::run(pop, [&] { large_to_sso(); });
 	} else {
 		non_sso_data().shrink_to_fit();
 	}
@@ -3888,7 +3888,7 @@ basic_string<CharT, Traits>::free_data()
 {
 	auto pop = get_pool();
 
-	transaction::run(pop, [&] {
+	flat_transaction::run(pop, [&] {
 		if (is_sso_used()) {
 			add_sso_to_tx(0, get_sso_size() + 1);
 			clear();
@@ -4176,7 +4176,7 @@ void
 basic_string<CharT, Traits>::swap(basic_string &other)
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (is_sso_used() && other.is_sso_used()) {
 			sso_data().swap(other.sso_data());
 			pmem::obj::swap(sso._size, other.sso._size);

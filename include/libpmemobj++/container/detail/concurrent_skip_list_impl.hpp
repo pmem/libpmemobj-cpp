@@ -215,7 +215,7 @@ public:
 		assert(level < height());
 		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 		auto &node = get_next(level);
-		obj::transaction::snapshot<atomic_node_pointer>(&node);
+		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
 		node.store(next, std::memory_order_release);
 	}
 
@@ -753,7 +753,7 @@ public:
 			return;
 
 		auto pop = get_pool_base();
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			clear();
 			delete_dummy_head();
 		});
@@ -799,7 +799,7 @@ public:
 			return *this;
 
 		obj::pool_base pop = get_pool_base();
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			using pocca_t = typename node_allocator_traits::
 				propagate_on_container_copy_assignment;
 			clear();
@@ -841,7 +841,7 @@ public:
 			return *this;
 
 		obj::pool_base pop = get_pool_base();
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			using pocma_t = typename node_allocator_traits::
 				propagate_on_container_move_assignment;
 			clear();
@@ -878,7 +878,7 @@ public:
 	operator=(std::initializer_list<value_type> il)
 	{
 		obj::pool_base pop = get_pool_base();
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			clear();
 			for (auto it = il.begin(); it != il.end(); ++it)
 				internal_unsafe_emplace(*it);
@@ -1288,7 +1288,7 @@ public:
 		obj::pool_base pop = get_pool_base();
 		auto &size_diff = tls_data.local().size_diff;
 
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			while (first != last) {
 				first = internal_erase(first, size_diff);
 			}
@@ -1981,7 +1981,7 @@ public:
 
 		persistent_node_ptr current = dummy_head->next(0);
 
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			while (current) {
 				assert(current->height() > 0);
 				persistent_node_ptr next = current->next(0);
@@ -1996,7 +1996,7 @@ public:
 
 			on_init_size = 0;
 			tls_data.clear();
-			obj::transaction::snapshot((size_t *)&_size);
+			obj::flat_transaction::snapshot((size_t *)&_size);
 			_size = 0;
 		});
 	}
@@ -2129,7 +2129,7 @@ public:
 	swap(concurrent_skip_list &other)
 	{
 		obj::pool_base pop = get_pool_base();
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			using pocs_t = typename node_allocator_traits::
 				propagate_on_container_swap;
 			allocator_swap(_node_allocator, other._node_allocator,
@@ -2139,8 +2139,9 @@ public:
 			std::swap(dummy_head, other.dummy_head);
 			on_init_size.swap(other.on_init_size);
 
-			obj::transaction::snapshot((size_t *)&_size);
-			obj::transaction::snapshot((size_t *)&(other._size));
+			obj::flat_transaction::snapshot((size_t *)&_size);
+			obj::flat_transaction::snapshot(
+				(size_t *)&(other._size));
 			_size = other._size.exchange(_size,
 						     std::memory_order_relaxed);
 		});
@@ -2506,7 +2507,7 @@ private:
 		tls_entry_type &tls_entry = tls_data.local();
 		obj::pool_base pop = get_pool_base();
 
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			assert(tls_entry.ptr == nullptr);
 			tls_entry.ptr =
 				create_node(std::forward<Args>(args)...);
@@ -2537,7 +2538,7 @@ private:
 			assert(tls_entry.ptr != nullptr);
 			assert(tls_entry.insert_stage == not_started);
 
-			obj::transaction::run(pop, [&] {
+			obj::flat_transaction::run(pop, [&] {
 				--tls_entry.size_diff;
 				delete_node(tls_entry.ptr);
 				tls_entry.ptr = nullptr;
@@ -2605,7 +2606,7 @@ private:
 				-> persistent_node_ptr & {
 				obj::pool_base pop = get_pool_base();
 
-				obj::transaction::manual tx(pop);
+				obj::flat_transaction::manual tx(pop);
 				tls_entry.ptr = create_node(
 					std::forward_as_tuple(
 						height, next_nodes.data()),
@@ -2614,7 +2615,7 @@ private:
 
 				++(tls_entry.size_diff);
 				tls_entry.insert_stage = in_progress;
-				obj::transaction::commit();
+				obj::flat_transaction::commit();
 
 				assert(tls_entry.ptr != nullptr);
 				return tls_entry.ptr;
@@ -2860,14 +2861,14 @@ private:
 		std::pair<persistent_node_ptr, persistent_node_ptr>
 			extract_result(nullptr, nullptr);
 
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			extract_result = internal_extract(pos);
 
 			/* Make sure that node was extracted */
 			assert(extract_result.first != nullptr);
 			delete_node(extract_result.first);
 			--size_diff;
-			obj::transaction::snapshot((size_type *)&_size);
+			obj::flat_transaction::snapshot((size_type *)&_size);
 			--_size;
 		});
 
@@ -2969,7 +2970,7 @@ private:
 		 * there can be an outer transaction we must make sure that size
 		 * change is transactional
 		 */
-		obj::transaction::snapshot((size_type *)&_size);
+		obj::flat_transaction::snapshot((size_type *)&_size);
 		_size = sz;
 		assert(std::is_sorted(
 			this->begin(), this->end(),
@@ -3155,7 +3156,7 @@ private:
 				if (tls_entry.insert_stage == in_progress) {
 					complete_insert(tls_entry);
 				} else {
-					obj::transaction::run(pop, [&] {
+					obj::flat_transaction::run(pop, [&] {
 						--(tls_entry.size_diff);
 						delete_node(node);
 						node = nullptr;
@@ -3172,7 +3173,7 @@ private:
 		assert(last_run_size >= 0 ||
 		       on_init_size >
 			       static_cast<size_type>(std::abs(last_run_size)));
-		obj::transaction::run(pop, [&] {
+		obj::flat_transaction::run(pop, [&] {
 			tls_data.clear();
 			on_init_size += static_cast<size_t>(last_run_size);
 		});

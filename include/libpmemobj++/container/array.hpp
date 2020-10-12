@@ -120,7 +120,7 @@ struct array {
 		if (this == &other)
 			return *this;
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			detail::conditional_add_to_tx(
 				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			std::copy(other.cbegin(), other.cend(), _get_data());
@@ -151,7 +151,7 @@ struct array {
 		if (this == &other)
 			return *this;
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			detail::conditional_add_to_tx(
 				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			detail::conditional_add_to_tx(
@@ -588,7 +588,7 @@ struct array {
 	{
 		auto pop = _get_pool();
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			detail::conditional_add_to_tx(
 				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			std::fill(_get_data(), _get_data() + size(), value);
@@ -615,7 +615,7 @@ struct array {
 		if (this == &other)
 			return;
 
-		transaction::run(pop, [&] {
+		flat_transaction::run(pop, [&] {
 			detail::conditional_add_to_tx(
 				this, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			detail::conditional_add_to_tx(

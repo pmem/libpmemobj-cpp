@@ -107,8 +107,8 @@ public:
 	destroy(const PMEMoid &oid)
 	{
 		if (pmemobj_tx_stage() == TX_STAGE_WORK) {
-			obj::transaction::register_callback(
-				obj::transaction::stage::oncommit, [oid] {
+			obj::flat_transaction::register_callback(
+				obj::flat_transaction::stage::oncommit, [oid] {
 					std::unique_lock<rwlock_type> lock(
 						get_rwlock());
 					get_map().erase(oid);

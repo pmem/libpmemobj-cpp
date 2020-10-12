@@ -346,7 +346,7 @@ enumerable_thread_specific<T, Mutex, Storage>::clear()
 {
 	auto pop = get_pool();
 
-	obj::transaction::run(pop, [&] {
+	obj::flat_transaction::run(pop, [&] {
 		_storage_size.get_rw() = 0;
 		_storage.clear();
 	});

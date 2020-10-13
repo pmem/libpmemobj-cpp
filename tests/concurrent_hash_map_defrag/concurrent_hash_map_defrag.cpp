@@ -49,6 +49,12 @@ public:
 		return hash(str.c_str(), str.size());
 	}
 
+	size_t
+	operator()(const std::string &str) const
+	{
+		return hash(str.c_str(), str.size());
+	}
+
 private:
 	size_t
 	hash(const char *str, size_t size) const
@@ -159,6 +165,76 @@ insert_defrag_lookup_test(nvobj::pool<root> &pop)
 				persistent_map_type::value_type>(ptr[i]);
 		}
 	});
+
+	map->clear();
+}
+
+void
+erase_defrag_concurrent_test(nvobj::pool<root> &pop, bool reversed_order)
+{
+	const size_t NUMBER_ITEMS_INSERT = 10000;
+
+	auto map = pop.root()->cons;
+
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	std::string str = " ";
+	for (size_t i = 0; i < NUMBER_ITEMS_INSERT; i++) {
+		map->insert_or_assign(str, str);
+		str.append(std::to_string(i));
+	}
+
+	std::vector<std::string> elements;
+	for (auto &v : *map) {
+		elements.push_back(std::string(v.first.c_str()));
+	}
+
+	if (reversed_order)
+		std::reverse(elements.begin() + 100, elements.end());
+
+	std::vector<std::thread> threads;
+	for (ptrdiff_t i = 0; i < 10; i++) {
+		threads.emplace_back([&, i]() {
+			ptrdiff_t start_offset = i == 0 ? 100 : 0;
+			auto start = std::next(
+				elements.begin(),
+				start_offset +
+					i *
+						static_cast<ptrdiff_t>(
+							NUMBER_ITEMS_INSERT) /
+						10);
+			auto end =
+				std::next(elements.begin(),
+					  (i + 1) *
+						  static_cast<ptrdiff_t>(
+							  NUMBER_ITEMS_INSERT) /
+						  10);
+			for (auto it = start; it != end; ++it) {
+				UT_ASSERT(map->erase(*it));
+			}
+		});
+	}
+
+	threads.emplace_back([&]() { map->defragment(); });
+
+	for (auto &thread : threads)
+		thread.join();
+
+	for (size_t i = 0; i < 100; ++i) {
+		persistent_map_type::accessor acc;
+		bool res = map->find(acc, elements[i]);
+
+		if (res) {
+			UT_ASSERT(acc->first == (elements[i]));
+			UT_ASSERT(acc->second == (elements[i]));
+		} else {
+			UT_ASSERT(false);
+		}
+	}
+
+	map->clear();
 }
 }
 
@@ -185,6 +261,8 @@ test(int argc, char *argv[])
 	}
 
 	insert_defrag_lookup_test(pop);
+	erase_defrag_concurrent_test(pop, false);
+	erase_defrag_concurrent_test(pop, true);
 
 	pop.close();
 }

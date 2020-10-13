@@ -49,6 +49,12 @@ public:
 		return hash(str.c_str(), str.size());
 	}
 
+	size_t
+	operator()(const std::string &str) const
+	{
+		return hash(str.c_str(), str.size());
+	}
+
 private:
 	size_t
 	hash(const char *str, size_t size) const
@@ -70,7 +76,7 @@ struct root {
 };
 
 /*
- * insert_and_erase_test_str -- (internal) test insert and erase operations
+ * insert_defrag_lookup -- test insert, erase and defrag operations
  * pmem::obj::concurrent_hash_map<pmem::obj::string, pmem::obj::string>
  */
 void
@@ -159,6 +165,88 @@ insert_defrag_lookup_test(nvobj::pool<root> &pop)
 				persistent_map_type::value_type>(ptr[i]);
 		}
 	});
+
+	map->clear();
+}
+
+/*
+ * insert_defrag_concurrent -- test concurrently erase and defrag operations
+ * pmem::obj::concurrent_hash_map<pmem::obj::string, pmem::obj::string>
+ */
+void
+erase_defrag_concurrent_test(nvobj::pool<root> &pop, bool reversed_order,
+			     size_t erase_threads_n)
+{
+	const ptrdiff_t BATCH_SIZE = 1000;
+	const size_t NUMBER_ITEMS_ERASE = BATCH_SIZE * erase_threads_n;
+	const size_t NUMBER_ITEMS_SAVE = 100;
+
+	auto map = pop.root()->cons;
+
+	UT_ASSERT(map != nullptr);
+
+	map->runtime_initialize();
+
+	std::string str = " ";
+	for (size_t i = 0; i < NUMBER_ITEMS_ERASE + NUMBER_ITEMS_SAVE; i++) {
+		map->insert_or_assign(str, str);
+		str.append(std::to_string(i));
+	}
+
+	std::vector<std::string> elements_to_erase;
+	std::vector<std::string> elements_to_save;
+
+	size_t cnt = 0;
+	for (auto &v : *map) {
+		/* first NUMBER_ITEMS_SAVE elements wont be erased */
+		if (cnt++ < NUMBER_ITEMS_SAVE)
+			elements_to_save.push_back(
+				std::string(v.first.c_str()));
+		else
+			elements_to_erase.push_back(
+				std::string(v.first.c_str()));
+	}
+
+	/* reverse order of elements_to_erase to test case when we are erasing
+	 * in order from last element to first */
+	if (reversed_order)
+		std::reverse(elements_to_erase.begin(),
+			     elements_to_erase.end());
+
+	std::vector<std::thread> threads;
+	for (ptrdiff_t i = 0; i < static_cast<ptrdiff_t>(erase_threads_n);
+	     i++) {
+		threads.emplace_back([&, i]() {
+			auto start = std::next(elements_to_erase.begin(),
+					       i * BATCH_SIZE);
+			auto end = std::next(elements_to_erase.begin(),
+					     (i + 1) * BATCH_SIZE);
+			for (auto it = start; it != end; ++it) {
+				UT_ASSERT(map->erase(*it));
+			}
+		});
+	}
+
+	threads.emplace_back([&]() { map->defragment(); });
+
+	for (auto &thread : threads)
+		thread.join();
+
+	UT_ASSERT(map->size() == NUMBER_ITEMS_SAVE);
+
+	for (size_t i = 0; i < NUMBER_ITEMS_SAVE; ++i) {
+		persistent_map_type::accessor acc;
+		bool res = map->find(acc, elements_to_save[i]);
+
+		if (res) {
+			UT_ASSERT(acc->first == (elements_to_save[i]));
+			UT_ASSERT(acc->second == (elements_to_save[i]));
+		} else {
+			UT_ASSERT(false);
+		}
+	}
+
+	map->clear();
 }
 }
 
@@ -185,6 +273,10 @@ test(int argc, char *argv[])
 	}
 
 	insert_defrag_lookup_test(pop);
+	erase_defrag_concurrent_test(pop, false, 1);
+	erase_defrag_concurrent_test(pop, true, 1);
+	erase_defrag_concurrent_test(pop, false, 10);
+	erase_defrag_concurrent_test(pop, true, 10);
 
 	pop.close();
 }

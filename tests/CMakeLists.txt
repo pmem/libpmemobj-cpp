@@ -405,6 +405,9 @@ if (TEST_STRING)
 
 	build_test(string_layout string_layout/string_layout.cpp)
 	add_test_generic(NAME string_layout TRACERS none)
+
+	build_test(string_range string_range/string_range.cpp)
+	add_test_generic(NAME string_range TRACERS none memcheck pmemcheck)
 endif()
 
 if(TEST_CONCURRENT_HASHMAP)

@@ -58,6 +58,8 @@ public:
 	using const_iterator = const_pointer;
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+	using range_snapshotting_iterator =
+		pmem::detail::range_snapshotting_iterator<CharT>;
 	using for_each_ptr_function =
 		std::function<void(persistent_ptr_base &)>;
 
@@ -149,6 +151,13 @@ public:
 	const CharT *cdata() const noexcept;
 	const CharT *c_str() const noexcept;
 	void for_each_ptr(for_each_ptr_function func);
+
+	/* Range */
+	slice<pointer> range(size_type p, size_type count);
+	slice<range_snapshotting_iterator> range(size_type start, size_type n,
+						 size_type snapshot_size);
+	slice<const_iterator> range(size_type start, size_type n) const;
+	slice<const_iterator> crange(size_type start, size_type n) const;
 
 	/* Iterators */
 	iterator begin();
@@ -1377,6 +1386,101 @@ typename basic_string<CharT, Traits>::const_reference
 	basic_string<CharT, Traits>::operator[](size_type n) const
 {
 	return is_sso_used() ? sso_data()[n] : non_sso_data()[n];
+}
+
+/**
+ * Returns slice and snapshots requested range. This method is not specified by
+ * STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice containing elements from <start, start + n).
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * string.
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
+template <typename CharT, typename Traits>
+slice<typename basic_string<CharT, Traits>::pointer>
+basic_string<CharT, Traits>::range(size_type start, size_type n)
+{
+	if (start + n > size())
+		throw std::out_of_range("basic_string::range");
+
+	return is_sso_used() ? sso_data().range(start, n)
+			     : non_sso_data().range(start, n);
+}
+
+/**
+ * Returns slice. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ * @param[in] snapshot_size number of elements which should be snapshotted in a
+ * bulk while traversing this slice. If provided value is larger or equal to n,
+ * entire range is added to a transaction. If value is equal to 0 no
+ * snapshotting happens.
+ *
+ * @return slice containing elements from <start, start + n).
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * string.
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
+template <typename CharT, typename Traits>
+slice<typename basic_string<CharT, Traits>::range_snapshotting_iterator>
+basic_string<CharT, Traits>::range(size_type start, size_type n,
+				   size_type snapshot_size)
+{
+	if (start + n > size())
+		throw std::out_of_range("basic_string::range");
+
+	if (snapshot_size > n)
+		snapshot_size = n;
+
+	return is_sso_used() ? sso_data().range(start, n, snapshot_size)
+			     : non_sso_data().range(start, n, snapshot_size);
+}
+
+/**
+ * Returns const slice. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice containing elements from <start, start + n).
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * string.
+ */
+template <typename CharT, typename Traits>
+slice<typename basic_string<CharT, Traits>::const_iterator>
+basic_string<CharT, Traits>::range(size_type start, size_type n) const
+{
+	return crange(start, n);
+}
+
+/**
+ * Returns const slice. This method is not specified by STL standards.
+ *
+ * @param[in] start start index of requested range.
+ * @param[in] n number of elements in range.
+ *
+ * @return slice containing elements from <start, start + n).
+ *
+ * @throw std::out_of_range if any element of the range would be outside of the
+ * string.
+ */
+template <typename CharT, typename Traits>
+slice<typename basic_string<CharT, Traits>::const_iterator>
+basic_string<CharT, Traits>::crange(size_type start, size_type n) const
+{
+	if (start + n > size())
+		throw std::out_of_range("basic_string::range");
+
+	return {const_iterator(cdata() + start),
+		const_iterator(cdata() + start + n)};
 }
 
 /**

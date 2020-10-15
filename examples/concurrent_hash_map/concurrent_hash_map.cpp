@@ -86,6 +86,10 @@ main(int argc, char *argv[])
 		auto &map = *r;
 		std::cout << map.size() << std::endl;
 
+		/* We expect around 10 * THREADS_NUM items, so we reserve
+		 * hashmap's capacity to speed up insert operations. */
+		map.reserve(10 * THREADS_NUM);
+
 		std::vector<std::thread> threads;
 		threads.reserve(static_cast<size_t>(THREADS_NUM));
 

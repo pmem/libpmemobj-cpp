@@ -1299,25 +1299,6 @@ public:
 	}
 
 	/**
-	 * Prepare enough segments for number of buckets
-	 */
-	void
-	reserve(size_type buckets)
-	{
-		if (buckets == 0)
-			return;
-
-		--buckets;
-
-		bool is_initial = this->size() == 0;
-
-		for (size_type m = mask(); buckets > m; m = mask())
-			enable_segment(
-				segment_traits_t::segment_index_of(m + 1),
-				is_initial);
-	}
-
-	/**
 	 * Swap hash_map_base
 	 * @throws std::transaction_error in case of PMDK transaction failed
 	 */
@@ -1661,6 +1642,7 @@ protected:
 	using hash_map_base::check_growth;
 	using hash_map_base::check_mask_race;
 	using hash_map_base::embedded_buckets;
+	using hash_map_base::enable_segment;
 	using hash_map_base::FEATURE_CONSISTENT_SIZE;
 	using hash_map_base::get_bucket;
 	using hash_map_base::get_pool_base;
@@ -1669,7 +1651,6 @@ protected:
 	using hash_map_base::internal_swap;
 	using hash_map_base::layout_features;
 	using hash_map_base::mask;
-	using hash_map_base::reserve;
 	using tls_t = typename hash_map_base::tls_t;
 	using node = typename hash_map_base::node;
 	using node_mutex_t = typename node::mutex_t;
@@ -2872,6 +2853,27 @@ public:
 		}
 
 		return my_defrag.run();
+	}
+
+	/**
+	 * Prepare enough segments for number of buckets.
+	 *
+	 * XXX: fixme
+	 */
+	void
+	reserve(size_type buckets)
+	{
+		if (buckets == 0)
+			return;
+
+		--buckets;
+
+		bool is_initial = this->size() == 0;
+
+		for (size_type m = mask(); buckets > m; m = mask())
+			enable_segment(
+				segment_traits_t::segment_index_of(m + 1),
+				is_initial);
 	}
 
 	/**

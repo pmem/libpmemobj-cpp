@@ -1752,7 +1752,7 @@ radix_tree<Key, Value, BytesView>::internal_find(const K &k) const
 	while (n && !n.is_leaf()) {
 		if (path_length_equal(key.size(), n))
 			n = n->embedded_entry;
-		else if (n->byte > key.size())
+		else if (n->byte >= key.size())
 			return nullptr;
 		else
 			n = n->child[slice_index(key[n->byte], n->bit)];

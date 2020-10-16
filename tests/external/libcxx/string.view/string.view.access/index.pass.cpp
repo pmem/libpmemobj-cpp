@@ -5,33 +5,41 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <string_view>
 
 // constexpr const _CharT& operator[](size_type _pos) const;
 
-#include <cassert>
-#include <string_view>
+#include "unittest.hpp"
 
-#include "test_macros.h"
+#include <type_traits>
+
+#include <libpmemobj++/string_view.hpp>
 
 template <typename CharT>
 void
 test(const CharT *s, size_t len)
 {
-	typedef std::basic_string_view<CharT> SV;
+	typedef pmem::obj::basic_string_view<CharT> SV;
 	SV sv(s, len);
-	ASSERT_SAME_TYPE(decltype(sv[0]), typename SV::const_reference);
-	LIBCPP_ASSERT_NOEXCEPT(sv[0]);
-	assert(sv.length() == len);
+	static_assert(std::is_same<decltype(sv[0]),
+				   typename SV::const_reference>::value,
+		      "must be const_reference");
+	UT_ASSERT(noexcept(sv[0]) == true);
+	UT_ASSERT(sv.length() == len);
 	for (size_t i = 0; i < len; ++i) {
-		assert(sv[i] == s[i]);
-		assert(&sv[i] == s + i);
+		UT_ASSERT(sv[i] == s[i]);
+		UT_ASSERT(&sv[i] == s + i);
 	}
 }
 
-int
-main(int, char **)
+static void
+run()
 {
 	test("ABCDE", 5);
 	test("a", 1);
@@ -39,22 +47,22 @@ main(int, char **)
 	test(L"ABCDE", 5);
 	test(L"a", 1);
 
-#if TEST_STD_VER >= 11
 	test(u"ABCDE", 5);
 	test(u"a", 1);
 
 	test(U"ABCDE", 5);
 	test(U"a", 1);
-#endif
 
-#if TEST_STD_VER > 11
 	{
-		constexpr std::basic_string_view<char> sv("ABC", 2);
+		constexpr pmem::obj::basic_string_view<char> sv("ABC", 2);
 		static_assert(sv.length() == 2, "");
 		static_assert(sv[0] == 'A', "");
 		static_assert(sv[1] == 'B', "");
 	}
-#endif
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { run(); });
 }

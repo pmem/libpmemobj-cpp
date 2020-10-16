@@ -67,7 +67,7 @@ public:
 	constexpr size_type size() const noexcept;
 	constexpr size_type length() const noexcept;
 
-	constexpr const CharT &at(size_type pos) const;
+	const CharT &at(size_type pos) const;
 	constexpr const CharT &operator[](size_type pos) const noexcept;
 	constexpr const_reference front() const noexcept;
 	constexpr const_reference back() const noexcept;
@@ -194,7 +194,7 @@ constexpr inline const CharT &
  * @throw std::out_of_range when out of bounds occurs.
  */
 template <typename CharT, typename Traits>
-constexpr inline const CharT &
+inline const CharT &
 basic_string_view<CharT, Traits>::at(size_t pos) const
 {
 	if (pos >= size())

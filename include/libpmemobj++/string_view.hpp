@@ -10,6 +10,7 @@
 #define LIBPMEMOBJ_CPP_STRING_VIEW
 
 #include <algorithm>
+#include <limits>
 #include <stdexcept>
 #include <string>
 
@@ -66,6 +67,8 @@ public:
 	constexpr const CharT *data() const noexcept;
 	constexpr size_type size() const noexcept;
 	constexpr size_type length() const noexcept;
+	constexpr bool empty() const noexcept;
+	constexpr size_type max_size() const noexcept;
 
 	const CharT &at(size_type pos) const;
 	constexpr const CharT &operator[](size_type pos) const noexcept;
@@ -171,6 +174,31 @@ constexpr inline typename basic_string_view<CharT, Traits>::size_type
 basic_string_view<CharT, Traits>::length() const noexcept
 {
 	return size_;
+}
+
+/**
+ * Returns that view is empty or not.
+ *
+ * @return true when size() == 0.
+ */
+template <typename CharT, typename Traits>
+constexpr inline bool
+basic_string_view<CharT, Traits>::empty() const noexcept
+{
+	return size() == 0;
+}
+
+/**
+ * Returns the largest possible number of char-like objects that can be referred
+ * to by a basic_string_view.
+ *
+ * @return maximum number of characters.
+ */
+template <typename CharT, typename Traits>
+constexpr inline typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::max_size() const noexcept
+{
+	return std::numeric_limits<size_type>::max();
 }
 
 /**

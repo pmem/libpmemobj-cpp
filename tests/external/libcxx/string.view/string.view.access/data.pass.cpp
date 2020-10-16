@@ -5,31 +5,31 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <string_view>
 
 // constexpr const _CharT* data() const noexcept;
 
-#include <cassert>
-#include <string_view>
+#include "unittest.hpp"
 
-#include "test_macros.h"
+#include <libpmemobj++/string_view.hpp>
 
 template <typename CharT>
 void
 test(const CharT *s, size_t len)
 {
-	std::basic_string_view<CharT> sv(s, len);
-	assert(sv.length() == len);
-	assert(sv.data() == s);
-#if TEST_STD_VER > 14
-	//  make sure we pick up std::data, too!
-	assert(sv.data() == std::data(sv));
-#endif
+	pmem::obj::basic_string_view<CharT> sv(s, len);
+	UT_ASSERT(sv.length() == len);
+	UT_ASSERT(sv.data() == s);
 }
 
-int
-main(int, char **)
+static void
+run()
 {
 	test("ABCDE", 5);
 	test("a", 1);
@@ -37,22 +37,22 @@ main(int, char **)
 	test(L"ABCDE", 5);
 	test(L"a", 1);
 
-#if TEST_STD_VER >= 11
 	test(u"ABCDE", 5);
 	test(u"a", 1);
 
 	test(U"ABCDE", 5);
 	test(U"a", 1);
-#endif
 
-#if TEST_STD_VER > 11
 	{
 		constexpr const char *s = "ABC";
-		constexpr std::basic_string_view<char> sv(s, 2);
+		constexpr pmem::obj::basic_string_view<char> sv(s, 2);
 		static_assert(sv.length() == 2, "");
 		static_assert(sv.data() == s, "");
 	}
-#endif
+}
 
-	return 0;
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { run(); });
 }

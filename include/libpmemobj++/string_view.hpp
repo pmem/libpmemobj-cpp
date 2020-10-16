@@ -10,7 +10,7 @@
 #define LIBPMEMOBJ_CPP_STRING_VIEW
 
 #include <algorithm>
-#include <cassert>
+#include <limits>
 #include <stdexcept>
 #include <string>
 
@@ -38,8 +38,8 @@ using u32string_view = std::basic_string_view<char32_t>;
 /**
  * Our partial std::string_view implementation.
  *
- * If C++17's std::string_view implementation is not available, this one is
- * used to avoid unnecessary string copying.
+ * If C++17's std::string_view implementation is not available, this one
+ * is used to avoid unnecessary string copying.
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string_view {
@@ -67,6 +67,8 @@ public:
 	constexpr const CharT *data() const noexcept;
 	constexpr size_type size() const noexcept;
 	constexpr size_type length() const noexcept;
+	constexpr bool empty() const noexcept;
+	constexpr size_type max_size() const noexcept;
 
 	const CharT &at(size_type pos) const;
 	constexpr const CharT &operator[](size_type pos) const noexcept;
@@ -135,8 +137,8 @@ constexpr inline basic_string_view<CharT, Traits>::basic_string_view(
 }
 
 /**
- * Returns pointer to data stored in this pmem::obj::string_view. It may not
- * contain the terminating null character.
+ * Returns pointer to data stored in this pmem::obj::string_view. It may
+ *not contain the terminating null character.
  *
  * @return pointer to C-like string (char *), it may not end with null
  *	character.
@@ -149,7 +151,8 @@ basic_string_view<CharT, Traits>::data() const noexcept
 }
 
 /**
- * Returns count of characters stored in this pmem::obj::string_view data.
+ * Returns count of characters stored in this pmem::obj::string_view
+ * data.
  *
  * @return the number of CharT elements in the view.
  */
@@ -158,6 +161,31 @@ constexpr inline typename basic_string_view<CharT, Traits>::size_type
 basic_string_view<CharT, Traits>::size() const noexcept
 {
 	return size_;
+}
+
+/**
+ * Returns that view is empty or not.
+ *
+ * @return true when size() == 0.
+ */
+template <typename CharT, typename Traits>
+constexpr inline bool
+basic_string_view<CharT, Traits>::empty() const noexcept
+{
+	return size() == 0;
+}
+
+/**
+ * Returns the largest possible number of char-like objects that can be
+ * referred to by a basic_string_view.
+ *
+ * @return maximum number of characters.
+ */
+template <typename CharT, typename Traits>
+constexpr inline typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::max_size() const noexcept
+{
+	return std::numeric_limits<size_type>::max();
 }
 
 /**

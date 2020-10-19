@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <stdexcept>
 #include <string>
 
 #if __cpp_lib_string_view
@@ -53,19 +54,24 @@ public:
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
 
-	basic_string_view() noexcept;
-	basic_string_view(const CharT *data, size_type size);
-	basic_string_view(const std::basic_string<CharT, Traits> &s);
-	basic_string_view(const CharT *data);
+	constexpr basic_string_view() noexcept;
+	constexpr basic_string_view(const CharT *data, size_type size);
+	constexpr basic_string_view(const std::basic_string<CharT, Traits> &s);
+	constexpr basic_string_view(const CharT *data);
 
-	basic_string_view(const basic_string_view &rhs) noexcept = default;
+	constexpr basic_string_view(const basic_string_view &rhs) noexcept =
+		default;
 	basic_string_view &
 	operator=(const basic_string_view &rhs) noexcept = default;
 
-	const CharT *data() const noexcept;
-	size_type size() const noexcept;
+	constexpr const CharT *data() const noexcept;
+	constexpr size_type size() const noexcept;
+	constexpr size_type length() const noexcept;
 
-	const CharT &operator[](size_type p) const noexcept;
+	const CharT &at(size_type pos) const;
+	constexpr const CharT &operator[](size_type pos) const noexcept;
+	constexpr const_reference front() const noexcept;
+	constexpr const_reference back() const noexcept;
 
 	int compare(const basic_string_view &other) const noexcept;
 
@@ -83,7 +89,7 @@ using u32string_view = basic_string_view<char32_t>;
  * Default constructor with empty data.
  */
 template <typename CharT, typename Traits>
-inline basic_string_view<CharT, Traits>::basic_string_view() noexcept
+constexpr inline basic_string_view<CharT, Traits>::basic_string_view() noexcept
     : data_(nullptr), size_(0)
 {
 }
@@ -96,8 +102,8 @@ inline basic_string_view<CharT, Traits>::basic_string_view() noexcept
  * @param[in] size length of the given data.
  */
 template <typename CharT, typename Traits>
-inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data,
-							   size_type size)
+constexpr inline basic_string_view<CharT, Traits>::basic_string_view(
+	const CharT *data, size_type size)
     : data_(data), size_(size)
 {
 }
@@ -108,7 +114,7 @@ inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data,
  * @param[in] s reference to the string to initialize with.
  */
 template <typename CharT, typename Traits>
-inline basic_string_view<CharT, Traits>::basic_string_view(
+constexpr inline basic_string_view<CharT, Traits>::basic_string_view(
 	const std::basic_string<CharT, Traits> &s)
     : data_(s.c_str()), size_(s.size())
 {
@@ -122,7 +128,8 @@ inline basic_string_view<CharT, Traits>::basic_string_view(
  *	it has to end with the terminating null character.
  */
 template <typename CharT, typename Traits>
-inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
+constexpr inline basic_string_view<CharT, Traits>::basic_string_view(
+	const CharT *data)
     : data_(data), size_(Traits::length(data))
 {
 }
@@ -135,7 +142,7 @@ inline basic_string_view<CharT, Traits>::basic_string_view(const CharT *data)
  *	character.
  */
 template <typename CharT, typename Traits>
-inline const CharT *
+constexpr inline const CharT *
 basic_string_view<CharT, Traits>::data() const noexcept
 {
 	return data_;
@@ -144,27 +151,80 @@ basic_string_view<CharT, Traits>::data() const noexcept
 /**
  * Returns count of characters stored in this pmem::obj::string_view data.
  *
- * @return pointer to C-like string (char *), it may not end with null
- *	character.
+ * @return the number of CharT elements in the view.
  */
 template <typename CharT, typename Traits>
-inline typename basic_string_view<CharT, Traits>::size_type
+constexpr inline typename basic_string_view<CharT, Traits>::size_type
 basic_string_view<CharT, Traits>::size() const noexcept
 {
 	return size_;
 }
 
 /**
- * Returns reference to a character at position @param[in] p .
+ * Returns count of characters stored in this pmem::obj::string_view data.
  *
- * @return reference to a char.
+ * @return the number of CharT elements in the view.
  */
 template <typename CharT, typename Traits>
-inline const CharT &basic_string_view<CharT, Traits>::operator[](size_t p) const
-	noexcept
+constexpr inline typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::length() const noexcept
 {
-	assert(p < size());
-	return data()[p];
+	return size_;
+}
+
+/**
+ * Returns reference to a character at position @param[in] pos .
+ *
+ * @return reference to the char.
+ */
+template <typename CharT, typename Traits>
+constexpr inline const CharT &
+	basic_string_view<CharT, Traits>::operator[](size_t pos) const noexcept
+{
+	return data()[pos];
+}
+
+/**
+ * Returns reference to the character at position @param[in] pos and
+ * performs bound checking.
+ *
+ * @return reference to the char.
+ *
+ * @throw std::out_of_range when out of bounds occurs.
+ */
+template <typename CharT, typename Traits>
+inline const CharT &
+basic_string_view<CharT, Traits>::at(size_t pos) const
+{
+	if (pos >= size())
+		throw std::out_of_range("Accessing a position out of bounds!");
+	return data()[pos];
+}
+
+/**
+ * Returns reference to the last character in the view.
+ * The behavior is undefined if empty() == true.
+ *
+ * @return reference to the last character.
+ */
+template <typename CharT, typename Traits>
+constexpr inline const CharT &
+basic_string_view<CharT, Traits>::back() const noexcept
+{
+	return operator[](size() - 1);
+}
+
+/**
+ * Returns reference to the first character in the view.
+ * The behavior is undefined if empty() == true.
+ *
+ * @return reference to the first character.
+ */
+template <typename CharT, typename Traits>
+constexpr inline const CharT &
+basic_string_view<CharT, Traits>::front() const noexcept
+{
+	return operator[](0);
 }
 
 /**

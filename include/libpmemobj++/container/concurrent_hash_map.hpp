@@ -333,7 +333,7 @@ struct hash_map_node {
 
 /**
  * The class provides the way to access certain properties of segments
- * used by hash map
+ * used by hash map.
  */
 template <typename Bucket>
 class segment_traits {
@@ -1319,7 +1319,7 @@ public:
 
 	/**
 	 * Swap hash_map_base
-	 * @throws std::transaction_error in case of PMDK transaction failed
+	 * @throw std::transaction_error in case of PMDK transaction failed
 	 */
 	void
 	internal_swap(hash_map_base<Key, T, mutex_t, scoped_t> &table)
@@ -1575,7 +1575,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
  * The implementation is based on a concurrent hash table algorithm
  * (https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf) where elements
- * assigned to buckets based on a hash code are calculated from a key.
+ * are assigned to buckets based on a hash code calculated from a key.
  * In addition to concurrent find, insert, and erase operations, the algorithm
  * employs resizing and on-demand per-bucket rehashing. The hash table consists
  * of an array of buckets, and each bucket consists of a list of nodes and a
@@ -2273,7 +2273,7 @@ public:
 	 * Clear hash map content
 	 * Not thread safe.
 	 *
-	 * @throws pmem::transaction_error in case of PMDK transaction failure
+	 * @throw pmem::transaction_error in case of PMDK transaction failure
 	 */
 	void clear();
 
@@ -2800,7 +2800,7 @@ public:
 	 * Remove element with corresponding key
 	 *
 	 * @return true if element was deleted by this call
-	 * @throws pmem::transaction_free_error in case of PMDK unable to free
+	 * @throw pmem::transaction_free_error in case of PMDK unable to free
 	 * the memory
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
@@ -2889,7 +2889,7 @@ public:
 	 * this function without constructing an instance of Key
 	 *
 	 * @return true if element was deleted by this call
-	 * @throws pmem::transaction_free_error in case of PMDK unable to free
+	 * @throw pmem::transaction_free_error in case of PMDK unable to free
 	 * the memory
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */

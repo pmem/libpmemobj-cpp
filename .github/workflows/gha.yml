@@ -4,13 +4,13 @@ on: [push, pull_request]
 env:
   REPO:           libpmemobj-cpp
   GITHUB_REPO:    pmem/libpmemobj-cpp
+  CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
 
 jobs:
   linux:
     name: Linux
     runs-on: ubuntu-latest
     env:
-      CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
       # use org's Private Access Token to log in to GitHub Container Registry
       CONTAINER_REG_USER:   ${{ secrets.GH_CR_USER }}
       CONTAINER_REG_PASS:   ${{ secrets.GH_CR_PAT }}

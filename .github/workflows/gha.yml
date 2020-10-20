@@ -33,6 +33,9 @@ jobs:
         with:
           fetch-depth: 50
 
+      - name: Log in to the container registry
+        run: echo "${CONTAINER_REG_PASS}" | docker login ghcr.io -u="${CONTAINER_REG_USER}" --password-stdin
+
       - name: Pull or rebuild the image
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh
 

@@ -75,6 +75,10 @@ public:
 	constexpr const_reference front() const noexcept;
 	constexpr const_reference back() const noexcept;
 
+	void remove_prefix(size_type n);
+	void remove_suffix(size_type n);
+	void swap(basic_string_view &v) noexcept;
+
 	int compare(const basic_string_view &other) const noexcept;
 
 private:
@@ -253,6 +257,52 @@ constexpr inline const CharT &
 basic_string_view<CharT, Traits>::front() const noexcept
 {
 	return operator[](0);
+}
+
+/**
+ * Moves the start of the view forward by n characters.
+ * The behavior is undefined if n > size().
+ *
+ * @param[in] n characters to remove from the start of the view
+ */
+template <typename CharT, typename Traits>
+void
+basic_string_view<CharT, Traits>::remove_prefix(size_type n)
+{
+	data_ += n;
+	size_ -= n;
+}
+
+/**
+ * Moves the end of the view back by n characters.
+ * The behavior is undefined if n > size().
+ *
+ * @param[in] n characters to remove from the end of the view
+ */
+template <typename CharT, typename Traits>
+void
+basic_string_view<CharT, Traits>::remove_suffix(size_type n)
+{
+	size_ -= n;
+}
+
+/**
+ * Exchanges the view with that of v.
+ *
+ * @param[in] v view to swap with
+ */
+template <typename CharT, typename Traits>
+void
+basic_string_view<CharT, Traits>::swap(
+	basic_string_view<CharT, Traits> &v) noexcept
+{
+	const value_type *p = data_;
+	data_ = v.data_;
+	v.data_ = p;
+
+	size_type sz = size_;
+	size_ = v.size_;
+	v.size_ = sz;
 }
 
 /**

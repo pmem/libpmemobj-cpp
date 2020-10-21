@@ -11,9 +11,6 @@ jobs:
     name: Linux
     runs-on: ubuntu-latest
     env:
-      # use org's Private Access Token to log in to GitHub Container Registry
-      CONTAINER_REG_USER:   ${{ secrets.GH_CR_USER }}
-      CONTAINER_REG_PASS:   ${{ secrets.GH_CR_PAT }}
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     strategy:
@@ -33,8 +30,13 @@ jobs:
         with:
           fetch-depth: 50
 
-      - name: Log in to the container registry
-        run: echo "${CONTAINER_REG_PASS}" | docker login ghcr.io -u="${CONTAINER_REG_USER}" --password-stdin
+      - name: Login to the container registry
+        uses: docker/login-action@v1
+        with:
+        # use org's Private Access Token to log in to GitHub Container Registry
+          registry: ghcr.io
+          username: ${{ secrets.GH_CR_USER }}
+          password: ${{ secrets.GH_CR_PAT }}
 
       - name: Pull or rebuild the image
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh

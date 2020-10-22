@@ -1,10 +1,11 @@
+
 name: CPP
 on: [push, pull_request]
 
 env:
   REPO:           libpmemobj-cpp
   GITHUB_REPO:    pmem/libpmemobj-cpp
-  CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
+  CONTAINER_REG:  ghcr.io/${{github.repository}}
 
 jobs:
   linux:

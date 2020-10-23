@@ -6,6 +6,7 @@
 # Original CMake flags and includes are saved to be restored at the end of the file.
 # This way project's original settings are not modified by the process of these checks.
 set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+set(SAVED_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
 
 if(NOT MSVC_VERSION)
@@ -90,6 +91,7 @@ if(NOT MSVC_VERSION)
 	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
 	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_SOURCE_DIR}/include ${LIBPMEMOBJ_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
+	set(CMAKE_CXX_FLAGS "")
 	CHECK_CXX_SOURCE_COMPILES(
 		"#include <libpmemobj++/make_persistent_array.hpp>
 		using namespace pmem::obj;
@@ -142,5 +144,6 @@ CHECK_CXX_SOURCE_COMPILES(
 )
 
 # Restore original, project's settings
-set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+set(CMAKE_CXX_FLAGS ${SAVED_CMAKE_CXX_FLAGS})
+set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})

@@ -6,7 +6,10 @@
 # Original CMake flags and includes are saved to be restored at the end of the file.
 # This way project's original settings are not modified by the process of these checks.
 set(SAVED_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
+set(SAVED_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 set(SAVED_CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES})
+
+set(CMAKE_CXX_FLAGS "")
 
 if(NOT MSVC_VERSION)
 
@@ -56,6 +59,7 @@ if(NOT MSVC_VERSION)
 
 	# Check for issues with older gcc compilers if "inline" aggregate initialization
 	# works for array class members https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65815
+	set(CMAKE_REQUIRED_FLAGS "")
 	CHECK_CXX_SOURCE_COMPILES(
 		"struct array {
 			int data[2];
@@ -98,6 +102,7 @@ if(NOT MSVC_VERSION)
 			return 0;
 		}"
 		NO_CLANG_TEMPLATE_BUG)
+	set(CMAKE_REQUIRED_INCLUDES "") # clean includes after check
 
 	# This is a workaround for older incompatible versions of libstdc++ and clang.
 	# Please see https://llvm.org/bugs/show_bug.cgi?id=15517 for more info.
@@ -142,5 +147,6 @@ CHECK_CXX_SOURCE_COMPILES(
 )
 
 # Restore original, project's settings
-set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
+set(CMAKE_CXX_FLAGS ${SAVED_CMAKE_CXX_FLAGS})
+set(CMAKE_REQUIRED_INCLUDES ${SAVED_CMAKE_REQUIRED_INCLUDES})

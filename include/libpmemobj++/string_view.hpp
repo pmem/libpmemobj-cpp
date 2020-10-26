@@ -53,6 +53,8 @@ public:
 	using const_reference = const value_type &;
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
+	using const_iterator = const_pointer;
+	using iterator = const_iterator;
 
 	constexpr basic_string_view() noexcept;
 	constexpr basic_string_view(const CharT *data, size_type size);
@@ -63,6 +65,17 @@ public:
 		default;
 	basic_string_view &
 	operator=(const basic_string_view &rhs) noexcept = default;
+
+	constexpr const_iterator begin() const noexcept;
+	constexpr const_iterator cbegin() const noexcept;
+	constexpr const_iterator end() const noexcept;
+	constexpr const_iterator cend() const noexcept;
+#ifdef XXX
+	constexpr const_reverse_iterator rbegin() const noexcept;
+	constexpr const_reverse_iterator crbegin() const noexcept;
+	constexpr const_reverse_iterator rend() const noexcept;
+	constexpr const_reverse_iterator crend() const noexcept;
+#endif
 
 	constexpr const CharT *data() const noexcept;
 	constexpr size_type size() const noexcept;
@@ -137,8 +150,60 @@ constexpr inline basic_string_view<CharT, Traits>::basic_string_view(
 }
 
 /**
+ * Returns an iterator to the first character of the view.
+ *
+ * @return const_iterator to the first character
+ */
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_iterator
+basic_string_view<CharT, Traits>::begin() const noexcept
+{
+	return cbegin();
+}
+
+/**
+ * Returns an iterator to the first character of the view.
+ *
+ * @return const_iterator to the first character
+ */
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_iterator
+basic_string_view<CharT, Traits>::cbegin() const noexcept
+{
+	return data_;
+}
+
+/**
+ * Returns an iterator to the character following the last character of the
+ * view. This character acts as a placeholder, attempting to access it results
+ * in undefined behavior.
+ *
+ * @return const_iterator to the character following the last character.
+ */
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_iterator
+basic_string_view<CharT, Traits>::end() const noexcept
+{
+	return cend();
+}
+
+/**
+ * Returns an iterator to the character following the last character of the
+ * view. This character acts as a placeholder, attempting to access it results
+ * in undefined behavior.
+ *
+ * @return const_iterator to the character following the last character.
+ */
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_iterator
+basic_string_view<CharT, Traits>::cend() const noexcept
+{
+	return data_ + size_;
+}
+
+/**
  * Returns pointer to data stored in this pmem::obj::string_view. It may
- *not contain the terminating null character.
+ * not contain the terminating null character.
  *
  * @return pointer to C-like string (char *), it may not end with null
  *	character.

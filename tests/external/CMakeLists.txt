@@ -758,6 +758,12 @@ if (TEST_STRING)
 	build_test(string_libcxx_string_view_capacity libcxx/string.view/string.view.capacity/capacity.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_capacity TRACERS none pmemcheck memcheck)
 
+	build_test(string_libcxx_string_view_begin libcxx/string.view/string.view.iterators/begin.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_begin TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_string_view_end libcxx/string.view/string.view.iterators/end.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_end TRACERS none pmemcheck memcheck)
+
 	if(MSVC_VERSION GREATER_EQUAL 1920)
 		build_test(string_libcxx_string_view_opeq_string_view libcxx/string.view/string.view.comparison/opeq.string_view.string_view.pass.cpp)
 		add_test_generic(NAME string_libcxx_string_view_opeq_string_view TRACERS none pmemcheck memcheck)

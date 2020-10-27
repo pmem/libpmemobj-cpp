@@ -29,7 +29,9 @@ test(const CharT *s, size_t len)
 	static_assert(std::is_same<decltype(sv.back()),
 				   typename SV::const_reference>::value,
 		      "must be const_reference");
+#ifndef __cpp_lib_string_view
 	static_assert(noexcept(sv.back()), "Operation must be noexcept");
+#endif
 	UT_ASSERT(sv.length() == len);
 	UT_ASSERT(sv.back() == s[len - 1]);
 	return &sv.back() == s + len - 1;

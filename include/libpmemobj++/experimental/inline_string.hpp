@@ -305,6 +305,20 @@ struct total_sizeof<basic_inline_string<CharT, Traits>> {
 };
 } /* namespace experimental */
 } /* namespace obj */
+
+namespace detail
+{
+/* Check if type is pmem::obj::basic_inline_string */
+template <typename>
+struct is_inline_string : std::false_type {
+};
+
+template <typename CharT, typename Traits>
+struct is_inline_string<obj::experimental::basic_inline_string<CharT, Traits>>
+    : std::true_type {
+};
+} /* namespace detail */
+
 } /* namespace pmem */
 
 #endif /* LIBPMEMOBJ_CPP_INLINE_STRING_HPP */

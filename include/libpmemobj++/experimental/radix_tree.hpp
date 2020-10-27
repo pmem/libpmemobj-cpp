@@ -3199,6 +3199,21 @@ swap(radix_tree<Key, Value, BytesView> &lhs,
 
 namespace detail
 {
+/* Check if type is pmem::obj::basic_string or
+ * pmem::obj::basic_inline_string */
+template <typename>
+struct is_string : std::false_type {
+};
+
+template <typename CharT, typename Traits>
+struct is_string<obj::basic_string<CharT, Traits>> : std::true_type {
+};
+
+template <typename CharT, typename Traits>
+struct is_string<obj::experimental::basic_inline_string<CharT, Traits>>
+    : std::true_type {
+};
+
 template <typename T>
 struct bytes_view<T, typename std::enable_if<is_string<T>::value>::type> {
 	using CharT = typename T::value_type;

@@ -11,9 +11,6 @@
 
 #include <type_traits>
 
-#include <libpmemobj++/container/basic_string.hpp>
-#include <libpmemobj++/experimental/inline_string.hpp>
-
 namespace pmem
 {
 
@@ -46,31 +43,6 @@ using is_transparent = typename Compare::is_transparent;
 
 template <typename Compare>
 using has_is_transparent = detail::supports<Compare, is_transparent>;
-
-/* Check if type is pmem::obj::basic_inline_string */
-template <typename>
-struct is_inline_string : std::false_type {
-};
-
-template <typename CharT, typename Traits>
-struct is_inline_string<obj::experimental::basic_inline_string<CharT, Traits>>
-    : std::true_type {
-};
-
-/* Check if type is pmem::obj::basic_string or
- * pmem::obj::basic_inline_string */
-template <typename>
-struct is_string : std::false_type {
-};
-
-template <typename CharT, typename Traits>
-struct is_string<obj::basic_string<CharT, Traits>> : std::true_type {
-};
-
-template <typename CharT, typename Traits>
-struct is_string<obj::experimental::basic_inline_string<CharT, Traits>>
-    : std::true_type {
-};
 
 } /* namespace detail */
 

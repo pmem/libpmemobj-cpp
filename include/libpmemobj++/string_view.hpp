@@ -56,6 +56,8 @@ public:
 	using const_pointer = const value_type *;
 	using const_iterator = const_pointer;
 	using iterator = const_iterator;
+	using reverse_iterator = std::reverse_iterator<const_iterator>;
+	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 	constexpr basic_string_view() noexcept;
 	constexpr basic_string_view(const CharT *data, size_type size);
@@ -71,12 +73,10 @@ public:
 	constexpr const_iterator cbegin() const noexcept;
 	constexpr const_iterator end() const noexcept;
 	constexpr const_iterator cend() const noexcept;
-#ifdef XXX
 	constexpr const_reverse_iterator rbegin() const noexcept;
 	constexpr const_reverse_iterator crbegin() const noexcept;
 	constexpr const_reverse_iterator rend() const noexcept;
 	constexpr const_reverse_iterator crend() const noexcept;
-#endif
 
 	constexpr const CharT *data() const noexcept;
 	constexpr size_type size() const noexcept;
@@ -206,6 +206,34 @@ basic_string_view<CharT, Traits>::cend() const noexcept
 	return data_ + size_;
 }
 
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
+basic_string_view<CharT, Traits>::rbegin() const noexcept
+{
+	return reverse_iterator(cend());
+}
+
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
+basic_string_view<CharT, Traits>::crbegin() const noexcept
+{
+	return reverse_iterator(cend());
+}
+
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
+basic_string_view<CharT, Traits>::rend() const noexcept
+{
+	return reverse_iterator(cbegin());
+}
+
+template <typename CharT, typename Traits>
+constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
+basic_string_view<CharT, Traits>::crend() const noexcept
+{
+	return reverse_iterator(cbegin());
+}
+
 /**
  * Returns pointer to data stored in this pmem::obj::string_view. It may
  * not contain the terminating null character.
@@ -218,19 +246,6 @@ constexpr inline const CharT *
 basic_string_view<CharT, Traits>::data() const noexcept
 {
 	return data_;
-}
-
-/**
- * Returns count of characters stored in this pmem::obj::string_view
- * data.
- *
- * @return the number of CharT elements in the view.
- */
-template <typename CharT, typename Traits>
-constexpr inline typename basic_string_view<CharT, Traits>::size_type
-basic_string_view<CharT, Traits>::size() const noexcept
-{
-	return size_;
 }
 
 /**
@@ -256,6 +271,19 @@ constexpr inline typename basic_string_view<CharT, Traits>::size_type
 basic_string_view<CharT, Traits>::max_size() const noexcept
 {
 	return (std::numeric_limits<size_type>::max)();
+}
+
+/**
+ * Returns count of characters stored in this pmem::obj::string_view
+ * data.
+ *
+ * @return the number of CharT elements in the view.
+ */
+template <typename CharT, typename Traits>
+constexpr inline typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::size() const noexcept
+{
+	return size_;
 }
 
 /**

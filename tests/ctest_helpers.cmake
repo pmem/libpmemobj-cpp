@@ -56,6 +56,7 @@ function(find_packages)
 		message(WARNING "libunwind not found. Stack traces from tests will not be reliable")
 	endif()
 
+	# XXX: if pmreorder not supported (e.g. on Win) - print one message "tests will be skipped"
 	if(NOT WIN32)
 		if(VALGRIND_FOUND AND TESTS_PMREORDER)
 			if((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
@@ -110,7 +111,6 @@ function(build_test name)
 	if(WIN32)
 		target_link_libraries(${name} dbghelp)
 	endif()
-	target_compile_definitions(${name} PRIVATE TESTS_LIBPMEMOBJ_VERSION=0x${LIBPMEMOBJ_VERSION_NUM})
 
 	add_dependencies(tests ${name})
 endfunction()

@@ -765,6 +765,12 @@ if (TEST_STRING)
 	build_test(string_libcxx_string_view_end libcxx/string.view/string.view.iterators/end.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_end TRACERS none pmemcheck memcheck)
 
+	build_test(string_libcxx_string_view_rbegin libcxx/string.view/string.view.iterators/rbegin.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_rbegin TRACERS none pmemcheck memcheck)
+
+	build_test(string_libcxx_string_view_rend libcxx/string.view/string.view.iterators/rend.pass.cpp)
+	add_test_generic(NAME string_libcxx_string_view_rend TRACERS none pmemcheck memcheck)
+
 	build_test(string_libcxx_string_view_swap libcxx/string.view/string.view.modifiers/swap.pass.cpp)
 	add_test_generic(NAME string_libcxx_string_view_swap TRACERS none pmemcheck memcheck)
 

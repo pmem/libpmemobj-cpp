@@ -2875,10 +2875,13 @@ public:
 
 		bool is_initial = this->size() == 0;
 
+		pool_base pop = get_pool_base();
+		pmem::obj::transaction::manual tx(pop);
 		for (size_type m = mask(); buckets > m; m = mask())
 			enable_segment(
 				segment_traits_t::segment_index_of(m + 1),
 				is_initial);
+		pmem::obj::transaction::commit();
 	}
 
 	/**

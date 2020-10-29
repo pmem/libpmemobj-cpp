@@ -276,6 +276,19 @@ test_tx_singlethread(nvobj::pool<root> &pop)
 	UT_ASSERTeq(bucket_count, map->bucket_count());
 	verify_elements(pop, number_of_inserts);
 
+	/* try {
+		pmem::obj::transaction::run(pop, [&] {
+			map->reserve(10 * (size_t)number_of_inserts);
+			pmem::obj::transaction::abort(0);
+		});
+	} catch (pmem::manual_tx_abort &) {
+	} catch (std::exception &e) {
+		UT_FATALexc(e);
+	}
+
+	UT_ASSERTeq(bucket_count, map->bucket_count());
+	verify_elements(pop, number_of_inserts); */
+
 	try {
 		pmem::obj::transaction::run(pop, [&] {
 			pmem::obj::delete_persistent<persistent_map_type>(map);

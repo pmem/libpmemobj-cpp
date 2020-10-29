@@ -28,6 +28,7 @@
 //  C++17
 
 #include "../is_transparent.h"
+#include "helper_classes.hpp"
 #include "map_wrapper.hpp"
 #include "unittest.hpp"
 
@@ -46,6 +47,8 @@ using container4 =
 	container_t<nvobj::string, Moveable, TRANSPARENT_COMPARE_STRING>;
 using container5 =
 	container_t<MoveableWrapper, MoveableWrapper, TRANSPARENT_COMPARE>;
+using container6 =
+	container_t<int, default_constructible_only, TRANSPARENT_COMPARE>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;
@@ -53,6 +56,7 @@ struct root {
 	nvobj::persistent_ptr<container3> s3;
 	nvobj::persistent_ptr<container4> s4;
 	nvobj::persistent_ptr<container5> s5;
+	nvobj::persistent_ptr<container6> s6;
 };
 
 int
@@ -318,6 +322,35 @@ run(pmem::obj::pool<root> &pop)
 		pmem::obj::transaction::run(
 			pop, [&] { nvobj::delete_persistent<M>(robj->s5); });
 	}
+	{
+		typedef container6 M;
+		typedef std::pair<M::iterator, bool> R;
+		pmem::obj::transaction::run(
+			pop, [&] { robj->s6 = nvobj::make_persistent<M>(); });
+		auto &m = *robj->s6;
+		R r;
+		for (int i = 0; i < 20; i += 2)
+			m.emplace(std::piecewise_construct,
+				  std::forward_as_tuple(i),
+				  std::forward_as_tuple());
+		UT_ASSERT(m.size() == 10);
+		UT_ASSERT(default_constructible_only::count == 10);
+
+		r = m.try_emplace(2);
+		UT_ASSERT(m.size() == 10);
+		UT_ASSERT(!r.second); // was not inserted
+		UT_ASSERT(default_constructible_only::count == 10);
+		UT_ASSERT(r.first->MAP_KEY == 2); // key
+
+		r = m.try_emplace(3);
+		UT_ASSERT(m.size() == 11);
+		UT_ASSERT(r.second);		  // was inserted
+		UT_ASSERT(r.first->MAP_KEY == 3); // key
+		UT_ASSERT(default_constructible_only::count == 11);
+		pmem::obj::transaction::run(
+			pop, [&] { nvobj::delete_persistent<M>(robj->s6); });
+	}
+
 	return 0;
 }
 

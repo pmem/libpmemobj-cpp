@@ -1,11 +1,11 @@
 # Content
 
 Dockerfiles and scripts placed in this directory are intended to be used as
-development process vehicles and part of continuous integration process.
+a development process vehicles and part of continuous integration process.
 
 Images built out of those recipes may by used with docker or podman as
-development environment.
-Only those used on Travis/Github Actions are fully tested on a daily basis.
+a development environment.
+Only those used on CI (Travis/Github Actions) are fully tested on a daily basis.
 In case of any problem, patches and Github issues are welcome.
 
 # How to build docker image
@@ -27,4 +27,3 @@ To get strace working, add to docker commandline
 ```sh
  --cap-add SYS_PTRACE
 ```
-

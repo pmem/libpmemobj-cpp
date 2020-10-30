@@ -36,7 +36,7 @@ sudo_password mv $TEMP_CF $CERT_FILE
 cd $WORKDIR
 mkdir build
 cd build
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug
+PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug
 
 export COVERITY_SCAN_PROJECT_NAME="$CI_REPO_SLUG"
 export COVERITY_SCAN_BRANCH_PATTERN="master"

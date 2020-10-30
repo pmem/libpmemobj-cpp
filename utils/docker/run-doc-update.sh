@@ -10,7 +10,7 @@
 
 set -e
 
-source `dirname $0`/valid-branches.sh
+source $(dirname ${0})/valid-branches.sh
 
 BOT_NAME=${DOC_UPDATE_BOT_NAME:-"pmem-bot"}
 DOC_REPO_OWNER="${DOC_REPO_OWNER:-"pmem"}"
@@ -21,10 +21,10 @@ ORIGIN="https://${DOC_UPDATE_GITHUB_TOKEN}@github.com/${BOT_NAME}/${REPO_NAME}"
 UPSTREAM="https://github.com/${DOC_REPO_OWNER}/${REPO_NAME}"
 # master or stable-* branch
 TARGET_BRANCH=${CI_BRANCH}
-VERSION=${TARGET_BRANCHES[$TARGET_BRANCH]}
+VERSION=${TARGET_BRANCHES[${TARGET_BRANCH}]}
 export GITHUB_TOKEN=${DOC_UPDATE_GITHUB_TOKEN}
 
-if [ -z $VERSION ]; then
+if [ -z ${VERSION} ]; then
 	echo "Target location for branch ${TARGET_BRANCH} is not defined."
 	exit 1
 fi

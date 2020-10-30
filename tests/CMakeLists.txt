@@ -40,7 +40,7 @@ if(MSVC_VERSION)
 	add_flag("-D_FORTIFY_SOURCE=2" RELEASE)
 
 	# omit function name ambiguity under MSVC++ compiler
-	if(MSVC_VERSION GREATER_EQUAL 1920)
+	if(MSVC_VERSION GREATER 1919)
 		add_flag(-Ob3)
 	endif()
 else()

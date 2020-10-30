@@ -8,37 +8,38 @@
 
 set -e
 
-if [[ "$CI_REPO_SLUG" != "$GITHUB_REPO" \
-   && ( "$COVERITY_SCAN_NOTIFICATION_EMAIL" == "" \
-     || "$COVERITY_SCAN_TOKEN" == "" ) ]]; then
+# Run coverity build only on upstream repository and check for req. vars
+if [[ "${CI_REPO_SLUG}" != "${GITHUB_REPO}" \
+   && ( "${COVERITY_SCAN_NOTIFICATION_EMAIL}" == "" \
+     || "${COVERITY_SCAN_TOKEN}" == "" ) ]]; then
 	echo
 	echo "Skipping Coverity build:"\
-		"COVERITY_SCAN_TOKEN=\"$COVERITY_SCAN_TOKEN\" or"\
+		"COVERITY_SCAN_TOKEN=\"${COVERITY_SCAN_TOKEN}\" or"\
 		"COVERITY_SCAN_NOTIFICATION_EMAIL="\
-		"\"$COVERITY_SCAN_NOTIFICATION_EMAIL\" is not set"
+		"\"${COVERITY_SCAN_NOTIFICATION_EMAIL}\" is not set"
 	exit 0
 fi
 
 # Prepare build environment
-source `dirname $0`/prepare-for-build.sh
+source $(dirname ${0})/prepare-for-build.sh
 
 CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 TEMP_CF=$(mktemp)
-cp $CERT_FILE $TEMP_CF
+cp ${CERT_FILE} ${TEMP_CF}
 
 # Download Coverity certificate
 echo -n | openssl s_client -connect scan.coverity.com:443 | \
 	sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | \
-	tee -a $TEMP_CF
+	tee -a ${TEMP_CF}
 
-sudo_password mv $TEMP_CF $CERT_FILE
+sudo_password mv ${TEMP_CF} ${CERT_FILE}
 
-cd $WORKDIR
-mkdir build
-cd build
+echo "Prepare build and run coverity scan"
+mkdir ${WORKDIR}/build
+cd ${WORKDIR}/build
 PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug
 
-export COVERITY_SCAN_PROJECT_NAME="$CI_REPO_SLUG"
+export COVERITY_SCAN_PROJECT_NAME="${CI_REPO_SLUG}"
 export COVERITY_SCAN_BRANCH_PATTERN="master"
 export COVERITY_SCAN_BUILD_COMMAND="make -j$(nproc)"
 

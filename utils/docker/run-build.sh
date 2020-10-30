@@ -74,7 +74,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=clang CXX=clang++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -111,7 +111,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=clang CXX=clang++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -145,7 +145,7 @@ function build_gcc_debug_cpp14() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -221,7 +221,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \

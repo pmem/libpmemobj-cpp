@@ -9,23 +9,19 @@ env:
   REPO:           libpmemobj-cpp
   GITHUB_REPO:    pmem/libpmemobj-cpp
   CONTAINER_REG:  ghcr.io/${{github.repository}}
+  HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
+  WORKDIR:        utils/docker
+  COVERITY_SCAN_NOTIFICATION_EMAIL:  ${{ secrets.COVERITY_SCAN_NOTIFICATION_EMAIL }}
+  COVERITY_SCAN_TOKEN:               ${{ secrets.COVERITY_SCAN_TOKEN }}
 
 jobs:
   linux:
     name: Linux-coverity
     runs-on: ubuntu-latest
-    env:
-      COVERITY_SCAN_NOTIFICATION_EMAIL:  ${{ secrets.COVERITY_SCAN_NOTIFICATION_EMAIL }}
-      COVERITY_SCAN_TOKEN:               ${{ secrets.COVERITY_SCAN_TOKEN }}
-      HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
-      WORKDIR:        utils/docker
     strategy:
       matrix:
         CONFIG: ["TYPE=coverity OS=ubuntu OS_VER=20.04"]
     steps:
-      - name: Print out the current date and time
-        run: date
-
       - name: Clone the git repo
         uses: actions/checkout@v2
 

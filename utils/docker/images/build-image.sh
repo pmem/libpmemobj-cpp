@@ -17,8 +17,8 @@ function usage {
 	echo
 	echo "Usage:"
 	echo "    build-image.sh <OS-VER>"
-	echo "where <OS-VER>, for example, can be 'fedora-31', provided " \
-		"a Dockerfile named 'Dockerfile.fedora-31' exists in the " \
+	echo "where <OS-VER>, for example, can be 'fedora-32', provided " \
+		"a Dockerfile named 'Dockerfile.fedora-32' exists in the " \
 		"current directory."
 }
 OS__OS_VER=${1}
@@ -30,7 +30,8 @@ if [[ -z "${OS__OS_VER}" ]]; then
 fi
 
 if [[ -z "${CONTAINER_REG}" ]]; then
-	echo "CONTAINER_REG environment variable is not set"
+	echo "ERROR: CONTAINER_REG environment variable is not set " \
+		"(e.g. \"<registry_addr>/<org_name>/<package_name>\")."
 	exit 1
 fi
 

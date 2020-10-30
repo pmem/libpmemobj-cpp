@@ -9,7 +9,7 @@
 
 set -e
 
-source `dirname $0`/prepare-for-build.sh
+source $(dirname ${0})/prepare-for-build.sh
 
 CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 TESTS_LONG=${TESTS_LONG:-OFF}
@@ -24,7 +24,7 @@ function upload_codecov() {
 
 	# set proper gcov command
 	clang_used=$(cmake -LA -N . | grep CMAKE_CXX_COMPILER | grep clang | wc -c)
-	if [[ $clang_used > 0 ]]; then
+	if [[ ${clang_used} -gt 0 ]]; then
 		gcovexe="llvm-cov gcov"
 	else
 		gcovexe="gcov"
@@ -32,13 +32,13 @@ function upload_codecov() {
 
 	# run gcov exe, using their bash (remove parsed coverage files, set flag and exit 1 if not successful)
 	# we rely on parsed report on codecov.io; the output is too long, hence it's disabled using -X flag
-	/opt/scripts/codecov -c -F $1 -Z -x "$gcovexe" -X "gcovout"
+	/opt/scripts/codecov -c -F ${1} -Z -x "${gcovexe}" -X "gcovout"
 
 	printf "check for any leftover gcov files\n"
 	leftover_files=$(find . -name "*.gcov")
-	if [[ -n "$leftover_files" ]]; then
+	if [[ -n "${leftover_files}" ]]; then
 		# display found files and exit with error (they all should be parsed)
-		echo "$leftover_files"
+		echo "${leftover_files}"
 		return 1
 	fi
 
@@ -50,7 +50,7 @@ function compile_example_standalone() {
 	mkdir /tmp/build_example
 	cd /tmp/build_example
 
-	cmake $WORKDIR/examples/$1
+	cmake ${WORKDIR}/examples/${1}
 
 	# exit on error
 	if [[ $? != 0 ]]; then
@@ -60,10 +60,6 @@ function compile_example_standalone() {
 
 	make -j$(nproc)
 	cd -
-}
-
-function sudo_password() {
-	echo $USERPASS | sudo -Sk $*
 }
 
 ###############################################################################
@@ -79,9 +75,9 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Debug \
-		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
 		-DTRACE_TESTS=1 \
-		-DCOVERAGE=$COVERAGE \
+		-DCOVERAGE=${COVERAGE} \
 		-DCXX_STANDARD=17 \
 		-DTESTS_USE_VALGRIND=0 \
 		-DTESTS_LONG=${TESTS_LONG} \
@@ -94,7 +90,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout 590
-	if [ "$COVERAGE" == "1" ]; then
+	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_clang_debug_cpp17
 	fi
 
@@ -116,9 +112,9 @@ function tests_clang_release_cpp11_no_valgrind() {
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
 		-DTRACE_TESTS=1 \
-		-DCOVERAGE=$COVERAGE \
+		-DCOVERAGE=${COVERAGE} \
 		-DCXX_STANDARD=11 \
 		-DTESTS_USE_VALGRIND=0 \
 		-DTESTS_LONG=${TESTS_LONG} \
@@ -129,7 +125,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder"  --timeout 540
-	if [ "$COVERAGE" == "1" ]; then
+	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_clang_release_cpp11
 	fi
 
@@ -150,9 +146,9 @@ function build_gcc_debug_cpp14() {
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Debug \
-		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
 		-DTRACE_TESTS=1 \
-		-DCOVERAGE=$COVERAGE \
+		-DCOVERAGE=${COVERAGE} \
 		-DCXX_STANDARD=14 \
 		-DTESTS_USE_VALGRIND=1 \
 		-DTESTS_LONG=${TESTS_LONG} \
@@ -174,7 +170,7 @@ function tests_gcc_debug_cpp14_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug_cpp14
 	ctest -E "_memcheck|_drd|_helgrind|_pmemcheck|_pmreorder" --timeout 590 --output-on-failure
-	if [ "$COVERAGE" == "1" ]; then
+	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_gcc_debug
 	fi
 	cd ..
@@ -216,8 +212,8 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	# TESTS_USE_VALGRIND=1. Expected behaviour is to get tests with suffix
 	# _SKIPPED_BECAUSE_OF_MISSING_VALGRIND
 	VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc" 2>/dev/null || true)
-	[ "$VALGRIND_PC_PATH" == "" ] && echo "Error: cannot find 'valgrind.pc' file" && exit 1
-	sudo_password mv $VALGRIND_PC_PATH tmp_valgrind_pc
+	[ "${VALGRIND_PC_PATH}" == "" ] && echo "Error: cannot find 'valgrind.pc' file" && exit 1
+	sudo_password mv ${VALGRIND_PC_PATH} tmp_valgrind_pc
 	mkdir build
 	cd build
 
@@ -226,9 +222,9 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
 		-DCMAKE_BUILD_TYPE=Release \
-		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
 		-DTRACE_TESTS=1 \
-		-DCOVERAGE=$COVERAGE \
+		-DCOVERAGE=${COVERAGE} \
 		-DCXX_STANDARD=17 \
 		-DTESTS_USE_VALGRIND=1 \
 		-DTESTS_LONG=${TESTS_LONG} \
@@ -240,14 +236,14 @@ function tests_gcc_release_cpp17_no_valgrind() {
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout 590
-	if [ "$COVERAGE" == "1" ]; then
+	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_gcc_release_cpp17_no_valgrind
 	fi
 
 	cd ..
 	rm -r build
 	#Recover valgrind
-	sudo_password mv tmp_valgrind_pc $VALGRIND_PC_PATH
+	sudo_password mv tmp_valgrind_pc ${VALGRIND_PC_PATH}
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -259,10 +255,10 @@ function tests_package() {
 	mkdir build
 	cd build
 
-	if [ $PACKAGE_MANAGER = "deb" ]; then
+	if [ ${PACKAGE_MANAGER} = "deb" ]; then
 		sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
 		sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
-	elif [ $PACKAGE_MANAGER = "rpm" ]; then
+	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
 		sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
 	fi
 
@@ -273,7 +269,7 @@ function tests_package() {
 		-DTESTS_TBB=OFF \
 		-DTESTS_PMREORDER=OFF \
 		-DBUILD_EXAMPLES=0 \
-		-DCPACK_GENERATOR=$PACKAGE_MANAGER \
+		-DCPACK_GENERATOR=${PACKAGE_MANAGER} \
 		-DTESTS_USE_FORCED_PMEM=1
 
 	make -j$(nproc)
@@ -286,9 +282,9 @@ function tests_package() {
 	compile_example_standalone map_cli && exit 1
 	echo "---------------------------------------------------------------------------"
 
-	if [ $PACKAGE_MANAGER = "deb" ]; then
+	if [ ${PACKAGE_MANAGER} = "deb" ]; then
 		sudo_password dpkg -i libpmemobj++*.deb
-	elif [ $PACKAGE_MANAGER = "rpm" ]; then
+	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
 		sudo_password rpm -i libpmemobj++*.rpm
 	fi
 
@@ -299,9 +295,9 @@ function tests_package() {
 	compile_example_standalone map_cli
 
 	# Remove pkg-config and force cmake to use find_package while compiling example
-	if [ $PACKAGE_MANAGER = "deb" ]; then
+	if [ ${PACKAGE_MANAGER} = "deb" ]; then
 		sudo_password dpkg -r --force-all pkg-config
-	elif [ $PACKAGE_MANAGER = "rpm" ]; then
+	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
 		# most rpm based OSes use the 'pkgconf' name, only openSUSE uses 'pkg-config'
 		sudo_password rpm -e --nodeps pkgconf || sudo_password rpm -e --nodeps pkg-config
 	fi
@@ -323,12 +319,12 @@ function tests_findLIBPMEMOBJ_cmake()
 
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_BUILD_TYPE=Release \
-		-DCMAKE_INSTALL_PREFIX=$INSTALL_DIR \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
 		-DTESTS_TBB=OFF \
 		-DTESTS_LONG=OFF \
 		-DTRACE_TESTS=1 \
 		-DBUILD_EXAMPLES=0 \
-		-DCOVERAGE=$COVERAGE \
+		-DCOVERAGE=${COVERAGE} \
 		-DCXX_STANDARD=17 \
 		-DTESTS_USE_FORCED_PMEM=1
 
@@ -343,15 +339,15 @@ function tests_findLIBPMEMOBJ_cmake()
 sudo_password mkdir /mnt/pmem
 sudo_password chmod 0777 /mnt/pmem
 sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
-mkdir $INSTALL_DIR
+mkdir ${INSTALL_DIR}
 
-cd $WORKDIR
+cd ${WORKDIR}
 
 # Run all build steps passed as script arguments
 build_steps=$@
-for build in $build_steps
+for build in ${build_steps}
 do
-	$build
+	${build}
 done
 
-rm -r $INSTALL_DIR
+rm -r ${INSTALL_DIR}

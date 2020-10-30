@@ -3,32 +3,31 @@
 # Copyright 2016-2020, Intel Corporation
 
 #
-# push-image.sh - pushes the Docker image tagged with OS-VER to the ${CONTAINER_REG}.
+# push-image.sh - pushes the Docker image tagged with ${IMG_VER}-${OS}-${OS_VER}
+#		to the ${CONTAINER_REG}.
 #
-# The script utilizes ${CONTAINER_REG_USER} and ${DOCKERHUB_PASSWORD} variables to
+# The script utilizes ${CONTAINER_REG_USER} and ${CONTAINER_REG_PASS} variables to
 # log in to the ${CONTAINER_REG}. The variables can be set in the CI's configuration
 # for automated builds.
 #
 
 set -e
 
-if [[ -z "${OS}" ]]; then
-	echo "OS environment variable is not set"
-	exit 1
-fi
-
-if [[ -z "${OS_VER}" ]]; then
-	echo "OS_VER environment variable is not set"
+if [[ -z "${OS}" || -z "${OS_VER}" ]]; then
+	echo "ERROR: The variables OS and OS_VER have to be set " \
+		"(e.g. OS=fedora, OS_VER=32)."
 	exit 1
 fi
 
 if [[ -z "${CONTAINER_REG}" ]]; then
-	echo "CONTAINER_REG environment variable is not set"
+	echo "ERROR: CONTAINER_REG environment variable is not set " \
+		"(e.g. \"<registry_addr>/<org_name>/<package_name>\")."
 	exit 1
 fi
 
 if [[ -z "${CONTAINER_REG_USER}" || -z "${CONTAINER_REG_PASS}" ]]; then
-	echo "ERROR: variables CONTAINER_REG_USER=\"${CONTAINER_REG_USER}\" and CONTAINER_REG_PASS=\"${CONTAINER_REG_PASS}\"" \
+	echo "ERROR: variables CONTAINER_REG_USER=\"${CONTAINER_REG_USER}\" " \
+		"and CONTAINER_REG_PASS=\"${CONTAINER_REG_PASS}\"" \
 		"have to be set properly to allow login to the Container Registry."
 	exit 1
 fi
@@ -43,8 +42,9 @@ then
 	exit 1
 fi
 
-echo "Log in to the container registry"
+echo "Log in to the Container Registry."
 echo "${CONTAINER_REG_PASS}" | docker login ghcr.io -u="${CONTAINER_REG_USER}" --password-stdin
 
-echo "Push the image to the container registry"
+echo "Push the image to the Container Registry."
 docker push ${CONTAINER_REG}:${TAG}
+echo "Image pushed."

@@ -25,12 +25,19 @@ export GITHUB_TOKEN=${DOC_UPDATE_GITHUB_TOKEN} # export for hub command
 REPO_DIR=$(mktemp -d -t libpmemobjcpp-XXX)
 ARTIFACTS_DIR=$(mktemp -d -t ARTIFACTS-XXX)
 
-# Only 'master' or 'stable-*' branches are valid
-source $(dirname ${0})/valid-branches.sh
+# Only 'master' or 'stable-*' branches are valid; determine docs location dir on gh-pages branch
 TARGET_BRANCH=${CI_BRANCH}
-VERSION=${TARGET_BRANCHES[${TARGET_BRANCH}]}
-if [ -z ${VERSION} ]; then
-	echo "Target location for branch ${TARGET_BRANCH} is not defined."
+if [[ "${TARGET_BRANCH}" == "master" ]]; then
+	TARGET_DOCS_DIR="master"
+elif [[ ${TARGET_BRANCH} == stable-* ]]; then
+	TARGET_DOCS_DIR=v$(echo ${TARGET_BRANCH} | cut -d"-" -f2 -s)
+else
+	echo "Skipping docs build, this script should be run only on master or stable-* branches."
+	echo "TARGET_BRANCH is set to: \'${TARGET_BRANCH}\'."
+	exit 0
+fi
+if [ -z "${TARGET_DOCS_DIR}" ]; then
+	echo "ERROR: Target docs location for branch: ${TARGET_BRANCH} is not set."
 	exit 1
 fi
 
@@ -61,15 +68,15 @@ cp -r ${REPO_DIR}/build/doc/cpp_html ${ARTIFACTS_DIR}/
 cd ${REPO_DIR}
 
 # Checkout gh-pages and copy docs
-GH_PAGES_NAME="${VERSION}-gh-pages-update"
+GH_PAGES_NAME="${TARGET_DOCS_DIR}-gh-pages-update"
 git checkout -B ${GH_PAGES_NAME} upstream/gh-pages
 git clean -dfx
 
 # Clean old content, since some files might have been deleted
-rm -rf ./${VERSION}
-mkdir -p ./${VERSION}/doxygen/
+rm -rf ./${TARGET_DOCS_DIR}
+mkdir -p ./${TARGET_DOCS_DIR}/doxygen/
 
-cp -fr ${ARTIFACTS_DIR}/cpp_html/* ./${VERSION}/doxygen/
+cp -fr ${ARTIFACTS_DIR}/cpp_html/* ./${TARGET_DOCS_DIR}/doxygen/
 
 echo "Add and push changes:"
 # git commit command may fail if there is nothing to commit.

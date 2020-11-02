@@ -18,6 +18,7 @@ jobs:
     name: Linux-other
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         CONFIG: ["OS=centos OS_VER=8",
                  "OS=archlinux-base OS_VER=latest",

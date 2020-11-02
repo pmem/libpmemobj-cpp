@@ -32,7 +32,6 @@ Publish package and make it official:
 
 Later, for major/minor release:
 - bump version of Docker images (build.sh, build-image.sh, push-image.sh, pull-or-rebuild-image.sh) to $VER+1 on master branch
-- add new branch in valid-branches.sh, on stable-$VER branch
 - update library version in [vcpkg](https://github.com/microsoft/vcpkg/blob/master/ports/libpmemobj-cpp) - file an inssue for their maintainers
 - once gh-pages contains new documentation:
  - add there (in index.md) v.$VER section in Doxygen docs links

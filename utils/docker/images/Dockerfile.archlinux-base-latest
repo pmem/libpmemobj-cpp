@@ -52,7 +52,7 @@ RUN pacman -S --noconfirm \
 
 # Install libndctl
 COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh archlinux-base
+RUN ./install-libndctl.sh
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh

@@ -8,7 +8,10 @@
 
 set -e
 
-OS=${1}
+if [[ -z "${OS}" ]]; then
+	echo "ERROR: The variable OS has to be set (e.g. OS=fedora)."
+	exit 1
+fi
 
 echo "==== clone ndctl repo ===="
 git clone https://github.com/pmem/ndctl.git

@@ -17,7 +17,8 @@
 # An empty file is created to signal that to next scripts.
 #
 # If the Docker image does not have to be rebuilt, it will be pulled from
-# the ${CONTAINER_REG}.
+# the ${CONTAINER_REG}. It can be also 'force' pulled if "pull" param was passed
+# as a first argument to this script.
 #
 
 set -e
@@ -48,14 +49,23 @@ function build_image() {
 	popd
 }
 
-# If "rebuild" param is passed to the script, force rebuild
+function pull_image() {
+	echo "Pull the image from the Container Registry."
+	docker pull ${CONTAINER_REG}:1.12-${OS}-${OS_VER}
+}
+
+# If "rebuild" or "pull" are passed to the script as param, force rebuild/pull.
 if [[ "${1}" == "rebuild" ]]; then
 	build_image
+	exit 0
+elif [[ "${1}" == "pull" ]]; then
+	pull_image
 	exit 0
 fi
 
 
-# Check if we need to rebuild the image or just pull it from the Container Registry
+# Determine if we need to rebuild the image or just pull it from
+# the Container Registry, based on commited changes.
 if [ -n "${CI_COMMIT_RANGE}" ]; then
 	commits=$(git rev-list ${CI_COMMIT_RANGE})
 else
@@ -102,6 +112,5 @@ for file in ${files}; do
 	fi
 done
 
-# Getting here means rebuilding the Docker image is not required.
-echo "Pull the image from the Container Registry."
-docker pull ${CONTAINER_REG}:1.12-${OS}-${OS_VER}
+# Getting here means rebuilding the Docker image is not required
+pull_image

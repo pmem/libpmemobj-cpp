@@ -61,7 +61,7 @@ cp -r ${REPO_DIR}/build/doc/cpp_html ${ARTIFACTS_DIR}/
 cd ${REPO_DIR}
 
 # Checkout gh-pages and copy docs
-GH_PAGES_NAME="gh-pages-for-${TARGET_BRANCH}"
+GH_PAGES_NAME="${VERSION}-gh-pages-update"
 git checkout -B ${GH_PAGES_NAME} upstream/gh-pages
 git clean -dfx
 
@@ -81,6 +81,7 @@ git push -f ${ORIGIN} ${GH_PAGES_NAME}
 
 echo "Make or update pull request:"
 # When there is already an open PR or there are no changes an error is thrown, which we ignore.
-hub pull-request -f -b ${DOC_REPO_OWNER}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} -m "doc: automatic gh-pages docs update" && true
+hub pull-request -f -b ${DOC_REPO_OWNER}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} \
+	-m "doc: automatic gh-pages update for ${TARGET_BRANCH}" && true
 
 popd

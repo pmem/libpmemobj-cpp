@@ -23,10 +23,6 @@ set -e
 source $(dirname $0)/set-ci-vars.sh
 source $(dirname $0)/set-vars.sh
 
-doc_variables_error="To build documentation and upload it as a Github pull request, \
-variables 'DOC_UPDATE_BOT_NAME', 'DOC_REPO_OWNER' and 'DOC_UPDATE_GITHUB_TOKEN' have to be provided. \
-For more details please read CONTRIBUTING.md"
-
 IMAGE_NAME=${CONTAINER_REG}:1.12-${OS}-${OS_VER}
 CONTAINER_NAME=libpmemobj-cpp-${OS}-${OS_VER}
 WORKDIR=/libpmemobj-cpp  # working dir within Docker container
@@ -81,10 +77,6 @@ if [[ -z "$COMMAND" ]]; then
 		COMMAND="./run-coverity.sh";
 		;;
 	doc)
-		if [[ -z "${DOC_UPDATE_BOT_NAME}" || -z "${DOC_UPDATE_GITHUB_TOKEN}" || -z "${DOC_REPO_OWNER}" ]]; then
-			echo "${doc_variables_error}"
-			exit 0
-		fi
 		COMMAND="./run-doc-update.sh";
 		;;
 	*)

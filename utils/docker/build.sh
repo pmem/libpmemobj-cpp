@@ -109,6 +109,7 @@ docker run --privileged=true --name=${CONTAINER_NAME} -i \
 	${DOCKER_OPTS} \
 	--env http_proxy=${http_proxy} \
 	--env https_proxy=${https_proxy} \
+	--env TERM=xterm-256color \
 	--env WORKDIR=${WORKDIR} \
 	--env SCRIPTSDIR=${SCRIPTSDIR} \
 	--env GITHUB_REPO=${GITHUB_REPO} \

@@ -59,6 +59,9 @@ public:
 	using reverse_iterator = std::reverse_iterator<const_iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+	static constexpr const size_type npos =
+		(std::numeric_limits<size_type>::max)();
+
 	constexpr basic_string_view() noexcept;
 	constexpr basic_string_view(const CharT *data, size_type size);
 	constexpr basic_string_view(const std::basic_string<CharT, Traits> &s);
@@ -93,6 +96,17 @@ public:
 	void remove_suffix(size_type n);
 	void swap(basic_string_view &v) noexcept;
 
+	constexpr basic_string_view substr(size_type pos = 0,
+					   size_type count = npos) const;
+	size_type copy(CharT *dest, size_type count, size_type pos = 0) const;
+	inline int compare(size_type pos1, size_type n1,
+			   basic_string_view sv) const;
+	inline int compare(size_type pos1, size_type n1, basic_string_view sv,
+			   size_type pos2, size_type n2) const;
+	inline int compare(const CharT *s) const noexcept;
+	inline int compare(size_type pos1, size_type n1, const CharT *s) const;
+	inline int compare(size_type pos1, size_type n1, const CharT *s,
+			   size_type n2) const;
 	int compare(const basic_string_view &other) const noexcept;
 
 private:
@@ -392,6 +406,151 @@ basic_string_view<CharT, Traits>::swap(
 {
 	std::swap(data_, v.data_);
 	std::swap(size_, v.size_);
+}
+
+/**
+ * Returns a view of the substring [pos, pos + rcount), where rcount is the
+ * smaller of count and size() - pos.
+ *
+ * @param[in] pos position of the first character
+ * @param[in] count requested length
+ *
+ * @return view of the substring [pos, pos + rcount).
+ *
+ * @throw std::out_of_range if pos > size()
+ */
+template <typename CharT, typename Traits>
+constexpr basic_string_view<CharT, Traits>
+basic_string_view<CharT, Traits>::substr(
+	basic_string_view<CharT, Traits>::size_type pos,
+	basic_string_view<CharT, Traits>::size_type count) const
+{
+	return pos > size()
+		? (throw std::out_of_range("string_view::substr"),
+		   basic_string_view())
+		: basic_string_view(data() + pos,
+				    (std::min)(count, size() - pos));
+}
+
+/**
+ * Copies the substring [pos, pos + rcount) to the character array pointed to by
+ * dest, where rcount is the smaller of count and size() - pos.
+ *
+ * @param[in] dest pointer to the destination character string
+ * @param[in] pos position of the first character
+ * @param[in] count requested substring length
+ *
+ * @return number of characters copied.
+ *
+ * @throw std::out_of_range if pos > size()
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::copy(
+	CharT *dest, basic_string_view<CharT, Traits>::size_type count,
+	basic_string_view<CharT, Traits>::size_type pos) const
+{
+	if (pos > size())
+		throw std::out_of_range("string_view::copy");
+	size_type rlen = (std::min)(count, size() - pos);
+	Traits::copy(dest, data() + pos, rlen);
+	return rlen;
+}
+
+/**
+ * Compares two character sequences.
+ *
+ * @param[in] pos1 position of the first character in this view to compare
+ * @param[in] n1 number of characters of this view to compare
+ * @param[in] sv view to compare
+ *
+ * @return negative value if this view is less than the other character
+ * sequence, zero if the both character sequences are equal, positive value if
+ * this view is greater than the other character sequence.
+ */
+template <typename CharT, typename Traits>
+inline int
+basic_string_view<CharT, Traits>::compare(
+	size_type pos1, size_type n1, basic_string_view<CharT, Traits> sv) const
+{
+	return substr(pos1, n1).compare(sv);
+}
+
+/**
+ * Compares two character sequences.
+ *
+ * @param[in] pos1 position of the first character in this view to compare
+ * @param[in] n1 number of characters of this view to compare
+ * @param[in] pos2 position of the first character of the given view to compare
+ * @param[in] n2 number of characters of the given view to compare
+ * @param[in] sv view to compare
+ *
+ * @return negative value if this view is less than the other character
+ * sequence, zero if the both character sequences are equal, positive value if
+ * this view is greater than the other character sequence.
+ */
+template <typename CharT, typename Traits>
+inline int
+basic_string_view<CharT, Traits>::compare(size_type pos1, size_type n1,
+					  basic_string_view sv, size_type pos2,
+					  size_type n2) const
+{
+	return substr(pos1, n1).compare(sv.substr(pos2, n2));
+}
+
+/**
+ * Compares two character sequences.
+ *
+ * @param[in] s pointer to the character string to compare to
+ *
+ * @return negative value if this view is less than the other character
+ * sequence, zero if the both character sequences are equal, positive value if
+ * this view is greater than the other character sequence.
+ */
+template <typename CharT, typename Traits>
+inline int
+basic_string_view<CharT, Traits>::compare(const CharT *s) const noexcept
+{
+	return compare(basic_string_view(s));
+}
+
+/**
+ * Compares two character sequences.
+ *
+ * @param[in] pos1 position of the first character in this view to compare
+ * @param[in] n1 number of characters of this view to compare
+ * @param[in] s pointer to the character string to compare to
+ *
+ * @return negative value if this view is less than the other character
+ * sequence, zero if the both character sequences are equal, positive value if
+ * this view is greater than the other character sequence.
+ */
+template <typename CharT, typename Traits>
+inline int
+basic_string_view<CharT, Traits>::compare(size_type pos1, size_type n1,
+					  const CharT *s) const
+{
+	return substr(pos1, n1).compare(basic_string_view(s));
+}
+
+/**
+ * Compares two character sequences.
+ *
+ * @param[in] pos1 position of the first character in this view to compare
+ * @param[in] n1 number of characters of this view to compare
+ * @param[in] s pointer to the character string to compare to
+ * @param[in] n2 number of characters of the given string to compare
+ *
+ * @return negative value if this view is less than the other character
+ * sequence, zero if the both character sequences are equal, positive value if
+ * this view is greater than the other character sequence.
+ */
+template <typename CharT, typename Traits>
+inline int
+basic_string_view<CharT, Traits>::compare(size_type pos1, size_type n1,
+					  const CharT *s, size_type n2) const
+{
+	return substr(pos1, n1).compare(basic_string_view(s, n2));
 }
 
 /**

@@ -62,6 +62,9 @@ jobs:
       - name: Clone the git repo
         uses: actions/checkout@v2
 
+      - name: Pull or rebuild the image
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh
+
       - name: Run the build
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
 

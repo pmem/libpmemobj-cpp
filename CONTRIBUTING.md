@@ -88,7 +88,7 @@ When developing a persistent container make sure you follow the rules and steps 
 ## Steps
 1. Create container implementation
 2. Create doc_snippet/example
-3. Add TEST_CONTAINER and INSTALL_CONTAINER CMake flags for enabling/disabling the container installation and testing.
+3. Add TEST_CONTAINER CMake option for enabling/disabling container's testing.
 4. Add tests (+ if possible, enable libcxx tests in tests/external/libcxx)
 
 ## Requirements:

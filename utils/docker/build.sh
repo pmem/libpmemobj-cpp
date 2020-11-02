@@ -21,7 +21,6 @@
 set -e
 
 source $(dirname $0)/set-ci-vars.sh
-source $(dirname $0)/set-vars.sh
 
 IMAGE_NAME=${CONTAINER_REG}:1.12-${OS}-${OS_VER}
 CONTAINER_NAME=libpmemobj-cpp-${OS}-${OS_VER}

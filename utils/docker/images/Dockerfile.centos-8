@@ -67,10 +67,6 @@ RUN dnf update -y \
 	xmlto \
  && dnf clean all
 
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh centos
-
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
 RUN ./install-valgrind.sh

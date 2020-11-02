@@ -6,6 +6,7 @@ env:
   REPO:           libpmemobj-cpp
   GITHUB_REPO:    pmem/libpmemobj-cpp
   CONTAINER_REG:  ghcr.io/${{github.repository}}
+  TEST_TIMEOUT:   600
 
 jobs:
   linux:
@@ -138,7 +139,7 @@ jobs:
 
       - name: Tests
         working-directory: build
-        run: ctest -C ${{ matrix.CONFIG }} --output-on-failure --timeout 540
+        run: ctest -C ${{ matrix.CONFIG }} --output-on-failure --timeout "${env:TEST_TIMEOUT}"
 
       - name: Install
         working-directory: build

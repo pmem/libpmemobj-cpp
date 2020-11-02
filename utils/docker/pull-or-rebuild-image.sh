@@ -24,7 +24,6 @@
 set -e
 
 source $(dirname ${0})/set-ci-vars.sh
-source $(dirname ${0})/set-vars.sh
 
 if [[ -z "${OS}" || -z "${OS_VER}" ]]; then
 	echo "ERROR: The variables OS and OS_VER have to be set " \
@@ -103,7 +102,7 @@ for file in ${files}; do
 			&& ${PUSH_IMAGE} == "1" ]]
 		then
 			echo "The image will be pushed to the Container Registry: ${CONTAINER_REG}"
-			touch ${CI_FILE_PUSH_IMAGE_TO_REPO}
+			touch ${PUSH_IMAGE_FLAG}
 		else
 			echo "Skip pushing the image to the Container Registry."
 		fi

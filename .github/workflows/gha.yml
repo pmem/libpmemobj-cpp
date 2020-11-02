@@ -17,8 +17,9 @@ jobs:
       CONTAINER_REG_USER:   ${{ secrets.GH_CR_USER }}
       CONTAINER_REG_PASS:   ${{ secrets.GH_CR_PAT }}
       FORCE_IMAGE_ACTION:   ${{ secrets.FORCE_IMAGE_ACTION }}
-      HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
-      WORKDIR:        utils/docker
+      HOST_WORKDIR:    /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
+      WORKDIR:         utils/docker
+      PUSH_IMAGE_FLAG: /tmp/push_image_to_repo_flag
     strategy:
       matrix:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
@@ -44,7 +45,7 @@ jobs:
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
 
       - name: Push the image
-        run: cd $WORKDIR && source ./set-vars.sh && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f ${CI_FILE_PUSH_IMAGE_TO_REPO} ]]; then images/push-image.sh $OS-$OS_VER; fi"
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} /bin/bash -c "if [[ -f ${PUSH_IMAGE_FLAG} ]]; then images/push-image.sh $OS-$OS_VER; fi"
   doc:
     name: build and publish docs
     runs-on: ubuntu-latest

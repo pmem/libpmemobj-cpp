@@ -44,7 +44,7 @@ base_dir=utils/docker/${images_dir_name}
 function build_image() {
 	echo "Building the Docker image for the Dockerfile.${OS}-${OS_VER}"
 	pushd ${images_dir_name}
-	./build-image.sh ${OS}-${OS_VER}
+	./build-image.sh
 	popd
 }
 

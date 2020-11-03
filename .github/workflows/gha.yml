@@ -20,7 +20,9 @@ jobs:
       FORCE_IMAGE_ACTION:   ${{ secrets.FORCE_IMAGE_ACTION }}
       HOST_WORKDIR:    /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:         utils/docker
+      TYPE:            debug
     strategy:
+      fail-fast: false
       matrix:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
@@ -30,7 +32,15 @@ jobs:
                  "TYPE=valgrind OS=ubuntu OS_VER=20.04",
                  "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04",
                  "TYPE=package OS=fedora OS_VER=32",
-                 "TYPE=package OS=ubuntu OS_VER=20.04"]
+                 "TYPE=package OS=ubuntu OS_VER=20.04"
+                 "OS=centos OS_VER=8",
+                 "OS=archlinux-base OS_VER=latest",
+                 "OS=debian OS_VER=testing",
+                 "OS=debian OS_VER=unstable",
+                 "OS=fedora OS_VER=rawhide",
+                 "OS=opensuse-leap OS_VER=latest",
+                 "OS=opensuse-tumbleweed OS_VER=latest",
+                 "OS=ubuntu OS_VER=rolling"]
     steps:
       - name: Clone the git repo
         uses: actions/checkout@v2

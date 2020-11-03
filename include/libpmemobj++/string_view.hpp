@@ -109,6 +109,43 @@ public:
 			   size_type n2) const;
 	int compare(const basic_string_view &other) const noexcept;
 
+	size_type find(const basic_string_view &str, size_type pos = 0) const
+		noexcept;
+	size_type find(CharT ch, size_type pos = 0) const noexcept;
+	size_type find(const CharT *s, size_type pos = 0) const;
+	size_type find(const CharT *s, size_type pos, size_type count) const;
+
+	size_type rfind(const basic_string_view &str,
+			size_type pos = npos) const noexcept;
+	size_type rfind(const CharT *s, size_type pos, size_type count) const;
+	size_type rfind(const CharT *s, size_type pos = npos) const;
+	size_type rfind(CharT ch, size_type pos = npos) const noexcept;
+	size_type find_first_of(const basic_string_view &str,
+				size_type pos = 0) const noexcept;
+	size_type find_first_of(const CharT *s, size_type pos,
+				size_type count) const;
+	size_type find_first_of(const CharT *s, size_type pos = 0) const;
+	size_type find_first_of(CharT ch, size_type pos = 0) const noexcept;
+	size_type find_first_not_of(const basic_string_view &str,
+				    size_type pos = 0) const noexcept;
+	size_type find_first_not_of(const CharT *s, size_type pos,
+				    size_type count) const;
+	size_type find_first_not_of(const CharT *s, size_type pos = 0) const;
+	size_type find_first_not_of(CharT ch, size_type pos = 0) const noexcept;
+	size_type find_last_of(const basic_string_view &str,
+			       size_type pos = npos) const noexcept;
+	size_type find_last_of(const CharT *s, size_type pos,
+			       size_type count) const;
+	size_type find_last_of(const CharT *s, size_type pos = npos) const;
+	size_type find_last_of(CharT ch, size_type pos = npos) const noexcept;
+	size_type find_last_not_of(const basic_string_view &str,
+				   size_type pos = npos) const noexcept;
+	size_type find_last_not_of(const CharT *s, size_type pos,
+				   size_type count) const;
+	size_type find_last_not_of(const CharT *s, size_type pos = npos) const;
+	size_type find_last_not_of(CharT ch, size_type pos = npos) const
+		noexcept;
+
 private:
 	const value_type *data_;
 	size_type size_;
@@ -406,6 +443,518 @@ basic_string_view<CharT, Traits>::swap(
 {
 	std::swap(data_, v.data_);
 	std::swap(size_, v.size_);
+}
+
+/*
+ * Finds the first substring equal str.
+ *
+ * @param[in] str string to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the first character of the found substring or
+ * npos if no such substring is found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find(const basic_string_view &str,
+				       size_type pos) const noexcept
+{
+	return find(str.data(), pos, str.size());
+}
+
+/**
+ * Finds the first character ch
+ *
+ * @param[in] ch character to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the first character equal to ch, or npos if no such
+ * character is found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find(CharT ch, size_type pos) const noexcept
+{
+	return find(&ch, pos, 1);
+}
+
+/**
+ * Finds the first substring equal to the range [s, s+count).
+ * This range may contain null characters.
+ *
+ * @param[in] s pointer to the C-style string to search for
+ * @param[in] pos position where the search starts from
+ * @param[in] count length of the substring to search for
+ *
+ * @return Position of the first character of the found substring or
+ * npos if no such substring is found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find(const CharT *s, size_type pos,
+				       size_type count) const
+{
+	auto sz = size();
+
+	if (pos > sz)
+		return npos;
+
+	if (count == 0)
+		return pos;
+
+	while (pos + count <= sz) {
+		auto found = traits_type::find(data() + pos, sz - pos, s[0]);
+		if (!found)
+			return npos;
+		pos = static_cast<size_type>(std::distance(data(), found));
+		if (traits_type::compare(found, s, count) == 0) {
+			return pos;
+		}
+		++pos;
+	}
+	return npos;
+}
+
+/**
+ * Finds the first substring equal to the C-style string pointed to by s.
+ * The length of the string is determined by the first null character.
+ *
+ * @param[in] s pointer to the C-style string to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the first character of the found substring or
+ * npos if no such substring is found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find(const CharT *s, size_type pos) const
+{
+	return find(s, pos, traits_type::length(s));
+}
+
+/**
+ * Finds the last substring equal to str.
+ * If npos or any value not smaller than size()-1 is passed as pos, whole string
+ * will be searched.
+ * @param[in] str string to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position (as an offset from start of the string) of the first
+ * character of the found substring or npos if no such substring is found
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::rfind(const basic_string_view &str,
+					size_type pos) const noexcept
+{
+	return rfind(str.data(), pos, str.size());
+}
+
+/**
+ * Finds the last substring equal to the range [s, s+count).
+ * This range can include null characters. When pos is specified, the search
+ * only includes sequences of characters that begin at or before position pos,
+ * ignoring any possible match beginning after pos. If npos or any value not
+ * smaller than size()-1 is passed as pos, whole string will be searched.
+ *
+ * @param[in] s pointer to the C-style string to search for
+ * @param[in] pos position where the search starts from
+ * @param[in] count length of the substring to search for
+ *
+ * @return Position (as an offset from start of the string) of the first
+ * character of the found substring or npos if no such substring is found. If
+ * searching for an empty string retrurn pos, if also pos is greater than the
+ * size of the string - it returns size
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::rfind(const CharT *s, size_type pos,
+					size_type count) const
+{
+	if (count <= size()) {
+		pos = (std::min)(size() - count, pos);
+		do {
+			if (traits_type::compare(data() + pos, s, count) == 0)
+				return pos;
+		} while (pos-- > 0);
+	}
+	return npos;
+}
+
+/**
+ * Finds the last substring equal to the C-style string pointed to by s.
+ * The length of the string is determined by the first null character
+ * If npos or any value not smaller than size()-1 is passed as pos, whole string
+ * will be searched.
+ *
+ * @param[in] s pointer to the C-style string to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position (as an offset from start of the string) of the first
+ * character of the found substring or npos if no such substring is found
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::rfind(const CharT *s, size_type pos) const
+{
+	return rfind(s, pos, traits_type::length(s));
+}
+
+/**
+ * Finds the last character equal to ch.
+ * If npos or any value not smaller than size()-1 is passed as pos, whole string
+ * will be searched.
+ *
+ * @param[in] ch character to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position (as an offset from start of the string) of the first
+ * character equal to ch or npos if no such character is found
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::rfind(CharT ch, size_type pos) const noexcept
+{
+	return rfind(&ch, pos, 1);
+}
+
+/**
+ * Finds the first character equal to any of the characters in str.
+ *
+ * @param[in] str string identifying characters to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_of(const basic_string_view &str,
+						size_type pos) const noexcept
+{
+	return find_first_of(str.data(), pos, str.size());
+}
+
+/**
+ * Finds the first character equal to any of the characters
+ * in the range [s, s+count). This range can include null characters.
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *for
+ * @param[in] pos position at which to begin searching
+ * @param[in] count length of the C-style string identifying characters to
+ *search for
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_of(const CharT *s, size_type pos,
+						size_type count) const
+{
+	size_type first_of = npos;
+	for (const CharT *c = s; c != s + count; ++c) {
+		size_type found = find(*c, pos);
+		if (found != npos && found < first_of)
+			first_of = found;
+	}
+	return first_of;
+}
+
+/**
+ * Finds the first character equal to any of the characters in the C-style
+ * string pointed to by s. The length of the string is determined by the first
+ * null character
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ * for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_of(const CharT *s,
+						size_type pos) const
+{
+	return find_first_of(s, pos, traits_type::length(s));
+}
+
+/**
+ * Finds the first character equal to ch
+ *
+ * @param[in] ch character to search for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_of(CharT ch, size_type pos) const
+	noexcept
+{
+	return find(ch, pos);
+}
+
+/**
+ * Finds the first character equal to none of the characters in str.
+ *
+ * @param[in] str string identifying characters to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_not_of(
+	const basic_string_view &str, size_type pos) const noexcept
+{
+	return find_first_not_of(str.data(), pos, str.size());
+}
+
+/**
+ * Finds the first character equal to none of the characters
+ * in the range [s, s+count). This range can include null characters.
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *	for
+ * @param[in] pos position at which to begin searching
+ * @param[in] count length of the C-style string identifying characters to
+ *search for
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_not_of(const CharT *s,
+						    size_type pos,
+						    size_type count) const
+{
+	if (pos >= size())
+		return npos;
+
+	for (auto it = cbegin() + pos; it != cend(); ++it)
+		if (!traits_type::find(s, count, *it))
+			return static_cast<size_type>(
+				std::distance(cbegin(), it));
+	return npos;
+}
+
+/**
+ * Finds the first character equal to none of the characters in the C-style
+ *string pointed to by s. The length of the string is determined by the first
+ *null character
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *	for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_not_of(const CharT *s,
+						    size_type pos) const
+{
+	return find_first_not_of(s, pos, traits_type::length(s));
+}
+
+/**
+ * Finds the first character not equal to ch
+ *
+ * @param[in] ch character to search for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_first_not_of(CharT ch,
+						    size_type pos) const
+	noexcept
+{
+	return find_first_not_of(&ch, pos, 1);
+}
+
+/**
+ * Finds the last character equal to any of the characters in str.
+ *
+ * @param[in] str string identifying characters to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_of(const basic_string_view &str,
+					       size_type pos) const noexcept
+{
+	return find_last_of(str.data(), pos, str.size());
+}
+
+/**
+ * Finds the last character equal to any of the characters
+ * in the range [s, s+count). This range can include null characters.
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *for
+ * @param[in] pos position at which to begin searching
+ * @param[in] count length of the C-style string identifying characters to
+ *search for
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_of(const CharT *s, size_type pos,
+					       size_type count) const
+{
+	if (size() == 0 || count == 0)
+		return npos;
+
+	bool found = false;
+	size_type last_of = 0;
+	for (const CharT *c = s; c != s + count; ++c) {
+		size_type position = rfind(*c, pos);
+		if (position != npos) {
+			found = true;
+			if (position > last_of)
+				last_of = position;
+		}
+	}
+	if (!found)
+		return npos;
+	return last_of;
+}
+
+/**
+ * Finds the last character equal to any of the characters in the C-style string
+ * pointed to by s. The length of the string is determined by the
+ * first null character
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *	for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_of(const CharT *s,
+					       size_type pos) const
+{
+	return find_last_of(s, pos, traits_type::length(s));
+}
+
+/**
+ * Finds the last character equal to ch
+ *
+ * @param[in] ch character to search for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_of(CharT ch, size_type pos) const
+	noexcept
+{
+	return rfind(ch, pos);
+}
+
+/**
+ * Finds the last character equal to none of the characters in str.
+ *
+ * @param[in] str string identifying characters to search for
+ * @param[in] pos position where the search starts from
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_not_of(const basic_string_view &str,
+						   size_type pos) const noexcept
+{
+	return find_last_not_of(str.data(), pos, str.size());
+}
+
+/**
+ * Finds the last character equal to none of the characters
+ * in the range [s, s+count). This range can include null characters.
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *for
+ * @param[in] pos position at which to begin searching
+ * @param[in] count length of the C-style string identifying characters to
+ *search for
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_not_of(const CharT *s,
+						   size_type pos,
+						   size_type count) const
+{
+	if (size() > 0) {
+		pos = (std::min)(pos, size() - 1);
+		do {
+			if (!traits_type::find(s, count, *(data() + pos)))
+				return pos;
+
+		} while (pos-- > 0);
+	}
+	return npos;
+}
+
+/**
+ * Finds the last character equal to none of the characters in the C-style
+ *string pointed to by s. The length of the string is determined by the first
+ *null character
+ *
+ * @param[in] s pointer to the C-style string identifying characters to search
+ *	for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_not_of(const CharT *s,
+						   size_type pos) const
+{
+	return find_last_not_of(s, pos, traits_type::length(s));
+}
+
+/**
+ * Finds the last character not equal to ch
+ *
+ * @param[in] ch character to search for
+ * @param[in] pos position at which to begin searching
+ *
+ * @return Position of the found character or npos if no such character is
+ * found.
+ */
+template <typename CharT, typename Traits>
+typename basic_string_view<CharT, Traits>::size_type
+basic_string_view<CharT, Traits>::find_last_not_of(CharT ch,
+						   size_type pos) const noexcept
+{
+	return find_last_not_of(&ch, pos, 1);
 }
 
 /**

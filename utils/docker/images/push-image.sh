@@ -43,7 +43,7 @@ then
 fi
 
 echo "Log in to the Container Registry."
-echo "${CONTAINER_REG_PASS}" | docker login ghcr.io -u="${CONTAINER_REG_USER}" --password-stdin
+echo "${CONTAINER_REG_PASS}" | docker login "${CONTAINER_REG}" -u="${CONTAINER_REG_USER}" --password-stdin
 
 echo "Push the image to the Container Registry."
 docker push ${CONTAINER_REG}:${TAG}

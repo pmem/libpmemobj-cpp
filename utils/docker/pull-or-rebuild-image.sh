@@ -4,30 +4,32 @@
 
 #
 # pull-or-rebuild-image.sh - rebuilds the Docker image used in the
-#                            current build if necessary.
+#		current build (if necessary) or pulls it from the Docker Container.
+#		Docker image is tagged as described in ./images/build-image.sh,
+#		but IMG_VER defaults in this script to "latest" (just in case it's
+#		used locally without building any images).
+#
+# If Docker was rebuilt and all requirements are fulfilled (more details in
+# push_image function below) image will be pushed to the ${CONTAINER_REG}.
 #
 # The script rebuilds the Docker image if:
 # 1. the Dockerfile for the current OS version (Dockerfile.${OS}-${OS_VER})
 #    or any .sh script in the Dockerfiles directory were modified and committed, or
 # 2. "rebuild" param was passed as a first argument to this script.
 #
-# If the CI build is not of the "pull_request" type (i.e. in case of
-# a pull request merge or any other "push" event) and it succeeds, the Docker image
-# should be pushed to the ${CONTAINER_REG} repository.
-# An empty file is created to signal that to next scripts.
-#
-# If the Docker image does not have to be rebuilt, it will be pulled from
-# the ${CONTAINER_REG}. Docker image is tagged as described in
-# ./images/build-image.sh, but IMG_VER defaults in this script to "latest"
-# (just in case it's used locally without building any images).
-#
-# Image can also be 'force' pulled if "pull" param was passed as a first argument to this script.
+# The script pulls the Docker image if:
+# 1. it does not have to be rebuilt (based on commited changes), or
+# 2. "pull" param was passed as a first argument to this script.
 #
 
 set -e
 
 source $(dirname ${0})/set-ci-vars.sh
+
 IMG_VER=${IMG_VER:-latest}
+TAG="${OS}-${OS_VER}-${IMG_VER}"
+IMAGES_DIR_NAME=images
+BASE_DIR=utils/docker/${IMAGES_DIR_NAME}
 
 if [[ -z "${OS}" || -z "${OS_VER}" ]]; then
 	echo "ERROR: The variables OS and OS_VER have to be set " \
@@ -41,14 +43,9 @@ if [[ -z "${CONTAINER_REG}" ]]; then
 	exit 1
 fi
 
-# Path to directory with Dockerfiles and image building scripts
-images_dir_name=images
-base_dir=utils/docker/${images_dir_name}
-TAG="${OS}-${OS_VER}-${IMG_VER}"
-
 function build_image() {
 	echo "Building the Docker image for the Dockerfile.${OS}-${OS_VER}"
-	pushd ${images_dir_name}
+	pushd ${IMAGES_DIR_NAME}
 	./build-image.sh
 	popd
 }
@@ -58,9 +55,30 @@ function pull_image() {
 	docker pull ${CONTAINER_REG}:${TAG}
 }
 
+function push_image {
+	# Check if the image has to be pushed to the Container Registry:
+	# - only upstream (not forked) repository,
+	# - stable-* or master branch,
+	# - not a pull_request event,
+	# - and PUSH_IMAGE flag was set for current build.
+	if [[ "${CI_REPO_SLUG}" == "${GITHUB_REPO}" \
+		&& (${CI_BRANCH} == stable-* || ${CI_BRANCH} == master) \
+		&& ${CI_EVENT_TYPE} != "pull_request" \
+		&& ${PUSH_IMAGE} == "1" ]]
+	then
+		echo "The image will be pushed to the Container Registry: ${CONTAINER_REG}"
+		pushd ${IMAGES_DIR_NAME}
+		./push-image.sh
+		popd
+	else
+		echo "Skip pushing the image to the Container Registry."
+	fi
+}
+
 # If "rebuild" or "pull" are passed to the script as param, force rebuild/pull.
 if [[ "${1}" == "rebuild" ]]; then
 	build_image
+	push_image
 	exit 0
 elif [[ "${1}" == "pull" ]]; then
 	pull_image
@@ -91,27 +109,11 @@ for file in ${files}; do echo ${file}; done
 # Check if committed file modifications require the Docker image to be rebuilt
 for file in ${files}; do
 	# Check if modified files are relevant to the current build
-	if [[ ${file} =~ ^(${base_dir})\/Dockerfile\.(${OS})-(${OS_VER})$ ]] \
-		|| [[ ${file} =~ ^(${base_dir})\/.*\.sh$ ]]
+	if [[ ${file} =~ ^(${BASE_DIR})\/Dockerfile\.(${OS})-(${OS_VER})$ ]] \
+		|| [[ ${file} =~ ^(${BASE_DIR})\/.*\.sh$ ]]
 	then
 		build_image
-
-		# Check if the image has to be pushed to the Container Registry
-		# (i.e. the build is triggered by commits to the ${GITHUB_REPO}
-		# repository's stable-* or master branch, and the CI build is not
-		# of the "pull_request" type). In that case, create the empty
-		# file.
-		if [[ "${CI_REPO_SLUG}" == "${GITHUB_REPO}" \
-			&& (${CI_BRANCH} == stable-* || ${CI_BRANCH} == master) \
-			&& ${CI_EVENT_TYPE} != "pull_request" \
-			&& ${PUSH_IMAGE} == "1" ]]
-		then
-			echo "The image will be pushed to the Container Registry: ${CONTAINER_REG}"
-			touch ${PUSH_IMAGE_FLAG}
-		else
-			echo "Skip pushing the image to the Container Registry."
-		fi
-
+		push_image
 		exit 0
 	fi
 done

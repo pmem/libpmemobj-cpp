@@ -11,6 +11,7 @@ env:
   CONTAINER_REG:  ghcr.io/${{github.repository}}
   HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
   WORKDIR:        utils/docker
+  IMG_VER:        latest
   TYPE:           debug
 
 jobs:

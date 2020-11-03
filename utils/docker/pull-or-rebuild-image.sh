@@ -17,13 +17,17 @@
 # An empty file is created to signal that to next scripts.
 #
 # If the Docker image does not have to be rebuilt, it will be pulled from
-# the ${CONTAINER_REG}. It can be also 'force' pulled if "pull" param was passed
-# as a first argument to this script.
+# the ${CONTAINER_REG}. Docker image is tagged as described in
+# ./images/build-image.sh, but IMG_VER defaults in this script to "latest"
+# (just in case it's used locally without building any images).
+#
+# Image can also be 'force' pulled if "pull" param was passed as a first argument to this script.
 #
 
 set -e
 
 source $(dirname ${0})/set-ci-vars.sh
+IMG_VER=${IMG_VER:-latest}
 
 if [[ -z "${OS}" || -z "${OS_VER}" ]]; then
 	echo "ERROR: The variables OS and OS_VER have to be set " \
@@ -40,6 +44,7 @@ fi
 # Path to directory with Dockerfiles and image building scripts
 images_dir_name=images
 base_dir=utils/docker/${images_dir_name}
+TAG="${OS}-${OS_VER}-${IMG_VER}"
 
 function build_the_image() {
 	echo "Building the Docker image for the Dockerfile.${OS}-${OS_VER}"
@@ -49,8 +54,8 @@ function build_the_image() {
 }
 
 function pull_the_image() {
-	echo "Pull the image from the Container Registry."
-	docker pull ${CONTAINER_REG}:1.12-${OS}-${OS_VER}
+	echo "Pull the image '${CONTAINER_REG}:${TAG}' from the Container Registry."
+	docker pull ${CONTAINER_REG}:${TAG}
 }
 
 # If "rebuild" or "pull" are passed to the script as param, force rebuild/pull.

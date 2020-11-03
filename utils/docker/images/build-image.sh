@@ -4,11 +4,14 @@
 
 #
 # build-image.sh - prepares a Docker image with <OS>-based environment for
-#		testing libpmemobj-cpp, tagged with ${CONTAINER_REG}:${IMG_VER}-${OS}-${OS_VER},
+#		testing libpmemobj-cpp, tagged with ${CONTAINER_REG}:${OS}-${OS_VER}-${IMG_VER},
 #		according to the Dockerfile.${OS}-${OS_VER} file located in the same directory.
+#		IMG_VER is a version of docker image (it usually relates to project's release tag)
+#		and it defaults to "devel".
 #
 
 set -e
+IMG_VER=${IMG_VER:-devel}
 
 if [[ -z "${OS}" || -z "${OS_VER}" ]]; then
 	echo "ERROR: The variables OS and OS_VER have to be set " \
@@ -29,8 +32,10 @@ if [[ ! -f "Dockerfile.${OS}-${OS_VER}" ]]; then
 	exit 1
 fi
 
-echo "Build a Docker image tagged with ${CONTAINER_REG}:1.12-${OS}-${OS_VER}"
-docker build -t ${CONTAINER_REG}:1.12-${OS}-${OS_VER} \
+TAG="${OS}-${OS_VER}-${IMG_VER}"
+
+echo "Build a Docker image tagged with: ${CONTAINER_REG}:${TAG}"
+docker build -t ${CONTAINER_REG}:${TAG} \
 	--build-arg http_proxy=$http_proxy \
 	--build-arg https_proxy=$https_proxy \
 	-f Dockerfile.${OS}-${OS_VER} .

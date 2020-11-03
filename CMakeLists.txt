@@ -79,7 +79,7 @@ option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1 - it speeds up
 option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
 option(TESTS_PMREORDER "enable tests with pmreorder (if pmreorder found; it requires PMDK ver. >= 1.9)" OFF)
 option(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND "enable concurrent_hash_map tests with drd and helgrind (can only be run on PMEM)" OFF)
-option(TESTS_CONCURRENT_GDB "enable concurrent gdb tests - require 'set scheduler-locking on' support (OS dependent)" OFF)
+option(TESTS_CONCURRENT_GDB "enable concurrent gdb tests" OFF)
 option(TESTS_LONG "enable long running tests" OFF)
 option(TESTS_TBB "enable tests which require TBB" OFF)
 option(TESTS_COMPATIBILITY "enable compatibility tests (requires internet connection)" OFF)

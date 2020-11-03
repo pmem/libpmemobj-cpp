@@ -14,15 +14,16 @@ set pagination off
 #    New node should now be visible (thread 11 partially completed)
 
 break gdb_sync1
+break loop_forever
 run
 rbreak concurrent_skip_list_impl.hpp:internal_insert_node
 thread 10
 c
-set scheduler-locking on
+jump loop_forever
 thread 11
 break gdb_sync2
 c
-del 3
+del 4
 finish
 set variable loop_sync_1 = 0
 c
@@ -33,11 +34,12 @@ finish
 finish
 n
 n
-del 4
+del 5
+jump loop_forever
 thread 12
 break gdb_sync3
 c
-del 5
+del 6
 finish
 set variable loop_sync_2 = 0
 break gdb_sync_exit thread 12

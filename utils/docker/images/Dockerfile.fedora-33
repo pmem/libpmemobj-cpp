@@ -7,12 +7,12 @@
 #
 
 # Pull base image
-FROM fedora:rawhide
-MAINTAINER szymom.romik@intel.com
+FROM fedora:33
+MAINTAINER szymon.romik@intel.com
 
 # Set required environment variables
 ENV OS fedora
-ENV OS_VER rawhide
+ENV OS_VER 33
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 
@@ -29,8 +29,6 @@ RUN dnf update -y \
 	bash-completion \
 	clang \
 	cmake \
-	cracklib \
-	cracklib-dicts \
 	daxctl-devel \
 	doxygen \
 	gcc \

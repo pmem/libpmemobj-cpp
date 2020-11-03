@@ -6,6 +6,7 @@ env:
   GITHUB_REPO:    pmem/libpmemobj-cpp
   CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
   TEST_TIMEOUT:   600
+  IMG_VER:        latest
 
 jobs:
   linux:

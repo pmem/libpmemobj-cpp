@@ -3,15 +3,15 @@
 # Copyright 2016-2020, Intel Corporation
 
 #
-# push-image.sh - pushes the Docker image tagged with ${IMG_VER}-${OS}-${OS_VER}
-#		to the ${CONTAINER_REG}.
+# push-image.sh - pushes the Docker image tagged as described in
+#		./build-image.sh, to the ${CONTAINER_REG}.
 #
 # The script utilizes ${CONTAINER_REG_USER} and ${CONTAINER_REG_PASS} variables to
-# log in to the ${CONTAINER_REG}. The variables can be set in the CI's configuration
-# for automated builds.
+# log in to the ${CONTAINER_REG}.
 #
 
 set -e
+IMG_VER=${IMG_VER:-devel}
 
 if [[ -z "${OS}" || -z "${OS_VER}" ]]; then
 	echo "ERROR: The variables OS and OS_VER have to be set " \
@@ -32,7 +32,7 @@ if [[ -z "${CONTAINER_REG_USER}" || -z "${CONTAINER_REG_PASS}" ]]; then
 	exit 1
 fi
 
-TAG="1.12-${OS}-${OS_VER}"
+TAG="${OS}-${OS_VER}-${IMG_VER}"
 
 echo "Check if the image tagged with ${CONTAINER_REG}:${TAG} exists locally"
 if [[ ! $(docker images -a | awk -v pattern="^${CONTAINER_REG}:${TAG}\$" \
@@ -42,9 +42,9 @@ then
 	exit 1
 fi
 
-echo "Log in to the Container Registry."
+echo "Log in to the Container Registry: ${CONTAINER_REG}"
 echo "${CONTAINER_REG_PASS}" | docker login "${CONTAINER_REG}" -u="${CONTAINER_REG_USER}" --password-stdin
 
-echo "Push the image to the Container Registry."
+echo "Push the image '${CONTAINER_REG}:${TAG}' to the Container Registry."
 docker push ${CONTAINER_REG}:${TAG}
 echo "Image pushed."

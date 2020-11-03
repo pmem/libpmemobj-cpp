@@ -4,7 +4,8 @@
 
 #
 # build.sh - runs a Docker container from a Docker image with environment
-#                  prepared for running libpmemobj-cpp builds and tests.
+#		prepared for running libpmemobj-cpp builds and tests. It uses Docker image
+#		tagged as described in ./images/build-image.sh.
 #
 # Notes:
 # - set env var 'HOST_WORKDIR' to where the root of this project is on the host machine,
@@ -21,8 +22,10 @@
 set -e
 
 source $(dirname $0)/set-ci-vars.sh
+IMG_VER=${IMG_VER:-devel}
 
-IMAGE_NAME=${CONTAINER_REG}:1.12-${OS}-${OS_VER}
+TAG="${OS}-${OS_VER}-${IMG_VER}"
+IMAGE_NAME=${CONTAINER_REG}:${TAG}
 CONTAINER_NAME=libpmemobj-cpp-${OS}-${OS_VER}
 WORKDIR=/libpmemobj-cpp  # working dir within Docker container
 SCRIPTSDIR=${WORKDIR}/utils/docker

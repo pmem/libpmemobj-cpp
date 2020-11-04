@@ -3063,25 +3063,7 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find(const CharT *s, size_type pos,
 				  size_type count) const
 {
-	auto sz = size();
-
-	if (pos > sz)
-		return npos;
-
-	if (count == 0)
-		return pos;
-
-	while (pos + count <= sz) {
-		auto found = traits_type::find(cdata() + pos, sz - pos, s[0]);
-		if (!found)
-			return npos;
-		pos = static_cast<size_type>(std::distance(cdata(), found));
-		if (traits_type::compare(found, s, count) == 0) {
-			return pos;
-		}
-		++pos;
-	}
-	return npos;
+	return operator basic_string_view<CharT, Traits>().find(s, pos, count);
 }
 
 /**
@@ -3156,14 +3138,7 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::rfind(const CharT *s, size_type pos,
 				   size_type count) const
 {
-	if (count <= size()) {
-		pos = (std::min)(size() - count, pos);
-		do {
-			if (traits_type::compare(cdata() + pos, s, count) == 0)
-				return pos;
-		} while (pos-- > 0);
-	}
-	return npos;
+	return operator basic_string_view<CharT, Traits>().rfind(s, pos, count);
 }
 
 /**
@@ -3238,13 +3213,8 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_first_of(const CharT *s, size_type pos,
 					   size_type count) const
 {
-	size_type first_of = npos;
-	for (const CharT *c = s; c != s + count; ++c) {
-		size_type found = find(*c, pos);
-		if (found != npos && found < first_of)
-			first_of = found;
-	}
-	return first_of;
+	return operator basic_string_view<CharT, Traits>().find_first_of(s, pos,
+									 count);
 }
 
 /**
@@ -3318,14 +3288,8 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_first_not_of(const CharT *s, size_type pos,
 					       size_type count) const
 {
-	if (pos >= size())
-		return npos;
-
-	for (auto it = cbegin() + pos; it != cend(); ++it)
-		if (!traits_type::find(s, count, *it))
-			return static_cast<size_type>(
-				std::distance(cbegin(), it));
-	return npos;
+	return operator basic_string_view<CharT, Traits>().find_first_not_of(
+		s, pos, count);
 }
 
 /**
@@ -3400,22 +3364,8 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_last_of(const CharT *s, size_type pos,
 					  size_type count) const
 {
-	if (size() == 0 || count == 0)
-		return npos;
-
-	bool found = false;
-	size_type last_of = 0;
-	for (const CharT *c = s; c != s + count; ++c) {
-		size_type position = rfind(*c, pos);
-		if (position != npos) {
-			found = true;
-			if (position > last_of)
-				last_of = position;
-		}
-	}
-	if (!found)
-		return npos;
-	return last_of;
+	return operator basic_string_view<CharT, Traits>().find_last_of(s, pos,
+									count);
 }
 
 /**
@@ -3489,15 +3439,8 @@ typename basic_string<CharT, Traits>::size_type
 basic_string<CharT, Traits>::find_last_not_of(const CharT *s, size_type pos,
 					      size_type count) const
 {
-	if (size() > 0) {
-		pos = (std::min)(pos, size() - 1);
-		do {
-			if (!traits_type::find(s, count, *(cdata() + pos)))
-				return pos;
-
-		} while (pos-- > 0);
-	}
-	return npos;
+	return operator basic_string_view<CharT, Traits>().find_last_not_of(
+		s, pos, count);
 }
 
 /**

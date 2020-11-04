@@ -89,8 +89,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
 		-DTEST_DIR=/mnt/pmem \
 		-DTESTS_USE_FORCED_PMEM=1 \
-		-DTESTS_COMPATIBILITY=1 \
-		-DTESTS_CONCURRENT_GDB=1
+		-DTESTS_COMPATIBILITY=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout 590

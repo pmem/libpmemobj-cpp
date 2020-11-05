@@ -17,6 +17,25 @@ endif()
 if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()
+# XXX: use it in version.hpp and in Doxygen.in
+# Set ${SRCVERSION}
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+	execute_process(COMMAND git describe
+			OUTPUT_VARIABLE SRCVERSION
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			ERROR_QUIET)
+	if(NOT SRCVERSION)
+		execute_process(COMMAND git log -1 --format=%h
+				OUTPUT_VARIABLE SRCVERSION
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+				OUTPUT_STRIP_TRAILING_WHITESPACE)
+	endif()
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/.version")
+	file(STRINGS ${CMAKE_SOURCE_DIR}/.version SRCVERSION)
+else()
+	set(SRCVERSION ${VERSION})
+endif()
 
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.8)
 set(LIBPMEM_REQUIRED_VERSION 1.7)
@@ -42,24 +61,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-
-# XXX: use it in version.hpp and in Doxygen.in
-# Set ${SRCVERSION}
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
-	execute_process(COMMAND git describe
-			OUTPUT_VARIABLE SRCVERSION
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_QUIET)
-	if(NOT SRCVERSION)
-		execute_process(COMMAND git log -1 --format=%h
-				OUTPUT_VARIABLE SRCVERSION
-				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-				OUTPUT_STRIP_TRAILING_WHITESPACE)
-	endif()
-else()
-	file(STRINGS ${CMAKE_SOURCE_DIR}/.version SRCVERSION)
-endif()
 
 ## CMake build options
 option(BUILD_EXAMPLES "build examples" ON)

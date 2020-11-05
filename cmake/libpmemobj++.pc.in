@@ -3,7 +3,7 @@ includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 
 Name: libpmemobj++
 Description: libpmemobj++ - c++ bindings for libpmemobj library
-Version: @VERSION@
+Version: @SRCVERSION@
 URL: https://github.com/pmem/libpmemobj-cpp
 Requires: libpmemobj >= @LIBPMEMOBJ_REQUIRED_VERSION@
 Cflags: -I${includedir}

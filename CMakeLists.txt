@@ -17,7 +17,7 @@ endif()
 if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()
-# XXX: use it in version.hpp and in Doxygen.in
+
 # Set ${SRCVERSION}
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
 	execute_process(COMMAND git describe

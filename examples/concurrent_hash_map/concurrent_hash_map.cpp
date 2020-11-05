@@ -65,7 +65,7 @@ main(int argc, char *argv[])
 			/* Logic when hash_map already exists. After opening of
 			 * the pool we have to call runtime_initialize()
 			 * function in order to recalculate mask and check for
-			 * consistentcy. */
+			 * consistency. */
 
 			r->runtime_initialize();
 
@@ -80,6 +80,7 @@ main(int argc, char *argv[])
 		}
 
 		auto &map = *r;
+		std::cout << map.size() << std::endl;
 
 		std::vector<std::thread> threads;
 		threads.reserve(static_cast<size_t>(THREADS_NUM));
@@ -146,25 +147,28 @@ main(int argc, char *argv[])
 				  << std::endl;
 			throw;
 		}
-		/* Erase remaining itemes in map. This function is not
-		 * thread-safe, hence the function is being called only after
-		 * thread execution has completed. */
-		try {
-			map.clear();
-		} catch (const pmem::transaction_out_of_memory &e) {
-			std::cerr << "Clear exception: " << e.what()
-				  << std::endl;
-			throw;
-		} catch (const pmem::transaction_free_error &e) {
-			std::cerr << "Clear exception: " << e.what()
-				  << std::endl;
-			throw;
-		}
 
-		/* If hash map is to be removed, free_data() method should be
-		 * called first. Otherwise, if deallocating internal hash map
-		 * metadata in a destructor fail program might terminate. */
 		if (remove_hashmap) {
+			/* Firstly, erase remaining items in the map. This
+			 * function is not thread-safe, hence the function is
+			 * being called only after thread execution has
+			 * completed. */
+			try {
+				map.clear();
+			} catch (const pmem::transaction_out_of_memory &e) {
+				std::cerr << "Clear exception: " << e.what()
+					  << std::endl;
+				throw;
+			} catch (const pmem::transaction_free_error &e) {
+				std::cerr << "Clear exception: " << e.what()
+					  << std::endl;
+				throw;
+			}
+
+			/* If hash map is to be removed, free_data() method
+			 * should be called first. Otherwise, if deallocating
+			 * internal hash map metadata in a destructor fails
+			 * program might terminate. */
 			map.free_data();
 
 			/* map.clear() // WRONG

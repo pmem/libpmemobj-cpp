@@ -239,7 +239,10 @@ add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
 ## Configure make install/uninstall and packages
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
-		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
+	${CMAKE_CURRENT_BINARY_DIR}/version.hpp @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libpmemobj++)
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")

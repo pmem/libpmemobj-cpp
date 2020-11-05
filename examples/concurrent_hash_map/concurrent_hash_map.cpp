@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 			return -1;
 		}
 
-		auto r = pop.root()->pptr;
+		auto &r = pop.root()->pptr;
 
 		if (r == nullptr) {
 			/* Logic when file was first opened. First, we have to

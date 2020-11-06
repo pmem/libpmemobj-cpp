@@ -23,52 +23,6 @@ TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
 export PMREORDER_STACKTRACE_DEPTH=20
 
-function upload_codecov() {
-	printf "\n$(tput setaf 1)$(tput setab 7)COVERAGE ${FUNCNAME[0]} START$(tput sgr 0)\n"
-
-	# set proper gcov command
-	clang_used=$(cmake -LA -N . | grep CMAKE_CXX_COMPILER | grep clang | wc -c)
-	if [[ ${clang_used} -gt 0 ]]; then
-		gcovexe="llvm-cov gcov"
-	else
-		gcovexe="gcov"
-	fi
-
-	# run gcov exe, using their bash (remove parsed coverage files, set flag and exit 1 if not successful)
-	# we rely on parsed report on codecov.io; the output is too long, hence it's disabled using -X flag
-	/opt/scripts/codecov -c -F ${1} -Z -x "${gcovexe}" -X "gcovout"
-
-	echo "Check for any leftover gcov files"
-	leftover_files=$(find . -name "*.gcov")
-	if [[ -n "${leftover_files}" ]]; then
-		# display found files and exit with error (they all should be parsed)
-		echo "${leftover_files}"
-		return 1
-	fi
-
-	printf "$(tput setaf 1)$(tput setab 7)COVERAGE ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
-}
-
-function compile_example_standalone() {
-	example_name=${1}
-	echo "Compile standalone example: ${example_name}"
-
-	rm -rf ${EXAMPLE_TEST_DIR}
-	mkdir ${EXAMPLE_TEST_DIR}
-	cd ${EXAMPLE_TEST_DIR}
-
-	cmake ${WORKDIR}/examples/${example_name}
-
-	# exit on error
-	if [[ $? != 0 ]]; then
-		cd -
-		return 1
-	fi
-
-	make -j$(nproc)
-	cd -
-}
-
 ###############################################################################
 # BUILD tests_clang_debug_cpp17_no_valgrind llvm
 ###############################################################################
@@ -335,10 +289,6 @@ function tests_findLIBPMEMOBJ_cmake()
 }
 
 # Main:
-sudo_password mkdir /mnt/pmem
-sudo_password chmod 0777 /mnt/pmem
-sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
-
 echo "### Cleaning workspace"
 workspace_cleanup
 

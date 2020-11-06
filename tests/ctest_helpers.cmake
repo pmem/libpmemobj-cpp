@@ -82,6 +82,8 @@ function(find_packages)
 		elseif(NOT VALGRIND_FOUND AND TESTS_USE_VALGRIND)
 			message(FATAL_ERROR "Valgrind not found, but tests are enabled. To disable them set CMake option TESTS_USE_VALGRIND=OFF.")
 		endif()
+	elseif(TESTS_USE_VALGRIND)
+		message(WARNING "Valgrind tests can't be run on Windows - they will be skipped.")
 	endif()
 endfunction()
 
@@ -227,8 +229,8 @@ function(add_test_common name tracer testcase cmake_script)
 		message(FATAL_ERROR "${executable} not build.")
 	endif()
 
-	# skip all valgrind tests on windows
-	if ((NOT ${tracer} STREQUAL none) AND WIN32)
+	# skip all Valgrind tests on Windows
+	if (WIN32 AND ${tracer} IN_LIST vg_tracers)
 		return()
 	endif()
 

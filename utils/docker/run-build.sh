@@ -21,55 +21,7 @@ TESTS_PMREORDER=${TESTS_PMREORDER:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-1}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
-INSTALL_DIR=/tmp/libpmemobj-cpp
-
 export PMREORDER_STACKTRACE_DEPTH=20
-
-function upload_codecov() {
-	printf "\n$(tput setaf 1)$(tput setab 7)COVERAGE ${FUNCNAME[0]} START$(tput sgr 0)\n"
-
-	# set proper gcov command
-	clang_used=$(cmake -LA -N . | grep CMAKE_CXX_COMPILER | grep clang | wc -c)
-	if [[ ${clang_used} -gt 0 ]]; then
-		gcovexe="llvm-cov gcov"
-	else
-		gcovexe="gcov"
-	fi
-
-	# run gcov exe, using their bash (remove parsed coverage files, set flag and exit 1 if not successful)
-	# we rely on parsed report on codecov.io; the output is too long, hence it's disabled using -X flag
-	/opt/scripts/codecov -c -F ${1} -Z -x "${gcovexe}" -X "gcovout"
-
-	echo "Check for any leftover gcov files"
-	leftover_files=$(find . -name "*.gcov")
-	if [[ -n "${leftover_files}" ]]; then
-		# display found files and exit with error (they all should be parsed)
-		echo "${leftover_files}"
-		return 1
-	fi
-
-	printf "$(tput setaf 1)$(tput setab 7)COVERAGE ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
-}
-
-function compile_example_standalone() {
-	example_name=${1}
-	echo "Compile standalone example: ${example_name}"
-
-	rm -rf /tmp/build_example
-	mkdir /tmp/build_example
-	cd /tmp/build_example
-
-	cmake ${WORKDIR}/examples/${example_name}
-
-	# exit on error
-	if [[ $? != 0 ]]; then
-		cd -
-		return 1
-	fi
-
-	make -j$(nproc)
-	cd -
-}
 
 ###############################################################################
 # BUILD tests_clang_debug_cpp17_no_valgrind llvm
@@ -102,8 +54,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		upload_codecov tests_clang_debug_cpp17
 	fi
 
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -137,8 +88,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 		upload_codecov tests_clang_release_cpp11
 	fi
 
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -181,8 +131,7 @@ function tests_gcc_debug_cpp14_no_valgrind() {
 	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_gcc_debug
 	fi
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -193,8 +142,7 @@ function tests_gcc_debug_cpp14_valgrind_memcheck_drd() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug_cpp14
 	ctest -R "_memcheck|_drd" --timeout ${TEST_TIMEOUT} --output-on-failure
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -206,8 +154,7 @@ function tests_gcc_debug_cpp14_valgrind_other() {
 	build_gcc_debug_cpp14
 	ctest -E "_none|_memcheck|_drd" --timeout ${TEST_TIMEOUT} --output-on-failure
 	ctest -R "_pmreorder" --timeout ${TEST_TIMEOUT} --output-on-failure
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -248,8 +195,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		upload_codecov tests_gcc_release_cpp17_no_valgrind
 	fi
 
-	cd ..
-	rm -r build
+	workspace_cleanup
 	#Recover valgrind
 	sudo_password mv tmp_valgrind_pc ${VALGRIND_PC_PATH}
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -303,8 +249,7 @@ function tests_package() {
 		sudo_password rpm -i libpmemobj++*.rpm
 	fi
 
-	cd ..
-	rm -rf build
+	workspace_cleanup
 
 	# Verify installed package
 	compile_example_standalone map_cli
@@ -320,6 +265,7 @@ function tests_package() {
 	# Verify installed package using find_package
 	compile_example_standalone map_cli
 
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -345,18 +291,14 @@ function tests_findLIBPMEMOBJ_cmake()
 
 	make -j$(nproc)
 
-	cd ..
-	rm -r build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
-# Main:
-sudo_password mkdir /mnt/pmem
-sudo_password chmod 0777 /mnt/pmem
-sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
-mkdir ${INSTALL_DIR}
 
-cd ${WORKDIR}
+# Main
+echo "### run-build.sh starts here ###"
+workspace_cleanup
 
 echo "Run build steps passed as script arguments"
 build_steps=$@
@@ -371,5 +313,3 @@ for build in ${build_steps}
 do
 	${build}
 done
-
-rm -r ${INSTALL_DIR}

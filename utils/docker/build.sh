@@ -132,6 +132,7 @@ docker run --privileged=true --name=${CONTAINER_NAME} -i \
 	--env TESTS_LONG=${TESTS_LONG:-OFF} \
 	--env TESTS_TBB=${TESTS_TBB:-ON} \
 	--env TESTS_PMREORDER=${TESTS_PMREORDER:-ON} \
+	--env TEST_TIMEOUT=${TEST_TIMEOUT} \
 	--env TZ='Europe/Warsaw' \
 	--shm-size=4G \
 	-v ${HOST_WORKDIR}:${WORKDIR} \

@@ -21,8 +21,6 @@ TESTS_PMREORDER=${TESTS_PMREORDER:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-1}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
-INSTALL_DIR=/tmp/libpmemobj-cpp
-
 export PMREORDER_STACKTRACE_DEPTH=20
 
 function upload_codecov() {
@@ -55,9 +53,9 @@ function compile_example_standalone() {
 	example_name=${1}
 	echo "Compile standalone example: ${example_name}"
 
-	rm -rf /tmp/build_example
-	mkdir /tmp/build_example
-	cd /tmp/build_example
+	rm -rf ${EXAMPLE_TEST_DIR}
+	mkdir ${EXAMPLE_TEST_DIR}
+	cd ${EXAMPLE_TEST_DIR}
 
 	cmake ${WORKDIR}/examples/${example_name}
 
@@ -102,8 +100,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		upload_codecov tests_clang_debug_cpp17
 	fi
 
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -137,8 +134,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 		upload_codecov tests_clang_release_cpp11
 	fi
 
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -181,8 +177,7 @@ function tests_gcc_debug_cpp14_no_valgrind() {
 	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_gcc_debug
 	fi
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -193,8 +188,7 @@ function tests_gcc_debug_cpp14_valgrind_memcheck_drd() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 	build_gcc_debug_cpp14
 	ctest -R "_memcheck|_drd" --timeout ${TEST_TIMEOUT} --output-on-failure
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -206,8 +200,7 @@ function tests_gcc_debug_cpp14_valgrind_other() {
 	build_gcc_debug_cpp14
 	ctest -E "_none|_memcheck|_drd" --timeout ${TEST_TIMEOUT} --output-on-failure
 	ctest -R "_pmreorder" --timeout ${TEST_TIMEOUT} --output-on-failure
-	cd ..
-	rm -rf build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -248,8 +241,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		upload_codecov tests_gcc_release_cpp17_no_valgrind
 	fi
 
-	cd ..
-	rm -r build
+	workspace_cleanup
 	#Recover valgrind
 	sudo_password mv tmp_valgrind_pc ${VALGRIND_PC_PATH}
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -296,8 +288,7 @@ function tests_package() {
 		sudo_password rpm -i libpmemobj++*.rpm
 	fi
 
-	cd ..
-	rm -rf build
+	workspace_cleanup
 
 	# Verify installed package
 	compile_example_standalone map_cli
@@ -313,6 +304,7 @@ function tests_package() {
 	# Verify installed package using find_package
 	compile_example_standalone map_cli
 
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -338,8 +330,7 @@ function tests_findLIBPMEMOBJ_cmake()
 
 	make -j$(nproc)
 
-	cd ..
-	rm -r build
+	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -347,9 +338,9 @@ function tests_findLIBPMEMOBJ_cmake()
 sudo_password mkdir /mnt/pmem
 sudo_password chmod 0777 /mnt/pmem
 sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
-mkdir ${INSTALL_DIR}
 
-cd ${WORKDIR}
+echo "### Cleaning workspace"
+workspace_cleanup
 
 echo "Run build steps passed as script arguments"
 build_steps=$@
@@ -364,5 +355,3 @@ for build in ${build_steps}
 do
 	${build}
 done
-
-rm -r ${INSTALL_DIR}

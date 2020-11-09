@@ -118,5 +118,9 @@ for file in ${files}; do
 	fi
 done
 
-# Getting here means rebuilding the Docker image is not required
-pull_image
+# Getting here means rebuilding the Docker image isn't required (based on changed files).
+# Pull the image from the Container Registry or rebuild anyway, if pull fails.
+if ! pull_image; then
+	build_image
+	push_image
+fi

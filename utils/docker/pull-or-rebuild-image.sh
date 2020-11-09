@@ -99,4 +99,9 @@ done
 
 # Getting here means rebuilding the Docker image is not required.
 # Pull the image from the Container Registry.
-docker pull ${CONTAINER_REG}:1.12-${OS}-${OS_VER}
+if ! docker pull ${CONTAINER_REG}:1.2-${OS}-${OS_VER}; then
+	pushd $images_dir_name
+	./build-image.sh ${OS}-${OS_VER}
+	touch $CI_FILE_PUSH_IMAGE_TO_REPO
+	popd
+fi

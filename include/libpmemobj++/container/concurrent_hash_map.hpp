@@ -2278,6 +2278,11 @@ public:
 	void clear();
 
 	/**
+	 * Destroys the concurrent_hash_map. Unlike destructor it will throw
+	 * an exception in case of any failure (e.g. not enough space for a
+	 * transactional data). If that happens, it might be necessary to free
+	 * some other data in the pool.
+	 *
 	 * Should be called before concurrent_hash_map destructor is called.
 	 * Otherwise, program can terminate if an exception occurs while freeing
 	 * memory inside dtor.

@@ -20,7 +20,6 @@ using namespace pmem::obj;
 using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
-const bool remove_hashmap = false;
 
 /* This is basic example and we only need to use concurrent_hash_map. Hence we
  * will correlate memory pool root object with single instance of persistent
@@ -36,12 +35,17 @@ int
 main(int argc, char *argv[])
 {
 	pool<root> pop;
+	bool remove_hashmap = false;
+
 	try {
-		if (argc != 2)
-			std::cerr << "usage: " << argv[0] << " file-name"
-				  << std::endl;
+		if (argc < 2)
+			std::cerr << "usage: " << argv[0]
+				  << " file-name [remove_hashmap]" << std::endl;
 
 		auto path = argv[1];
+
+		if (argc == 3)
+			remove_hashmap = std::string(argv[2]) == "1";
 
 		try {
 			pop = pool<root>::open(path, "concurrent_hash_map");
@@ -177,6 +181,7 @@ main(int argc, char *argv[])
 
 			transaction::run(pop, [&] {
 				delete_persistent<hashmap_type>(r);
+				r = nullptr;
 			});
 		}
 		pop.close();

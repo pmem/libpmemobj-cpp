@@ -44,7 +44,6 @@ RUN dnf update -y \
 	gcc-c++ \
 	gdb \
 	git \
-	hub \
 	json-c-devel \
 	kmod-devel \
 	libtool \

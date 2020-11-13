@@ -13,10 +13,10 @@ if [ "${SKIP_VALGRIND_BUILD}" ]; then
 	exit
 fi
 
-git clone --recursive https://github.com/pmem/valgrind.git
+git clone git://sourceware.org/git/valgrind.git
 cd valgrind
 # pmem-3.15: Merge pull request #81 from marcinslusarz/pmem-3.15
-git checkout 09f75f69683d862f8456f75484fcdc0dc5508900
+# git checkout 09f75f69683d862f8456f75484fcdc0dc5508900
 
 ./autogen.sh
 ./configure --prefix=/usr

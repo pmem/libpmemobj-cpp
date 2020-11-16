@@ -20,7 +20,6 @@ using namespace pmem::obj;
 using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
-const bool remove_hashmap = false;
 
 /* This is basic example and we only need to use concurrent_hash_map. Hence we
  * will correlate memory pool root object with single instance of persistent
@@ -36,12 +35,17 @@ int
 main(int argc, char *argv[])
 {
 	pool<root> pop;
+	bool remove_hashmap = false;
+
 	try {
-		if (argc != 2)
-			std::cerr << "usage: " << argv[0] << " file-name"
-				  << std::endl;
+		if (argc < 2)
+			std::cerr << "usage: " << argv[0]
+				  << " file-name [remove_hashmap]" << std::endl;
 
 		auto path = argv[1];
+
+		if (argc == 3)
+			remove_hashmap = std::string(argv[2]) == "1";
 
 		try {
 			pop = pool<root>::open(path, "concurrent_hash_map");
@@ -50,7 +54,7 @@ main(int argc, char *argv[])
 			return -1;
 		}
 
-		auto r = pop.root()->pptr;
+		auto &r = pop.root()->pptr;
 
 		if (r == nullptr) {
 			/* Logic when file was first opened. First, we have to
@@ -65,7 +69,7 @@ main(int argc, char *argv[])
 			/* Logic when hash_map already exists. After opening of
 			 * the pool we have to call runtime_initialize()
 			 * function in order to recalculate mask and check for
-			 * consistentcy. */
+			 * consistency. */
 
 			r->runtime_initialize();
 
@@ -80,6 +84,7 @@ main(int argc, char *argv[])
 		}
 
 		auto &map = *r;
+		std::cout << map.size() << std::endl;
 
 		std::vector<std::thread> threads;
 		threads.reserve(static_cast<size_t>(THREADS_NUM));
@@ -146,25 +151,28 @@ main(int argc, char *argv[])
 				  << std::endl;
 			throw;
 		}
-		/* Erase remaining itemes in map. This function is not
-		 * thread-safe, hence the function is being called only after
-		 * thread execution has completed. */
-		try {
-			map.clear();
-		} catch (const pmem::transaction_out_of_memory &e) {
-			std::cerr << "Clear exception: " << e.what()
-				  << std::endl;
-			throw;
-		} catch (const pmem::transaction_free_error &e) {
-			std::cerr << "Clear exception: " << e.what()
-				  << std::endl;
-			throw;
-		}
 
-		/* If hash map is to be removed, free_data() method should be
-		 * called first. Otherwise, if deallocating internal hash map
-		 * metadata in a destructor fail program might terminate. */
 		if (remove_hashmap) {
+			/* Firstly, erase remaining items in the map. This
+			 * function is not thread-safe, hence the function is
+			 * being called only after thread execution has
+			 * completed. */
+			try {
+				map.clear();
+			} catch (const pmem::transaction_out_of_memory &e) {
+				std::cerr << "Clear exception: " << e.what()
+					  << std::endl;
+				throw;
+			} catch (const pmem::transaction_free_error &e) {
+				std::cerr << "Clear exception: " << e.what()
+					  << std::endl;
+				throw;
+			}
+
+			/* If hash map is to be removed, free_data() method
+			 * should be called first. Otherwise, if deallocating
+			 * internal hash map metadata in a destructor fails
+			 * program might terminate. */
 			map.free_data();
 
 			/* map.clear() // WRONG
@@ -173,6 +181,7 @@ main(int argc, char *argv[])
 
 			transaction::run(pop, [&] {
 				delete_persistent<hashmap_type>(r);
+				r = nullptr;
 			});
 		}
 		pop.close();

@@ -255,6 +255,13 @@ function tests_gcc_release_cpp17_no_valgrind() {
 ###############################################################################
 function tests_package() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+
+	if ! ls /opt/pmdk-pkg/libpmem* > /dev/null 2>&1; then
+		echo "ERROR: There are no PMDK packages in /opt/pmdk-pkg - they are required for package test(s)."
+		printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+		return 1
+	fi
+
 	mkdir build
 	cd build
 

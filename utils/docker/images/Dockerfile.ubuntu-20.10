@@ -1,0 +1,80 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright 2016-2020, Intel Corporation
+
+#
+# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
+#              environment prepared for running libpmemobj-cpp tests.
+#
+
+# Pull base image
+FROM ubuntu:20.10
+MAINTAINER szymon.romik@intel.com
+
+# Set required environment variables
+ENV OS ubuntu
+ENV OS_VER 20.10
+ENV PACKAGE_MANAGER deb
+ENV NOTTY 1
+
+# Additional parameters to build docker without building components
+ARG SKIP_VALGRIND_BUILD
+ARG SKIP_PMDK_BUILD
+ARG SKIP_SCRIPTS_DOWNLOAD
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# Update the Apt cache and install basic tools
+RUN apt-get update \
+ && apt-get install -y software-properties-common \
+	asciidoc \
+	autoconf \
+	clang \
+	clang-format-9 \
+	cmake \
+	curl \
+	debhelper \
+	devscripts \
+	doxygen \
+	gcc \
+	gdb \
+	git \
+	graphviz \
+	libdaxctl-dev \
+	libjson-c-dev \
+	libkmod-dev \
+	libncurses5-dev \
+	libndctl-dev \
+	libsfml-dev \
+	libtbb-dev \
+	libtext-diff-perl \
+	libudev-dev \
+	libunwind-dev \
+	llvm \
+	pandoc \
+	pkg-config \
+	ruby \
+	sudo \
+	tzdata \
+	uuid-dev \
+	wget \
+	whois \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install valgrind
+COPY install-valgrind.sh install-valgrind.sh
+RUN ./install-valgrind.sh
+
+# Install pmdk
+COPY install-pmdk.sh install-pmdk.sh
+RUN ./install-pmdk.sh dpkg
+
+# Download scripts required in run-*.sh
+COPY download-scripts.sh download-scripts.sh
+COPY 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch
+RUN ./download-scripts.sh
+
+# Add user
+ENV USER user
+ENV USERPASS pass
+RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
+USER $USER

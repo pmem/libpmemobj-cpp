@@ -562,11 +562,8 @@ if(TEST_CONCURRENT_HASHMAP)
 		message(WARNING "Skipping concurrent_hash_map_rehash_break test because GDB was not found")
 	endif()
 
-	# XXX: move this check to the top of the file, to potentially fail build earlier
 	if(NOT TESTS_TBB)
 		message(WARNING "Skipping concurrent_hash_map_tbb tests - disabled by cmake TESTS_TBB option")
-	elseif(NOT TBB_FOUND)
-		message(FATAL_ERROR "concurrent_hash_map_tbb tests enabled by cmake TESTS_TBB option, but Intel TBB library was not found")
 	else()
 		build_test_tbb(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
 		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none

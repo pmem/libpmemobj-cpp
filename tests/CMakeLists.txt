@@ -6,6 +6,9 @@ include(ctest_helpers.cmake)
 ## Setup
 add_custom_target(tests)
 
+# Try to find it for some tests using TBB
+include(tbb)
+
 # Add checks when DEVELOPER_MODE is ON
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.c

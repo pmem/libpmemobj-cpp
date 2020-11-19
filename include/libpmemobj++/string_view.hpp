@@ -970,9 +970,7 @@ basic_string_view<CharT, Traits>::find_last_not_of(CharT ch,
  */
 template <typename CharT, typename Traits>
 constexpr basic_string_view<CharT, Traits>
-basic_string_view<CharT, Traits>::substr(
-	basic_string_view<CharT, Traits>::size_type pos,
-	basic_string_view<CharT, Traits>::size_type count) const
+basic_string_view<CharT, Traits>::substr(size_type pos, size_type count) const
 {
 	return pos > size()
 		? throw std::out_of_range("string_view::substr")
@@ -994,9 +992,8 @@ basic_string_view<CharT, Traits>::substr(
  */
 template <typename CharT, typename Traits>
 typename basic_string_view<CharT, Traits>::size_type
-basic_string_view<CharT, Traits>::copy(
-	CharT *dest, basic_string_view<CharT, Traits>::size_type count,
-	basic_string_view<CharT, Traits>::size_type pos) const
+basic_string_view<CharT, Traits>::copy(CharT *dest, size_type count,
+				       size_type pos) const
 {
 	if (pos > size())
 		throw std::out_of_range("string_view::copy");
@@ -1018,8 +1015,8 @@ basic_string_view<CharT, Traits>::copy(
  */
 template <typename CharT, typename Traits>
 inline int
-basic_string_view<CharT, Traits>::compare(
-	size_type pos1, size_type n1, basic_string_view<CharT, Traits> sv) const
+basic_string_view<CharT, Traits>::compare(size_type pos1, size_type n1,
+					  basic_string_view sv) const
 {
 	return substr(pos1, n1).compare(sv);
 }

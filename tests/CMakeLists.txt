@@ -6,6 +6,9 @@ include(ctest_helpers.cmake)
 ## Setup
 add_custom_target(tests)
 
+# Try to find it for some tests using TBB
+include(tbb)
+
 # Add checks when DEVELOPER_MODE is ON
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
@@ -562,11 +565,8 @@ if(TEST_CONCURRENT_HASHMAP)
 		message(WARNING "Skipping concurrent_hash_map_rehash_break test because GDB was not found")
 	endif()
 
-	# XXX: move this check to the top of the file, to potentially fail build earlier
 	if(NOT TESTS_TBB)
 		message(WARNING "Skipping concurrent_hash_map_tbb tests - disabled by cmake TESTS_TBB option")
-	elseif(NOT TBB_FOUND)
-		message(FATAL_ERROR "concurrent_hash_map_tbb tests enabled by cmake TESTS_TBB option, but Intel TBB library was not found")
 	else()
 		build_test_tbb(concurrent_hash_map_tbb_insert_lookup concurrent_hash_map_insert_lookup/concurrent_hash_map_tbb_insert_lookup.cpp)
 		add_test_generic(NAME concurrent_hash_map_tbb_insert_lookup TRACERS none

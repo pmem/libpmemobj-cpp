@@ -164,9 +164,6 @@ if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_BENCHMARKS)
 		find_package(LIBPMEMOBJ REQUIRED ${LIBPMEMOBJ_REQUIRED_VERSION})
 		find_package(LIBPMEM REQUIRED ${LIBPMEM_REQUIRED_VERSION})
 	endif()
-
-	# XXX: required by tests only?
-	include(tbb)
 endif()
 
 add_custom_target(checkers ALL)

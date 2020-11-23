@@ -6,6 +6,11 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
 
 // <string>
 
@@ -207,8 +212,7 @@ run(pmem::obj::pool<root> &pop)
 			auto s3 = nvobj::make_persistent<S>(
 				sv, static_cast<S::size_type>(0),
 				std::string::npos); // calls ctor(T, pos, npos)
-			UT_ASSERT(static_cast<pmem::obj::string_view>(*s3) ==
-				  sv);
+			UT_ASSERT(*s3 == sv);
 			nvobj::delete_persistent<S>(s3);
 		});
 

@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright 2016-2020, Intel Corporation
+
+#
+# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
+#              environment prepared for running libpmemobj-cpp tests.
+#
+
+# Pull base image
+FROM ubuntu:18.04
+MAINTAINER szymon.romik@intel.com
+
+# Set required environment variables
+ENV OS ubuntu
+ENV OS_VER 18.04
+ENV PACKAGE_MANAGER deb
+ENV NOTTY 1
+
+# Additional parameters to build docker without building components
+ARG SKIP_VALGRIND_BUILD
+ARG SKIP_PMDK_BUILD
+ARG SKIP_SCRIPTS_DOWNLOAD
+
+ARG NDCTL_DEPS="\
+	bash-completion \
+	libkeyutils-dev \
+	libkmod-dev \
+	libudev-dev \
+	systemd"
+
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	libatomic1"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+# Update the Apt cache and install basic tools
+RUN apt-get update \
+ && apt-get install -y software-properties-common \
+	asciidoc \
+	autoconf \
+	clang \
+	clang-format-9 \
+	cmake \
+	curl \
+	debhelper \
+	devscripts \
+	doxygen \
+	gcc \
+	gdb \
+	git \
+	graphviz \
+	libjson-c-dev \
+	libkmod-dev \
+	libncurses5-dev \
+	libsfml-dev \
+	libtbb-dev \
+	libtext-diff-perl \
+	libudev-dev \
+	libunwind-dev \
+	llvm \
+	pandoc \
+	pkg-config \
+	sudo \
+	tzdata \
+	uuid-dev \
+	whois \
+	$NDCTL_DEPS \
+	$LIBPMEMOBJ_CPP_DEPS \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install libndctl
+COPY install-libndctl.sh install-libndctl.sh
+RUN ./install-libndctl.sh ubuntu
+
+# Install valgrind
+COPY install-valgrind.sh install-valgrind.sh
+RUN ./install-valgrind.sh
+
+# Install pmdk from sources (because there are no ndctl packages)
+COPY install-pmdk.sh install-pmdk.sh
+RUN ./install-pmdk.sh
+
+# Add user
+ENV USER user
+ENV USERPASS pass
+RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
+USER $USER

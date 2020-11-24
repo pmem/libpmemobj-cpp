@@ -69,8 +69,7 @@ jobs:
         CONFIG: [Debug, Release]
     steps:
        - name: Update PATH
-         run: |
-           echo "::add-path::$Env:MSBUILD"
+         run: echo "${env:MSBUILD}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
        - name: Cache vcpkg packages
          uses: actions/cache@v1

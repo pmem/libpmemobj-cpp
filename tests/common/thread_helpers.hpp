@@ -35,13 +35,14 @@ parallel_xexec(size_t concurrency, Function f)
 {
 	std::condition_variable cv;
 	std::mutex m;
-	size_t counter = 0;
+	std::unique_ptr<size_t> counter =
+		std::unique_ptr<size_t>(new size_t(0));
 
 	auto syncthreads = [&] {
 		std::unique_lock<std::mutex> lock(m);
-		counter++;
-		if (counter < concurrency)
-			cv.wait(lock);
+		(*counter)++;
+		if (*counter < concurrency)
+			cv.wait(lock, [&] { return *counter >= concurrency; });
 		else
 			/*
 			 * notify_call could be called outside of a lock

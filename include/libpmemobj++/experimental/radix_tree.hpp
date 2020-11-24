@@ -1802,6 +1802,10 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
 		auto *leaf = pos.leaf_;
 		auto parent = leaf->parent;
 
+		/* there are more elements in the container */
+		if (parent)
+			++pos;
+
 		delete_persistent<radix_tree::leaf>(
 			persistent_ptr<radix_tree::leaf>(leaf));
 
@@ -1813,8 +1817,6 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
 			pos = begin();
 			return;
 		}
-
-		++pos;
 
 		/* It's safe to cast because we're inside non-const method. */
 		const_cast<tagged_node_ptr &>(*parent->find_child(leaf)) =

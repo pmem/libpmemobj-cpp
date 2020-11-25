@@ -28,7 +28,7 @@ Up-to-date support/maintenance status of branches/releases is available on [pmem
 	- perl
 
 ### Additional requirements: ###
-**radix_tree**: on Windows, Visual Studio in version at least 2017 is needed. Testing and/or installing radix_tree can be disable via CMake options.
+**radix_tree**: on Windows, Visual Studio in version at least 2017 is needed. Testing or installing radix_tree can be disabled via CMake options. Then please use -DTEST_RADIX_TREE=OFF switch.
 
 ## On Linux ##
 
@@ -85,6 +85,7 @@ vcpkg integrate install
 ...
 cmake . -Bbuild -G "Visual Studio 14 2015 Win64"
         -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
+        -DTEST_RADIX_TREE=OFF
 
 msbuild build/ALL_BUILD.vcxproj
 ```

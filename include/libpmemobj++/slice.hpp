@@ -13,8 +13,31 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include "detail/template_helpers.hpp"
+
 namespace pmem
 {
+
+namespace detail
+{
+template <typename Iterator>
+using subtraction =
+	decltype(std::declval<Iterator>() - std::declval<Iterator>());
+template <typename Iterator>
+using has_subtraction = supports<Iterator, subtraction>;
+
+template <typename Iterator>
+using pre_decrement = decltype(std::declval<Iterator>().operator--());
+template <typename Iterator>
+using has_pre_decrement = supports<Iterator, pre_decrement>;
+
+template <typename Iterator>
+using indexing = decltype(std::declval<Iterator>().operator[](
+	std::declval<
+		typename std::iterator_traits<Iterator>::difference_type>()));
+template <typename Iterator>
+using has_indexing = supports<Iterator, indexing>;
+} /* namespace detail */
 
 namespace obj
 {
@@ -32,19 +55,21 @@ public:
 	using reference = typename std::iterator_traits<iterator>::reference;
 
 	/**
-	 * Constructor taking two RandomAccess iterators which define a range.
+	 * Constructor taking two iterators (iterators should support:
+	 * operator[], operator-(), operator--()) which define a range.
 	 *
 	 * @throw std::out_of_range if it_end < it_begin.
 	 */
 	slice(Iterator begin, Iterator end) : it_begin(begin), it_end(end)
 	{
 		static_assert(
-			std::is_same<typename std::iterator_traits<
-					     iterator>::iterator_category,
-				     std::random_access_iterator_tag>::value,
-			"Iterator should have RandomAccessIterator tag");
+			std::is_pointer<Iterator>::value ||
+				(detail::has_indexing<Iterator>::value &&
+				 detail::has_pre_decrement<Iterator>::value &&
+				 detail::has_subtraction<Iterator>::value),
+			"Iterator should support: operator[], operator-(), operator--()");
 
-		if (it_end < it_begin)
+		if (it_end - it_begin < 0)
 			throw std::out_of_range("pmem::obj::slice");
 	}
 

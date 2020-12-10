@@ -10,8 +10,8 @@ set -e
 
 PACKAGE_MANAGER=${1}
 
-# common: 1.9.1, 16.09.2020
-PMDK_VERSION="1.9.1"
+# common: 1.9.2, 28.10.2020
+PMDK_VERSION="1.9.2"
 
 if [ "${SKIP_PMDK_BUILD}" ]; then
 	echo "Variable 'SKIP_PMDK_BUILD' is set; skipping building PMDK"

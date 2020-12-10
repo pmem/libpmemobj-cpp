@@ -4,7 +4,7 @@ var searchData=
   ['large_5fto_5fsso_189',['large_to_sso',['../classpmem_1_1obj_1_1basic__string.html#a22227244591870a94bf48200382b54e3',1,'pmem::obj::basic_string']]],
   ['layout_5ferror_190',['layout_error',['../classpmem_1_1layout__error.html',1,'pmem']]],
   ['leaf_191',['leaf',['../structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html',1,'pmem::obj::experimental::radix_tree']]],
-  ['length_192',['length',['../classpmem_1_1obj_1_1basic__string.html#a49f8407184c7b0f27cb68af66ca390a9',1,'pmem::obj::basic_string']]],
+  ['length_192',['length',['../classpmem_1_1obj_1_1basic__string.html#a49f8407184c7b0f27cb68af66ca390a9',1,'pmem::obj::basic_string::length()'],['../classpmem_1_1obj_1_1basic__string__view.html#a8cb102247bcbd177670d05521f7c11c4',1,'pmem::obj::basic_string_view::length()']]],
   ['less_3c_20pmem_3a_3aobj_3a_3ap_3c_20t_20_3e_20_3e_193',['less&lt; pmem::obj::p&lt; T &gt; &gt;',['../structstd_1_1less_3_01pmem_1_1obj_1_1p_3_01T_01_4_01_4.html',1,'std']]],
   ['life_2ehpp_194',['life.hpp',['../life_8hpp.html',1,'']]],
   ['local_195',['local',['../classpmem_1_1detail_1_1enumerable__thread__specific.html#afeae1b16fed71fd749169843aa7b1388',1,'pmem::detail::enumerable_thread_specific']]],

@@ -3867,11 +3867,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -3915,11 +3915,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -3962,12 +3962,12 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the C-style string identifying characters to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4004,11 +4004,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4052,11 +4052,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4100,11 +4100,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4147,12 +4147,12 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the C-style string identifying characters to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4189,11 +4189,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4237,11 +4237,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4285,11 +4285,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4332,12 +4332,12 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the C-style string identifying characters to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the first character that does not match. If no such characters are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4374,11 +4374,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Position of the first character not equal to any of the characters in the given string, or npos if no such character is found. </dd></dl>
 
 </div>
 </div>
@@ -4422,11 +4422,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the last character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4470,11 +4470,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the last character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4517,12 +4517,12 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the C-style string identifying characters to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the last character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -4559,11 +4559,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string identifying characters to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to begin searching</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position of the found character or npos if no such character is found. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The position of the last character that matches. If no matches are found, the function returns npos. </dd></dl>
 
 </div>
 </div>
@@ -7239,11 +7239,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ch</td><td>character to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from start of the string) of the first character equal to ch or npos if no such character is found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from the start of the string) of the first character equal to ch or npos if no such character is found </dd></dl>
 
 </div>
 </div>
@@ -7287,11 +7287,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <p>If npos or any value not smaller than <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a58239620ad3391a77f92dc75ee22f3f6">size()</a>-1 is passed as pos, whole string will be searched. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>string to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from start of the string) of the first character of the found substring or npos if no such substring is found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from the start of the string) of the first character of the found substring or npos if no such substring is found </dd></dl>
 
 </div>
 </div>
@@ -7334,12 +7334,12 @@ template&lt;typename CharT , typename Traits &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>length of the substring to search for</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from start of the string) of the first character of the found substring or npos if no such substring is found. If searching for an empty string retrurn pos, if also pos is greater than the size of the string - it returns size </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from the start of the string) of the first character of the found substring or npos if no such substring is found. If searching for an empty string returns pos unless pos &gt; <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a58239620ad3391a77f92dc75ee22f3f6">size()</a>, in which case returns <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a58239620ad3391a77f92dc75ee22f3f6">size()</a>. </dd></dl>
 
 </div>
 </div>
@@ -7372,15 +7372,15 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </div><div class="memdoc">
 
 <p>Finds the last substring equal to the C-style string pointed to by s. </p>
-<p>The length of the string is determined by the first null character If npos or any value not smaller than <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a58239620ad3391a77f92dc75ee22f3f6">size()</a>-1 is passed as pos, whole string will be searched.</p>
+<p>The length of the string is determined by the first null character. If npos or any value not smaller than <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a58239620ad3391a77f92dc75ee22f3f6">size()</a>-1 is passed as pos, whole string will be searched.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>pointer to the C-style string to search for </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position where the search starts from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pos</td><td>position at which to start the search</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from start of the string) of the first character of the found substring or npos if no such substring is found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Position (as an offset from the start of the string) of the first character of the found substring or npos if no such substring is found </dd></dl>
 
 </div>
 </div>

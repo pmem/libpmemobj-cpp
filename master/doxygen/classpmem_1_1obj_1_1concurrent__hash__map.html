@@ -142,7 +142,7 @@ template&lt;typename I &gt; </td></tr>
 <tr class="memdesc:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear hash map content Not thread safe.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a595cebdbdb8c398fc1819810c0c1fb6d">More...</a><br /></td></tr>
 <tr class="separator:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bfa5210cdb1478e396abd30079e75db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">free_data</a> ()</td></tr>
-<tr class="memdesc:a5bfa5210cdb1478e396abd30079e75db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">More...</a><br /></td></tr>
+<tr class="memdesc:a5bfa5210cdb1478e396abd30079e75db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">More...</a><br /></td></tr>
 <tr class="separator:a5bfa5210cdb1478e396abd30079e75db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52c9f358e07869c1db977f9ef53110e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">~concurrent_hash_map</a> ()</td></tr>
 <tr class="memdesc:a52c9f358e07869c1db977f9ef53110e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">More...</a><br /></td></tr>
@@ -279,7 +279,6 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line"><span class="keyword">using</span> hashmap_type = <a class="code" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map&lt;p&lt;int&gt;</a>, <a class="code" href="classpmem_1_1obj_1_1p.html">p&lt;int&gt;</a>&gt;;</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> THREADS_NUM = 30;</div>
-<div class="line"><span class="keyword">const</span> <span class="keywordtype">bool</span> remove_hashmap = <span class="keyword">false</span>;</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* This is basic example and we only need to use concurrent_hash_map. Hence we</span></div>
 <div class="line"><span class="comment"> * will correlate memory pool root object with single instance of persistent</span></div>
@@ -295,12 +294,17 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div>
 <div class="line">{</div>
 <div class="line">    <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;root&gt;</a> pop;</div>
+<div class="line">    <span class="keywordtype">bool</span> remove_hashmap = <span class="keyword">false</span>;</div>
+<div class="line"> </div>
 <div class="line">    <span class="keywordflow">try</span> {</div>
-<div class="line">        <span class="keywordflow">if</span> (argc != 2)</div>
-<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;usage: &quot;</span> &lt;&lt; argv[0] &lt;&lt; <span class="stringliteral">&quot; file-name&quot;</span></div>
-<div class="line">                  &lt;&lt; std::endl;</div>
+<div class="line">        <span class="keywordflow">if</span> (argc &lt; 2)</div>
+<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;usage: &quot;</span> &lt;&lt; argv[0]</div>
+<div class="line">                  &lt;&lt; <span class="stringliteral">&quot; file-name [remove_hashmap]&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"> </div>
 <div class="line">        <span class="keyword">auto</span> path = argv[1];</div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordflow">if</span> (argc == 3)</div>
+<div class="line">            remove_hashmap = std::string(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
 <div class="line"> </div>
 <div class="line">        <span class="keywordflow">try</span> {</div>
 <div class="line">            pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;concurrent_hash_map&quot;</span>);</div>
@@ -309,7 +313,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">            <span class="keywordflow">return</span> -1;</div>
 <div class="line">        }</div>
 <div class="line"> </div>
-<div class="line">        <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>()-&gt;pptr;</div>
+<div class="line">        <span class="keyword">auto</span> &amp;r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>()-&gt;pptr;</div>
 <div class="line"> </div>
 <div class="line">        <span class="keywordflow">if</span> (r == <span class="keyword">nullptr</span>) {</div>
 <div class="line">            <span class="comment">/* Logic when file was first opened. First, we have to</span></div>
@@ -324,7 +328,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">            <span class="comment">/* Logic when hash_map already exists. After opening of</span></div>
 <div class="line"><span class="comment">             * the pool we have to call runtime_initialize()</span></div>
 <div class="line"><span class="comment">             * function in order to recalculate mask and check for</span></div>
-<div class="line"><span class="comment">             * consistentcy. */</span></div>
+<div class="line"><span class="comment">             * consistency. */</span></div>
 <div class="line"> </div>
 <div class="line">            r-&gt;runtime_initialize();</div>
 <div class="line"> </div>
@@ -339,6 +343,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">        }</div>
 <div class="line"> </div>
 <div class="line">        <span class="keyword">auto</span> &amp;map = *r;</div>
+<div class="line">        std::cout &lt;&lt; map.size() &lt;&lt; std::endl;</div>
 <div class="line"> </div>
 <div class="line">        std::vector&lt;std::thread&gt; threads;</div>
 <div class="line">        threads.reserve(<span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(THREADS_NUM));</div>
@@ -405,25 +410,28 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">                  &lt;&lt; std::endl;</div>
 <div class="line">            <span class="keywordflow">throw</span>;</div>
 <div class="line">        }</div>
-<div class="line">        <span class="comment">/* Erase remaining itemes in map. This function is not</span></div>
-<div class="line"><span class="comment">         * thread-safe, hence the function is being called only after</span></div>
-<div class="line"><span class="comment">         * thread execution has completed. */</span></div>
-<div class="line">        <span class="keywordflow">try</span> {</div>
-<div class="line">            map.clear();</div>
-<div class="line">        } <span class="keywordflow">catch</span> (<span class="keyword">const</span> <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a> &amp;e) {</div>
-<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Clear exception: &quot;</span> &lt;&lt; e.what()</div>
-<div class="line">                  &lt;&lt; std::endl;</div>
-<div class="line">            <span class="keywordflow">throw</span>;</div>
-<div class="line">        } <span class="keywordflow">catch</span> (<span class="keyword">const</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a> &amp;e) {</div>
-<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Clear exception: &quot;</span> &lt;&lt; e.what()</div>
-<div class="line">                  &lt;&lt; std::endl;</div>
-<div class="line">            <span class="keywordflow">throw</span>;</div>
-<div class="line">        }</div>
 <div class="line"> </div>
-<div class="line">        <span class="comment">/* If hash map is to be removed, free_data() method should be</span></div>
-<div class="line"><span class="comment">         * called first. Otherwise, if deallocating internal hash map</span></div>
-<div class="line"><span class="comment">         * metadata in a destructor fail program might terminate. */</span></div>
 <div class="line">        <span class="keywordflow">if</span> (remove_hashmap) {</div>
+<div class="line">            <span class="comment">/* Firstly, erase remaining items in the map. This</span></div>
+<div class="line"><span class="comment">             * function is not thread-safe, hence the function is</span></div>
+<div class="line"><span class="comment">             * being called only after thread execution has</span></div>
+<div class="line"><span class="comment">             * completed. */</span></div>
+<div class="line">            <span class="keywordflow">try</span> {</div>
+<div class="line">                map.clear();</div>
+<div class="line">            } <span class="keywordflow">catch</span> (<span class="keyword">const</span> <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a> &amp;e) {</div>
+<div class="line">                std::cerr &lt;&lt; <span class="stringliteral">&quot;Clear exception: &quot;</span> &lt;&lt; e.what()</div>
+<div class="line">                      &lt;&lt; std::endl;</div>
+<div class="line">                <span class="keywordflow">throw</span>;</div>
+<div class="line">            } <span class="keywordflow">catch</span> (<span class="keyword">const</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a> &amp;e) {</div>
+<div class="line">                std::cerr &lt;&lt; <span class="stringliteral">&quot;Clear exception: &quot;</span> &lt;&lt; e.what()</div>
+<div class="line">                      &lt;&lt; std::endl;</div>
+<div class="line">                <span class="keywordflow">throw</span>;</div>
+<div class="line">            }</div>
+<div class="line"> </div>
+<div class="line">            <span class="comment">/* If hash map is to be removed, free_data() method</span></div>
+<div class="line"><span class="comment">             * should be called first. Otherwise, if deallocating</span></div>
+<div class="line"><span class="comment">             * internal hash map metadata in a destructor fails</span></div>
+<div class="line"><span class="comment">             * program might terminate. */</span></div>
 <div class="line">            map.free_data();</div>
 <div class="line"> </div>
 <div class="line">            <span class="comment">/* map.clear() // WRONG</span></div>
@@ -432,6 +440,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line"> </div>
 <div class="line">            <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">                delete_persistent&lt;hashmap_type&gt;(r);</div>
+<div class="line">                r = <span class="keyword">nullptr</span>;</div>
 <div class="line">            });</div>
 <div class="line">        }</div>
 <div class="line">        pop.close();</div>
@@ -505,7 +514,7 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual , type
 
 <p>free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. </p>
 <p>Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
-<p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Should be called before concurrent_hash_map destructor is called.">free_data()</a> was called (unless it was called in a transaction and that transaction aborted). </p>
+<p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Destroys the concurrent_hash_map.">free_data()</a> was called (unless it was called in a transaction and that transaction aborted). </p>
 
 </div>
 </div>
@@ -1171,9 +1180,10 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual , type
 </table>
 </div><div class="memdoc">
 
-<p>Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. </p>
-<p>Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
-<p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Should be called before concurrent_hash_map destructor is called.">free_data()</a> was called (unless this was done in a transaction and transaction aborted).</p>
+<p>Destroys the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. </p>
+<p>Unlike destructor it will throw an exception in case of any failure (e.g. not enough space for a transactional data). If that happens, it might be necessary to free some other data in the pool.</p>
+<p>Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
+<p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Destroys the concurrent_hash_map.">free_data()</a> was called (unless this was done in a transaction and transaction aborted).</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::transaction_error</td><td>in case of PMDK transaction failure </td></tr>

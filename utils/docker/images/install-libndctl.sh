@@ -8,24 +8,27 @@
 
 set -e
 
-OS=$1
+if [[ -z "${OS}" ]]; then
+	echo "ERROR: The variable OS has to be set (e.g. OS=fedora)."
+	exit 1
+fi
 
 echo "==== clone ndctl repo ===="
 git clone https://github.com/pmem/ndctl.git
 cd ndctl
 git checkout v69
 
-if [ "$OS" = "fedora" ]; then
+if [ "${OS}" = "fedora" ]; then
 
 echo "==== setup rpmbuild tree ===="
 rpmdev-setuptree
 
-RPMDIR=$HOME/rpmbuild/
+RPMDIR=${HOME}/rpmbuild/
 VERSION=$(./git-version)
 SPEC=./rhel/ndctl.spec
 
 echo "==== create source tarball ====="
-git archive --format=tar --prefix="ndctl-${VERSION}/" HEAD | gzip > "$RPMDIR/SOURCES/ndctl-${VERSION}.tar.gz"
+git archive --format=tar --prefix="ndctl-${VERSION}/" HEAD | gzip > "${RPMDIR}/SOURCES/ndctl-${VERSION}.tar.gz"
 
 echo "==== build ndctl ===="
 ./autogen.sh
@@ -33,20 +36,20 @@ echo "==== build ndctl ===="
 make -j$(nproc)
 
 echo "==== build ndctl packages ===="
-rpmbuild -ba $SPEC
+rpmbuild -ba ${SPEC}
 
 echo "==== install ndctl packages ===="
-rpm -i $RPMDIR/RPMS/x86_64/*.rpm
+rpm -i ${RPMDIR}/RPMS/x86_64/*.rpm
 
 echo "==== cleanup ===="
-rm -rf $RPMDIR
+rm -rf ${RPMDIR}
 
 else
 
 echo "==== set OS-specific options ===="
 OS_SPECIFIC=""
 LIBDIR=/usr/lib
-case $(echo $OS | cut -d'-' -f1) in
+case $(echo ${OS} | cut -d'-' -f1) in
 	centos|opensuse)
 		LIBDIR=/usr/lib64
 		;;
@@ -57,7 +60,7 @@ esac
 
 echo "==== build ndctl ===="
 ./autogen.sh
-./configure --libdir=$LIBDIR --disable-docs $OS_SPECIFIC
+./configure --libdir=${LIBDIR} --disable-docs ${OS_SPECIFIC}
 make -j$(nproc)
 
 echo "==== install ndctl ===="

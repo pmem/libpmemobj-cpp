@@ -884,6 +884,53 @@ test_inline_string_wchart_key(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_inline_s_wchart>(
 			r->radix_inline_s_wchart);
 	});
+}
+
+void
+test_remove_inserted(nvobj::pool<root> &pop)
+{
+	const size_t NUM_ITER = 100;
+
+	auto r = pop.root();
+
+	nvobj::transaction::run(pop, [&] {
+		r->radix_str = nvobj::make_persistent<container_string>();
+	});
+
+	/* remove element which was just inserted */
+	nvobj::transaction::run(pop, [&] {
+		for (size_t i = 0; i < NUM_ITER; i++) {
+			UT_ASSERT(r->radix_str
+					  ->emplace(std::to_string(i),
+						    std::to_string(i))
+					  .second);
+			UT_ASSERT(r->radix_str->erase(std::to_string(i)));
+		}
+	});
+
+	/* insert some initial elements */
+	nvobj::transaction::run(pop, [&] {
+		for (size_t i = 0; i < 5; i++)
+			UT_ASSERT(r->radix_str
+					  ->emplace("init" + std::to_string(i),
+						    std::to_string(i))
+					  .second);
+	});
+
+	/* remove element which was just inserted */
+	nvobj::transaction::run(pop, [&] {
+		for (size_t i = 0; i < NUM_ITER; i++) {
+			UT_ASSERT(r->radix_str
+					  ->emplace(std::to_string(i),
+						    std::to_string(i))
+					  .second);
+			UT_ASSERT(r->radix_str->erase(std::to_string(i)));
+		}
+	});
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_string>(r->radix_str);
+	});
 
 	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
 }
@@ -921,6 +968,7 @@ test(int argc, char *argv[])
 	test_compression(pop);
 	test_inline_string_u8t_key(pop);
 	test_inline_string_wchart_key(pop);
+	test_remove_inserted(pop);
 
 	pop.close();
 }

@@ -83,7 +83,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aee17b6985ff9a9b368f551808abf726a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#aee17b6985ff9a9b368f551808abf726a">slice</a> (Iterator <a class="el" href="classpmem_1_1obj_1_1slice.html#a65433f2b1b2ac620d28d0f33b12c24b2">begin</a>, Iterator <a class="el" href="classpmem_1_1obj_1_1slice.html#a95fc897b38b62dd528e8ecb008e99638">end</a>)</td></tr>
-<tr class="memdesc:aee17b6985ff9a9b368f551808abf726a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor taking two RandomAccess iterators which define a range.  <a href="classpmem_1_1obj_1_1slice.html#aee17b6985ff9a9b368f551808abf726a">More...</a><br /></td></tr>
+<tr class="memdesc:aee17b6985ff9a9b368f551808abf726a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor taking two iterators (iterators should support: operator[], <a class="el" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef" title="Subtraction operator for persistent pointers.">operator-()</a>, <a class="el" href="namespacepmem_1_1obj.html#a72906abaf063550b2ac46c9929b8a1be" title="Prefix decrement operator overload.">operator--()</a>) which define a range.  <a href="classpmem_1_1obj_1_1slice.html#aee17b6985ff9a9b368f551808abf726a">More...</a><br /></td></tr>
 <tr class="separator:aee17b6985ff9a9b368f551808abf726a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e10961ee1606f88181df5168f9023fc"><td class="memItemLeft" align="right" valign="top"><a id="a9e10961ee1606f88181df5168f9023fc"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a9e10961ee1606f88181df5168f9023fc">slice</a> (const <a class="el" href="classpmem_1_1obj_1_1slice.html">slice</a> &amp;other) noexcept=default</td></tr>
@@ -158,7 +158,7 @@ template&lt;typename Iterator &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor taking two RandomAccess iterators which define a range. </p>
+<p>Constructor taking two iterators (iterators should support: operator[], <a class="el" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef" title="Subtraction operator for persistent pointers.">operator-()</a>, <a class="el" href="namespacepmem_1_1obj.html#a72906abaf063550b2ac46c9929b8a1be" title="Prefix decrement operator overload.">operator--()</a>) which define a range. </p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::out_of_range</td><td>if it_end &lt; it_begin. </td></tr>

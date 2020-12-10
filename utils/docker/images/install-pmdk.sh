@@ -4,6 +4,7 @@
 
 #
 # install-pmdk.sh - installs libpmem & libpmemobj
+#		and prepares DEB/RPM packages if possible (stored on docker image in /opt/).
 #
 
 set -e

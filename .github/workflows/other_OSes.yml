@@ -14,6 +14,9 @@ env:
   IMG_VER:        latest
   TYPE:           debug
   PUSH_IMAGE:     1
+  # use org's Private Access Token to log in to GitHub Container Registry
+  CONTAINER_REG_USER:   ${{ secrets.GH_CR_USER }}
+  CONTAINER_REG_PASS:   ${{ secrets.GH_CR_PAT }}
 
 jobs:
   linux:
@@ -38,6 +41,7 @@ jobs:
       - name: Clone the git repo
         uses: actions/checkout@v2
 
+      # other_OSes workflow rebuilds images every time and push them to the container registry
       - name: Rebuild and push the image
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh rebuild
 

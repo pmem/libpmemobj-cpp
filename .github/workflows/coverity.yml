@@ -26,6 +26,7 @@ jobs:
       - name: Clone the git repo
         uses: actions/checkout@v2
 
+      # coverity workflow should just reuse (pull) the most recent, available image
       - name: Pull the image
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh pull
 

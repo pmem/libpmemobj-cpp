@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['node_486',['node',['../structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html',1,'pmem::obj::experimental::radix_tree']]],
-  ['numeric_5flimits_3c_20pmem_3a_3aobj_3a_3ap_3c_20t_20_3e_20_3e_487',['numeric_limits&lt; pmem::obj::p&lt; T &gt; &gt;',['../structstd_1_1numeric__limits_3_01pmem_1_1obj_1_1p_3_01T_01_4_01_4.html',1,'std']]]
+  ['manual_5ftx_5fabort_488',['manual_tx_abort',['../classpmem_1_1manual__tx__abort.html',1,'pmem']]],
+  ['mutex_489',['mutex',['../classpmem_1_1obj_1_1mutex.html',1,'pmem::obj']]],
+  ['mutex_5fvector_490',['mutex_vector',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1mutex__vector.html',1,'pmem::obj::concurrent_hash_map']]]
 ];

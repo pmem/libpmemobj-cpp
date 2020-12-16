@@ -708,7 +708,7 @@ $(function() {
 <div class="line"><a name="l01071"></a><span class="lineno"> 1071</span>&#160;        <span class="keywordflow">throw</span> std::length_error(<span class="stringliteral">&quot;Assignable range exceeds max size.&quot;</span>);</div>
 <div class="line"><a name="l01072"></a><span class="lineno"> 1072</span>&#160; </div>
 <div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;        <span class="keywordflow">if</span> (count &gt; capacity())</div>
 <div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;            internal_reserve(count);</div>
 <div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (count &lt; size())</div>
@@ -739,7 +739,7 @@ $(function() {
 <div class="line"><a name="l01128"></a><span class="lineno"> 1128</span>&#160;        <span class="keywordflow">throw</span> std::length_error(<span class="stringliteral">&quot;Assignable range exceeds max size.&quot;</span>);</div>
 <div class="line"><a name="l01129"></a><span class="lineno"> 1129</span>&#160; </div>
 <div class="line"><a name="l01130"></a><span class="lineno"> 1130</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01131"></a><span class="lineno"> 1131</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160;        <span class="keywordflow">if</span> (count &gt; capacity())</div>
 <div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;            internal_reserve(count);</div>
 <div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (count &lt; size())</div>
@@ -787,7 +787,7 @@ $(function() {
 <div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160; </div>
 <div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;        _data = std::move(other._data);</div>
 <div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160;        _segments_used = other._segments_used;</div>
 <div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;        other._segments_used = 0;</div>
@@ -1065,7 +1065,7 @@ $(function() {
 <div class="line"><a name="l01767"></a><span class="lineno"> 1767</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l01768"></a><span class="lineno"> 1768</span>&#160; </div>
 <div class="line"><a name="l01769"></a><span class="lineno"> 1769</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01770"></a><span class="lineno"> 1770</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] { internal_reserve(capacity_new); });</div>
+<div class="line"><a name="l01770"></a><span class="lineno"> 1770</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] { internal_reserve(capacity_new); });</div>
 <div class="line"><a name="l01771"></a><span class="lineno"> 1771</span>&#160;}</div>
 <div class="line"><a name="l01772"></a><span class="lineno"> 1772</span>&#160; </div>
 <div class="line"><a name="l01777"></a><span class="lineno"> 1777</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Policy&gt;</div>
@@ -1088,7 +1088,7 @@ $(function() {
 <div class="line"><a name="l01805"></a><span class="lineno"> 1805</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l01806"></a><span class="lineno"> 1806</span>&#160; </div>
 <div class="line"><a name="l01807"></a><span class="lineno"> 1807</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01808"></a><span class="lineno"> 1808</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01808"></a><span class="lineno"> 1808</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01809"></a><span class="lineno"> 1809</span>&#160;        <span class="keywordflow">for</span> (size_type i = new_last + 1; i &lt; _segments_used; ++i)</div>
 <div class="line"><a name="l01810"></a><span class="lineno"> 1810</span>&#160;            _data[i].free_data();</div>
 <div class="line"><a name="l01811"></a><span class="lineno"> 1811</span>&#160;        _segments_used = new_last + 1;</div>
@@ -1101,7 +1101,7 @@ $(function() {
 <div class="line"><a name="l01829"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1segment__vector.html#a33fc50106c73f4c7def2de10a4d70b9e"> 1829</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1segment__vector.html#a33fc50106c73f4c7def2de10a4d70b9e">segment_vector&lt;T, Policy&gt;::clear</a>()</div>
 <div class="line"><a name="l01830"></a><span class="lineno"> 1830</span>&#160;{</div>
 <div class="line"><a name="l01831"></a><span class="lineno"> 1831</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01832"></a><span class="lineno"> 1832</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] { shrink(0); });</div>
+<div class="line"><a name="l01832"></a><span class="lineno"> 1832</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] { shrink(0); });</div>
 <div class="line"><a name="l01833"></a><span class="lineno"> 1833</span>&#160;    assert(segment_capacity_validation());</div>
 <div class="line"><a name="l01834"></a><span class="lineno"> 1834</span>&#160;}</div>
 <div class="line"><a name="l01835"></a><span class="lineno"> 1835</span>&#160; </div>
@@ -1110,7 +1110,7 @@ $(function() {
 <div class="line"><a name="l01850"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1segment__vector.html#a98574d45630348a10be67222fc3487b2"> 1850</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1segment__vector.html#a98574d45630348a10be67222fc3487b2">segment_vector&lt;T, Policy&gt;::free_data</a>()</div>
 <div class="line"><a name="l01851"></a><span class="lineno"> 1851</span>&#160;{</div>
 <div class="line"><a name="l01852"></a><span class="lineno"> 1852</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01853"></a><span class="lineno"> 1853</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01853"></a><span class="lineno"> 1853</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01854"></a><span class="lineno"> 1854</span>&#160;        <span class="keywordflow">for</span> (size_type i = 0; i &lt; _segments_used; ++i)</div>
 <div class="line"><a name="l01855"></a><span class="lineno"> 1855</span>&#160;            _data[i].free_data();</div>
 <div class="line"><a name="l01856"></a><span class="lineno"> 1856</span>&#160;        _segments_used = 0;</div>
@@ -1131,7 +1131,7 @@ $(function() {
 <div class="line"><a name="l01917"></a><span class="lineno"> 1917</span>&#160;    size_type idx = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(pos - <a class="code" href="namespacepmem_1_1obj.html#a5fd06001cc9db20b93349064c3ef9062">cbegin</a>());</div>
 <div class="line"><a name="l01918"></a><span class="lineno"> 1918</span>&#160; </div>
 <div class="line"><a name="l01919"></a><span class="lineno"> 1919</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01920"></a><span class="lineno"> 1920</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01920"></a><span class="lineno"> 1920</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01921"></a><span class="lineno"> 1921</span>&#160;        insert_gap(idx, 1);</div>
 <div class="line"><a name="l01922"></a><span class="lineno"> 1922</span>&#160;        <a class="code" href="namespacepmem_1_1obj.html#aa33ff9be3b0cc1bce22b7524b9252077">get</a>(idx) = std::move(value);</div>
 <div class="line"><a name="l01923"></a><span class="lineno"> 1923</span>&#160;    });</div>
@@ -1147,7 +1147,7 @@ $(function() {
 <div class="line"><a name="l01959"></a><span class="lineno"> 1959</span>&#160;    size_type idx = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(pos - <a class="code" href="namespacepmem_1_1obj.html#a5fd06001cc9db20b93349064c3ef9062">cbegin</a>());</div>
 <div class="line"><a name="l01960"></a><span class="lineno"> 1960</span>&#160; </div>
 <div class="line"><a name="l01961"></a><span class="lineno"> 1961</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l01962"></a><span class="lineno"> 1962</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l01962"></a><span class="lineno"> 1962</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l01963"></a><span class="lineno"> 1963</span>&#160;        insert_gap(idx, count);</div>
 <div class="line"><a name="l01964"></a><span class="lineno"> 1964</span>&#160;        <span class="keywordflow">for</span> (size_type i = idx; i &lt; idx + count; ++i)</div>
 <div class="line"><a name="l01965"></a><span class="lineno"> 1965</span>&#160;            <a class="code" href="namespacepmem_1_1obj.html#aa33ff9be3b0cc1bce22b7524b9252077">get</a>(i) = std::move(value);</div>
@@ -1168,7 +1168,7 @@ $(function() {
 <div class="line"><a name="l02013"></a><span class="lineno"> 2013</span>&#160;    size_type gap_size = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(std::distance(first, last));</div>
 <div class="line"><a name="l02014"></a><span class="lineno"> 2014</span>&#160; </div>
 <div class="line"><a name="l02015"></a><span class="lineno"> 2015</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02016"></a><span class="lineno"> 2016</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02016"></a><span class="lineno"> 2016</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02017"></a><span class="lineno"> 2017</span>&#160;        insert_gap(idx, gap_size);</div>
 <div class="line"><a name="l02018"></a><span class="lineno"> 2018</span>&#160;        <span class="keywordflow">for</span> (size_type i = idx; i &lt; idx + gap_size; ++i, ++first)</div>
 <div class="line"><a name="l02019"></a><span class="lineno"> 2019</span>&#160;            <a class="code" href="namespacepmem_1_1obj.html#aa33ff9be3b0cc1bce22b7524b9252077">get</a>(i) = *first;</div>
@@ -1193,7 +1193,7 @@ $(function() {
 <div class="line"><a name="l02092"></a><span class="lineno"> 2092</span>&#160;    size_type idx = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(pos - <a class="code" href="namespacepmem_1_1obj.html#a5fd06001cc9db20b93349064c3ef9062">cbegin</a>());</div>
 <div class="line"><a name="l02093"></a><span class="lineno"> 2093</span>&#160; </div>
 <div class="line"><a name="l02094"></a><span class="lineno"> 2094</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02095"></a><span class="lineno"> 2095</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02095"></a><span class="lineno"> 2095</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02096"></a><span class="lineno"> 2096</span>&#160;        detail::temp_value&lt;value_type,</div>
 <div class="line"><a name="l02097"></a><span class="lineno"> 2097</span>&#160;                   noexcept(T(std::forward&lt;Args&gt;(args)...))&gt;</div>
 <div class="line"><a name="l02098"></a><span class="lineno"> 2098</span>&#160;        tmp(std::forward&lt;Args&gt;(args)...);</div>
@@ -1212,7 +1212,7 @@ $(function() {
 <div class="line"><a name="l02135"></a><span class="lineno"> 2135</span>&#160;    assert(size() &lt; max_size());</div>
 <div class="line"><a name="l02136"></a><span class="lineno"> 2136</span>&#160; </div>
 <div class="line"><a name="l02137"></a><span class="lineno"> 2137</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02138"></a><span class="lineno"> 2138</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02138"></a><span class="lineno"> 2138</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02139"></a><span class="lineno"> 2139</span>&#160;        <span class="keywordflow">if</span> (size() == capacity())</div>
 <div class="line"><a name="l02140"></a><span class="lineno"> 2140</span>&#160;            internal_reserve(capacity() + 1);</div>
 <div class="line"><a name="l02141"></a><span class="lineno"> 2141</span>&#160; </div>
@@ -1241,7 +1241,7 @@ $(function() {
 <div class="line"><a name="l02209"></a><span class="lineno"> 2209</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html">iterator</a>(<span class="keyword">this</span>, idx);</div>
 <div class="line"><a name="l02210"></a><span class="lineno"> 2210</span>&#160; </div>
 <div class="line"><a name="l02211"></a><span class="lineno"> 2211</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02212"></a><span class="lineno"> 2212</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02212"></a><span class="lineno"> 2212</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02213"></a><span class="lineno"> 2213</span>&#160;        size_type _size = size();</div>
 <div class="line"><a name="l02214"></a><span class="lineno"> 2214</span>&#160; </div>
 <div class="line"><a name="l02215"></a><span class="lineno"> 2215</span>&#160;        <span class="keywordflow">if</span> (!std::is_trivially_destructible&lt;T&gt;::value ||</div>
@@ -1294,7 +1294,7 @@ $(function() {
 <div class="line"><a name="l02311"></a><span class="lineno"> 2311</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l02312"></a><span class="lineno"> 2312</span>&#160; </div>
 <div class="line"><a name="l02313"></a><span class="lineno"> 2313</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02314"></a><span class="lineno"> 2314</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] { shrink(size() - 1); });</div>
+<div class="line"><a name="l02314"></a><span class="lineno"> 2314</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] { shrink(size() - 1); });</div>
 <div class="line"><a name="l02315"></a><span class="lineno"> 2315</span>&#160;    assert(segment_capacity_validation());</div>
 <div class="line"><a name="l02316"></a><span class="lineno"> 2316</span>&#160;}</div>
 <div class="line"><a name="l02317"></a><span class="lineno"> 2317</span>&#160; </div>
@@ -1303,7 +1303,7 @@ $(function() {
 <div class="line"><a name="l02343"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1segment__vector.html#a5d813b415ab367b9c3a10cb9af20bb76"> 2343</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1segment__vector.html#a5d813b415ab367b9c3a10cb9af20bb76">segment_vector&lt;T, Policy&gt;::resize</a>(size_type count)</div>
 <div class="line"><a name="l02344"></a><span class="lineno"> 2344</span>&#160;{</div>
 <div class="line"><a name="l02345"></a><span class="lineno"> 2345</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02346"></a><span class="lineno"> 2346</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02346"></a><span class="lineno"> 2346</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02347"></a><span class="lineno"> 2347</span>&#160;        size_type _size = size();</div>
 <div class="line"><a name="l02348"></a><span class="lineno"> 2348</span>&#160;        <span class="keywordflow">if</span> (count &lt; _size)</div>
 <div class="line"><a name="l02349"></a><span class="lineno"> 2349</span>&#160;            shrink(count);</div>
@@ -1321,7 +1321,7 @@ $(function() {
 <div class="line"><a name="l02385"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1segment__vector.html#a10be76a66671fee84756bd2902109b3b"> 2385</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1segment__vector.html#a5d813b415ab367b9c3a10cb9af20bb76">segment_vector&lt;T, Policy&gt;::resize</a>(size_type count, <span class="keyword">const</span> value_type &amp;value)</div>
 <div class="line"><a name="l02386"></a><span class="lineno"> 2386</span>&#160;{</div>
 <div class="line"><a name="l02387"></a><span class="lineno"> 2387</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02388"></a><span class="lineno"> 2388</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02388"></a><span class="lineno"> 2388</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02389"></a><span class="lineno"> 2389</span>&#160;        size_type _size = size();</div>
 <div class="line"><a name="l02390"></a><span class="lineno"> 2390</span>&#160;        <span class="keywordflow">if</span> (count &lt; _size)</div>
 <div class="line"><a name="l02391"></a><span class="lineno"> 2391</span>&#160;            shrink(count);</div>
@@ -1339,7 +1339,7 @@ $(function() {
 <div class="line"><a name="l02406"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1segment__vector.html#a2c9be5b870f39e608fc236144bedc0c7"> 2406</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1segment__vector.html#a2c9be5b870f39e608fc236144bedc0c7">segment_vector&lt;T, Policy&gt;::swap</a>(<a class="code" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a> &amp;other)</div>
 <div class="line"><a name="l02407"></a><span class="lineno"> 2407</span>&#160;{</div>
 <div class="line"><a name="l02408"></a><span class="lineno"> 2408</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> pb = get_pool();</div>
-<div class="line"><a name="l02409"></a><span class="lineno"> 2409</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pb, [&amp;] {</div>
+<div class="line"><a name="l02409"></a><span class="lineno"> 2409</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pb, [&amp;] {</div>
 <div class="line"><a name="l02410"></a><span class="lineno"> 2410</span>&#160;        _data.swap(other._data);</div>
 <div class="line"><a name="l02411"></a><span class="lineno"> 2411</span>&#160;        <a class="code" href="namespacepmem_1_1obj.html#a2eaf529f99d9ee39c30b32ea8a82a965">std::swap</a>(_segments_used, other._segments_used);</div>
 <div class="line"><a name="l02412"></a><span class="lineno"> 2412</span>&#160;    });</div>
@@ -1710,7 +1710,6 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector_html_ae0a54feecd73cbe81d9248ef69a5b83b"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector.html#ae0a54feecd73cbe81d9248ef69a5b83b">pmem::obj::segment_vector::crange</a></div><div class="ttdeci">slice&lt; const_iterator &gt; crange(size_type start, size_type n) const</div><div class="ttdoc">Returns const slice.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:1695</div></div>
 <div class="ttc" id="amake__persistent_8hpp_html"><div class="ttname"><a href="make__persistent_8hpp.html">make_persistent.hpp</a></div><div class="ttdoc">Persistent_ptr transactional allocation functions for objects.</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator_html_a68359faf969de7310c2b2c7bb3da0f7d"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html#a68359faf969de7310c2b2c7bb3da0f7d">pmem::obj::segment_vector_internal::segment_iterator::segment_iterator</a></div><div class="ttdeci">segment_iterator() noexcept</div><div class="ttdoc">Default constructor.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:132</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1transaction_html_aae32a7ede01bfcf20672433263267387"><div class="ttname"><a href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a></div><div class="ttdeci">static void run(pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:406</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector_html_a70d737c6c08e62cde1c1f577f115acbe"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector.html#a70d737c6c08e62cde1c1f577f115acbe">pmem::obj::segment_vector::crend</a></div><div class="ttdeci">const_reverse_iterator crend() const noexcept</div><div class="ttdoc">Returns a const reverse iterator to the beginning.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:1631</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector_html_a83443513d6dc9d327aaddb1d3f2c579a"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector.html#a83443513d6dc9d327aaddb1d3f2c579a">pmem::obj::segment_vector::range</a></div><div class="ttdeci">slice&lt; iterator &gt; range(size_type start, size_type n)</div><div class="ttdoc">Returns slice and snapshots requested range.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:1651</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_af36a1b526d5d5c81d35f02557c3b8e24"><div class="ttname"><a href="namespacepmem_1_1obj.html#af36a1b526d5d5c81d35f02557c3b8e24">pmem::obj::swap</a></div><div class="ttdeci">void swap(pmem::obj::array&lt; T, N &gt; &amp;lhs, pmem::obj::array&lt; T, N &gt; &amp;rhs)</div><div class="ttdoc">Non-member swap function.</div><div class="ttdef"><b>Definition:</b> array.hpp:880</div></div>
@@ -1773,6 +1772,7 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector_html_aa15b3effc92e38a79e1aa2ed5e5f92ab"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector.html#aa15b3effc92e38a79e1aa2ed5e5f92ab">pmem::obj::segment_vector::cget</a></div><div class="ttdeci">const_reference cget(size_type n) const</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:2717</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector_html_acc4478b889ed006fb75c171e65b2d3ed"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector.html#acc4478b889ed006fb75c171e65b2d3ed">pmem::obj::segment_vector::construct</a></div><div class="ttdeci">void construct(size_type idx, size_type count, Args &amp;&amp;... args)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:2483</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:817</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector_html_af0e227b9f711389978df043c0c58a54f"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector.html#af0e227b9f711389978df043c0c58a54f">pmem::obj::segment_vector::assign</a></div><div class="ttdeci">void assign(size_type count, const_reference value)</div><div class="ttdoc">Replaces the contents with count copies of value value transactionally.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:1068</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['stage_925',['stage',['../classpmem_1_1obj_1_1transaction.html#ae0c3e48dd17baa77f58d9c76042f9582',1,'pmem::obj::transaction']]]
+  ['stage_933',['stage',['../classpmem_1_1detail_1_1transaction__base.html#a1e4345317108f070b1917aeb58d4c51d',1,'pmem::detail::transaction_base']]]
 ];

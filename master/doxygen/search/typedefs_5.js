@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['native_5fhandle_5ftype_918',['native_handle_type',['../classpmem_1_1obj_1_1condition__variable.html#a5d6f2b49f88a03db9e9f3a2b49f6bf6d',1,'pmem::obj::condition_variable::native_handle_type()'],['../classpmem_1_1obj_1_1mutex.html#a746ecab28758da55f241b0f7b76ced36',1,'pmem::obj::mutex::native_handle_type()'],['../classpmem_1_1obj_1_1shared__mutex.html#ad4c7fd0b2addf9babd42dc3827585c87',1,'pmem::obj::shared_mutex::native_handle_type()'],['../classpmem_1_1obj_1_1timed__mutex.html#ac561c19b42016f409ae142395645f99b',1,'pmem::obj::timed_mutex::native_handle_type()']]]
+  ['iterator_5fcategory_923',['iterator_category',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#ad59315a07c5d3bfd6a761ac17007b23a',1,'pmem::obj::experimental::self_relative_ptr::iterator_category()'],['../classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff',1,'pmem::obj::persistent_ptr::iterator_category()']]]
 ];

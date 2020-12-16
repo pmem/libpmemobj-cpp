@@ -1,16 +1,7 @@
 var searchData=
 [
-  ['segment_5fiterator_510',['segment_iterator',['../classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html',1,'pmem::obj::segment_vector_internal']]],
-  ['segment_5fvector_511',['segment_vector',['../classpmem_1_1obj_1_1segment__vector.html',1,'pmem::obj']]],
-  ['self_5frelative_5faccessor_512',['self_relative_accessor',['../classpmem_1_1detail_1_1self__relative__accessor.html',1,'pmem::detail']]],
-  ['self_5frelative_5fptr_513',['self_relative_ptr',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
-  ['self_5frelative_5fptr_3c_20list_5fnode_5ftype_20_3e_514',['self_relative_ptr&lt; list_node_type &gt;',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
-  ['self_5frelative_5fptr_5fbase_5fimpl_515',['self_relative_ptr_base_impl',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
-  ['self_5frelative_5fptr_5fbase_5fimpl_3c_20std_3a_3aatomic_3c_20std_3a_3aptrdiff_5ft_20_3e_20_3e_516',['self_relative_ptr_base_impl&lt; std::atomic&lt; std::ptrdiff_t &gt; &gt;',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
-  ['self_5frelative_5fptr_5fbase_5fimpl_3c_20std_3a_3aptrdiff_5ft_20_3e_517',['self_relative_ptr_base_impl&lt; std::ptrdiff_t &gt;',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
-  ['serial_5fbucket_5faccessor_518',['serial_bucket_accessor',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html',1,'pmem::obj::concurrent_hash_map']]],
-  ['shared_5fmutex_519',['shared_mutex',['../classpmem_1_1obj_1_1shared__mutex.html',1,'pmem::obj']]],
-  ['slice_520',['slice',['../classpmem_1_1obj_1_1slice.html',1,'pmem::obj']]],
-  ['standard_5falloc_5fpolicy_521',['standard_alloc_policy',['../classpmem_1_1obj_1_1standard__alloc__policy.html',1,'pmem::obj']]],
-  ['standard_5falloc_5fpolicy_3c_20void_20_3e_522',['standard_alloc_policy&lt; void &gt;',['../classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html',1,'pmem::obj']]]
+  ['radix_5ftree_511',['radix_tree',['../classpmem_1_1obj_1_1experimental_1_1radix__tree.html',1,'pmem::obj::experimental']]],
+  ['radix_5ftree_5fiterator_512',['radix_tree_iterator',['../structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html',1,'pmem::obj::experimental::radix_tree']]],
+  ['range_5fsnapshotting_5fiterator_513',['range_snapshotting_iterator',['../structpmem_1_1detail_1_1range__snapshotting__iterator.html',1,'pmem::detail']]],
+  ['rebind_514',['rebind',['../structpmem_1_1obj_1_1object__traits_1_1rebind.html',1,'pmem::obj::object_traits&lt; T &gt;::rebind&lt; U &gt;'],['../structpmem_1_1obj_1_1standard__alloc__policy_1_1rebind.html',1,'pmem::obj::standard_alloc_policy&lt; T &gt;::rebind&lt; U &gt;'],['../structpmem_1_1obj_1_1allocator_1_1rebind.html',1,'pmem::obj::allocator&lt; T, Policy, Traits &gt;::rebind&lt; U &gt;'],['../structpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4_1_1rebind.html',1,'pmem::obj::standard_alloc_policy&lt; void &gt;::rebind'],['../structpmem_1_1obj_1_1object__traits_3_01void_01_4_1_1rebind.html',1,'pmem::obj::object_traits&lt; void &gt;::rebind']]]
 ];

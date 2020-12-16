@@ -655,7 +655,7 @@ class pmem::obj::basic_string&lt; CharT, Traits &gt;</h3>
 <div class="line">    <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>();</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (r-&gt;test_string == <span class="keyword">nullptr</span>) {</div>
-<div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">            <span class="comment">/* note that allocation in transaction is made by</span></div>
 <div class="line"><span class="comment">             * make_persistent */</span></div>
 <div class="line">            r-&gt;test_string = make_persistent&lt;string&gt;(<span class="stringliteral">&quot;example1&quot;</span>);</div>
@@ -664,7 +664,7 @@ class pmem::obj::basic_string&lt; CharT, Traits &gt;</h3>
 <div class="line"> </div>
 <div class="line">    std::cout &lt;&lt; r-&gt;test_string-&gt;c_str() &lt;&lt; std::endl;</div>
 <div class="line"> </div>
-<div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">        delete_persistent&lt;string&gt;(r-&gt;test_string);</div>
 <div class="line">        r-&gt;test_string = <span class="keyword">nullptr</span>;</div>
 <div class="line">    });</div>
@@ -677,7 +677,7 @@ class pmem::obj::basic_string&lt; CharT, Traits &gt;</h3>
 <div class="line">    <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>();</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (r-&gt;test_object == <span class="keyword">nullptr</span>) {</div>
-<div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">            <span class="comment">/* WRONG:</span></div>
 <div class="line"><span class="comment">             * r-&gt;test_object = make_persistent&lt;example_object&gt;();</span></div>
 <div class="line"><span class="comment">             * r-&gt;test_object-&gt;string_inside = string(&quot;example2&quot;);</span></div>
@@ -695,7 +695,7 @@ class pmem::obj::basic_string&lt; CharT, Traits &gt;</h3>
 <div class="line"> </div>
 <div class="line">    std::cout &lt;&lt; r-&gt;test_object-&gt;string_inside.c_str() &lt;&lt; std::endl;</div>
 <div class="line"> </div>
-<div class="line">    <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">        delete_persistent&lt;example_object&gt;(r-&gt;test_object);</div>
 <div class="line">        r-&gt;test_object = <span class="keyword">nullptr</span>;</div>
 <div class="line">    });</div>
@@ -7503,8 +7503,8 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </ul>
 </div><!-- contents -->
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:688</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:624</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1transaction_html_aae32a7ede01bfcf20672433263267387"><div class="ttname"><a href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a></div><div class="ttdeci">static void run(pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:406</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:152</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:462</div></div>

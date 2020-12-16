@@ -83,7 +83,7 @@ $(function() {
 <p>Have fun! The PMDK team</p>
 <h2><a class="anchor" id="autotoc_md0"></a>
 Compiler notice</h2>
-<p>The C++ bindings require a C++11 compliant compiler, therefore the minimal versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the <a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic.html" title="C++ automatic scope transaction class.">pmem::obj::transaction::automatic</a> class requires C++17, so you need a more recent version for this to be available (GCC 6.1/Clang 3.7). It is recommended to use these or newer versions of GCC or Clang. A usage of the libpmemobj-cpp containers requires GCC &gt;= 4.9.0 (see explanation in the main README.md file).</p>
+<p>The C++ bindings require a C++11 compliant compiler, therefore the minimal versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html#a8ffae81b74ffe313eb2deb16573d70e1" title="C++ automatic scope transaction class.">pmem::obj::transaction::automatic</a> class requires C++17, so you need a more recent version for this to be available (GCC 6.1/Clang 3.7). It is recommended to use these or newer versions of GCC or Clang. A usage of the libpmemobj-cpp containers requires GCC &gt;= 4.9.0 (see explanation in the main README.md file).</p>
 <h2><a class="anchor" id="autotoc_md1"></a>
 Standard notice</h2>
 <p>Please note that the C++11 standard, section 3.8, states that a valid non-trivially default constructible object (in other words, not plain old data) must be properly constructed in the lifetime of the application. Libpmemobj, or any shared memory solution for that matter, does not strictly adhere to that constraint.</p>
@@ -98,7 +98,7 @@ Important classes/functions</h2>
 <li>Atomic array allocations - <a class="el" href="make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays.">make_persistent_array_atomic.hpp</a></li>
 <li>Resides on persistent memory property - <a class="el" href="classpmem_1_1obj_1_1p.html">p</a></li>
 <li>Persistent smart pointer - <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a></li>
-<li>Persistent memory transactions - <a class="el" href="classpmem_1_1obj_1_1transaction.html">transaction</a></li>
+<li>Persistent memory transactions - <a class="el" href="namespacepmem_1_1obj.html#a584f6676f0d014e94253e19f2d18da43">transaction</a></li>
 <li>Persistent memory resident mutex - <a class="el" href="classpmem_1_1obj_1_1mutex.html">mutex</a></li>
 <li>Persistent memory pool - <a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a></li>
 <li>Defrag class - <a class="el" href="classpmem_1_1obj_1_1defrag.html">defrag</a></li>

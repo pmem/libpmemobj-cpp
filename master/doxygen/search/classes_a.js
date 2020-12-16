@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['object_5ftraits_488',['object_traits',['../classpmem_1_1obj_1_1object__traits.html',1,'pmem::obj']]],
-  ['object_5ftraits_3c_20void_20_3e_489',['object_traits&lt; void &gt;',['../classpmem_1_1obj_1_1object__traits_3_01void_01_4.html',1,'pmem::obj']]]
+  ['node_491',['node',['../structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html',1,'pmem::obj::experimental::radix_tree']]],
+  ['numeric_5flimits_3c_20pmem_3a_3aobj_3a_3ap_3c_20t_20_3e_20_3e_492',['numeric_limits&lt; pmem::obj::p&lt; T &gt; &gt;',['../structstd_1_1numeric__limits_3_01pmem_1_1obj_1_1p_3_01T_01_4_01_4.html',1,'std']]]
 ];

@@ -401,7 +401,7 @@ class pmem::obj::segment_vector&lt; T, Policy &gt;</h3>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">try</span> {</div>
 <div class="line">        <span class="keywordflow">if</span> (r-&gt;pptr0 == <span class="keyword">nullptr</span>) {</div>
-<div class="line">            <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">            <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">                r-&gt;pptr0 = make_persistent&lt;segment_t&gt;();</div>
 <div class="line">                r-&gt;pptr1 = make_persistent&lt;seg_vec_exp_arr&gt;();</div>
 <div class="line">                r-&gt;pptr2 = make_persistent&lt;seg_vec_exp_vec&gt;();</div>
@@ -456,7 +456,7 @@ class pmem::obj::segment_vector&lt; T, Policy &gt;</h3>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">try</span> {</div>
-<div class="line">        <a class="code" href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
 <div class="line">            delete_persistent&lt;segment_t&gt;(r-&gt;pptr0);</div>
 <div class="line">            delete_persistent&lt;seg_vec_exp_arr&gt;(r-&gt;pptr1);</div>
 <div class="line">            delete_persistent&lt;seg_vec_exp_vec&gt;(r-&gt;pptr2);</div>
@@ -3450,10 +3450,10 @@ template&lt;typename T , typename Policy &gt; </div>
 <div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:45</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__error_html"><div class="ttname"><a href="classpmem_1_1transaction__error.html">pmem::transaction_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:63</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:120</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:688</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1p_html"><div class="ttname"><a href="classpmem_1_1obj_1_1p.html">pmem::obj::p</a></div><div class="ttdoc">Resides on pmem class.</div><div class="ttdef"><b>Definition:</b> p.hpp:35</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:624</div></div>
 <div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1transaction_html_aae32a7ede01bfcf20672433263267387"><div class="ttname"><a href="classpmem_1_1obj_1_1transaction.html#aae32a7ede01bfcf20672433263267387">pmem::obj::transaction::run</a></div><div class="ttdeci">static void run(pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:406</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a></div><div class="ttdoc">pmem::obj::vector - persistent container with std::vector compatible interface.</div><div class="ttdef"><b>Definition:</b> vector.hpp:41</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:152</div></div>

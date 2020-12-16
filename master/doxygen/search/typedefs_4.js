@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['iterator_5fcategory_917',['iterator_category',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#ad59315a07c5d3bfd6a761ac17007b23a',1,'pmem::obj::experimental::self_relative_ptr::iterator_category()'],['../classpmem_1_1obj_1_1persistent__ptr.html#a978fa74b702f6d40c235a68103d3e0ff',1,'pmem::obj::persistent_ptr::iterator_category()']]]
+  ['fixed_5fsize_5fvector_5fpolicy_922',['fixed_size_vector_policy',['../namespacepmem_1_1obj.html#a859b965166fda256885558839d7bb7ec',1,'pmem::obj']]]
 ];

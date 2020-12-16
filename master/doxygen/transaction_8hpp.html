@@ -69,7 +69,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">transaction.hpp File Reference</div>  </div>
 </div><!--header-->
@@ -93,20 +94,20 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1can__do__snapshot.html">pmem::detail::can_do_snapshot&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure that checks if it is possible to snapshot the specified memory.  <a href="structpmem_1_1detail_1_1can__do__snapshot.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction.html">pmem::obj::transaction</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ transaction handler class.  <a href="classpmem_1_1obj_1_1transaction.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1transaction__base.html">pmem::detail::transaction_base&lt; is_flat &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Common functionality for basic_transaction and flat_transaction.  <a href="classpmem_1_1detail_1_1transaction__base.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction_1_1manual.html">pmem::obj::transaction::manual</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ manual scope transaction class.  <a href="classpmem_1_1obj_1_1transaction_1_1manual.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1transaction__base_1_1automatic_1_1uncaught__exception__counter.html">pmem::detail::transaction_base&lt; is_flat &gt;::automatic::uncaught_exception_counter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal class for counting active exceptions.  <a href="classpmem_1_1detail_1_1transaction__base_1_1automatic_1_1uncaught__exception__counter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic.html">pmem::obj::transaction::automatic</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ automatic scope transaction class.  <a href="classpmem_1_1obj_1_1transaction_1_1automatic.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1detail_1_1transaction__base_1_1tx__data.html">pmem::detail::transaction_base&lt; is_flat &gt;::tx_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This data is stored along with the pmemobj transaction data using pmemobj_tx_set_data().  <a href="structpmem_1_1detail_1_1transaction__base_1_1tx__data.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html">pmem::obj::transaction::automatic::uncaught_exception_counter</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal class for counting active exceptions.  <a href="classpmem_1_1obj_1_1transaction_1_1automatic_1_1uncaught__exception__counter.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__transaction.html">pmem::obj::basic_transaction</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ transaction handler class.  <a href="classpmem_1_1obj_1_1basic__transaction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1transaction_1_1tx__data.html">pmem::obj::transaction::tx_data</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This data is stored along with the pmemobj transaction data using pmemobj_tx_set_data().  <a href="structpmem_1_1obj_1_1transaction_1_1tx__data.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ flat transaction handler class.  <a href="classpmem_1_1obj_1_1flat__transaction.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -120,6 +121,12 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacepmem_1_1obj"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html">pmem::obj</a></td></tr>
 <tr class="memdesc:namespacepmem_1_1obj"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main libpmemobj namespace. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a584f6676f0d014e94253e19f2d18da43"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html#a584f6676f0d014e94253e19f2d18da43">pmem::obj::transaction</a> = basic_transaction</td></tr>
+<tr class="memdesc:a584f6676f0d014e94253e19f2d18da43"><td class="mdescLeft">&#160;</td><td class="mdescRight">By default, <a class="el" href="namespacepmem_1_1obj.html#a584f6676f0d014e94253e19f2d18da43" title="By default, pmem::obj::transaction is an alias to pmem::obj::basic_transaction.">pmem::obj::transaction</a> is an alias to <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html" title="C++ transaction handler class.">pmem::obj::basic_transaction</a>.  <a href="namespacepmem_1_1obj.html#a584f6676f0d014e94253e19f2d18da43">More...</a><br /></td></tr>
+<tr class="separator:a584f6676f0d014e94253e19f2d18da43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>C++ pmemobj transactions. </p>

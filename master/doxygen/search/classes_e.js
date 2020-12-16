@@ -1,14 +1,16 @@
 var searchData=
 [
-  ['thread_5fid_5ftype_523',['thread_id_type',['../structpmem_1_1detail_1_1thread__id__type.html',1,'pmem::detail']]],
-  ['timed_5fmutex_524',['timed_mutex',['../classpmem_1_1obj_1_1timed__mutex.html',1,'pmem::obj']]],
-  ['total_5fsizeof_525',['total_sizeof',['../structpmem_1_1obj_1_1experimental_1_1total__sizeof.html',1,'pmem::obj::experimental']]],
-  ['total_5fsizeof_3c_20basic_5finline_5fstring_3c_20chart_2c_20traits_20_3e_20_3e_526',['total_sizeof&lt; basic_inline_string&lt; CharT, Traits &gt; &gt;',['../structpmem_1_1obj_1_1experimental_1_1total__sizeof_3_01basic__inline__string_3_01CharT_00_01Traits_01_4_01_4.html',1,'pmem::obj::experimental']]],
-  ['transaction_527',['transaction',['../classpmem_1_1obj_1_1transaction.html',1,'pmem::obj']]],
-  ['transaction_5falloc_5ferror_528',['transaction_alloc_error',['../classpmem_1_1transaction__alloc__error.html',1,'pmem']]],
-  ['transaction_5ferror_529',['transaction_error',['../classpmem_1_1transaction__error.html',1,'pmem']]],
-  ['transaction_5ffree_5ferror_530',['transaction_free_error',['../classpmem_1_1transaction__free__error.html',1,'pmem']]],
-  ['transaction_5fout_5fof_5fmemory_531',['transaction_out_of_memory',['../classpmem_1_1transaction__out__of__memory.html',1,'pmem']]],
-  ['transaction_5fscope_5ferror_532',['transaction_scope_error',['../classpmem_1_1transaction__scope__error.html',1,'pmem']]],
-  ['tx_5fdata_533',['tx_data',['../structpmem_1_1obj_1_1transaction_1_1tx__data.html',1,'pmem::obj::transaction']]]
+  ['segment_5fiterator_515',['segment_iterator',['../classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html',1,'pmem::obj::segment_vector_internal']]],
+  ['segment_5fvector_516',['segment_vector',['../classpmem_1_1obj_1_1segment__vector.html',1,'pmem::obj']]],
+  ['self_5frelative_5faccessor_517',['self_relative_accessor',['../classpmem_1_1detail_1_1self__relative__accessor.html',1,'pmem::detail']]],
+  ['self_5frelative_5fptr_518',['self_relative_ptr',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
+  ['self_5frelative_5fptr_3c_20list_5fnode_5ftype_20_3e_519',['self_relative_ptr&lt; list_node_type &gt;',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
+  ['self_5frelative_5fptr_5fbase_5fimpl_520',['self_relative_ptr_base_impl',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
+  ['self_5frelative_5fptr_5fbase_5fimpl_3c_20std_3a_3aatomic_3c_20std_3a_3aptrdiff_5ft_20_3e_20_3e_521',['self_relative_ptr_base_impl&lt; std::atomic&lt; std::ptrdiff_t &gt; &gt;',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
+  ['self_5frelative_5fptr_5fbase_5fimpl_3c_20std_3a_3aptrdiff_5ft_20_3e_522',['self_relative_ptr_base_impl&lt; std::ptrdiff_t &gt;',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
+  ['serial_5fbucket_5faccessor_523',['serial_bucket_accessor',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html',1,'pmem::obj::concurrent_hash_map']]],
+  ['shared_5fmutex_524',['shared_mutex',['../classpmem_1_1obj_1_1shared__mutex.html',1,'pmem::obj']]],
+  ['slice_525',['slice',['../classpmem_1_1obj_1_1slice.html',1,'pmem::obj']]],
+  ['standard_5falloc_5fpolicy_526',['standard_alloc_policy',['../classpmem_1_1obj_1_1standard__alloc__policy.html',1,'pmem::obj']]],
+  ['standard_5falloc_5fpolicy_3c_20void_20_3e_527',['standard_alloc_policy&lt; void &gt;',['../classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html',1,'pmem::obj']]]
 ];

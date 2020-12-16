@@ -41,7 +41,7 @@ sudo_password mv ${TEMP_CF} ${CERT_FILE}
 echo "Prepare CMake build"
 mkdir ${WORKDIR}/build
 cd ${WORKDIR}/build
-PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF
+PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF
 
 # The 'travisci_build_coverity_scan.sh' script requires the following
 # environment variables to be set:

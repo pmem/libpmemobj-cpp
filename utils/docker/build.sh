@@ -72,7 +72,8 @@ if [[ -z "$COMMAND" ]]; then
 		;;
 	package)
 		builds=(tests_package
-			tests_findLIBPMEMOBJ_cmake)
+			tests_findLIBPMEMOBJ_cmake
+			tests_cmake)
 		COMMAND="./run-build.sh ${builds[@]}";
 		;;
 	coverity)

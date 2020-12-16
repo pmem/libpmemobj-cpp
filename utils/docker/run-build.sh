@@ -31,7 +31,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=clang CXX=clang++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -66,7 +66,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=clang CXX=clang++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -99,7 +99,7 @@ function build_gcc_debug_cpp14() {
 	mkdir build
 	cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -163,16 +163,9 @@ function tests_gcc_debug_cpp14_valgrind_other() {
 ###############################################################################
 function tests_gcc_release_cpp17_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
-	# It is a test of the build system: move valgrind to other location and build with
-	# TESTS_USE_VALGRIND=1. Expected behaviour is to get tests with suffix
-	# _SKIPPED_BECAUSE_OF_MISSING_VALGRIND
-	VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc" 2>/dev/null || true)
-	[ "${VALGRIND_PC_PATH}" == "" ] && echo "Error: cannot find 'valgrind.pc' file" && exit 1
-	sudo_password mv ${VALGRIND_PC_PATH} tmp_valgrind_pc
-	mkdir build
-	cd build
+	mkdir build && cd build
 
-	PKG_CONFIG_PATH=/opt/pmdk/lib/pkgconfig/ \
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DDEVELOPER_MODE=1 \
 		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
@@ -181,7 +174,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		-DTRACE_TESTS=1 \
 		-DCOVERAGE=${COVERAGE} \
 		-DCXX_STANDARD=17 \
-		-DTESTS_USE_VALGRIND=1 \
+		-DTESTS_USE_VALGRIND=0 \
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTESTS_TBB=${TESTS_TBB} \
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
@@ -196,8 +189,6 @@ function tests_gcc_release_cpp17_no_valgrind() {
 	fi
 
 	workspace_cleanup
-	#Recover valgrind
-	sudo_password mv tmp_valgrind_pc ${VALGRIND_PC_PATH}
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 
@@ -281,6 +272,7 @@ function tests_findLIBPMEMOBJ_cmake()
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_BUILD_TYPE=Release \
 		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+		-DTESTS_USE_VALGRIND=OFF \
 		-DTESTS_TBB=OFF \
 		-DTESTS_LONG=OFF \
 		-DTRACE_TESTS=1 \
@@ -292,6 +284,37 @@ function tests_findLIBPMEMOBJ_cmake()
 	make -j$(nproc)
 
 	workspace_cleanup
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
+
+###############################################################################
+# BUILD tests_cmake (tests for the build system itself)
+###############################################################################
+function tests_cmake() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+
+	echo "Rename valgrind.pc and build with TESTS_USE_VALGRIND=1 CMake option." \
+		"Build should fail, because Valgrind couldn't be found."
+	VALGRIND_PC_PATH=$(find /usr -name "valgrind.pc" 2>/dev/null || true)
+	[ -z "${VALGRIND_PC_PATH}" ] && echo "Error: cannot find 'valgrind.pc' file" && exit 1
+	echo "valgrind.pc found in: ${VALGRIND_PC_PATH}"
+	sudo_password mv ${VALGRIND_PC_PATH} tmp_valgrind_pc
+
+	mkdir build && cd build
+
+	echo "---------------------------- Error expected! ------------------------------"
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
+	CC=gcc CXX=g++ \
+	cmake .. -DCMAKE_BUILD_TYPE=Debug \
+		-DTEST_DIR=/mnt/pmem \
+		-DTESTS_USE_VALGRIND=1 \
+	&& exit 1
+	echo "----------------------------------------------------------------------------"
+
+	workspace_cleanup
+	echo "Recover valgrind.pc"
+	sudo_password mv tmp_valgrind_pc ${VALGRIND_PC_PATH}
+
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 }
 

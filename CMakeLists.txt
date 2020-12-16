@@ -76,7 +76,7 @@ option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
 option(USE_CCACHE "Use ccache if it is available in the system" ON)
 
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1 - it speeds up tests execution on emulated pmem" OFF)
-option(TESTS_USE_VALGRIND "enable tests with valgrind (if found)" ON)
+option(TESTS_USE_VALGRIND "enable tests with valgrind (fail build if Valgrind not found)" ON)
 option(TESTS_PMREORDER "enable tests with pmreorder (if pmreorder found; it requires PMDK ver. >= 1.9)" OFF)
 option(TESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND "enable concurrent_hash_map tests with drd and helgrind (can only be run on PMEM)" OFF)
 option(TESTS_CONCURRENT_GDB "enable concurrent gdb tests - require 'set scheduler-locking on' support (OS dependent)" OFF)

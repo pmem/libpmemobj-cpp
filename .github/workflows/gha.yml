@@ -123,7 +123,6 @@ jobs:
                     -A "${env:ARCH}"
                     -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
                     -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
-                    -DLIBPMEMOBJ_VERSION="${env:PMDK_VERSION}"
                     -DTESTS_USE_FORCED_PMEM=ON
                     -DTESTS_TBB=ON
                     -DDEVELOPER_MODE=ON

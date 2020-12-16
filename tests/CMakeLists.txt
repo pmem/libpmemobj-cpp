@@ -187,8 +187,17 @@ if(NOT WIN32)
 	add_test_generic(NAME shared_mutex_posix TRACERS drd helgrind pmemcheck)
 endif()
 
-build_test(transaction transaction/transaction.cpp)
-add_test_generic(NAME transaction TRACERS none pmemcheck memcheck)
+build_test_ext(NAME transaction_common_flat SRC_FILES transaction/transaction.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_USE_FLAT_TRANSACTION)
+add_test_generic(NAME transaction_common_flat TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME transaction_common_basic SRC_FILES transaction/transaction.cpp)
+add_test_generic(NAME transaction_common_basic TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME transaction_flat SRC_FILES transaction/transaction_flat.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_USE_FLAT_TRANSACTION)
+add_test_generic(NAME transaction_flat TRACERS none pmemcheck memcheck)
+
+build_test_ext(NAME transaction_basic SRC_FILES transaction/transaction_basic.cpp)
+add_test_generic(NAME transaction_basic TRACERS none pmemcheck memcheck)
 
 if(VOLATILE_STATE_PRESENT)
 	build_test(volatile_state volatile_state/volatile_state.cpp)
@@ -652,13 +661,8 @@ if(TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE)
 	build_test_ext(NAME segment_vector_array_expsize_ctor_exceptions_notx SRC_FILES vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_ctor_exceptions_notx TRACERS none memcheck)
 
-	#[[ XXX:
-	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standard.
-	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
-	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
-	]]
-	# build_test_ext(NAME segment_vector_array_expsize_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
-	# add_test_generic(NAME segment_vector_array_expsize_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test_ext(NAME segment_vector_array_expsize_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
+	add_test_generic(NAME segment_vector_array_expsize_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
 
 	build_test_ext(NAME segment_vector_array_expsize_ctor_move SRC_FILES vector_ctor_move/vector_ctor_move.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_ARRAY_EXPSIZE)
 	add_test_generic(NAME segment_vector_array_expsize_ctor_move TRACERS none memcheck pmemcheck)
@@ -725,13 +729,8 @@ if(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE)
 	build_test_ext(NAME segment_vector_vector_expsize_ctor_exceptions_notx SRC_FILES vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_ctor_exceptions_notx TRACERS none memcheck)
 
-	#[[ XXX:
-	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standard.
-	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
-	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
-	]]
-	# build_test_ext(NAME segment_vector_vector_expsize_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
-	# add_test_generic(NAME segment_vector_vector_expsize_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test_ext(NAME segment_vector_vector_expsize_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
+	add_test_generic(NAME segment_vector_vector_expsize_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
 
 	build_test_ext(NAME segment_vector_vector_expsize_ctor_move SRC_FILES vector_ctor_move/vector_ctor_move.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_EXPSIZE)
 	add_test_generic(NAME segment_vector_vector_expsize_ctor_move TRACERS none memcheck pmemcheck)
@@ -798,13 +797,8 @@ if(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	build_test_ext(NAME segment_vector_vector_fixedsize_ctor_exceptions_notx SRC_FILES vector_ctor_exceptions_notx/vector_ctor_exceptions_notx.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_ctor_exceptions_notx TRACERS none memcheck)
 
-	#[[ XXX:
-	 When we throwing exceptions in segment vector constructor, destructors is called for all constructed element according to standard.
-	 In this way for segment with non-zero capacity in the underlying vectors destructor free_data() methods is called.
-	 The free_data() run nested transaction which is failed to run when internally calls pmemobj_tx_begin(pool.handle(), nullptr, TX_PARAM_NONE).
-	]]
-	# build_test_ext(NAME segment_vector_vector_fixedsize_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
-	# add_test_generic(NAME segment_vector_vector_fixedsize_ctor_exceptions_oom TRACERS none memcheck pmemcheck)
+	build_test_ext(NAME segment_vector_vector_fixedsize_ctor_exceptions_oom SRC_FILES vector_ctor_exceptions_oom/vector_ctor_exceptions_oom.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
+	add_test_generic(NAME segment_vector_vector_fixedsize_ctor_exceptions_oom TRACERS none memcheck) # XXX: pmemcheck timeouts
 
 	build_test_ext(NAME segment_vector_vector_fixedsize_ctor_move SRC_FILES vector_ctor_move/vector_ctor_move.cpp BUILD_OPTIONS -DSEGMENT_VECTOR_VECTOR_FIXEDSIZE)
 	add_test_generic(NAME segment_vector_vector_fixedsize_ctor_move TRACERS none memcheck pmemcheck)

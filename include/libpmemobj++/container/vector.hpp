@@ -632,7 +632,7 @@ vector<T>::assign(size_type count, const_reference value)
 {
 	pool_base pb = get_pool();
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (count <= capacity()) {
 			/*
 			 * Reallocation is not needed. First, replace old
@@ -692,7 +692,7 @@ vector<T>::assign(InputIt first, InputIt last)
 
 	size_type size_new = static_cast<size_type>(std::distance(first, last));
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (size_new <= capacity()) {
 			/*
 			 * Reallocation is not needed. First, replace old
@@ -790,7 +790,7 @@ vector<T>::assign(vector &&other)
 
 	pool_base pb = get_pool();
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		dealloc();
 
 		_data = other._data;
@@ -1387,7 +1387,7 @@ vector<T>::reserve(size_type capacity_new)
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { realloc(capacity_new); });
+	flat_transaction::run(pb, [&] { realloc(capacity_new); });
 }
 
 /**
@@ -1423,7 +1423,7 @@ vector<T>::shrink_to_fit()
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { realloc(capacity_new); });
+	flat_transaction::run(pb, [&] { realloc(capacity_new); });
 }
 
 /**
@@ -1439,7 +1439,7 @@ void
 vector<T>::clear()
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { shrink(0); });
+	flat_transaction::run(pb, [&] { shrink(0); });
 }
 
 /**
@@ -1462,7 +1462,7 @@ vector<T>::free_data()
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { dealloc(); });
+	flat_transaction::run(pb, [&] { dealloc(); });
 }
 
 /**
@@ -1528,7 +1528,7 @@ vector<T>::insert(const_iterator pos, value_type &&value)
 
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		internal_insert(idx, std::make_move_iterator(&value),
 				std::make_move_iterator(&value + 1));
 	});
@@ -1572,7 +1572,7 @@ vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
 
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		internal_insert(
 			idx, single_element_iterator<value_type>(&value, 0),
 			single_element_iterator<value_type>(&value, count));
@@ -1626,7 +1626,7 @@ vector<T>::insert(const_iterator pos, InputIt first, InputIt last)
 
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
 
-	transaction::run(pb, [&] { internal_insert(idx, first, last); });
+	flat_transaction::run(pb, [&] { internal_insert(idx, first, last); });
 
 	return iterator(&_data[static_cast<difference_type>(idx)]);
 }
@@ -1702,7 +1702,7 @@ vector<T>::emplace(const_iterator pos, Args &&... args)
 
 	size_type idx = static_cast<size_type>(std::distance(cbegin(), pos));
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		/*
 		 * args might be a reference to underlying array element. This
 		 * reference can be invalidated after internal_insert() call.
@@ -1755,7 +1755,7 @@ vector<T>::emplace_back(Args &&... args)
 	 */
 	pool_base pb = get_pool();
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (_size == _capacity) {
 			realloc(get_recommended_capacity(_size + 1));
 		} else {
@@ -1829,7 +1829,7 @@ vector<T>::erase(const_iterator first, const_iterator last)
 
 	pool_base pb = get_pool();
 
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (!std::is_trivially_destructible<T>::value ||
 		    idx + count < _size)
 			add_data_to_tx(idx, _size - idx);
@@ -1910,7 +1910,7 @@ vector<T>::pop_back()
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] { shrink(size() - 1); });
+	flat_transaction::run(pb, [&] { shrink(size() - 1); });
 }
 
 /**
@@ -1934,7 +1934,7 @@ void
 vector<T>::resize(size_type count)
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (count <= _size)
 			shrink(count);
 		else {
@@ -1970,7 +1970,7 @@ vector<T>::resize(size_type count, const value_type &value)
 		return;
 
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		if (count <= _size)
 			shrink(count);
 		else {
@@ -1989,7 +1989,7 @@ void
 vector<T>::swap(vector &other)
 {
 	pool_base pb = get_pool();
-	transaction::run(pb, [&] {
+	flat_transaction::run(pb, [&] {
 		std::swap(this->_data, other._data);
 		std::swap(this->_size, other._size);
 		std::swap(this->_capacity, other._capacity);

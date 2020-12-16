@@ -18,6 +18,25 @@ if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()
 
+# Set ${SRCVERSION}
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+	execute_process(COMMAND git describe
+			OUTPUT_VARIABLE SRCVERSION
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			OUTPUT_STRIP_TRAILING_WHITESPACE
+			ERROR_QUIET)
+	if(NOT SRCVERSION)
+		execute_process(COMMAND git log -1 --format=%h
+				OUTPUT_VARIABLE SRCVERSION
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+				OUTPUT_STRIP_TRAILING_WHITESPACE)
+	endif()
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/.version")
+	file(STRINGS ${CMAKE_SOURCE_DIR}/.version SRCVERSION)
+else()
+	set(SRCVERSION ${VERSION})
+endif()
+
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.8)
 set(LIBPMEM_REQUIRED_VERSION 1.7)
 # Only pmreorder in ver. >= 1.9 guarantees reliable output
@@ -42,24 +61,6 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-
-# XXX: use it in version.hpp and in Doxygen.in
-# Set ${SRCVERSION}
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
-	execute_process(COMMAND git describe
-			OUTPUT_VARIABLE SRCVERSION
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_QUIET)
-	if(NOT SRCVERSION)
-		execute_process(COMMAND git log -1 --format=%h
-				OUTPUT_VARIABLE SRCVERSION
-				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-				OUTPUT_STRIP_TRAILING_WHITESPACE)
-	endif()
-else()
-	file(STRINGS ${CMAKE_SOURCE_DIR}/.version SRCVERSION)
-endif()
 
 ## CMake build options
 option(BUILD_EXAMPLES "build examples" ON)
@@ -235,7 +236,10 @@ add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
 ## Configure make install/uninstall and packages
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
-		${CMAKE_SOURCE_DIR}/include/libpmemobj++/version.hpp @ONLY)
+	${CMAKE_CURRENT_BINARY_DIR}/version.hpp @ONLY)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libpmemobj++)
 
 install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	FILES_MATCHING PATTERN "*.hpp")

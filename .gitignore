@@ -11,4 +11,3 @@ build/
 *.swp
 ~*
 tags
-include/libpmemobj++/version.hpp

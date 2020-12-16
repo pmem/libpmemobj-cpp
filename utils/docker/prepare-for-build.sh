@@ -4,7 +4,7 @@
 
 #
 # prepare-for-build.sh - prepares environment for the build
-#		(on CI, or when ./build.sh used, it happens inside a Docker container)
+#		(when ./build.sh was used, it happens inside a Docker container)
 #		and stores functions common to run-* scripts in this dir.
 #
 
@@ -23,9 +23,11 @@ function sudo_password() {
 	echo ${USERPASS} | sudo -Sk $*
 }
 
+echo "Current WORKDIR content:"
+ls ${WORKDIR} -alh
+
 if [ "${CI_RUN}" == "YES" ]; then
-	echo "Change WORKDIR's owner on CI build and prepare tmpfs device"
-	ls ${WORKDIR} -l
+	echo "CI build: change WORKDIR's owner and prepare tmpfs device"
 	sudo_password chown -R $(id -u).$(id -g) ${WORKDIR}
 
 	sudo_password mkdir /mnt/pmem

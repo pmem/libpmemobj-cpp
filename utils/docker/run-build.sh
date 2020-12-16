@@ -5,8 +5,8 @@
 #
 # run-build.sh [build_step]...
 #		in CI it's run inside a Docker container, called by ./build.sh .
-#		It can be run locally, with caution (it may affect local environment),
-#		run libpmemobj-cpp builds (given as params; defined here as functions).
+#		It can be also run locally (but with caution, it may affect local environment).
+#		Executes libpmemobj-cpp builds (given as params; defined here as functions).
 #
 
 set -e

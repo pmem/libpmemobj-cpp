@@ -25,7 +25,11 @@ struct simple_ptr {
 	{
 		UT_ASSERT(ptr != nullptr);
 
-		nvobj::delete_persistent<T>(ptr);
+		try {
+			nvobj::delete_persistent<T>(ptr);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
 	}
 
 	nvobj::persistent_ptr<T> ptr;
@@ -44,7 +48,11 @@ struct simple_ptr_tx {
 	{
 		UT_ASSERT(ptr != nullptr);
 
-		nvobj::delete_persistent<T>(ptr);
+		try {
+			nvobj::delete_persistent<T>(ptr);
+		} catch (...) {
+			UT_ASSERT(0);
+		}
 	}
 
 	nvobj::persistent_ptr<T> ptr;

@@ -65,7 +65,7 @@ To install **libpmemobj-cpp** on Fedora or RedHat execute:
 You will need the following packages for compilation:
 
 - **cmake** >= 3.3
-- **libpmemobj-dev(el)** >= 1.8 (https://pmem.io/pmdk/)
+- **libpmemobj-dev(el)** >= 1.9 (https://pmem.io/pmdk/)
 - compiler with C++11 support
 	- **gcc** >= 4.8.1<sup> 1</sup>
 	- **clang** >= 3.3

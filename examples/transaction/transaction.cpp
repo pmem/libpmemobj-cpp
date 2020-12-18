@@ -296,7 +296,13 @@ struct simple_ptr {
 	~simple_ptr()
 	{
 		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-		delete_persistent<T>(ptr);
+
+		try {
+			delete_persistent<T>(ptr);
+		} catch (pmem::transaction_free_error &e) {
+			std::cerr << e.what() << std::endl;
+			std::terminate();
+		}
 	}
 
 	persistent_ptr<T> ptr;

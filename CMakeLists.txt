@@ -37,7 +37,7 @@ else()
 	set(SRCVERSION ${VERSION})
 endif()
 
-set(LIBPMEMOBJ_REQUIRED_VERSION 1.8)
+set(LIBPMEMOBJ_REQUIRED_VERSION 1.9)
 set(LIBPMEM_REQUIRED_VERSION 1.7)
 # Only pmreorder in ver. >= 1.9 guarantees reliable output
 set(PMREORDER_REQUIRED_VERSION 1.9)

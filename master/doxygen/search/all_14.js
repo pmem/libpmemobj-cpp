@@ -8,7 +8,6 @@ var searchData=
   ['vector_2ehpp_416',['vector.hpp',['../vector_8hpp.html',1,'']]],
   ['vector_3c_20value_5ftype_20_3e_417',['vector&lt; value_type &gt;',['../classpmem_1_1obj_1_1vector.html',1,'pmem::obj']]],
   ['verify_5ftype_418',['verify_type',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a61b645d35e63b21aa63373251da3fd4d',1,'pmem::obj::experimental::self_relative_ptr::verify_type()'],['../classpmem_1_1obj_1_1persistent__ptr.html#ae5e4e6f4f66affcd0b29ffb8ea27038d',1,'pmem::obj::persistent_ptr::verify_type()']]],
-  ['version_2ehpp_419',['version.hpp',['../version_8hpp.html',1,'']]],
-  ['volatile_5fstate_420',['volatile_state',['../classpmem_1_1detail_1_1volatile__state.html',1,'pmem::detail']]],
-  ['volatile_5fstate_2ehpp_421',['volatile_state.hpp',['../volatile__state_8hpp.html',1,'']]]
+  ['volatile_5fstate_419',['volatile_state',['../classpmem_1_1detail_1_1volatile__state.html',1,'pmem::detail']]],
+  ['volatile_5fstate_2ehpp_420',['volatile_state.hpp',['../volatile__state_8hpp.html',1,'']]]
 ];

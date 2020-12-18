@@ -75,7 +75,7 @@ jobs:
       VCPKG_DEFAULT_TRIPLET: x64-windows
       GENERATOR: "Visual Studio 16 2019"
       ARCH:      "x64"
-      PMDK_VERSION: "1.8"
+      PMDK_VERSION: "1.9"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
       WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"

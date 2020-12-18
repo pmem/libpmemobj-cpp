@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.11</span>
+   &#160;<span id="projectnumber">1.11-193-g3b4b00d3</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -1205,7 +1205,13 @@ template&lt;size_t SegmentSize = 1024, template&lt; typename &gt; class SegmentT
 <div class="line">    ~simple_ptr()</div>
 <div class="line">    {</div>
 <div class="line">        assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
-<div class="line">        delete_persistent&lt;T&gt;(ptr);</div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordflow">try</span> {</div>
+<div class="line">            delete_persistent&lt;T&gt;(ptr);</div>
+<div class="line">        } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a> &amp;e) {</div>
+<div class="line">            std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">            std::terminate();</div>
+<div class="line">        }</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> ptr;</div>
@@ -4364,6 +4370,7 @@ template&lt;typename T &gt; </div>
 </div>
 </div><!-- contents -->
 <div class="ttc" id="aclasspmem_1_1obj_1_1mutex_html"><div class="ttname"><a href="classpmem_1_1obj_1_1mutex.html">pmem::obj::mutex</a></div><div class="ttdoc">Persistent memory resident mutex implementation.</div><div class="ttdef"><b>Definition:</b> mutex.hpp:31</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:140</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:674</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__error_html"><div class="ttname"><a href="classpmem_1_1transaction__error.html">pmem::transaction_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:63</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:688</div></div>

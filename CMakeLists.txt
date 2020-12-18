@@ -20,25 +20,6 @@ if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()
 
-# Set ${SRCVERSION}
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
-	execute_process(COMMAND git describe
-			OUTPUT_VARIABLE SRCVERSION
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_QUIET)
-	if(NOT SRCVERSION)
-		execute_process(COMMAND git log -1 --format=%h
-				OUTPUT_VARIABLE SRCVERSION
-				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-				OUTPUT_STRIP_TRAILING_WHITESPACE)
-	endif()
-elseif(EXISTS "${CMAKE_SOURCE_DIR}/.version")
-	file(STRINGS ${CMAKE_SOURCE_DIR}/.version SRCVERSION)
-else()
-	set(SRCVERSION ${VERSION})
-endif()
-
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.9)
 set(LIBPMEM_REQUIRED_VERSION 1.7)
 # Only pmreorder in ver. >= 1.9 guarantees reliable output
@@ -112,7 +93,10 @@ include(CMakePackageConfigHelpers)
 include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
+
 include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
+# set SRCVERSION, it's more accurate and "current" than VERSION
+set_source_ver(SRCVERSION)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")

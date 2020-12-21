@@ -4,7 +4,7 @@
 include(../ctest_helpers.cmake)
 include(ExternalProject)
 
-set(COMPATIBILITY_TEST_HEADERS_LOCATION ${CMAKE_BINARY_DIR}/compatibility)
+set(COMPATIBILITY_TEST_HEADERS_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/compatibility)
 
 function(add_libpmemobj_cpp version)
     ExternalProject_Add(libpmemobj-cpp-${version}

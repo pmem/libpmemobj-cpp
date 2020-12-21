@@ -92,7 +92,7 @@ if(NOT MSVC_VERSION)
 		NO_CLANG_BRACE_INITIALIZATION_NEWEXPR_BUG)
 
 	# Check for issues with older clang compilers which assert on delete persistent<[][]>.
-	set(CMAKE_REQUIRED_INCLUDES ${CMAKE_SOURCE_DIR}/include ${LIBPMEMOBJ_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_INCLUDES ${LIBPMEMOBJCPP_ROOT_DIR}/include ${LIBPMEMOBJ_INCLUDE_DIRS})
 	set(CMAKE_REQUIRED_FLAGS "--std=c++11 -Wno-error -c")
 	CHECK_CXX_SOURCE_COMPILES(
 		"#include <libpmemobj++/make_persistent_array.hpp>

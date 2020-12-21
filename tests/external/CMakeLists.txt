@@ -20,8 +20,8 @@ function(add_test_expect_failure name)
 				EXCLUDE_FROM_DEFAULT_BUILD TRUE)
 
 	add_test(NAME ${name}_fail_expected
-		COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target ${name}_fail_expected
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+		COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR} --target ${name}_fail_expected
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 	set_tests_properties(${name}_fail_expected PROPERTIES WILL_FAIL TRUE)
 endfunction()

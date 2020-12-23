@@ -3,7 +3,9 @@
 
 include(ctest_helpers.cmake)
 
+# ----------------------------------------------------------------- #
 ## Setup
+# ----------------------------------------------------------------- #
 add_custom_target(tests)
 
 # Try to find it for some tests using TBB
@@ -87,7 +89,9 @@ add_library(valgrind_internal STATIC valgrind_internal.cpp)
 add_executable(check_is_pmem check_is_pmem/check_is_pmem.cpp)
 target_link_libraries(check_is_pmem ${LIBPMEM_LIBRARIES})
 
+# ----------------------------------------------------------------- #
 ## Tests
+# ----------------------------------------------------------------- #
 # tests using examples
 function(build_example_queue)
 	add_executable(ex-queue ../examples/queue/queue.cpp)

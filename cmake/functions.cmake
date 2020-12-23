@@ -162,3 +162,56 @@ function(find_pmemcheck)
 		message(WARNING "Valgrind pmemcheck NOT found. Pmemcheck tests will not be performed.")
 	endif()
 endfunction()
+
+# src version shows the current version, as reported by git describe
+# unless git is not available, then it's set to the recently released VERSION
+function(set_source_ver SRCVERSION)
+	# if there's version file commited, use it
+	if(EXISTS "${CMAKE_SOURCE_DIR}/.version")
+		file(STRINGS ${CMAKE_SOURCE_DIR}/.version FILE_VERSION)
+		set(SRCVERSION ${FILE_VERSION} PARENT_SCOPE)
+		return()
+	endif()
+
+	# otherwise take it from git
+	execute_process(COMMAND git describe
+		OUTPUT_VARIABLE GIT_VERSION
+		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+		ERROR_QUIET)
+	if(GIT_VERSION)
+		# 1.5-rc1-19-gb8f78a329 -> 1.5-rc1.git19.gb8f78a329
+		string(REGEX MATCHALL
+			"([0-9.]*)-rc([0-9]*)-([0-9]*)-([0-9a-g]*)"
+			MATCHES
+			${GIT_VERSION})
+		if(MATCHES)
+			set(SRCVERSION
+				"${CMAKE_MATCH_1}-rc${CMAKE_MATCH_2}.git${CMAKE_MATCH_3}.${CMAKE_MATCH_4}"
+				PARENT_SCOPE)
+			return()
+		endif()
+
+		# 1.5-19-gb8f78a329 -> 1.5-git19.gb8f78a329
+		string(REGEX MATCHALL
+			"([0-9.]*)-([0-9]*)-([0-9a-g]*)"
+			MATCHES
+			${GIT_VERSION})
+		if(MATCHES)
+			set(SRCVERSION
+				"${CMAKE_MATCH_1}-git${CMAKE_MATCH_2}.${CMAKE_MATCH_3}"
+				PARENT_SCOPE)
+			return()
+		endif()
+	else()
+		execute_process(COMMAND git log -1 --format=%h
+			OUTPUT_VARIABLE GIT_COMMIT
+			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+			OUTPUT_STRIP_TRAILING_WHITESPACE)
+		set(SRCVERSION ${GIT_COMMIT} PARENT_SCOPE)
+		return()
+	endif()
+
+	# last chance: use version set up in the top-level CMake
+	set(SRCVERSION ${VERSION} PARENT_SCOPE)
+endfunction()

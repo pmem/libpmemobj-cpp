@@ -4,7 +4,9 @@
 cmake_minimum_required(VERSION 3.3)
 project(libpmemobj-cpp C CXX)
 
+# ----------------------------------------------------------------- #
 ## Set required and useful variables
+# ----------------------------------------------------------------- #
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 11)
 set(VERSION_PATCH 0)
@@ -16,25 +18,6 @@ if(VERSION_PATCH GREATER 0)
 endif()
 if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
-endif()
-
-# Set ${SRCVERSION}
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
-	execute_process(COMMAND git describe
-			OUTPUT_VARIABLE SRCVERSION
-			WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-			OUTPUT_STRIP_TRAILING_WHITESPACE
-			ERROR_QUIET)
-	if(NOT SRCVERSION)
-		execute_process(COMMAND git log -1 --format=%h
-				OUTPUT_VARIABLE SRCVERSION
-				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-				OUTPUT_STRIP_TRAILING_WHITESPACE)
-	endif()
-elseif(EXISTS "${CMAKE_SOURCE_DIR}/.version")
-	file(STRINGS ${CMAKE_SOURCE_DIR}/.version SRCVERSION)
-else()
-	set(SRCVERSION ${VERSION})
 endif()
 
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.9)
@@ -62,7 +45,9 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
+# ----------------------------------------------------------------- #
 ## CMake build options
+# ----------------------------------------------------------------- #
 option(BUILD_EXAMPLES "build examples" ON)
 option(BUILD_TESTS "build tests" ON)
 option(BUILD_DOC "build documentation" ON)
@@ -97,7 +82,10 @@ option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::experimental::concurren
 option(TEST_SELF_RELATIVE_POINTER "enable testing of pmem::obj::experimental::self_relative_ptr" ON)
 option(TEST_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 
-## Setup environment, find packages, set compiler's flags, add additional custom targets
+# ----------------------------------------------------------------- #
+## Setup environment, find packages, set compiler's flags,
+## add additional custom targets, ...
+# ----------------------------------------------------------------- #
 include(FindPerl)
 include(FindThreads)
 include(CMakeDependentOption)
@@ -105,7 +93,10 @@ include(CMakePackageConfigHelpers)
 include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
+
 include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
+# set SRCVERSION, it's more accurate and "current" than VERSION
+set_source_ver(SRCVERSION)
 
 # Required for MSVC to correctly define __cplusplus
 add_flag("/Zc:__cplusplus")
@@ -140,30 +131,32 @@ if(VALGRIND_FOUND)
 	endif()
 endif()
 
-# XXX: move under if(BUILD_TESTS)
-# Some tests and examples require clang >= 8.0
-# because of the following bug:
-# https://bugs.llvm.org/show_bug.cgi?id=28280
-# which is fixed in clang v8.0.
-set(CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG "8.0")
+# Find Clang
 find_program(CLANG NAMES clang)
 if(CLANG)
-	get_program_version_major_minor(${CLANG} CLANG_VERSION)
 	message(STATUS "Found clang: ${CLANG} (version: ${CLANG_VERSION})")
-	if(CLANG_VERSION VERSION_LESS CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG)
-		set(CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT 1)
-	endif()
 else()
 	message(STATUS "clang not found")
 endif()
 
 if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_BENCHMARKS)
+	# Find libpmem and libpmemobj (PMDK libraries)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(LIBPMEMOBJ REQUIRED libpmemobj>=${LIBPMEMOBJ_REQUIRED_VERSION})
 		pkg_check_modules(LIBPMEM REQUIRED libpmem>=${LIBPMEM_REQUIRED_VERSION})
 	else()
 		find_package(LIBPMEMOBJ REQUIRED ${LIBPMEMOBJ_REQUIRED_VERSION})
 		find_package(LIBPMEM REQUIRED ${LIBPMEM_REQUIRED_VERSION})
+	endif()
+
+	# Some tests and examples require clang >= 8.0, because of the bug
+	# (https://bugs.llvm.org/show_bug.cgi?id=28280), which is fixed in clang v8.0.
+	set(CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG "8.0")
+	if(CLANG)
+		get_program_version_major_minor(${CLANG} CLANG_VERSION)
+		if(CLANG_VERSION VERSION_LESS CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG)
+			set(CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT 1)
+		endif()
 	endif()
 endif()
 
@@ -234,7 +227,9 @@ add_check_whitespace(include-experimental ${CMAKE_CURRENT_SOURCE_DIR}/include/li
 add_check_whitespace(cmake-main ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
+# ----------------------------------------------------------------- #
 ## Configure make install/uninstall and packages
+# ----------------------------------------------------------------- #
 configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
 	${CMAKE_CURRENT_BINARY_DIR}/version.hpp @ONLY)
 
@@ -282,8 +277,9 @@ include_directories(include)
 # all packages are found and all paths/variables are set.
 include(${CMAKE_SOURCE_DIR}/cmake/check_compiling_issues.cmake)
 
-
+# ----------------------------------------------------------------- #
 ## Add/include sub-directories if build options enabled them
+# ----------------------------------------------------------------- #
 if(BUILD_TESTS)
 	if(TEST_DIR)
 		enable_testing()

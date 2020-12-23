@@ -20,6 +20,7 @@ if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()
 
+set(LIBPMEMOBJCPP_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIBPMEMOBJ_REQUIRED_VERSION 1.9)
 set(LIBPMEM_REQUIRED_VERSION 1.7)
 # Only pmreorder in ver. >= 1.9 guarantees reliable output
@@ -43,7 +44,7 @@ if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LIBPMEMOBJCPP_ROOT_DIR}/cmake)
 
 # ----------------------------------------------------------------- #
 ## CMake build options
@@ -94,7 +95,7 @@ include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 
-include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
+include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/functions.cmake)
 # set SRCVERSION, it's more accurate and "current" than VERSION
 set_source_ver(SRCVERSION)
 
@@ -165,8 +166,8 @@ add_custom_target(cppstyle)
 add_custom_target(cppformat)
 add_custom_target(check-whitespace)
 add_custom_target(check-license
-	COMMAND ${CMAKE_SOURCE_DIR}/utils/check_license/check-headers.sh
-			${CMAKE_SOURCE_DIR}
+	COMMAND ${LIBPMEMOBJCPP_ROOT_DIR}/utils/check_license/check-headers.sh
+			${LIBPMEMOBJCPP_ROOT_DIR}
 			BSD-3-Clause)
 
 if(CHECK_CPP_STYLE)
@@ -217,8 +218,8 @@ add_cppstyle(include-container-detail ${CMAKE_CURRENT_SOURCE_DIR}/include/libpme
 add_cppstyle(include-detail ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/detail/*.hpp)
 add_cppstyle(include-experimental ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/experimental/*.hpp)
 
-add_check_whitespace(main ${CMAKE_SOURCE_DIR}/utils/check_license/*.sh
-						${CMAKE_SOURCE_DIR}/README.md)
+add_check_whitespace(main ${LIBPMEMOBJCPP_ROOT_DIR}/utils/check_license/*.sh
+						${LIBPMEMOBJCPP_ROOT_DIR}/*.md)
 add_check_whitespace(include ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/*.hpp)
 add_check_whitespace(include-container ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/container/*.hpp)
 add_check_whitespace(include-container-detail ${CMAKE_CURRENT_SOURCE_DIR}/include/libpmemobj++/container/detail/*.hpp)
@@ -230,7 +231,7 @@ add_check_whitespace(cmake-helpers ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 # ----------------------------------------------------------------- #
 ## Configure make install/uninstall and packages
 # ----------------------------------------------------------------- #
-configure_file(${CMAKE_SOURCE_DIR}/cmake/version.hpp.in
+configure_file(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/version.hpp.in
 	${CMAKE_CURRENT_BINARY_DIR}/version.hpp @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp
@@ -242,21 +243,21 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 install(DIRECTORY examples/ DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 	FILES_MATCHING PATTERN "*.*pp")
 
-configure_file(${CMAKE_SOURCE_DIR}/cmake/libpmemobj++.pc.in
+configure_file(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/libpmemobj++.pc.in
 		${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.pc @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++.pc
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 configure_file(
-	"${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+	"${LIBPMEMOBJCPP_ROOT_DIR}/cmake/cmake_uninstall.cmake.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
 	IMMEDIATE @ONLY)
 
 add_custom_target(uninstall
 	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
 
-configure_package_config_file(${CMAKE_SOURCE_DIR}/cmake/libpmemobj++-config.cmake.in
+configure_package_config_file(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/libpmemobj++-config.cmake.in
 		${CMAKE_CURRENT_BINARY_DIR}/libpmemobj++-config.cmake
 		INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/libpmemobj++/cmake
 		PATH_VARS CMAKE_INSTALL_LIBDIR CMAKE_INSTALL_INCLUDEDIR)
@@ -275,7 +276,7 @@ include_directories(include)
 # Run checks for known issues, it's required to enable/disable some tests and examples.
 # It has to be executed (included) here, when environment is fully set up,
 # all packages are found and all paths/variables are set.
-include(${CMAKE_SOURCE_DIR}/cmake/check_compiling_issues.cmake)
+include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/check_compiling_issues.cmake)
 
 # ----------------------------------------------------------------- #
 ## Add/include sub-directories if build options enabled them
@@ -305,5 +306,5 @@ elseif(BUILD_EXAMPLES)
 endif()
 
 if(NOT "${CPACK_GENERATOR}" STREQUAL "")
-	include(${CMAKE_SOURCE_DIR}/cmake/packages.cmake)
+	include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/packages.cmake)
 endif()

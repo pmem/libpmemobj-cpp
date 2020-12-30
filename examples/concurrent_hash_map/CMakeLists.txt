@@ -24,3 +24,7 @@ link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS})
 add_executable(concurrent_hash_map concurrent_hash_map.cpp)
 target_include_directories(concurrent_hash_map PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
 target_link_libraries(concurrent_hash_map ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(concurrent_hash_map_complex_types concurrent_hash_map_complex_types.cpp)
+target_include_directories(concurrent_hash_map_complex_types PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(concurrent_hash_map_complex_types ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

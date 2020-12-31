@@ -204,6 +204,10 @@ function tests_package() {
 		return 1
 	fi
 
+	# Fetch git history for `git describe` to work,
+	# so that package has proper 'version' field
+	[ -f .git/shallow ] && git fetch --unshallow --tags
+
 	mkdir build
 	cd build
 

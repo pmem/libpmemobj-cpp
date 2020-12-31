@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # run-build.sh [build_step]...
@@ -203,6 +203,10 @@ function tests_package() {
 		printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
 		return 1
 	fi
+
+	# Fetch git history for `git describe` to work,
+	# so that package has proper 'version' field
+	[ $(git rev-parse --is-shallow-repository) ] && git fetch --unshallow --tags
 
 	mkdir build
 	cd build

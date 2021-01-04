@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2020, Intel Corporation
+# Copyright 2020-2021, Intel Corporation
 
 include(../ctest_helpers.cmake)
 include(ExternalProject)
@@ -45,12 +45,30 @@ endfunction()
 
 add_libpmemobj_cpp(1.7)
 add_libpmemobj_cpp(1.8.1)
+add_libpmemobj_cpp(1.9)
+add_libpmemobj_cpp(1.10)
+add_libpmemobj_cpp(1.11)
 
 build_test_with_cpp_version(1.7 version_1.7 version/version_1.7.cpp)
 build_test_with_cpp_version(1.8.1 version_1.8.1 version/version_1.8.cpp)
+build_test_with_cpp_version(1.9 version_1.9 version/version_1.9.cpp)
+build_test_with_cpp_version(1.10 version_1.10 version/version_1.10.cpp)
+build_test_with_cpp_version(1.11 version_1.11 version/version_1.11.cpp)
 
 build_test_with_cpp_version(1.8.1 concurrent_hash_map_feature_size_1.8.1 concurrent_hash_map_feature_size/concurrent_hash_map_feature_size.cpp)
+build_test_with_cpp_version(1.9 concurrent_hash_map_feature_size_1.9 concurrent_hash_map_feature_size/concurrent_hash_map_feature_size.cpp)
+build_test_with_cpp_version(1.10 concurrent_hash_map_feature_size_1.10 concurrent_hash_map_feature_size/concurrent_hash_map_feature_size.cpp)
+build_test_with_cpp_version(1.11 concurrent_hash_map_feature_size_1.11 concurrent_hash_map_feature_size/concurrent_hash_map_feature_size.cpp)
 build_test_with_cpp_version(master concurrent_hash_map_feature_size_master concurrent_hash_map_feature_size/concurrent_hash_map_feature_size.cpp)
 
 add_compatibility_test(concurrent_hash_map_feature_size_1.8.1_master_compatibility concurrent_hash_map_feature_size_1.8.1 concurrent_hash_map_feature_size_master)
 add_compatibility_test(concurrent_hash_map_feature_size_master_1.8.1_compatibility concurrent_hash_map_feature_size_master concurrent_hash_map_feature_size_1.8.1)
+
+add_compatibility_test(concurrent_hash_map_feature_size_1.9_master_compatibility concurrent_hash_map_feature_size_1.9 concurrent_hash_map_feature_size_master)
+add_compatibility_test(concurrent_hash_map_feature_size_master_1.9_compatibility concurrent_hash_map_feature_size_master concurrent_hash_map_feature_size_1.9)
+
+add_compatibility_test(concurrent_hash_map_feature_size_1.10_master_compatibility concurrent_hash_map_feature_size_1.10 concurrent_hash_map_feature_size_master)
+add_compatibility_test(concurrent_hash_map_feature_size_master_1.10_compatibility concurrent_hash_map_feature_size_master concurrent_hash_map_feature_size_1.10)
+
+add_compatibility_test(concurrent_hash_map_feature_size_1.11_master_compatibility concurrent_hash_map_feature_size_1.11 concurrent_hash_map_feature_size_master)
+add_compatibility_test(concurrent_hash_map_feature_size_master_1.11_compatibility concurrent_hash_map_feature_size_master concurrent_hash_map_feature_size_1.11)

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * concurrent_hash_map_feature_size.cpp -- pmem::obj::concurrent_hash_map test
- *
+ *		used to check compatibility between different binaries.
  */
 
 #include "../concurrent_hash_map/concurrent_hash_map_traits.hpp"
@@ -120,7 +120,7 @@ static void
 test(int argc, char *argv[])
 {
 	if (argc < 3) {
-		UT_FATAL("usage: %s file-name mode [c|o]", argv[0]);
+		UT_FATAL("usage: %s file-name [c|o]", argv[0]);
 	}
 
 	const char *path = argv[1];

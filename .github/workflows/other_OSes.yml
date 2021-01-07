@@ -36,7 +36,8 @@ jobs:
                  "OS=opensuse-tumbleweed OS_VER=latest",
                  "OS=ubuntu OS_VER=18.04",
                  "OS=ubuntu OS_VER=20.10",
-                 "OS=ubuntu OS_VER=rolling"]
+                 "OS=ubuntu OS_VER=rolling",
+                 "TYPE=package OS=ubuntu OS_VER=rolling"]
     steps:
       - name: Clone the git repo
         uses: actions/checkout@v2

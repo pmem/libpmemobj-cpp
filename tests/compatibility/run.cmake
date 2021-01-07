@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2020, Intel Corporation
+# Copyright 2020-2021, Intel Corporation
+
+# Simple script to 'create' with one executable and 'open' with another one
 
 include(${SRC_DIR}/../../helpers.cmake)
 

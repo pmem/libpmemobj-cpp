@@ -38,6 +38,7 @@ Publish package and make it official:
 
 Later, for major/minor release:
 - update library version in [vcpkg](https://github.com/microsoft/vcpkg/blob/master/ports/libpmemobj-cpp) - file an inssue for their maintainers
+- add new compatibility tests (for new version) in tests/compatibility/CMakeLists.txt, on stable-$VER branch
 - once gh-pages contains new documentation:
  - add there (in index.md) v.$VER section in Doxygen docs links
  - update "Releases' support status" table (older releases' statuses as well, if needed)

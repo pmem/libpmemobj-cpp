@@ -15,15 +15,15 @@
 
 using namespace pmem::obj;
 
-/* In this example we will be using concurrent_hash_map with p<int> type for
- * both keys and values */
+/* In this example we use concurrent_hash_map with p<int> type as
+ * both keys and values. */
 using hashmap_type = concurrent_hash_map<p<int>, p<int>>;
 
 const int THREADS_NUM = 30;
 
 /* This is basic example and we only need to use concurrent_hash_map. Hence we
- * will correlate memory pool root object with single instance of persistent
- * pointer to hasmap_type */
+ * correlate memory pool root object with a single instance of persistent
+ * pointer to hashmap_type. */
 struct root {
 	persistent_ptr<hashmap_type> pptr;
 };
@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 
 			r->runtime_initialize();
 
-			/* defragment the whole pool at the beginning */
+			/* Defragment the whole pool at the beginning. */
 			try {
 				r->defragment();
 			} catch (const pmem::defrag_error &e) {
@@ -86,11 +86,15 @@ main(int argc, char *argv[])
 		auto &map = *r;
 		std::cout << map.size() << std::endl;
 
+		/* We expect around 10 * THREADS_NUM items, so we reserve
+		 * hashmap's capacity to speed up insert operations. */
+		map.reserve(10 * THREADS_NUM);
+
 		std::vector<std::thread> threads;
 		threads.reserve(static_cast<size_t>(THREADS_NUM));
 
-		/* Insert THREADS_NUM / 3 key-value pairs to the hashmap. This
-		 * operation is thread-safe. */
+		/* Start THREADS_NUM/3 threads to insert key-value pairs
+		 * to the hashmap. This operation is thread-safe. */
 		for (int i = 0; i < THREADS_NUM / 3; ++i) {
 			threads.emplace_back([&]() {
 				for (int i = 0; i < 10 * THREADS_NUM; ++i) {
@@ -100,8 +104,8 @@ main(int argc, char *argv[])
 			});
 		}
 
-		/* Erase THREADS_NUM /3 key-value pairs from the hashmap. This
-		 * operation is thread-safe. */
+		/* Start THREADS_NUM/3 threads to erase key-value pairs
+		 * from the hashmap. This operation is thread-safe. */
 		for (int i = 0; i < THREADS_NUM / 3; ++i) {
 			threads.emplace_back([&]() {
 				for (int i = 0; i < 10 * THREADS_NUM; ++i) {
@@ -110,8 +114,9 @@ main(int argc, char *argv[])
 			});
 		}
 
-		/* Check if given key is in the hashmap. For the time of an
-		 * accessor life, the read-write lock is taken on the item. */
+		/* Start THREADS_NUM/3 threads to check if given key is
+		 * in the hashmap. For the time of an accessor life,
+		 * the read-write lock is taken on the item. */
 		for (int i = 0; i < THREADS_NUM / 3; ++i) {
 			threads.emplace_back([&]() {
 				for (int i = 0; i < 10 * THREADS_NUM; ++i) {
@@ -132,7 +137,7 @@ main(int argc, char *argv[])
 			t.join();
 		}
 		try {
-			/* defragment the whole pool at the end */
+			/* Defragment the whole pool at the end. */
 			map.defragment();
 		} catch (const pmem::defrag_error &e) {
 			std::cerr << "Defragmentation exception: " << e.what()
@@ -176,8 +181,7 @@ main(int argc, char *argv[])
 			map.free_data();
 
 			/* map.clear() // WRONG
-			 * After free_data() concurrent hash map cannot be used
-			 * anymore! */
+			 * After free_data() hash map cannot be used anymore! */
 
 			transaction::run(pop, [&] {
 				delete_persistent<hashmap_type>(r);

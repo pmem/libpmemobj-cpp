@@ -530,6 +530,15 @@ if(TEST_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_defrag concurrent_hash_map_defrag/concurrent_hash_map_defrag.cpp)
 	add_test_generic(NAME concurrent_hash_map_defrag TRACERS none)
 
+	build_test(concurrent_hash_map_reserve concurrent_hash_map_reserve/concurrent_hash_map_reserve.cpp)
+	add_test_generic(NAME concurrent_hash_map_reserve TRACERS none) # memcheck pmemcheck
+
+	if (NOT WIN32)
+		build_test(concurrent_hash_map_reserve_mock concurrent_hash_map_reserve/concurrent_hash_map_reserve_mock.cpp common/mock_tx_alloc.cc)
+		target_link_libraries(concurrent_hash_map_reserve_mock ${CMAKE_DL_LIBS})
+		add_test_generic(NAME concurrent_hash_map_reserve_mock TRACERS none)
+	endif()
+
 	# This test can NOT be run under helgrind as it will report wrong lock ordering. Helgrind is right about
 	# possible deadlock situation but that could only happen in case of wrong API usage.
 	build_test(concurrent_hash_map_deadlock concurrent_hash_map_deadlock/concurrent_hash_map_deadlock.cpp)

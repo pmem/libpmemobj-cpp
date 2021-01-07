@@ -333,7 +333,7 @@ struct hash_map_node {
 
 /**
  * The class provides the way to access certain properties of segments
- * used by hash map
+ * used by hash map.
  */
 template <typename Bucket>
 class segment_traits {
@@ -1299,27 +1299,8 @@ public:
 	}
 
 	/**
-	 * Prepare enough segments for number of buckets
-	 */
-	void
-	reserve(size_type buckets)
-	{
-		if (buckets == 0)
-			return;
-
-		--buckets;
-
-		bool is_initial = this->size() == 0;
-
-		for (size_type m = mask(); buckets > m; m = mask())
-			enable_segment(
-				segment_traits_t::segment_index_of(m + 1),
-				is_initial);
-	}
-
-	/**
 	 * Swap hash_map_base
-	 * @throws std::transaction_error in case of PMDK transaction failed
+	 * @throw std::transaction_error in case of PMDK transaction failed
 	 */
 	void
 	internal_swap(hash_map_base<Key, T, mutex_t, scoped_t> &table)
@@ -1575,7 +1556,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
  * The implementation is based on a concurrent hash table algorithm
  * (https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf) where elements
- * assigned to buckets based on a hash code are calculated from a key.
+ * are assigned to buckets based on a hash code calculated from a key.
  * In addition to concurrent find, insert, and erase operations, the algorithm
  * employs resizing and on-demand per-bucket rehashing. The hash table consists
  * of an array of buckets, and each bucket consists of a list of nodes and a
@@ -1661,6 +1642,7 @@ protected:
 	using hash_map_base::check_growth;
 	using hash_map_base::check_mask_race;
 	using hash_map_base::embedded_buckets;
+	using hash_map_base::enable_segment;
 	using hash_map_base::FEATURE_CONSISTENT_SIZE;
 	using hash_map_base::get_bucket;
 	using hash_map_base::get_pool_base;
@@ -1669,7 +1651,6 @@ protected:
 	using hash_map_base::internal_swap;
 	using hash_map_base::layout_features;
 	using hash_map_base::mask;
-	using hash_map_base::reserve;
 	using tls_t = typename hash_map_base::tls_t;
 	using node = typename hash_map_base::node;
 	using node_mutex_t = typename node::mutex_t;
@@ -2273,7 +2254,7 @@ public:
 	 * Clear hash map content
 	 * Not thread safe.
 	 *
-	 * @throws pmem::transaction_error in case of PMDK transaction failure
+	 * @throw pmem::transaction_error in case of PMDK transaction failure
 	 */
 	void clear();
 
@@ -2800,7 +2781,7 @@ public:
 	 * Remove element with corresponding key
 	 *
 	 * @return true if element was deleted by this call
-	 * @throws pmem::transaction_free_error in case of PMDK unable to free
+	 * @throw pmem::transaction_free_error in case of PMDK unable to free
 	 * the memory
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */
@@ -2880,6 +2861,30 @@ public:
 	}
 
 	/**
+	 * Prepare enough segments for number of buckets.
+	 *
+	 * XXX: fixme
+	 */
+	void
+	reserve(size_type buckets)
+	{
+		if (buckets == 0)
+			return;
+
+		--buckets;
+
+		bool is_initial = this->size() == 0;
+
+		pool_base pop = get_pool_base();
+		pmem::obj::transaction::manual tx(pop);
+		for (size_type m = mask(); buckets > m; m = mask())
+			enable_segment(
+				segment_traits_t::segment_index_of(m + 1),
+				is_initial);
+		pmem::obj::transaction::commit();
+	}
+
+	/**
 	 * Remove element with corresponding key
 	 *
 	 * This overload only participates in overload resolution if the
@@ -2889,7 +2894,7 @@ public:
 	 * this function without constructing an instance of Key
 	 *
 	 * @return true if element was deleted by this call
-	 * @throws pmem::transaction_free_error in case of PMDK unable to free
+	 * @throw pmem::transaction_free_error in case of PMDK unable to free
 	 * the memory
 	 * @throw pmem::transaction_scope_error if called inside transaction
 	 */

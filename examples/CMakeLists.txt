@@ -212,6 +212,8 @@ add_example(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
 
 add_example(pool pool/pool.cpp)
 
+add_example(pool_as_class_member pool/pool_as_class_member.cpp)
+
 add_example(mutex mutex/mutex.cpp)
 
 add_example(make_persistent make_persistent/make_persistent.cpp)

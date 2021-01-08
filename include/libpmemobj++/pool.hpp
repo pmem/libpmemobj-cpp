@@ -43,6 +43,9 @@ class persistent_ptr;
  * where providing pool template argument is undesirable. The typical usage
  * example would be:
  * @snippet pool/pool.cpp pool_base_example
+ *
+ * The exmple of using pool with RAII idom:
+ * @snippet pool/pool_as_class_member.cpp  pool_class_member_example
  */
 class pool_base {
 public:

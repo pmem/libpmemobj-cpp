@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2020, Intel Corporation
+# Copyright 2020-2021, Intel Corporation
 
 cmake_minimum_required(VERSION 3.4)
 project(pool CXX)
@@ -20,6 +20,10 @@ else()
 endif()
 
 link_directories(${LIBPMEMOBJ++_LIBRARY_DIRS})
+
+add_executable(pool_as_class_member pool_as_class_member.cpp)
+target_include_directories(pool_as_class_member PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(pool_as_class_member ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 add_executable(pool pool.cpp)
 target_include_directories(pool PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)

@@ -70,8 +70,9 @@ public:
 		throw std::out_of_range("no entry in simplekv");
 	}
 
+	template <typename T>
 	void
-	put(const std::string &key, const Value &val)
+	put(const std::string &key, const T &val)
 	{
 		auto index = std::hash<std::string>{}(key) % N;
 

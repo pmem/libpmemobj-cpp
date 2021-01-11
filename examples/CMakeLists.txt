@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 if(MSVC_VERSION)
 	add_flag(-W2)
@@ -137,6 +137,7 @@ if(TEST_VECTOR)
 	add_example(defrag defrag/defrag.cpp)
 	if(NOT CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT)
 		add_example(simplekv_rebuild simplekv_rebuild/simplekv_rebuild.cpp)
+		add_example(simplekv_rebuild_string simplekv_rebuild/simplekv_rebuild_string.cpp)
 	else()
 		message(WARNING "skipping simplekv_rebuild example - it requires clang >= ${CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG}")
 	endif()

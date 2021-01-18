@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -451,7 +451,10 @@ protected:
  *
  * This class is the pmemobj pool handler. It provides basic primitives
  * for operations on pmemobj pools. The template parameter defines the
- * type of the root object within the pool. The typical usage example would be:
+ * type of the root object within the pool. This pool class inherits also
+ * some methods from the base class: pmem::obj::pool_base.
+ *
+ * The typical usage example would be:
  * @snippet pool/pool.cpp pool_example
  *
  * This API should not be mixed with C API. For example explicitly calling

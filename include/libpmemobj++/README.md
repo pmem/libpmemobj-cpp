@@ -3,6 +3,19 @@ libpmemobj-cpp	{#mainpage}
 
 This is the C++ API for libpmemobj extended with persistent containers.
 
+If you want to read more about PMDK (and libpmemobj C API in specific) see:
+https://pmem.io/pmdk
+
+Main libpmemobj-cpp documentation website is:
+https://pmem.io/libpmemobj-cpp
+It also contains links to blog articles which you might find helpful.
+
+If you find any issues or have suggestion about these bindings please file an
+issue in https://github.com/pmem/libpmemobj-cpp/issues. The GitHub website
+is also the main code repository location and it contains full usage examples.
+
+### Introduction
+
 During the development of libpmemobj, many difficulties were encountered and
 compromises were made to make the C API as much user-friendly as possible. This
 is mostly due to the semantics of the C language. Since C++ is a more expressive
@@ -34,14 +47,8 @@ Please remember to take extra care when using _static class members_. They are
 not stored in persistent memory, therefore their value will _not_ always be
 consistent across subsequent executions or compilations of user applications.
 
-If you find any issues or have suggestion about these bindings please file an
-issue in https://github.com/pmem/libpmemobj-cpp/issues. There are also blog articles in
-https://pmem.io/blog/ which you might find helpful.
+### Compiler notice
 
-Have fun!
-The PMDK team
-
-### Compiler notice ###
 The C++ bindings require a C++11 compliant compiler, therefore the minimal
 versions of GCC and Clang are 4.8.1 and 3.3 respectively. However the
 pmem::obj::transaction::automatic class requires C++17, so
@@ -50,7 +57,8 @@ It is recommended to use these or newer versions of GCC or Clang.
 A usage of the libpmemobj-cpp containers requires GCC >= 4.9.0 (see explanation
 in the main README.md file).
 
-### Standard notice ###
+### C++ standard notice
+
 Please note that the C++11 standard, section 3.8, states that a valid
 non-trivially default constructible object (in other words, not plain old data)
 must be properly constructed in the lifetime of the application.
@@ -69,7 +77,20 @@ practically speaking implementation defined. The only exception to this rule is
 the use of polymorphic types, which are notably forbidden when using C++
 bindings.
 
-### Important classes/functions ###
+### Compatibility notice
+
+In libpmemobj 1.12 we introduced a new transaction handler type: pmem::obj::flat_transaction.
+By defining LIBPMEMOBJ_CPP_USE_FLAT_TRANSACTION you can make pmem::obj::transaction to be
+an alias to pmem::obj::flat_transaction. In 1.12 we have also changed the default behavior
+of containers' transactional methods. Now, in case of any failure within such method,
+the outer transaction (if any) will not be immediately aborted. Instead, an exception
+will be thrown, which will lead to transaction abort only if it's not caught before the outer tx scope ends.
+To change the behavior to the old one, you can set LIBPMEMOBJ_CPP_FLAT_TX_USE_FAILURE_RETURN macro to 0.
+Be aware that the old behavior can lead to segfaults in some cases
+(see tx_nested_struct_example in this
+[example](https://github.com/pmem/libpmemobj-cpp/blob/master/examples/transaction/transaction.cpp)).
+
+### Important classes/functions
 
  * Transactional allocations - make_persistent.hpp
  * Transactional array allocations - make_persistent_array.hpp
@@ -82,7 +103,7 @@ bindings.
  * Persistent memory pool - [pool](@ref pmem::obj::pool)
  * Defrag class - [defrag](@ref pmem::obj::defrag)
 
-## Persistent containers ##
+## Persistent containers
 
 The C++ standard library containers collection is something that persistent
 memory programmers may want to use. Containers manage the lifetime of held
@@ -92,8 +113,10 @@ Template Library) containers has two main downsides:
 
 Implementation details:
  - STL containers do not use algorithms optimal from persistent memory programming point of view.
- - Persistent memory containers should have durability and consistency properties, while not every STL method guarantees strong exception safety.
- - Persistent memory containers should be designed with an awareness of fragmentation limitations.
+ - Persistent memory containers should have durability and consistency properties,
+    while not every STL method guarantees strong exception safety.
+ - Persistent memory containers should be designed with an awareness of
+    fragmentation limitations.
 
 Memory layout:
  - The STL does not guarantee that the container layout will remain unchanged in new library versions.
@@ -105,11 +128,14 @@ These methods guarantee atomicity, consistency and durability. Besides specific
 internal implementation details, libpmemobj-cpp persistent memory containers
 have the well-known STL-like interface and they work with STL algorithms.
 
-### Available containers ###
+### Available containers
 
  * array with STL-like interface - [pmem::obj::array](@ref pmem::obj::array)
  * string with STL-like interface - [pmem::obj::string](@ref pmem::obj::basic_string)
  * vector with STL-like interface - [pmem::obj::vector](@ref pmem::obj::vector)
- * segment_vector with std::vector-like interface (no STL counterpart) - [pmem::obj::segment_vector](@ref pmem::obj::segment_vector)
- * concurrent_hash_map (no STL counterpart) - [pmem::obj::concurrent_hash_map](@ref pmem::obj::concurrent_hash_map)
- * radix_tree (partially compatible with std::map) - [pmem::obj::experimental::radix_tree](@ref pmem::obj::experimental::radix_tree)
+ * segment_vector with std::vector-like interface (no STL counterpart) -
+    [pmem::obj::segment_vector](@ref pmem::obj::segment_vector)
+ * concurrent_hash_map (no STL counterpart) -
+    [pmem::obj::concurrent_hash_map](@ref pmem::obj::concurrent_hash_map)
+ * radix_tree (partially compatible with std::map) -
+    [pmem::obj::experimental::radix_tree](@ref pmem::obj::experimental::radix_tree)

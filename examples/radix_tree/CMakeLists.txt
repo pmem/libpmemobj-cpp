@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2020, Intel Corporation
+# Copyright 2020-2021, Intel Corporation
 
 cmake_minimum_required(VERSION 3.3)
 project(radix_tree CXX)
@@ -35,3 +35,7 @@ target_link_libraries(radix_tree_inline_string ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE
 add_executable(radix_tree_inline_string_uint8t_key radix_tree_inline_string_uint8t_key.cpp)
 target_include_directories(radix_tree_inline_string_uint8t_key PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
 target_link_libraries(radix_tree_inline_string_uint8t_key ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+
+add_executable(radix_tree_complex_value radix_tree_complex_value.cpp)
+target_include_directories(radix_tree_complex_value PUBLIC ${LIBPMEMOBJ++_INCLUDE_DIRS} . ..)
+target_link_libraries(radix_tree_complex_value ${LIBPMEMOBJ++_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

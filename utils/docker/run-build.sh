@@ -14,10 +14,12 @@ set -e
 source $(dirname ${0})/prepare-for-build.sh
 
 # params set for this file; if not previously set, the right-hand param is used
+TEST_DIR=${PMEMKV_TEST_DIR:-${DEFAULT_TEST_DIR}}
 CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 TESTS_LONG=${TESTS_LONG:-OFF}
 TESTS_TBB=${TESTS_TBB:-ON}
 TESTS_PMREORDER=${TESTS_PMREORDER:-ON}
+TESTS_PACKAGES=${TEST_PACKAGES:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-ON}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
@@ -44,7 +46,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTESTS_TBB=${TESTS_TBB} \
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
-		-DTEST_DIR=/mnt/pmem \
+		-DTEST_DIR=${TEST_DIR} \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_COMPATIBILITY=1
 
@@ -78,7 +80,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 		-DTESTS_USE_VALGRIND=0 \
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
-		-DTEST_DIR=/mnt/pmem \
+		-DTEST_DIR=${TEST_DIR} \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_COMPATIBILITY=1
 
@@ -112,7 +114,7 @@ function build_gcc_debug_cpp14() {
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTESTS_TBB=${TESTS_TBB} \
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
-		-DTEST_DIR=/mnt/pmem \
+		-DTEST_DIR=${TEST_DIR} \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND=1 \
 		-DTESTS_COMPATIBILITY=1 \
@@ -178,7 +180,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		-DTESTS_LONG=${TESTS_LONG} \
 		-DTESTS_TBB=${TESTS_TBB} \
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
-		-DTEST_DIR=/mnt/pmem \
+		-DTEST_DIR=${TEST_DIR} \
 		-DBUILD_EXAMPLES=0 \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM}
 
@@ -198,6 +200,8 @@ function tests_gcc_release_cpp17_no_valgrind() {
 function tests_package() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 
+	[ ! "${TESTS_PACKAGES}" = "ON" ] && echo "Skipping testing packages, TESTS_PACKAGES variable is not set."
+
 	if ! ls /opt/pmdk-pkg/libpmem* > /dev/null 2>&1; then
 		echo "ERROR: There are no PMDK packages in /opt/pmdk-pkg - they are required for package test(s)."
 		printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -212,6 +216,8 @@ function tests_package() {
 		sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
 	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
 		sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
+	else
+		echo "Notice: skipping building of packages because PACKAGE_MANAGER is not equal 'rpm' nor 'deb' ..."
 	fi
 
 	CC=gcc CXX=g++ \
@@ -306,7 +312,7 @@ function tests_cmake() {
 	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
 	CC=gcc CXX=g++ \
 	cmake .. -DCMAKE_BUILD_TYPE=Debug \
-		-DTEST_DIR=/mnt/pmem \
+		-DTEST_DIR=${TEST_DIR} \
 		-DTESTS_USE_VALGRIND=1 \
 	&& exit 1
 	echo "----------------------------------------------------------------------------"

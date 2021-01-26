@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # run-build.sh [build_step]...
@@ -18,7 +18,7 @@ CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 TESTS_LONG=${TESTS_LONG:-OFF}
 TESTS_TBB=${TESTS_TBB:-ON}
 TESTS_PMREORDER=${TESTS_PMREORDER:-ON}
-TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-1}
+TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-ON}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
 export PMREORDER_STACKTRACE_DEPTH=20

@@ -4,7 +4,7 @@
 - [Code Style](#code-style)
 - [Submitting Pull Requests](#submitting-pull-requests)
 - [Implementing persistent containers](#implementing-persistent-containers)
-- [Configuring Github fork](#configuring-github-fork)
+- [Configuring GitHub fork](#configuring-github-fork)
 
 # Opening New Issues
 
@@ -106,24 +106,24 @@ When developing a persistent container make sure you follow the rules and steps 
 * for_each_ptr method for defragmentation purposes.
 * Containers with lower memory overhead (like vector) can implement some heuristic for verifying layout (like comparing pmemobj_alloc_usable_size with expected capacity).
 
-# Configuring Github fork
+# Configuring GitHub fork
 
 To build and submit documentation as an automatically generated pull request,
 the repository has to be properly configured.
 
-* [Personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) for Github account has to be generated.
+* [Personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) for GitHub account has to be generated.
   * Such personal access token has to be set in in GitHub repository's
   [secrets](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
   as `DOC_UPDATE_GITHUB_TOKEN` variable.
 
 * `DOC_UPDATE_BOT_NAME` secret variable has to be set. In most cases it will be
-  the same as Github account name.
+  the same as GitHub account name.
 
-* `DOC_REPO_OWNER` secret variable has to be set. Name of Github account,
+* `DOC_REPO_OWNER` secret variable has to be set. Name of GitHub account,
   which will be target to make an automatic pull request with documentation.
-  In most cases it will be the same as Github account name.
+  In most cases it will be the same as GitHub account name.
 
-To enable automatic images pushing to Github Container Registry, following variables:
+To enable automatic images pushing to GitHub Container Registry, following variables:
 
 * `CONTAINER_REG` existing environment variable (defined in workflow files, in .github/ directory)
   has to be updated to contain proper GitHub Container Registry address (to forking user's container registry),

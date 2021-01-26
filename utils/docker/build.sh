@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2017-2020, Intel Corporation
+# Copyright 2017-2021, Intel Corporation
 
 #
 # build.sh - runs a Docker container from a Docker image with environment
@@ -23,7 +23,6 @@ set -e
 
 source $(dirname $0)/set-ci-vars.sh
 IMG_VER=${IMG_VER:-devel}
-
 TAG="${OS}-${OS_VER}-${IMG_VER}"
 IMAGE_NAME=${CONTAINER_REG}:${TAG}
 CONTAINER_NAME=libpmemobj-cpp-${OS}-${OS_VER}

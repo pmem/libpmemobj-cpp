@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # pull-or-rebuild-image.sh - rebuilds the Docker image used in the
-#		current build (if necessary) or pulls it from the Docker Container.
+#		current build (if necessary) or pulls it from the Container Registry.
 #		Docker image is tagged as described in ./images/build-image.sh,
 #		but IMG_VER defaults in this script to "latest" (just in case it's
 #		used locally without building any images).
@@ -25,7 +25,6 @@
 set -e
 
 source $(dirname ${0})/set-ci-vars.sh
-
 IMG_VER=${IMG_VER:-latest}
 TAG="${OS}-${OS_VER}-${IMG_VER}"
 IMAGES_DIR_NAME=images
@@ -84,7 +83,6 @@ elif [[ "${1}" == "pull" ]]; then
 	pull_image
 	exit 0
 fi
-
 
 # Determine if we need to rebuild the image or just pull it from
 # the Container Registry, based on commited changes.

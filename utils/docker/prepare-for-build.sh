@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2019-2020, Intel Corporation
+# Copyright 2019-2021, Intel Corporation
 
 #
 # prepare-for-build.sh - prepares environment for the build
@@ -18,6 +18,7 @@ fi
 
 INSTALL_DIR=/tmp/libpmemobj-cpp
 EXAMPLE_TEST_DIR=/tmp/build_example
+TEST_DIR=${PMEMKV_TEST_DIR:-${DEFAULT_TEST_DIR}}
 
 function sudo_password() {
 	echo ${USERPASS} | sudo -Sk $*
@@ -30,9 +31,9 @@ if [ "${CI_RUN}" == "YES" ]; then
 	echo "CI build: change WORKDIR's owner and prepare tmpfs device"
 	sudo_password chown -R $(id -u).$(id -g) ${WORKDIR}
 
-	sudo_password mkdir /mnt/pmem
-	sudo_password chmod 0777 /mnt/pmem
-	sudo_password mount -o size=2G -t tmpfs none /mnt/pmem
+	sudo_password mkdir ${TEST_DIR}
+	sudo_password chmod 0777 ${TEST_DIR}
+	sudo_password mount -o size=2G -t tmpfs none ${TEST_DIR}
 fi || true
 
 

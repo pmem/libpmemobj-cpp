@@ -131,9 +131,11 @@ docker run --privileged=true --name=${CONTAINER_NAME} -i \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=${COVERITY_SCAN_NOTIFICATION_EMAIL} \
 	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-OFF} \
 	--env COVERAGE=${COVERAGE} \
+	--env DEFAULT_TEST_DIR=/mnt/pmem \
 	--env TESTS_LONG=${TESTS_LONG:-OFF} \
 	--env TESTS_TBB=${TESTS_TBB:-ON} \
 	--env TESTS_PMREORDER=${TESTS_PMREORDER:-ON} \
+	--env TESTS_PACKAGES=${TESTS_PACKAGES:-ON} \
 	--env TEST_TIMEOUT=${TEST_TIMEOUT} \
 	--env TZ='Europe/Warsaw' \
 	--shm-size=4G \

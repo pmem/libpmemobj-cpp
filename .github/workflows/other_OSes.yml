@@ -11,6 +11,7 @@ env:
   CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
   HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
   WORKDIR:        utils/docker
+  TEST_TIMEOUT:   600
   IMG_VER:        latest
   TYPE:           debug
   PUSH_IMAGE:     1

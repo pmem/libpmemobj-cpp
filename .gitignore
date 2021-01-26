@@ -3,7 +3,6 @@
 !.gitattributes
 !.github/
 !.clang-format
-!.travis.yml
 !.mailmap
 !.version
 build/

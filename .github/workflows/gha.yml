@@ -77,7 +77,6 @@ jobs:
       PMDK_VERSION: "1.9"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
-      WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"
       MSBUILD:  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin"
     strategy:
       matrix:

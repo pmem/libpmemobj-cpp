@@ -19,7 +19,7 @@ CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 TESTS_LONG=${TESTS_LONG:-OFF}
 TESTS_TBB=${TESTS_TBB:-ON}
 TESTS_PMREORDER=${TESTS_PMREORDER:-ON}
-TESTS_PACKAGES=${TEST_PACKAGES:-ON}
+TESTS_PACKAGES=${TESTS_PACKAGES:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-ON}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
@@ -217,7 +217,8 @@ function tests_package() {
 	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
 		sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
 	else
-		echo "Notice: skipping building of packages because PACKAGE_MANAGER is not equal 'rpm' nor 'deb' ..."
+		echo "ERROR: skipping building of packages because PACKAGE_MANAGER is not equal to 'rpm' nor 'deb' ..."
+		return 1
 	fi
 
 	CC=gcc CXX=g++ \
@@ -235,7 +236,7 @@ function tests_package() {
 
 	make -j$(nproc) package
 
-	# Make sure there is no libpmemobj++ currently installed
+	echo "Make sure there is no libpmemobj++ currently installed."
 	echo "---------------------------- Error expected! ------------------------------"
 	compile_example_standalone map_cli && exit 1
 	echo "---------------------------------------------------------------------------"
@@ -248,7 +249,7 @@ function tests_package() {
 
 	workspace_cleanup
 
-	# Verify installed package
+	echo "Verify installed package."
 	compile_example_standalone map_cli
 
 	# Remove pkg-config and force cmake to use find_package while compiling example
@@ -259,7 +260,7 @@ function tests_package() {
 		sudo_password rpm -e --nodeps pkgconf || sudo_password rpm -e --nodeps pkg-config
 	fi
 
-	# Verify installed package using find_package
+	echo "Verify installed package using find_package."
 	compile_example_standalone map_cli
 
 	workspace_cleanup

@@ -109,11 +109,11 @@ endfunction()
 
 if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
 	build_example_queue()
-	add_test_generic(NAME ex-queue CASE 0 TRACERS none SCRIPT examples/ex-queue_0.cmake)
+	add_test_generic(NAME ex-queue CASE 0 TRACERS none SCRIPT ex-queue/ex-queue_0.cmake)
 
 	if(CURSES_FOUND AND NOT WIN32)
 		build_example_pman()
-		add_test_generic(NAME ex-pman CASE 0 TRACERS none SCRIPT examples/ex-pman_0.cmake)
+		add_test_generic(NAME ex-pman CASE 0 TRACERS none SCRIPT ex-pman/ex-pman_0.cmake)
 	else()
 		message(WARNING "ncurses not found - pman test won't be build")
 	endif()

@@ -1,3 +1,30 @@
+Thu Feb 04 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>
+
+	* Version 1.12-rc1
+
+	This release introduces new transaction handler type (flat_transaction)
+	which solves https://github.com/pmem/libpmemobj-cpp/issues/516 (more
+	information can be found in README).
+
+	It also introduces several improvements and bugfixes for radix_tree as
+	well as additional methods for pmem::obj::string_view.
+
+	New features:
+	- pmem::obj::flat_transaction
+	- extend API for pmem::obj::string_view (relational operators, find,
+		substr, copy, compare)
+
+	Bug fixes:
+	- make default bytes_view implementation in radix_tree work for
+		wide characters
+	- fix assign_val function in radix tree which incorrectly handled
+		inline_string<CharT> for CharT != char
+	- fix use after free in radix_tree::erase method
+
+	Other changes:
+	- allow using any iterator which supports operator[], operator-() and
+		operator--() in pmem::obj::slice
+
 Wed Sep 30 2020 Szymon Romik <szymon.romik@intel.com>
 
 	* Version 1.11

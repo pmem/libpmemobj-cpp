@@ -36,8 +36,7 @@ include_directories(${LIBPMEMOBJ_INCLUDE_DIRS} .)
 link_directories(${LIBPMEMOBJ_LIBRARY_DIRS})
 
 add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-add_check_whitespace(examples-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
+add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.*)
 
 add_cppstyle(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*pp)
 add_check_whitespace(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*)

@@ -7,7 +7,7 @@ set -e
 # prepares input for ex-pman test
 # usage: ./prepare_input.sh input_file
 
-dd if=/dev/zero bs=64 count=1 2>>/dev/null >> $1
-echo -n slkiiijjbjjii >> $1
-dd if=/dev/zero bs=128 count=1 2>>/dev/null >> $1
-echo -n q >> $1
+dd if=/dev/zero bs=64 count=1 2>>/dev/null >> ${1}
+echo -n slkiiijjbjjii >> ${1}
+dd if=/dev/zero bs=128 count=1 2>>/dev/null >> ${1}
+echo -n q >> ${1}

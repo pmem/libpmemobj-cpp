@@ -1,5 +1,10 @@
 name: CPP
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  release:
+    types:
+      - created
 
 env:
   REPO:           libpmemobj-cpp
@@ -31,6 +36,27 @@ jobs:
                  "TYPE=package OS=fedora OS_VER=32",
                  "TYPE=package OS=ubuntu OS_VER=20.04"]
     steps:
+      - name: Get release version
+        if: github.event_name == 'release'
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo ${GITHUB_REF#refs/tags/} | grep -E "^[0-9]+.[0-9]+(-rc[0-9]+)?$" | cut -f 1,2 -d . | cut -f 1 -d -)
+
+      - name: Print version (major.minor)
+        if: github.event_name == 'release' && steps.get_version.outputs.VERSION != ''
+        run: echo ${{ steps.get_version.outputs.VERSION }}
+
+      - name: Set image version and force image action
+        if: github.event_name }} == 'release' && steps.get_version.outputs.VERSION != ''
+        run: |
+          echo "IMG_VER=${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_ENV
+          echo "FORCE_IMAGE_ACTION=rebuild" >> $GITHUB_ENV
+
+      - name:  XXX
+        if: github.event_name }} == 'release' && steps.get_version.outputs.VERSION != ''
+        run: |
+          echo "img ver: $IMG_VER"
+          echo "img action $FORCE_IMAGE_ACTION"
+
       - name: Clone the git repo
         uses: actions/checkout@v2
         with:

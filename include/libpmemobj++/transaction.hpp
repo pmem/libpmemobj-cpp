@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -687,7 +687,7 @@ public:
 	static void
 	run(obj::pool_base &pool, std::function<void()> tx, Locks &... locks)
 	{
-		return detail::transaction_base<false>::run(pool, tx, locks...);
+		detail::transaction_base<false>::run(pool, tx, locks...);
 	}
 
 	/*
@@ -816,7 +816,7 @@ public:
 	static void
 	run(obj::pool_base &pool, std::function<void()> tx, Locks &... locks)
 	{
-		return detail::transaction_base<true>::run(pool, tx, locks...);
+		detail::transaction_base<true>::run(pool, tx, locks...);
 	}
 
 	/*

@@ -4,20 +4,7 @@ This document contains all the steps required to make a new release of libpmemob
 
 \#define $VERSION = current full version (e.g. 1.0.2); $VER = major+minor only version (e.g. 1.0)
 
-Make a release locally:
-- add an entry to ChangeLog, remember to change the day of the week in the release date
-  - for major/minor releases mention compatibility with the previous release
-  - for major/minor releases add new ChangeLog template (for $VER+1)
-- echo $VERSION > .version
-- git add .version
-- update project's version in top-level CMakeLists.txt
-- git commit -a -S -m "common: $VERSION release"
-- git tag -a -s -m "Libpmemobj-cpp Version $VERSION" $VERSION
-
-Undo temporary release changes:
-- git rm .version && git commit -m "common: git versioning"
-- for major/minor release:
-  - create stable-$VER branch now: git checkout -b stable-$VER
+Run utils/make_release.sh and follow all the steps.
 
 Publish changes:
 - for major/minor release:

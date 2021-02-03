@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 include(${SRC_DIR}/../helpers.cmake)
 
@@ -11,7 +11,7 @@ if (result EQUAL 0)
 	execute(${SRC_DIR}/prepare_input.sh ${DIR}/input)
 	execute(${TEST_EXECUTABLE} ${DIR}/testfile ${SRC_DIR}/../../examples/pman/map INPUT_FILE ${DIR}/input)
 else()
-	message(WARNING "Skip: stdout is not terminal")
+	message(WARNING "Skip: stdout is not a tty terminal")
 endif()
 
 finish()

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 set(DIR ${PARENT_DIR}/${TEST_NAME})
 
@@ -224,7 +224,7 @@ endfunction()
 
 function(check_target name)
     if(NOT EXISTS ${name})
-        message(FATAL_ERROR "Tests were not found! If not built, run make first.")
+        message(FATAL_ERROR "Test file: \"${name}\" was not found! If test wasn't built, run make first.")
     endif()
 endfunction()
 

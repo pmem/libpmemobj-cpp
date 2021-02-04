@@ -210,6 +210,8 @@ add_example(segment_vector segment_vector/segment_vector.cpp)
 
 add_example(concurrent_hash_map concurrent_hash_map/concurrent_hash_map.cpp)
 
+add_example(concurrent_hash_map_string concurrent_hash_map/concurrent_hash_map_string.cpp)
+
 add_example(pool pool/pool.cpp)
 
 add_example(mutex mutex/mutex.cpp)

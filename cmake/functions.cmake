@@ -19,23 +19,47 @@ function(prepend var prefix)
 	set(${var} "${listVar}" PARENT_SCOPE)
 endfunction()
 
-# Checks whether flag is supported by current C++ compiler and appends
-# it to the relevant cmake variable.
-# 1st argument is a flag
-# 2nd (optional) argument is a build type (debug, release)
-macro(add_flag flag)
+# Checks whether flag is supported by current C++ compiler
+macro(check_flag flag OUT_NAME)
 	string(REPLACE - _ flag2 ${flag})
 	string(REPLACE " " _ flag2 ${flag2})
 	string(REPLACE = "_" flag2 ${flag2})
 	set(check_name "CXX_HAS_${flag2}")
 
 	check_cxx_compiler_flag(${flag} ${check_name})
+	set(${OUT_NAME} "${check_name}")
+endmacro()
+
+# Checks flag and appends it to the relevant cmake variable, parameters:
+# 1st: a flag
+# 2nd: (optional) a build type (DEBUG, RELEASE, ...), by default appends to common variable
+macro(add_flag flag)
+	check_flag("${flag}" check_name)
 
 	if (${${check_name}})
 		if (${ARGC} EQUAL 1)
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
 		else()
-			set(CMAKE_CXX_FLAGS_${ARGV1} "${CMAKE_CXX_FLAGS_${ARGV1}} ${flag}")
+			string(TOUPPER "${ARGV1}" BUILD)
+			set(CMAKE_CXX_FLAGS_${BUILD} "${CMAKE_CXX_FLAGS_${BUILD}} ${flag}")
+		endif()
+	endif()
+endmacro()
+
+# Checks flag and replaces found regex with the flag (only if the flag is supported).
+# Useful in Windows builds, where doubled flag produces warning. Parameters:
+# 1st: a flag
+# 2nd: a regex to be replaced, by the flag
+# 3rd: (optional) a build type (DEBUG, RELEASE, ...), by default replaces in common variable
+macro(replace_flag flag regex)
+	check_flag("${flag}" check_name)
+
+	if (${${check_name}})
+		if (${ARGC} EQUAL 2)
+			string(REGEX REPLACE "${regex}" "${flag}" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+		else()
+			string(TOUPPER "${ARGV2}" BUILD)
+			string(REGEX REPLACE "${regex}" "${flag}" CMAKE_CXX_FLAGS_${BUILD} "${CMAKE_CXX_FLAGS_${BUILD}}")
 		endif()
 	endif()
 endmacro()

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 cmake_minimum_required(VERSION 3.3)
 project(libpmemobj-cpp C CXX)
@@ -99,8 +99,10 @@ include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/functions.cmake)
 # set SRCVERSION, it's more accurate and "current" than VERSION
 set_source_ver(SRCVERSION)
 
-# Required for MSVC to correctly define __cplusplus
-add_flag("/Zc:__cplusplus")
+if(WIN32)
+	# Required for MSVC to correctly define __cplusplus
+	add_flag("/Zc:__cplusplus")
+endif()
 
 if(NOT WIN32)
 	find_package(PkgConfig QUIET)

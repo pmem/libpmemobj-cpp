@@ -8,9 +8,9 @@ project(libpmemobj-cpp C CXX)
 ## Set required and useful variables
 # ----------------------------------------------------------------- #
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 11)
+set(VERSION_MINOR 12)
 set(VERSION_PATCH 0)
-#set(VERSION_PRERELEASE rc3)
+set(VERSION_PRERELEASE rc1)
 
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 if(VERSION_PATCH GREATER 0)

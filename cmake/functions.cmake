@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 #
 # functions.cmake - helper functions for CMakeLists.txt
@@ -209,6 +209,12 @@ function(set_source_ver SRCVERSION)
 			WORKING_DIRECTORY ${LIBPMEMOBJCPP_ROOT_DIR}
 			OUTPUT_STRIP_TRAILING_WHITESPACE)
 		set(SRCVERSION ${GIT_COMMIT} PARENT_SCOPE)
+
+		# CPack may complain about commit sha being a package version
+		if(NOT "${CPACK_GENERATOR}" STREQUAL "")
+			message(WARNING "It seems this is a shallow clone. SRCVERSION is set to: \"${GIT_COMMIT}\". "
+				"CPack may complain about setting it as a package version. Unshallow this repo before making a package.")
+		endif()
 		return()
 	endif()
 

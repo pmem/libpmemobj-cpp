@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 cmake_minimum_required(VERSION 3.3)
 project(libpmemobj-cpp C CXX)
@@ -39,6 +39,7 @@ set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
 set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
 
 set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test CACHE STRING "working directory for tests")
+message(STATUS "TEST_DIR set to: \"${TEST_DIR}\"")
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
@@ -282,12 +283,7 @@ include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/check_compiling_issues.cmake)
 ## Add/include sub-directories if build options enabled them
 # ----------------------------------------------------------------- #
 if(BUILD_TESTS)
-	if(TEST_DIR)
-		enable_testing()
-	else()
-		message(WARNING "TEST_DIR is empty - 'make test' will not work")
-	endif()
-
+	enable_testing()
 	add_subdirectory(tests)
 endif()
 

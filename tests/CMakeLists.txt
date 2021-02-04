@@ -46,7 +46,10 @@ if(MSVC_VERSION)
 
 	# omit function name ambiguity under MSVC++ compiler
 	if(MSVC_VERSION GREATER 1919)
-		add_flag(-Ob3)
+		# Each CXX_FLAGS_* variable has its own /Ob setting. By default CMake
+		# may set it up with some value, so we replace it (or add, if not found)
+		# in the current build to avoid warning D9025.
+		replace_or_add_flag("/Ob3" "/Ob[0-9]" ${CMAKE_BUILD_TYPE})
 	endif()
 else()
 	add_flag(-Wall)

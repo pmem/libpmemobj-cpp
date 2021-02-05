@@ -8,7 +8,7 @@
 #
 
 # Pull base image
-FROM fedora:rawhide
+FROM registry.fedoraproject.org/fedora:rawhide
 MAINTAINER szymom.romik@intel.com
 
 # Set required environment variables

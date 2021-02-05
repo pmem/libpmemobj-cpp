@@ -68,6 +68,7 @@ ARG REDUNDANT_DEPS="\
 	open-sans-fonts \
 	passwd \
 	tar \
+	hub \
 	xmlto \
 	asciidoc \
 	json-c-devel \

@@ -30,6 +30,7 @@ jobs:
                  "OS=archlinux-base OS_VER=latest",
                  "OS=debian OS_VER=testing",
                  "OS=debian OS_VER=unstable",
+                 "OS=debian OS_VER=latest",
                  "OS=fedora OS_VER=33",
                  "OS=fedora OS_VER=rawhide PUSH_IMAGE=0",
                  "TYPE=package OS=fedora OS_VER=rawhide",

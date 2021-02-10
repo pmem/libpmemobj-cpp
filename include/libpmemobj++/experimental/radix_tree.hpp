@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -15,6 +15,8 @@
 
 #ifndef LIBPMEMOBJ_CPP_RADIX_HPP
 #define LIBPMEMOBJ_CPP_RADIX_HPP
+
+#include <libpmemobj/action.h>
 
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/container/string.hpp>
@@ -107,6 +109,8 @@ class radix_tree {
 	struct radix_tree_iterator;
 
 public:
+	struct node_handle_batch;
+
 	using key_type = Key;
 	using mapped_type = Value;
 	using value_type = detail::pair<const key_type, mapped_type>;
@@ -153,6 +157,7 @@ public:
 	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last);
 	void insert(std::initializer_list<value_type> il);
+	void insert(node_handle_batch &b);
 	// insert_return_type insert(node_type&& nh);
 	// iterator insert(const_iterator hint, node_type&& nh);
 
@@ -191,6 +196,9 @@ public:
 		typename = typename std::enable_if<
 			detail::has_is_transparent<BytesView>::value, K>::type>
 	std::pair<iterator, bool> insert_or_assign(K &&k, M &&obj);
+
+	template <typename K, typename V>
+	void create_node(node_handle_batch &batch, K &&k, V &&v);
 
 	iterator erase(const_iterator pos);
 	iterator erase(const_iterator first, const_iterator last);
@@ -657,6 +665,15 @@ struct radix_tree<Key, Value, BytesView>::node::forward_iterator {
 private:
 	pointer child;
 	const node *n;
+};
+
+template <typename Key, typename Value, typename BytesView>
+struct radix_tree<Key, Value, BytesView>::node_handle_batch {
+private:
+	std::vector<persistent_ptr<radix_tree::leaf>> leaves;
+	std::vector<pobj_action> actv;
+
+	friend class radix_tree<Key, Value, BytesView>;
 };
 
 /**
@@ -1464,6 +1481,31 @@ radix_tree<Key, Value, BytesView>::insert(std::initializer_list<value_type> il)
 	insert(il.begin(), il.end());
 }
 
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::insert(node_handle_batch &batch)
+{
+	auto pop = pool_base(pmemobj_pool_by_ptr(this));
+
+	flat_transaction::run(pop, [&] {
+		pmemobj_tx_publish(batch.actv.data(), batch.actv.size());
+
+		for (size_t i = 0; i < batch.leaves.size(); ++i) {
+			auto res = internal_emplace(
+				batch.leaves[i]->key(),
+				[&](tagged_node_ptr parent) {
+					size_++;
+
+					batch.leaves[i]->parent = parent;
+
+					return batch.leaves[i];
+				});
+			if (!res.second)
+				pmemobj_tx_free(batch.leaves[i].raw());
+		}
+	});
+}
+
 /**
  * If a key equivalent to k already exists in the container, does nothing.
  * Otherwise, behaves like emplace except that the element is constructed
@@ -1637,6 +1679,36 @@ radix_tree<Key, Value, BytesView>::insert_or_assign(K &&k, M &&obj)
 	if (!ret.second)
 		ret.first.assign_val(std::forward<M>(obj));
 	return ret;
+}
+
+template <typename Key, typename Value, typename BytesView>
+template <typename K, typename V>
+void
+radix_tree<Key, Value, BytesView>::create_node(node_handle_batch &batch, K &&k,
+					       V &&v)
+{
+	auto pop = pmemobj_pool_by_ptr(this);
+
+	auto key_size = total_sizeof<Key>::value(k);
+	auto val_size = total_sizeof<Value>::value(v);
+
+	auto total_size = sizeof(leaf) + key_size + val_size;
+
+	batch.actv.emplace_back();
+	auto ptr = persistent_ptr<leaf>(
+		pmemobj_reserve(pop, &batch.actv.back(), total_size, 0));
+
+	auto key_dst = reinterpret_cast<Key *>(ptr.get() + 1);
+	auto val_dst = reinterpret_cast<Value *>(
+		reinterpret_cast<char *>(key_dst) + key_size);
+
+	new (ptr.get()) leaf();
+	new (key_dst) Key(std::forward<K>(k));
+	new (val_dst) Value(std::forward<V>(v));
+
+	pmemobj_persist(pop, ptr.get(), total_size);
+
+	batch.leaves.emplace_back(ptr);
 }
 
 /**

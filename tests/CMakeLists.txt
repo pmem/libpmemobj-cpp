@@ -962,6 +962,9 @@ if(TEST_RADIX_TREE)
 	build_test_ext(NAME radix_ctor_and_assignment SRC_FILES map/map_ctor_and_assignment.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_ctor_and_assignment TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME radix_insert_batch SRC_FILES radix_tree/radix_insert_batch.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
+	add_test_generic(NAME radix_insert_batch TRACERS none memcheck pmemcheck)
+
 	if(TESTS_LONG)
 		build_test(radix_large radix_tree/radix_large.cpp)
 		add_test_generic(NAME radix_large TRACERS none)

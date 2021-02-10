@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.11-git222.gf5494503</span>
+   &#160;<span id="projectnumber">1.12-rc1.git3.gc4f4ea63</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -72,7 +72,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="transaction_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-License-Identifier: BSD-3-Clause</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/* Copyright 2016-2020, Intel Corporation */</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/* Copyright 2016-2021, Intel Corporation */</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef LIBPMEMOBJ_CPP_TRANSACTION_HPP</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define LIBPMEMOBJ_CPP_TRANSACTION_HPP</span></div>
@@ -443,7 +443,7 @@ $(function() {
 <div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span></div>
 <div class="line"><a name="l00688"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">  688</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">run</a>(<a class="code" href="classpmem_1_1obj_1_1pool__base.html">obj::pool_base</a> &amp;<a class="code" href="classpmem_1_1obj_1_1pool.html">pool</a>, std::function&lt;<span class="keywordtype">void</span>()&gt; tx, Locks &amp;... locks)</div>
 <div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    {</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1detail_1_1transaction__base.html#ada1950241b0a503c2ce0628ec03e99f0">detail::transaction_base&lt;false&gt;::run</a>(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool</a>, tx, locks...);</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;        <a class="code" href="classpmem_1_1detail_1_1transaction__base.html#ada1950241b0a503c2ce0628ec03e99f0">detail::transaction_base&lt;false&gt;::run</a>(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool</a>, tx, locks...);</div>
 <div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    }</div>
 <div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160; </div>
 <div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="comment">/*</span></div>
@@ -471,7 +471,7 @@ $(function() {
 <div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span></div>
 <div class="line"><a name="l00817"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">  817</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">run</a>(<a class="code" href="classpmem_1_1obj_1_1pool__base.html">obj::pool_base</a> &amp;<a class="code" href="classpmem_1_1obj_1_1pool.html">pool</a>, std::function&lt;<span class="keywordtype">void</span>()&gt; tx, Locks &amp;... locks)</div>
 <div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;    {</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1detail_1_1transaction__base.html#ada1950241b0a503c2ce0628ec03e99f0">detail::transaction_base&lt;true&gt;::run</a>(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool</a>, tx, locks...);</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;        <a class="code" href="classpmem_1_1detail_1_1transaction__base.html#ada1950241b0a503c2ce0628ec03e99f0">detail::transaction_base&lt;true&gt;::run</a>(<a class="code" href="classpmem_1_1obj_1_1pool.html">pool</a>, tx, locks...);</div>
 <div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    }</div>
 <div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160; </div>
 <div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;    <span class="comment">/*</span></div>

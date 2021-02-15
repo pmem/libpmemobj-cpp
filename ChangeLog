@@ -1,6 +1,6 @@
-Fri Feb 12 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>
+Mon Feb 15 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>
 
-	* Version 1.12-rc2
+	* Version 1.12
 
 	This release introduces new transaction handler type (flat_transaction)
 	which solves https://github.com/pmem/libpmemobj-cpp/issues/516 (more

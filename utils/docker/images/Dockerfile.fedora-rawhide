@@ -8,7 +8,7 @@
 #
 
 # Pull base image
-FROM registry.fedoraproject.org/fedora:rawhide
+FROM fedora:rawhide
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
@@ -21,54 +21,78 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
-ARG LIBPMEMOBJ_CPP_DEPS="\
-	libatomic \
-	libpmem-devel \
-	libpmemobj-devel \
-	pmempool"
-
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	asciidoc \
-	autoconf \
-	automake \
-	bash-completion \
-	clang \
+# Base development packages
+ARG BASE_DEPS="\
 	cmake \
-	cracklib \
-	cracklib-dicts \
-	daxctl-devel \
-	doxygen \
 	gcc \
 	gcc-c++ \
-	gdb \
 	git \
+	make"
+
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	libatomic \
+	libpmemobj-devel \
+	tbb-devel"
+
+# pmem's Valgrind (optional; valgrind-devel may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	ncurses-devel \
+	SFML-devel"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libpmem-devel \
+	libunwind-devel \
+	pmempool"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	perl-Text-Diff \
+	pkgconf \
+	sudo"
+
+ARG REDUNDANT_DEPS="\
+	bash-completion \
+	open-sans-fonts \
+	passwd \
+	tar \
+	xmlto \
+	asciidoc \
 	json-c-devel \
 	kmod-devel \
 	libtool \
 	libudev-devel \
-	libunwind-devel \
 	libuuid-devel \
-	make \
-	man \
-	ncurses-devel \
-	ndctl-devel \
-	open-sans-fonts \
-	pandoc \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	rpm-build-libs \
-	rpmdevtools \
-	SFML-devel \
-	sudo \
-	tar \
-	tbb-devel \
-	wget \
-	which \
-	xmlto \
-	$LIBPMEMOBJ_CPP_DEPS \
+	libpmem-devel \
+	cracklib \
+	cracklib-dicts \
+	wget"
+
+# Update packages and install basic tools
+RUN dnf update -y \
+ && dnf install -y \
+	asciidoc \
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${COVERITY_DEPS} \
+	${MISC_DEPS} \
  && dnf clean all
 
 # Install valgrind

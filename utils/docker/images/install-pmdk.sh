@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 #
 # install-pmdk.sh - installs libpmem & libpmemobj
@@ -23,8 +23,9 @@ git clone https://github.com/pmem/pmdk
 cd pmdk
 git checkout ${PMDK_VERSION}
 
-make -j$(nproc) prefix=/opt/pmdk
-sudo make install -j$(nproc) prefix=/opt/pmdk
+# Don't generate docs, they are reundant for us
+make DOC=n -j$(nproc) prefix=/opt/pmdk
+sudo make DOC=n install -j$(nproc) prefix=/opt/pmdk
 
 # Do not create nor test any packages if PACKAGE_MANAGER is not set
 [[ -z "${PACKAGE_MANAGER}" ]] && exit 0

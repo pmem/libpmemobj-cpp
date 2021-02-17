@@ -20,47 +20,86 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	asciidoc \
-	autoconf \
-	automake \
-	bash-completion \
-	clang \
+# Base development packages
+ARG BASE_DEPS="\
 	cmake \
-	daxctl-devel \
-	doxygen \
 	gcc \
 	gcc-c++ \
-	gdb \
 	git \
-	hub \
-	json-c-devel \
-	kmod-devel \
+	make"
+
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
 	libatomic \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
+	tbb-devel"
+
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+ARG PMDK_DEPS="\
+	autoconf \
+	automake \
+	daxctl-devel \
+	gdb \
 	man \
-	ncurses-devel \
 	ndctl-devel \
-	open-sans-fonts \
 	pandoc \
-	passwd \
-	perl-Text-Diff \
 	rpm-build \
 	rpm-build-libs \
 	rpmdevtools \
-	SFML-devel \
-	sudo \
+	which"
+
+# pmem's Valgrind (optional; valgrind-devel may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	ncurses-devel \
+	SFML-devel"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libunwind-devel"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	hub \
+	perl-Text-Diff \
+	pkgconf \
+	sudo"
+
+ARG REDUNDANT_DEPS="\
+	bash-completion \
+	open-sans-fonts \
+	passwd \
 	tar \
-	tbb-devel \
-	wget \
-	which \
 	xmlto \
+	asciidoc \
+	json-c-devel \
+	kmod-devel \
+	libtool \
+	libudev-devel \
+	libuuid-devel \
+	wget"
+
+# Update packages and install basic tools
+RUN dnf update -y \
+ && dnf install -y \
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${COVERITY_DEPS} \
+	${MISC_DEPS} \
  && dnf clean all
 
 # Install valgrind

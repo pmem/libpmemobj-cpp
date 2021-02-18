@@ -28,8 +28,9 @@ ARG LIBPMEMOBJ_CPP_DEPS="\
 	pmempool"
 
 # Install basic tools
-RUN dnf update -y \
- && dnf install -y \
+# XXX --nogpg workaround, because of Fedora rawhide signing change
+RUN dnf update -y --nogpg \
+ && dnf install -y --nogpg \
 	asciidoc \
 	autoconf \
 	automake \

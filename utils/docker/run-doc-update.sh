@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 #
 # run-doc-update.sh - is called inside a Docker container,
@@ -85,6 +85,9 @@ echo "Add and push changes:"
 git add -A
 git commit -m "doc: automatic gh-pages docs update" && true
 git push -f ${ORIGIN} ${GH_PAGES_NAME}
+
+echo "Make sure hub command is available:"
+hub --version
 
 echo "Make or update pull request:"
 # When there is already an open PR or there are no changes an error is thrown, which we ignore.

@@ -82,14 +82,6 @@ ARG MISC_DEPS="\
 	sudo \
 	whois"
 
-ARG REDUNDANT_DEPS="\
-	asciidoc \
-	curl \
-	fakeroot \
-	graphviz \
-	llvm \
-	tzdata"
-
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update the apt cache and install basic tools

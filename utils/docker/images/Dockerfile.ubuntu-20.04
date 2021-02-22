@@ -83,15 +83,6 @@ ARG MISC_DEPS="\
 	sudo \
 	whois"
 
-ARG REDUNDANT_DEPS="\
-	asciidoc \
-	fakeroot \
-	libjson-c-dev \
-	libkmod-dev \
-	libudev-dev \
-	tzdata \
-	uuid-dev"
-
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update the apt cache and install basic tools

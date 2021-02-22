@@ -63,23 +63,6 @@ ARG MISC_DEPS="\
 	pkgconf \
 	sudo"
 
-ARG REDUNDANT_DEPS="\
-	bash-completion \
-	open-sans-fonts \
-	passwd \
-	tar \
-	xmlto \
-	asciidoc \
-	json-c-devel \
-	kmod-devel \
-	libtool \
-	libudev-devel \
-	libuuid-devel \
-	libpmem-devel \
-	cracklib \
-	cracklib-dicts \
-	wget"
-
 # Update packages and install basic tools
 RUN dnf update -y \
  && dnf install -y \

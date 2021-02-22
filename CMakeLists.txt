@@ -40,8 +40,23 @@ set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
 set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test CACHE STRING "working directory for tests")
 message(STATUS "TEST_DIR set to: \"${TEST_DIR}\"")
 
+# Specify and print the build type
+set(DEFAULT_BUILD_TYPE "RelWithDebInfo")
+set(predefined_build_types
+	Debug
+	Release
+	RelWithDebInfo
+	MinSizeRel)
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "RelWithDebInfo")
+	message(STATUS "CMAKE_BUILD_TYPE not set, setting the default one: ${DEFAULT_BUILD_TYPE}")
+	set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}"
+		CACHE STRING "choose the type of build (${predefined_build_types})" FORCE STRINGS)
+else()
+	message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+	if(NOT CMAKE_BUILD_TYPE IN_LIST predefined_build_types)
+		message(WARNING "Unusual build type was set, please make sure it's proper one. "
+			"By default supported are only following: ${predefined_build_types}.")
+	endif()
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LIBPMEMOBJCPP_ROOT_DIR}/cmake)

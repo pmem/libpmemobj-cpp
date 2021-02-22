@@ -86,7 +86,7 @@ You will need the following packages for compilation:
 ```
 $ mkdir build
 $ cd build
-$ cmake .. [-DCMAKE_INSTALL_PREFIX=<path_to_installation_dir>]
+$ cmake .. [-DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=<path_to_installation_dir>]
 $ make
 # make install
 ```

@@ -9,6 +9,8 @@ XXX Igor Chorążewicz <igor.chorazewicz@intel.com>
 	-
 
 	Other changes:
+	- Switched default CMake's build type from "Debug" to "RelWithDebInfo"
+		it's relevant for a GitHub users (who may e.g. run some benchmarks)
 	-
 
 Mon Feb 15 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>

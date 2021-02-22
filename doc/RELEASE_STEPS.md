@@ -7,6 +7,7 @@ This document contains all the steps required to make a new release of libpmemob
 Make a release locally:
 - add an entry to ChangeLog, remember to change the day of the week in the release date
   - for major/minor releases mention compatibility with the previous release
+  - for major/minor releases add new ChangeLog template (for $VER+1)
 - echo $VERSION > .version
 - git add .version
 - update project's version in top-level CMakeLists.txt

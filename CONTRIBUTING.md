@@ -37,6 +37,9 @@ make cppformat
 
 We take outside code contributions to `libpmemobj-cpp` through GitHub pull requests.
 
+If you add a new feature or fix a critical bug please append appropriate entry
+to ChangeLog under newest release.
+
 **NOTE: If you do decide to implement code changes and contribute them,
 please make sure you agree your contribution can be made available under the
 [BSD-style License used for libpmemobj-cpp](LICENSE).**

@@ -41,7 +41,7 @@ set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test CACHE STRING "working directory fo
 message(STATUS "TEST_DIR set to: \"${TEST_DIR}\"")
 
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug")
+	set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LIBPMEMOBJCPP_ROOT_DIR}/cmake)

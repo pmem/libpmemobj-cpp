@@ -10,6 +10,7 @@
 #define LIBPMEMOBJ_CPP_POOL_HPP
 
 #include <cstddef>
+#include <errno.h>
 #include <functional>
 #include <mutex>
 #include <string>
@@ -108,9 +109,7 @@ public:
 #else
 		pmemobjpool *pop = pmemobj_open(path.c_str(), layout.c_str());
 #endif
-		if (pop == nullptr)
-			throw pmem::pool_error("Failed opening pool")
-				.with_pmemobj_errormsg();
+		check_pool(pop, "opening");
 
 		pmemobj_set_user_data(pop, new detail::pool_data);
 
@@ -144,9 +143,7 @@ public:
 		pmemobjpool *pop = pmemobj_create(path.c_str(), layout.c_str(),
 						  size, mode);
 #endif
-		if (pop == nullptr)
-			throw pmem::pool_error("Failed creating pool")
-				.with_pmemobj_errormsg();
+		check_pool(pop, "creating");
 
 		pmemobj_set_user_data(pop, new detail::pool_data);
 
@@ -191,9 +188,7 @@ public:
 	open(const std::wstring &path, const std::wstring &layout)
 	{
 		pmemobjpool *pop = pmemobj_openW(path.c_str(), layout.c_str());
-		if (pop == nullptr)
-			throw pmem::pool_error("Failed opening pool")
-				.with_pmemobj_errormsg();
+		check_pool(pop, "opening");
 
 		pmemobj_set_user_data(pop, new detail::pool_data);
 
@@ -223,9 +218,7 @@ public:
 	{
 		pmemobjpool *pop = pmemobj_createW(path.c_str(), layout.c_str(),
 						   size, mode);
-		if (pop == nullptr)
-			throw pmem::pool_error("Failed creating pool")
-				.with_pmemobj_errormsg();
+		check_pool(pop, "creating");
 
 		pmemobj_set_user_data(pop, new detail::pool_data);
 
@@ -434,6 +427,23 @@ public:
 	}
 
 protected:
+	static void
+	check_pool(pmemobjpool *pop, std::string mode)
+	{
+		if (pop == nullptr) {
+			if (errno == EINVAL || errno == EFBIG ||
+			    errno == ENOENT) {
+				throw pmem::pool_invalid_argument(
+					"Failed " + mode + " pool")
+					.with_pmemobj_errormsg();
+			} else {
+				throw pmem::pool_error("Failed " + mode +
+						       " pool")
+					.with_pmemobj_errormsg();
+			}
+		}
+	}
+
 	/* The pool opaque handle */
 	PMEMobjpool *pop;
 

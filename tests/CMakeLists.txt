@@ -92,6 +92,21 @@ add_library(valgrind_internal STATIC valgrind_internal.cpp)
 add_executable(check_is_pmem check_is_pmem/check_is_pmem.cpp)
 target_link_libraries(check_is_pmem ${LIBPMEM_LIBRARIES})
 
+# Set variable to know if debug tests can be run
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+	set(DEBUG_BUILD_TESTS 1)
+endif()
+
+# Set variable if currently used compiler is GNU (gcc)
+if("${CMAKE_C_COMPILER_ID}" MATCHES "GNU" AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+	set(GCC_COMPILER_IN_USE 1)
+endif()
+
+# Produce general warnings, e.g. when a command/tool is missing
+if(NOT GDB_FOUND)
+	message(WARNING "GDB was not found - skipping some tests. To fix, make sure `gdb` command is OS-wide accesible.")
+endif()
+
 # ----------------------------------------------------------------- #
 ## Tests
 # ----------------------------------------------------------------- #
@@ -583,8 +598,6 @@ if(TEST_CONCURRENT_HASHMAP)
 				add_test_generic(NAME concurrent_hash_map_rehash_break CASE ${TESTCASE} TRACERS none)
 			endforeach()
 		endif()
-	else()
-		message(WARNING "Skipping concurrent_hash_map_rehash_break test because GDB was not found")
 	endif()
 
 	if(NOT TESTS_TBB)
@@ -634,8 +647,6 @@ if(TEST_CONCURRENT_HASHMAP)
 				configure_file("${CMAKE_SCRIPT}.cmake.in" "${CMAKE_SCRIPT}_${case}.cmake" @ONLY)
 				add_test_generic(NAME ${TEST} CASE ${case} TRACERS none)
 			endforeach()
-		else()
-			message(WARNING "Skipping concurrent_hash_map_pmreorder_break_insert test because GDB was not found")
 		endif()
 	else()
 		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
@@ -902,16 +913,17 @@ if(TEST_CONCURRENT_MAP)
 	add_test_generic(NAME concurrent_map_find_lower_lower_eq TRACERS none memcheck pmemcheck)
 
 	if(TESTS_CONCURRENT_GDB AND GDB_FOUND)
-		if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		# This test is confirmed to run on gcc (and not on clang)
+		if(DEBUG_BUILD_TESTS AND GCC_COMPILER_IN_USE)
 			build_test(concurrent_map_mt_gdb concurrent_map_mt_gdb/concurrent_map_mt_gdb.cpp)
 			add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 0 SCRIPT concurrent_map_mt_gdb/concurrent_map_mt_gdb_0.cmake)
 			add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 1 SCRIPT concurrent_map_mt_gdb/concurrent_map_mt_gdb_1.cmake)
 			add_test_generic(NAME concurrent_map_mt_gdb TRACERS none CASE 2 SCRIPT concurrent_map_mt_gdb/concurrent_map_mt_gdb_2.cmake)
+		elseif(NOT DEBUG_BUILD_TESTS)
+			message(WARNING "TESTS_CONCURRENT_GDB is set, but it's a non-debug build - concurrent_map_mt_gdb test will be skipped.")
 		else()
-			message(WARNING "Skipping concurrent_map_mt_gdb test because it is non-debug build")
+			message(WARNING "TESTS_CONCURRENT_GDB is set, but current compiler is not gcc (concurrent_map_mt_gdb seems to work only with it). Skipping.")
 		endif()
-	elseif(TESTS_CONCURRENT_GDB)
-		message(WARNING "Skipping concurrent_map_mt_gdb test because GDB was not found")
 	endif()
 
 	build_test(concurrent_map_insert_reopen concurrent_map/concurrent_map_insert_reopen.cpp)

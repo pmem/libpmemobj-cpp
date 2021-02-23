@@ -2,17 +2,17 @@
 # Copyright 2016-2021, Intel Corporation
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
+# Dockerfile - a 'recipe' for Docker to build an image of debian-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
-FROM ubuntu:rolling
+FROM registry.hub.docker.com/library/debian:latest
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
-ENV OS ubuntu
-ENV OS_VER rolling
+ENV OS debian
+ENV OS_VER latest
 ENV PACKAGE_MANAGER deb
 ENV NOTTY 1
 
@@ -28,7 +28,7 @@ RUN apt-get update \
 	asciidoc \
 	autoconf \
 	clang \
-	clang-format-9 \
+	clang-format \
 	cmake \
 	curl \
 	debhelper \

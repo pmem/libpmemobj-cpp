@@ -9,7 +9,7 @@
 
 # Pull base image
 FROM fedora:rawhide
-MAINTAINER szymom.romik@intel.com
+MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
 ENV OS fedora
@@ -21,54 +21,61 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
+# Base development packages
+ARG BASE_DEPS="\
+	cmake \
+	gcc \
+	gcc-c++ \
+	git \
+	make"
+
+# Dependencies for compiling libpmemobj-cpp project
 ARG LIBPMEMOBJ_CPP_DEPS="\
 	libatomic \
-	libpmem-devel \
 	libpmemobj-devel \
+	tbb-devel"
+
+# pmem's Valgrind (optional; valgrind-devel may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	ncurses-devel \
+	SFML-devel"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libpmem-devel \
+	libunwind-devel \
 	pmempool"
 
-# Install basic tools
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	perl-Text-Diff \
+	pkgconf \
+	sudo"
+
+# Update packages and install basic tools
 RUN dnf update -y \
  && dnf install -y \
 	asciidoc \
-	autoconf \
-	automake \
-	bash-completion \
-	clang \
-	cmake \
-	cracklib \
-	cracklib-dicts \
-	daxctl-devel \
-	doxygen \
-	gcc \
-	gcc-c++ \
-	gdb \
-	git \
-	json-c-devel \
-	kmod-devel \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
-	man \
-	ncurses-devel \
-	ndctl-devel \
-	open-sans-fonts \
-	pandoc \
-	passwd \
-	perl-Text-Diff \
-	rpm-build \
-	rpm-build-libs \
-	rpmdevtools \
-	SFML-devel \
-	sudo \
-	tar \
-	tbb-devel \
-	wget \
-	which \
-	xmlto \
-	$LIBPMEMOBJ_CPP_DEPS \
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${COVERITY_DEPS} \
+	${MISC_DEPS} \
  && dnf clean all
 
 # Install valgrind

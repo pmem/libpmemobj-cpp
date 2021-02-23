@@ -7,19 +7,18 @@
 #
 
 # Pull base image
-FROM registry.hub.docker.com/library/ubuntu:20.10
+FROM registry.hub.docker.com/library/ubuntu:devel
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
 ENV OS ubuntu
-ENV OS_VER 20.10
+ENV OS_VER devel
 ENV PACKAGE_MANAGER deb
 ENV NOTTY 1
 
 # Additional parameters to build docker without building components
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
-ARG SKIP_SCRIPTS_DOWNLOAD
 
 # Base development packages
 ARG BASE_DEPS="\
@@ -95,11 +94,6 @@ RUN ./install-valgrind.sh
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh dpkg
-
-# Download scripts required in run-*.sh
-COPY download-scripts.sh download-scripts.sh
-COPY 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch
-RUN ./download-scripts.sh
 
 # Add user
 ENV USER user

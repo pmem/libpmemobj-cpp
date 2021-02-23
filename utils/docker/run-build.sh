@@ -48,7 +48,8 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
 		-DTEST_DIR=${TEST_DIR} \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
-		-DTESTS_COMPATIBILITY=1
+		-DTESTS_COMPATIBILITY=1 \
+		-DTESTS_CONCURRENT_GDB=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}
@@ -82,7 +83,8 @@ function tests_clang_release_cpp11_no_valgrind() {
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
 		-DTEST_DIR=${TEST_DIR} \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
-		-DTESTS_COMPATIBILITY=1
+		-DTESTS_COMPATIBILITY=1 \
+		-DTESTS_CONCURRENT_GDB=1
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}
@@ -182,7 +184,8 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
 		-DTEST_DIR=${TEST_DIR} \
 		-DBUILD_EXAMPLES=0 \
-		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM}
+		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
+		-DTESTS_CONCURRENT_GDB=1
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout ${TEST_TIMEOUT}

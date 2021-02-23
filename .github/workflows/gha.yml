@@ -141,6 +141,7 @@ jobs:
         run: cmake . -Bbuild
                     -G "${env:GENERATOR}"
                     -A "${env:ARCH}"
+                    -DCMAKE_BUILD_TYPE="${{ matrix.CONFIG }}"
                     -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
                     -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
                     -DTESTS_USE_FORCED_PMEM=ON

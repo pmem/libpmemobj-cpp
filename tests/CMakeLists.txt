@@ -161,6 +161,7 @@ add_test_generic(NAME pool CASE 2 TRACERS none)
 add_test_generic(NAME pool CASE 3 TRACERS none)
 add_test_generic(NAME pool CASE 4 TRACERS none)
 add_test_generic(NAME pool CASE 5 TRACERS none)
+add_test_generic(NAME pool CASE 6 TRACERS none)
 
 if(WIN32)
 	build_test(pool_win pool/pool_win.cpp)

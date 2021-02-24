@@ -35,11 +35,6 @@ ARG LIBPMEMOBJ_CPP_DEPS="\
 	libpmemobj-devel \
 	tbb-devel"
 
-# pmem's Valgrind (optional; valgrind-devel may be used instead)
-ARG VALGRIND_DEPS="\
-	autoconf \
-	automake"
-
 # Examples (optional)
 ARG EXAMPLES_DEPS="\
 	ncurses-devel \
@@ -50,11 +45,14 @@ ARG DOC_DEPS="\
 	doxygen"
 
 # Tests (optional)
+# XXX: Valgrind is installed from upstream package, because of:
+# https://bugzilla.redhat.com/show_bug.cgi?id=1903527
 ARG TESTS_DEPS="\
 	gdb \
 	libpmem-devel \
 	libunwind-devel \
-	pmempool"
+	pmempool \
+	valgrind-devel"
 
 # Misc for our builds/CI (optional)
 ARG MISC_DEPS="\

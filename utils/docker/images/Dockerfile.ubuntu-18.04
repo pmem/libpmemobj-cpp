@@ -51,7 +51,8 @@ ARG PMDK_DEPS="\
 	debhelper \
 	devscripts \
 	gdb \
-	pandoc"
+	pandoc \
+	python3"
 
 # pmem's Valgrind (optional; valgrind-devel may be used instead)
 ARG VALGRIND_DEPS="\

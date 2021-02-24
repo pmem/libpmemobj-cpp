@@ -42,6 +42,7 @@ ARG PMDK_DEPS="\
 	man \
 	ndctl-devel \
 	pandoc \
+	python3 \
 	rpm-build \
 	rpm-build-libs \
 	rpmdevtools \

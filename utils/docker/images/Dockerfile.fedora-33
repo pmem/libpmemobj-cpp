@@ -85,7 +85,6 @@ RUN dnf update -y \
 	${EXAMPLES_DEPS} \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
-	${COVERITY_DEPS} \
 	${MISC_DEPS} \
  && dnf clean all
 

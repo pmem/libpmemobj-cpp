@@ -9,15 +9,16 @@
 
 set -e
 
-PACKAGE_MANAGER=${1}
-
-# common: 1.9.2, 28.10.2020
-PMDK_VERSION="1.9.2"
-
 if [ "${SKIP_PMDK_BUILD}" ]; then
 	echo "Variable 'SKIP_PMDK_BUILD' is set; skipping building PMDK"
 	exit
 fi
+
+PACKAGE_MANAGER=${1}
+
+# master: Merge pull request #5150 from kilobyte/rpm-no-lto, 16.02.2021
+# contains fix for packaging
+PMDK_VERSION="7f88d9fae088b81936d2f6d5235169e90e7478c7"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

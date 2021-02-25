@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -51,6 +51,24 @@ public:
 	{
 		(*this) = pool_error(what() + std::string(": ") +
 				     detail::errormsg());
+		return *this;
+	}
+};
+
+/**
+ * Custom pool error class.
+ *
+ * Thrown when there is an invalid argument passed to create/open pool.
+ */
+class pool_invalid_argument : public pool_error {
+public:
+	using pool_error::pool_error;
+
+	pool_invalid_argument &
+	with_pmemobj_errormsg()
+	{
+		(*this) = pool_invalid_argument(what() + std::string(": ") +
+						detail::errormsg());
 		return *this;
 	}
 };

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2015-2020, Intel Corporation */
+/* Copyright 2015-2021, Intel Corporation */
 
 /*
  * obj_cpp_pool.c -- cpp pool implementation test
@@ -23,6 +23,27 @@ struct root {
 	nvobj::p<int> val;
 };
 
+/* emulate no more space in the memory */
+void *
+null_alloc_func(size_t s)
+{
+	errno = ENOSPC;
+	return nullptr;
+}
+
+void
+test_pool_exceptions()
+{
+	/* try catching pool_invalid_argument as a pool_error */
+	try {
+		throw pmem::pool_invalid_argument("test");
+	} catch (pmem::pool_error &e) {
+		return;
+	}
+
+	UT_ASSERT(0);
+}
+
 /*
  * pool_create -- (internal) test pool create
  */
@@ -35,8 +56,11 @@ pool_create(const char *path, const char *layout, size_t poolsize,
 		pop = nvobj::pool<root>::create(path, layout, poolsize, mode);
 		nvobj::persistent_ptr<root> root = pop.root();
 		UT_ASSERT(root != nullptr);
-	} catch (pmem::pool_error &e) {
+	} catch (pmem::pool_invalid_argument &e) {
 		UT_OUT("%s: pool::create: %s", path, e.what());
+		return;
+	} catch (pmem::pool_error &e) {
+		UT_OUT("%s: pool::create: (pool_error) %s", path, e.what());
 		return;
 	}
 
@@ -69,8 +93,11 @@ pool_open(const char *path, const char *layout)
 	nvobj::pool<root> pop;
 	try {
 		pop = nvobj::pool<root>::open(path, layout);
-	} catch (pmem::pool_error &e) {
+	} catch (pmem::pool_invalid_argument &e) {
 		UT_OUT("%s: pool::open: %s", path, e.what());
+		return;
+	} catch (pmem::pool_error &e) {
+		UT_OUT("%s: pool::open: (pool_error) %s", path, e.what());
 		return;
 	}
 
@@ -142,6 +169,9 @@ test(int argc, char *argv[])
 		layout = argv[3];
 
 	switch (argv[1][0]) {
+		case 'n':
+			pmemobj_set_funcs(null_alloc_func, NULL, NULL, NULL);
+			/* no break */
 		case 'c':
 			poolsize = std::stoul(argv[4], nullptr, 0) *
 				MB; /* in megabytes */
@@ -165,6 +195,8 @@ test(int argc, char *argv[])
 		default:
 			UT_FATAL("unknown operation");
 	}
+
+	test_pool_exceptions();
 }
 
 int

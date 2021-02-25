@@ -805,13 +805,13 @@ if (TEST_STRING)
 	add_test_generic(NAME string_libcxx_string_view_compare_pointer_size TRACERS none pmemcheck memcheck)
 
 	# On Windows only run for new MSVC compiler
-	if(MSVC_VERSION GREATER 1919)
+	if(NOT WIN32 OR MSVC_VERSION GREATER 1919)
 		build_test(string_libcxx_string_view_opeq_string_view libcxx/string.view/string.view.comparison/opeq.string_view.string_view.pass.cpp)
 		add_test_generic(NAME string_libcxx_string_view_opeq_string_view TRACERS none pmemcheck memcheck)
 
 		# Due to LNK1179 error (in Windows' Release builds) we want to run these tests
 		# only with std::string_view (not ours implementation; available in C++17)
-		if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR CXX_STANDARD GREATER 14)
+		if (NOT WIN32 OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR CXX_STANDARD GREATER 14)
 			build_test(string_libcxx_string_view_opeq_pointer libcxx/string.view/string.view.comparison/opeq.string_view.pointer.pass.cpp)
 			add_test_generic(NAME string_libcxx_string_view_opeq_pointer TRACERS none pmemcheck memcheck)
 

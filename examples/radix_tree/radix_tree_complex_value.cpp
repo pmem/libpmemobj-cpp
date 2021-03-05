@@ -15,21 +15,36 @@
 
 #include <iostream>
 
+struct date {
+	pmem::obj::p<uint64_t> year;
+	pmem::obj::p<uint64_t> month;
+	pmem::obj::p<uint64_t> day;
+};
+
 /* Pmem-resident data type. */
 struct city_info {
 	city_info(uint64_t population, uint64_t area_in_sqr_km,
-		  std::string country) /* std::string is passed here since
-					  pmem::obj::string cannot be used on
-					  dram */
+		  std::string country,
+		  date upd_date = date{2021, 1, 1}) /* std::string
+		     is passed here since pmem::obj::string
+		     cannot be used on dram */
 	    : population(population),
 	      area_in_sqr_km(area_in_sqr_km),
-	      country(country)
+	      country(country),
+	      latest_update_date(upd_date)
 	{
 	}
 
 	pmem::obj::p<uint64_t> population;
 	pmem::obj::p<uint64_t> area_in_sqr_km;
 	pmem::obj::string country;
+
+	/* If some fields are often updated at the same time, it might
+	 * be better to put them inside a structure and wrap the whole structure
+	 * in pmem::obj::p<>. By doing this, number of snapshots can be reduced
+	 * (which means better performance).
+	 */
+	pmem::obj::p<date> latest_update_date;
 };
 
 using kv_type = pmem::obj::experimental::radix_tree<
@@ -54,9 +69,20 @@ insert_elements_kv(pmem::obj::pool<root> pop)
 	 * The transaction guarantees that either all elements will be inserted
 	 * or none of them (even in case of failure). */
 	pmem::obj::transaction::run(pop, [&] {
+		/* Ok, construct city_info directly on pmem */
 		r->kv->try_emplace("Gdansk", 470907, 262, "Poland");
 		r->kv->try_emplace("Warsaw", 1793579, 517, "Poland");
 		r->kv->try_emplace("Krakow", 779115, 326, "Poland");
+
+		/* WRONG: cannot create city_info on stack (DRAM) since
+		 * pmem::obj::string can only be placed on pmem:
+		 *
+		 * city_info cs(470907, 262, "Poland");
+		 * r->kv->try_emplace("Ponzań", cs);
+		 *
+		 * r->kv->try_emplace("Poznań", city_info(470907, 262,
+		 * "Poland"));
+		 */
 	});
 
 	kv_type::iterator it = r->kv->find("Gdansk");
@@ -64,11 +90,26 @@ insert_elements_kv(pmem::obj::pool<root> pop)
 
 	/* Update "Gdansk" information in a transaction.
 	 * The transaction guarantees that either both population and area will
-	 * be updated or none of them (even in case of failure)
+	 * be updated or none of them (even in case of failure).
+	 *
+	 * This code will make two snaphots.
 	 */
 	pmem::obj::transaction::run(pop, [&] {
 		it->value().population += 10000;
 		it->value().area_in_sqr_km += 10;
+	});
+
+	/* Update "Gdańsk" latest_update_date field.
+	 *
+	 * This code will result in only one snaphot.
+	 */
+	pmem::obj::transaction::run(pop, [&] {
+		it->value().latest_update_date.get_rw().year = 2021;
+		it->value().latest_update_date.get_rw().month = 3;
+		it->value().latest_update_date.get_rw().day = 5;
+
+		/* OR */
+		it->value().latest_update_date = date{2021, 3, 5};
 	});
 
 	it = r->kv->find("Warsaw");

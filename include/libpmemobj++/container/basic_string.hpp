@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2020, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 /**
  * @file
@@ -697,7 +697,7 @@ basic_string<CharT, Traits>::basic_string(std::initializer_list<CharT> ilist)
 }
 
 /**
- * Implicitly converts argument to a string view then initilizes
+ * Implicitly converts argument to a string view then initializes
  * the string with the content of string view.
  *
  * @param[in] t object (convertible to std::basic_string_view)
@@ -725,7 +725,7 @@ basic_string<CharT, Traits>::basic_string(const T &t)
 }
 
 /**
- * Implicitly converts argument to a string view then initilizes
+ * Implicitly converts argument to a string view then initializes
  * the string with the subrange [pos, pos + n) of string view.
  *
  * @param[in] t object (convertible to std::basic_string_view)

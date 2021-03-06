@@ -203,7 +203,7 @@ main(int argc, char *argv[])
 			});
 		}
 	} catch (std::exception &e) {
-		std::cerr << "Exception occured: " << e.what() << std::endl;
+		std::cerr << "Exception occurred: " << e.what() << std::endl;
 		retval = -1;
 	}
 	try {

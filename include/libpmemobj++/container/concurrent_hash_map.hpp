@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2020, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 /**
  * @file
@@ -1028,7 +1028,7 @@ public:
 
 	/*
 	 * Should be called before concurrent_hash_map destructor is called.
-	 * Otherwise, program can terminate if an exception occurs wile freeing
+	 * Otherwise, program can terminate if an exception occurs while freeing
 	 * memory inside dtor.
 	 */
 	void

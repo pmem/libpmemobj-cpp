@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -25,7 +25,7 @@ namespace experimental
  * Persistent self-relative pointer class.
  *
  * self_relative_ptr implements a smart ptr. It encapsulates the
- * self offseted pointer and provides member access, dereference and array
+ * self offsetted pointer and provides member access, dereference and array
  * access operators.
  *
  * @includedoc shared/pointer_requirements.txt

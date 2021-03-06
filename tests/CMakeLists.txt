@@ -104,7 +104,7 @@ endif()
 
 # Produce general warnings, e.g. when a command/tool is missing
 if(NOT GDB_FOUND)
-	message(WARNING "GDB was not found - skipping some tests. To fix, make sure `gdb` command is OS-wide accesible.")
+	message(WARNING "GDB was not found - skipping some tests. To fix, make sure `gdb` command is OS-wide accessible.")
 endif()
 
 # ----------------------------------------------------------------- #

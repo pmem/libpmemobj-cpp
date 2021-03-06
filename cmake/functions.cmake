@@ -201,7 +201,7 @@ endfunction()
 # src version shows the current version, as reported by git describe
 # unless git is not available, then it's set to the recently released VERSION
 function(set_source_ver SRCVERSION)
-	# if there's version file commited, use it
+	# if there's version file committed, use it
 	if(EXISTS "${LIBPMEMOBJCPP_ROOT_DIR}/.version")
 		file(STRINGS ${LIBPMEMOBJCPP_ROOT_DIR}/.version FILE_VERSION)
 		set(SRCVERSION ${FILE_VERSION} PARENT_SCOPE)

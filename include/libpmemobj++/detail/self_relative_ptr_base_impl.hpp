@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -291,7 +291,7 @@ private:
 };
 
 /**
- * Static class accesssor to self_relative_ptr_base
+ * Static class accessor to self_relative_ptr_base
  */
 template <typename T>
 class self_relative_accessor {

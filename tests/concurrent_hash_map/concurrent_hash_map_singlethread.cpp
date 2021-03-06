@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /*
  * concurrent_hash_map.cpp -- pmem::obj::concurrent_hash_map test
@@ -191,7 +191,7 @@ tx_alloc_wrapper(nvobj::pool_base &pop, nvobj::persistent_ptr<U> &ptr,
 }
 
 /*
- * ctor_test -- (internal) test constrcutors
+ * ctor_test -- (internal) test constructors
  * pmem::obj::concurrent_hash_map<nvobj::p<int>, nvobj::p<int> >
  */
 void

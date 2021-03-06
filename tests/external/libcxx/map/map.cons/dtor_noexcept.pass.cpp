@@ -101,7 +101,7 @@ run(pmem::obj::pool<root> &pop)
 		typedef nvobjex::concurrent_map<MoveOnly, MoveOnly> C;
 		static_assert(std::is_nothrow_destructible<C>::value, "");
 	}
-#ifdef XXX // XXX: Implemenet test_allocator and other_allocator class
+#ifdef XXX // XXX: Implement test_allocator and other_allocator class
 	typedef std::pair<const MoveOnly, MoveOnly> V;
 	{
 		typedef nvobjex::concurrent_map<MoveOnly, MoveOnly,

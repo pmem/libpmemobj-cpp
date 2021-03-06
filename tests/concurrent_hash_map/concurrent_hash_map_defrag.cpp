@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * concurrent_hash_map_defrag.cpp -- pmem::obj::concurrent_hash_map test
@@ -198,7 +198,7 @@ erase_defrag_concurrent_test(nvobj::pool<root> &pop, bool reversed_order,
 
 	size_t cnt = 0;
 	for (auto &v : *map) {
-		/* first NUMBER_ITEMS_SAVE elements wont be erased */
+		/* first NUMBER_ITEMS_SAVE elements won't be erased */
 		if (cnt++ < NUMBER_ITEMS_SAVE)
 			elements_to_save.push_back(
 				std::string(v.first.c_str()));

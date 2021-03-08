@@ -443,16 +443,22 @@ public:
 		}
 	}
 
-	/**
-	 * Possible stages of a transaction, for every stage one or more
-	 * callbacks can be registered.
+	/*! \enum stage
+		\brief Possible stages of a transaction.
+
+		For every stage one or more callbacks can be registered
+		(see transaction::register_callback()).
+
+		To read more about PMDK's transactions and their stages, see
+		manpage pmemobj_tx_begin(3):
+		https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3
 	 */
 	enum class stage {
-		work = TX_STAGE_WORK,	      /* transaction in progress */
-		oncommit = TX_STAGE_ONCOMMIT, /* successfully committed */
-		onabort = TX_STAGE_ONABORT,   /* tx_begin failed or transaction
-						 aborted */
-		finally = TX_STAGE_FINALLY,   /* ready for cleanup */
+		work = TX_STAGE_WORK,	      /**< transaction in progress */
+		oncommit = TX_STAGE_ONCOMMIT, /**< successfully committed */
+		onabort = TX_STAGE_ONABORT, /**< tx_begin failed or transaction
+					       aborted */
+		finally = TX_STAGE_FINALLY, /**< ready for cleanup */
 	};
 
 	/**

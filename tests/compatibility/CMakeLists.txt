@@ -7,7 +7,7 @@ include(ExternalProject)
 set(COMPATIBILITY_TEST_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/headers)
 
 # Add external cmake projects with libpmemobj-cpp in selected {version}
-# to build their headers (to include in compatbility tests).
+# to build their headers (to include in compatibility tests).
 function(add_libpmemobj_cpp version)
     ExternalProject_Add(libpmemobj-cpp-${version}
         GIT_REPOSITORY https://github.com/pmem/libpmemobj-cpp

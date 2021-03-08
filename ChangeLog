@@ -58,7 +58,7 @@ Wed Sep 30 2020 Szymon Romik <szymon.romik@intel.com>
 	- string_view class (support for compilers older than C++17)
 	- experimental self_relative_ptr and std::atomic<self_relative_ptr>
 		specialization (persistent smart ptr which encapsulates the self
-		offseted pointer and provides member access, dereference and
+		offsetted pointer and provides member access, dereference and
 		array access operators - for some workloads it could be faster
 		alternative for persistent_ptr)
 
@@ -88,7 +88,7 @@ Thu May 28 2020 Szymon Romik <szymon.romik@intel.com>
 
 	Optimizations:
 	- optimized clear() and erase() for trivial types in segment_vector
-	- optimized move constructor and assignement for basic_string
+	- optimized move constructor and assignment for basic_string
 
 	Bug Fixes:
 	- fixed free_data() in concurrent_hash_map

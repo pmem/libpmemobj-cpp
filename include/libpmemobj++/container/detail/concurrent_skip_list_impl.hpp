@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 #ifndef PMEMOBJ_CONCURRENT_SKIP_LIST_IMPL_HPP
 #define PMEMOBJ_CONCURRENT_SKIP_LIST_IMPL_HPP
@@ -720,8 +720,8 @@ public:
 	}
 
 	/**
-	 * Intialize concurrent_skip_list after process restart.
-	 * MUST be called everytime after process restart.
+	 * Initialize concurrent_skip_list after process restart.
+	 * MUST be called every time after process restart.
 	 * Not thread safe.
 	 *
 	 */
@@ -3060,7 +3060,7 @@ private:
 	 * Each node object has different size which depends on number of layers
 	 * the node is linked. In this method we calculate the size of the new
 	 * node based on the node height. Then required amount of bytes are
-	 * allcoated and casted to the persistent_node_ptr.
+	 * allocated and casted to the persistent_node_ptr.
 	 *
 	 * @pre Should be called inside transaction.
 	 */

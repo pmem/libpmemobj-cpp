@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * radix_tree_inline_string.cpp -- example which shows how to use
@@ -62,7 +62,7 @@ insert_elements_kv(pmem::obj::pool<root> pop)
 		assert(pmem::obj::string_view(it->value())
 			       .compare("some long string") == 0);
 
-		/* If reallocation happend on assign_val, it2 will be
+		/* If reallocation happened on assign_val, it2 will be
 		 * invalidated */
 		(void)it2;
 

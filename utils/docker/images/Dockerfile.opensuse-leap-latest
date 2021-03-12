@@ -20,6 +20,57 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
+# Base development packages
+ARG BASE_DEPS="\
+	cmake \
+	gcc \
+	git \
+	make"
+
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	libatomic1 \
+	tbb-devel"
+
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+ARG PMDK_DEPS="\
+	autoconf \
+	automake \
+	fdupes \
+	gdb \
+	libndctl-devel \
+	man \
+	pandoc \
+	python3 \
+	rpm-build \
+	rpmdevtools \
+	which"
+
+# pmem's Valgrind (optional; valgrind package may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	ncurses-devel"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libunwind-devel"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	perl-Text-Diff \
+	pkg-config \
+	sudo"
+
 # Update the OS
 RUN zypper dup -y
 
@@ -28,45 +79,17 @@ RUN zypper update -y
 
 # Install basic tools
 RUN zypper install -y \
-	asciidoc \
-	autoconf \
-	automake \
-	bash-completion \
-	clang \
-	cmake \
-	doxygen \
-	fdupes \
-	gcc \
-	gdb \
-	git \
-	keyutils-devel \
-	libjson-c-devel \
-	libkmod-devel \
-	libndctl-devel \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
-	man \
-	ncurses-devel \
-	pandoc \
-	perl-Text-Diff \
-	'pkgconfig(bash-completion)' \
-	python3 \
-	rpm-build \
-	rpmdevtools \
-	sudo \
-	tar \
-	tbb-devel \
-	wget \
-	which \
-	xmlto
-RUN zypper clean all
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${MISC_DEPS}
 
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
+# Clean the package cache
+RUN zypper clean all
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh

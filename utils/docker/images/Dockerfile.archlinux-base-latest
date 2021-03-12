@@ -20,35 +20,73 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
+# Base development packages
+ARG BASE_DEPS="\
+	cmake \
+	gcc \
+	git \
+	make"
+
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	intel-tbb"
+
+# ndctl's dependencies (optional; ndctl-devel & daxctl-devel may be used instead)
+ARG NDCTL_DEPS="\
+	automake \
+	asciidoc \
+	bash-completion \
+	pkg-config \
+	xmlto"
+
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+ARG PMDK_DEPS="\
+	autoconf \
+	automake \
+	gdb \
+	python3 \
+	which"
+
+# pmem's Valgrind (optional; valgrind package may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	sfml"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen \
+	graphviz"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libunwind"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	file \
+	perl-text-diff \
+	pkg-config \
+	sudo \
+	whois"
+
 # Update the Apt cache and install basic tools
 RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm \
-	asciidoc \
-	autoconf \
-	automake \
-	bash-completion \
-	clang \
-	cmake \
-	doxygen \
-	file \
-	gcc \
-	gdb \
-	git \
-	graphviz \
-	sfml \
-	intel-tbb \
-	libunwind \
-	llvm \
-	make \
-	pandoc \
-	perl-text-diff \
-	pkg-config \
-	ruby \
-	sudo \
-	wget \
-	which \
-	whois \
-	xmlto
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${NDCTL_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${MISC_DEPS}
 
 # Install libndctl
 COPY install-libndctl.sh install-libndctl.sh

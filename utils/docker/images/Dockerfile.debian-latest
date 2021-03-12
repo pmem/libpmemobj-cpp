@@ -20,43 +20,70 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
+# Base development packages
+ARG BASE_DEPS="\
+	cmake \
+	gcc \
+	git"
+
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	libatomic1 \
+	libtbb-dev"
+
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+ARG PMDK_DEPS="\
+	autoconf \
+	automake \
+	debhelper \
+	devscripts \
+	gdb \
+	libdaxctl-dev \
+	libndctl-dev \
+	pandoc \
+	python3"
+
+# pmem's Valgrind (optional; valgrind may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	libncurses5-dev \
+	libsfml-dev"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen \
+	graphviz"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libunwind-dev"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	libtext-diff-perl \
+	pkg-config \
+	sudo \
+	whois"
+
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update the Apt cache and install basic tools
 RUN apt-get update \
  && apt-get install -y software-properties-common \
-	asciidoc \
-	autoconf \
-	clang \
-	clang-format \
-	cmake \
-	curl \
-	debhelper \
-	devscripts \
-	doxygen \
-	gcc \
-	gdb \
-	git \
-	graphviz \
-	libdaxctl-dev \
-	libjson-c-dev \
-	libkmod-dev \
-	libncurses5-dev \
-	libndctl-dev \
-	libsfml-dev \
-	libtbb-dev \
-	libtext-diff-perl \
-	libudev-dev \
-	libunwind-dev \
-	llvm \
-	pandoc \
-	pkg-config \
-	ruby \
-	sudo \
-	tzdata \
-	uuid-dev \
-	wget \
-	whois \
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${MISC_DEPS} \
  && rm -rf /var/lib/apt/lists/*
 
 # Install valgrind

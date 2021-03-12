@@ -32,7 +32,7 @@ ARG LIBPMEMOBJ_CPP_DEPS="\
 	libatomic1 \
 	libtbb-dev"
 
-# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+# PMDK's dependencies (optional; libpmemobj-dev package may be used instead)
 ARG PMDK_DEPS="\
 	autoconf \
 	automake \
@@ -44,7 +44,7 @@ ARG PMDK_DEPS="\
 	pandoc \
 	python3"
 
-# pmem's Valgrind (optional; valgrind-devel may be used instead)
+# pmem's Valgrind (optional; valgrind package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -91,7 +91,6 @@ RUN apt-get update \
  && apt-get install -y software-properties-common \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
-	${NDCTL_DEPS} \
 	${PMDK_DEPS} \
 	${VALGRIND_DEPS} \
 	${EXAMPLES_DEPS} \

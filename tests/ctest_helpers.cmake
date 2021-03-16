@@ -24,19 +24,6 @@ set(LIBS_DIRS ${LIBPMEMOBJ_LIBRARY_DIRS} ${LIBPMEM_LIBRARY_DIRS})
 include_directories(${INCLUDE_DIRS})
 link_directories(${LIBS_DIRS})
 
-function(find_gdb)
-	execute_process(COMMAND gdb --help
-			RESULT_VARIABLE GDB_RET
-			OUTPUT_QUIET
-			ERROR_QUIET)
-	if(GDB_RET)
-		set(GDB_FOUND 0 CACHE INTERNAL "")
-		message(WARNING "GDB NOT found, some tests will be skipped")
-	else()
-		set(GDB_FOUND 1 CACHE INTERNAL "")
-	endif()
-endfunction()
-
 function(find_packages)
 	if(PKG_CONFIG_FOUND)
 		pkg_check_modules(CURSES QUIET ncurses)
@@ -56,34 +43,52 @@ function(find_packages)
 		message(WARNING "libunwind not found. Stack traces from tests will not be reliable")
 	endif()
 
-	# XXX: if pmreorder not supported (e.g. on Win) - print one message "tests will be skipped"
-	if(NOT WIN32)
-		if(VALGRIND_FOUND AND VALGRIND_PMEMCHECK_FOUND AND TESTS_PMREORDER)
-			if((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
-				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
-				get_program_version_major_minor(${PMREORDER} PMREORDER_VERSION)
-				message(STATUS "pmreorder found: ${PMREORDER}, in version: ${PMREORDER_VERSION}")
+	find_gdb()
+	find_pmreorder()
+endfunction()
 
-				if(PMREORDER_VERSION EQUAL PMREORDER_REQUIRED_VERSION OR PMREORDER_VERSION GREATER PMREORDER_REQUIRED_VERSION)
-					set(PROPER_PMREORDER_VERSION 1)
-				endif()
+function(find_gdb)
+	execute_process(COMMAND gdb --help
+			RESULT_VARIABLE GDB_RET
+			OUTPUT_QUIET
+			ERROR_QUIET)
+	if(GDB_RET)
+		set(GDB_FOUND 0 CACHE INTERNAL "")
+		message(WARNING "GDB NOT found, some tests will be skipped")
+	else()
+		set(GDB_FOUND 1 CACHE INTERNAL "")
+	endif()
+endfunction()
 
-				if(PMREORDER AND PROPER_PMREORDER_VERSION)
-					set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
-					set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
-				elseif(NOT PMREORDER)
-					message(WARNING "Pmreorder not found - pmreorder tests will not be performed.")
-				elseif(NOT PROPER_PMREORDER_VERSION)
-					message(WARNING "Pmreorder should be in version >= ${PMREORDER_REQUIRED_VERSION} - pmreorder tests will not be performed.")
-				endif()
-			else()
-				message(WARNING "Pmemcheck must be installed in version 1.X for pmreorder to work - pmreorder tests will not be performed.")
-			endif()
-		elseif(NOT VALGRIND_FOUND AND TESTS_USE_VALGRIND)
-			message(FATAL_ERROR "Valgrind not found, but tests are enabled. To disable them set CMake option TESTS_USE_VALGRIND=OFF.")
+# Find pmreorder in proper version
+function(find_pmreorder)
+	if((NOT VALGRIND_FOUND OR NOT VALGRIND_PMEMCHECK_FOUND) AND TESTS_PMREORDER)
+		message(FATAL_ERROR "Valgrind (with pmemcheck) not found, but pmreorder tests are enabled. "
+				"To disable them set CMake option TESTS_USE_VALGRIND=OFF.")
+	elseif(NOT VALGRIND_FOUND OR NOT VALGRIND_PMEMCHECK_FOUND OR NOT TESTS_PMREORDER)
+		# either there's no valgrind (or pmemcheck) or we don't want to run tests with pmreorder
+		return()
+	endif()
+
+	if((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
+		find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
+		get_program_version_major_minor(${PMREORDER} PMREORDER_VERSION)
+		message(STATUS "pmreorder found: ${PMREORDER}, in version: ${PMREORDER_VERSION}")
+
+		if(PMREORDER_VERSION EQUAL PMREORDER_REQUIRED_VERSION OR PMREORDER_VERSION GREATER PMREORDER_REQUIRED_VERSION)
+			set(PROPER_PMREORDER_VERSION 1)
 		endif()
-	elseif(TESTS_USE_VALGRIND)
-		message(WARNING "Valgrind tests can't be run on Windows - they will be skipped.")
+
+		if(PMREORDER AND PROPER_PMREORDER_VERSION)
+			set(ENV{PATH} ${LIBPMEMOBJ_PREFIX}/bin:$ENV{PATH})
+			set(PMREORDER_SUPPORTED true CACHE INTERNAL "pmreorder support")
+		elseif(NOT PMREORDER)
+			message(WARNING "Pmreorder not found - pmreorder tests will not be performed.")
+		elseif(NOT PROPER_PMREORDER_VERSION)
+			message(WARNING "Pmreorder should be in version >= ${PMREORDER_REQUIRED_VERSION} - pmreorder tests will not be performed.")
+		endif()
+	else()
+		message(WARNING "Pmemcheck must be installed in version 1.X for pmreorder to work - pmreorder tests will not be performed.")
 	endif()
 endfunction()
 
@@ -202,8 +207,12 @@ function(add_test_common name tracer testcase cmake_script)
 	    set(tracer none)
 	endif()
 
-	# Valgrind tests won't work on Windows
-	if(NOT WIN32 AND ${tracer} IN_LIST vg_tracers)
+	# skip all Valgrind tests on Windows
+	if(WIN32 AND ${tracer} IN_LIST vg_tracers)
+		return()
+	endif()
+
+	if(${tracer} IN_LIST vg_tracers)
 		if(TESTS_USE_VALGRIND)
 			# pmemcheck is not necessarily required (because it's not always delivered with Valgrind)
 			if(${tracer} STREQUAL "pmemcheck" AND (NOT VALGRIND_PMEMCHECK_FOUND))
@@ -225,13 +234,8 @@ function(add_test_common name tracer testcase cmake_script)
 	endif()
 
 	# test was not build
-	if (NOT TARGET ${name})
+	if(NOT TARGET ${name})
 		message(FATAL_ERROR "${executable} not build.")
-	endif()
-
-	# skip all Valgrind tests on Windows
-	if (WIN32 AND ${tracer} IN_LIST vg_tracers)
-		return()
 	endif()
 
 	add_testcase(${name} ${tracer} ${testcase} ${cmake_script})

@@ -2,9 +2,10 @@
 # Copyright 2018-2021, Intel Corporation
 
 #
-# functions.cmake - helper functions for CMakeLists.txt
+# functions.cmake - helper functions for top-level CMakeLists.txt
 #
 
+# join all ${VALUES} into an ${OUT} string, split with custom ${SEP}arator
 function(join SEP OUT VALUES)
 	string(REPLACE ";" "${SEP}" JOIN_TMP "${VALUES}")
 	set(${OUT} "${JOIN_TMP}" PARENT_SCOPE)

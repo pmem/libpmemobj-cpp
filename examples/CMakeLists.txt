@@ -1,6 +1,17 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright 2018-2021, Intel Corporation
 
+#
+# examples/CMakeLists.txt - CMake file for building all examples along with
+#	the current libpmemobj-cpp sources, for verification purposes.
+#	To build an example as a standalone application (with libpmemobj-cpp
+#	from the system) see a CMake file in any of the subdirectories.
+#
+add_custom_target(examples)
+
+# ----------------------------------------------------------------- #
+## Setup examples
+# ----------------------------------------------------------------- #
 if(MSVC_VERSION)
 	add_flag(-W2)
 	add_flag("-D_FORTIFY_SOURCE=2" RELEASE)
@@ -30,11 +41,10 @@ if(COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
-add_custom_target(examples)
-
 include_directories(${LIBPMEMOBJ_INCLUDE_DIRS} .)
 link_directories(${LIBPMEMOBJ_LIBRARY_DIRS})
 
+# Add developer checks
 add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.*)
 
@@ -101,14 +111,7 @@ add_check_whitespace(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_s
 add_cppstyle(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
 add_check_whitespace(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*)
 
-function(add_example name)
-	set(srcs ${ARGN})
-	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
-	add_executable(example-${name} ${srcs})
-	target_link_libraries(example-${name} ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-	add_dependencies(examples example-${name})
-endfunction()
-
+# Find required packages for examples
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(CURSES QUIET ncurses)
 else()
@@ -126,6 +129,17 @@ else()
 	set(SFML_LIBRARIES sfml-graphics sfml-window sfml-system)
 endif()
 
+function(add_example name)
+	set(srcs ${ARGN})
+	prepend(srcs ${CMAKE_CURRENT_SOURCE_DIR} ${srcs})
+	add_executable(example-${name} ${srcs})
+	target_link_libraries(example-${name} ${LIBPMEMOBJ_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+	add_dependencies(examples example-${name})
+endfunction()
+
+# ----------------------------------------------------------------- #
+## Add examples (some under the 'if', required for specific example)
+# ----------------------------------------------------------------- #
 if(TEST_ARRAY)
 	add_example(queue queue/queue.cpp)
 endif()

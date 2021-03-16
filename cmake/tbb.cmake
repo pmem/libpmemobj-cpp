@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright 2017-2021, Intel Corporation
 
+set(TBB_DIR "" CACHE PATH "dir with TBBConfig.cmake, to be set if using custom TBB installation")
 message(STATUS "Checking for module 'tbb'")
 
 # TBB was found without pkg-config:

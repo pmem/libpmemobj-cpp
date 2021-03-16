@@ -811,7 +811,7 @@ if (TEST_STRING)
 
 		# Due to LNK1179 error (in Windows' Release builds) we want to run these tests
 		# only with std::string_view (not ours implementation; available in C++17)
-		if (NOT WIN32 OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" OR CXX_STANDARD GREATER 14)
+		if (NOT WIN32 OR DEBUG_BUILD_TESTS OR CXX_STANDARD GREATER 14)
 			build_test(string_libcxx_string_view_opeq_pointer libcxx/string.view/string.view.comparison/opeq.string_view.pointer.pass.cpp)
 			add_test_generic(NAME string_libcxx_string_view_opeq_pointer TRACERS none pmemcheck memcheck)
 

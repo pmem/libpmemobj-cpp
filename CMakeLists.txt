@@ -2,7 +2,9 @@
 # Copyright 2018-2021, Intel Corporation
 
 cmake_minimum_required(VERSION 3.3)
+
 project(libpmemobj-cpp C CXX)
+set(LIBPMEMOBJCPP_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------------------------------------- #
 ## Set required and useful variables
@@ -19,26 +21,10 @@ if(VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()
 
-set(LIBPMEMOBJCPP_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(LIBPMEMOBJ_REQUIRED_VERSION 1.9)
-set(LIBPMEM_REQUIRED_VERSION 1.7)
-# Only pmreorder in ver. >= 1.9 guarantees reliable output
-set(PMREORDER_REQUIRED_VERSION 1.9)
-
-set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
-
-# Treat CMAKE_CXX_STANDARD as a requirement
-set(CXX_STANDARD_REQUIRED ON)
-
 set(CXX_STANDARD 14 CACHE STRING "C++ language standard")
+
+set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
-
-# Do not treat include directories from the interfaces
-# of consumed Imported Targets as SYSTEM by default.
-set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
-
-set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test CACHE STRING "working directory for tests")
-message(STATUS "TEST_DIR set to: \"${TEST_DIR}\"")
 
 # Specify and print the build type
 set(DEFAULT_BUILD_TYPE "RelWithDebInfo")
@@ -59,7 +45,23 @@ else()
 	endif()
 endif()
 
+include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/functions.cmake)
+# set SRCVERSION, it's more accurate and "current" than VERSION
+set_source_ver(SRCVERSION)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${LIBPMEMOBJCPP_ROOT_DIR}/cmake)
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(LIBPMEMOBJ_REQUIRED_VERSION 1.9)
+set(LIBPMEM_REQUIRED_VERSION 1.7)
+# Only pmreorder in ver. >= 1.9 guarantees reliable output
+set(PMREORDER_REQUIRED_VERSION 1.9)
+
+set(TEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/test CACHE STRING "working directory for tests")
+message(STATUS "TEST_DIR set to: \"${TEST_DIR}\"")
+
+# Do not treat include directories from the interfaces
+# of consumed Imported Targets as SYSTEM by default.
+set(CMAKE_NO_SYSTEM_FROM_IMPORTED 1)
 
 # ----------------------------------------------------------------- #
 ## CMake build options
@@ -110,9 +112,11 @@ include(CheckCXXSourceCompiles)
 include(CheckCXXCompilerFlag)
 include(GNUInstallDirs)
 
-include(${LIBPMEMOBJCPP_ROOT_DIR}/cmake/functions.cmake)
-# set SRCVERSION, it's more accurate and "current" than VERSION
-set_source_ver(SRCVERSION)
+# Configure the ccache as compiler launcher
+find_program(CCACHE_FOUND ccache)
+if(USE_CCACHE AND CCACHE_FOUND)
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+endif()
 
 if(WIN32)
 	# Required for MSVC to correctly define __cplusplus
@@ -123,13 +127,7 @@ if(NOT WIN32)
 	find_package(PkgConfig QUIET)
 endif()
 
-# Configure the ccache as compiler launcher
-find_program(CCACHE_FOUND ccache)
-if(USE_CCACHE AND CCACHE_FOUND)
-	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-endif()
-
-# Find Valgrind
+# Finds valgrind and checks for pmemcheck's availability
 if(PKG_CONFIG_FOUND)
 	pkg_check_modules(VALGRIND QUIET valgrind)
 else()
@@ -137,6 +135,8 @@ else()
 endif()
 
 if(VALGRIND_FOUND)
+	message(STATUS "Found Valgrind in '${VALGRIND_LIBRARY_DIRS}' (version: ${VALGRIND_VERSION})")
+
 	add_flag(-DLIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED=1)
 	add_flag(-DLIBPMEMOBJ_CPP_VG_DRD_ENABLED=1)
 	add_flag(-DLIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED=1)
@@ -314,7 +314,7 @@ endif()
 if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
 	add_subdirectory(examples)
 elseif(BUILD_EXAMPLES)
-	message(WARNING "Skipping building of examples because of compiler issue")
+	message(WARNING "Skipping building of examples because of gcc variadic template bug")
 endif()
 
 if(NOT "${CPACK_GENERATOR}" STREQUAL "")

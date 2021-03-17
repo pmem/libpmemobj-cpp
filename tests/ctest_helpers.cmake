@@ -62,9 +62,12 @@ endfunction()
 
 # Find pmreorder in proper version
 function(find_pmreorder)
-	if(NOT VALGRIND_FOUND AND TESTS_PMREORDER)
+	if((NOT VALGRIND_FOUND OR NOT VALGRIND_PMEMCHECK_FOUND) AND TESTS_PMREORDER)
 		message(FATAL_ERROR "Valgrind not found, but tests are enabled. "
 				"To disable them set CMake option TESTS_USE_VALGRIND=OFF.")
+	elseif(NOT VALGRIND_FOUND OR NOT VALGRIND_PMEMCHECK_FOUND OR NOT TESTS_PMREORDER)
+		# either there's no valgrind (or pmemcheck) or we don't want to run tests with pmreorder
+		return()
 	endif()
 
 	if((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)

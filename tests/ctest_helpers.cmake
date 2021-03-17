@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 #
 # ctest_helpers.cmake - helper functions for tests/CMakeLists.txt
@@ -58,7 +58,7 @@ function(find_packages)
 
 	# XXX: if pmreorder not supported (e.g. on Win) - print one message "tests will be skipped"
 	if(NOT WIN32)
-		if(VALGRIND_FOUND AND TESTS_PMREORDER)
+		if(VALGRIND_FOUND AND VALGRIND_PMEMCHECK_FOUND AND TESTS_PMREORDER)
 			if((NOT(PMEMCHECK_VERSION LESS 1.0)) AND PMEMCHECK_VERSION LESS 2.0)
 				find_program(PMREORDER names pmreorder HINTS ${LIBPMEMOBJ_PREFIX}/bin)
 				get_program_version_major_minor(${PMREORDER} PMREORDER_VERSION)

@@ -150,6 +150,7 @@ jobs:
                     -DCMAKE_TOOLCHAIN_FILE="${env:CMAKE_TOOLCHAIN_FILE}"
                     -DCMAKE_INSTALL_PREFIX="${env:CMAKE_INSTALL_PREFIX}"
                     -DTESTS_USE_FORCED_PMEM=ON
+                    -DTESTS_USE_VALGRIND=OFF
                     -DTESTS_TBB=ON
                     -DDEVELOPER_MODE=ON
                     -DCXX_STANDARD="${{ matrix.CXX_STANDARD }}"

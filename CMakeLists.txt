@@ -147,6 +147,10 @@ if(VALGRIND_FOUND)
 	if(VALGRIND_PMEMCHECK_FOUND)
 		add_flag(-DLIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1)
 	endif()
+elseif(NOT VALGRIND_FOUND AND TESTS_USE_VALGRIND)
+	message(FATAL_ERROR "Valgrind not found, but flag TESTS_USE_VALGRIND was set.")
+elseif(NOT VALGRIND_FOUND)
+	message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
 endif()
 
 # Find Clang

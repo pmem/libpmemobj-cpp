@@ -69,7 +69,7 @@ RUN dnf update -y \
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo "$USER:$USERPASS" | chpasswd
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER \
+ && echo "$USER:$USERPASS" | chpasswd \
+ && gpasswd wheel -a $USER
 USER $USER

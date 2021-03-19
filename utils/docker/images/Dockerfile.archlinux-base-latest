@@ -76,8 +76,8 @@ ARG MISC_DEPS="\
 	whois"
 
 # Update the Apt cache and install basic tools
-RUN pacman -Syu --noconfirm
-RUN pacman -S --noconfirm \
+RUN pacman -Syu --noconfirm \
+ && pacman -S --noconfirm \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
 	${NDCTL_DEPS} \
@@ -86,7 +86,8 @@ RUN pacman -S --noconfirm \
 	${EXAMPLES_DEPS} \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
-	${MISC_DEPS}
+	${MISC_DEPS} \
+ && rm -rf /var/cache/pacman/pkg/*
 
 # Install libndctl
 COPY install-libndctl.sh install-libndctl.sh
@@ -104,14 +105,11 @@ RUN ./install-pmdk.sh
 ENV USER user
 ENV USERPASS p1a2s3s4
 ENV PFILE ./password
-RUN useradd -m $USER
-RUN echo $USERPASS > $PFILE
-RUN echo $USERPASS >> $PFILE
-RUN passwd $USER < $PFILE
-RUN rm -f $PFILE
-RUN sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER \
+ && echo $USERPASS > $PFILE \
+ && echo $USERPASS >> $PFILE \
+ && passwd $USER < $PFILE \
+ && rm -f $PFILE \
+ && sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers \
+ && gpasswd wheel -a $USER
 USER $USER
-
-# Clean the cache of packages
-RUN rm -rf /var/cache/pacman/pkg/*

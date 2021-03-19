@@ -1965,12 +1965,12 @@ protected:
 	{
 		if (layout_features.incompat != header_features().incompat)
 			throw pmem::layout_error(
-				"Incompat flags mismatch, for more details go to: https://pmem.io/pmdk/cpp_obj/ \n");
+				"Incompat flags mismatch, for more details go to: https://pmem.io/libpmemobj-cpp\n");
 
 		if ((layout_features.compat & FEATURE_CONSISTENT_SIZE) &&
 		    this->value_size != sizeof(value_type))
 			throw pmem::layout_error(
-				"Size of value_type is different than the one stored in the pool \n");
+				"Size of value_type is different than the one stored in the pool\n");
 	}
 
 public:

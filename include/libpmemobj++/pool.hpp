@@ -448,10 +448,14 @@ protected:
 	PMEMobjpool *pop;
 
 #ifndef _WIN32
-	/* Default create mode */
+	/**
+	 * Default create mode
+	 */
 	static const int DEFAULT_MODE = S_IWUSR | S_IRUSR;
 #else
-	/* Default create mode */
+	/**
+	 * Default create mode
+	 */
 	static const int DEFAULT_MODE = S_IWRITE | S_IREAD;
 #endif
 };

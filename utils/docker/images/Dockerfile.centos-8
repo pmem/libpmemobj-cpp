@@ -20,51 +20,75 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
-RUN dnf update -y
-RUN dnf install -y epel-release
-RUN dnf install -y 'dnf-command(config-manager)'
-RUN dnf config-manager --set-enabled powertools
+# Base development packages
+ARG BASE_DEPS="\
+	cmake \
+	gcc \
+	gcc-c++ \
+	git \
+	make"
 
-# Install basic tools
-RUN dnf update -y \
- && dnf install -y \
-	asciidoc \
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	libatomic \
+	tbb-devel"
+
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+ARG PMDK_DEPS="\
 	autoconf \
 	automake \
-	bash-completion \
-	clang \
-	cmake \
 	daxctl-devel \
-	doxygen \
-	gcc \
 	gdb \
-	git \
-	json-c-devel \
-	keyutils-libs-devel \
-	kmod-devel \
-	libatomic \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
 	man \
-	ncurses-devel \
 	ndctl-devel \
-	open-sans-fonts \
 	pandoc \
-	passwd \
-	perl-Text-Diff \
 	python3 \
 	rpm-build \
 	rpm-build-libs \
 	rpmdevtools \
-	sudo \
-	tar \
-	tbb-devel \
-	wget \
-	which \
-	xmlto \
+	which"
+
+# pmem's Valgrind (optional; valgrind-devel may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	ncurses-devel"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libunwind-devel"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	passwd \
+	perl-Text-Diff \
+	pkgconf \
+	sudo"
+
+# Update package repository, extend dnf's package base and install basic tools
+RUN dnf update -y \
+ && dnf install -y epel-release \
+ && dnf install -y 'dnf-command(config-manager)' \
+ && dnf config-manager --set-enabled powertools \
+ && dnf update -y \
+ && dnf install -y \
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${MISC_DEPS} \
  && dnf clean all
 
 # Install valgrind
@@ -78,7 +102,7 @@ RUN ./install-pmdk.sh rpm
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo $USERPASS | passwd $USER --stdin
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER \
+ && echo $USERPASS | passwd $USER --stdin \
+ && gpasswd wheel -a $USER
 USER $USER

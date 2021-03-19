@@ -70,7 +70,6 @@ ARG TESTS_DEPS="\
 # Misc for our builds/CI (optional)
 ARG MISC_DEPS="\
 	clang \
-	hub \
 	perl-Text-Diff \
 	pkgconf \
 	sudo"
@@ -99,7 +98,7 @@ RUN ./install-pmdk.sh rpm
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo "$USER:$USERPASS" | chpasswd
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER \
+ && echo "$USER:$USERPASS" | chpasswd \
+ && gpasswd wheel -a $USER
 USER $USER

@@ -20,55 +20,72 @@ ENV NOTTY 1
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
 
-# Update the OS
-RUN zypper dup -y
+# Base development packages
+ARG BASE_DEPS="\
+	cmake \
+	gcc \
+	git \
+	make"
 
-# Update all packages
-RUN zypper update -y
+# Dependencies for compiling libpmemobj-cpp project
+ARG LIBPMEMOBJ_CPP_DEPS="\
+	libatomic1 \
+	tbb-devel"
 
-# Install basic tools
-RUN zypper install -y \
-	asciidoc \
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+ARG PMDK_DEPS="\
 	autoconf \
 	automake \
-	bash-completion \
-	clang \
-	cmake \
-	doxygen \
 	fdupes \
-	gcc \
 	gdb \
-	git \
-	keyutils-devel \
-	libjson-c-devel \
-	libkmod-devel \
 	libndctl-devel \
-	libtool \
-	libudev-devel \
-	libunwind-devel \
-	libuuid-devel \
-	make \
 	man \
-	ncurses-devel \
 	pandoc \
-	perl-Text-Diff \
-	'pkgconfig(bash-completion)' \
 	python3 \
 	rpm-build \
 	rpmdevtools \
-	sudo \
-	tar \
-	tbb-devel \
-	wget \
-	which \
-	xmlto
-RUN zypper clean all
+	which"
 
-# Install libndctl
-COPY install-libndctl.sh install-libndctl.sh
-RUN ./install-libndctl.sh
+# pmem's Valgrind (optional; valgrind package may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
 
-# Install valgrind
+# Examples (optional)
+ARG EXAMPLES_DEPS="\
+	ncurses-devel"
+
+# Documentation (optional)
+ARG DOC_DEPS="\
+	doxygen"
+
+# Tests (optional)
+ARG TESTS_DEPS="\
+	gdb \
+	libunwind-devel"
+
+# Misc for our builds/CI (optional)
+ARG MISC_DEPS="\
+	clang \
+	perl-Text-Diff \
+	pkg-config \
+	sudo"
+
+# Update the OS, packages and install basic tools
+RUN zypper dup -y \
+ && zypper update -y \
+ && zypper install -y \
+	${BASE_DEPS} \
+	${LIBPMEMOBJ_CPP_DEPS} \
+	${PMDK_DEPS} \
+	${VALGRIND_DEPS} \
+	${EXAMPLES_DEPS} \
+	${DOC_DEPS} \
+	${TESTS_DEPS} \
+	${MISC_DEPS} \
+ && zypper clean all
+
+# Install valgrind and update pkg-config path variable
 COPY install-valgrind.sh install-valgrind.sh
 RUN ./install-valgrind.sh
 ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/lib/pkgconfig/
@@ -81,12 +98,12 @@ RUN ./install-pmdk.sh rpm
 ENV USER user
 ENV USERPASS p1a2s3s4
 ENV PFILE ./password
-RUN useradd -m $USER
-RUN echo $USERPASS > $PFILE
-RUN echo $USERPASS >> $PFILE
-RUN passwd $USER < $PFILE
-RUN rm -f $PFILE
-RUN sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
-RUN groupadd wheel
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER \
+ && echo $USERPASS > $PFILE \
+ && echo $USERPASS >> $PFILE \
+ && passwd $USER < $PFILE \
+ && rm -f $PFILE \
+ && sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers \
+ && groupadd wheel \
+ && gpasswd wheel -a $USER
 USER $USER

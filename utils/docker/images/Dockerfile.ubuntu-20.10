@@ -19,7 +19,6 @@ ENV NOTTY 1
 # Additional parameters to build docker without building components
 ARG SKIP_VALGRIND_BUILD
 ARG SKIP_PMDK_BUILD
-ARG SKIP_SCRIPTS_DOWNLOAD
 
 # Base development packages
 ARG BASE_DEPS="\
@@ -32,7 +31,7 @@ ARG LIBPMEMOBJ_CPP_DEPS="\
 	libatomic1 \
 	libtbb-dev"
 
-# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
+# PMDK's dependencies (optional; libpmemobj-dev package may be used instead)
 ARG PMDK_DEPS="\
 	autoconf \
 	automake \
@@ -44,7 +43,7 @@ ARG PMDK_DEPS="\
 	pandoc \
 	python3"
 
-# pmem's Valgrind (optional; valgrind-devel may be used instead)
+# pmem's Valgrind (optional; valgrind package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -80,7 +79,6 @@ RUN apt-get update \
  && apt-get install -y software-properties-common \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
-	${NDCTL_DEPS} \
 	${PMDK_DEPS} \
 	${VALGRIND_DEPS} \
 	${EXAMPLES_DEPS} \
@@ -96,11 +94,6 @@ RUN ./install-valgrind.sh
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
 RUN ./install-pmdk.sh dpkg
-
-# Download scripts required in run-*.sh
-COPY download-scripts.sh download-scripts.sh
-COPY 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch 0001-fix-generating-gcov-files-and-turn-off-verbose-log.patch
-RUN ./download-scripts.sh
 
 # Add user
 ENV USER user

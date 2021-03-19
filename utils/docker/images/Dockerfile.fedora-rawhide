@@ -17,10 +17,6 @@ ENV OS_VER rawhide
 ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 
-# Additional parameters to build docker without building components
-ARG SKIP_VALGRIND_BUILD
-ARG SKIP_PMDK_BUILD
-
 # Base development packages
 ARG BASE_DEPS="\
 	cmake \
@@ -45,8 +41,6 @@ ARG DOC_DEPS="\
 	doxygen"
 
 # Tests (optional)
-# XXX: Valgrind is installed from upstream package, because of:
-# https://bugzilla.redhat.com/show_bug.cgi?id=1903527
 ARG TESTS_DEPS="\
 	gdb \
 	libpmem-devel \
@@ -64,26 +58,18 @@ ARG MISC_DEPS="\
 # Update packages and install basic tools
 RUN dnf update -y \
  && dnf install -y \
-	asciidoc \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
-	${PMDK_DEPS} \
-	${VALGRIND_DEPS} \
 	${EXAMPLES_DEPS} \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
-	${COVERITY_DEPS} \
 	${MISC_DEPS} \
  && dnf clean all
-
-# Install valgrind
-COPY install-valgrind.sh install-valgrind.sh
-RUN ./install-valgrind.sh
 
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER
-RUN echo "$USER:$USERPASS" | chpasswd
-RUN gpasswd wheel -a $USER
+RUN useradd -m $USER \
+ && echo "$USER:$USERPASS" | chpasswd \
+ && gpasswd wheel -a $USER
 USER $USER

@@ -95,8 +95,11 @@ pipeline {
 					libs.api.run_bash_script("""
 						${SCRIPTS_DIR}/createNamespace.sh -p --size=100G
 					""")
+					def TEST_DIR= "/mnt/pmem0"
+					export DEFAULT_TEST_DIR=${TEST_DIR}
 					def ENV_VAL="export WORKDIR=${WORKSPACE_DIR}/${REPO_DIR}; export SCRIPTSDIR=\$WORKDIR/utils/docker; export TESTS_LONG=ON; export TERM=xterm-256color; ${COV_PARAM}"
 					libs.api.echo_header("Running test type: ${params.TEST_TYPE}")
+                                        export TEST_TIMEOUT=3600; export TESTS_USE_FORCED_PMEM=0;
 					dir("${REPO_PATH}/utils/docker")
 					libs.api.echo_header("Test options: ${params.TEST_OPTIONS}")
 					params.TEST_OPTIONS.split().each { build ->

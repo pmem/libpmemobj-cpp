@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2021, Intel Corporation */
 
-/* Jenkinsfile - Scripts to create libpmemobj-cpp and libpmemobj_matrix jobs - to run with initial jenkins job. */
+/* Jenkinsfile - Scripts to create libpmemobj-cpp and libpmemobj-cpp_matrix jobs - to run with initial jenkins job. */
 
 /* define common properties of pipelines: */
 description_param = '''
@@ -43,7 +43,7 @@ branch_param = '''
 test_options_param = '''
 	string {
 		name('TEST_OPTIONS')
-		defaultValue('tests_gcc_debug_cpp11 tests_gcc_debug_cpp14 test_release_installation tests_clang_release_cpp20')
+		defaultValue('tests_clang_debug_cpp17_no_valgrind tests_clang_release_cpp11_no_valgrind build_gcc_debug_cpp14 tests_gcc_debug_cpp14_no_valgrind tests_gcc_debug_cpp14_valgrind_memcheck_drd tests_gcc_debug_cpp14_valgrind_other tests_gcc_release_cpp17_no_valgrind ')
 		trim(true)
 		description("Test builds, as defined in run-build.sh")
 	}
@@ -100,12 +100,12 @@ def remote_definition(current_job_script_path) {
 environmental_variables = """
 	environmentVariables {
 		envs(
-			api_lib: "jenkins_files/utils/jenkins/lib/api.groovy",
-			lib_path: "jenkins_files/utils/jenkins/lib/",
-			scripts_path: "jenkins_files/utils/jenkins/scripts/",
+			api_lib: "jenkins/lib/api.groovy",
+			lib_path: "jenkins/lib/",
+			scripts_path: "jenkins/scripts/",
 			jenkins_files_repo: "https://github.com/pmem/dev-utils-kit.git",
 			jenkins_files_branch: "*/${jenkins_files_branch_source}",
-			info_addr: "https://github.com/pmem/libpmemobj-cpp.com/"
+			info_addr: "https://github.com/pmem/libpmemobj-cpp.git"
 		)
 	}
 """
@@ -123,8 +123,8 @@ triggers = '''
 '''
 
 node {
-	stage('libpmemobj_linux'){
-        jobDsl scriptText: """pipelineJob("libpmemobj_linux") {
+	stage('libpmemobj-cpp_linux'){
+        jobDsl scriptText: """pipelineJob("libpmemobj-cpp_linux") {
 			parameters {
 				${label_param}
 				${branch_param}
@@ -138,7 +138,7 @@ node {
 			${gitlab_connection}
 			${environmental_variables}
 			${triggers}
-			${remote_definition 'utils/jenkins/pmemkv_linux.jenkins'}
+			${remote_definition 'utils/jenkins/libpmemobj-cpp.jenkins'}
 		}"""
     }
     stage('libpmemobj_linux_matrix'){

@@ -9,7 +9,7 @@ libs = [:]
 currentBuild.displayName = "#$currentBuild.id $LABEL: $BRANCH - $TEST_TYPE, coverage: $COVERAGE"
 currentBuild.description = "$DESCRIPTION"
 
-REPO_DIR='libpmemobj'
+REPO_DIR='libpmemobj-cpp'
 
 /* Send report summary via email. */
 def send_mail(attachments, msg) {
@@ -45,7 +45,7 @@ pipeline {
 	stages {
 		/* preparation stage: clean workspace, create output directories, log file,
 		clone repository containing Jenkins pipelines, load libraries, set warning on DUT, etc. */
-		stage('Prepare') {
+		stage('Prepare workspace') {
 			steps {
 				print "Deleting ${WORKSPACE} directory"
 				deleteDir()
@@ -55,8 +55,8 @@ pipeline {
 					writeFile file: 'console.log', text: ''
 				}
 
-				print "Checkout repository containing Jenkins pipelines"
-				checkout([$class: 'GitSCM', branches: [[name: jenkins_files_branch]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'jenkins_files']], submoduleCfg: [], userRemoteConfigs: [[url: jenkins_files_repo]]])
+				print "Checkout repository containing Jenkins libraries and additional scripts"
+				checkout([$class: 'GitSCM', branches: [[name: jenkins_files_branch]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'dev-utils-kit']], submoduleCfg: [], userRemoteConfigs: [[url: jenkins_files_repo]]])
 
 				print "Loading pipeline libraries"
 				script {
@@ -74,7 +74,7 @@ pipeline {
 			}
 		}
 		/* clone libpmemobj-cpp repository to be tested */
-		stage('Repo checkout') {
+		stage('Repo Checkout libpmemobj-cpp') {
 			steps {
 				script {
 					def REPO_PATH="${WORKSPACE_DIR}/${REPO_DIR}"
@@ -87,26 +87,52 @@ pipeline {
 				script {
 				warnError('Build unstable.') {
 					libs.api.echo_header("Running tests")
+					libs.api.run_bash_script("""
+						echo "DEVICE TYPE: ${params.DEVICE_TYPE}"
+						echo "TEST TYPE: ${params.TEST_TYPE}"
+						echo "CPP_STYLE: ${params.CHECK_CPP_STYLE}"
+						echo "LONG: ${params.TESTS_LONG}"
+						echo "TBB: ${params.TESTS_TBB}"
+						echo "PMREORDER: ${params.TESTS_PMREORDER}"
+						echo "TIMEOUT: ${params.TEST_TIMEOUT}"
+					""")					
 					def COV_PARAM=""
+					def TEST_DIR
 					if (params.COVERAGE == 'yes') {
 						COV_PARAM="export COVERAGE=1"
 					}
 					def REPO_PATH="${WORKSPACE}/${REPO_DIR}"
-					libs.api.run_bash_script("""
-						${SCRIPTS_DIR}/createNamespace.sh -p --size=100G
-					""")
-					def ENV_VAL="export WORKDIR=${WORKSPACE_DIR}/${REPO_DIR}; export SCRIPTSDIR=\$WORKDIR/utils/docker; export TESTS_LONG=ON; export TERM=xterm-256color; ${COV_PARAM}"
+					switch (params.DEVICE_TYPE) {
+						case 'DAX':
+							libs.api.run_bash_script("""
+								${SCRIPTS_DIR}/createNamespace.sh -d --size=100G
+							""")
+							TEST_DIR = "/dev/" + libs.api.run_bash_script("""
+								sudo ndctl list -M -N | jq -r '.[] | select(.mode=="devdax").chardev' | head -n 1
+							""").output
+							break
+						case 'PMEM':
+							libs.api.run_bash_script("""
+								${SCRIPTS_DIR}/createNamespace.sh -p --size=100G
+							""")
+							TEST_DIR = "/mnt/pmem0"
+							break
+						case 'NONE':
+							TEST_DIR = "/dev/shm"
+							break
+						}
+					def ENV_VAL="export DEFAULT_TEST_DIR=${TEST_DIR}; export WORKDIR=${WORKSPACE_DIR}/${REPO_DIR}; export SCRIPTSDIR=\$WORKDIR/utils/docker; export TESTS_LONG=${params.TESTS_LONG}; export CHECK_CPP_STYLE=${params.CHECK_CPP_STYLE}; export TESTS_PMREORDER=${params.TESTS_PMREORDER}; export TESTS_TBB=${params.TESTS_TBB}; export TERM=xterm-256color; export TEST_TIMEOUT=${params.TEST_TIMEOUT}; export TESTS_USE_FORCED_PMEM=0; ${COV_PARAM}"
 					libs.api.echo_header("Running test type: ${params.TEST_TYPE}")
 					dir("${REPO_PATH}/utils/docker")
+					{
 					libs.api.echo_header("Test options: ${params.TEST_OPTIONS}")
 					params.TEST_OPTIONS.split().each { build ->
 						stage("${build}") {
 							catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-						libs.api.run_bash_script("""
-							${ENV_VAL}
-							./run-build.sh ${build}
-							""")
-									}
+								libs.api.run_bash_script("""
+									${ENV_VAL}
+									./run-build.sh ${build}
+									""")
 								}
 							}
 						}
@@ -129,40 +155,33 @@ pipeline {
 				libs.api.unset_jenkins_warning_on_dut()
 				libs.api.write_os_branch_repo(params.LABEL, params.BRANCH, params.REPO_URL)
 				libs.api.archive_output()
-				/* Make sure to uninstall libpmemobj-cpp from the DUT. */
-				def REPO_PATH="${WORKSPACE_DIR}/${REPO_DIR}"
-				libs.api.run_bash_script("""
-							cd ${REPO_PATH}/build || true
-							sudo make uninstall || true
-							sudo rm /usr/lib64/pkgconfig/libpmemobj++.pc || true
-						""")
 			}
 		}
 		success {
 			script {
 				libs.api.write_result_and_archive('success')
 				if (params.SEND_RESULTS) {
-                    def build_info = "Build" + " #$currentBuild.id " + "succeeded"
-                    send_mail('', build_info)
-                }
+					def build_info = "Build" + " #$currentBuild.id " + "succeeded"
+					send_mail('', build_info)
+					}
 			}
 		}
 		failure {
 			script {
 				libs.api.write_result_and_archive('fail')
 				if (params.SEND_RESULTS) {
-                    def build_info = "Build" + " #$currentBuild.id " + "failed"
-                    send_mail('', build_info)
-                }
+					def build_info = "Build" + " #$currentBuild.id " + "failed"
+					send_mail('', build_info)
+				}
 			}
 		}
 		unstable {
 			script {
 				libs.api.write_result_and_archive('fail')
 				if (params.SEND_RESULTS) {
-                    def build_info = "Build" + " #$currentBuild.id " + "failed"
-                    send_mail('', build_info)
-                }
+					def build_info = "Build" + " #$currentBuild.id " + "failed"
+					send_mail('', build_info)
+				}
 			}
 		}
 	}

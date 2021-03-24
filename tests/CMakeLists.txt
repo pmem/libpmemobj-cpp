@@ -8,9 +8,6 @@ include(ctest_helpers.cmake)
 # ----------------------------------------------------------------- #
 add_custom_target(tests)
 
-# Try to find it for some tests using TBB
-include(tbb)
-
 # Add checks when DEVELOPER_MODE is ON
 add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
@@ -78,9 +75,11 @@ if(COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
-# Prepare additional libraries/executables and finding required packages
+# Prepare additional libraries/executables and find packages required for tests
 find_packages()
-find_gdb()
+
+# Try to find it for some tests using TBB
+include(tbb)
 
 add_library(test_backtrace STATIC test_backtrace.c)
 if(LIBUNWIND_FOUND)
@@ -105,6 +104,10 @@ endif()
 # Produce general warnings, e.g. when a command/tool is missing
 if(NOT GDB_FOUND)
 	message(WARNING "GDB was not found - skipping some tests. To fix, make sure `gdb` command is OS-wide accessible.")
+endif()
+
+if(NOT PMREORDER_SUPPORTED)
+	message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 endif()
 
 # ----------------------------------------------------------------- #
@@ -134,7 +137,6 @@ if(BUILD_EXAMPLES AND NO_GCC_VARIADIC_TEMPLATE_BUG)
 		add_test_generic(NAME ex-pman CASE 0 TRACERS none SCRIPT ex-pman/ex-pman_0.cmake)
 	endif()
 elseif(BUILD_EXAMPLES)
-	message(WARNING "Skipping examples tests because of gcc variadic template bug")
 	skip_test("examples_tests" "SKIPPED_BECAUSE_OF_GCC_VARIADIC_TEMPLATE_BUG")
 endif()
 
@@ -345,8 +347,6 @@ if(TEST_ARRAY)
 		build_test(array_slice_pmreorder array/array_slice_pmreorder.cpp)
 		add_test_generic(NAME array_slice_pmreorder CASE 0 TRACERS none SCRIPT array/array_slice_pmreorder_0.cmake)
 		add_test_generic(NAME array_slice_pmreorder CASE 1 TRACERS none SCRIPT array/array_slice_pmreorder_1.cmake)
-	else()
-		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
 endif()
 ################################################################################
@@ -647,8 +647,6 @@ if(TEST_CONCURRENT_HASHMAP)
 				add_test_generic(NAME ${TEST} CASE ${case} TRACERS none)
 			endforeach()
 		endif()
-	else()
-		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
 endif()
 ################################################################################
@@ -953,11 +951,7 @@ if(TEST_CONCURRENT_MAP)
 				configure_file("${CMAKE_SCRIPT}.cmake.in" "${CMAKE_SCRIPT}_${case}.cmake" @ONLY)
 				add_test_generic(NAME ${TEST} CASE ${case} TRACERS none)
 			endforeach()
-		else()
-			message(WARNING "Skipping concurrent_map_pmreorder_break_insert test because GDB was not found")
 		endif()
-	else()
-		message(WARNING "Skipping pmreorder tests because of no pmreorder support")
 	endif()
 endif()
 ################################################################################

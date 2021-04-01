@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 #ifndef THREAD_HELPERS_COMMON_HPP
 #define THREAD_HELPERS_COMMON_HPP
 
@@ -25,31 +25,58 @@ parallel_exec(size_t concurrency, Function f)
 	}
 }
 
-/*
- * This function executes 'concurrency' threads and provides
- * 'syncthreads' method (synchronization barrier) for f()
- */
-template <typename Function>
-void
-parallel_xexec(size_t concurrency, Function f)
-{
-	std::condition_variable cv;
-	std::mutex m;
-	std::unique_ptr<size_t> counter =
-		std::unique_ptr<size_t>(new size_t(0));
+class latch {
+public:
+	latch(size_t desired) : counter(desired)
+	{
+	}
 
-	auto syncthreads = [&] {
-		std::unique_lock<std::mutex> lock(m);
-		(*counter)++;
-		if (*counter < concurrency)
-			cv.wait(lock, [&] { return *counter >= concurrency; });
-		else
+	/* Returns true for the last thread arriving at the latch, false for all
+	 * other threads. */
+	bool
+	wait(std::unique_lock<std::mutex> &lock)
+	{
+		counter--;
+		if (counter > 0) {
+			cv.wait(lock, [&] { return counter == 0; });
+			return false;
+		} else {
 			/*
 			 * notify_call could be called outside of a lock
 			 * (it would perform better) but drd complains
 			 * in that case
 			 */
 			cv.notify_all();
+			return true;
+		}
+	}
+
+private:
+	std::condition_variable cv;
+	size_t counter = 0;
+};
+
+/*
+ * This function executes 'concurrency' threads and provides
+ * 'syncthreads' method (multi-use synchronization barrier) for f()
+ */
+template <typename Function>
+void
+parallel_xexec(size_t concurrency, Function f)
+{
+	std::mutex m;
+	std::shared_ptr<latch> current_latch =
+		std::shared_ptr<latch>(new latch(concurrency));
+
+	/* Implements multi-use barrier (latch). Once all threads arrive at the
+	 * latch, a new latch is allocated and used by all subsequent calls to
+	 * syncthreads. */
+	auto syncthreads = [&] {
+		std::unique_lock<std::mutex> lock(m);
+		auto l = current_latch;
+		if (l->wait(lock))
+			current_latch =
+				std::shared_ptr<latch>(new latch(concurrency));
 	};
 
 	parallel_exec(concurrency, [&](size_t tid) { f(tid, syncthreads); });

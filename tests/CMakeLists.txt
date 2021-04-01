@@ -149,6 +149,9 @@ else()
 	skip_test("aggregate_initialization" "SKIPPED_BECAUSE_OF_NO_COMPILER_SUPPORT")
 endif()
 
+build_test(helpers_test common/helpers_test.cpp)
+add_test_generic(NAME helpers_test TRACERS none memcheck)
+
 build_test(allocator allocator/allocator.cpp)
 add_test_generic(NAME allocator TRACERS none memcheck pmemcheck)
 

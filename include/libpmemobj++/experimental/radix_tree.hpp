@@ -39,6 +39,7 @@
 #endif
 
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/hazard_ptr.hpp>
 #include <libpmemobj++/detail/integer_sequence.hpp>
 #include <libpmemobj++/detail/tagged_ptr.hpp>
 
@@ -297,8 +298,13 @@ private:
 
 	using pointer_type = detail::tagged_ptr<leaf, node>;
 
+	/* std::atomic specialization does not add modifications to a
+	 * transaction, that's why it's necessary to wrap it with p<> */
+	using atomic_pointer_type =
+		p<detail::hazard_ptr<std::atomic<pointer_type>>>;
+
 	/*** pmem members ***/
-	pointer_type root;
+	atomic_pointer_type root;
 	p<uint64_t> size_;
 
 	/* helper functions */
@@ -421,7 +427,7 @@ private:
 	     std::tuple<Args2...> &second_args, detail::index_sequence<I1...>,
 	     detail::index_sequence<I2...>);
 
-	pointer_type parent = nullptr;
+	atomic_pointer_type parent = nullptr;
 };
 
 /**
@@ -435,7 +441,7 @@ struct radix_tree<Key, Value, BytesView>::node {
 	/**
 	 * Pointer to a parent node. Used by iterators.
 	 */
-	pointer_type parent;
+	atomic_pointer_type parent;
 
 	/**
 	 * The embedded_entry ptr is used only for nodes for which length of the
@@ -443,10 +449,10 @@ struct radix_tree<Key, Value, BytesView>::node {
 	 * entry holds a key which represents the entire subtree prefix (path
 	 * from root).
 	 */
-	pointer_type embedded_entry;
+	atomic_pointer_type embedded_entry;
 
 	/* Children can be both leaves and internal nodes. */
-	pointer_type child[SLNODES];
+	atomic_pointer_type child[SLNODES];
 
 	/**
 	 * Byte and bit together are used to calculate the NIB which is used to

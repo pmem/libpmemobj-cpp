@@ -1,0 +1,156 @@
+#ifndef LIBPMEMOBJ_MPSC_QUEUE_HPP
+#define LIBPMEMOBJ_MPSC_QUEUE_HPP
+
+#include <libpmemobj++/transaction.hpp>
+#include <libpmemobj++/make_persistent.hpp>
+#include <libpmemobj++/persistent_ptr.hpp>
+
+#include <libpmemobj++/container/detail/ringbuf/ringbuf.h>
+#include <cstddef>
+#include <cstring>
+#include <atomic>
+
+namespace pmem
+{
+
+namespace obj
+{
+
+namespace experimental
+{
+
+
+class mpsc_queue
+{
+public:
+	class accessor
+	{
+	private:
+		ringbuf_worker_t *w;
+		mpsc_queue *queue;
+
+		size_t len;
+		char* data;
+	public:
+
+		accessor(mpsc_queue *q, ringbuf_worker_t *worker, size_t len)
+		{
+			w = worker;
+			queue = q;
+			auto offset = ringbuf_acquire(queue->ring_buffer, w, len);
+			data = queue->buf.get() + offset;
+		};
+
+		char* add(const char* d, size_t len)
+		{
+			// XXX: Add bound check
+			char* current_data = data;
+			queue->pop->memcpy_persist(data ,d, len);
+			data += len;
+			return current_data;
+		}
+
+		~accessor()
+		{
+			ringbuf_produce(queue->ring_buffer, w);
+		}
+	};
+
+	class read_accessor
+	{
+	private:
+		mpsc_queue *queue;
+	public:
+		size_t len;
+		char* data;
+
+		read_accessor(mpsc_queue *q)
+		{
+			queue = q;
+			size_t offset;
+
+			len = ringbuf_consume(queue->ring_buffer, &offset);
+			data = queue->buf.get() + offset;
+		}
+
+		~read_accessor()
+		{
+			ringbuf_release(queue->ring_buffer, len);
+		}
+	};
+
+	class worker
+	{
+	private:
+		mpsc_queue *queue;
+		ringbuf_worker_t *w;
+		unsigned id;
+	public:
+		worker(mpsc_queue *q)
+		{
+			queue = q;
+			id = queue->cnt.fetch_add(1);
+			w = ringbuf_register(queue->ring_buffer, id);
+		}
+
+		~worker()
+		{
+			ringbuf_unregister(queue->ring_buffer, w);
+		}
+
+		accessor produce(size_t len)
+		{
+			return accessor(queue, w, len);
+		}
+
+	};
+
+private:
+	ringbuf_t *ring_buffer;
+	std::atomic_size_t cnt;
+	pmem::obj::persistent_ptr<char[]> buf;
+	pmem::obj::pool_base *pop;
+
+public:
+
+
+	mpsc_queue(pmem::obj::pool_base *my_pool, pmem::obj::persistent_ptr<char[]> *log, size_t buff_size,size_t max_workers=1)
+	{
+		size_t ring_buffer_size;
+		buf = *log;
+		pop = my_pool;
+
+		pmem::obj::transaction::run(*pop, [&] {
+			buf = pmem::obj::make_persistent<char[]>(buff_size);
+		});
+
+		ringbuf_get_sizes(max_workers, &ring_buffer_size, NULL);
+		ring_buffer = (ringbuf_t*) malloc(ring_buffer_size);
+		ringbuf_setup(ring_buffer, max_workers, buff_size);
+	}
+	
+	~mpsc_queue()
+	{
+		free(ring_buffer);
+	}
+
+	worker register_worker()
+	{
+		return worker(this);
+	}
+
+	read_accessor consume()
+	{
+	return read_accessor(this);
+	}
+
+	void recover()
+	{
+	}
+};
+
+}
+}
+}
+
+#endif /* LIBPMEMOBJ_MPSC_QUEUE_HPP */

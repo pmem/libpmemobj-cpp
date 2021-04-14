@@ -954,6 +954,13 @@ if(TEST_CONCURRENT_MAP)
 		endif()
 	endif()
 endif()
+
+################################################################################
+#################################### MPSC_QUEUE ################################
+if(TEST_MPSC_QUEUE)
+	build_test(mpsc_queue_basic mpsc_queue/basic.cpp)
+	add_test_generic(NAME mpsc_queue_basic TRACERS none)
+endif()
 ################################################################################
 #################################### RADIX_TREE ################################
 if(TEST_RADIX_TREE)

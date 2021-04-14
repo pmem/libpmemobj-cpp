@@ -1,60 +1,14 @@
 /*
- * Copyright (c) 2016-2017 Mindaugas Rasiukevicius <rmind at noxt eu>
+ * Copyright (c) 2016 Mindaugas Rasiukevicius <rmind at noxt eu>
  * All rights reserved.
  *
  * Use is subject to license terms, as specified in the LICENSE file.
  */
 
-/*
- * Atomic multi-producer single-consumer ring buffer, which supports
- * contiguous range operations and which can be conveniently used for
- * message passing.
- *
- * There are three offsets -- think of clock hands:
- * - NEXT: marks the beginning of the available space,
- * - WRITTEN: the point up to which the data is actually written.
- * - Observed READY: point up to which data is ready to be written.
- *
- * Producers
- *
- *	Observe and save the 'next' offset, then request N bytes from
- *	the ring buffer by atomically advancing the 'next' offset.  Once
- *	the data is written into the "reserved" buffer space, the thread
- *	clears the saved value; these observed values are used to compute
- *	the 'ready' offset.
- *
- * Consumer
- *
- *	Writes the data between 'written' and 'ready' offsets and updates
- *	the 'written' value.  The consumer thread scans for the lowest
- *	seen value by the producers.
- *
- * Key invariant
- *
- *	Producers cannot go beyond the 'written' offset; producers are
- *	also not allowed to catch up with the consumer.  Only the consumer
- *	is allowed to catch up with the producer i.e. set the 'written'
- *	offset to be equal to the 'next' offset.
- *
- * Wrap-around
- *
- *	If the producer cannot acquire the requested length due to little
- *	available space at the end of the buffer, then it will wraparound.
- *	WRAP_LOCK_BIT in 'next' offset is used to lock the 'end' offset.
- *
- *	There is an ABA problem if one producer stalls while a pair of
- *	producer and consumer would both successfully wrap-around and set
- *	the 'next' offset to the stale value of the first producer, thus
- *	letting it to perform a successful CAS violating the invariant.
- *	A counter in the 'next' offset (masked by WRAP_COUNTER) is used
- *	to prevent from this problem.  It is incremented on wraparounds.
- *
- *	The same ABA problem could also cause a stale 'ready' offset,
- *	which could be observed by the consumer.  We set WRAP_LOCK_BIT in
- *	the 'seen' value before advancing the 'next' and clear this bit
- *	after the successful advancing; this ensures that only the stable
- *	'ready' is observed by the consumer.
- */
+#ifndef _RINGBUF_H_
+#define _RINGBUF_H_
+
+#include <cstddef>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,8 +19,40 @@
 #include <limits.h>
 #include <errno.h>
 
-#include "ringbuf.h"
-#include "utils.h"
+#include <atomic>
+#include <algorithm>
+#include <cassert>
+
+#include <libpmemobj++/detail/atomic_backoff.hpp>
+
+#define	__predict_false(x)	__builtin_expect((x) != 0, 0)
+
+namespace pmem
+{
+
+namespace obj
+{
+
+namespace experimental
+{
+
+namespace ringbuf
+{
+
+typedef struct ringbuf ringbuf_t;
+typedef struct ringbuf_worker ringbuf_worker_t;
+
+int		ringbuf_setup(ringbuf_t *, unsigned, size_t);
+void		ringbuf_get_sizes(unsigned, size_t *, size_t *);
+
+ringbuf_worker_t *ringbuf_register(ringbuf_t *, unsigned);
+void		ringbuf_unregister(ringbuf_t *, ringbuf_worker_t *);
+
+ssize_t		ringbuf_acquire(ringbuf_t *, ringbuf_worker_t *, size_t);
+void		ringbuf_produce(ringbuf_t *, ringbuf_worker_t *);
+size_t		ringbuf_consume(ringbuf_t *, size_t *);
+void		ringbuf_release(ringbuf_t *, size_t);
+
 
 #define	RBUF_OFF_MASK	(0x00000000ffffffffUL)
 #define	WRAP_LOCK_BIT	(0x8000000000000000UL)
@@ -75,11 +61,11 @@
 #define	WRAP_COUNTER	(0x7fffffff00000000UL)
 #define	WRAP_INCR(x)	(((x) + 0x100000000UL) & WRAP_COUNTER)
 
-typedef uint64_t	ringbuf_off_t;
+typedef uint64_t ringbuf_off_t;
 
 struct ringbuf_worker {
-	volatile ringbuf_off_t	seen_off;
-	int			registered;
+	volatile std::atomic<ringbuf_off_t>	seen_off;
+	std::atomic<int>	registered;
 };
 
 struct ringbuf {
@@ -91,11 +77,11 @@ struct ringbuf {
 	 * WRAP_LOCK_BIT is set in case of wrap-around; in such case,
 	 * the producer can update the 'end' offset.
 	 */
-	volatile ringbuf_off_t	next;
-	ringbuf_off_t		end;
+	volatile std::atomic<ringbuf_off_t>	next;
+	std::atomic<ringbuf_off_t>	end;
 
 	/* The following are updated by the consumer. */
-	ringbuf_off_t		written;
+	std::atomic<ringbuf_off_t>	written;
 	unsigned		nworkers;
 	ringbuf_worker_t	workers[];
 };
@@ -140,7 +126,7 @@ ringbuf_register(ringbuf_t *rbuf, unsigned i)
 	ringbuf_worker_t *w = &rbuf->workers[i];
 
 	w->seen_off = RBUF_OFF_MAX;
-	atomic_store_explicit(&w->registered, true, memory_order_release);
+	std::atomic_store_explicit<int>(&w->registered, true, std::memory_order_release);
 	return w;
 }
 
@@ -157,15 +143,16 @@ ringbuf_unregister(ringbuf_t *rbuf, ringbuf_worker_t *w)
 static inline ringbuf_off_t
 stable_nextoff(ringbuf_t *rbuf)
 {
-	unsigned count = SPINLOCK_BACKOFF_MIN;
 	ringbuf_off_t next;
-retry:
-	next = atomic_load_explicit(&rbuf->next, memory_order_acquire);
-	if (next & WRAP_LOCK_BIT) {
-		SPINLOCK_BACKOFF(count);
-		goto retry;
+	for(pmem::detail::atomic_backoff backoff;;) {
+		next = std::atomic_load_explicit<ringbuf_off_t>(&rbuf->next, std::memory_order_acquire);
+		if (next & WRAP_LOCK_BIT) {
+			backoff.pause();
+		} else {
+			break;
+		}
 	}
-	ASSERT((next & RBUF_OFF_MASK) < rbuf->space);
+	assert((next & RBUF_OFF_MASK) < rbuf->space);
 	return next;
 }
 
@@ -175,13 +162,14 @@ retry:
 static inline ringbuf_off_t
 stable_seenoff(ringbuf_worker_t *w)
 {
-	unsigned count = SPINLOCK_BACKOFF_MIN;
 	ringbuf_off_t seen_off;
-retry:
-	seen_off = atomic_load_explicit(&w->seen_off, memory_order_acquire);
-	if (seen_off & WRAP_LOCK_BIT) {
-		SPINLOCK_BACKOFF(count);
-		goto retry;
+	for(pmem::detail::atomic_backoff backoff;;) {
+		seen_off = std::atomic_load_explicit<ringbuf_off_t>(&w->seen_off, std::memory_order_acquire);
+		if (seen_off & WRAP_LOCK_BIT) {
+			backoff.pause();
+		} else {
+			break;
+		}
 	}
 	return seen_off;
 }
@@ -197,8 +185,8 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 {
 	ringbuf_off_t seen, next, target;
 
-	ASSERT(len > 0 && len <= rbuf->space);
-	ASSERT(w->seen_off == RBUF_OFF_MAX);
+	assert(len > 0 && len <= rbuf->space);
+	assert(w->seen_off == RBUF_OFF_MAX);
 
 	do {
 		ringbuf_off_t written;
@@ -214,9 +202,9 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 		 */
 		seen = stable_nextoff(rbuf);
 		next = seen & RBUF_OFF_MASK;
-		ASSERT(next < rbuf->space);
-		atomic_store_explicit(&w->seen_off, next | WRAP_LOCK_BIT,
-		    memory_order_relaxed);
+		assert(next < rbuf->space);
+		std::atomic_store_explicit<ringbuf_off_t>(&w->seen_off, next | WRAP_LOCK_BIT,
+		    std::memory_order_relaxed);
 
 		/*
 		 * Compute the target offset.  Key invariant: we cannot
@@ -226,8 +214,8 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 		written = rbuf->written;
 		if (__predict_false(next < written && target >= written)) {
 			/* The producer must wait. */
-			atomic_store_explicit(&w->seen_off,
-			    RBUF_OFF_MAX, memory_order_release);
+			std::atomic_store_explicit<ringbuf_off_t>(&w->seen_off,
+			    RBUF_OFF_MAX, std::memory_order_release);
 			return -1;
 		}
 
@@ -246,8 +234,8 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 			 */
 			target = exceed ? (WRAP_LOCK_BIT | len) : 0;
 			if ((target & RBUF_OFF_MASK) >= written) {
-				atomic_store_explicit(&w->seen_off,
-				    RBUF_OFF_MAX, memory_order_release);
+				std::atomic_store_explicit<ringbuf_off_t>(&w->seen_off,
+				    RBUF_OFF_MAX, std::memory_order_release);
 				return -1;
 			}
 			/* Increment the wrap-around counter. */
@@ -256,7 +244,7 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 			/* Preserve the wrap-around counter. */
 			target |= seen & WRAP_COUNTER;
 		}
-	} while (!atomic_compare_exchange_weak(&rbuf->next, &seen, target));
+	} while (!std::atomic_compare_exchange_weak<ringbuf_off_t>(&rbuf->next, &seen, target));
 
 	/*
 	 * Acquired the range.  Clear WRAP_LOCK_BIT in the 'seen' value
@@ -264,8 +252,8 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 	 *
 	 * No need for memory_order_release, since CAS issued a fence.
 	 */
-	atomic_store_explicit(&w->seen_off, w->seen_off & ~WRAP_LOCK_BIT,
-	    memory_order_relaxed);
+	std::atomic_store_explicit<ringbuf_off_t>(&w->seen_off, w->seen_off & ~WRAP_LOCK_BIT,
+	    std::memory_order_relaxed);
 
 	/*
 	 * If we set the WRAP_LOCK_BIT in the 'next' (because we exceed
@@ -274,8 +262,8 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 	 */
 	if (__predict_false(target & WRAP_LOCK_BIT)) {
 		/* Cannot wrap-around again if consumer did not catch-up. */
-		ASSERT(rbuf->written <= next);
-		ASSERT(rbuf->end == RBUF_OFF_MAX);
+		assert(rbuf->written <= next);
+		assert(rbuf->end == RBUF_OFF_MAX);
 		rbuf->end = next;
 		next = 0;
 
@@ -283,10 +271,10 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 		 * Unlock: ensure the 'end' offset reaches global
 		 * visibility before the lock is released.
 		 */
-		atomic_store_explicit(&rbuf->next,
-		    (target & ~WRAP_LOCK_BIT), memory_order_release);
+		std::atomic_store_explicit<ringbuf_off_t>(&rbuf->next,
+		    (target & ~WRAP_LOCK_BIT), std::memory_order_release);
 	}
-	ASSERT((target & RBUF_OFF_MASK) <= rbuf->space);
+	assert((target & RBUF_OFF_MASK) <= rbuf->space);
 	return (ssize_t)next;
 }
 
@@ -298,9 +286,9 @@ void
 ringbuf_produce(ringbuf_t *rbuf, ringbuf_worker_t *w)
 {
 	(void)rbuf;
-	ASSERT(w->registered);
-	ASSERT(w->seen_off != RBUF_OFF_MAX);
-	atomic_store_explicit(&w->seen_off, RBUF_OFF_MAX, memory_order_release);
+	assert(w->registered);
+	assert(w->seen_off != RBUF_OFF_MAX);
+	std::atomic_store_explicit<ringbuf_off_t>(&w->seen_off, RBUF_OFF_MAX, std::memory_order_release);
 }
 
 /*
@@ -343,7 +331,7 @@ retry:
 		 * Get a stable 'seen' value.  This is necessary since we
 		 * want to discard the stale 'seen' values.
 		 */
-		if (!atomic_load_explicit(&w->registered, memory_order_relaxed))
+		if (!std::atomic_load_explicit<int>(&w->registered, std::memory_order_relaxed))
 			continue;
 		seen_off = stable_seenoff(w);
 
@@ -353,9 +341,9 @@ retry:
 		 * not behind the 'written' offset.
 		 */
 		if (seen_off >= written) {
-			ready = MIN(seen_off, ready);
+			ready = std::min<ringbuf_off_t>(seen_off, ready);
 		}
-		ASSERT(ready >= written);
+		assert(ready >= written);
 	}
 
 	/*
@@ -363,7 +351,7 @@ retry:
 	 * and deduct the safe 'ready' offset.
 	 */
 	if (next < written) {
-		const ringbuf_off_t end = MIN(rbuf->space, rbuf->end);
+		const ringbuf_off_t end = std::min<ringbuf_off_t>(rbuf->space, rbuf->end);
 
 		/*
 		 * Wrap-around case.  Check for the cut off first.
@@ -385,8 +373,8 @@ retry:
 			 * Wrap-around the consumer and start from zero.
 			 */
 			written = 0;
-			atomic_store_explicit(&rbuf->written,
-			    written, memory_order_release);
+			std::atomic_store_explicit<ringbuf_off_t>(&rbuf->written,
+			    written, std::memory_order_release);
 			goto retry;
 		}
 
@@ -396,21 +384,21 @@ retry:
 		 * 'ready' or the 'end' offset.  If neither is set, then
 		 * the actual end of the buffer.
 		 */
-		ASSERT(ready > next);
-		ready = MIN(ready, end);
-		ASSERT(ready >= written);
+		assert(ready > next);
+		ready = std::min<ringbuf_off_t>(ready, end);
+		assert(ready >= written);
 	} else {
 		/*
 		 * Regular case.  Up to the observed 'ready' (if set)
 		 * or the 'next' offset.
 		 */
-		ready = MIN(ready, next);
+		ready = std::min<ringbuf_off_t>(ready, next);
 	}
 	towrite = ready - written;
 	*offset = written;
 
-	ASSERT(ready >= written);
-	ASSERT(towrite <= rbuf->space);
+	assert(ready >= written);
+	assert(towrite <= rbuf->space);
 	return towrite;
 }
 
@@ -422,9 +410,15 @@ ringbuf_release(ringbuf_t *rbuf, size_t nbytes)
 {
 	const size_t nwritten = rbuf->written + nbytes;
 
-	ASSERT(rbuf->written <= rbuf->space);
-	ASSERT(rbuf->written <= rbuf->end);
-	ASSERT(nwritten <= rbuf->space);
+	assert(rbuf->written <= rbuf->space);
+	assert(rbuf->written <= rbuf->end);
+	assert(nwritten <= rbuf->space);
 
 	rbuf->written = (nwritten == rbuf->space) ? 0 : nwritten;
 }
+
+}
+}
+}
+}
+#endif

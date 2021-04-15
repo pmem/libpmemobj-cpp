@@ -130,7 +130,7 @@ run(pmem::obj::pool<root> &pop)
 	} catch (std::exception &e) {
 		UT_FATALexc(e);
 	}
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void

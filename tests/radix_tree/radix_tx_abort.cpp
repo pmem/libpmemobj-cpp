@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 #include "radix.hpp"
 
@@ -43,7 +43,7 @@ test_emplace(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -87,7 +87,7 @@ test_try_emplace(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -152,7 +152,7 @@ test_insert_or_assign(nvobj::pool<root> &pop,
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -199,7 +199,7 @@ test_insert(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -266,7 +266,7 @@ test_assign(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -334,7 +334,7 @@ test_assign_internal_leaf(nvobj::pool<root> &pop,
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -377,7 +377,7 @@ test_assign_root(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -422,7 +422,7 @@ test_erase(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 template <typename Container, int ValueRepeats>
@@ -463,7 +463,7 @@ test_erase_internal(nvobj::pool<root> &pop,
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 }
 

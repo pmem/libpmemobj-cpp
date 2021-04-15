@@ -1,0 +1,6 @@
+{
+   Conditional variable destruction false-positive
+   drd:CondErr
+   fun:pthread_cond_destroy_intercept
+   fun:pthread_cond_destroy@*
+}

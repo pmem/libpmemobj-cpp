@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * concurrent_map.cpp -- pmem::obj::concurrent_map test
@@ -20,8 +20,6 @@
 
 #include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/experimental/concurrent_map.hpp>
-
-#include <libpmemobj.h>
 
 #define LAYOUT "concurrent_map"
 
@@ -82,20 +80,6 @@ gdb_sync_exit()
 
 static int loop_sync_1 = 1;
 static int loop_sync_2 = 1;
-
-int
-num_allocs(nvobj::pool<root> &pop)
-{
-	auto oid = pmemobj_first(pop.handle());
-	int num = 0;
-
-	while (!OID_IS_NULL(oid)) {
-		num++;
-		oid = pmemobj_next(oid);
-	}
-
-	return num;
-}
 
 struct test_case {
 	virtual void

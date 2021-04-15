@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 #include "radix.hpp"
 
@@ -118,7 +118,7 @@ test_iterators(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_int>(r->radix_int);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
@@ -261,7 +261,7 @@ test_find(nvobj::pool<root> &pop)
 				r->radix_str);
 		});
 
-		UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+		UT_ASSERTeq(num_allocs(pop), 0);
 	}
 
 	{
@@ -297,7 +297,7 @@ test_find(nvobj::pool<root> &pop)
 				r->radix_str);
 		});
 
-		UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+		UT_ASSERTeq(num_allocs(pop), 0);
 	}
 
 	{
@@ -397,7 +397,7 @@ test_find(nvobj::pool<root> &pop)
 				r->radix_str);
 		});
 
-		UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+		UT_ASSERTeq(num_allocs(pop), 0);
 	}
 }
 
@@ -531,7 +531,7 @@ test_compression(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_string>(r->radix_str);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 /* Tests some corner cases (not covered by libcxx erase tests). */
@@ -587,7 +587,7 @@ test_erase(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_string>(r->radix_str);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 /* This test inserts elements in range [0:2:2 * numeric_limits<uint16_t>::max()]
@@ -647,7 +647,7 @@ test_binary_keys(nvobj::pool<root> &pop)
 
 	its = {};
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 
 	nvobj::transaction::run(pop, [&] {
 		r->radix_int_int = nvobj::make_persistent<container_int_int>();
@@ -687,7 +687,7 @@ test_binary_keys(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_int_int>(r->radix_int_int);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
@@ -763,7 +763,7 @@ test_pre_post_fixes(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_string>(r->radix_str);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
@@ -791,7 +791,7 @@ test_assign_inline_string(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_string>(r->radix_str);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
@@ -844,7 +844,7 @@ test_inline_string_u8t_key(nvobj::pool<root> &pop)
 			r->radix_inline_s_u8t);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
@@ -932,7 +932,7 @@ test_remove_inserted(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<container_string>(r->radix_str);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 static void

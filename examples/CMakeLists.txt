@@ -41,6 +41,8 @@ if(COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
 endif()
 
+include(tbb)
+
 include_directories(${LIBPMEMOBJ_INCLUDE_DIRS} .)
 link_directories(${LIBPMEMOBJ_LIBRARY_DIRS})
 
@@ -233,3 +235,6 @@ add_example(make_persistent make_persistent/make_persistent.cpp)
 add_example(persistent persistent/persistent.cpp)
 
 add_example(transaction transaction/transaction.cpp)
+
+add_example(multi_tier_map radix_tree/multi_tier_map.cpp)
+target_link_libraries(example-multi_tier_map ${TBB_LIBRARIES})

@@ -29,12 +29,13 @@ public:
 		ringbuf_worker_t *w;
 		mpsc_queue *queue;
 
-		size_t len;
+		size_t accessor_window;
 		char* data;
 	public:
 
 		accessor(mpsc_queue *q, ringbuf_worker_t *worker, size_t len)
 		{
+			accessor_window = len;
 			w = worker;
 			queue = q;
 			auto offset = ringbuf_acquire(queue->ring_buffer, w, len);
@@ -43,10 +44,12 @@ public:
 
 		char* add(const char* d, size_t len)
 		{
-			// XXX: Add bound check
+			assert(len <= accessor_window);
+
 			char* current_data = data;
 			queue->pop->memcpy_persist(data ,d, len);
 			data += len;
+			accessor_window -= len;
 			return current_data;
 		}
 
@@ -54,6 +57,7 @@ public:
 		{
 			ringbuf_produce(queue->ring_buffer, w);
 		}
+
 	};
 
 	class read_accessor
@@ -110,6 +114,7 @@ private:
 	std::atomic_size_t cnt;
 	pmem::obj::persistent_ptr<char[]> buf;
 	pmem::obj::pool_base *pop;
+	size_t buff_size_;
 
 public:
 
@@ -119,16 +124,13 @@ public:
 		size_t ring_buffer_size;
 		buf = *log;
 		pop = my_pool;
-
-		pmem::obj::transaction::run(*pop, [&] {
-			buf = pmem::obj::make_persistent<char[]>(buff_size);
-		});
+		buff_size_ = buff_size;
 
 		ringbuf_get_sizes(max_workers, &ring_buffer_size, NULL);
 		ring_buffer = (ringbuf_t*) malloc(ring_buffer_size);
 		ringbuf_setup(ring_buffer, max_workers, buff_size);
 	}
-	
+
 	~mpsc_queue()
 	{
 		free(ring_buffer);
@@ -141,11 +143,14 @@ public:
 
 	read_accessor consume()
 	{
-	return read_accessor(this);
+		return read_accessor(this);
 	}
 
 	void recover()
 	{
+		auto recovery_worker = register_worker();
+		// reclame all data in buffer
+		recovery_worker.produce(buff_size_);
 	}
 };
 

@@ -50,7 +50,7 @@ public:
 			assert(len <= accessor_window);
 
 			char* current_data = data;
-			queue->pop->memcpy_persist(data ,d, len);
+			queue->pop.memcpy_persist(data ,d, len);
 			data += len;
 			accessor_window -= len;
 			return current_data;
@@ -125,18 +125,18 @@ private:
 	ringbuf_t *ring_buffer;
 	static pmem::detail::id_manager id_manager;
 	pmem::obj::persistent_ptr<char[]> buf;
-	pmem::obj::pool_base *pop;
+	pmem::obj::pool_base pop;
 	size_t buff_size_;
 
 
 public:
 
 
-	mpsc_queue(pmem::obj::pool_base *my_pool, pmem::obj::persistent_ptr<char[]> *log, size_t buff_size,size_t max_workers=1)
+	mpsc_queue(pmem::obj::persistent_ptr<char[]> *log, size_t buff_size,size_t max_workers=1)
 	{
 		size_t ring_buffer_size;
 		buf = *log;
-		pop = my_pool;
+		pop = pmem::obj::pool_by_vptr(log);
 		buff_size_ = buff_size;
 
 		ringbuf_get_sizes(max_workers, &ring_buffer_size, NULL);

@@ -45,7 +45,7 @@ int basic_test(int argc, char *argv[])
 
 	auto proot = pop.root();
 
-	auto queue = new pmem::obj::experimental::mpsc_queue(&pop, &proot->log, 10000, 1);
+	auto queue = new pmem::obj::experimental::mpsc_queue(&proot->log, 10000, 1);
 	auto worker =  queue->register_worker();
 	if(!already_exists){
 	{
@@ -109,7 +109,7 @@ int mt_test(int argc, char *argv[])
 				proot->log = pmem::obj::make_persistent<char[]>(buff_size);
 		});
 	}
-	auto queue = pmem::obj::experimental::mpsc_queue(&pop, &proot->log, buff_size, concurrency);
+	auto queue = pmem::obj::experimental::mpsc_queue(&proot->log, buff_size, concurrency);
 	if(recovery_needed)
 	{
 		queue.recover();

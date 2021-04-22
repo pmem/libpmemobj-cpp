@@ -5,6 +5,9 @@
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 
+// XXX: Move id_manager to separate file
+#include <libpmemobj++/detail/enumerable_thread_specific.hpp>
+
 #include <libpmemobj++/container/detail/ringbuf/ringbuf.h>
 #include <cstddef>
 #include <cstring>
@@ -57,7 +60,6 @@ public:
 		{
 			ringbuf_produce(queue->ring_buffer, w);
 		}
-
 	};
 
 	class read_accessor
@@ -88,18 +90,21 @@ public:
 	private:
 		mpsc_queue *queue;
 		ringbuf_worker_t *w;
-		unsigned id;
+		size_t id;
 	public:
 		worker(mpsc_queue *q)
 		{
 			queue = q;
-			id = queue->cnt.fetch_add(1);
+			auto &manager = queue->get_id_manager();
+			id = manager.get();
 			w = ringbuf_register(queue->ring_buffer, id);
 		}
 
 		~worker()
 		{
 			ringbuf_unregister(queue->ring_buffer, w);
+			auto &manager = queue->get_id_manager();
+			manager.release(id);
 		}
 
 		accessor produce(size_t len)
@@ -110,11 +115,19 @@ public:
 	};
 
 private:
+
+	inline pmem::detail::id_manager &get_id_manager()
+	{
+		static pmem::detail::id_manager manager;
+		return manager;
+	}
+
 	ringbuf_t *ring_buffer;
-	std::atomic_size_t cnt;
+	static pmem::detail::id_manager id_manager;
 	pmem::obj::persistent_ptr<char[]> buf;
 	pmem::obj::pool_base *pop;
 	size_t buff_size_;
+
 
 public:
 
@@ -150,7 +163,8 @@ public:
 	{
 		auto recovery_worker = register_worker();
 		// reclame all data in buffer
-		recovery_worker.produce(buff_size_);
+		auto useless_acc = recovery_worker.produce(buff_size_);
+		(void)useless_acc;
 	}
 };
 

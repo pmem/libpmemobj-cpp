@@ -89,7 +89,7 @@ int mt_test(int argc, char *argv[])
 	const char *path = argv[1];
 
 	pmem::obj::pool<struct root> pop;
-	
+
 	bool recovery_needed = false;
 	try {
 		pop = pmem::obj::pool<root>::create(
@@ -102,18 +102,18 @@ int mt_test(int argc, char *argv[])
 
 	auto proot = pop.root();
 	const size_t buff_size = 100000;
-	
+
 	if(! recovery_needed)
 	{
 		pmem::obj::transaction::run(pop, [&] {
 				proot->log = pmem::obj::make_persistent<char[]>(buff_size);
 		});
 	}
-	auto queue = new pmem::obj::experimental::mpsc_queue(&pop, &proot->log, buff_size, concurrency);
+	auto queue = pmem::obj::experimental::mpsc_queue(&pop, &proot->log, buff_size, concurrency);
 	if(recovery_needed)
 	{
-		queue-> recover();
-		auto rd_acc = queue->consume();
+		queue.recover();
+		auto rd_acc = queue.consume();
 		if(rd_acc.len > 0)
 			std::cout << std::string(rd_acc.data, rd_acc.len) << std::endl;
 	} else {
@@ -122,12 +122,12 @@ int mt_test(int argc, char *argv[])
 			if( thread_id == 0 ){
 				for (int i = 0; i<100000000; i++)
 				{
-					auto rd_acc = queue->consume();
+					auto rd_acc = queue.consume();
 					if(rd_acc.len > 0)
 						std::cout << std::string(rd_acc.data, rd_acc.len) << std::endl;
 				}
 			} else {
-				auto worker =  queue->register_worker();
+				auto worker = queue.register_worker();
 				for( int i =0; i<10; i++)
 				{
 					std::string tmp = std::to_string(i);
@@ -137,7 +137,6 @@ int mt_test(int argc, char *argv[])
 			}
 		});
 	}
-	delete queue;
 	return 0;
 }
 

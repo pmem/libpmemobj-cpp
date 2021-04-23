@@ -17,6 +17,8 @@ init(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 			auto ret = ptr->try_emplace(key<Container>(i),
 						    value<Container>(i));
 			its.push_back(ret.first);
+
+			ptr->runtime_initialize_mt();
 		}
 	});
 
@@ -31,7 +33,7 @@ test_memory_reclamation_erase(nvobj::pool<root> &pop,
 	auto its = init(pop, ptr);
 
 	for (auto it = ptr->begin(); it != ptr->end();)
-		it = ptr->erase(it, true);
+		it = ptr->erase(it);
 
 	for (unsigned i = 0; i < its.size(); i++) {
 		UT_ASSERT(its[i]->key() == key<Container>(i));
@@ -60,7 +62,7 @@ test_memory_reclamation_assign(nvobj::pool<root> &pop,
 
 	for (unsigned i = 0; i < its.size(); i++) {
 		auto ret = ptr->insert_or_assign(key<Container>(i),
-						 value<Container>(1 + i), true);
+						 value<Container>(1 + i));
 		UT_ASSERT(!ret.second);
 	}
 
@@ -96,7 +98,7 @@ test_memory_reclamation_dtor(nvobj::pool<root> &pop,
 	init(pop, ptr);
 
 	for (auto it = ptr->begin(); it != ptr->end();)
-		it = ptr->erase(it, true);
+		it = ptr->erase(it);
 
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });

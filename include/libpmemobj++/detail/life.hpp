@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -10,6 +10,7 @@
 #define LIBPMEMOBJ_CPP_DESTROYER_HPP
 
 #include <cstddef>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 

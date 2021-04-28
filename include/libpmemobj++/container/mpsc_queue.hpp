@@ -3,6 +3,7 @@
 
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+#include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 // XXX: Move id_manager to separate file
@@ -22,42 +23,62 @@ namespace obj
 namespace experimental
 {
 
+static constexpr size_t CACHELINE_SIZE = 64ULL;
+#define ALIGN_UP(size, align) (((size) + (align)-1) & ~((align)-1))
+
 class mpsc_queue {
 public:
+	struct entry {
+		char data[56];
+		size_t size;
+	};
+
 	class accessor {
 	private:
+		entry dram_entry;
+
 		ringbuf::ringbuf_worker_t *w;
 		mpsc_queue *queue;
 
-		size_t accessor_window;
+		size_t size = 0;
+		size_t available_size;
 		char *data;
 
 	public:
 		accessor(mpsc_queue *q, ringbuf::ringbuf_worker_t *worker,
 			 size_t len)
 		{
-			accessor_window = len;
+			assert(len <= CACHELINE_SIZE && len > 0);
+
+			len = ALIGN_UP(len, CACHELINE_SIZE);
+
+			available_size = len;
 			w = worker;
 			queue = q;
 			auto offset =
 				ringbuf_acquire(queue->ring_buffer, w, len);
-			data = queue->buf.get() + offset;
+			data = queue->buf + offset;
 		};
 
 		char *
 		add(const char *d, size_t len)
 		{
-			assert(len <= accessor_window);
+			assert(size + len <= available_size);
 
-			char *current_data = data;
-			queue->pop.memcpy_persist(data, d, len);
-			data += len;
-			accessor_window -= len;
-			return current_data;
+			memcpy(dram_entry.data + size, d, len);
+			size += len;
+
+			return dram_entry.data + size;
 		}
 
 		~accessor()
 		{
+			dram_entry.size = size;
+			pmemobj_memcpy(queue->pop.handle(), data,
+				       (char *)&dram_entry, CACHELINE_SIZE,
+				       PMEMOBJ_F_MEM_NONTEMPORAL);
+			pmemobj_drain(queue->pop.handle());
+
 			ringbuf_produce(queue->ring_buffer, w);
 		}
 	};
@@ -66,17 +87,74 @@ public:
 	private:
 		mpsc_queue *queue;
 
-	public:
+		// XXX - Input iterator
+		struct iterator {
+			iterator(char *data) : data(data)
+			{
+			}
+
+			// Invalidates data after increment
+			iterator &
+			operator++()
+			{
+				auto pop = pmem::obj::pool_by_vptr(data);
+				entry *entry_ptr = (entry *)data;
+
+				entry_ptr->size = 0;
+				pop.persist(&entry_ptr->size,
+					    sizeof(entry_ptr->size));
+
+				data += CACHELINE_SIZE;
+
+				return *this;
+			}
+
+			bool
+			operator==(const iterator &rhs)
+			{
+				return data == rhs.data;
+			}
+
+			bool
+			operator!=(const iterator &rhs)
+			{
+				return data != rhs.data;
+			}
+
+			pmem::obj::string_view operator*() const
+			{
+				entry *entry_ptr = (entry *)data;
+				return pmem::obj::string_view(entry_ptr->data,
+							      entry_ptr->size);
+			}
+
+		private:
+			char *data;
+		};
+
 		size_t len;
 		char *data;
 
+	public:
 		read_accessor(mpsc_queue *q)
 		{
 			queue = q;
 			size_t offset;
 
 			len = ringbuf_consume(queue->ring_buffer, &offset);
-			data = queue->buf.get() + offset;
+			data = queue->buf + offset;
+		}
+
+		iterator
+		begin()
+		{
+			return iterator(data);
+		}
+
+		iterator
+		end()
+		{
+			return iterator(data + len);
 		}
 
 		~read_accessor()
@@ -123,7 +201,7 @@ private:
 	}
 
 	ringbuf::ringbuf_t *ring_buffer;
-	pmem::obj::persistent_ptr<char[]> buf;
+	char *buf;
 	pmem::obj::pool_base pop;
 	size_t buff_size_;
 
@@ -132,9 +210,13 @@ public:
 		   size_t max_workers = 1)
 	{
 		size_t ring_buffer_size;
-		buf = log;
+
+		auto addr = (uintptr_t)log.get();
+		auto aligned_addr = ALIGN_UP(addr, CACHELINE_SIZE);
+
+		buf = (char *)aligned_addr;
 		pop = pmem::obj::pool_by_pptr(log);
-		buff_size_ = buff_size;
+		buff_size_ = buff_size - (aligned_addr - addr);
 
 		ringbuf::ringbuf_get_sizes(max_workers, &ring_buffer_size,
 					   NULL);
@@ -157,6 +239,21 @@ public:
 	consume()
 	{
 		return read_accessor(this);
+	}
+
+	// XXX - Move logic from this function to consume (this requires setting
+	// reader/writer offsets int ringubf)
+	template <typename F>
+	void
+	recover(F &&f)
+	{
+		for (size_t i = 0; i < buff_size_; i += CACHELINE_SIZE) {
+			entry dram_entry;
+			memcpy((char *)&dram_entry, buf + i, CACHELINE_SIZE);
+
+			if (dram_entry.size)
+				f(dram_entry);
+		}
 	}
 };
 

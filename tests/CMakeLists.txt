@@ -959,6 +959,12 @@ if(TEST_CONCURRENT_MAP)
 endif()
 
 ################################################################################
+#################################### MPSC_QUEUE ################################
+if(TEST_MPSC_QUEUE)
+	build_test(mpsc_queue_basic mpsc_queue/basic.cpp)
+	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none)
+endif()
+################################################################################
 #################################### RADIX_TREE ################################
 if(TEST_RADIX_TREE)
 	build_test(radix_tx_abort radix_tree/radix_tx_abort.cpp)

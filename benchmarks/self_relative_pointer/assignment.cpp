@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
- * assignment.cpp -- this benchmarks is used to measure time of
+ * assignment.cpp -- this benchmark is used to measure time of
  * the assignment operator and the swap function for persistent_ptr and
  * self_relative_ptr
  */

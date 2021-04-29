@@ -51,6 +51,11 @@ print_time_per_element(std::string msg,
 		       std::chrono::nanoseconds::rep total_time,
 		       size_t n_elements)
 {
+	if (n_elements <= 0) {
+		throw std::invalid_argument(
+			"Benchmark failed, wrong params passed.");
+	}
+
 	std::cout << msg << static_cast<size_t>(total_time) / n_elements << "ns"
 		  << std::endl;
 }

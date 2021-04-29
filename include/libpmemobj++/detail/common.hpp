@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -63,6 +63,29 @@
 
 #if LIBPMEMOBJ_CPP_VG_DRD_ENABLED
 #include <drd.h>
+#endif
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, ptr)                     \
+	if (order == std::memory_order_release ||                              \
+	    order == std::memory_order_acq_rel ||                              \
+	    order == std::memory_order_seq_cst) {                              \
+		ANNOTATE_HAPPENS_BEFORE(ptr);                                  \
+	}
+
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, ptr)                      \
+	if (order == std::memory_order_consume ||                              \
+	    order == std::memory_order_acquire ||                              \
+	    order == std::memory_order_acq_rel ||                              \
+	    order == std::memory_order_seq_cst) {                              \
+		ANNOTATE_HAPPENS_AFTER(ptr);                                   \
+	}
+#else
+
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, ptr)
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, ptr)
+
 #endif
 
 /*

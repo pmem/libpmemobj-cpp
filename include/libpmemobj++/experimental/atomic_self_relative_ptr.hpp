@@ -1,37 +1,15 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 #ifndef LIBPMEMOBJ_CPP_ATOMIC_SELF_RELATIVE_PTR_HPP
 #define LIBPMEMOBJ_CPP_ATOMIC_SELF_RELATIVE_PTR_HPP
 
+#include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/self_relative_ptr_base_impl.hpp>
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/transaction.hpp>
 
 #include <atomic>
-
-#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-
-#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, ptr)                     \
-	if (order == std::memory_order_release ||                              \
-	    order == std::memory_order_acq_rel ||                              \
-	    order == std::memory_order_seq_cst) {                              \
-		ANNOTATE_HAPPENS_BEFORE(ptr);                                  \
-	}
-
-#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, ptr)                      \
-	if (order == std::memory_order_consume ||                              \
-	    order == std::memory_order_acquire ||                              \
-	    order == std::memory_order_acq_rel ||                              \
-	    order == std::memory_order_seq_cst) {                              \
-		ANNOTATE_HAPPENS_AFTER(ptr);                                   \
-	}
-#else
-
-#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, ptr)
-#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, ptr)
-
-#endif
 
 namespace std
 {
@@ -251,9 +229,6 @@ private:
 };
 
 } /* namespace std */
-
-#undef LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE
-#undef LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER
 
 namespace pmem
 {

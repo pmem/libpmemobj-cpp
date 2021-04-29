@@ -966,6 +966,9 @@ if(TEST_RADIX_TREE)
 	build_test(radix_basic radix_tree/radix_basic.cpp)
 	add_test_generic(NAME radix_basic TRACERS none memcheck pmemcheck)
 
+	build_test_ext(NAME radix_concurrent SRC_FILES radix_tree/radix_concurrent.cpp)
+	add_test_generic(NAME radix_concurrent TRACERS none memcheck pmemcheck drd helgrind)
+
 	build_test_ext(NAME radix_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)
 

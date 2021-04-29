@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
- * insert_open.cpp -- this simple benchmarks is used to measure time of
+ * insert_open.cpp -- this simple benchmark is used to measure time of
  * inserting specified number of elements and time of runtime_initialize().
  */
 

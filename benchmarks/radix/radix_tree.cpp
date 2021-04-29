@@ -51,6 +51,11 @@ print_time_per_element(std::string msg,
 		       std::chrono::nanoseconds::rep total_time,
 		       size_t n_elements)
 {
+	if (n_elements == 0) {
+		throw std::invalid_argument(
+			"Benchmark failed, wrong params passed.");
+	}
+
 	std::cout << msg << static_cast<size_t>(total_time) / n_elements << "ns"
 		  << std::endl;
 }
@@ -200,12 +205,28 @@ main(int argc, char *argv[])
 	}
 
 	const char *path = argv[1];
-	if (argc > 2)
+	if (argc > 2) {
 		params.count = std::stoul(argv[2]);
-	if (argc > 3)
+		if (params.count == 0) {
+			std::cerr << "Number of the elements must be > 0"
+				  << std::endl;
+			return 1;
+		}
+	}
+	if (argc > 3) {
 		params.batch_size = std::stoul(argv[3]);
-	if (argc > 4)
+		if (params.batch_size == 0) {
+			std::cerr << "Batch size must be > 0" << std::endl;
+			return 1;
+		}
+	}
+	if (argc > 4) {
 		params.sample_size = std::stoul(argv[4]);
+		if (params.sample_size == 0) {
+			std::cerr << "Sample size must be > 0" << std::endl;
+			return 1;
+		}
+	}
 
 	std::cout << "Radix benchmark, count: " << params.count
 		  << ", batch_size: " << params.batch_size

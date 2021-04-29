@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -295,7 +295,8 @@ private:
 	struct leaf;
 	struct node;
 
-	using pointer_type = detail::tagged_ptr<leaf, node>;
+	using pointer_type = std::atomic<detail::tagged_ptr<leaf, node>>;
+	using non_atomic_pointer_type = detail::tagged_ptr<leaf, node>;
 
 	/*** pmem members ***/
 	pointer_type root;
@@ -307,40 +308,43 @@ private:
 	template <typename K>
 	leaf *internal_find(const K &k) const;
 
-	static pointer_type &parent_ref(pointer_type n);
+	static pointer_type &parent_ref(non_atomic_pointer_type n);
 	template <typename K1, typename K2>
 	static bool keys_equal(const K1 &k1, const K2 &k2);
 	template <typename K1, typename K2>
 	static int compare(const K1 &k1, const K2 &k2, byten_t offset = 0);
 	template <bool Direction, typename Iterator>
-	static leaf *next_leaf(Iterator child, pointer_type parent);
+	static leaf *next_leaf(Iterator child, non_atomic_pointer_type parent);
 	template <bool Direction>
-	static leaf *find_leaf(pointer_type n);
+	static leaf *find_leaf(non_atomic_pointer_type n);
 	static unsigned slice_index(char k, uint8_t shift);
 	template <typename K1, typename K2>
 	static byten_t prefix_diff(const K1 &lhs, const K2 &rhs,
 				   byten_t offset = 0);
-	leaf *any_leftmost_leaf(pointer_type n, size_type min_depth) const;
+	leaf *any_leftmost_leaf(non_atomic_pointer_type n,
+				size_type min_depth) const;
 	template <typename K1, typename K2>
 	static bitn_t bit_diff(const K1 &leaf_key, const K2 &key, byten_t diff);
 	template <typename K>
 	leaf *common_prefix_leaf(const K &key) const;
-	static void print_rec(std::ostream &os, radix_tree::pointer_type n);
+	static void print_rec(std::ostream &os,
+			      radix_tree::non_atomic_pointer_type n);
 	template <typename K>
 	static BytesView bytes_view(const K &k);
 	static string_view bytes_view(string_view s);
-	static bool path_length_equal(size_t key_size, pointer_type n);
+	static bool path_length_equal(size_t key_size,
+				      non_atomic_pointer_type n);
 	template <typename K>
-	std::tuple<const pointer_type *, pointer_type>
+	std::tuple<const pointer_type *, non_atomic_pointer_type>
 	descend(const K &k, byten_t diff, bitn_t sh) const;
 	template <typename K>
-	std::tuple<pointer_type *, pointer_type>
+	std::tuple<pointer_type *, non_atomic_pointer_type>
 	descend(const K &k, byten_t diff, bitn_t sh);
 	template <bool Lower, typename K>
 	const_iterator internal_bound(const K &k) const;
-	static bool is_leaf(const pointer_type &p);
-	static leaf *get_leaf(const pointer_type &p);
-	static node *get_node(const pointer_type &p);
+	static bool is_leaf(const non_atomic_pointer_type &p);
+	static leaf *get_leaf(const non_atomic_pointer_type &p);
+	static node *get_node(const non_atomic_pointer_type &p);
 
 	void check_pmem();
 	void check_tx_stage_work();
@@ -380,32 +384,33 @@ struct radix_tree<Key, Value, BytesView>::leaf {
 	const Key &key() const;
 	const Value &value() const;
 
-	static persistent_ptr<leaf> make(pointer_type parent);
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent);
 
 	template <typename... Args1, typename... Args2>
 	static persistent_ptr<leaf>
-	make(pointer_type parent, std::piecewise_construct_t pc,
+	make(non_atomic_pointer_type parent, std::piecewise_construct_t pc,
 	     std::tuple<Args1...> first_args, std::tuple<Args2...> second_args);
 	template <typename K, typename V>
-	static persistent_ptr<leaf> make(pointer_type parent, K &&k, V &&v);
-	static persistent_ptr<leaf> make(pointer_type parent, const Key &k,
-					 const Value &v);
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent, K &&k,
+					 V &&v);
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent,
+					 const Key &k, const Value &v);
 	template <typename K, typename... Args>
-	static persistent_ptr<leaf> make_key_args(pointer_type parent, K &&k,
-						  Args &&... args);
+	static persistent_ptr<leaf>
+	make_key_args(non_atomic_pointer_type parent, K &&k, Args &&... args);
 	template <typename K, typename V>
-	static persistent_ptr<leaf> make(pointer_type parent,
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent,
 					 detail::pair<K, V> &&p);
 	template <typename K, typename V>
-	static persistent_ptr<leaf> make(pointer_type parent,
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent,
 					 const detail::pair<K, V> &p);
 	template <typename K, typename V>
-	static persistent_ptr<leaf> make(pointer_type parent,
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent,
 					 std::pair<K, V> &&p);
 	template <typename K, typename V>
-	static persistent_ptr<leaf> make(pointer_type parent,
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent,
 					 const std::pair<K, V> &p);
-	static persistent_ptr<leaf> make(pointer_type parent,
+	static persistent_ptr<leaf> make(non_atomic_pointer_type parent,
 					 const leaf &other);
 
 private:
@@ -416,12 +421,12 @@ private:
 	template <typename... Args1, typename... Args2, size_t... I1,
 		  size_t... I2>
 	static persistent_ptr<leaf>
-	make(pointer_type parent, std::piecewise_construct_t,
+	make(non_atomic_pointer_type parent, std::piecewise_construct_t,
 	     std::tuple<Args1...> &first_args,
 	     std::tuple<Args2...> &second_args, detail::index_sequence<I1...>,
 	     detail::index_sequence<I2...>);
 
-	pointer_type parent = nullptr;
+	pointer_type parent;
 };
 
 /**
@@ -430,7 +435,7 @@ private:
  */
 template <typename Key, typename Value, typename BytesView>
 struct radix_tree<Key, Value, BytesView>::node {
-	node(pointer_type parent, byten_t byte, bitn_t bit);
+	node(non_atomic_pointer_type parent, byten_t byte, bitn_t bit);
 
 	/**
 	 * Pointer to a parent node. Used by iterators.
@@ -687,12 +692,10 @@ radix_tree<Key, Value, BytesView>::radix_tree(InputIt first, InputIt last)
  */
 template <typename Key, typename Value, typename BytesView>
 radix_tree<Key, Value, BytesView>::radix_tree(const radix_tree &m)
+    : root(nullptr), size_(0)
 {
 	check_pmem();
 	check_tx_stage_work();
-
-	root = nullptr;
-	size_ = 0;
 
 	for (auto it = m.cbegin(); it != m.cend(); it++)
 		emplace(*it);
@@ -716,9 +719,9 @@ radix_tree<Key, Value, BytesView>::radix_tree(radix_tree &&m)
 	check_pmem();
 	check_tx_stage_work();
 
-	root = m.root;
+	root.store_with_snapshot(m.root.load());
 	size_ = m.size_;
-	m.root = nullptr;
+	m.root.store_with_snapshot(nullptr);
 	m.size_ = 0;
 }
 
@@ -764,7 +767,7 @@ radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
 		flat_transaction::run(pop, [&] {
 			clear();
 
-			this->root = nullptr;
+			this->root.store_with_snapshot(nullptr);
 			this->size_ = 0;
 
 			for (auto it = other.cbegin(); it != other.cend(); it++)
@@ -795,9 +798,9 @@ radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
 		flat_transaction::run(pop, [&] {
 			clear();
 
-			this->root = other.root;
+			this->root.store_with_snapshot(other.root.load());
 			this->size_ = other.size_;
-			other.root = nullptr;
+			other.root.store_with_snapshot(nullptr);
 			other.size_ = 0;
 		});
 	}
@@ -827,7 +830,7 @@ radix_tree<Key, Value, BytesView>::operator=(
 	transaction::run(pop, [&] {
 		clear();
 
-		this->root = nullptr;
+		this->root.store_with_snapshot(nullptr);
 		this->size_ = 0;
 
 		for (auto it = ilist.begin(); it != ilist.end(); it++)
@@ -904,7 +907,7 @@ radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::pointer_type &
-radix_tree<Key, Value, BytesView>::parent_ref(pointer_type n)
+radix_tree<Key, Value, BytesView>::parent_ref(non_atomic_pointer_type n)
 {
 	if (is_leaf(n))
 		return get_leaf(n)->parent;
@@ -921,18 +924,18 @@ radix_tree<Key, Value, BytesView>::parent_ref(pointer_type n)
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::leaf *
 radix_tree<Key, Value, BytesView>::any_leftmost_leaf(
-	typename radix_tree<Key, Value, BytesView>::pointer_type n,
+	typename radix_tree<Key, Value, BytesView>::non_atomic_pointer_type n,
 	size_type min_depth) const
 {
 	assert(n);
 
 	while (!is_leaf(n)) {
-		if (n->embedded_entry && n->byte >= min_depth)
-			return get_leaf(n->embedded_entry);
+		if (n->embedded_entry.load() && n->byte >= min_depth)
+			return get_leaf(n->embedded_entry.load());
 
 		for (size_t i = 0; i < SLNODES; i++) {
-			pointer_type m;
-			if ((m = n->child[i])) {
+			non_atomic_pointer_type m;
+			if ((m = n->child[i].load())) {
 				n = m;
 				break;
 			}
@@ -950,10 +953,10 @@ template <typename K>
 typename radix_tree<Key, Value, BytesView>::leaf *
 radix_tree<Key, Value, BytesView>::common_prefix_leaf(const K &key) const
 {
-	auto n = root;
+	auto n = root.load();
 
 	while (n && !is_leaf(n) && n->byte < key.size()) {
-		auto nn = n->child[slice_index(key[n->byte], n->bit)];
+		auto nn = n->child[slice_index(key[n->byte], n->bit)].load();
 
 		if (nn)
 			n = nn;
@@ -1042,7 +1045,7 @@ radix_tree<Key, Value, BytesView>::prefix_diff(const K1 &lhs, const K2 &rhs,
 template <typename Key, typename Value, typename BytesView>
 bool
 radix_tree<Key, Value, BytesView>::path_length_equal(size_t key_size,
-						     pointer_type n)
+						     non_atomic_pointer_type n)
 {
 	return n->byte == key_size && n->bit == bitn_t(FIRST_NIB);
 }
@@ -1071,11 +1074,11 @@ radix_tree<Key, Value, BytesView>::bit_diff(const K1 &leaf_key, const K2 &key,
 template <typename Key, typename Value, typename BytesView>
 template <typename K>
 std::tuple<const typename radix_tree<Key, Value, BytesView>::pointer_type *,
-	   typename radix_tree<Key, Value, BytesView>::pointer_type>
+	   typename radix_tree<Key, Value, BytesView>::non_atomic_pointer_type>
 radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
 					   bitn_t sh) const
 {
-	auto n = root;
+	auto n = root.load();
 	auto prev = n;
 	auto slot = &root;
 
@@ -1083,7 +1086,7 @@ radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
 	       (n->byte < diff || (n->byte == diff && n->bit >= sh))) {
 		prev = n;
 		slot = &n->child[slice_index(key[n->byte], n->bit)];
-		n = *slot;
+		n = slot->load();
 	}
 
 	return {slot, prev};
@@ -1092,12 +1095,12 @@ radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
 template <typename Key, typename Value, typename BytesView>
 template <typename K>
 std::tuple<typename radix_tree<Key, Value, BytesView>::pointer_type *,
-	   typename radix_tree<Key, Value, BytesView>::pointer_type>
+	   typename radix_tree<Key, Value, BytesView>::non_atomic_pointer_type>
 radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
 					   bitn_t sh)
 {
 	const pointer_type *slot;
-	pointer_type prev;
+	non_atomic_pointer_type prev;
 
 	std::tie(slot, prev) =
 		const_cast<const radix_tree *>(this)->descend(key, diff, sh);
@@ -1113,10 +1116,11 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	if (!root) {
-		flat_transaction::run(pop,
-				      [&] { this->root = make_leaf(nullptr); });
-		return {iterator(get_leaf(root), &root), true};
+	if (!root.load()) {
+		flat_transaction::run(pop, [&] {
+			this->root.store_with_snapshot(make_leaf(nullptr));
+		});
+		return {iterator(get_leaf(root.load()), &root), true};
 	}
 
 	/*
@@ -1137,10 +1141,10 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 
 	/* Descend into the tree again. */
 	pointer_type *slot;
-	pointer_type prev;
+	non_atomic_pointer_type prev;
 	std::tie(slot, prev) = descend(key, diff, sh);
 
-	auto n = *slot;
+	auto n = slot->load();
 
 	/*
 	 * If the divergence point is at same nib as an existing node, and
@@ -1150,60 +1154,71 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	if (!n) {
 		assert(diff < (std::min)(leaf_key.size(), key.size()));
 
-		flat_transaction::run(pop, [&] { *slot = make_leaf(prev); });
-		return {iterator(get_leaf(*slot), &root), true};
+		flat_transaction::run(pop, [&] {
+			slot->store_with_snapshot(make_leaf(prev));
+		});
+		return {iterator(get_leaf(slot->load()), &root), true};
 	}
 
 	/* New key is a prefix of the leaf key or they are equal. We need to add
 	 * leaf ptr to internal node. */
 	if (diff == key.size()) {
 		if (!is_leaf(n) && path_length_equal(key.size(), n)) {
-			assert(!n->embedded_entry);
+			assert(!n->embedded_entry.load());
 
-			flat_transaction::run(
-				pop, [&] { n->embedded_entry = make_leaf(n); });
+			flat_transaction::run(pop, [&] {
+				n->embedded_entry.store_with_snapshot(
+					make_leaf(n));
+			});
 
-			return {iterator(get_leaf(n->embedded_entry), &root),
+			return {iterator(get_leaf(n->embedded_entry.load()),
+					 &root),
 				true};
 		}
 
 		/* Path length from root to n is longer than key.size().
 		 * We have to allocate new internal node above n. */
-		pointer_type node;
+		non_atomic_pointer_type node;
 		flat_transaction::run(pop, [&] {
 			node = make_persistent<radix_tree::node>(
-				parent_ref(n), diff, bitn_t(FIRST_NIB));
-			node->embedded_entry = make_leaf(node);
+				parent_ref(n).load(), diff, bitn_t(FIRST_NIB));
+			node->embedded_entry.store_with_snapshot(
+				make_leaf(node));
 			node->child[slice_index(leaf_key[diff],
-						bitn_t(FIRST_NIB))] = n;
+						bitn_t(FIRST_NIB))]
+				.store_with_snapshot(n);
 
-			parent_ref(n) = node;
-			*slot = node;
+			parent_ref(n).store_with_snapshot(node);
+			slot->store_with_snapshot(node);
 		});
 
-		return {iterator(get_leaf(node->embedded_entry), &root), true};
+		return {iterator(get_leaf(node->embedded_entry.load()), &root),
+			true};
 	}
 
 	if (diff == leaf_key.size()) {
 		/* Leaf key is a prefix of the new key. We need to convert leaf
 		 * to a node. */
-		pointer_type node;
+		non_atomic_pointer_type node;
 		flat_transaction::run(pop, [&] {
 			/* We have to add new node at the edge from parent to n
 			 */
 			node = make_persistent<radix_tree::node>(
-				parent_ref(n), diff, bitn_t(FIRST_NIB));
-			node->embedded_entry = n;
-			node->child[slice_index(key[diff], bitn_t(FIRST_NIB))] =
-				make_leaf(node);
+				parent_ref(n).load(), diff, bitn_t(FIRST_NIB));
+			node->embedded_entry.store_with_snapshot(n);
+			node->child[slice_index(key[diff], bitn_t(FIRST_NIB))]
+				.store_with_snapshot(make_leaf(node));
 
-			parent_ref(n) = node;
-			*slot = node;
+			parent_ref(n).store_with_snapshot(node);
+			slot->store_with_snapshot(node);
 		});
 
-		return {iterator(get_leaf(node->child[slice_index(
-					 key[diff], bitn_t(FIRST_NIB))]),
-				 &root),
+		return {iterator(
+				get_leaf(node->child[slice_index(
+							     key[diff],
+							     bitn_t(FIRST_NIB))]
+						 .load()),
+				&root),
 			true};
 	}
 
@@ -1211,19 +1226,23 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	 * (slice_index(key[diff], sh)). This means that a tree is vertically
 	 * compressed and we have to "break" this compression and add a new
 	 * node. */
-	pointer_type node;
+	non_atomic_pointer_type node;
 	flat_transaction::run(pop, [&] {
-		node = make_persistent<radix_tree::node>(parent_ref(n), diff,
-							 sh);
-		node->child[slice_index(leaf_key[diff], sh)] = n;
-		node->child[slice_index(key[diff], sh)] = make_leaf(node);
+		node = make_persistent<radix_tree::node>(parent_ref(n).load(),
+							 diff, sh);
+		node->child[slice_index(leaf_key[diff], sh)]
+			.store_with_snapshot(n);
+		node->child[slice_index(key[diff], sh)].store_with_snapshot(
+			make_leaf(node));
 
-		parent_ref(n) = node;
-		*slot = node;
+		parent_ref(n).store_with_snapshot(node);
+		slot->store_with_snapshot(node);
 	});
 
-	return {iterator(get_leaf(node->child[slice_index(key[diff], sh)]),
-			 &root),
+	return {iterator(
+			get_leaf(
+				node->child[slice_index(key[diff], sh)].load()),
+			&root),
 		true};
 }
 
@@ -1261,7 +1280,7 @@ std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
 radix_tree<Key, Value, BytesView>::try_emplace(const key_type &k,
 					       Args &&... args)
 {
-	return internal_emplace(k, [&](pointer_type parent) {
+	return internal_emplace(k, [&](non_atomic_pointer_type parent) {
 		size_++;
 		return leaf::make_key_args(parent, k,
 					   std::forward<Args>(args)...);
@@ -1304,8 +1323,8 @@ radix_tree<Key, Value, BytesView>::emplace(Args &&... args)
 
 	flat_transaction::run(pop, [&] {
 		auto leaf_ = leaf::make(nullptr, std::forward<Args>(args)...);
-		auto make_leaf = [&](pointer_type parent) {
-			leaf_->parent = parent;
+		auto make_leaf = [&](non_atomic_pointer_type parent) {
+			leaf_->parent.store_with_snapshot(parent);
 			size_++;
 			return leaf_;
 		};
@@ -1457,7 +1476,7 @@ template <class... Args>
 std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
 radix_tree<Key, Value, BytesView>::try_emplace(key_type &&k, Args &&... args)
 {
-	return internal_emplace(k, [&](pointer_type parent) {
+	return internal_emplace(k, [&](non_atomic_pointer_type parent) {
 		size_++;
 		return leaf::make_key_args(parent, std::move(k),
 					   std::forward<Args>(args)...);
@@ -1506,7 +1525,7 @@ radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
 			  bool>>::type
 
 {
-	return internal_emplace(k, [&](pointer_type parent) {
+	return internal_emplace(k, [&](non_atomic_pointer_type parent) {
 		size_++;
 		return leaf::make_key_args(parent, std::forward<K>(k),
 					   std::forward<Args>(args)...);
@@ -1714,14 +1733,14 @@ radix_tree<Key, Value, BytesView>::internal_find(const K &k) const
 {
 	auto key = bytes_view(k);
 
-	auto n = root;
+	auto n = root.load();
 	while (n && !is_leaf(n)) {
 		if (path_length_equal(key.size(), n))
-			n = n->embedded_entry;
+			n = n->embedded_entry.load();
 		else if (n->byte >= key.size())
 			return nullptr;
 		else
-			n = n->child[slice_index(key[n->byte], n->bit)];
+			n = n->child[slice_index(key[n->byte], n->bit)].load();
 	}
 
 	if (!n)
@@ -1771,7 +1790,7 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
 
 	flat_transaction::run(pop, [&] {
 		auto *leaf = pos.leaf_;
-		auto parent = leaf->parent;
+		auto parent = leaf->parent.load();
 
 		/* there are more elements in the container */
 		if (parent)
@@ -1784,43 +1803,44 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
 
 		/* was root */
 		if (!parent) {
-			this->root = nullptr;
+			this->root.store_with_snapshot(nullptr);
 			pos = begin();
 			return;
 		}
 
 		/* It's safe to cast because we're inside non-const method. */
-		const_cast<pointer_type &>(*parent->find_child(leaf)) = nullptr;
+		const_cast<pointer_type &>(*parent->find_child(leaf))
+			.store_with_snapshot(nullptr);
 
 		/* Compress the tree vertically. */
 		auto n = parent;
-		parent = n->parent;
-		pointer_type only_child = nullptr;
+		parent = n->parent.load();
+		non_atomic_pointer_type only_child = nullptr;
 		for (size_t i = 0; i < SLNODES; i++) {
-			if (n->child[i]) {
+			if (n->child[i].load()) {
 				if (only_child) {
 					/* more than one child */
 					return;
 				}
-				only_child = n->child[i];
+				only_child = n->child[i].load();
 			}
 		}
 
-		if (only_child && n->embedded_entry) {
+		if (only_child && n->embedded_entry.load()) {
 			/* There are actually 2 "children" so we can't compress.
 			 */
 			return;
-		} else if (n->embedded_entry) {
-			only_child = n->embedded_entry;
+		} else if (n->embedded_entry.load()) {
+			only_child = n->embedded_entry.load();
 		}
 
 		assert(only_child);
-		parent_ref(only_child) = n->parent;
+		parent_ref(only_child).store_with_snapshot(n->parent.load());
 
 		auto *child_slot = parent
 			? const_cast<pointer_type *>(&*parent->find_child(n))
 			: &root;
-		*child_slot = only_child;
+		child_slot->store_with_snapshot(only_child);
 
 		delete_persistent<radix_tree::node>(get_node(n));
 	});
@@ -1922,7 +1942,7 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	if (!root)
+	if (!root.load())
 		return end();
 
 	/*
@@ -1947,10 +1967,10 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 
 	/* Descend into the tree again. */
 	const pointer_type *slot;
-	pointer_type prev;
+	non_atomic_pointer_type prev;
 	std::tie(slot, prev) = descend(key, diff, sh);
 
-	if (!*slot) {
+	if (!slot->load()) {
 		leaf = next_leaf<node::direction::Forward>(
 			prev->template make_iterator<node::direction::Forward>(
 				slot),
@@ -1965,7 +1985,7 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 	 * under right siblings of *slot are > key and keys under left siblings
 	 * are < key. */
 	if (diff == key.size()) {
-		leaf = find_leaf<node::direction::Forward>(*slot);
+		leaf = find_leaf<node::direction::Forward>(slot->load());
 		return const_iterator(leaf, &root);
 	}
 
@@ -1981,7 +2001,7 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 	/* The target node must be within *slot subtree. The left siblings
 	 * of *slot are all less than the looked-for key. */
 	if (compare(key, leaf_key, diff) < 0) {
-		leaf = find_leaf<node::direction::Forward>(*slot);
+		leaf = find_leaf<node::direction::Forward>(slot->load());
 		return const_iterator(leaf, &root);
 	}
 
@@ -2201,12 +2221,12 @@ template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::cbegin() const
 {
-	if (!root)
+	if (!root.load())
 		return const_iterator(nullptr, &root);
 
 	return const_iterator(
 		radix_tree::find_leaf<radix_tree::node::direction::Forward>(
-			root),
+			root.load()),
 		&root);
 }
 
@@ -2317,8 +2337,8 @@ radix_tree<Key, Value, BytesView>::rend() const
 
 template <typename Key, typename Value, typename BytesView>
 void
-radix_tree<Key, Value, BytesView>::print_rec(std::ostream &os,
-					     radix_tree::pointer_type n)
+radix_tree<Key, Value, BytesView>::print_rec(
+	std::ostream &os, radix_tree::non_atomic_pointer_type n)
 {
 	if (!is_leaf(n)) {
 		os << "\"" << get_node(n) << "\""
@@ -2326,20 +2346,21 @@ radix_tree<Key, Value, BytesView>::print_rec(std::ostream &os,
 		os << "\"" << get_node(n) << "\" [label=\"byte:" << n->byte
 		   << ", bit:" << int(n->bit) << "\"]" << std::endl;
 
-		auto parent = n->parent ? get_node(n->parent) : 0;
+		auto parent = n->parent.load() ? get_node(n->parent.load()) : 0;
 		os << "\"" << get_node(n) << "\" -> "
 		   << "\"" << parent << "\" [label=\"parent\"]" << std::endl;
 
 		for (auto it = n->begin(); it != n->end(); ++it) {
-			if (!(*it))
+			if (!(it->load()))
 				continue;
 
-			auto ch = is_leaf(*it) ? (void *)get_leaf(*it)
-					       : (void *)get_node(*it);
+			auto ch = is_leaf(it->load())
+				? (void *)get_leaf(it->load())
+				: (void *)get_node(it->load());
 
 			os << "\"" << get_node(n) << "\" -> \"" << ch << "\""
 			   << std::endl;
-			print_rec(os, *it);
+			print_rec(os, it->load());
 		}
 	} else {
 		auto bv = bytes_view(get_leaf(n)->key());
@@ -2353,14 +2374,14 @@ radix_tree<Key, Value, BytesView>::print_rec(std::ostream &os,
 
 		os << "\"]" << std::endl;
 
-		auto parent = get_leaf(n)->parent
-			? get_node(get_leaf(n)->parent)
+		auto parent = get_leaf(n)->parent.load()
+			? get_node(get_leaf(n)->parent.load())
 			: nullptr;
 
 		os << "\"" << get_leaf(n) << "\" -> \"" << parent
 		   << "\" [label=\"parent\"]" << std::endl;
 
-		if (parent && n == parent->embedded_entry) {
+		if (parent && n == parent->embedded_entry.load()) {
 			os << "{rank=same;\"" << parent << "\";\""
 			   << get_leaf(n) << "\"}" << std::endl;
 		}
@@ -2376,8 +2397,8 @@ operator<<(std::ostream &os, const radix_tree<K, V, BV> &tree)
 {
 	os << "digraph Radix {" << std::endl;
 
-	if (tree.root)
-		radix_tree<K, V, BV>::print_rec(os, tree.root);
+	if (tree.root.load())
+		radix_tree<K, V, BV>::print_rec(os, tree.root.load());
 
 	os << "}" << std::endl;
 
@@ -2414,8 +2435,8 @@ radix_tree<Key, Value, BytesView>::node::forward_iterator::operator++()
 }
 
 template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::node::node(pointer_type parent, byten_t byte,
-					      bitn_t bit)
+radix_tree<Key, Value, BytesView>::node::node(non_atomic_pointer_type parent,
+					      byten_t byte, bitn_t bit)
     : parent(parent), byte(byte), bit(bit)
 {
 }
@@ -2534,7 +2555,13 @@ auto
 radix_tree<Key, Value, BytesView>::node::find_child(const Ptr &n) const
 	-> decltype(begin<Direction>())
 {
-	return std::find(begin<Direction>(), end<Direction>(), n);
+	auto it = begin<Direction>();
+	while (it != end<Direction>()) {
+		if (it->load() == n)
+			return it;
+		++it;
+	}
+	return it;
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2608,23 +2635,23 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	} else {
 		pointer_type *slot;
 
-		if (!leaf_->parent) {
-			assert(get_leaf(root) == leaf_);
+		if (!leaf_->parent.load()) {
+			assert(get_leaf(root->load()) == leaf_);
 			slot = root;
 		} else {
 			slot = const_cast<pointer_type *>(
-				&*leaf_->parent->find_child(leaf_));
+				&*leaf_->parent.load()->find_child(leaf_));
 		}
 
 		auto old_leaf = leaf_;
 
 		flat_transaction::run(pop, [&] {
-			*slot = leaf::make_key_args(old_leaf->parent,
-						    old_leaf->key(), rhs);
+			slot->store_with_snapshot(leaf::make_key_args(
+				old_leaf->parent.load(), old_leaf->key(), rhs));
 			delete_persistent<typename radix_tree::leaf>(old_leaf);
 		});
 
-		leaf_ = get_leaf(*slot);
+		leaf_ = get_leaf(slot->load());
 	}
 }
 
@@ -2655,15 +2682,17 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++()
 	assert(leaf_);
 
 	/* leaf is root, there is no other leaf in the tree */
-	if (!leaf_->parent)
+	if (!leaf_->parent.load())
 		leaf_ = nullptr;
 	else {
-		auto it = leaf_->parent->template find_child<
-			radix_tree::node::direction::Forward>(leaf_);
+		auto it = leaf_->parent.load()
+				  ->template find_child<
+					  radix_tree::node::direction::Forward>(
+					  leaf_);
 
 		leaf_ = const_cast<leaf_ptr>(
 			next_leaf<radix_tree::node::direction::Forward>(
-				it, leaf_->parent));
+				it, leaf_->parent.load()));
 	}
 
 	return *this;
@@ -2679,17 +2708,20 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
 		/* this == end() */
 		leaf_ = const_cast<leaf_ptr>(
 			radix_tree::find_leaf<
-				radix_tree::node::direction::Reverse>(*root));
+				radix_tree::node::direction::Reverse>(
+				root->load()));
 	} else {
 		/* Iterator must be decrementable. */
-		assert(leaf_->parent);
+		assert(leaf_->parent.load());
 
-		auto it = leaf_->parent->template find_child<
-			radix_tree::node::direction::Reverse>(leaf_);
+		auto it = leaf_->parent.load()
+				  ->template find_child<
+					  radix_tree::node::direction::Reverse>(
+					  leaf_);
 
 		leaf_ = const_cast<leaf_ptr>(
 			next_leaf<radix_tree::node::direction::Reverse>(
-				it, leaf_->parent));
+				it, leaf_->parent.load()));
 	}
 
 	return *this;
@@ -2749,15 +2781,16 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator==(
 template <typename Key, typename Value, typename BytesView>
 template <bool Direction, typename Iterator>
 typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent)
+radix_tree<Key, Value, BytesView>::next_leaf(Iterator node,
+					     non_atomic_pointer_type parent)
 {
 	do {
 		++node;
-	} while (node != parent->template end<Direction>() && !(*node));
+	} while (node != parent->template end<Direction>() && !(node->load()));
 
 	/* No more children on this level, need to go up. */
 	if (node == parent->template end<Direction>()) {
-		auto p = parent->parent;
+		auto p = parent->parent.load();
 		if (!p) // parent == root
 			return nullptr;
 
@@ -2765,7 +2798,7 @@ radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent)
 		return next_leaf<Direction>(p_it, p);
 	}
 
-	return find_leaf<Direction>(*node);
+	return find_leaf<Direction>(node->load());
 }
 
 /*
@@ -2776,7 +2809,7 @@ template <typename Key, typename Value, typename BytesView>
 template <bool Direction>
 typename radix_tree<Key, Value, BytesView>::leaf *
 radix_tree<Key, Value, BytesView>::find_leaf(
-	typename radix_tree<Key, Value, BytesView>::pointer_type n)
+	typename radix_tree<Key, Value, BytesView>::non_atomic_pointer_type n)
 {
 	assert(n);
 
@@ -2785,8 +2818,8 @@ radix_tree<Key, Value, BytesView>::find_leaf(
 
 	for (auto it = n->template begin<Direction>();
 	     it != n->template end<Direction>(); ++it) {
-		if (*it)
-			return find_leaf<Direction>(*it);
+		if (it->load())
+			return find_leaf<Direction>(it->load());
 	}
 
 	/* There must be at least one leaf at the bottom. */
@@ -2838,7 +2871,7 @@ radix_tree<Key, Value, BytesView>::leaf::~leaf()
 
 template <typename Key, typename Value, typename BytesView>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent)
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent)
 {
 	auto t = std::make_tuple();
 	return make(parent, std::piecewise_construct, t, t,
@@ -2849,7 +2882,7 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent)
 template <typename Key, typename Value, typename BytesView>
 template <typename... Args1, typename... Args2>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      std::piecewise_construct_t pc,
 					      std::tuple<Args1...> first_args,
 					      std::tuple<Args2...> second_args)
@@ -2861,8 +2894,8 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 
 template <typename Key, typename Value, typename BytesView>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent, const Key &k,
-					      const Value &v)
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
+					      const Key &k, const Value &v)
 {
 	return make(parent, std::piecewise_construct, std::forward_as_tuple(k),
 		    std::forward_as_tuple(v));
@@ -2871,7 +2904,8 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent, const Key &k,
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename V>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent, K &&k, V &&v)
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
+					      K &&k, V &&v)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(std::forward<K>(k)),
@@ -2881,8 +2915,8 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent, K &&k, V &&v)
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename... Args>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make_key_args(pointer_type parent,
-						       K &&k, Args &&... args)
+radix_tree<Key, Value, BytesView>::leaf::make_key_args(
+	non_atomic_pointer_type parent, K &&k, Args &&... args)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(std::forward<K>(k)),
@@ -2892,7 +2926,7 @@ radix_tree<Key, Value, BytesView>::leaf::make_key_args(pointer_type parent,
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename V>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      detail::pair<K, V> &&p)
 {
 	return make(parent, std::piecewise_construct,
@@ -2903,7 +2937,7 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename V>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      const detail::pair<K, V> &p)
 {
 	return make(parent, std::piecewise_construct,
@@ -2914,7 +2948,7 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename V>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      std::pair<K, V> &&p)
 {
 	return make(parent, std::piecewise_construct,
@@ -2925,7 +2959,7 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 template <typename Key, typename Value, typename BytesView>
 template <typename K, typename V>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      const std::pair<K, V> &p)
 {
 	return make(parent, std::piecewise_construct,
@@ -2936,7 +2970,7 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 template <typename Key, typename Value, typename BytesView>
 template <typename... Args1, typename... Args2, size_t... I1, size_t... I2>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      std::piecewise_construct_t,
 					      std::tuple<Args1...> &first_args,
 					      std::tuple<Args2...> &second_args,
@@ -2958,14 +2992,14 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 	new (key_dst) Key(std::forward<Args1>(std::get<I1>(first_args))...);
 	new (val_dst) Value(std::forward<Args2>(std::get<I2>(second_args))...);
 
-	ptr->parent = parent;
+	ptr->parent.store_with_snapshot(parent);
 
 	return ptr;
 }
 
 template <typename Key, typename Value, typename BytesView>
 persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
+radix_tree<Key, Value, BytesView>::leaf::make(non_atomic_pointer_type parent,
 					      const leaf &other)
 {
 	return make(parent, other.key(), other.value());
@@ -3004,7 +3038,7 @@ radix_tree<Key, Value, BytesView>::check_tx_stage_work()
 template <typename Key, typename Value, typename BytesView>
 bool
 radix_tree<Key, Value, BytesView>::is_leaf(
-	const radix_tree<Key, Value, BytesView>::pointer_type &p)
+	const radix_tree<Key, Value, BytesView>::non_atomic_pointer_type &p)
 {
 	return p.template is<leaf>();
 }
@@ -3012,7 +3046,7 @@ radix_tree<Key, Value, BytesView>::is_leaf(
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::leaf *
 radix_tree<Key, Value, BytesView>::get_leaf(
-	const radix_tree<Key, Value, BytesView>::pointer_type &p)
+	const radix_tree<Key, Value, BytesView>::non_atomic_pointer_type &p)
 {
 	return p.template get<leaf>();
 }
@@ -3020,7 +3054,7 @@ radix_tree<Key, Value, BytesView>::get_leaf(
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::node *
 radix_tree<Key, Value, BytesView>::get_node(
-	const radix_tree<Key, Value, BytesView>::pointer_type &p)
+	const radix_tree<Key, Value, BytesView>::non_atomic_pointer_type &p)
 {
 	return p.template get<node>();
 }

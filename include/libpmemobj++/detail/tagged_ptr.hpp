@@ -10,6 +10,46 @@
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 
+// XXX use this from atomic_self_relative_ptr.hpp
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, ptr)                     \
+	if (order == std::memory_order_release ||                              \
+	    order == std::memory_order_acq_rel ||                              \
+	    order == std::memory_order_seq_cst) {                              \
+		ANNOTATE_HAPPENS_BEFORE(ptr);                                  \
+	}
+
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, ptr)                      \
+	if (order == std::memory_order_consume ||                              \
+	    order == std::memory_order_acquire ||                              \
+	    order == std::memory_order_acq_rel ||                              \
+	    order == std::memory_order_seq_cst) {                              \
+		ANNOTATE_HAPPENS_AFTER(ptr);                                   \
+	}
+#else
+
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, ptr)
+#define LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, ptr)
+
+#endif
+
+namespace pmem
+{
+namespace detail
+{
+template <typename P1, typename P2, typename PointerType>
+struct tagged_ptr_impl;
+}
+}
+
+namespace std
+{
+template <typename P1, typename P2>
+struct atomic<pmem::detail::tagged_ptr_impl<
+	P1, P2, pmem::obj::experimental::self_relative_ptr<void>>>;
+}
+
 namespace pmem
 {
 namespace detail
@@ -23,6 +63,10 @@ struct tagged_ptr_impl {
 	tagged_ptr_impl(std::nullptr_t) : ptr(nullptr)
 	{
 		assert(!(bool)*this);
+	}
+
+	tagged_ptr_impl(const PointerType &ptr) : ptr(ptr)
+	{
 	}
 
 	tagged_ptr_impl(const obj::persistent_ptr<P1> &ptr)
@@ -157,6 +201,11 @@ private:
 	}
 
 	PointerType ptr;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+	friend std::atomic<tagged_ptr_impl<
+		P1, P2, obj::experimental::self_relative_ptr<void>>>;
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 
 template <typename P1, typename P2>
@@ -170,11 +219,12 @@ namespace std
 {
 
 template <typename P1, typename P2>
-struct atomic<pmem::detail::tagged_ptr<P1, P2>> {
+struct atomic<pmem::detail::tagged_ptr_impl<
+	P1, P2, pmem::obj::experimental::self_relative_ptr<void>>> {
 private:
 	using ptr_type = pmem::detail::tagged_ptr_impl<
 		P1, P2,
-		std::atomic<pmem::obj::experimental::self_relative_ptr<void>>>;
+		atomic<pmem::obj::experimental::self_relative_ptr<void>>>;
 
 public:
 	using this_type = atomic;
@@ -184,26 +234,46 @@ public:
 	 * Constructors
 	 */
 	constexpr atomic() noexcept = default;
+
 	atomic(value_type value) : ptr()
 	{
 		store(value);
 	}
+
 	atomic(const atomic &) = delete;
 
 	void
 	store(value_type desired,
 	      std::memory_order order = std::memory_order_seq_cst) noexcept
 	{
-		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, &ptr);
-		ptr.store(desired, order);
+		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, &ptr.ptr);
+		ptr.ptr.store(desired.ptr, order);
+	}
+
+	void
+	store_with_snapshot(
+		value_type desired,
+		std::memory_order order = std::memory_order_seq_cst) noexcept
+	{
+		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, &ptr.ptr);
+		pmem::obj::transaction::snapshot(&ptr.ptr);
+		ptr.ptr.store(desired.ptr, order);
 	}
 
 	value_type
 	load(std::memory_order order = std::memory_order_seq_cst) const noexcept
 	{
-		auto ptr = this->ptr.load(order);
-		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, &ptr);
-		return ptr;
+		auto ret = this->ptr.ptr.load(order);
+		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, &ptr.ptr);
+		return value_type(ret);
+	}
+
+	void
+	swap(atomic<pmem::detail::tagged_ptr<P1, P2>> &rhs)
+	{
+		auto tmp = rhs.load();
+		rhs.store_with_snapshot(this->load());
+		this->store_with_snapshot(tmp);
 	}
 
 private:

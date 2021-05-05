@@ -24,7 +24,8 @@ ARG SKIP_PMDK_BUILD
 ARG BASE_DEPS="\
 	cmake \
 	build-essential \
-	git"
+	git \
+	software-properties-common"
 
 # Dependencies for compiling libpmemobj-cpp project
 ARG LIBPMEMOBJ_CPP_DEPS="\
@@ -53,7 +54,7 @@ ARG PMDK_DEPS="\
 	pandoc \
 	python3"
 
-# pmem's Valgrind (optional; valgrind package may be used instead)
+# pmem's Valgrind dependencies (optional; valgrind package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -86,7 +87,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Update the apt cache and install basic tools
 RUN apt-get update \
- && apt-get install -y software-properties-common \
+ && apt-get install -y \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
 	${NDCTL_DEPS} \

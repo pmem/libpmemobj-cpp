@@ -48,7 +48,7 @@ ARG PMDK_DEPS="\
 	rpmdevtools \
 	which"
 
-# pmem's Valgrind (optional; valgrind-devel may be used instead)
+# pmem's Valgrind dependencies (optional; valgrind-devel package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"

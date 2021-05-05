@@ -70,6 +70,7 @@ ARG TESTS_DEPS="\
 # Misc for our builds/CI (optional)
 ARG MISC_DEPS="\
 	clang \
+	hub \
 	perl-Text-Diff \
 	pkgconf \
 	sudo"

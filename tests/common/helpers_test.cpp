@@ -17,7 +17,7 @@ static size_t const concurrency = 4;
 static void
 test()
 {
-	std::atomic<int> counter;
+	std::atomic<size_t> counter;
 	counter = 0;
 
 	parallel_xexec(concurrency,

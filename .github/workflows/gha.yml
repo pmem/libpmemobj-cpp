@@ -27,6 +27,7 @@ jobs:
     strategy:
       matrix:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
+                 "TYPE=debug OS=fedora OS_VER=34 PUSH_IMAGE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
                  "TYPE=release OS=fedora OS_VER=32",
@@ -77,7 +78,7 @@ jobs:
       github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/stable-')
     strategy:
       matrix:
-        CONFIG: ["TYPE=doc OS=fedora OS_VER=32"]
+        CONFIG: ["TYPE=doc OS=fedora OS_VER=34"]
     steps:
       - name: Clone the git repo
         uses: actions/checkout@v2

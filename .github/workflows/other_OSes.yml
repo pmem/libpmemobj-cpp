@@ -32,7 +32,6 @@ jobs:
                  "OS=debian OS_VER=unstable",
                  "OS=debian OS_VER=latest",
                  "OS=fedora OS_VER=33",
-                 "OS=fedora OS_VER=34",
                  "TYPE=package OS=fedora OS_VER=34 PUSH_IMAGE=0",
                  "OS=fedora OS_VER=rawhide TESTS_PMREORDER=0",
                  "OS=opensuse-leap OS_VER=latest",

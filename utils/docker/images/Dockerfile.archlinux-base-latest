@@ -7,7 +7,7 @@
 #
 
 # Pull base image
-FROM registry.hub.docker.com/archlinux/base:latest
+FROM registry.hub.docker.com/library/archlinux:base
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables

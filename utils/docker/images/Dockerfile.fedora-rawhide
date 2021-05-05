@@ -4,11 +4,11 @@
 #
 # Dockerfile - a 'recipe' for Docker to build an image of fedora-based
 #              environment prepared for running libpmemobj-cpp tests.
-#              PMDK (libpmem & libpmemobj) are installed from dnf repo.
+#              PMDK (libpmem & libpmemobj) and Valgrind are installed from dnf repo.
 #
 
 # Pull base image
-FROM fedora:rawhide
+FROM registry.fedoraproject.org/fedora:rawhide
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables

@@ -2,18 +2,18 @@
 # Copyright 2016-2021, Intel Corporation
 
 #
-# Dockerfile - a 'recipe' for Docker to build an image of ubuntu-based
+# Dockerfile - a 'recipe' for Docker to build an image of fedora-based
 #              environment prepared for running libpmemobj-cpp tests.
 #
 
 # Pull base image
-FROM registry.hub.docker.com/library/ubuntu:20.10
+FROM registry.fedoraproject.org/fedora:34
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
-ENV OS ubuntu
-ENV OS_VER 20.10
-ENV PACKAGE_MANAGER deb
+ENV OS fedora
+ENV OS_VER 34
+ENV PACKAGE_MANAGER rpm
 ENV NOTTY 1
 
 # Additional parameters to build docker without building components
@@ -23,61 +23,60 @@ ARG SKIP_PMDK_BUILD
 # Base development packages
 ARG BASE_DEPS="\
 	cmake \
-	build-essential \
+	gcc \
+	gcc-c++ \
 	git \
-	software-properties-common"
+	make"
 
 # Dependencies for compiling libpmemobj-cpp project
 ARG LIBPMEMOBJ_CPP_DEPS="\
-	libatomic1 \
-	libtbb-dev"
+	libatomic \
+	tbb-devel"
 
-# PMDK's dependencies (optional; libpmemobj-dev package may be used instead)
+# PMDK's dependencies (optional; libpmemobj-devel package may be used instead)
 ARG PMDK_DEPS="\
 	autoconf \
 	automake \
-	debhelper \
-	devscripts \
+	daxctl-devel \
 	gdb \
-	libdaxctl-dev \
-	libndctl-dev \
+	man \
+	ndctl-devel \
 	pandoc \
-	python3"
+	python3 \
+	rpm-build \
+	rpm-build-libs \
+	rpmdevtools \
+	which"
 
-# pmem's Valgrind dependencies (optional; valgrind package may be used instead)
+# pmem's Valgrind (optional; valgrind-devel may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
 
 # Examples (optional)
 ARG EXAMPLES_DEPS="\
-	libncurses5-dev \
-	libsfml-dev"
+	ncurses-devel \
+	SFML-devel"
 
 # Documentation (optional)
 ARG DOC_DEPS="\
-	doxygen \
-	graphviz"
+	doxygen"
 
 # Tests (optional)
 ARG TESTS_DEPS="\
 	gdb \
-	libunwind-dev"
+	libunwind-devel"
 
 # Misc for our builds/CI (optional)
 ARG MISC_DEPS="\
 	clang \
-	clang-format-9 \
-	libtext-diff-perl \
-	pkg-config \
-	sudo \
-	whois"
+	perl-Text-Diff \
+	pkgconf \
+	sudo"
 
-ENV DEBIAN_FRONTEND noninteractive
-
-# Update the apt cache and install basic tools
-RUN apt-get update \
- && apt-get install -y \
+# Update packages and install basic tools
+RUN dnf update -y \
+ && dnf install -y \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
 	${PMDK_DEPS} \
@@ -86,7 +85,7 @@ RUN apt-get update \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
 	${MISC_DEPS} \
- && rm -rf /var/lib/apt/lists/*
+ && dnf clean all
 
 # Install valgrind
 COPY install-valgrind.sh install-valgrind.sh
@@ -94,10 +93,12 @@ RUN ./install-valgrind.sh
 
 # Install pmdk
 COPY install-pmdk.sh install-pmdk.sh
-RUN ./install-pmdk.sh dpkg
+RUN ./install-pmdk.sh rpm
 
 # Add user
 ENV USER user
 ENV USERPASS pass
-RUN useradd -m $USER -g sudo -p `mkpasswd $USERPASS`
+RUN useradd -m $USER \
+ && echo "$USER:$USERPASS" | chpasswd \
+ && gpasswd wheel -a $USER
 USER $USER

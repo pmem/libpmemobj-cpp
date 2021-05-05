@@ -4,11 +4,11 @@
 #
 # Dockerfile - a 'recipe' for Docker to build an image of fedora-based
 #              environment prepared for running libpmemobj-cpp tests.
-#              PMDK (libpmem & libpmemobj) are installed from dnf repo.
+#              PMDK (libpmem & libpmemobj) and Valgrind are installed from dnf repo.
 #
 
 # Pull base image
-FROM fedora:rawhide
+FROM registry.fedoraproject.org/fedora:rawhide
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
@@ -41,6 +41,7 @@ ARG DOC_DEPS="\
 	doxygen"
 
 # Tests (optional)
+# NOTE: glibc is installed as a separate command; see below
 ARG TESTS_DEPS="\
 	gdb \
 	libpmem-devel \
@@ -64,6 +65,7 @@ RUN dnf update -y \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
 	${MISC_DEPS} \
+ && dnf debuginfo-install -y glibc \
  && dnf clean all
 
 # Add user

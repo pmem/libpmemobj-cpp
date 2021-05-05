@@ -48,7 +48,7 @@ ARG PMDK_DEPS="\
 	rpmdevtools \
 	which"
 
-# pmem's Valgrind (optional; valgrind-devel may be used instead)
+# pmem's Valgrind dependencies (optional; valgrind-devel package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -63,6 +63,7 @@ ARG DOC_DEPS="\
 	doxygen"
 
 # Tests (optional)
+# NOTE: glibc is installed as a separate command; see below
 ARG TESTS_DEPS="\
 	gdb \
 	libunwind-devel"
@@ -85,6 +86,7 @@ RUN dnf update -y \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
 	${MISC_DEPS} \
+ && dnf debuginfo-install -y glibc \
  && dnf clean all
 
 # Install valgrind

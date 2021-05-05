@@ -7,7 +7,7 @@
 #
 
 # Pull base image
-FROM registry.hub.docker.com/archlinux/base:latest
+FROM registry.hub.docker.com/library/archlinux:base
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
@@ -31,7 +31,7 @@ ARG BASE_DEPS="\
 ARG LIBPMEMOBJ_CPP_DEPS="\
 	intel-tbb"
 
-# ndctl's dependencies (optional; ndctl-devel & daxctl-devel may be used instead)
+# ndctl's dependencies (optional; ndctl package may be used instead)
 ARG NDCTL_DEPS="\
 	automake \
 	asciidoc \
@@ -47,7 +47,7 @@ ARG PMDK_DEPS="\
 	python3 \
 	which"
 
-# pmem's Valgrind (optional; valgrind package may be used instead)
+# pmem's Valgrind dependencies (optional; valgrind package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -75,7 +75,7 @@ ARG MISC_DEPS="\
 	sudo \
 	whois"
 
-# Update the Apt cache and install basic tools
+# Update the pacman cache and install basic tools
 RUN pacman -Syu --noconfirm \
  && pacman -S --noconfirm \
 	${BASE_DEPS} \

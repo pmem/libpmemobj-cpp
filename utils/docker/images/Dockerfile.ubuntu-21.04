@@ -7,12 +7,12 @@
 #
 
 # Pull base image
-FROM registry.hub.docker.com/library/ubuntu:20.10
+FROM registry.hub.docker.com/library/ubuntu:21.04
 MAINTAINER igor.chorazewicz@intel.com
 
 # Set required environment variables
 ENV OS ubuntu
-ENV OS_VER 20.10
+ENV OS_VER 21.04
 ENV PACKAGE_MANAGER deb
 ENV NOTTY 1
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 #include "transaction_helpers.hpp"
 #include "unittest.hpp"
@@ -139,5 +139,31 @@ verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K&& key_f,
 		} else {
 			UT_ASSERT(uit->key() == keys[i + 1]);
 		}
+	}
+}
+
+template <typename WriteF, typename ReadF>
+static void
+parallel_write_read(WriteF writer, std::vector<ReadF> &readers,
+		    size_t n_readers)
+{
+	parallel_exec(n_readers + 1, [&](size_t thread_id) {
+		if (thread_id == 0) {
+			writer();
+		} else {
+			readers[(thread_id - 1) % readers.size()]();
+		}
+	});
+}
+
+template <typename Container>
+static void
+init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr, const size_t initial_elements)
+{
+	nvobj::transaction::run(
+		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
+
+	for (size_t i = 0; i < initial_elements; ++i) {
+		ptr->emplace(key<Container>(i), value<Container>(i));
 	}
 }

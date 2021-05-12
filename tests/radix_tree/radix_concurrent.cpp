@@ -10,40 +10,17 @@
 
 static size_t INITIAL_ELEMENTS = 256;
 
-template <typename WriteF, typename ReadF>
-static void
-parallel_write_read(WriteF writer, std::vector<ReadF> &readers,
-		    size_t n_readers)
-{
-	parallel_exec(n_readers + 1, [&](size_t thread_id) {
-		if (thread_id == 0) {
-			writer();
-		} else {
-			readers[(thread_id - 1) % readers.size()]();
-		}
-	});
-}
-
-template <typename Container>
-static void
-init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
-{
-	nvobj::transaction::run(
-		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
-
-	for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-		ptr->emplace(key<Container>(i), value<Container>(i));
-	}
-}
-
 template <typename Container>
 static void
 test_write_find(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 {
-	const size_t threads = 16;
+	size_t threads = 8;
+	if (On_drd)
+		threads = 2;
+
 	const size_t batch_size = INITIAL_ELEMENTS / threads;
 
-	init_container(pop, ptr);
+	init_container(pop, ptr, INITIAL_ELEMENTS);
 
 	auto writer = [&]() {
 		for (size_t i = INITIAL_ELEMENTS; i < INITIAL_ELEMENTS * 2;
@@ -70,91 +47,20 @@ test_write_find(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
+
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
-
-// XXX: For now, we cannot concurrently read and overwrite values
-#if FALSE
-template <typename Container>
-static void
-test_overwrite_find(nvobj::pool<root> &pop,
-		    nvobj::persistent_ptr<Container> &ptr)
-{
-	const size_t threads = 16;
-
-	init_container(pop, ptr);
-
-	auto writer = [&]() {
-		for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-			ptr->insert_or_assign(key<Container>(i),
-					      value<Container>(i + 1));
-		}
-	};
-
-	auto readers = std::vector<std::function<void()>>{
-		[&]() {
-			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				auto res = ptr->find(key<Container>(i));
-				UT_ASSERT(res != ptr->end());
-				UT_ASSERT(res->value() == value<Container>(i) ||
-					  res->value() ==
-						  value<Container>(i + 1));
-			}
-		},
-	};
-
-	parallel_write_read(writer, readers, threads);
-
-	nvobj::transaction::run(
-		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
-}
-
-static void
-test_overwrite_bigger_size_find(
-	nvobj::pool<root> &pop,
-	nvobj::persistent_ptr<container_int_string> &ptr)
-{
-	const size_t threads = 16;
-	const std::string new_val = std::string(100, 'a');
-
-	init_container(pop, ptr);
-
-	auto writer = [&]() {
-		for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-			ptr->insert_or_assign(key<container_int_string>(i),
-					      new_val);
-		}
-	};
-
-	auto readers = std::vector<std::function<void()>>{
-		[&]() {
-			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				auto res =
-					ptr->find(key<container_int_string>(i));
-				UT_ASSERT(res != ptr->end());
-				UT_ASSERT(res->value() ==
-						  value<container_int_string>(
-							  i) ||
-					  res->value() == new_val);
-			}
-		},
-	};
-
-	parallel_write_read(writer, readers, threads);
-
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_string>(ptr);
-	});
-}
-#endif
 
 template <typename Container>
 static void
 test_various_readers(nvobj::pool<root> &pop,
 		     nvobj::persistent_ptr<Container> &ptr)
 {
-	const size_t threads = 12;
+	size_t threads = 16;
+	if (On_drd)
+		threads = 4;
 
-	init_container(pop, ptr);
+	init_container(pop, ptr, INITIAL_ELEMENTS);
 
 	auto writer = [&]() {
 		/* writer thread does nothing in this test */
@@ -189,6 +95,8 @@ test_various_readers(nvobj::pool<root> &pop,
 
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
+
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 static void
@@ -210,28 +118,17 @@ test(int argc, char *argv[])
 	}
 
 	test_write_find(pop, pop.root()->radix_int_int);
-	// test_overwrite_find(pop, pop.root()->radix_int_int);
 	/* this test only works with int as a value type */
 	test_various_readers(pop, pop.root()->radix_int_int);
 
-	test_write_find(pop, pop.root()->radix_int);
-	// test_overwrite_find(pop, pop.root()->radix_int);
-
-	test_write_find(pop, pop.root()->radix_int_str);
-	// test_overwrite_find(pop, pop.root()->radix_int_str);
-	// test_overwrite_bigger_size_find(pop, pop.root()->radix_int_str);
-
-	test_write_find(pop, pop.root()->radix_str);
-	// test_overwrite_find(pop, pop.root()->radix_str);
-
-	test_write_find(pop, pop.root()->radix_inline_s_wchart_wchart);
-	// test_overwrite_find(pop, pop.root()->radix_inline_s_wchart_wchart);
-
-	test_write_find(pop, pop.root()->radix_inline_s_wchart);
-	// test_overwrite_find(pop, pop.root()->radix_inline_s_wchart);
-
-	test_write_find(pop, pop.root()->radix_inline_s_u8t);
-	// test_overwrite_find(pop, pop.root()->radix_inline_s_u8t);
+	if (!On_drd) {
+		test_write_find(pop, pop.root()->radix_int);
+		test_write_find(pop, pop.root()->radix_int_str);
+		test_write_find(pop, pop.root()->radix_str);
+		test_write_find(pop, pop.root()->radix_inline_s_wchart_wchart);
+		test_write_find(pop, pop.root()->radix_inline_s_wchart);
+		test_write_find(pop, pop.root()->radix_inline_s_u8t);
+	}
 
 	pop.close();
 }

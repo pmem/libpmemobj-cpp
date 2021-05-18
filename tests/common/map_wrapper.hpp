@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /*
  * map_wrapper.cpp -- wrapper for sharing tests between map-like data
@@ -91,8 +91,8 @@ erase(C &m, Args &&... args) -> decltype(m.erase(std::forward<Args>(args)...))
 
 #define MAP_KEY key()
 #define MAP_VALUE value()
-#define TRANSPARENT_COMPARE heterogenous_bytes_view
-#define TRANSPARENT_COMPARE_NOT_REFERENCEABLE heterogenous_bytes_view
+#define TRANSPARENT_COMPARE heterogeneous_bytes_view
+#define TRANSPARENT_COMPARE_NOT_REFERENCEABLE heterogeneous_bytes_view
 #define TRANSPARENT_COMPARE_STRING pmem::detail::bytes_view<pmem::obj::string>
 
 #endif

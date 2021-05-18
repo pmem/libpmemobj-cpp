@@ -139,3 +139,5 @@ have the well-known STL-like interface and they work with STL algorithms.
     [pmem::obj::concurrent_hash_map](@ref pmem::obj::concurrent_hash_map)
  * radix_tree (partially compatible with std::map) -
     [pmem::obj::experimental::radix_tree](@ref pmem::obj::experimental::radix_tree)
+ * concurrent_map (partially compatible with std::map) -
+    [pmem::obj::experimental::concurrent_map](@ref pmem::obj::experimental::concurrent_map)

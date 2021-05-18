@@ -1,12 +1,11 @@
 .*
-!.gitignore
-!.gitattributes
-!.github/
 !.clang-format
+!.gitattributes
+!.gitignore
+!.github/
 !.mailmap
 !.version
 build/
 *~
 *.swp
 ~*
-tags

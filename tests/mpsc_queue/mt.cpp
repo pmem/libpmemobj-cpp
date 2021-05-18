@@ -50,7 +50,7 @@ mt_test(int argc, char *argv[])
 
 	auto proot = pop.root();
 
-	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000,
+	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 100000,
 							 concurrency);
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb", "cccc"};
@@ -58,49 +58,61 @@ mt_test(int argc, char *argv[])
 	std::vector<std::thread> threads;
 	threads.reserve(concurrency);
 
-	volatile bool execution_end = false;
-
+	std::atomic_bool execution_end(false);
 	for (size_t i = 0; i < concurrency; ++i) {
 		threads.emplace_back([&]() {
 			auto worker = queue.register_worker();
+			int x = 0;
 			for (auto &e : values) {
-				auto acc = worker.produce(e.size());
-				acc.add(e.data(), e.size());
+				bool insert_succeed = false;
+				while (!insert_succeed) {
+					insert_succeed = worker.produce(
+						e.size(), [&](auto range) {
+							x++;
+							std::copy_n(
+								e.begin(),
+								e.size(),
+								range.begin());
+						});
+				};
 			}
+			std::cout << x << std::endl;
 		});
 	};
 
+	std::vector<std::string> values_on_pmem;
 	std::thread consumer([&]() {
-		std::vector<std::string> values_on_pmem;
 		/* Read data while writting */
-		while (!execution_end) {
-			auto rd_acc = queue.consume();
-			for (auto str : rd_acc) {
-				values_on_pmem.emplace_back(str.data(),
-							    str.size());
-			}
-		}
-		/* Read rest of data */
-		{
-			auto rd_acc = queue.consume();
-			for (auto str : rd_acc) {
-				values_on_pmem.emplace_back(str.data(),
-							    str.size());
-			}
-		}
-		for (auto v : values) {
-			auto count = std::count(values_on_pmem.begin(),
-						values_on_pmem.end(), v);
-			UT_ASSERTeq(count, concurrency);
+		while (!execution_end.load()) {
+			queue.consume([&](auto rd_acc) {
+				for (auto str : rd_acc) {
+					std::cout << "consume: " << str
+						  << std::endl;
+					values_on_pmem.emplace_back(str.data(),
+								    str.size());
+				}
+			});
 		}
 	});
 
 	for (auto &t : threads) {
 		t.join();
 	}
-	execution_end = true;
+	execution_end.store(true);
 	consumer.join();
+	queue.consume([&](auto rd_acc1) {
+		for (auto str : rd_acc1) {
+			std::cout << str.size() << " ";
+			values_on_pmem.emplace_back(str.data(), str.size());
+		}
+	});
 
+	for (auto &v : values) {
+		auto count = std::count(values_on_pmem.begin(),
+					values_on_pmem.end(), v);
+		UT_ASSERTeq(count, concurrency);
+	}
+	UT_ASSERT(false);
 	return 0;
 }
 

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/* Copyright 2021, Intel Corporation */
+
 #ifndef LIBPMEMOBJ_MPSC_QUEUE_HPP
 #define LIBPMEMOBJ_MPSC_QUEUE_HPP
 
@@ -7,12 +10,15 @@
 #include <libpmemobj++/transaction.hpp>
 
 // XXX: Move id_manager to separate file
+#include <iterator>
 #include <libpmemobj++/detail/enumerable_thread_specific.hpp>
+#include <libpmemobj++/slice.hpp>
 
 #include <atomic>
 #include <cstddef>
 #include <cstring>
 #include <libpmemobj++/container/detail/ringbuf.h>
+#include <stdexcept>
 
 namespace pmem
 {
@@ -33,61 +39,12 @@ public:
 		size_t size;
 	};
 
-	class accessor {
-	private:
-		entry dram_entry;
-
-		ringbuf::ringbuf_worker_t *w;
-		mpsc_queue *queue;
-
-		size_t size = 0;
-		size_t available_size;
-		char *data;
-
-	public:
-		accessor(mpsc_queue *q, ringbuf::ringbuf_worker_t *worker,
-			 size_t len)
-		{
-			assert(len <= CACHELINE_SIZE && len > 0);
-
-			len = ALIGN_UP(len, CACHELINE_SIZE);
-
-			available_size = len;
-			w = worker;
-			queue = q;
-			auto offset =
-				ringbuf_acquire(queue->ring_buffer, w, len);
-			data = queue->buf + offset;
-		};
-
-		char *
-		add(const char *d, size_t len)
-		{
-			assert(size + len <= available_size);
-
-			memcpy(dram_entry.data + size, d, len);
-			size += len;
-
-			return dram_entry.data + size;
-		}
-
-		~accessor()
-		{
-			dram_entry.size = size;
-			pmemobj_memcpy(queue->pop.handle(), data,
-				       (char *)&dram_entry, CACHELINE_SIZE,
-				       PMEMOBJ_F_MEM_NONTEMPORAL);
-			pmemobj_drain(queue->pop.handle());
-
-			ringbuf_produce(queue->ring_buffer, w);
-		}
-	};
-
 	class read_accessor {
 	private:
 		mpsc_queue *queue;
+		size_t len;
+		char *data;
 
-		// XXX - Input iterator
 		struct iterator {
 			iterator(char *data) : data(data)
 			{
@@ -132,16 +89,15 @@ public:
 			char *data;
 		};
 
-		size_t len;
-		char *data;
-
 	public:
 		read_accessor(mpsc_queue *q)
 		{
 			queue = q;
 			size_t offset;
-
 			len = ringbuf_consume(queue->ring_buffer, &offset);
+			if (len == 0) {
+				throw std::runtime_error("");
+			}
 			data = queue->buf + offset;
 		}
 
@@ -185,10 +141,31 @@ public:
 			manager.release(id);
 		}
 
-		accessor
-		produce(size_t len)
+		template <typename Function>
+		bool
+		produce(size_t size, Function &&f)
 		{
-			return accessor(queue, w, len);
+			entry dram_entry;
+			size_t aligned_len = ALIGN_UP(size, CACHELINE_SIZE);
+			auto offset = ringbuf_acquire(queue->ring_buffer, w,
+						      aligned_len);
+			if (offset != -1) {
+				char *data = queue->buf + offset;
+				auto range = pmem::obj::slice<char *>(
+					dram_entry.data,
+					dram_entry.data + size);
+				f(range);
+				dram_entry.size = size;
+				pmemobj_memcpy(queue->pop.handle(), data,
+					       (char *)&dram_entry,
+					       CACHELINE_SIZE,
+					       PMEMOBJ_F_MEM_NONTEMPORAL);
+				pmemobj_drain(queue->pop.handle());
+
+				ringbuf_produce(queue->ring_buffer, w);
+				return true;
+			}
+			return false;
 		}
 	};
 
@@ -221,7 +198,7 @@ public:
 		ringbuf::ringbuf_get_sizes(max_workers, &ring_buffer_size,
 					   NULL);
 		ring_buffer = (ringbuf::ringbuf_t *)malloc(ring_buffer_size);
-		ringbuf::ringbuf_setup(ring_buffer, max_workers, buff_size);
+		ringbuf::ringbuf_setup(ring_buffer, max_workers, buff_size_);
 	}
 
 	~mpsc_queue()
@@ -235,10 +212,18 @@ public:
 		return worker(this);
 	}
 
-	read_accessor
-	consume()
+	template <typename Function>
+	bool
+	consume(Function &&f)
 	{
-		return read_accessor(this);
+		// XXX:Change this try-catch with something resonable
+		try {
+			auto acc = read_accessor(this);
+			f(acc);
+			return true;
+		} catch (std::runtime_error &e) {
+			return false;
+		}
 	}
 
 	// XXX - Move logic from this function to consume (this requires setting

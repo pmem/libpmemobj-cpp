@@ -11,6 +11,7 @@
 #include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
 
+#include <algorithm>
 #include <libpmemobj++/container/mpsc_queue.hpp>
 #include <string>
 
@@ -21,9 +22,103 @@ struct root {
 };
 
 int
-basic_test(int argc, char *argv[])
+consume_empty(pmem::obj::pool<root> pop)
 {
 
+	auto proot = pop.root();
+
+	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
+
+	auto worker = queue.register_worker();
+	queue.consume([&](auto rd_acc) { UT_ASSERT(false); });
+
+	return 0;
+}
+
+int
+consume_empty_after_insertion(pmem::obj::pool<root> pop)
+{
+	size_t queue_size = 1000;
+	auto proot = pop.root();
+	auto queue =
+		pmem::obj::experimental::mpsc_queue(proot->log, queue_size, 1);
+
+	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
+
+	auto worker = queue.register_worker();
+	for (const auto &e : values) {
+		worker.produce(e.size(), [&](auto range) {
+			std::copy_n(e.begin(), e.size(), range.begin());
+		});
+	}
+	queue.consume([&](auto rd_acc) {
+		int i = 0;
+		for (const auto &str : rd_acc) {
+			i++;
+		}
+		UT_ASSERTeq(i, values.size());
+	});
+	bool consumed = queue.consume([&](auto rd_acc1) {
+		/* Shouldn't reach this line */
+		UT_ASSERT(false);
+	});
+	UT_ASSERTeq(consumed, false);
+
+	return 0;
+}
+
+int
+basic_test(pmem::obj::pool<root> pop, bool create)
+{
+
+	auto proot = pop.root();
+
+	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
+	auto worker = queue.register_worker();
+
+	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
+
+	if (create) {
+
+		for (const auto &e : values) {
+			worker.produce(e.size(), [&](auto range) {
+				std::copy_n(e.begin(), e.size(), range.begin());
+			});
+		}
+
+		std::vector<std::string> values_on_pmem;
+		queue.consume([&](auto rd_acc) {
+			for (const auto &str : rd_acc) {
+				values_on_pmem.emplace_back(str.data(),
+							    str.size());
+			}
+		});
+		UT_ASSERT(values_on_pmem == values);
+
+		std::string tmp = "old";
+
+		worker.produce(tmp.size(), [&](auto range) {
+			std::copy_n(tmp.begin(), tmp.size(), range.begin());
+		});
+	} else {
+		std::vector<std::string> values_on_pmem;
+		queue.recover(
+			[&](pmem::obj::experimental::mpsc_queue::entry &entry) {
+				values_on_pmem.emplace_back(entry.data,
+							    entry.size);
+			});
+		UT_ASSERTeq(values_on_pmem.size(), 1);
+		UT_ASSERTeq(values_on_pmem[0].size(), 3);
+		UT_ASSERT(values_on_pmem[0] == std::string("old"));
+		std::cout << values_on_pmem[0] << std::endl;
+	}
+
+	return 0;
+}
+
+int
+main(int argc, char *argv[])
+{
 	if (argc != 3)
 		UT_FATAL("usage: %s file-name create", argv[0]);
 
@@ -45,51 +140,13 @@ basic_test(int argc, char *argv[])
 		pop = pmem::obj::pool<root>::open(std::string(path), LAYOUT);
 	}
 
-	auto proot = pop.root();
-
-	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
-	auto worker = queue.register_worker();
-
-	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
-
+	run_test([&] { basic_test(pop, create); });
 	if (create) {
-		for (auto &e : values) {
-			auto acc = worker.produce(e.size());
-			acc.add(e.data(), e.size());
-		}
-		{
-			auto rd_acc = queue.consume();
-			std::vector<std::string> values_on_pmem;
-			for (auto str : rd_acc) {
-				values_on_pmem.emplace_back(str.data(),
-							    str.size());
-			}
-
-			UT_ASSERT(values_on_pmem == values);
-		}
-
-		{
-			auto acc = worker.produce(5);
-			const char *tmp = "old";
-			acc.add(tmp, 3);
-		}
-	} else {
-		std::vector<std::string> values_on_pmem;
-		queue.recover(
-			[&](pmem::obj::experimental::mpsc_queue::entry &entry) {
-				values_on_pmem.emplace_back(entry.data,
-							    entry.size);
-			});
-
-		UT_ASSERTeq(values_on_pmem.size(), 1);
-		UT_ASSERT(values_on_pmem[0] == "old");
+		run_test([&] {
+			consume_empty(pop);
+			consume_empty_after_insertion(pop);
+		});
 	}
 
 	return 0;
-}
-
-int
-main(int argc, char *argv[])
-{
-	return run_test([&] { basic_test(argc, argv); });
 }

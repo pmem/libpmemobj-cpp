@@ -8,6 +8,8 @@
 
 // XXX: Move id_manager to separate file
 #include <libpmemobj++/detail/enumerable_thread_specific.hpp>
+#include <libpmemobj++/slice.hpp>
+#include <iterator>
 
 #include <atomic>
 #include <cstddef>
@@ -40,8 +42,6 @@ public:
 		ringbuf::ringbuf_worker_t *w;
 		mpsc_queue *queue;
 
-		size_t size = 0;
-		size_t available_size;
 		char *data;
 
 	public:
@@ -49,31 +49,19 @@ public:
 			 size_t len)
 		{
 			assert(len <= CACHELINE_SIZE && len > 0);
+			dram_entry.size = len;
+			size_t aligned_len = ALIGN_UP(len, CACHELINE_SIZE);
 
-			len = ALIGN_UP(len, CACHELINE_SIZE);
-
-			available_size = len;
 			w = worker;
 			queue = q;
 			auto offset =
-				ringbuf_acquire(queue->ring_buffer, w, len);
+				ringbuf_acquire(queue->ring_buffer, w, aligned_len);
 			data = queue->buf + offset;
 		};
 
-		char *
-		add(const char *d, size_t len)
-		{
-			assert(size + len <= available_size);
-
-			memcpy(dram_entry.data + size, d, len);
-			size += len;
-
-			return dram_entry.data + size;
-		}
-
 		~accessor()
 		{
-			dram_entry.size = size;
+			//dram_entry.size = size;
 			pmemobj_memcpy(queue->pop.handle(), data,
 				       (char *)&dram_entry, CACHELINE_SIZE,
 				       PMEMOBJ_F_MEM_NONTEMPORAL);
@@ -81,11 +69,17 @@ public:
 
 			ringbuf_produce(queue->ring_buffer, w);
 		}
+
+		pmem::obj::slice<char*> get_range() {
+			return pmem::obj::slice<char*>(dram_entry.data, dram_entry.data + dram_entry.size);
+		}
 	};
 
 	class read_accessor {
 	private:
 		mpsc_queue *queue;
+		size_t len;
+		char *data;
 
 		// XXX - Input iterator
 		struct iterator {
@@ -130,10 +124,8 @@ public:
 
 		private:
 			char *data;
-		};
+	};
 
-		size_t len;
-		char *data;
 
 	public:
 		read_accessor(mpsc_queue *q)
@@ -185,10 +177,14 @@ public:
 			manager.release(id);
 		}
 
-		accessor
-		produce(size_t len)
+		template <typename Function>
+		bool
+		produce(size_t size, Function &&f)
 		{
-			return accessor(queue, w, len);
+			auto acc = accessor(queue, w, size);
+			auto data = acc.get_range();
+			f(data);
+			return true;
 		}
 	};
 
@@ -235,10 +231,13 @@ public:
 		return worker(this);
 	}
 
-	read_accessor
-	consume()
+	template <typename Function>
+	bool
+	consume(Function &&f)
 	{
-		return read_accessor(this);
+		auto acc = read_accessor(this);
+		f(acc);
+		return true;
 	}
 
 	// XXX - Move logic from this function to consume (this requires setting

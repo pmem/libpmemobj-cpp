@@ -13,6 +13,7 @@
 
 #include <libpmemobj++/container/mpsc_queue.hpp>
 #include <string>
+#include <algorithm>
 
 #define LAYOUT "layout"
 
@@ -49,30 +50,30 @@ basic_test(int argc, char *argv[])
 
 	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
 	auto worker = queue.register_worker();
+	constexpr size_t null_terminator = 1;
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
 
 	if (create) {
-		for (auto &e : values) {
-			auto acc = worker.produce(e.size());
-			acc.add(e.data(), e.size());
+		for (const auto &e : values) {
+			worker.produce(e.size() ,[&](auto range) {
+				// copy with terminator
+				std::copy_n(e.begin(), e.size(), range.begin());
+			});
 		}
-		{
-			auto rd_acc = queue.consume();
-			std::vector<std::string> values_on_pmem;
-			for (auto str : rd_acc) {
-				values_on_pmem.emplace_back(str.data(),
-							    str.size());
+
+		std::vector<std::string> values_on_pmem;
+		queue.consume([&](auto rd_acc) {
+			for (const auto &str : rd_acc) {
+				values_on_pmem.emplace_back(str.data(), str.size());
 			}
+		});
+		UT_ASSERT(values_on_pmem == values);
 
-			UT_ASSERT(values_on_pmem == values);
-		}
-
-		{
-			auto acc = worker.produce(5);
-			const char *tmp = "old";
-			acc.add(tmp, 3);
-		}
+		std::string tmp = "old";
+		worker.produce(tmp.size(), [&](auto range) {
+			std::copy_n(tmp.begin(), tmp.size(), range.begin());
+		});
 	} else {
 		std::vector<std::string> values_on_pmem;
 		queue.recover(
@@ -80,9 +81,9 @@ basic_test(int argc, char *argv[])
 				values_on_pmem.emplace_back(entry.data,
 							    entry.size);
 			});
-
 		UT_ASSERTeq(values_on_pmem.size(), 1);
-		UT_ASSERT(values_on_pmem[0] == "old");
+		UT_ASSERTeq(values_on_pmem[0].size(), 3);
+		UT_ASSERT(values_on_pmem[0] == std::string("old"));
 	}
 
 	return 0;

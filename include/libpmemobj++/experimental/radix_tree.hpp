@@ -303,6 +303,10 @@ private:
 	using atomic_pointer_type = std::atomic<detail::tagged_ptr<leaf, node>>;
 	using pointer_type = detail::tagged_ptr<leaf, node>;
 
+	struct concurrent_modification_exception : std::exception {
+		using std::exception::exception;
+	};
+
 	/*** pmem members ***/
 	atomic_pointer_type root;
 	p<uint64_t> size_;
@@ -2785,18 +2789,27 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++()
 {
 	assert(leaf_);
 
-	/* leaf is root, there is no other leaf in the tree */
-	if (!leaf_->parent.load_acquire())
-		leaf_ = nullptr;
-	else {
-		auto it = leaf_->parent.load_acquire()
-				  ->template find_child<
-					  radix_tree::node::direction::Forward>(
-					  leaf_);
+	constexpr auto direction = radix_tree::node::direction::Forward;
+	auto parent_ptr = leaf_->parent.load_acquire();
 
-		leaf_ = const_cast<leaf_ptr>(
-			next_leaf<radix_tree::node::direction::Forward>(
-				it, leaf_->parent.load_acquire()));
+	try {
+		/* leaf is root, there is no other leaf in the tree */
+		if (!parent_ptr)
+			leaf_ = nullptr;
+		else {
+			auto it = parent_ptr->template find_child<direction>(
+				leaf_);
+
+			if (it == parent_ptr->template end<direction>())
+				throw concurrent_modification_exception{};
+
+			leaf_ = const_cast<leaf_ptr>(
+				next_leaf<direction>(it, parent_ptr));
+		}
+	} catch (concurrent_modification_exception &) {
+		/* Search the tree from top - this iterator might point to
+		 * detached leaf. */
+		*this = tree->upper_bound(leaf_->key());
 	}
 
 	return *this;
@@ -2808,24 +2821,34 @@ typename radix_tree<Key, Value,
 		    BytesView>::template radix_tree_iterator<IsConst> &
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
 {
-	if (!leaf_) {
-		/* this == end() */
-		leaf_ = const_cast<leaf_ptr>(
-			radix_tree::find_leaf<
-				radix_tree::node::direction::Reverse>(
-				tree->root.load_acquire()));
-	} else {
-		/* Iterator must be decrementable. */
-		assert(leaf_->parent.load_acquire());
+	constexpr auto direction = radix_tree::node::direction::Reverse;
 
-		auto it = leaf_->parent.load_acquire()
-				  ->template find_child<
-					  radix_tree::node::direction::Reverse>(
-					  leaf_);
+	try {
+		if (!leaf_) {
+			/* this == end() */
+			leaf_ = const_cast<leaf_ptr>(
+				radix_tree::find_leaf<direction>(
+					tree->root.load_acquire()));
+		} else {
+			auto parent_ptr = leaf_->parent.load_acquire();
 
-		leaf_ = const_cast<leaf_ptr>(
-			next_leaf<radix_tree::node::direction::Reverse>(
-				it, leaf_->parent.load_acquire()));
+			/* Iterator must be decrementable. */
+			assert(parent_ptr);
+
+			auto it =
+				leaf_->parent.load_acquire()
+					->template find_child<direction>(leaf_);
+
+			if (it == parent_ptr->template end<direction>())
+				throw concurrent_modification_exception{};
+
+			leaf_ = const_cast<leaf_ptr>(
+				next_leaf<direction>(it, parent_ptr));
+		}
+	} catch (concurrent_modification_exception &) {
+		/* Search the tree from top - this iterator might point to
+		 * detached leaf. */
+		*this = --tree->lower_bound(leaf_->key());
 	}
 
 	return *this;
@@ -2899,6 +2922,9 @@ radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent)
 			return nullptr;
 
 		auto p_it = p->template find_child<Direction>(parent);
+		if (p_it == p->template end<Direction>())
+			throw concurrent_modification_exception{};
+
 		return next_leaf<Direction>(p_it, p);
 	}
 
@@ -2926,8 +2952,9 @@ radix_tree<Key, Value, BytesView>::find_leaf(
 			return find_leaf<Direction>(it->load_acquire());
 	}
 
-	/* There must be at least one leaf at the bottom. */
-	std::abort();
+	/* If there is no leaf at the bottom this means that concurrent erase
+	 * happened. */
+	throw concurrent_modification_exception{};
 }
 
 template <typename Key, typename Value, typename BytesView>

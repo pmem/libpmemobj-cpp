@@ -35,6 +35,7 @@ ARG LIBPMEMOBJ_CPP_DEPS="\
 ARG NDCTL_DEPS="\
 	automake \
 	bash-completion \
+	ca-certificates \
 	libkeyutils-dev \
 	libkmod-dev \
 	libjson-c-dev \
@@ -53,7 +54,7 @@ ARG PMDK_DEPS="\
 	pandoc \
 	python3"
 
-# pmem's Valgrind (optional; valgrind package may be used instead)
+# pmem's Valgrind dependencies (optional; valgrind package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -71,6 +72,7 @@ ARG DOC_DEPS="\
 # Tests (optional)
 ARG TESTS_DEPS="\
 	gdb \
+	libc6-dbg \
 	libunwind-dev"
 
 # Misc for our builds/CI (optional)
@@ -86,7 +88,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Update the apt cache and install basic tools
 RUN apt-get update \
- && apt-get install -y software-properties-common \
+ && apt-get install -y --no-install-recommends \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
 	${NDCTL_DEPS} \

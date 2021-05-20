@@ -77,6 +77,12 @@ You will need the following packages for compilation:
 - for Windows compilation:
 	- [**vcpkg**](https://github.com/microsoft/vcpkg#quick-start-windows)
 
+Required packages (or their names) for some OSes may differ. Some examples or scripts in this repository may require additional dependencies, but should not interrupt the build.
+
+See our **[Dockerfiles](utils/docker/images)** (used e.g. on our CI
+systems) to get an idea what packages are required to build
+the entire libpmemobj-cpp, with all tests and examples.
+
  ><sup>1</sup> C++11 is supported in GCC since version 4.8.1, but it does not support expanding variadic template variables in lambda expressions, which is required to build persistent containers and is possible with GCC >= 4.9.0. If you want to build libpmemobj-cpp without testing containers, use flag TEST_XXX=OFF (separate flag for each container).
 
  ><sup>2</sup> **radix_tree** is supported on Windows with MSBuild >=15 (Visual Studio at least 2017 is needed). Testing radix_tree can be disabled via CMake option (use -DTEST_RADIX_TREE=OFF).

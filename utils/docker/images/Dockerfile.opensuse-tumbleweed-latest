@@ -46,7 +46,7 @@ ARG PMDK_DEPS="\
 	rpmdevtools \
 	which"
 
-# pmem's Valgrind (optional; valgrind package may be used instead)
+# pmem's Valgrind dependencies (optional; valgrind-devel package may be used instead)
 ARG VALGRIND_DEPS="\
 	autoconf \
 	automake"
@@ -62,6 +62,7 @@ ARG DOC_DEPS="\
 # Tests (optional)
 ARG TESTS_DEPS="\
 	gdb \
+	glibc-debuginfo \
 	libunwind-devel"
 
 # Misc for our builds/CI (optional)
@@ -72,8 +73,10 @@ ARG MISC_DEPS="\
 	sudo"
 
 # Update the OS, packages and install basic tools
+# using additional repo for glibc debuginfo
 RUN zypper dup -y \
  && zypper update -y \
+ && zypper mr -e repo-debug \
  && zypper install -y \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \

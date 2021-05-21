@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git4.g21576bf4</span>
+   &#160;<span id="projectnumber">1.12-git79.g2a0b54fd</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -162,9 +162,9 @@ $(function() {
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_MAKE_PERSISTENT_HPP */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_ad45c60e7966d086029c42d151ce969e0"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#ad45c60e7966d086029c42d151ce969e0">pmem::obj::persistent_ptr::get</a></div><div class="ttdeci">element_type * get() const noexcept</div><div class="ttdoc">Get the direct pointer.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:478</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:140</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:158</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:120</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:138</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>
 <div class="ttc" id="apexceptions_8hpp_html"><div class="ttname"><a href="pexceptions_8hpp.html">pexceptions.hpp</a></div><div class="ttdoc">Custom exceptions.</div></div>
 <div class="ttc" id="acheck__persistent__ptr__array_8hpp_html"><div class="ttname"><a href="check__persistent__ptr__array_8hpp.html">check_persistent_ptr_array.hpp</a></div><div class="ttdoc">Compile time type check for make_persistent.</div></div>
@@ -174,11 +174,11 @@ $(function() {
 <div class="ttc" id="astructpmem_1_1obj_1_1allocation__flag_html_ae89f1ed6c125d3bd67fd33c0cff27c76"><div class="ttname"><a href="structpmem_1_1obj_1_1allocation__flag.html#ae89f1ed6c125d3bd67fd33c0cff27c76">pmem::obj::allocation_flag::none</a></div><div class="ttdeci">static allocation_flag none()</div><div class="ttdoc">Do not change allocator behaviour.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:61</div></div>
 <div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for destroying arrays.</div></div>
 <div class="ttc" id="astructpmem_1_1obj_1_1allocation__flag_html"><div class="ttname"><a href="structpmem_1_1obj_1_1allocation__flag.html">pmem::obj::allocation_flag</a></div><div class="ttdoc">Type of flag which can be passed to make_persistent.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:31</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:158</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:176</div></div>
 <div class="ttc" id="avariadic_8hpp_html"><div class="ttname"><a href="variadic_8hpp.html">variadic.hpp</a></div><div class="ttdoc">Helper functionality for handling variadic templates.</div></div>
 <div class="ttc" id="aallocation__flag_8hpp_html"><div class="ttname"><a href="allocation__flag_8hpp.html">allocation_flag.hpp</a></div><div class="ttdoc">allocation_flag - defines flags which can be passed to make_persistent</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_a9e090bf5d2b950fba759c7560c16e08e"><div class="ttname"><a href="namespacepmem_1_1obj.html#a9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a></div><div class="ttdeci">detail::pp_if_not_array&lt; T &gt;::type make_persistent(allocation_flag flag, Args &amp;&amp;... args)</div><div class="ttdoc">Transactionally allocate and construct an object of type T.</div><div class="ttdef"><b>Definition:</b> make_persistent.hpp:50</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__alloc__error_html"><div class="ttname"><a href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:101</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__alloc__error_html"><div class="ttname"><a href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:119</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20

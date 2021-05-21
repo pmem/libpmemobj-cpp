@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git4.g21576bf4</span>
+   &#160;<span id="projectnumber">1.12-git79.g2a0b54fd</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -107,7 +107,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ab4ac5792b79b8d661b13d9caf24603ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move constructor.  <a href="classpmem_1_1detail_1_1concurrent__skip__list.html#ab4ac5792b79b8d661b13d9caf24603ef">More...</a><br /></td></tr>
 <tr class="separator:ab4ac5792b79b8d661b13d9caf24603ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1ead701625a419d46f4592e88bbf6af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac1ead701625a419d46f4592e88bbf6af">runtime_initialize</a> ()</td></tr>
-<tr class="memdesc:ac1ead701625a419d46f4592e88bbf6af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intialize <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> after process restart.  <a href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac1ead701625a419d46f4592e88bbf6af">More...</a><br /></td></tr>
+<tr class="memdesc:ac1ead701625a419d46f4592e88bbf6af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> after process restart.  <a href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac1ead701625a419d46f4592e88bbf6af">More...</a><br /></td></tr>
 <tr class="separator:ac1ead701625a419d46f4592e88bbf6af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb23bea4c5cd65f97e9708a9f6847621"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#acb23bea4c5cd65f97e9708a9f6847621">free_data</a> ()</td></tr>
 <tr class="memdesc:acb23bea4c5cd65f97e9708a9f6847621"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should be called before <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> destructor is called.  <a href="classpmem_1_1detail_1_1concurrent__skip__list.html#acb23bea4c5cd65f97e9708a9f6847621">More...</a><br /></td></tr>
@@ -439,7 +439,7 @@ class pmem::detail::concurrent_skip_list&lt; Traits &gt;</h3>
 <p>Persistent memory aware implementation of the concurrent skip list. </p>
 <p>The implementation is based on the lock-based concurrent skip list algorithm described in <a href="https://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf">https://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf</a>.</p>
 <p>Our concurrent skip list implementation supports concurrent insertion and traversal, but not concurrent erasure. The erase method is prefixed with unsafe_, to indicate that there is no concurrency safety.</p>
-<p>Each time, the pool with <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> is being opened, the <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> requires <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac1ead701625a419d46f4592e88bbf6af" title="Intialize concurrent_skip_list after process restart.">runtime_initialize()</a> to be called in order to restore the state after process restart.</p>
+<p>Each time, the pool with <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> is being opened, the <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> requires <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac1ead701625a419d46f4592e88bbf6af" title="Initialize concurrent_skip_list after process restart.">runtime_initialize()</a> to be called in order to restore the state after process restart.</p>
 <p>Traits template parameter allows to specify properties of the concurrent_ski_list. The Traits type should has the following member types:</p><ul>
 <li>key_type - type of the key</li>
 <li>mapped_type - type of the mapped_value</li>
@@ -1326,7 +1326,7 @@ template&lt;typename... Args&gt; </div>
 </div><div class="memdoc">
 
 <p>Creates new node, value_type should be constructed separately. </p>
-<p>Each node object has different size which depends on number of layers the node is linked. In this method we calculate the size of the new node based on the node height. Then required amount of bytes are allcoated and casted to the persistent_node_ptr.</p>
+<p>Each node object has different size which depends on number of layers the node is linked. In this method we calculate the size of the new node based on the node height. Then required amount of bytes are allocated and casted to the persistent_node_ptr.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>Should be called inside transaction. </dd></dl>
 
 </div>
@@ -3707,8 +3707,8 @@ template&lt;typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Intialize <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> after process restart. </p>
-<p>MUST be called everytime after process restart. Not thread safe. </p>
+<p>Initialize <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html" title="Persistent memory aware implementation of the concurrent skip list.">concurrent_skip_list</a> after process restart. </p>
+<p>MUST be called every time after process restart. Not thread safe. </p>
 
 </div>
 </div>

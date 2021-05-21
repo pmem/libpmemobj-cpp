@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git4.g21576bf4</span>
+   &#160;<span id="projectnumber">1.12-git79.g2a0b54fd</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -120,11 +120,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abb89253cf63f449a6c28800038c45624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="memTemplParams" colspan="2">template&lt;class T , typename Enable  = typename std::enable_if&lt;			std::is_convertible&lt;const T &amp;,					    pmem::obj::basic_string_view&lt;						    CharT, Traits&gt;&gt;::value &amp;&amp;			!std::is_convertible&lt;const T &amp;, const CharT *&gt;::value&gt;&gt; </td></tr>
 <tr class="memitem:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a5eaa536f14e9e8f4cadbd9fb9dca2be6">basic_string</a> (const T &amp;t)</td></tr>
-<tr class="memdesc:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicitly converts argument to a string view then initilizes the string with the content of string view.  <a href="classpmem_1_1obj_1_1basic__string.html#a5eaa536f14e9e8f4cadbd9fb9dca2be6">More...</a><br /></td></tr>
+<tr class="memdesc:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicitly converts argument to a string view then initializes the string with the content of string view.  <a href="classpmem_1_1obj_1_1basic__string.html#a5eaa536f14e9e8f4cadbd9fb9dca2be6">More...</a><br /></td></tr>
 <tr class="separator:a5eaa536f14e9e8f4cadbd9fb9dca2be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="memTemplParams" colspan="2">template&lt;class T , typename Enable  = typename std::enable_if&lt;std::is_convertible&lt;			  const T &amp;,			  pmem::obj::basic_string_view&lt;CharT, Traits&gt;&gt;::value&gt;&gt; </td></tr>
 <tr class="memitem:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#a4b20a3482e95dad0dc13b0c9bfcd45d3">basic_string</a> (const T &amp;t, size_type pos, size_type n)</td></tr>
-<tr class="memdesc:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicitly converts argument to a string view then initilizes the string with the subrange [pos, pos + n) of string view.  <a href="classpmem_1_1obj_1_1basic__string.html#a4b20a3482e95dad0dc13b0c9bfcd45d3">More...</a><br /></td></tr>
+<tr class="memdesc:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implicitly converts argument to a string view then initializes the string with the subrange [pos, pos + n) of string view.  <a href="classpmem_1_1obj_1_1basic__string.html#a4b20a3482e95dad0dc13b0c9bfcd45d3">More...</a><br /></td></tr>
 <tr class="separator:a4b20a3482e95dad0dc13b0c9bfcd45d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad5d808b3b047b0f1cd656a787a7f00a"><td class="memItemLeft" align="right" valign="top"><a id="aad5d808b3b047b0f1cd656a787a7f00a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html#aad5d808b3b047b0f1cd656a787a7f00a">~basic_string</a> ()</td></tr>
@@ -1203,7 +1203,7 @@ template&lt;class T , typename Enable &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Implicitly converts argument to a string view then initilizes the string with the content of string view. </p>
+<p>Implicitly converts argument to a string view then initializes the string with the content of string view. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>object (convertible to std::basic_string_view) to initialize the string with.</td></tr>
@@ -1258,7 +1258,7 @@ template&lt;class T , typename Enable &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Implicitly converts argument to a string view then initilizes the string with the subrange [pos, pos + n) of string view. </p>
+<p>Implicitly converts argument to a string view then initializes the string with the subrange [pos, pos + n) of string view. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>object (convertible to std::basic_string_view) to initialize the string with. </td></tr>
@@ -7503,11 +7503,11 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </ul>
 </div><!-- contents -->
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:688</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:627</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:694</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:152</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:465</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20

@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
+
+/**
+ * @file
+ * Persistent pointer for pool handle.
+ */
 
 #ifndef PMEMOBJ_PERSISTENT_POOL_PTR_HPP
 #define PMEMOBJ_PERSISTENT_POOL_PTR_HPP
@@ -420,7 +425,7 @@ public:
 	}
 
 private:
-	/* offset of persistent object in a persistent memory pool*/
+	/* offset of persistent object in a persistent memory pool */
 	uint64_t off;
 
 	void

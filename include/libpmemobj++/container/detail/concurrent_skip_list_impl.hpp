@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2020-2021, Intel Corporation */
 
+/**
+ * @file
+ * Persistent memory aware implementation of the concurrent skip list.
+ */
+
 #ifndef PMEMOBJ_CONCURRENT_SKIP_LIST_IMPL_HPP
 #define PMEMOBJ_CONCURRENT_SKIP_LIST_IMPL_HPP
 
@@ -448,9 +453,9 @@ public:
 };
 
 /**
- * Persistent memory aware implementation of the concurrent skip list. The
- * implementation is based on the lock-based concurrent skip list algorithm
- * described in
+ * Persistent memory aware implementation of the concurrent skip list.
+ *
+ * The implementation is based on the lock-based algorithm described in
  * https://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf.
  *
  * Our concurrent skip list implementation supports concurrent insertion and

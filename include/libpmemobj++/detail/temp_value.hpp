@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 /**
  * @file
- * temp_value template class for caching objects.
+ * template class for caching objects.
  */
 
 #ifndef LIBPMEMOBJ_CPP_TEMP_VALUE_HPP
@@ -34,7 +34,7 @@ namespace detail
 template <typename T, bool NoExcept, typename Enable = void>
 struct temp_value;
 
-/**
+/*
  * Specialization for non-throwing constructors and objects smaller than
  * LIBPMEMOBJ_CPP_MAX_STACK_ALLOC_SIZE bytes. Constructs and stores value in
  * underlying field.
@@ -59,7 +59,7 @@ struct temp_value<
 	T t;
 };
 
-/**
+/*
  * Specialization for throwing constructors or objects greater than or equal to
  * LIBPMEMOBJ_CPP_MAX_STACK_ALLOC_SIZE bytes. Constructs and stores value in
  * underlying field in pmem.

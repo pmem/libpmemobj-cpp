@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -90,9 +90,33 @@ private:
 	obj::p<uint64_t> capacity_;
 };
 
+/**
+ * Most common specialization (for a char)
+ * for pmem::obj::experimental::basic_inline_string.
+ *
+ * @relatesalso pmem::obj::experimental::basic_inline_string
+ */
 using inline_string = basic_inline_string<char>;
+/**
+ * Wide character specialization
+ * for pmem::obj::experimental::basic_inline_string.
+ *
+ * @relatesalso pmem::obj::experimental::basic_inline_string
+ */
 using inline_wstring = basic_inline_string<wchar_t>;
+/**
+ * 16-bit character specialization
+ * for pmem::obj::experimental::basic_inline_string.
+ *
+ * @relatesalso pmem::obj::experimental::basic_inline_string
+ */
 using inline_u16string = basic_inline_string<char16_t>;
+/**
+ * 32-bit character specialization
+ * for pmem::obj::experimental::basic_inline_string.
+ *
+ * @relatesalso pmem::obj::experimental::basic_inline_string
+ */
 using inline_u32string = basic_inline_string<char32_t>;
 
 /**
@@ -417,7 +441,7 @@ struct total_sizeof {
 
 /**
  * A helper trait which calculates required memory capacity (in bytes) for a
- * type.
+ * type. Specialization of pmem::obj::experimental::total_sizeof.
  *
  * Inline_string requires capacity of sizeof(basic_inline_string<CharT>) + size
  * of the data itself.

@@ -19,6 +19,11 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/tx_base.h>
 
+/**
+ * Definition to enable back the old transaction behavior. If set to false,
+ * any failure in tx will immediately return from the scope (possibly of
+ * an inner tx). More details in the top-level README.
+ */
 #ifndef LIBPMEMOBJ_CPP_FLAT_TX_USE_FAILURE_RETURN
 #define LIBPMEMOBJ_CPP_FLAT_TX_USE_FAILURE_RETURN true
 #endif

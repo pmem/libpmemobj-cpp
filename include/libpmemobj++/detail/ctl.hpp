@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 /**
  * @file
- * C++ ctl api.
+ * C++ ctl API.
  */
 
 #ifndef LIBPMEMOBJ_CPP_CTL_HPP

@@ -39,3 +39,7 @@ following exceptions:
 * include/detail/ringbuf.hpp and tests/mpsc_queue/ringbuf.cpp contain
   ring buffer implementation and tests adapted from: https://github.com/rmind/ringbuf
   which is covered by licence included in those files.
+
+* include/detail/ebr.hpp contain EBR implementation adapted
+  from: https://github.com/rmind/libqsbr which is covered by
+  licence included in those files.

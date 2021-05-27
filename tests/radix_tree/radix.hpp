@@ -158,12 +158,12 @@ parallel_write_read(WriteF writer, std::vector<ReadF> &readers,
 
 template <typename Container>
 static void
-init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr, const size_t initial_elements)
+init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr, const size_t initial_elements, const size_t value_repeats = 1)
 {
 	nvobj::transaction::run(
 		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
 
 	for (size_t i = 0; i < initial_elements; ++i) {
-		ptr->emplace(key<Container>(i), value<Container>(i));
+		ptr->emplace(key<Container>(i), value<Container>(i, value_repeats));
 	}
 }

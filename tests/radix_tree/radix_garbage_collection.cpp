@@ -20,8 +20,6 @@ init(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 			auto ret = ptr->try_emplace(key<Container>(i),
 						    value<Container>(i));
 			its.push_back(ret.first);
-
-			ptr->runtime_initialize_mt();
 		}
 
 		ptr->runtime_initialize_mt();
@@ -47,10 +45,12 @@ test_memory_reclamation_erase(nvobj::pool<root> &pop,
 
 	UT_ASSERT(num_allocs(pop) > 2);
 
-	ptr->garbage_collect();
+	ptr->garbage_collect_force();
 
 	/* radix_tree and garbage vector */
 	UT_ASSERTeq(num_allocs(pop), 2);
+
+	ptr->runtime_finalize_mt();
 
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
@@ -78,7 +78,7 @@ test_memory_reclamation_assign(nvobj::pool<root> &pop,
 
 	auto alocs = num_allocs(pop);
 
-	ptr->garbage_collect();
+	ptr->garbage_collect_force();
 
 	UT_ASSERT(num_allocs(pop) < alocs);
 
@@ -88,6 +88,8 @@ test_memory_reclamation_assign(nvobj::pool<root> &pop,
 		UT_ASSERT(it->key() == key<Container>(i));
 		UT_ASSERT(it->value() == value<Container>(i + 1));
 	}
+
+	ptr->runtime_finalize_mt();
 
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
@@ -104,6 +106,8 @@ test_memory_reclamation_dtor(nvobj::pool<root> &pop,
 
 	for (auto it = ptr->begin(); it != ptr->end();)
 		it = ptr->erase(it);
+
+	ptr->runtime_finalize_mt();
 
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });

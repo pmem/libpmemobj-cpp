@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 #ifndef LIBPMEMOBJ_CPP_UNITTEST_HPP
 #define LIBPMEMOBJ_CPP_UNITTEST_HPP
@@ -173,6 +173,12 @@ ut_stat(const char *file, int line, const char *func, const char *path,
 			UT_FATAL("%s: violated offset checkpoint -- "          \
 				 "checkpoint %lu, real offset %lu",            \
 				 STR(type), checkpoint, off);                  \
+	} while (0)
+
+#define ASSERT_REACHED                                                         \
+	do {                                                                   \
+		UT_FATAL("%s:%d in function %s should never be reached",       \
+			 __FILE__, __LINE__, __func__);                        \
 	} while (0)
 
 static inline int

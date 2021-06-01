@@ -957,6 +957,15 @@ if(TEST_CONCURRENT_MAP)
 		endif()
 	endif()
 endif()
+
+################################################################################
+#################################### MPSC_QUEUE ################################
+if(TEST_MPSC_QUEUE)
+	#Test for internal implementation of ringbuffer
+	build_test(ringbuf mpsc_queue/ringbuf.cpp)
+	add_test_generic(NAME ringbuf SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none)
+
+endif()
 ################################################################################
 #################################### RADIX_TREE ################################
 if(TEST_RADIX_TREE)

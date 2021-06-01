@@ -23,29 +23,29 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+// SPDX-License-Identifier: BSD-3-Clause
+// Copyright 2021, Intel Corporation
 
-
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 
-#include "ringbuf.h"
+#include <libpmemobj++/detail/ringbuf.hpp>
 
-#define	MAX_WORKERS	2
+using namespace pmem::obj::experimental::ringbuf;
 
-static size_t		ringbuf_obj_size;
+#define MAX_WORKERS 2
 
 static void
 test_wraparound(void)
 {
 	const size_t n = 1000;
-	ringbuf_t *r = malloc(ringbuf_obj_size);
+	ringbuf_t *r = new ringbuf(MAX_WORKERS, n);
 	ringbuf_worker_t *w;
 	size_t len, woff;
 	ssize_t off;
 
 	/* Size n, but only (n - 1) can be produced at a time. */
-	ringbuf_setup(r, MAX_WORKERS, n);
 	w = ringbuf_register(r, 0);
 
 	/* Produce (n / 2 + 1) and then attempt another (n / 2 - 1). */
@@ -61,25 +61,33 @@ test_wraparound(void)
 	assert(len == (n / 2 + 1) && woff == 0);
 	ringbuf_release(r, len);
 
-	for(int i =0; i < 10; i++){
-		len = ringbuf_consume(r, &woff);
-		assert(len == 0);
-		ringbuf_release(r, len);
-	}
+	/* All consumed, attempt (n / 2 + 1) now. */
+	off = ringbuf_acquire(r, w, n / 2 + 1);
+	assert(off == -1);
+
+	/* However, wraparound can be successful with (n / 2). */
+	off = ringbuf_acquire(r, w, n / 2);
+	assert(off == 0);
+	ringbuf_produce(r, w);
+
+	/* Consume (n / 2) bytes. */
+	len = ringbuf_consume(r, &woff);
+	assert(len == (n / 2) && woff == 0);
+	ringbuf_release(r, len);
 
 	ringbuf_unregister(r, w);
-	free(r);
+	delete r;
 }
 
 static void
 test_multi(void)
 {
-	ringbuf_t *r = malloc(ringbuf_obj_size);
+
+	ringbuf_t *r = new ringbuf(MAX_WORKERS, 3);
 	ringbuf_worker_t *w;
 	size_t len, woff;
 	ssize_t off;
 
-	ringbuf_setup(r, MAX_WORKERS, 3);
 	w = ringbuf_register(r, 0);
 
 	/*
@@ -138,18 +146,17 @@ test_multi(void)
 	ringbuf_release(r, len);
 
 	ringbuf_unregister(r, w);
-	free(r);
+	delete r;
 }
 
 static void
 test_overlap(void)
 {
-	ringbuf_t *r = malloc(ringbuf_obj_size);
+	ringbuf_t *r = new ringbuf(MAX_WORKERS, 10);
 	ringbuf_worker_t *w1, *w2;
 	size_t len, woff;
 	ssize_t off;
 
-	ringbuf_setup(r, MAX_WORKERS, 10);
 	w1 = ringbuf_register(r, 0);
 	w2 = ringbuf_register(r, 1);
 
@@ -209,79 +216,97 @@ test_overlap(void)
 	assert(len == 4 && woff == 0);
 	ringbuf_release(r, len);
 
+	/*
+	 * Previous consumer consumed all data, so next one should fail
+	 */
+	len = ringbuf_consume(r, &woff);
+	assert(len == 0);
+
 	ringbuf_unregister(r, w1);
 	ringbuf_unregister(r, w2);
-	free(r);
+
+	/*
+	 * After unregistration of all producers, consumer should still fail
+	 */
+	len = ringbuf_consume(r, &woff);
+	assert(len == 0);
+
+	delete r;
 }
 
 static void
 test_random(void)
 {
-	ringbuf_t *r = malloc(ringbuf_obj_size);
-	ringbuf_worker_t *w1, *w2;
 	ssize_t off1 = -1, off2 = -1;
 	unsigned n = 1000 * 1000 * 50;
-	unsigned char buf[500];
+	constexpr size_t buff_size = 500;
+	unsigned char buf[buff_size];
 
-	ringbuf_setup(r, MAX_WORKERS, sizeof(buf));
+	ringbuf_t *r = new ringbuf(MAX_WORKERS, buff_size);
+	ringbuf_worker_t *w1, *w2;
+
 	w1 = ringbuf_register(r, 0);
 	w2 = ringbuf_register(r, 1);
 
 	while (n--) {
 		size_t len, woff;
 
-		len = random() % (sizeof(buf) / 2) + 1;
+		len = static_cast<size_t>(random()) % (sizeof(buf) / 2) + 1;
 		switch (random() % 3) {
-		case 0:	// consumer
-			len = ringbuf_consume(r, &woff);
-			if (len > 0) {
-				size_t vlen = 0;
-				assert(woff < sizeof(buf));
-				while (vlen < len) {
-					size_t mlen = (unsigned)buf[woff];
-					assert(mlen > 0);
-					vlen += mlen;
-					woff += mlen;
+			case 0: // consumer
+				len = ringbuf_consume(r, &woff);
+				if (len > 0) {
+					size_t vlen = 0;
+					assert(woff < sizeof(buf));
+					while (vlen < len) {
+						size_t mlen =
+							(unsigned)buf[woff];
+						assert(mlen > 0);
+						vlen += mlen;
+						woff += mlen;
+					}
+					assert(vlen == len);
+					ringbuf_release(r, len);
 				}
-				assert(vlen == len);
-				ringbuf_release(r, len);
-			}
-			break;
-		case 1:	// producer 1
-			if (off1 == -1) {
-				if ((off1 = ringbuf_acquire(r, w1, len)) >= 0) {
-					assert((size_t)off1 < sizeof(buf));
-					buf[off1] = len - 1;
+				break;
+			case 1: // producer 1
+				if (off1 == -1) {
+					if ((off1 = ringbuf_acquire(
+						     r, w1, len)) >= 0) {
+						assert((size_t)off1 <
+						       sizeof(buf));
+						buf[off1] = len - 1;
+					}
+				} else {
+					buf[off1]++;
+					ringbuf_produce(r, w1);
+					off1 = -1;
 				}
-			} else {
-				buf[off1]++;
-				ringbuf_produce(r, w1);
-				off1 = -1;
-			}
-			break;
-		case 2:	// producer 2
-			if (off2 == -1) {
-				if ((off2 = ringbuf_acquire(r, w2, len)) >= 0) {
-					assert((size_t)off2 < sizeof(buf));
-					buf[off2] = len - 1;
+				break;
+			case 2: // producer 2
+				if (off2 == -1) {
+					if ((off2 = ringbuf_acquire(
+						     r, w2, len)) >= 0) {
+						assert((size_t)off2 <
+						       sizeof(buf));
+						buf[off2] = len - 1;
+					}
+				} else {
+					buf[off2]++;
+					ringbuf_produce(r, w2);
+					off2 = -1;
 				}
-			} else {
-				buf[off2]++;
-				ringbuf_produce(r, w2);
-				off2 = -1;
-			}
-			break;
+				break;
 		}
 	}
 	ringbuf_unregister(r, w1);
 	ringbuf_unregister(r, w2);
-	free(r);
+	delete r;
 }
 
 int
 main(void)
 {
-	ringbuf_get_sizes(MAX_WORKERS, &ringbuf_obj_size, NULL);
 	test_wraparound();
 	test_multi();
 	test_overlap();

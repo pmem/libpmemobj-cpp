@@ -1,5 +1,5 @@
 SPDX-License-Identifier: BSD-3-Clause
-Copyright 2018, Intel Corporation
+Copyright 2018-2021, Intel Corporation
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -35,3 +35,7 @@ following exceptions:
 
 * tests/external/libcxx which contain tests adapted from llvm
   libcxx, and is covered by license contained in that directory.
+
+* include/detail/ringbuf.hpp and tests/mpsc_queue/ringbuf.cpp contain
+  ring buffer implementation and tests adapted from: https://github.com/rmind/ringbuf
+  which is covered by licence included in those files.

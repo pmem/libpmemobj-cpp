@@ -44,6 +44,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cassert>
+#include <memory>
 
 #include <libpmemobj++/detail/atomic_backoff.hpp>
 
@@ -91,6 +92,12 @@ typedef uint64_t ringbuf_off_t;
 struct ringbuf_worker {
 	std::atomic<ringbuf_off_t> seen_off;
 	std::atomic<int> registered;
+
+	ringbuf_worker()
+	{
+		seen_off.store(0);
+		registered.store(0);
+	}
 };
 
 struct ringbuf {
@@ -108,20 +115,17 @@ struct ringbuf {
 	/* The following are updated by the consumer. */
 	std::atomic<ringbuf_off_t> written;
 	unsigned nworkers;
-	ringbuf_worker_t *workers;
+	std::unique_ptr<ringbuf_worker_t[]> workers;
 
 	ringbuf(size_t max_workers, size_t length)
+	    : workers(new ringbuf_worker[max_workers])
 	{
 		written.store(0);
-		workers = new ringbuf_worker[max_workers];
+		next.store(0);
+		end.store(0);
 		space = length;
 		end = RBUF_OFF_MAX;
 		nworkers = max_workers;
-	}
-
-	~ringbuf()
-	{
-		delete[] workers;
 	}
 };
 

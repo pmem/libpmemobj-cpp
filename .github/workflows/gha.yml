@@ -28,7 +28,7 @@ jobs:
       matrix:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
-                 "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
+                 # XXX: "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
                  "TYPE=release OS=fedora OS_VER=32",
                  "TYPE=release OS=ubuntu OS_VER=20.04",
                  "TYPE=valgrind OS=ubuntu OS_VER=20.04",

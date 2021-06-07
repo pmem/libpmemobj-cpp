@@ -1,6 +1,6 @@
-From d633d3b0a5f03be280efb80a69b9d5ed4e9c4d56 Mon Sep 17 00:00:00 2001
+From f6cd213d8db4ddc8bd0555237247662d253b1891 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=C5=81ukasz=20Stolarczuk?= <lukasz.stolarczuk@intel.com>
-Date: Tue, 14 Jul 2020 13:58:34 +0200
+Date: Mon, 7 Jun 2021 11:52:11 +0200
 Subject: [PATCH] fix generating gcov files and turn-off verbose log
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH] fix generating gcov files and turn-off verbose log
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/codecov b/codecov
-index e702ecd..0a2f4d8 100755
+index b672be2..625d45c 100755
 --- a/codecov
 +++ b/codecov
-@@ -1108,9 +1108,9 @@ then
+@@ -1210,9 +1210,9 @@ then
      if [ "$ft_gcovout" = "0" ];
      then
        # suppress gcov output
@@ -23,15 +23,15 @@ index e702ecd..0a2f4d8 100755
      fi
    else
      say "${e}==>${x} gcov disabled"
-@@ -1425,7 +1425,7 @@ do
-       report_len=$(wc -c < "$file")
-       if [ "$report_len" -ne 0 ];
-       then
--        say "    ${g}+${x} $file ${e}bytes=$(echo "$report_len" | tr -d ' ')${x}"
-+        #say "    ${g}+${x} $file ${e}bytes=$(echo "$report_len" | tr -d ' ')${x}"
-         # append to to upload
-         _filename=$(basename "$file")
-         if [ "${_filename##*.}" = 'gcov' ];
+@@ -1547,7 +1547,7 @@ then
+         report_len=$(wc -c < "$file")
+         if [ "$report_len" -ne 0 ];
+         then
+-          say "    ${g}+${x} $file ${e}bytes=$(echo "$report_len" | tr -d ' ')${x}"
++          #say "    ${g}+${x} $file ${e}bytes=$(echo "$report_len" | tr -d ' ')${x}"
+           # append to to upload
+           _filename=$(basename "$file")
+           if [ "${_filename##*.}" = 'gcov' ];
 -- 
-2.25.1
+2.27.0
 

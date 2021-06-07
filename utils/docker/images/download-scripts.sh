@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2020, Intel Corporation
+# Copyright 2020-2021, Intel Corporation
 
 #
 # download-scripts.sh - downloads specific version of
@@ -10,8 +10,8 @@
 
 set -e
 
-# master: Merge pull request #342 from codecov/revert-proj-name-..., 18.08.2020
-CODECOV_VERSION="e877c1280cc6e902101fb5df2981ed1c962da7f0"
+# master: Fix go regex (#436), 25.05.2021
+CODECOV_VERSION="965008c97d649721850b9ff0de3f71e9b8adeb71"
 
 if [ "${SKIP_SCRIPTS_DOWNLOAD}" ]; then
 	echo "Variable 'SKIP_SCRIPTS_DOWNLOAD' is set; skipping scripts' download"

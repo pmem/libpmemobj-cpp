@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 #include "unittest.hpp"
 
@@ -59,7 +59,7 @@ test_long_string(nvobj::pool<root> &pop)
 		nvobj::delete_persistent<nvobj::string>(r->str);
 	});
 
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 static void

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2020, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 #include "unittest.hpp"
 
@@ -429,7 +429,7 @@ check_tx_abort(pmem::obj::pool<struct root> &pop, const char *str,
 		nvobj::delete_persistent<S>(r->str);
 		nvobj::delete_persistent<S>(r->str2);
 	});
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 static void
@@ -462,7 +462,7 @@ test(int argc, char *argv[])
 		       "0123456789012345678901234567890123456789"
 		       "0123456789",
 		       true);
-	UT_ASSERT(OID_IS_NULL(pmemobj_first(pop.handle())));
+	UT_ASSERTeq(num_allocs(pop), 0);
 	pop.close();
 }
 

@@ -21,6 +21,7 @@ test_write_find(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 	const size_t batch_size = INITIAL_ELEMENTS / threads;
 
 	init_container(pop, ptr, INITIAL_ELEMENTS);
+	ptr->runtime_initialize_mt();
 
 	auto writer = [&]() {
 		for (size_t i = INITIAL_ELEMENTS; i < INITIAL_ELEMENTS * 2;
@@ -45,16 +46,18 @@ test_write_find(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 
 	parallel_write_read(writer, readers, threads);
 
+	ptr->runtime_finalize_mt();
+
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
-template <typename Container>
+/* this test only works with int as a key type */
 static void
 test_various_readers(nvobj::pool<root> &pop,
-		     nvobj::persistent_ptr<Container> &ptr)
+		     nvobj::persistent_ptr<container_int_int> &ptr)
 {
 	size_t threads = 16;
 	if (On_drd)
@@ -69,24 +72,28 @@ test_various_readers(nvobj::pool<root> &pop,
 	auto readers = std::vector<std::function<void()>>{
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				auto res = ptr->find(key<Container>(i));
+				auto res = ptr->find(key<container_int_int>(i));
 				UT_ASSERT(res != ptr->end());
-				UT_ASSERT(res->value() == value<Container>(i));
+				UT_ASSERT(res->value() ==
+					  value<container_int_int>(i));
 			}
 		},
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				auto res = ptr->lower_bound(key<Container>(i));
+				auto res = ptr->lower_bound(
+					key<container_int_int>(i));
 				UT_ASSERT(res != ptr->end());
-				UT_ASSERT(res->value() == value<Container>(i));
+				UT_ASSERT(res->value() ==
+					  value<container_int_int>(i));
 			}
 		},
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS - 1; ++i) {
-				auto res = ptr->upper_bound(key<Container>(i));
+				auto res = ptr->upper_bound(
+					key<container_int_int>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<Container>(i + 1));
+					  value<container_int_int>(i + 1));
 			}
 		},
 	};
@@ -94,7 +101,7 @@ test_various_readers(nvobj::pool<root> &pop,
 	parallel_write_read(writer, readers, threads);
 
 	nvobj::transaction::run(
-		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
+		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -118,7 +125,6 @@ test(int argc, char *argv[])
 	}
 
 	test_write_find(pop, pop.root()->radix_int_int);
-	/* this test only works with int as a value type */
 	test_various_readers(pop, pop.root()->radix_int_int);
 
 	if (!On_drd) {

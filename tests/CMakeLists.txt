@@ -300,6 +300,9 @@ add_test_generic(NAME string_view TRACERS none memcheck)
 build_test(inline_string inline_string/inline_string.cpp)
 add_test_generic(NAME inline_string TRACERS none memcheck pmemcheck)
 
+build_test(ebr ebr/ebr.cpp)
+add_test_generic(NAME ebr TRACERS none memcheck pmemcheck drd helgrind)
+
 if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr ptr/self_relative_ptr.cpp)
 	add_test_generic(NAME self_relative_ptr TRACERS none memcheck pmemcheck)
@@ -985,6 +988,12 @@ if(TEST_RADIX_TREE)
 
 	build_test_ext(NAME radix_concurrent_overwrite SRC_FILES radix_tree/radix_concurrent_overwrite.cpp)
 	add_test_generic(NAME radix_concurrent_overwrite TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test_ext(NAME radix_concurrent_erase SRC_FILES radix_tree/radix_concurrent_erase.cpp)
+	add_test_generic(NAME radix_concurrent_erase TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test_ext(NAME radix_concurrent_iterate SRC_FILES radix_tree/radix_concurrent_iterate.cpp)
+	add_test_generic(NAME radix_concurrent_iterate TRACERS none memcheck pmemcheck drd helgrind)
 
 	build_test_ext(NAME radix_ctor_exceptions_nopmem SRC_FILES map/map_ctor_exception_nopmem.cpp BUILD_OPTIONS -DLIBPMEMOBJ_CPP_TESTS_RADIX)
 	add_test_generic(NAME radix_ctor_exceptions_nopmem TRACERS none memcheck pmemcheck)

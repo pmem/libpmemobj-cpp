@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git79.g2a0b54fd</span>
+   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -248,6 +248,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2290f1ae7fe23a55e58a333e9b5cedad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a2290f1ae7fe23a55e58a333e9b5cedad">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a2290f1ae7fe23a55e58a333e9b5cedad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Member swap.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a2290f1ae7fe23a55e58a333e9b5cedad">More...</a><br /></td></tr>
 <tr class="separator:a2290f1ae7fe23a55e58a333e9b5cedad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4923d25ae182a1cb62158dd63c108c5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4923d25ae182a1cb62158dd63c108c5e">garbage_collect</a> ()</td></tr>
+<tr class="memdesc:a4923d25ae182a1cb62158dd63c108c5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally collects and frees all garbage produced by erase, clear, insert_or_assign or assing_val in concurrent mode (if runtime_initialize_mt was called).  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4923d25ae182a1cb62158dd63c108c5e">More...</a><br /></td></tr>
+<tr class="separator:a4923d25ae182a1cb62158dd63c108c5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9540a586ffa3718e3342e23e4f12234"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac9540a586ffa3718e3342e23e4f12234">runtime_initialize_mt</a> ()</td></tr>
+<tr class="memdesc:ac9540a586ffa3718e3342e23e4f12234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables single-writer multiple-readers concurrency with read uncommitted isolation.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac9540a586ffa3718e3342e23e4f12234">More...</a><br /></td></tr>
+<tr class="separator:ac9540a586ffa3718e3342e23e4f12234"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e3fc5e59af32f560692ba7486aa6991"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
 <tr class="memitem:a4e3fc5e59af32f560692ba7486aa6991"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">iterator</a>, bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4e3fc5e59af32f560692ba7486aa6991">try_emplace</a> (const key_type &amp;k, Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:a4e3fc5e59af32f560692ba7486aa6991"><td class="mdescLeft">&#160;</td><td class="mdescRight">If a key equivalent to k already exists in the container, does nothing.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4e3fc5e59af32f560692ba7486aa6991">More...</a><br /></td></tr>
@@ -279,6 +285,10 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:a5b4b7a90f63b6b23a2168db10c951e96"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a5b4b7a90f63b6b23a2168db10c951e96"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a5b4b7a90f63b6b23a2168db10c951e96">free</a> (<a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt; ptr)</td></tr>
+<tr class="memdesc:a5b4b7a90f63b6b23a2168db10c951e96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes node/leaf pointed by ptr.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a5b4b7a90f63b6b23a2168db10c951e96">More...</a><br /></td></tr>
+<tr class="separator:a5b4b7a90f63b6b23a2168db10c951e96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59c426250aea51c6b793fa53d7cc8789"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a59c426250aea51c6b793fa53d7cc8789">check_pmem</a> ()</td></tr>
 <tr class="memdesc:a59c426250aea51c6b793fa53d7cc8789"><td class="mdescLeft">&#160;</td><td class="mdescRight">Private helper function.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a59c426250aea51c6b793fa53d7cc8789">More...</a><br /></td></tr>
 <tr class="separator:a59c426250aea51c6b793fa53d7cc8789"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -942,7 +952,7 @@ template&lt;typename K , typename &gt; </div>
 <p>This overload only participates in overload resolution if BytesView struct has a type member named is_transparent.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">k</td><td>key value of the elements to remove.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">k</td><td>key value of the elements to remove </td></tr>
   </table>
   </dd>
 </dl>
@@ -1197,6 +1207,64 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Const iterator to an element with key equivalent to key. If no such element is found, past-the-end iterator is returned. </dd></dl>
+
+</div>
+</div>
+<a id="a5b4b7a90f63b6b23a2168db10c951e96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b4b7a90f63b6b23a2168db10c951e96">&#9670;&nbsp;</a></span>free()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::free </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr</a>&lt; T &gt;&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Deletes node/leaf pointed by ptr. </p>
+<p>If concurrent mode is used, adds element to the garbage list. Otherwise, frees the element immediately. </p>
+
+</div>
+</div>
+<a id="a4923d25ae182a1cb62158dd63c108c5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4923d25ae182a1cb62158dd63c108c5e">&#9670;&nbsp;</a></span>garbage_collect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::garbage_collect</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transactionally collects and frees all garbage produced by erase, clear, insert_or_assign or assing_val in concurrent mode (if runtime_initialize_mt was called). </p>
+<p>Garbage is not automatically collected on move/copy ctor/assignment.</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1840,6 +1908,31 @@ template&lt;typename Key , typename Value , typename BytesView &gt; </div>
 
 </div>
 </div>
+<a id="ac9540a586ffa3718e3342e23e4f12234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9540a586ffa3718e3342e23e4f12234">&#9670;&nbsp;</a></span>runtime_initialize_mt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key , typename Value , typename BytesView &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a>&lt; Key, Value, BytesView &gt;::runtime_initialize_mt</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enables single-writer multiple-readers concurrency with read uncommitted isolation. </p>
+<p>This property is NOT persistent. Enabling must be done after each application restart.</p>
+<p>This has the following effects:</p><ul>
+<li>erase and clear does not free nodes/leaves immediately, instead they are added to a garbage list which can be freed by calling <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4923d25ae182a1cb62158dd63c108c5e" title="Transactionally collects and frees all garbage produced by erase, clear, insert_or_assign or assing_v...">garbage_collect()</a></li>
+<li>insert_or_assign and <a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html#a53b47ac2cc6be9e9efb12f6dc6434f46" title="Handles assignment to the value.">iterator.assign_val</a> do not perform in-place update, instead a new leaf is allocated and the old one is added to the garbage list</li>
+<li>memory-reclamation mechanisms are initialized</li>
+</ul>
+<p>By default, concurrency is not enabled. </p>
+
+</div>
+</div>
 <a id="a8121b6328437beca5713fa3ba39758dc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8121b6328437beca5713fa3ba39758dc">&#9670;&nbsp;</a></span>size()</h2>
 
@@ -2227,7 +2320,7 @@ template&lt;typename K , typename V , typename BV &gt; </div>
 <li>libpmemobj++/experimental/<a class="el" href="radix__tree_8hpp_source.html">radix_tree.hpp</a></li>
 </ul>
 </div><!-- contents -->
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1radix__tree_html_a8121b6328437beca5713fa3ba39758dc"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a8121b6328437beca5713fa3ba39758dc">pmem::obj::experimental::radix_tree::size</a></div><div class="ttdeci">uint64_t size() const noexcept</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:880</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1radix__tree_html_a8121b6328437beca5713fa3ba39758dc"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a8121b6328437beca5713fa3ba39758dc">pmem::obj::experimental::radix_tree::size</a></div><div class="ttdeci">uint64_t size() const noexcept</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:892</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.20

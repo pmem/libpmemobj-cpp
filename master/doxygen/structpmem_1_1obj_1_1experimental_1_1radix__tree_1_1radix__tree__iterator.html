@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git79.g2a0b54fd</span>
+   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -124,7 +124,13 @@ template&lt;typename V , typename Enable &gt; </div>
 <p>Handles assignment to the value. </p>
 <p>If there is enough capacity old content is overwritten (with a help of undo log). Otherwise a new leaf is allocated and the old one is freed.</p>
 <p>If reallocation happens, all other iterators to this element are invalidated.</p>
-<p>This function is useful when value_type is inline_string. </p>
+<p>This function is useful when value_type is inline_string.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>value of type <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html" title="Our partial std::string_view implementation.">basic_string_view</a> </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -151,7 +157,13 @@ template&lt;typename T , typename V , typename Enable &gt; </div>
 </div><div class="memdoc">
 
 <p>Assign value to leaf pointed by the iterator. </p>
-<p>This function is transactional </p>
+<p>This function is transactional.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>value of type <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html" title="Our partial std::string_view implementation.">basic_string_view</a> </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

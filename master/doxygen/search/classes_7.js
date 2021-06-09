@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['id_5fmanager_482',['id_manager',['../structpmem_1_1detail_1_1id__manager.html',1,'pmem::detail']]],
-  ['is_5fbidirectional_5fiterator_483',['is_bidirectional_iterator',['../structpmem_1_1detail_1_1is__bidirectional__iterator.html',1,'pmem::detail']]],
-  ['is_5fforward_5fiterator_484',['is_forward_iterator',['../structpmem_1_1detail_1_1is__forward__iterator.html',1,'pmem::detail']]],
-  ['is_5finput_5fiterator_485',['is_input_iterator',['../structpmem_1_1detail_1_1is__input__iterator.html',1,'pmem::detail']]],
-  ['is_5foutput_5fiterator_486',['is_output_iterator',['../structpmem_1_1detail_1_1is__output__iterator.html',1,'pmem::detail']]],
-  ['is_5frandom_5faccess_5fiterator_487',['is_random_access_iterator',['../structpmem_1_1detail_1_1is__random__access__iterator.html',1,'pmem::detail']]]
+  ['id_5fmanager_488',['id_manager',['../structpmem_1_1detail_1_1id__manager.html',1,'pmem::detail']]],
+  ['is_5fbidirectional_5fiterator_489',['is_bidirectional_iterator',['../structpmem_1_1detail_1_1is__bidirectional__iterator.html',1,'pmem::detail']]],
+  ['is_5fforward_5fiterator_490',['is_forward_iterator',['../structpmem_1_1detail_1_1is__forward__iterator.html',1,'pmem::detail']]],
+  ['is_5finput_5fiterator_491',['is_input_iterator',['../structpmem_1_1detail_1_1is__input__iterator.html',1,'pmem::detail']]],
+  ['is_5foutput_5fiterator_492',['is_output_iterator',['../structpmem_1_1detail_1_1is__output__iterator.html',1,'pmem::detail']]],
+  ['is_5frandom_5faccess_5fiterator_493',['is_random_access_iterator',['../structpmem_1_1detail_1_1is__random__access__iterator.html',1,'pmem::detail']]]
 ];

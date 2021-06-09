@@ -339,6 +339,8 @@ echo "Defined build steps: ${build_steps}"
 
 if [[ -z "${build_steps}" ]]; then
 	echo "ERROR: The variable build_steps with selected builds to run is not set!"
+	echo "Possible build steps:"
+	grep "^function" ${0} | sed 's/function//' | cut -f1 -d"("
 	exit 1
 fi
 

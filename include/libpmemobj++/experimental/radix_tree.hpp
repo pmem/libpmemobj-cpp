@@ -40,6 +40,7 @@
 #endif
 
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/ebr.hpp>
 #include <libpmemobj++/detail/integer_sequence.hpp>
 #include <libpmemobj++/detail/tagged_ptr.hpp>
 
@@ -279,8 +280,12 @@ public:
 					const radix_tree<K, V, BV> &tree);
 
 	void garbage_collect();
+	void garbage_collect_force();
 
-	void runtime_initialize_mt();
+	void runtime_initialize_mt(detail::ebr *e = new detail::ebr());
+	void runtime_finalize_mt();
+
+	detail::ebr::worker register_worker();
 
 private:
 	using byten_t = uint64_t;
@@ -317,7 +322,9 @@ private:
 	atomic_pointer_type root;
 	p<uint64_t> size_;
 	v<uint64_t> mt;
-	vector<pointer_type> garbage;
+	vector<pointer_type> garbages[3];
+
+	detail::ebr *ebr = nullptr;
 
 	/* helper functions */
 	template <typename K, typename F, class... Args>
@@ -361,6 +368,7 @@ private:
 	static node *get_node(const pointer_type &p);
 	template <typename T>
 	void free(persistent_ptr<T> ptr);
+	void clear_garbage(size_t n);
 
 	void check_pmem();
 	void check_tx_stage_work();
@@ -866,7 +874,8 @@ radix_tree<Key, Value, BytesView>::~radix_tree()
 {
 	try {
 		clear();
-		garbage_collect();
+		for (size_t i = 0; i < 3; ++i)
+			clear_garbage(i);
 	} catch (...) {
 		std::terminate();
 	}
@@ -932,12 +941,32 @@ radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
  */
 template <typename Key, typename Value, typename BytesView>
 void
+radix_tree<Key, Value, BytesView>::garbage_collect_force()
+{
+	ebr->full_sync();
+	for (size_t i = 0; i < 3; ++i) {
+		clear_garbage(i);
+	}
+}
+
+template <typename Key, typename Value, typename BytesView>
+void
 radix_tree<Key, Value, BytesView>::garbage_collect()
 {
+	ebr->sync();
+	clear_garbage(ebr->gc_epoch());
+}
+
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::clear_garbage(size_t n)
+{
+	assert(n >= 0 && n <= 2);
+
 	auto pop = pool_by_vptr(this);
 
 	flat_transaction::run(pop, [&] {
-		for (auto &e : garbage) {
+		for (auto &e : garbages[n]) {
 			if (is_leaf(e))
 				delete_persistent<radix_tree::leaf>(
 					persistent_ptr<radix_tree::leaf>(
@@ -948,7 +977,7 @@ radix_tree<Key, Value, BytesView>::garbage_collect()
 						get_node(e)));
 		}
 
-		garbage.clear();
+		garbages[n].clear();
 	});
 }
 
@@ -968,9 +997,33 @@ radix_tree<Key, Value, BytesView>::garbage_collect()
  */
 template <typename Key, typename Value, typename BytesView>
 void
-radix_tree<Key, Value, BytesView>::runtime_initialize_mt()
+radix_tree<Key, Value, BytesView>::runtime_initialize_mt(detail::ebr *e)
 {
 	mt.get(false) = true;
+#if LIBPMEMOBJ_CPP_ANY_VG_TOOL_ENABLED
+	VALGRIND_PMC_REMOVE_PMEM_MAPPING(&ebr, sizeof(detail::ebr *));
+#endif
+	ebr = e;
+}
+
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::runtime_finalize_mt()
+{
+	mt.get(false) = false;
+	if (ebr) {
+		delete ebr;
+	}
+	ebr = nullptr;
+}
+
+template <typename Key, typename Value, typename BytesView>
+detail::ebr::worker
+radix_tree<Key, Value, BytesView>::register_worker()
+{
+	assert(ebr);
+
+	return ebr->register_worker();
 }
 
 /*
@@ -2041,7 +2094,7 @@ void
 radix_tree<Key, Value, BytesView>::free(persistent_ptr<T> ptr)
 {
 	if (mt.get(false))
-		garbage.emplace_back(ptr);
+		garbages[ebr->staging_epoch()].emplace_back(ptr);
 	else
 		delete_persistent<T>(ptr);
 }

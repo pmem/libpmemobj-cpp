@@ -128,6 +128,7 @@ main(int argc, char *argv[])
 	pmem::obj::transaction::run(pop, [&] {
 		pop.root()->log =
 			pmem::obj::make_persistent<char[]>(buffer_size);
+		std::fill_n(pop.root()->log.get(), buffer_size, 0);
 	});
 
 	return run_test([&] { mt_test(pop, concurrency, buffer_size); });

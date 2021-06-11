@@ -2149,6 +2149,11 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 
 		const_iterator result;
 
+		/*
+		 * n would point to element with key which we are looking for
+		 * (if it existed). All elements on the left are smaller and all
+		 * element on the right are bigger.
+		 */
 		if (!n) {
 			assert(prev && !is_leaf(prev));
 
@@ -2178,13 +2183,33 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 			 * The target node must be the next leaf. */
 			result = ++const_iterator(leaf, this);
 		} else {
-			/* *slot is the point of divergence. */
 			assert(diff < leaf_key.size() && diff < key.size());
 
-			/* The target node must be within *slot's subtree. The
-			 * left siblings of *slot are all less than the
-			 * looked-for key. */
-			if (compare(key, leaf_key, diff) < 0) {
+			/* *slot is the point of divergence. It means the tree
+			 * is compressed.
+			 *
+			 *  Example for key AXXB or AZZZB
+			 *         ROOT
+			 *         /  \
+			 *        A    B
+			 *       /      \
+			 *    *slot     ...
+			 *      / \
+			 *    YYA YYC
+			 *    /     \
+			 *   ...   ...
+			 *
+			 * We need to compare the first bytes of key and
+			 * leaf_key to decide where to continue our search (for
+			 * AXXB we would compare X with Y).
+			 */
+
+			/* If next byte in key is less than in leaf_key it means
+			 * that the target node must be within *slot's subtree.
+			 * The left siblings of *slot are all less than the
+			 * looked-for key (this is the case fo AXXB from the
+			 * example above). */
+			if (key[diff] < leaf_key[diff]) {
 				auto target_leaf =
 					find_leaf<node::direction::Forward>(n);
 
@@ -2195,9 +2220,14 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 			} else if (slot == &root) {
 				result = const_iterator(nullptr, this);
 			} else {
-				/* Since looked-for key is larger than *slot,
-				 * the target node must be within subtree of a
-				 * right sibling of *slot. */
+				assert(key[diff] > leaf_key[diff]);
+
+				/* Since next byte in key is greater
+				 * than in leaf_key, the target node
+				 * must be within subtree of a right
+				 * sibling of *slot. All leaf in the
+				 * subtree under *slot
+				 * are smaller than key*/
 				auto target_leaf = next_leaf<
 					node::direction::Forward>(
 					prev->template make_iterator<

@@ -15,7 +15,8 @@ add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 						  ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*pp
-						  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp)
+						  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp
+						  ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
 
 add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
@@ -23,7 +24,8 @@ add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
 								  ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*pp
-								  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp)
+								  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp
+								  ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 # Set up compilation flags

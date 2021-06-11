@@ -110,6 +110,14 @@
 	std::is_trivially_copyable<T>::value
 #endif
 
+#if defined(__x86_64) || defined(_M_X64) || defined(__aarch64__)
+static constexpr size_t CACHELINE_SIZE = 64ULL;
+#elif defined(__PPC64__)
+static constexpr size_t CACHELINE_SIZE = 128ULL;
+#else
+#error unable to recognize architecture at compile time
+#endif
+
 /*! \namespace pmem
  * \brief Persistent memory namespace.
  *
@@ -302,6 +310,18 @@ mssb_index64(uint64_t value)
 }
 
 #endif
+
+static constexpr size_t
+align_up(size_t size, size_t align)
+{
+	return ((size) + (align)-1) & ~((align)-1);
+}
+
+static constexpr size_t
+align_down(size_t size, size_t align)
+{
+	return (size) & ~((align)-1);
+}
 
 } /* namespace detail */
 

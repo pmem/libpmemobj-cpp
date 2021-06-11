@@ -93,7 +93,8 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
 	auto worker = queue.register_worker();
 
-	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
+	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb",
+					   std::string(120, 'a')};
 	std::string store_to_next_run = "old";
 	if (create) {
 		/* Insert the data */
@@ -129,11 +130,9 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 	} else {
 		std::vector<std::string> values_on_pmem;
 		/* Recover the data in second run of application */
-		queue.recover(
-			[&](pmem::obj::experimental::mpsc_queue::entry &entry) {
-				values_on_pmem.emplace_back(entry.data,
-							    entry.size);
-			});
+		queue.recover([&](pmem::obj::string_view entry) {
+			values_on_pmem.emplace_back(entry.data(), entry.size());
+		});
 		UT_ASSERTeq(values_on_pmem.size(), 1);
 		UT_ASSERTeq(values_on_pmem[0].size(), store_to_next_run.size());
 		UT_ASSERT(values_on_pmem[0] == store_to_next_run);

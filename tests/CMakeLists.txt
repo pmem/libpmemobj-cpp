@@ -970,6 +970,13 @@ if(TEST_MPSC_QUEUE)
 
 	build_test(mpsc_queue_basic mpsc_queue/basic.cpp)
 	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none)
+
+	build_test(mpsc_queue_recovery mpsc_queue/recovery.cpp)
+	add_test_generic(NAME mpsc_queue_recovery CASE 0 SCRIPT mpsc_queue/recovery_0.cmake TRACERS none)
+	add_test_generic(NAME mpsc_queue_recovery CASE 1 SCRIPT mpsc_queue/recovery_1.cmake TRACERS none)
+
+	build_test(mpsc_queue_recovery_after_consume mpsc_queue/recovery_after_consume.cpp)
+	add_test_generic(NAME mpsc_queue_recovery_after_consume CASE 0 SCRIPT mpsc_queue/recovery_after_consume_0.cmake TRACERS none)
 endif()
 ################################################################################
 #################################### RADIX_TREE ################################

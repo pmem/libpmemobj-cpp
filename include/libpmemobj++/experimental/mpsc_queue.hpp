@@ -377,6 +377,7 @@ public:
 		return worker(this);
 	}
 
+	/* XXX: hide wraparound behind iterators */
 	template <typename Function>
 	bool
 	try_consume(Function &&f)

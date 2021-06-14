@@ -4,6 +4,7 @@
 #ifndef LIBPMEMOBJ_MPSC_QUEUE_HPP
 #define LIBPMEMOBJ_MPSC_QUEUE_HPP
 
+#include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 #include <libpmemobj++/detail/ringbuf.hpp>
 #include <libpmemobj++/make_persistent.hpp>
@@ -27,15 +28,22 @@ namespace obj
 namespace experimental
 {
 
-static constexpr size_t CACHELINE_SIZE = 64ULL;
-
 /* XXX: Add documentation */
 class mpsc_queue {
 public:
-	struct entry {
-		char data[56];
-		size_t size;
-	};
+	class read_accessor;
+	class worker;
+
+	mpsc_queue(pmem::obj::persistent_ptr<char[]> log, size_t buff_size,
+		   size_t max_workers = 1);
+
+	worker register_worker();
+
+	template <typename Function>
+	bool try_consume(Function &&f);
+
+	template <typename Function>
+	void recover(Function &&f);
 
 	class read_accessor {
 	private:
@@ -43,65 +51,27 @@ public:
 		size_t len;
 
 		struct iterator {
-			iterator(char *data) : data(data)
-			{
-			}
+			iterator(char *data, char *end);
 
-			/* Invalidates data after increment */
-			iterator &
-			operator++()
-			{
-				auto pop = pmem::obj::pool_by_vptr(data);
-				entry *entry_ptr = (entry *)data;
+			iterator &operator++();
 
-				entry_ptr->size = 0;
-				pop.persist(&entry_ptr->size,
-					    sizeof(entry_ptr->size));
+			bool operator==(const iterator &rhs);
+			bool operator!=(const iterator &rhs);
 
-				data += CACHELINE_SIZE;
-
-				return *this;
-			}
-
-			bool
-			operator==(const iterator &rhs)
-			{
-				return data == rhs.data;
-			}
-
-			bool
-			operator!=(const iterator &rhs)
-			{
-				return data != rhs.data;
-			}
-
-			pmem::obj::string_view operator*() const
-			{
-				entry *entry_ptr = (entry *)data;
-				return pmem::obj::string_view(entry_ptr->data,
-							      entry_ptr->size);
-			}
+			pmem::obj::string_view operator*() const;
 
 		private:
+			void skip_consumed();
+
 			char *data;
+			char *end;
 		};
 
 	public:
-		read_accessor(char *data, size_t len) : data(data), len(len)
-		{
-		}
+		read_accessor(char *data, size_t len);
 
-		iterator
-		begin()
-		{
-			return iterator(data);
-		}
-
-		iterator
-		end()
-		{
-			return iterator(data + len);
-		}
+		iterator begin();
+		iterator end();
 	};
 
 	/* All workers should be destroyed before destruction of mpsc_queue */
@@ -112,142 +82,356 @@ public:
 		size_t id;
 
 	public:
-		worker(mpsc_queue *q)
-		{
-			queue = q;
-			auto &manager = queue->get_id_manager();
-			id = manager.get();
-			w = ringbuf_register(queue->ring_buffer.get(), id);
-		}
+		worker(mpsc_queue *q);
+		~worker();
 
 		worker(const worker &) = delete;
-
 		worker &operator=(const worker &) = delete;
 
-		worker(worker &&other)
-		{
-			*this = std::move(other);
-		}
-
-		worker &
-		operator=(worker &&other)
-		{
-			if (this != &other) {
-				queue = other.queue;
-				w = other.w;
-				id = other.id;
-
-				other.queue = nullptr;
-				other.w = nullptr;
-			}
-			return *this;
-		}
-
-		~worker()
-		{
-			if (w) {
-				ringbuf_unregister(queue->ring_buffer.get(), w);
-				auto &manager = queue->get_id_manager();
-				manager.release(id);
-			}
-		}
+		worker(worker &&other);
+		worker &operator=(worker &&other);
 
 		template <typename Function>
-		bool
-		try_produce(size_t size, Function &&f)
-		{
-			entry dram_entry;
-			assert(size <= CACHELINE_SIZE);
-			auto offset = ringbuf_acquire(queue->ring_buffer.get(),
-						      w, CACHELINE_SIZE);
-			if (offset != -1) {
-				char *data = queue->buf + offset;
-				auto range = pmem::obj::slice<char *>(
-					dram_entry.data,
-					dram_entry.data + size);
-				f(range);
-				dram_entry.size = size;
-				pmemobj_memcpy(queue->pop.handle(), data,
-					       (char *)&dram_entry,
-					       CACHELINE_SIZE,
-					       PMEMOBJ_F_MEM_NONTEMPORAL);
-				pmemobj_drain(queue->pop.handle());
+		bool try_produce(size_t size, Function &&f);
+		bool try_produce(pmem::obj::string_view data);
 
-				ringbuf_produce(queue->ring_buffer.get(), w);
-				return true;
-			}
-			return false;
-		}
+	private:
+		void store_to_log(pmem::obj::string_view data, char *log_data);
 	};
 
 private:
-	inline pmem::detail::id_manager &
-	get_id_manager()
-	{
-		static pmem::detail::id_manager manager;
-		return manager;
-	}
+	struct first_block {
+		static constexpr size_t CAPACITY =
+			pmem::detail::CACHELINE_SIZE - sizeof(size_t);
+		static constexpr size_t DIRTY_FLAG = (1ULL << 63);
 
-	static size_t
-	align_up(size_t size, size_t align)
-	{
-		return (((size) + (align)-1) & ~((align)-1));
-	}
+		pmem::obj::p<size_t> size;
+		char data[CAPACITY];
+	};
+
+	inline pmem::detail::id_manager &get_id_manager();
 
 	std::unique_ptr<ringbuf::ringbuf_t> ring_buffer;
 	char *buf;
 	pmem::obj::pool_base pop;
 	size_t buff_size_;
-
-public:
-	mpsc_queue(pmem::obj::persistent_ptr<char[]> log, size_t buff_size,
-		   size_t max_workers = 1)
-	    : ring_buffer(new ringbuf::ringbuf_t(max_workers, buff_size))
-	{
-		pop = pmem::obj::pool_by_pptr(log);
-		auto addr = (uintptr_t)log.get();
-		auto aligned_addr = align_up(addr, CACHELINE_SIZE);
-
-		buf = (char *)aligned_addr;
-		buff_size_ = buff_size - (aligned_addr - addr);
-	}
-
-	worker
-	register_worker()
-	{
-		return worker(this);
-	}
-
-	template <typename Function>
-	bool
-	try_consume(Function &&f)
-	{
-		size_t offset;
-		size_t len = ringbuf_consume(ring_buffer.get(), &offset);
-		if (len != 0) {
-			auto acc = read_accessor(buf + offset, len);
-			f(acc);
-			ringbuf_release(ring_buffer.get(), len);
-			return true;
-		}
-		return false;
-	}
-
-	/* XXX - Move logic from this function to consume (this requires setting
-	   reader/writer offsets in ringbuf) */
-	template <typename Function>
-	void
-	recover(Function &&f)
-	{
-		for (size_t i = 0; i < buff_size_; i += CACHELINE_SIZE) {
-			entry dram_entry;
-			memcpy((char *)&dram_entry, buf + i, CACHELINE_SIZE);
-
-			if (dram_entry.size)
-				f(dram_entry);
-		}
-	}
 };
+
+/** XXX: log should be zeroed out by the user. */
+mpsc_queue::mpsc_queue(pmem::obj::persistent_ptr<char[]> log, size_t buff_size,
+		       size_t max_workers)
+    : ring_buffer(new ringbuf::ringbuf_t(max_workers, buff_size))
+{
+	pop = pmem::obj::pool_by_pptr(log);
+	auto addr = (uintptr_t)log.get();
+	auto aligned_addr =
+		pmem::detail::align_up(addr, pmem::detail::CACHELINE_SIZE);
+
+	buf = (char *)aligned_addr;
+	buff_size_ = buff_size - (aligned_addr - addr);
+	buff_size_ = pmem::detail::align_down(buff_size_,
+					      pmem::detail::CACHELINE_SIZE);
+}
+
+inline pmem::detail::id_manager &
+mpsc_queue::get_id_manager()
+{
+	static pmem::detail::id_manager manager;
+	return manager;
+}
+
+inline mpsc_queue::worker
+mpsc_queue::register_worker()
+{
+	return worker(this);
+}
+
+/* XXX: hide wraparound behind iterators */
+template <typename Function>
+inline bool
+mpsc_queue::try_consume(Function &&f)
+{
+	size_t offset;
+	size_t len = ringbuf_consume(ring_buffer.get(), &offset);
+	if (len != 0) {
+		auto acc = read_accessor(buf + offset, len);
+		f(acc);
+		ringbuf_release(ring_buffer.get(), len);
+		return true;
+	}
+	return false;
+}
+
+/* XXX - Move logic from this function to consume (this requires setting
+   reader/writer offsets in ringbuf) */
+template <typename Function>
+inline void
+mpsc_queue::recover(Function &&f)
+{
+	auto acc = read_accessor(buf, buff_size_);
+	auto it = acc.begin();
+	while (it != acc.end()) {
+		f(*it);
+		++it;
+	}
+}
+
+inline mpsc_queue::worker::worker(mpsc_queue *q)
+{
+	queue = q;
+	auto &manager = queue->get_id_manager();
+	id = manager.get();
+	w = ringbuf_register(queue->ring_buffer.get(), id);
+}
+
+inline mpsc_queue::worker::worker(mpsc_queue::worker &&other)
+{
+	*this = std::move(other);
+}
+
+inline mpsc_queue::worker &
+mpsc_queue::worker::operator=(worker &&other)
+{
+	if (this != &other) {
+		queue = other.queue;
+		w = other.w;
+		id = other.id;
+
+		other.queue = nullptr;
+		other.w = nullptr;
+	}
+	return *this;
+}
+
+inline mpsc_queue::worker::~worker()
+{
+	if (w) {
+		ringbuf_unregister(queue->ring_buffer.get(), w);
+		auto &manager = queue->get_id_manager();
+		manager.release(id);
+	}
+}
+
+/**
+ * @param f cannot fail. Any exception thrown from f will result
+ * in terminate().
+ */
+template <typename Function>
+inline bool
+mpsc_queue::worker::try_produce(size_t size, Function &&f)
+{
+	auto data = std::unique_ptr<char[]>(new char[size]);
+	auto range = pmem::obj::slice<char *>(data.get(), data.get() + size);
+
+	auto req_size = pmem::detail::align_up(size + sizeof(first_block::size),
+					       pmem::detail::CACHELINE_SIZE);
+	auto offset = ringbuf_acquire(queue->ring_buffer.get(), w, req_size);
+
+	if (offset == -1)
+		return false;
+
+	try {
+		f(range);
+	} catch (...) {
+		std::terminate();
+	}
+
+	store_to_log(pmem::obj::string_view(data.get(), size),
+		     queue->buf + offset);
+
+	ringbuf_produce(queue->ring_buffer.get(), w);
+
+	return true;
+}
+
+inline bool
+mpsc_queue::worker::try_produce(pmem::obj::string_view data)
+{
+	auto req_size =
+		pmem::detail::align_up(data.size() + sizeof(first_block::size),
+				       pmem::detail::CACHELINE_SIZE);
+	auto offset = ringbuf_acquire(queue->ring_buffer.get(), w, req_size);
+
+	if (offset == -1)
+		return false;
+
+	store_to_log(data, queue->buf + offset);
+
+	ringbuf_produce(queue->ring_buffer.get(), w);
+
+	return true;
+}
+
+inline void
+mpsc_queue::worker::store_to_log(pmem::obj::string_view data, char *log_data)
+{
+	assert(reinterpret_cast<uintptr_t>(log_data) %
+		       pmem::detail::CACHELINE_SIZE ==
+	       0);
+
+	first_block fblock;
+	fblock.size = data.size() | size_t(first_block::DIRTY_FLAG);
+
+	/*
+	 * First step is to copy up to 56B of data and store
+	 * data.size() with DIRTY flag set. After that, we store
+	 * rest of the data in two steps:
+	 *	1. Remainder of the data is aligned down to
+	 *	cacheline and copied.
+	 * Now, we are left with between 0 to 63 bytes. If
+	 * nonzero:
+	 *	2. Create a stack allocated cacheline-sized
+	 *	buffer, fill in the remainder of the data, and
+	 *	copy the entire cacheline. After all data is
+	 *	stored, we clear the dirty flag from size.
+	 *
+	 * This is done so that we avoid a cache-miss on
+	 * misaligned writes.
+	 */
+
+	size_t ncopy = (std::min)(data.size(), size_t(first_block::CAPACITY));
+	std::copy_n(data.data(), ncopy, fblock.data);
+
+	pmemobj_memcpy(queue->pop.handle(), log_data,
+		       reinterpret_cast<char *>(&fblock),
+		       pmem::detail::CACHELINE_SIZE, PMEMOBJ_F_MEM_NONTEMPORAL);
+
+	size_t remaining_size = ncopy > data.size() ? 0 : data.size() - ncopy;
+
+	const char *srcof = data.data() + ncopy;
+	size_t rcopy = pmem::detail::align_down(remaining_size,
+						pmem::detail::CACHELINE_SIZE);
+	size_t lcopy = remaining_size - rcopy;
+
+	char last_cacheline[pmem::detail::CACHELINE_SIZE];
+	if (lcopy != 0)
+		std::copy_n(srcof + rcopy, lcopy, last_cacheline);
+
+	if (rcopy != 0) {
+		char *dest = log_data + pmem::detail::CACHELINE_SIZE;
+
+		pmemobj_memcpy(queue->pop.handle(), dest, srcof, rcopy,
+			       PMEMOBJ_F_MEM_NODRAIN |
+				       PMEMOBJ_F_MEM_NONTEMPORAL);
+	}
+
+	if (lcopy != 0) {
+		void *dest = log_data + pmem::detail::CACHELINE_SIZE + rcopy;
+
+		pmemobj_memcpy(queue->pop.handle(), dest, last_cacheline,
+			       pmem::detail::CACHELINE_SIZE,
+			       PMEMOBJ_F_MEM_NODRAIN |
+				       PMEMOBJ_F_MEM_NONTEMPORAL);
+	}
+
+	pmemobj_drain(queue->pop.handle());
+
+	fblock.size &= (~size_t(first_block::DIRTY_FLAG));
+
+	pmemobj_memcpy(queue->pop.handle(), log_data,
+		       reinterpret_cast<char *>(&fblock),
+		       pmem::detail::CACHELINE_SIZE, PMEMOBJ_F_MEM_NONTEMPORAL);
+}
+
+inline mpsc_queue::read_accessor::read_accessor(char *data, size_t len)
+    : data(data), len(len)
+{
+}
+
+inline mpsc_queue::read_accessor::iterator
+mpsc_queue::read_accessor::begin()
+{
+	return iterator(data, data + len);
+}
+
+inline mpsc_queue::read_accessor::iterator
+mpsc_queue::read_accessor::end()
+{
+	return iterator(data + len, data + len);
+}
+
+inline mpsc_queue::read_accessor::iterator::iterator(char *data, char *end)
+    : data(data), end(end)
+{
+	skip_consumed();
+}
+
+/* Invalidates data after increment */
+inline mpsc_queue::read_accessor::iterator &
+mpsc_queue::read_accessor::iterator::operator++()
+{
+	auto pop = pmem::obj::pool_by_vptr(data);
+
+	auto block = reinterpret_cast<first_block *>(data);
+
+	assert(block->size != 0);
+
+	auto element_end = reinterpret_cast<first_block *>(
+		data +
+		static_cast<ptrdiff_t>(block->size + sizeof(block->size)));
+
+	/* Mark all cachelines as consumed. */
+	pmem::obj::flat_transaction::run(pop, [&] {
+		while (block < element_end) {
+			block->size = 0;
+			block++;
+		}
+	});
+
+	/* Go to the next, unconsumed element. */
+	skip_consumed();
+
+	return *this;
+}
+
+inline bool
+mpsc_queue::read_accessor::iterator::operator==(
+	const mpsc_queue::read_accessor::iterator &rhs)
+{
+	return data == rhs.data;
+}
+
+inline bool
+mpsc_queue::read_accessor::iterator::operator!=(
+	const mpsc_queue::read_accessor::iterator &rhs)
+{
+	return data != rhs.data;
+}
+
+inline pmem::obj::string_view
+	mpsc_queue::read_accessor::iterator::operator*() const
+{
+	auto b = reinterpret_cast<first_block *>(data);
+	return pmem::obj::string_view(b->data, b->size);
+}
+
+inline void
+mpsc_queue::read_accessor::iterator::skip_consumed()
+{
+	auto b = reinterpret_cast<first_block *>(data);
+	auto e = reinterpret_cast<first_block *>(end);
+
+	/* Advance to first, unconsumed element */
+	while (b < e) {
+		if (b->size == 0) {
+			b++;
+		} else if (b->size & size_t(first_block::DIRTY_FLAG)) {
+			auto size =
+				b->size & (~size_t(first_block::DIRTY_FLAG));
+			auto aligned_size = pmem::detail::align_up(
+				size + sizeof(b->size),
+				pmem::detail::CACHELINE_SIZE);
+
+			b += aligned_size / pmem::detail::CACHELINE_SIZE;
+		} else {
+			break;
+		}
+	}
+
+	assert(b <= e);
+
+	this->data = reinterpret_cast<char *>(b);
+}
 
 } /* namespace experimental */
 } /* namespace obj */

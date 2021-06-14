@@ -118,7 +118,7 @@ main(int argc, char *argv[])
 	constexpr size_t concurrency = 16;
 	/* buffer_size have to be at least twice as big as biggest inserted
 	 * element */
-	size_t buffer_size = pmem::obj::experimental::CACHELINE_SIZE * 2;
+	size_t buffer_size = pmem::detail::CACHELINE_SIZE * 2;
 
 	pmem::obj::pool<struct root> pop;
 
@@ -128,6 +128,7 @@ main(int argc, char *argv[])
 	pmem::obj::transaction::run(pop, [&] {
 		pop.root()->log =
 			pmem::obj::make_persistent<char[]>(buffer_size);
+		std::fill_n(pop.root()->log.get(), buffer_size, 0);
 	});
 
 	return run_test([&] { mt_test(pop, concurrency, buffer_size); });

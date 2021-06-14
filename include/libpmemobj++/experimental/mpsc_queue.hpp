@@ -206,6 +206,10 @@ public:
 			}
 		}
 
+		/**
+		 * @param f cannot fail. Any exception thrown from f will result
+		 * in terminate().
+		 */
 		template <typename Function>
 		bool
 		try_produce(size_t size, Function &&f)
@@ -223,7 +227,11 @@ public:
 			if (offset == -1)
 				return false;
 
-			f(range);
+			try {
+				f(range);
+			} catch (...) {
+				std::terminate();
+			}
 
 			store_to_log(pmem::obj::string_view(data.get(), size),
 				     queue->buf + offset);

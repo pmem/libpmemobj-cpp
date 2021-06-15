@@ -19,10 +19,12 @@
 
 #define LAYOUT "layout"
 
+using queue_type = pmem::obj::experimental::mpsc_queue;
+
 static constexpr size_t MAX_CONCURRENCY = 100;
 
 struct root {
-	pmem::obj::persistent_ptr<char[]> log;
+	pmem::obj::persistent_ptr<queue_type::pmem_log_type> log;
 	pmem::obj::p<size_t> written[MAX_CONCURRENCY];
 };
 
@@ -36,8 +38,7 @@ void
 run_consistent(pmem::obj::pool<root> pop, bool synchronized = false)
 {
 	auto proot = pop.root();
-	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, QUEUE_SIZE,
-							 concurrency);
+	auto queue = queue_type(*proot->log, concurrency);
 
 	for (size_t i = 0; i < MAX_CONCURRENCY; i++)
 		proot->written[i] = 0;
@@ -77,8 +78,7 @@ void
 check_consistency(pmem::obj::pool<root> pop)
 {
 	auto proot = pop.root();
-	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, QUEUE_SIZE,
-							 concurrency);
+	auto queue = queue_type(*proot->log, concurrency);
 
 	size_t expected = 0;
 	for (size_t i = 0; i < MAX_CONCURRENCY; i++) {
@@ -103,8 +103,8 @@ init(pmem::obj::pool<root> &pop)
 {
 	pmem::obj::transaction::run(pop, [&] {
 		pop.root()->log =
-			pmem::obj::make_persistent<char[]>(QUEUE_SIZE);
-		std::fill_n(pop.root()->log.get(), QUEUE_SIZE, 0);
+			pmem::obj::make_persistent<queue_type::pmem_log_type>(
+				QUEUE_SIZE);
 	});
 }
 

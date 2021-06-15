@@ -33,9 +33,9 @@ class mpsc_queue {
 public:
 	class read_accessor;
 	class worker;
+	class pmem_log_type;
 
-	mpsc_queue(pmem::obj::persistent_ptr<char[]> log, size_t buff_size,
-		   size_t max_workers = 1);
+	mpsc_queue(pmem_log_type &pmem, size_t max_workers = 1);
 
 	worker register_worker();
 
@@ -99,6 +99,15 @@ public:
 		void store_to_log(pmem::obj::string_view data, char *log_data);
 	};
 
+	class pmem_log_type {
+	public:
+		pmem_log_type(size_t size);
+
+	private:
+		pmem::obj::vector<char> data;
+		friend class mpsc_queue;
+	};
+
 private:
 	struct first_block {
 		static constexpr size_t CAPACITY =
@@ -117,20 +126,23 @@ private:
 	size_t buff_size_;
 };
 
-/** XXX: log should be zeroed out by the user. */
-mpsc_queue::mpsc_queue(pmem::obj::persistent_ptr<char[]> log, size_t buff_size,
-		       size_t max_workers)
-    : ring_buffer(new ringbuf::ringbuf_t(max_workers, buff_size))
+mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
+    : ring_buffer(new ringbuf::ringbuf_t(max_workers, pmem.data.size()))
 {
-	pop = pmem::obj::pool_by_pptr(log);
-	auto addr = (uintptr_t)log.get();
+	pop = pmem::obj::pool_by_vptr(&pmem);
+
+	auto addr = reinterpret_cast<uintptr_t>(&pmem.data[0]);
 	auto aligned_addr =
 		pmem::detail::align_up(addr, pmem::detail::CACHELINE_SIZE);
 
-	buf = (char *)aligned_addr;
-	buff_size_ = buff_size - (aligned_addr - addr);
+	buf = reinterpret_cast<char *>(aligned_addr);
+	buff_size_ = pmem.data.size() - (aligned_addr - addr);
 	buff_size_ = pmem::detail::align_down(buff_size_,
 					      pmem::detail::CACHELINE_SIZE);
+}
+
+mpsc_queue::pmem_log_type::pmem_log_type(size_t size) : data(size, 0)
+{
 }
 
 inline pmem::detail::id_manager &

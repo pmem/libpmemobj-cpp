@@ -19,24 +19,25 @@
 
 #define LAYOUT "layout"
 
+using queue_type = pmem::obj::experimental::mpsc_queue;
+
+static constexpr size_t QUEUE_SIZE = 10000;
+
 struct root {
-	pmem::obj::persistent_ptr<char[]> log;
+	pmem::obj::persistent_ptr<queue_type::pmem_log_type> log;
 };
 
 /* Test to consume from empty queue */
 int
 consume_empty(pmem::obj::pool<root> pop)
 {
-
 	auto proot = pop.root();
 
-	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
+	auto queue = queue_type(*proot->log, 1);
 
 	auto worker = queue.register_worker();
 	bool consumed = queue.try_consume(
-		[&](pmem::obj::experimental::mpsc_queue::read_accessor rd_acc) {
-			ASSERT_UNREACHABLE;
-		});
+		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
 	return 0;
@@ -46,10 +47,8 @@ consume_empty(pmem::obj::pool<root> pop)
 int
 consume_empty_after_insertion(pmem::obj::pool<root> pop)
 {
-	size_t queue_size = 1000;
 	auto proot = pop.root();
-	auto queue =
-		pmem::obj::experimental::mpsc_queue(proot->log, queue_size, 1);
+	auto queue = queue_type(*proot->log, 1);
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
 
@@ -62,21 +61,21 @@ consume_empty_after_insertion(pmem::obj::pool<root> pop)
 			});
 	}
 	/* Consume all of it */
-	queue.try_consume(
-		[&](pmem::obj::experimental::mpsc_queue::read_accessor rd_acc) {
-			size_t i = 0;
-			for (const auto &str : rd_acc) {
-				(void)str;
-				i++;
-			}
-			UT_ASSERTeq(i, values.size());
-		});
+	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+		size_t i = 0;
+		for (const auto &str : rd_acc) {
+			(void)str;
+			i++;
+		}
+		UT_ASSERTeq(i, values.size());
+	});
 
 	/* Try to consume empty queue */
 	for (int i = 0; i < 10; i++) {
 		bool consumed = queue.try_consume(
-			[&](pmem::obj::experimental::mpsc_queue::read_accessor
-				    rd_acc1) { ASSERT_UNREACHABLE; });
+			[&](queue_type::read_accessor rd_acc1) {
+				ASSERT_UNREACHABLE;
+			});
 		UT_ASSERTeq(consumed, false);
 	}
 
@@ -90,7 +89,7 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 	auto proot = pop.root();
 
-	auto queue = pmem::obj::experimental::mpsc_queue(proot->log, 10000, 1);
+	auto queue = queue_type(*proot->log, 1);
 	auto worker = queue.register_worker();
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb",
@@ -108,14 +107,12 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 		/* Consume all the data */
 		std::vector<std::string> values_on_pmem;
-		queue.try_consume(
-			[&](pmem::obj::experimental::mpsc_queue::read_accessor
-				    rd_acc) {
-				for (const auto &str : rd_acc) {
-					values_on_pmem.emplace_back(str.data(),
-								    str.size());
-				}
-			});
+		queue.try_consume([&](queue_type::read_accessor rd_acc) {
+			for (const auto &str : rd_acc) {
+				values_on_pmem.emplace_back(str.data(),
+							    str.size());
+			}
+		});
 		UT_ASSERT(values_on_pmem == values);
 
 		/* Inset new data, which may be recovered in next run of
@@ -158,9 +155,8 @@ main(int argc, char *argv[])
 						    S_IWUSR | S_IRUSR);
 
 		pmem::obj::transaction::run(pop, [&] {
-			pop.root()->log =
-				pmem::obj::make_persistent<char[]>(10000);
-			std::fill_n(pop.root()->log.get(), 10000, 0);
+			pop.root()->log = pmem::obj::make_persistent<
+				queue_type::pmem_log_type>(QUEUE_SIZE);
 		});
 	} else {
 		pop = pmem::obj::pool<root>::open(std::string(path), LAYOUT);

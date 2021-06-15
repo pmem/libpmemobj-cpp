@@ -19,19 +19,23 @@
 
 #define LAYOUT "multithreaded_mpsc_queue_test"
 
+using queue_type = pmem::obj::experimental::mpsc_queue;
+
+/* buffer_size have to be at least twice as big as biggest inserted
+ * element */
+static constexpr size_t QUEUE_SIZE = 2 * pmem::detail::CACHELINE_SIZE;
+
 struct root {
-	pmem::obj::persistent_ptr<char[]> log;
+	pmem::obj::persistent_ptr<queue_type::pmem_log_type> log;
 };
 
 /* basic multithreaded for produce-consume */
 int
-mt_test(pmem::obj::pool<root> pop, size_t concurrency, size_t buffer_size)
+mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 {
-
 	auto proot = pop.root();
 
-	auto queue = pmem::obj::experimental::mpsc_queue(
-		proot->log, buffer_size, concurrency);
+	auto queue = queue_type(*proot->log, concurrency);
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb", "cccc"};
 
@@ -82,21 +86,17 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency, size_t buffer_size)
 	 * data was consumed during first try_consume, second would fail.
 	 */
 	for (int i = 0; i < 2; i++) {
-		queue.try_consume(
-			[&](pmem::obj::experimental::mpsc_queue::read_accessor
-				    rd_acc1) {
-				for (auto str : rd_acc1) {
-					values_on_pmem.emplace_back(str.data(),
-								    str.size());
-				}
-			});
+		queue.try_consume([&](queue_type::read_accessor rd_acc1) {
+			for (auto str : rd_acc1) {
+				values_on_pmem.emplace_back(str.data(),
+							    str.size());
+			}
+		});
 	}
 
 	/* At this moment queue should be empty */
 	bool consumed = queue.try_consume(
-		[&](pmem::obj::experimental::mpsc_queue::read_accessor rd_acc) {
-			ASSERT_UNREACHABLE;
-		});
+		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
 	for (auto &v : values) {
@@ -116,9 +116,6 @@ main(int argc, char *argv[])
 	const char *path = argv[1];
 
 	constexpr size_t concurrency = 16;
-	/* buffer_size have to be at least twice as big as biggest inserted
-	 * element */
-	size_t buffer_size = pmem::detail::CACHELINE_SIZE * 2;
 
 	pmem::obj::pool<struct root> pop;
 
@@ -127,9 +124,9 @@ main(int argc, char *argv[])
 
 	pmem::obj::transaction::run(pop, [&] {
 		pop.root()->log =
-			pmem::obj::make_persistent<char[]>(buffer_size);
-		std::fill_n(pop.root()->log.get(), buffer_size, 0);
+			pmem::obj::make_persistent<queue_type::pmem_log_type>(
+				QUEUE_SIZE);
 	});
 
-	return run_test([&] { mt_test(pop, concurrency, buffer_size); });
+	return run_test([&] { mt_test(pop, concurrency); });
 }

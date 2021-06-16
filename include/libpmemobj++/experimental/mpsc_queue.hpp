@@ -6,6 +6,7 @@
 
 #include <libpmemobj++/detail/enumerable_thread_specific.hpp>
 #include <libpmemobj++/detail/ringbuf.hpp>
+#include <libpmemobj++/detail/semaphore.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/slice.hpp>
@@ -174,9 +175,19 @@ public:
 				pmemobj_drain(queue->pop.handle());
 
 				ringbuf_produce(queue->ring_buffer.get(), w);
+				queue->produced->release();
 				return true;
 			}
 			return false;
+		}
+
+		template <typename Function>
+		void
+		produce(size_t size, Function &&f)
+		{
+			while (!try_produce(size, f)) {
+				queue->consumed->acquire();
+			}
 		}
 	};
 
@@ -199,10 +210,16 @@ private:
 	pmem::obj::pool_base pop;
 	size_t buff_size_;
 
+	/* Synchronization primitives */
+	std::unique_ptr<pmem::detail::binary_semaphore> consumed;
+	std::unique_ptr<pmem::detail::binary_semaphore> produced;
+
 public:
 	mpsc_queue(pmem::obj::persistent_ptr<char[]> log, size_t buff_size,
 		   size_t max_workers = 1)
-	    : ring_buffer(new ringbuf::ringbuf_t(max_workers, buff_size))
+	    : ring_buffer(new ringbuf::ringbuf_t(max_workers, buff_size)),
+	      consumed(new pmem::detail::binary_semaphore(1)),
+	      produced(new pmem::detail::binary_semaphore(0))
 	{
 		pop = pmem::obj::pool_by_pptr(log);
 		auto addr = (uintptr_t)log.get();
@@ -211,6 +228,26 @@ public:
 		buf = (char *)aligned_addr;
 		buff_size_ = buff_size - (aligned_addr - addr);
 	}
+
+	mpsc_queue &
+	operator=(mpsc_queue &&other)
+	{
+		return *this;
+	}
+
+	mpsc_queue(mpsc_queue &&other)
+	    : ring_buffer(std::move(other.ring_buffer)),
+	      buf(other.buf),
+	      pop(other.pop),
+	      buff_size_(other.buff_size_),
+	      consumed(std::move(other.consumed)),
+	      produced(std::move(other.produced))
+	{
+	}
+
+	mpsc_queue(const mpsc_queue &) = delete;
+
+	mpsc_queue &operator=(const mpsc_queue &) = delete;
 
 	worker
 	register_worker()
@@ -228,9 +265,19 @@ public:
 			auto acc = read_accessor(buf + offset, len);
 			f(acc);
 			ringbuf_release(ring_buffer.get(), len);
+			consumed->release();
 			return true;
 		}
 		return false;
+	}
+
+	template <typename Function>
+	void
+	consume(Function &&f)
+	{
+		while (!try_consume(f)) {
+			produced->acquire();
+		}
 	}
 
 	/* XXX - Move logic from this function to consume (this requires setting

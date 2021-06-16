@@ -7,6 +7,6 @@ setup()
 
 execute(${TEST_EXECUTABLE} c ${DIR}/testfile)
 pmreorder_create_store_log(${DIR}/testfile ${TEST_EXECUTABLE} x ${DIR}/testfile)
-pmreorder_execute(true NoReorderNoCheck "PMREORDER_FILL=ReorderAccumulative" ${TEST_EXECUTABLE} o)
+pmreorder_execute(true NoReorderNoCheck "PMREORDER_MARKER=ReorderAccumulative" ${TEST_EXECUTABLE} o)
 
 finish()

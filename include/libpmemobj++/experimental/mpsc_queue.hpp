@@ -30,6 +30,9 @@ namespace experimental
 
 /* XXX: Add documentation */
 class mpsc_queue {
+private:
+	struct first_block;
+
 public:
 	class read_accessor;
 	class worker;
@@ -42,16 +45,10 @@ public:
 	template <typename Function>
 	bool try_consume(Function &&f);
 
-	template <typename Function>
-	void recover(Function &&f);
-
 	class read_accessor {
 	private:
-		char *data;
-		size_t len;
-
 		struct iterator {
-			iterator(char *data, char *end);
+			iterator(mpsc_queue *queue, char *data, char *end);
 
 			iterator &operator++();
 
@@ -61,14 +58,18 @@ public:
 			pmem::obj::string_view operator*() const;
 
 		private:
-			void skip_consumed();
+			first_block *skip_consumed(first_block *);
 
+			mpsc_queue *queue;
 			char *data;
 			char *end;
 		};
 
+		iterator begin_;
+		iterator end_;
+
 	public:
-		read_accessor(char *data, size_t len);
+		read_accessor(mpsc_queue *queue, char *data, size_t len);
 
 		iterator begin();
 		iterator end();
@@ -105,6 +106,8 @@ public:
 
 	private:
 		pmem::obj::vector<char> data;
+		pmem::obj::p<size_t> written;
+
 		friend class mpsc_queue;
 	};
 
@@ -124,10 +127,12 @@ private:
 	char *buf;
 	pmem::obj::pool_base pop;
 	size_t buff_size_;
+	pmem_log_type *pmem;
+
+	void restore_offsets();
 };
 
 mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
-    : ring_buffer(new ringbuf::ringbuf_t(max_workers, pmem.data.size()))
 {
 	pop = pmem::obj::pool_by_vptr(&pmem);
 
@@ -139,9 +144,88 @@ mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
 	buff_size_ = pmem.data.size() - (aligned_addr - addr);
 	buff_size_ = pmem::detail::align_down(buff_size_,
 					      pmem::detail::CACHELINE_SIZE);
+
+	ring_buffer = std::unique_ptr<ringbuf::ringbuf_t>(
+		new ringbuf::ringbuf_t(max_workers, buff_size_));
+
+	this->pmem = &pmem;
+
+	restore_offsets();
 }
 
-mpsc_queue::pmem_log_type::pmem_log_type(size_t size) : data(size, 0)
+void
+mpsc_queue::restore_offsets()
+{
+	/* Invariant */
+	assert(pmem->written < buff_size_);
+
+	/* XXX: implement restore_offset function in ringbuf */
+
+	auto w = ringbuf_register(ring_buffer.get(), 0);
+
+	if (!pmem->written) {
+		/* If pmem->written == 0 it means that consumer should start
+		 * reading from the beginning. There might be elements produced
+		 * anywhere in the log. Since we want to prohibit any producers
+		 * from overwriting the original content - mark the entire log
+		 * as produced. */
+
+		auto acq = ringbuf_acquire(
+			ring_buffer.get(), w,
+			buff_size_ - pmem::detail::CACHELINE_SIZE);
+		assert(acq == 0);
+		(void)acq;
+		ringbuf_produce(ring_buffer.get(), w);
+
+		ringbuf_unregister(ring_buffer.get(), w);
+
+		return;
+	}
+
+	/* If pmem->written != there still might be element in the log. Morever,
+	 * to guarantee proper order of elements on recovery, we must restore
+	 * consumer offset. (If we would start consuming from the beginning of
+	 * the log, we could consume newer elements first.) Offsets are restored
+	 * by following operations:
+	 *
+	 * produce(pmem->written);
+	 * consume();
+	 * produce(size - pmem->written);
+	 * produce(pmem->written - CACHELINE_SIZE);
+	 *
+	 * This results in producer offset equal to pmem->written -
+	 * CACHELINE_SIZE and consumer offset equal to pmem->written.
+	 */
+
+	auto acq = ringbuf_acquire(ring_buffer.get(), w, pmem->written);
+	assert(acq == 0);
+	ringbuf_produce(ring_buffer.get(), w);
+
+	/* Restore consumer offset */
+	size_t offset;
+	auto len = ringbuf_consume(ring_buffer.get(), &offset);
+	assert(len == pmem->written);
+	ringbuf_release(ring_buffer.get(), len);
+
+	assert(offset == 0);
+	assert(len == pmem->written);
+
+	acq = ringbuf_acquire(ring_buffer.get(), w, buff_size_ - pmem->written);
+	assert(acq != -1);
+	assert(static_cast<size_t>(acq) == pmem->written);
+	ringbuf_produce(ring_buffer.get(), w);
+
+	acq = ringbuf_acquire(ring_buffer.get(), w,
+			      pmem->written - pmem::detail::CACHELINE_SIZE);
+	assert(acq == 0);
+	ringbuf_produce(ring_buffer.get(), w);
+
+	ringbuf_unregister(ring_buffer.get(), w);
+	(void)acq;
+}
+
+mpsc_queue::pmem_log_type::pmem_log_type(size_t size)
+    : data(size, 0), written(0)
 {
 }
 
@@ -158,34 +242,38 @@ mpsc_queue::register_worker()
 	return worker(this);
 }
 
-/* XXX: hide wraparound behind iterators */
 template <typename Function>
 inline bool
 mpsc_queue::try_consume(Function &&f)
 {
+	if (pmemobj_tx_stage() != TX_STAGE_NONE)
+		throw pmem::transaction_scope_error(
+			"Function called inside transaction scope.");
+
 	size_t offset;
 	size_t len = ringbuf_consume(ring_buffer.get(), &offset);
 	if (len != 0) {
-		auto acc = read_accessor(buf + offset, len);
-		f(acc);
+		pmem->written = offset;
+		pop.persist(pmem->written);
+
+		auto acc = read_accessor(this, buf + offset, len);
+
+		// XXX - we can mark begin/end as && (can only by called on
+		// std::move(acc))
+		bool elements_to_consume = (acc.begin() != acc.end());
+		if (elements_to_consume)
+			f(acc);
+
 		ringbuf_release(ring_buffer.get(), len);
-		return true;
+
+		/* XXX: it would be better to call f once - hide
+		 * wraparound behind iterators */
+		/* XXX: add param to ringbuf_consume and do not
+		 * call store_explicit in consume */
+		return try_consume(std::forward<Function>(f)) ||
+			elements_to_consume;
 	}
 	return false;
-}
-
-/* XXX - Move logic from this function to consume (this requires setting
-   reader/writer offsets in ringbuf) */
-template <typename Function>
-inline void
-mpsc_queue::recover(Function &&f)
-{
-	auto acc = read_accessor(buf, buff_size_);
-	auto it = acc.begin();
-	while (it != acc.end()) {
-		f(*it);
-		++it;
-	}
 }
 
 inline mpsc_queue::worker::worker(mpsc_queue *q)
@@ -193,6 +281,9 @@ inline mpsc_queue::worker::worker(mpsc_queue *q)
 	queue = q;
 	auto &manager = queue->get_id_manager();
 	id = manager.get();
+
+	assert(id < q->ring_buffer->nworkers);
+
 	w = ringbuf_register(queue->ring_buffer.get(), id);
 }
 
@@ -345,27 +436,41 @@ mpsc_queue::worker::store_to_log(pmem::obj::string_view data, char *log_data)
 		       pmem::detail::CACHELINE_SIZE, PMEMOBJ_F_MEM_NONTEMPORAL);
 }
 
-inline mpsc_queue::read_accessor::read_accessor(char *data, size_t len)
-    : data(data), len(len)
+inline mpsc_queue::read_accessor::read_accessor(mpsc_queue *queue, char *data,
+						size_t len)
+    : begin_(queue, data, data + len), end_(queue, data + len, data + len)
 {
 }
 
 inline mpsc_queue::read_accessor::iterator
 mpsc_queue::read_accessor::begin()
 {
-	return iterator(data, data + len);
+	return begin_;
 }
 
 inline mpsc_queue::read_accessor::iterator
 mpsc_queue::read_accessor::end()
 {
-	return iterator(data + len, data + len);
+	return end_;
 }
 
-inline mpsc_queue::read_accessor::iterator::iterator(char *data, char *end)
-    : data(data), end(end)
+inline mpsc_queue::read_accessor::iterator::iterator(mpsc_queue *queue,
+						     char *data, char *end)
+    : queue(queue), data(data), end(end)
 {
-	skip_consumed();
+	auto pop = pmem::obj::pool_by_vptr(data);
+	pmem::obj::flat_transaction::run(pop, [&] {
+		auto b = reinterpret_cast<first_block *>(data);
+		auto unconsumed = skip_consumed(b);
+
+		assert(unconsumed >= b);
+		queue->pmem->written += static_cast<size_t>(unconsumed - b) *
+			sizeof(first_block);
+		if (queue->pmem->written == queue->buff_size_)
+			queue->pmem->written = 0;
+
+		this->data = reinterpret_cast<char *>(unconsumed);
+	});
 }
 
 /* Invalidates data after increment */
@@ -378,20 +483,42 @@ mpsc_queue::read_accessor::iterator::operator++()
 
 	assert(block->size != 0);
 
+	auto element_size =
+		pmem::detail::align_up(block->size + sizeof(block->size),
+				       pmem::detail::CACHELINE_SIZE);
 	auto element_end = reinterpret_cast<first_block *>(
-		data +
-		static_cast<ptrdiff_t>(block->size + sizeof(block->size)));
+		data + static_cast<ptrdiff_t>(element_size));
+
+	assert(element_end <=
+	       reinterpret_cast<first_block *>(queue->buf + queue->buff_size_));
 
 	/* Mark all cachelines as consumed. */
 	pmem::obj::flat_transaction::run(pop, [&] {
 		while (block < element_end) {
+			/* data in block might be uninitialized. */
+			detail::conditional_add_to_tx(
+				&block->size, 1, POBJ_XADD_ASSUME_INITIALIZED);
 			block->size = 0;
 			block++;
 		}
+
+		queue->pmem->written += pmem::detail::align_up(
+			element_size, pmem::detail::CACHELINE_SIZE);
+
+		/* Go to the next, unconsumed element. */
+		auto unconsumed = skip_consumed(block);
+
+		assert(unconsumed >= block);
+		queue->pmem->written +=
+			static_cast<size_t>(unconsumed - block) *
+			sizeof(first_block);
+		if (queue->pmem->written == queue->buff_size_)
+			queue->pmem->written = 0;
+
+		block = unconsumed;
 	});
 
-	/* Go to the next, unconsumed element. */
-	skip_consumed();
+	data = reinterpret_cast<char *>(block);
 
 	return *this;
 }
@@ -417,17 +544,29 @@ inline pmem::obj::string_view
 	return pmem::obj::string_view(b->data, b->size);
 }
 
-inline void
-mpsc_queue::read_accessor::iterator::skip_consumed()
+inline mpsc_queue::first_block *
+mpsc_queue::read_accessor::iterator::skip_consumed(mpsc_queue::first_block *b)
 {
-	auto b = reinterpret_cast<first_block *>(data);
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
 	auto e = reinterpret_cast<first_block *>(end);
 
-	/* Advance to first, unconsumed element */
+	/* Advance to first, unconsumed element. Each cacheline can be in one of
+	 * 3 states:
+	 * 1. First 8 bytes (size) are equal to 0 - there is no data in this
+	 * cacheline.
+	 * 2. First 8 bytes (size) are non-zero and have dirty flag set - next
+	 * size bytes are junk.
+	 * 3. First 8 bytes (size) are non-zero and have dirty flag unset - next
+	 * size bytes are ready to be consumed (they represent consistent data).
+	 */
 	while (b < e) {
 		if (b->size == 0) {
 			b++;
 		} else if (b->size & size_t(first_block::DIRTY_FLAG)) {
+			// XXX - we should clear the cachelines here!!!! (add
+			// test for this)
+
 			auto size =
 				b->size & (~size_t(first_block::DIRTY_FLAG));
 			auto aligned_size = pmem::detail::align_up(
@@ -442,7 +581,7 @@ mpsc_queue::read_accessor::iterator::skip_consumed()
 
 	assert(b <= e);
 
-	this->data = reinterpret_cast<char *>(b);
+	return b;
 }
 
 } /* namespace experimental */

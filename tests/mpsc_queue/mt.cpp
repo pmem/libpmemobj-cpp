@@ -23,19 +23,23 @@ using queue_type = pmem::obj::experimental::mpsc_queue;
 
 /* buffer_size have to be at least twice as big as biggest inserted
  * element */
-static constexpr size_t QUEUE_SIZE = 2 * pmem::detail::CACHELINE_SIZE;
+static constexpr size_t QUEUE_SIZE = 3 * pmem::detail::CACHELINE_SIZE;
 
 struct root {
 	pmem::obj::persistent_ptr<queue_type::pmem_log_type> log;
 };
 
 /* basic multithreaded for produce-consume */
-int
+static void
 mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 {
 	auto proot = pop.root();
 
 	auto queue = queue_type(*proot->log, concurrency);
+
+	bool consumed = queue.try_consume(
+		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	UT_ASSERTeq(consumed, false);
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb", "cccc"};
 
@@ -80,22 +84,15 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 		}
 	});
 
-	/* Consume the rest of the data. Need to call try_consume twice, as some
-	 * data may be at the end of buffer, and some may be at the beginning.
-	 * Ringbuffer do not merge those two pats into one try_consume. If all
-	 * data was consumed during first try_consume, second would fail.
-	 */
-	for (int i = 0; i < 2; i++) {
-		queue.try_consume([&](queue_type::read_accessor rd_acc1) {
-			for (auto str : rd_acc1) {
-				values_on_pmem.emplace_back(str.data(),
-							    str.size());
-			}
-		});
-	}
+	/* Consume the rest of the data. */
+	queue.try_consume([&](queue_type::read_accessor rd_acc1) {
+		for (auto str : rd_acc1) {
+			values_on_pmem.emplace_back(str.data(), str.size());
+		}
+	});
 
 	/* At this moment queue should be empty */
-	bool consumed = queue.try_consume(
+	consumed = queue.try_consume(
 		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
@@ -104,11 +101,10 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 					values_on_pmem.end(), v);
 		UT_ASSERTeq(count, static_cast<int>(concurrency));
 	}
-	return 0;
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
 	if (argc != 2)
 		UT_FATAL("usage: %s file-name", argv[0]);
@@ -128,5 +124,13 @@ main(int argc, char *argv[])
 				QUEUE_SIZE);
 	});
 
-	return run_test([&] { mt_test(pop, concurrency); });
+	mt_test(pop, concurrency);
+
+	pop.close();
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

@@ -2,16 +2,15 @@
 /* Copyright 2021, Intel Corporation */
 
 /*
- * recovery_after_consume.pp -- pmreorder test for mpsc_queue
+ * recovery_after_consume.cpp -- pmreorder test for mpsc_queue
  * which breaks produce after produce/consume cycle.
  */
 
-#include "unittest.hpp"
+#include "queue.hpp"
 
 #include <algorithm>
 #include <string>
 
-#include <libpmemobj++/experimental/mpsc_queue.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <libpmemobj++/string_view.hpp>
@@ -44,76 +43,35 @@ run_consistent(pmem::obj::pool<root> pop)
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, concurrency);
 
+	bool consumed = queue.try_consume(
+		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	UT_ASSERTeq(consumed, false);
+
 	for (size_t i = 0; i < concurrency; i++)
 		proot->written[i] = 0;
 
-	size_t capacity = 0;
-	{
-		auto worker = queue.register_worker();
-
-		/* Check how many elements fit in the log. */
-		while (worker.try_produce(
-			produce_size, [&](pmem::obj::slice<char *> range) {
-				std::fill_n(range.begin(), produce_size, 1);
-				capacity++;
-			}))
-			;
-	}
+	size_t capacity = get_queue_capacity(queue, produce_size);
 	UT_ASSERTne(capacity, 0);
 
 	proot->capacity = capacity;
 	pop.persist(proot->capacity);
 
-	/* Clear the queue */
-	auto ret = queue.try_consume([](queue_type::read_accessor acc) {
-		for (const auto &e : acc)
-			(void)e;
-	});
-	UT_ASSERT(ret);
+	make_queue_with_first_half_empty(queue, capacity, produce_size,
+					 [&](pmem::obj::slice<char *> range) {
+						 std::fill_n(range.begin(),
+							     produce_size, 1);
+					 });
 
-	size_t produced = 0;
-	{
-		auto worker = queue.register_worker();
-
-		while (produced < capacity) {
-			/* Produce half of the elements, call consume and
-			 * produce the rest. This should result in log being
-			 * consumed at the
-			 * beginning and unconsumed at the end. */
-			ret = worker.try_produce(
-				produce_size,
-				[&](pmem::obj::slice<char *> range) {
-					std::fill_n(range.begin(), produce_size,
-						    1);
-					produced++;
-				});
-
-			UT_ASSERT(ret);
-
-			if (produced == capacity / 2) {
-				size_t cnt_consumed = 0;
-				auto ret = queue.try_consume(
-					[&](pmem::obj::experimental::
-						    mpsc_queue::read_accessor
-							    acc) {
-						for (const auto &str : acc) {
-							(void)str;
-							cnt_consumed++;
-						}
-					});
-				UT_ASSERT(ret);
-				UT_ASSERTeq(cnt_consumed, produced);
-			}
-		}
-	}
-	UT_ASSERTeq(capacity, produced);
-
+	/* Run this under pmreorder. After crash state of the queue should be
+	 * something like this: | produced | crashed | produced | empty |
+	 * produced |
+	 */
 	parallel_xexec(
 		concurrency, [&](size_t id, std::function<void()> syncthreads) {
 			auto worker = queue.register_worker();
 
 			if (id == 0)
-				VALGRIND_PMC_EMIT_LOG("PMREORDER_FILL.BEGIN");
+				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
 
 			auto ret = worker.try_produce(
 				produce_size,
@@ -123,7 +81,7 @@ run_consistent(pmem::obj::pool<root> pop)
 				});
 
 			if (id == 0)
-				VALGRIND_PMC_EMIT_LOG("PMREORDER_FILL.END");
+				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.END");
 
 			proot->written[id] = 1;
 			pop.persist(proot->written[id]);
@@ -145,8 +103,9 @@ check_consistency(pmem::obj::pool<root> pop)
 	}
 
 	std::vector<std::string> values_on_pmem;
-	queue.recover([&](pmem::obj::string_view entry) {
-		values_on_pmem.emplace_back(entry.data(), entry.size());
+	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+		for (auto entry : rd_acc)
+			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});
 
 	UT_ASSERT(values_on_pmem.size() >= expected);
@@ -166,8 +125,8 @@ init(pmem::obj::pool<root> &pop)
 	});
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
 	if (argc != 3 || strchr("cox", argv[1][0]) == nullptr)
 		UT_FATAL("usage: %s <c|o|x> file-name", argv[0]);
@@ -196,5 +155,11 @@ main(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	return 0;
+	pop.close();
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

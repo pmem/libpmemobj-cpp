@@ -2,7 +2,7 @@
 /* Copyright 2021, Intel Corporation */
 
 /*
- * recovery.pp -- pmreorder test for mpsc_queue
+ * recovery.cpp -- pmreorder test for mpsc_queue
  * which breaks produce.
  */
 
@@ -34,11 +34,15 @@ static const size_t concurrency = 4;
 static const auto fill_pattern = char(1);
 
 /* Break application during produce. */
-void
-run_consistent(pmem::obj::pool<root> pop, bool synchronized = false)
+static void
+run_consistent(pmem::obj::pool<root> pop, bool break_produce, bool synchronized)
 {
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, concurrency);
+
+	auto ret = queue.try_consume(
+		[&](queue_type::read_accessor acc) { ASSERT_UNREACHABLE; });
+	UT_ASSERT(!ret);
 
 	for (size_t i = 0; i < MAX_CONCURRENCY; i++)
 		proot->written[i] = 0;
@@ -47,8 +51,8 @@ run_consistent(pmem::obj::pool<root> pop, bool synchronized = false)
 		concurrency, [&](size_t id, std::function<void()> syncthreads) {
 			auto worker = queue.register_worker();
 
-			if (id == 0)
-				VALGRIND_PMC_EMIT_LOG("PMREORDER_FILL.BEGIN");
+			if (id == 0 && break_produce)
+				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
 
 			worker.try_produce(produce_size,
 					   [&](pmem::obj::slice<char *> range) {
@@ -66,16 +70,16 @@ run_consistent(pmem::obj::pool<root> pop, bool synchronized = false)
 							       fill_pattern);
 					   });
 
-			if (id == 0)
-				VALGRIND_PMC_EMIT_LOG("PMREORDER_FILL.END");
+			if (id == 0 && break_produce)
+				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.END");
 
 			proot->written[id] = 1;
 			pop.persist(proot->written[id]);
 		});
 }
 
-void
-check_consistency(pmem::obj::pool<root> pop)
+static void
+check_consistency(pmem::obj::pool<root> pop, bool already_consumed)
 {
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, concurrency);
@@ -87,9 +91,42 @@ check_consistency(pmem::obj::pool<root> pop)
 	}
 
 	std::vector<std::string> values_on_pmem;
-	queue.recover([&](pmem::obj::string_view entry) {
-		values_on_pmem.emplace_back(entry.data(), entry.size());
+	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+		for (auto entry : rd_acc)
+			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});
+
+	if (already_consumed) {
+		UT_ASSERT(values_on_pmem.size() <= expected);
+	} else
+		UT_ASSERT(values_on_pmem.size() >= expected);
+
+	for (auto &str : values_on_pmem) {
+		UT_ASSERT(str == std::string(produce_size, fill_pattern));
+	}
+}
+
+static void
+run_break_recovery(pmem::obj::pool<root> pop)
+{
+	auto proot = pop.root();
+	auto queue = queue_type(*proot->log, concurrency);
+
+	size_t expected = 0;
+	for (size_t i = 0; i < MAX_CONCURRENCY; i++) {
+		if (proot->written[i])
+			expected++;
+	}
+
+	VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
+
+	std::vector<std::string> values_on_pmem;
+	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+		for (auto entry : rd_acc)
+			values_on_pmem.emplace_back(entry.data(), entry.size());
+	});
+
+	VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
 
 	UT_ASSERT(values_on_pmem.size() >= expected);
 
@@ -98,7 +135,7 @@ check_consistency(pmem::obj::pool<root> pop)
 	}
 }
 
-void
+static void
 init(pmem::obj::pool<root> &pop)
 {
 	pmem::obj::transaction::run(pop, [&] {
@@ -108,13 +145,16 @@ init(pmem::obj::pool<root> &pop)
 	});
 }
 
-int
-main(int argc, char *argv[])
+static void
+test(int argc, char *argv[])
 {
-	if (argc < 3 || strchr("cox", argv[1][0]) == nullptr)
-		UT_FATAL("usage: %s <c|o|x> file-name [synchronized]", argv[0]);
+	if (argc < 4 || strchr("cox", argv[1][0]) == nullptr)
+		UT_FATAL(
+			"usage: %s <c|o|x> break_recovery file-name [synchronized]",
+			argv[0]);
 
-	const char *path = argv[2];
+	auto break_recovery = std::stoi(argv[2]);
+	const char *path = argv[3];
 
 	pmem::obj::pool<root> pop;
 
@@ -122,7 +162,7 @@ main(int argc, char *argv[])
 		if (argv[1][0] == 'o') {
 			pop = pmem::obj::pool<root>::open(path, LAYOUT);
 
-			check_consistency(pop);
+			check_consistency(pop, break_recovery);
 		} else if (argv[1][0] == 'c') {
 			pop = pmem::obj::pool<root>::create(
 				path, LAYOUT, PMEMOBJ_MIN_POOL * 20,
@@ -131,13 +171,22 @@ main(int argc, char *argv[])
 			init(pop);
 		} else if (argv[1][0] == 'x') {
 			pop = pmem::obj::pool<root>::open(path, LAYOUT);
-			auto synchronized = std::stoi(argv[3]);
+			auto synchronized = std::stoi(argv[4]);
 
-			run_consistent(pop, synchronized);
+			run_consistent(pop, !break_recovery, synchronized);
+
+			if (break_recovery)
+				run_break_recovery(pop);
 		}
 	} catch (pmem::pool_error &pe) {
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	return 0;
+	pop.close();
+}
+
+int
+main(int argc, char *argv[])
+{
+	return run_test([&] { test(argc, argv); });
 }

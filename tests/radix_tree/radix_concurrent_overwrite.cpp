@@ -53,7 +53,9 @@ test_overwrite_bigger_size_find(
 		},
 	};
 
-	parallel_write_read(writer, readers, threads);
+	parallel_modify_read(writer, readers, threads);
+
+	ptr->runtime_finalize_mt();
 
 	nvobj::transaction::run(pop, [&] {
 		nvobj::delete_persistent<container_int_string>(ptr);

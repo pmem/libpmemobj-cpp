@@ -40,6 +40,7 @@
 #endif
 
 #include <libpmemobj++/detail/common.hpp>
+#include <libpmemobj++/detail/ebr.hpp>
 #include <libpmemobj++/detail/integer_sequence.hpp>
 #include <libpmemobj++/detail/tagged_ptr.hpp>
 
@@ -120,6 +121,7 @@ public:
 	using reverse_iterator = std::reverse_iterator<iterator>;
 	using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 	using difference_type = std::ptrdiff_t;
+	using ebr = detail::ebr;
 
 	radix_tree();
 
@@ -279,8 +281,12 @@ public:
 					const radix_tree<K, V, BV> &tree);
 
 	void garbage_collect();
+	void garbage_collect_force();
 
-	void runtime_initialize_mt();
+	void runtime_initialize_mt(ebr *e = new ebr());
+	void runtime_finalize_mt();
+
+	ebr::worker register_worker();
 
 private:
 	using byten_t = uint64_t;
@@ -296,6 +302,8 @@ private:
 	static constexpr bitn_t SLICE_MASK = (bitn_t) ~(SLICE - 1);
 	/* Position of the first SLICE */
 	static constexpr bitn_t FIRST_NIB = 8 - SLICE;
+	/* Number of EBR epochs */
+	static constexpr size_t EPOCHS_NUMBER = 3;
 
 	struct leaf;
 	struct node;
@@ -320,7 +328,9 @@ private:
 	atomic_pointer_type root;
 	p<uint64_t> size_;
 	v<uint64_t> mt;
-	vector<pointer_type> garbage;
+	vector<pointer_type> garbages[EPOCHS_NUMBER];
+
+	ebr *ebr_ = nullptr;
 
 	/* helper functions */
 	template <typename K, typename F, class... Args>
@@ -364,6 +374,7 @@ private:
 	static node *get_node(const pointer_type &p);
 	template <typename T>
 	void free(persistent_ptr<T> ptr);
+	void clear_garbage(size_t n);
 
 	void check_pmem();
 	void check_tx_stage_work();
@@ -869,7 +880,8 @@ radix_tree<Key, Value, BytesView>::~radix_tree()
 {
 	try {
 		clear();
-		garbage_collect();
+		for (size_t i = 0; i < EPOCHS_NUMBER; ++i)
+			clear_garbage(i);
 	} catch (...) {
 		std::terminate();
 	}
@@ -925,9 +937,29 @@ radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
 }
 
 /**
- * Transactionally collects and frees all garbage produced by erase,
- * clear, insert_or_assign or assing_val in concurrent mode (if
- * runtime_initialize_mt was called).
+ * Performs full epochs synchronisation. Transactionally collects and frees all
+ * garbage produced by erase, clear, insert_or_assign or assign_val in
+ * concurrent mode (if runtime_initialize_mt was called).
+ *
+ * Garbage is not automatically collected on move/copy ctor/assignment.
+ *
+ * @throw pmem::transaction_error when snapshotting failed.
+ */
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::garbage_collect_force()
+{
+	ebr_->full_sync();
+	for (size_t i = 0; i < EPOCHS_NUMBER; ++i) {
+		clear_garbage(i);
+	}
+}
+
+/**
+ * Tries to collect and free some garbage produced by erase, clear,
+ * insert_or_assign or assign_val in concurrent mode (if runtime_initialize_mt
+ * was called). It is not guaranteed that this method will free any memory. It
+ * depends on operations currently performed by other threads.
  *
  * Garbage is not automatically collected on move/copy ctor/assignment.
  *
@@ -937,10 +969,20 @@ template <typename Key, typename Value, typename BytesView>
 void
 radix_tree<Key, Value, BytesView>::garbage_collect()
 {
+	ebr_->sync();
+	clear_garbage(ebr_->gc_epoch());
+}
+
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::clear_garbage(size_t n)
+{
+	assert(n >= 0 && n <= 2);
+
 	auto pop = pool_by_vptr(this);
 
 	flat_transaction::run(pop, [&] {
-		for (auto &e : garbage) {
+		for (auto &e : garbages[n]) {
 			if (is_leaf(e))
 				delete_persistent<radix_tree::leaf>(
 					persistent_ptr<radix_tree::leaf>(
@@ -951,14 +993,15 @@ radix_tree<Key, Value, BytesView>::garbage_collect()
 						get_node(e)));
 		}
 
-		garbage.clear();
+		garbages[n].clear();
 	});
 }
 
 /**
  * Enables single-writer multiple-readers concurrency with read uncommitted
  * isolation. This property is NOT persistent. Enabling must be done after
- * each application restart.
+ * each application restart. It is necessary to call runtime_finalize_mt()
+ * before closing the application.
  *
  * This has the following effects:
  * - erase and clear does not free nodes/leaves immediately, instead they are
@@ -968,12 +1011,51 @@ radix_tree<Key, Value, BytesView>::garbage_collect()
  * - memory-reclamation mechanisms are initialized
  *
  * By default, concurrency is not enabled.
+ *
+ * @param[in] e pointer to own ebr, default it will be created automatically.
  */
 template <typename Key, typename Value, typename BytesView>
 void
-radix_tree<Key, Value, BytesView>::runtime_initialize_mt()
+radix_tree<Key, Value, BytesView>::runtime_initialize_mt(ebr *e)
 {
 	mt.get(false) = true;
+#if LIBPMEMOBJ_CPP_ANY_VG_TOOL_ENABLED
+	VALGRIND_PMC_REMOVE_PMEM_MAPPING(&ebr_, sizeof(ebr *));
+#endif
+	ebr_ = e;
+}
+
+/**
+ * Disables single-writer multiple-readers concurrency with read uncommitted
+ * isolation. This property is NOT persistent. Disabling must be done before
+ * each application close and before calling radix destructor.
+ */
+template <typename Key, typename Value, typename BytesView>
+void
+radix_tree<Key, Value, BytesView>::runtime_finalize_mt()
+{
+	mt.get(false) = false;
+	if (ebr_) {
+		delete ebr_;
+	}
+	ebr_ = nullptr;
+}
+
+/**
+ * Registers and returns a new worker, which can perform critical operations
+ * (accessing some shared data that can be removed in other threads). There can
+ * be only one worker per thread. The worker will be automatically unregistered
+ * in the destructor.
+ *
+ * @return new registered worker.
+ */
+template <typename Key, typename Value, typename BytesView>
+radix_tree<Key, Value, BytesView>::ebr::worker
+radix_tree<Key, Value, BytesView>::register_worker()
+{
+	assert(ebr_);
+
+	return ebr_->register_worker();
 }
 
 /*
@@ -2054,7 +2136,7 @@ void
 radix_tree<Key, Value, BytesView>::free(persistent_ptr<T> ptr)
 {
 	if (mt.get(false))
-		garbage.emplace_back(ptr);
+		garbages[ebr_->staging_epoch()].emplace_back(ptr);
 	else
 		delete_persistent<T>(ptr);
 }

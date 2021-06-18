@@ -176,14 +176,14 @@ verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K &&key_f,
 	}
 }
 
-template <typename WriteF, typename ReadF>
+template <typename ModifyF, typename ReadF>
 static void
-parallel_write_read(WriteF writer, std::vector<ReadF> &readers,
+parallel_write_read(ModifyF modifier, std::vector<ReadF> &readers,
 		    size_t n_readers)
 {
 	parallel_exec(n_readers + 1, [&](size_t thread_id) {
 		if (thread_id == 0) {
-			writer();
+			modifier();
 		} else {
 			readers[(thread_id - 1) % readers.size()]();
 		}

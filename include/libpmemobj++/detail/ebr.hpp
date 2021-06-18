@@ -1,12 +1,57 @@
-/*
- * Copyright (c) 2016-2018 Mindaugas Rasiukevicius <rmind at noxt eu>
+/*-
+ * Copyright (c) 2015-2018 Mindaugas Rasiukevicius <rmind at noxt eu>
  * All rights reserved.
  *
- * Use is subject to license terms, as specified in the LICENSE file.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  */
 
-/*
- * Epoch-based reclamation (EBR).  Reference:
+// SPDX-License-Identifier: BSD-3-Clause
+/* Copyright 2021, Intel Corporation */
+
+/**
+ * @file
+ * C++ EBR API.
+ */
+
+#ifndef LIBPMEMOBJ_EBR_HPP
+#define LIBPMEMOBJ_EBR_HPP
+
+#include <atomic>
+#include <cassert>
+#include <functional>
+#include <mutex>
+#include <thread>
+#include <unordered_map>
+
+#include <libpmemobj++/detail/common.hpp>
+
+namespace pmem
+{
+
+namespace detail
+{
+
+/**
+ * Epoch-based reclamation (EBR). Reference:
  *
  *	K. Fraser, Practical lock-freedom,
  *	Technical Report UCAM-CL-TR-579, February 2004
@@ -16,333 +61,211 @@
  *
  * Any workers (threads or processes) actively referencing (accessing)
  * the globally visible objects must do that in the critical path covered
- * using the dedicated enter/exit functions.  The grace period is
- * determined using "epochs" -- implemented as a global counter (and,
- * for example, a dedicated G/C list for each epoch).  Objects in the
- * current global epoch can be staged for reclamation (garbage collection).
- * Then, the objects in the target epoch can be reclaimed after two
- * successful increments of the global epoch.  Only three epochs are
- * needed (e, e-1 and e-2), therefore we use clock arithmetics.
- *
- * See the comments in the ebr_sync() function for detailed explanation.
+ * using the dedicated function. The grace period is determined using "epochs"
+ * implemented as a global counter (and, for example, a dedicated G/C list for
+ * each epoch). Objects in the current global epoch can be staged for
+ * reclamation (garbage collection). Then, the objects in the target epoch can
+ * be reclaimed after two successful increments of the global epoch. Only three
+ * epochs are needed (e, e-1 and e-2), therefore we use clock arithmetics.
  */
+class ebr {
+	using atomic = std::atomic<size_t>;
+	using reference = std::reference_wrapper<atomic>;
 
-#include <assert.h>
+public:
+	class worker;
 
-/*
- * A regular assert (debug/diagnostic only).
- */
-#if defined(DEBUG)
-#define ASSERT assert
-#else
-#define ASSERT(x)
-#endif
+	ebr();
 
-/*
- * Branch prediction macros.
- */
-#ifndef __predict_true
-#define __predict_true(x) __builtin_expect((x) != 0, 1)
-#define __predict_false(x) __builtin_expect((x) != 0, 0)
-#endif
+	worker register_worker();
+	bool sync();
+	void full_sync();
+	size_t staging_epoch();
+	size_t gc_epoch();
 
-/*
- * Atomic operations and memory barriers.  If C11 API is not available,
- * then wrap the GCC builtin routines.
- */
-#ifndef atomic_compare_exchange_weak
-#define atomic_compare_exchange_weak(ptr, expected, desired)                   \
-	__sync_bool_compare_and_swap(ptr, expected, desired)
-#endif
+	class worker {
+	public:
+		worker(const worker &w) = delete;
+		worker(worker &&w) = default;
+		~worker();
 
-#ifndef atomic_exchange
-static inline void *
-atomic_exchange(volatile void *ptr, void *newval)
-{
-	void *volatile *ptrp = (void *volatile *)ptr;
-	void *oldval;
-again:
-	oldval = *ptrp;
-	if (!__sync_bool_compare_and_swap(ptrp, oldval, newval)) {
-		goto again;
-	}
-	return oldval;
-}
-#endif
+		template <typename F>
+		void critical(F &&f);
 
-#ifndef atomic_fetch_add
-#define atomic_fetch_add(x, a) __sync_fetch_and_add(x, a)
-#endif
+	private:
+		worker(ebr *e_, reference ref);
 
-#ifndef atomic_thread_fence
-#define memory_order_relaxed __ATOMIC_RELAXED
-#define memory_order_acquire __ATOMIC_ACQUIRE
-#define memory_order_release __ATOMIC_RELEASE
-#define memory_order_seq_cst __ATOMIC_SEQ_CST
-#define atomic_thread_fence(m) __atomic_thread_fence(m)
-#endif
-#ifndef atomic_store_explicit
-#define atomic_store_explicit __atomic_store_n
-#endif
-#ifndef atomic_load_explicit
-#define atomic_load_explicit __atomic_load_n
-#endif
+		reference local_epoch;
+		ebr *e;
 
-/*
- * Exponential back-off for the spinning paths.
- */
-#define SPINLOCK_BACKOFF_MIN 4
-#define SPINLOCK_BACKOFF_MAX 128
-#if defined(__x86_64__) || defined(__i386__)
-#define SPINLOCK_BACKOFF_HOOK __asm volatile("pause" ::: "memory")
-#else
-#define SPINLOCK_BACKOFF_HOOK
-#endif
-#define SPINLOCK_BACKOFF(count)                                                \
-	do {                                                                   \
-		for (int __i = (count); __i != 0; __i--) {                     \
-			SPINLOCK_BACKOFF_HOOK;                                 \
-		}                                                              \
-		if ((count) < SPINLOCK_BACKOFF_MAX)                            \
-			(count) += (count);                                    \
-	} while (/* CONSTCOND */ 0);
+		friend ebr;
+	};
 
-/*
- * Cache line size - a reasonable upper bound.
- */
-#define CACHE_LINE_SIZE 64
+private:
+	static const size_t ACTIVE_FLAG = static_cast<size_t>(1)
+		<< (sizeof(size_t) * 8 - 1);
+	static const size_t EPOCHS_NUMBER = 3;
 
-struct ebr;
-typedef struct ebr ebr_t;
+	atomic global_epoch;
 
-#define EBR_EPOCHS 3
-#define ACTIVE_FLAG (0x80000000U)
-
-typedef struct ebr_tls {
-	/*
-	 * - A local epoch counter for each thread.
-	 * - The epoch counter may have the "active" flag set.
-	 * - Thread list entry (pointer).
-	 */
-	unsigned local_epoch;
-	LIST_ENTRY(ebr_tls) entry;
-} ebr_tls_t;
-
-struct ebr {
-	/*
-	 * - There is a global epoch counter which can be 0, 1 or 2.
-	 * - TLS with a list of the registered threads.
-	 */
-	unsigned global_epoch;
-	pthread_key_t tls_key;
-	pthread_mutex_t lock;
-	LIST_HEAD(, ebr_tls) list;
+	std::unordered_map<std::thread::id, atomic> workers;
+	std::mutex mtx;
 };
 
-ebr_t *
-ebr_create(void)
+/**
+ * Default and only ebr constructor.
+ */
+ebr::ebr() : global_epoch(0)
 {
-	ebr_t *ebr;
-	int ret;
-
-	ret = posix_memalign((void **)&ebr, CACHE_LINE_SIZE, sizeof(ebr_t));
-	if (ret != 0) {
-		errno = ret;
-		return NULL;
-	}
-	memset(ebr, 0, sizeof(ebr_t));
-	if (pthread_key_create(&ebr->tls_key, free) != 0) {
-		free(ebr);
-		return NULL;
-	}
-	pthread_mutex_init(&ebr->lock, NULL);
-	return ebr;
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	VALGRIND_HG_DISABLE_CHECKING(&global_epoch, sizeof(global_epoch));
+#endif
 }
 
-void
-ebr_destroy(ebr_t *ebr)
-{
-	pthread_key_delete(ebr->tls_key);
-	pthread_mutex_destroy(&ebr->lock);
-	free(ebr);
-}
-
-/*
- * ebr_register: register the current worker (thread/process) for EBR.
+/**
+ * Registers and returns a new worker, which can perform critical operations
+ * (accessing some shared data that can be removed in other threads). There can
+ * be only one worker per thread. The worker will be automatically unregistered
+ * in the destructor.
  *
- * => Returns 0 on success and errno on failure.
- */
-int
-ebr_register(ebr_t *ebr)
-{
-	ebr_tls_t *t;
-
-	t = pthread_getspecific(ebr->tls_key);
-	if (__predict_false(t == NULL)) {
-		int ret;
-
-		ret = posix_memalign((void **)&t, CACHE_LINE_SIZE,
-				     sizeof(ebr_tls_t));
-		if (ret != 0) {
-			errno = ret;
-			return -1;
-		}
-		pthread_setspecific(ebr->tls_key, t);
-	}
-	memset(t, 0, sizeof(ebr_tls_t));
-
-	pthread_mutex_lock(&ebr->lock);
-	LIST_INSERT_HEAD(&ebr->list, t, entry);
-	pthread_mutex_unlock(&ebr->lock);
-	return 0;
-}
-
-void
-ebr_unregister(ebr_t *ebr)
-{
-	ebr_tls_t *t;
-
-	t = pthread_getspecific(ebr->tls_key);
-	if (t == NULL) {
-		return;
-	}
-	pthread_setspecific(ebr->tls_key, NULL);
-
-	pthread_mutex_lock(&ebr->lock);
-	LIST_REMOVE(t, entry);
-	pthread_mutex_unlock(&ebr->lock);
-	free(t);
-}
-
-/*
- * ebr_enter: mark the entrance to the critical path.
- */
-void
-ebr_enter(ebr_t *ebr)
-{
-	ebr_tls_t *t;
-	unsigned epoch;
-
-	t = pthread_getspecific(ebr->tls_key);
-	ASSERT(t != NULL);
-
-	/*
-	 * Set the "active" flag and set the local epoch to global
-	 * epoch (i.e. observe the global epoch).  Ensure that the
-	 * epoch is observed before any loads in the critical path.
-	 */
-	epoch = ebr->global_epoch | ACTIVE_FLAG;
-	atomic_store_explicit(&t->local_epoch, epoch, memory_order_relaxed);
-	atomic_thread_fence(memory_order_seq_cst);
-}
-
-/*
- * ebr_exit: mark the exit of the critical path.
- */
-void
-ebr_exit(ebr_t *ebr)
-{
-	ebr_tls_t *t;
-
-	t = pthread_getspecific(ebr->tls_key);
-	ASSERT(t != NULL);
-
-	/*
-	 * Clear the "active" flag.  Must ensure that any stores in
-	 * the critical path reach global visibility before that.
-	 */
-	ASSERT(t->local_epoch & ACTIVE_FLAG);
-	atomic_thread_fence(memory_order_seq_cst);
-	atomic_store_explicit(&t->local_epoch, 0, memory_order_relaxed);
-}
-
-/*
- * ebr_sync: attempt to synchronise and announce a new epoch.
+ * @throw runtime_error if there is already a registered worker for the current
+ * thread.
  *
- * => Synchronisation points must be serialised.
- * => Return true if a new epoch was announced.
- * => Return the epoch ready for reclamation.
+ * @return new registered worker.
+ */
+ebr::worker
+ebr::register_worker()
+{
+	std::lock_guard<std::mutex> lock(mtx);
+	auto res = workers.emplace(std::this_thread::get_id(), 0);
+	if (!res.second) {
+		throw std::runtime_error(
+			"There can be only one worker per thread");
+	}
+
+	return worker{this, reference{res.first->second}};
+}
+
+/**
+ * Attempts to synchronise and announce a new epoch.
+ *
+ * The synchronisation points must be serialized (e.g. if there are multiple G/C
+ * workers or other writers). Generally, calls to ebr::staging_epoch() and
+ * ebr::gc_epoch() would be a part of the same serialized path (calling sync()
+ * and gc_epoch()/staging_epoch() concurrently in two other threads will cause
+ * an undefined behavior).
+ *
+ * @return true if a new epoch is announced and false if it wasn't possible in
+ * the current state.
  */
 bool
-ebr_sync(ebr_t *ebr, unsigned *gc_epoch)
+ebr::sync()
 {
-	unsigned epoch;
-	ebr_tls_t *t;
+	auto current_epoch = global_epoch.load();
 
-	/*
-	 * Ensure that any loads or stores on the writer side reach
-	 * the global visibility.  We want to allow the callers to
-	 * assume that the ebr_sync() call serves as a full barrier.
-	 */
-	epoch = atomic_load_explicit(&ebr->global_epoch, memory_order_relaxed);
-	atomic_thread_fence(memory_order_seq_cst);
-
-	/*
-	 * Check whether all active workers observed the global epoch.
-	 */
-	LIST_FOREACH(t, &ebr->list, entry)
-	{
-		unsigned local_epoch;
-		bool active;
-
-		local_epoch = atomic_load_explicit(&t->local_epoch,
-						   memory_order_relaxed);
-		active = (local_epoch & ACTIVE_FLAG) != 0;
-
-		if (active && (local_epoch != (epoch | ACTIVE_FLAG))) {
-			/* No, not ready. */
-			*gc_epoch = ebr_gc_epoch(ebr);
+	std::lock_guard<std::mutex> lock(mtx);
+	for (auto &w : workers) {
+		auto local_e = w.second.load();
+		bool active = local_e & ACTIVE_FLAG;
+		if (active && (local_e != (current_epoch | ACTIVE_FLAG))) {
 			return false;
 		}
 	}
 
-	/* Yes: increment and announce a new global epoch. */
-	atomic_store_explicit(&ebr->global_epoch, (epoch + 1) % 3,
-			      memory_order_relaxed);
+	LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(std::memory_order_seq_cst,
+					       &global_epoch);
+	global_epoch.store((current_epoch + 1) % EPOCHS_NUMBER);
 
-	/*
-	 * Let the new global epoch be 'e'.  At this point:
-	 *
-	 * => Active workers: might still be running in the critical path
-	 *    in the e-1 epoch or might be already entering a new critical
-	 *    path and observing the new epoch e.
-	 *
-	 * => Inactive workers: might become active by entering a critical
-	 *    path before or after the global epoch counter was incremented,
-	 *    observing either e-1 or e.
-	 *
-	 * => Note that the active workers cannot have a stale observation
-	 *    of the e-2 epoch at this point (there is no ABA problem using
-	 *    the clock arithmetics).
-	 *
-	 * => Therefore, there can be no workers still running the critical
-	 *    path in the e-2 epoch.  This is the epoch ready for G/C.
-	 */
-	*gc_epoch = ebr_gc_epoch(ebr);
 	return true;
 }
 
-/*
- * ebr_staging_epoch: return the epoch where objects can be staged
- * for reclamation.
+/**
+ * Perform full synchronisation ensuring that all objects which are no longer
+ * globally visible (and potentially staged for reclamation) at the time of
+ * calling this routine will be safe to reclaim/destroy after this
+ * synchronisation routine completes and returns. Note: the synchronisation may
+ * take across multiple epochs.
  */
-unsigned
-ebr_staging_epoch(ebr_t *ebr)
+void
+ebr::full_sync()
 {
-	/* The current epoch. */
-	return ebr->global_epoch;
+	size_t syncs_cnt = 0;
+	while (true) {
+		if (sync() && ++syncs_cnt == EPOCHS_NUMBER) {
+			break;
+		}
+	}
 }
 
-/*
- * ebr_gc_epoch: return the epoch where objects are ready to be
- * reclaimed i.e. it is guaranteed to be safe to destroy them.
+/**
+ * Returns the epoch where objects can be staged for reclamation. This can be
+ * used as a reference value for the pending queue/tag, used to postpone the
+ * reclamation until this epoch becomes available for G/C. Note that this
+ * function would normally be serialized together with the ebr::sync() calls.
+ *
+ * @return the epoch where objects can be staged for reclamation.
  */
-unsigned
-ebr_gc_epoch(ebr_t *ebr)
+size_t
+ebr::staging_epoch()
 {
-	/*
-	 * Since we use only 3 epochs, e-2 is just the next global
-	 * epoch with clock arithmetics.
-	 */
-	return (ebr->global_epoch + 1) % 3;
+	return global_epoch.load();
 }
+
+/**
+ * Returns the epoch available for reclamation, i.e. the epoch where it is
+ * guaranteed that the objects are safe to be reclaimed/destroyed. Note that
+ * this function would normally be serialized together with the ebr::sync()
+ * calls.
+ *
+ * @return the epoch available for reclamation.
+ */
+size_t
+ebr::gc_epoch()
+{
+	return (global_epoch.load() + 1) % EPOCHS_NUMBER;
+}
+
+ebr::worker::worker(ebr *e_, reference ref) : local_epoch(ref), e(e_)
+{
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	VALGRIND_HG_DISABLE_CHECKING(&ref.get(), sizeof(ref.get()));
+#endif
+}
+
+/**
+ * Unregisters the worker from the list of the workers in the ebr.
+ */
+ebr::worker::~worker()
+{
+	std::lock_guard<std::mutex> lock(e->mtx);
+	e->workers.erase(std::this_thread::get_id());
+}
+
+/**
+ * Performs critical operations. Typically, this would be used by the readers
+ * when accessing some shared data. Reclamation of objects is guaranteed not to
+ * occur in the critical path.
+ *
+ * @param[in] f the function which will be executed as a critical operation.
+ * This function's signature should be void().
+ */
+template <typename F>
+void
+ebr::worker::critical(F &&f)
+{
+	auto new_epoch = e->global_epoch.load() | ACTIVE_FLAG;
+	LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(std::memory_order_seq_cst,
+					      &(e->global_epoch));
+
+	local_epoch.get().store(new_epoch);
+
+	f();
+
+	local_epoch.get().store(0);
+}
+
+} /* namespace detail */
+
+} /* namespace pmem */
+
+#endif /* LIBPMEMOBJ_EBR_HPP */

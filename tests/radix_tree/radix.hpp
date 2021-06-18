@@ -19,14 +19,19 @@ using container_int =
 using container_string =
 	nvobjex::radix_tree<nvobjex::inline_string, nvobjex::inline_string>;
 
-using container_int_int =
-	nvobjex::radix_tree<unsigned, nvobj::p<unsigned>>;
+using container_int_int = nvobjex::radix_tree<unsigned, nvobj::p<unsigned>>;
 using container_int_string =
 	nvobjex::radix_tree<unsigned, nvobjex::inline_string>;
 
-using container_inline_s_wchart = nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>, nvobj::p<unsigned>>;
-using container_inline_s_wchart_wchart = nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>, nvobjex::basic_inline_string<wchar_t>>;
-using container_inline_s_u8t = nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>, nvobjex::basic_inline_string<uint8_t>>;
+using container_inline_s_wchart =
+	nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>,
+			    nvobj::p<unsigned>>;
+using container_inline_s_wchart_wchart =
+	nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>,
+			    nvobjex::basic_inline_string<wchar_t>>;
+using container_inline_s_u8t =
+	nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>,
+			    nvobjex::basic_inline_string<uint8_t>>;
 
 struct root {
 	nvobj::persistent_ptr<container_int> radix_int;
@@ -36,13 +41,15 @@ struct root {
 	nvobj::persistent_ptr<container_int_string> radix_int_str;
 
 	nvobj::persistent_ptr<container_inline_s_wchart> radix_inline_s_wchart;
-	nvobj::persistent_ptr<container_inline_s_wchart_wchart> radix_inline_s_wchart_wchart;
+	nvobj::persistent_ptr<container_inline_s_wchart_wchart>
+		radix_inline_s_wchart_wchart;
 	nvobj::persistent_ptr<container_inline_s_u8t> radix_inline_s_u8t;
 };
 
 template <typename Container,
-	  typename Enable = typename std::enable_if<std::is_same<
-		  typename Container::mapped_type, nvobj::p<unsigned>>::value>::type>
+	  typename Enable = typename std::enable_if<
+		  std::is_same<typename Container::mapped_type,
+			       nvobj::p<unsigned>>::value>::type>
 typename Container::mapped_type
 value(unsigned v, int repeats = 1)
 {
@@ -51,9 +58,11 @@ value(unsigned v, int repeats = 1)
 }
 
 template <typename Container,
-	  typename Enable = typename std::enable_if<
-		  std::is_same<typename Container::mapped_type,
-			       typename nvobjex::basic_inline_string<typename Container::mapped_type::value_type>>::value>::type>
+	  typename Enable = typename std::enable_if<std::is_same<
+		  typename Container::mapped_type,
+		  typename nvobjex::basic_inline_string<
+			  typename Container::mapped_type::value_type>>::
+							    value>::type>
 std::basic_string<typename Container::mapped_type::value_type>
 value(unsigned v, int repeats = 1)
 {
@@ -78,9 +87,11 @@ key(unsigned v)
 }
 
 template <typename Container,
-	  typename Enable = typename std::enable_if<
-		  std::is_same<typename Container::key_type,
-			       typename nvobjex::basic_inline_string<typename Container::key_type::value_type>>::value>::type>
+	  typename Enable = typename std::enable_if<std::is_same<
+		  typename Container::key_type,
+		  typename nvobjex::basic_inline_string<
+			  typename Container::key_type::value_type>>::value>::
+		  type>
 std::basic_string<typename Container::key_type::value_type>
 key(unsigned v)
 {
@@ -93,21 +104,44 @@ key(unsigned v)
 
 template <typename CharT, typename Traits>
 bool
-operator==(pmem::obj::basic_string_view<CharT, Traits> lhs, const std::basic_string<CharT, Traits> &rhs)
+operator==(pmem::obj::basic_string_view<CharT, Traits> lhs,
+	   const std::basic_string<CharT, Traits> &rhs)
 {
 	return lhs.compare(rhs) == 0;
 }
 
 template <typename CharT, typename Traits>
 bool
-operator==(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs, const std::basic_string<CharT, Traits> &rhs)
+operator==(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs,
+	   const std::basic_string<CharT, Traits> &rhs)
 {
-	return pmem::obj::basic_string_view<CharT, Traits>(lhs.data(), lhs.size()).compare(rhs) == 0;
+	return pmem::obj::basic_string_view<CharT, Traits>(lhs.data(),
+							   lhs.size())
+		       .compare(rhs) == 0;
+}
+
+template <typename CharT, typename Traits>
+bool
+operator!=(pmem::obj::basic_string_view<CharT, Traits> lhs,
+	   const std::basic_string<CharT, Traits> &rhs)
+{
+	return lhs.compare(rhs) != 0;
+}
+
+template <typename CharT, typename Traits>
+bool
+operator!=(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs,
+	   const std::basic_string<CharT, Traits> &rhs)
+{
+	return pmem::obj::basic_string_view<CharT, Traits>(lhs.data(),
+							   lhs.size())
+		       .compare(rhs) != 0;
 }
 
 template <typename Container, typename K, typename F>
 void
-verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K&& key_f, F &&value_f)
+verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K &&key_f,
+		F &&value_f)
 {
 	UT_ASSERTeq(ptr->size(), static_cast<size_t>(count));
 	for (unsigned i = 0; i < count; i++) {
@@ -158,12 +192,14 @@ parallel_write_read(WriteF writer, std::vector<ReadF> &readers,
 
 template <typename Container>
 static void
-init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr, const size_t initial_elements)
+init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr,
+	       const size_t initial_elements, const size_t value_repeats = 1)
 {
 	nvobj::transaction::run(
 		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
 
 	for (size_t i = 0; i < initial_elements; ++i) {
-		ptr->emplace(key<Container>(i), value<Container>(i));
+		ptr->emplace(key<Container>(i),
+			     value<Container>(i, value_repeats));
 	}
 }

@@ -303,6 +303,19 @@ private:
 	using atomic_pointer_type = std::atomic<detail::tagged_ptr<leaf, node>>;
 	using pointer_type = detail::tagged_ptr<leaf, node>;
 
+	/* This structure holds snapshotted view of a node. */
+	struct node_desc {
+		const atomic_pointer_type *slot;
+		pointer_type node;
+		pointer_type prev;
+	};
+
+	using path_type = std::vector<node_desc>;
+
+	/* Arbitrarily choosen value, overhead of vector resizing for deep radix
+	 * tree will not be noticeable. */
+	static constexpr size_t PATH_INIT_CAP = 64;
+
 	/*** pmem members ***/
 	atomic_pointer_type root;
 	p<uint64_t> size_;
@@ -320,10 +333,11 @@ private:
 	static bool keys_equal(const K1 &k1, const K2 &k2);
 	template <typename K1, typename K2>
 	static int compare(const K1 &k1, const K2 &k2, byten_t offset = 0);
-	template <bool Direction, typename Iterator>
-	static leaf *next_leaf(Iterator child, pointer_type parent);
+	template <bool Direction, typename Iterator, typename K>
+	const leaf *next_leaf(Iterator child, pointer_type parent,
+			      const K &k) const;
 	template <bool Direction>
-	static leaf *find_leaf(pointer_type n);
+	const leaf *find_leaf(pointer_type n) const;
 	static unsigned slice_index(char k, uint8_t shift);
 	template <typename K1, typename K2>
 	static byten_t prefix_diff(const K1 &lhs, const K2 &rhs,
@@ -332,18 +346,17 @@ private:
 	template <typename K1, typename K2>
 	static bitn_t bit_diff(const K1 &leaf_key, const K2 &key, byten_t diff);
 	template <typename K>
-	leaf *common_prefix_leaf(const K &key) const;
+	std::pair<typename radix_tree<Key, Value, BytesView>::leaf *, path_type>
+	descend(pointer_type n, const K &key) const;
 	static void print_rec(std::ostream &os, radix_tree::pointer_type n);
 	template <typename K>
 	static BytesView bytes_view(const K &k);
 	static string_view bytes_view(string_view s);
 	static bool path_length_equal(size_t key_size, pointer_type n);
-	template <typename K>
-	std::tuple<const atomic_pointer_type *, pointer_type>
-	descend(const K &k, byten_t diff, bitn_t sh) const;
-	template <typename K>
-	std::tuple<atomic_pointer_type *, pointer_type>
-	descend(const K &k, byten_t diff, bitn_t sh);
+	template <bool Lower, typename K>
+	bool validate_bound(const_iterator it, const K &key) const;
+	node_desc follow_path(const path_type &, byten_t diff, bitn_t sh) const;
+	bool validate_path(const path_type &path) const;
 	template <bool Lower, typename K>
 	const_iterator internal_bound(const K &k) const;
 	static bool is_leaf(const pointer_type &p);
@@ -951,8 +964,7 @@ radix_tree<Key, Value, BytesView>::garbage_collect()
  * - erase and clear does not free nodes/leaves immediately, instead they are
  * added to a garbage list which can be freed by calling garbage_collect()
  * - insert_or_assign and iterator.assign_val do not perform in-place update,
- *   instead a new leaf is allocated and the old one is added to the garbage
- * list
+ * instead a new leaf is allocated and the old one is added to the garbage list
  * - memory-reclamation mechanisms are initialized
  *
  * By default, concurrency is not enabled.
@@ -982,6 +994,8 @@ radix_tree<Key, Value, BytesView>::parent_ref(pointer_type n)
  *
  * @param min_depth specifies minimum depth of the leaf. If the
  * tree is shorter than min_depth, a bottom leaf is returned.
+ *
+ * Can return nullptr if there is a conflicting, concurrent operation.
  */
 template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::leaf *
@@ -991,49 +1005,83 @@ radix_tree<Key, Value, BytesView>::any_leftmost_leaf(
 {
 	assert(n);
 
-	while (!is_leaf(n)) {
-		if (n->embedded_entry.load_acquire() && n->byte >= min_depth)
-			return get_leaf(n->embedded_entry.load_acquire());
+	while (n && !is_leaf(n)) {
+		auto ne = n->embedded_entry.load_acquire();
+		if (ne && n->byte >= min_depth)
+			return get_leaf(ne);
 
+		pointer_type nn = nullptr;
 		for (size_t i = 0; i < SLNODES; i++) {
-			if (n->child[i].load_acquire()) {
-				n = n->child[i].load_acquire();
+			nn = n->child[i].load_acquire();
+			if (nn) {
 				break;
 			}
 		}
+
+		n = nn;
 	}
 
-	return get_leaf(n);
+	return n ? get_leaf(n) : nullptr;
 }
 
 /*
- * Descends to the leaf that shares a common prefix with the key.
+ * Descends to the leaf that shares a common prefix with the @param key.
+ * Returns a pair consisting of a pointer to above mentioned leaf and
+ * object of type `path_type` which represents path to a divergence point.
+ *
+ * @param root_snap is a pointer to the root node (we pass it here because
+ * loading it within this function might cause inconsistency if outer code
+ * sees a different root.
+ *
+ * Can return nullptr if there is a conflicting, concurrent operation.
  */
 template <typename Key, typename Value, typename BytesView>
 template <typename K>
-typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::common_prefix_leaf(const K &key) const
+std::pair<typename radix_tree<Key, Value, BytesView>::leaf *,
+	  typename radix_tree<Key, Value, BytesView>::path_type>
+radix_tree<Key, Value, BytesView>::descend(pointer_type root_snap,
+					   const K &key) const
 {
-	auto n = root.load_acquire();
+	assert(root_snap);
+
+	auto slot = &this->root;
+	auto n = root_snap;
+	decltype(n) prev = nullptr;
+
+	path_type path;
+	path.reserve(PATH_INIT_CAP);
+	path.push_back(node_desc{slot, n, prev});
 
 	while (n && !is_leaf(n) && n->byte < key.size()) {
-		auto nn = n->child[slice_index(key[n->byte], n->bit)]
-				  .load_acquire();
+		auto prev = n;
+		slot = &n->child[slice_index(key[n->byte], n->bit)];
+		auto nn = slot->load_acquire();
 
-		if (nn)
+		if (nn) {
+			path.push_back(node_desc{slot, nn, prev});
 			n = nn;
-		else {
+		} else {
+			path.push_back(node_desc{slot, nullptr, prev});
 			n = any_leftmost_leaf(n, key.size());
 			break;
 		}
 	}
 
+	if (!n)
+		return {nullptr, std::move(path)};
+
 	/* This can happen when key is a prefix of some leaf or when the node at
 	 * which the keys diverge isn't a leaf */
-	if (!is_leaf(n))
+	if (!is_leaf(n)) {
 		n = any_leftmost_leaf(n, key.size());
+	}
 
-	return get_leaf(n);
+	if (n) {
+		return std::pair<leaf *, path_type>{get_leaf(n),
+						    std::move(path)};
+	} else {
+		return std::pair<leaf *, path_type>{nullptr, std::move(path)};
+	}
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1133,42 +1181,31 @@ radix_tree<Key, Value, BytesView>::bit_diff(const K1 &leaf_key, const K2 &key,
 	return sh;
 }
 
+/*
+ * Follows path saved in @param path until appropriate node is found
+ * (for which @param diff and @param sh matches with byte and bit).
+ */
 template <typename Key, typename Value, typename BytesView>
-template <typename K>
-std::tuple<
-	const typename radix_tree<Key, Value, BytesView>::atomic_pointer_type *,
-	typename radix_tree<Key, Value, BytesView>::pointer_type>
-radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
-					   bitn_t sh) const
+typename radix_tree<Key, Value, BytesView>::node_desc
+radix_tree<Key, Value, BytesView>::follow_path(const path_type &path,
+					       byten_t diff, bitn_t sh) const
 {
-	auto n = root.load_acquire();
-	auto prev = n;
-	auto slot = &root;
+	assert(path.size());
 
-	while (n && !is_leaf(n) &&
-	       (n->byte < diff || (n->byte == diff && n->bit >= sh))) {
-		prev = n;
-		slot = &n->child[slice_index(key[n->byte], n->bit)];
-		n = slot->load_acquire();
+	auto idx = 0ULL;
+	auto n = path[idx];
+
+	while (n.node && !is_leaf(n.node) &&
+	       (n.node->byte < diff ||
+		(n.node->byte == diff && n.node->bit >= sh))) {
+
+		idx++;
+		assert(idx < path.size());
+
+		n = path[idx];
 	}
 
-	return {slot, prev};
-}
-
-template <typename Key, typename Value, typename BytesView>
-template <typename K>
-std::tuple<typename radix_tree<Key, Value, BytesView>::atomic_pointer_type *,
-	   typename radix_tree<Key, Value, BytesView>::pointer_type>
-radix_tree<Key, Value, BytesView>::descend(const K &key, byten_t diff,
-					   bitn_t sh)
-{
-	const atomic_pointer_type *slot;
-	pointer_type prev;
-
-	std::tie(slot, prev) =
-		const_cast<const radix_tree *>(this)->descend(key, diff, sh);
-
-	return {const_cast<atomic_pointer_type *>(slot), prev};
+	return n;
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -1179,12 +1216,14 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	if (!root.load_acquire()) {
+	auto r = root.load_acquire();
+	if (!r) {
+		pointer_type leaf;
 		flat_transaction::run(pop, [&] {
-			this->root.store_with_snapshot_release(
-				make_leaf(nullptr));
+			leaf = make_leaf(nullptr);
+			this->root.store_with_snapshot_release(leaf);
 		});
-		return {iterator(get_leaf(root.load_acquire()), this), true};
+		return {iterator(get_leaf(leaf), this), true};
 	}
 
 	/*
@@ -1194,7 +1233,12 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	 * are not known due to a possible path compression). Second time to
 	 * find the place for the new element.
 	 */
-	auto leaf = common_prefix_leaf(key);
+	auto ret = descend(r, key);
+	auto leaf = ret.first;
+	auto path = ret.second;
+
+	assert(leaf);
+
 	auto leaf_key = bytes_view(leaf->key());
 	auto diff = prefix_diff(key, leaf_key);
 	auto sh = bit_diff(leaf_key, key, diff);
@@ -1203,12 +1247,11 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
 	if (diff == key.size() && leaf_key.size() == key.size())
 		return {iterator(leaf, this), false};
 
-	/* Descend into the tree again. */
-	atomic_pointer_type *slot;
-	pointer_type prev;
-	std::tie(slot, prev) = descend(key, diff, sh);
-
-	auto n = slot->load_acquire();
+	/* Descend the tree again by following the path. */
+	auto node_d = follow_path(path, diff, sh);
+	auto slot = const_cast<atomic_pointer_type *>(node_d.slot);
+	auto prev = node_d.prev;
+	auto n = node_d.node;
 
 	/*
 	 * If the divergence point is at same nib as an existing node, and
@@ -2016,6 +2059,47 @@ radix_tree<Key, Value, BytesView>::free(persistent_ptr<T> ptr)
 		delete_persistent<T>(ptr);
 }
 
+/**
+ * Checks if iterator points to element which compares bigger (or equal)
+ * to key.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <bool Lower, typename K>
+bool
+radix_tree<Key, Value, BytesView>::validate_bound(const_iterator it,
+						  const K &key) const
+{
+	if (it == cend())
+		return true;
+
+	if (Lower)
+		return (compare(bytes_view(it->key()), bytes_view(key)) >= 0);
+
+	return (compare(bytes_view(it->key()), bytes_view(key)) > 0);
+}
+
+/**
+ * Checks if any node in the @param path was modified.
+ */
+template <typename Key, typename Value, typename BytesView>
+bool
+radix_tree<Key, Value, BytesView>::validate_path(const path_type &path) const
+{
+	/* Path cannot change in a single-threaded workload */
+	// XXX - if (!mt) return true;
+
+	for (auto i = 0ULL; i < path.size(); i++) {
+		if (path[i].node != path[i].slot->load_acquire())
+			return false;
+
+		if (path[i].node &&
+		    parent_ref(path[i].node).load_acquire() != path[i].prev)
+			return false;
+	}
+
+	return true;
+}
+
 template <typename Key, typename Value, typename BytesView>
 template <bool Lower, typename K>
 typename radix_tree<Key, Value, BytesView>::const_iterator
@@ -2024,82 +2108,149 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	if (!root.load_acquire())
-		return end();
+	while (true) {
+		auto r = root.load_acquire();
 
-	/*
-	 * Need to descend the tree twice. First to find a leaf that
-	 * represents a subtree that shares a common prefix with the key.
-	 * This is needed to find out the actual labels between nodes (they
-	 * are not known due to a possible path compression). Second time to
-	 * get the actual element.
-	 */
-	auto leaf = common_prefix_leaf(key);
-	auto leaf_key = bytes_view(leaf->key());
-	auto diff = prefix_diff(key, leaf_key);
-	auto sh = bit_diff(leaf_key, key, diff);
+		if (!r)
+			return end();
 
-	/* Key exists. */
-	if (diff == key.size() && leaf_key.size() == key.size()) {
-		if (Lower)
-			return const_iterator(leaf, this);
-		else
-			return ++const_iterator(leaf, this);
+		/*
+		 * Need to descend the tree twice. First to find a leaf that
+		 * represents a subtree that shares a common prefix with the
+		 * key. This is needed to find out the actual labels between
+		 * nodes (they are not known due to a possible path
+		 * compression). Second time to get the actual element.
+		 */
+		auto ret = descend(r, key);
+		auto leaf = ret.first;
+		auto path = ret.second;
+
+		if (!leaf)
+			continue;
+
+		auto leaf_key = bytes_view(leaf->key());
+		auto diff = prefix_diff(key, leaf_key);
+		auto sh = bit_diff(leaf_key, key, diff);
+
+		/* Key exists. */
+		if (diff == key.size() && leaf_key.size() == key.size()) {
+			if (Lower)
+				return const_iterator(leaf, this);
+			else
+				return ++const_iterator(leaf, this);
+		}
+
+		/* Descend the tree again by following the path. */
+		auto node_d = follow_path(path, diff, sh);
+
+		auto n = node_d.node;
+		auto slot = node_d.slot;
+		auto prev = node_d.prev;
+
+		const_iterator result;
+
+		/*
+		 * n would point to element with key which we are looking for
+		 * (if it existed). All elements on the left are smaller and all
+		 * element on the right are bigger.
+		 */
+		if (!n) {
+			assert(prev && !is_leaf(prev));
+
+			auto target_leaf = next_leaf<node::direction::Forward>(
+				prev->template make_iterator<
+					node::direction::Forward>(slot),
+				prev, k);
+
+			result = const_iterator(target_leaf, this);
+		} else if (diff == key.size()) {
+			/* The looked-for key is a prefix of the leaf key. The
+			 * target node must be the smallest leaf within *slot's
+			 * subtree. Key represented by a path from root to n is
+			 * larger than the looked-for key. Additionally keys
+			 * under right siblings of *slot are > key and keys
+			 * under left siblings are < key. */
+			auto target_leaf =
+				find_leaf<node::direction::Forward>(n);
+
+			if (!target_leaf)
+				continue;
+
+			result = const_iterator(target_leaf, this);
+		} else if (diff == leaf_key.size()) {
+			/* Leaf's key is a prefix of the looked-for key. Leaf's
+			 * key is the biggest key less than the looked-for key.
+			 * The target node must be the next leaf. */
+			result = ++const_iterator(leaf, this);
+		} else {
+			assert(diff < leaf_key.size() && diff < key.size());
+
+			/* *slot is the point of divergence. It means the tree
+			 * is compressed.
+			 *
+			 *  Example for key AXXB or AZZB
+			 *         ROOT
+			 *         /  \
+			 *        A    B
+			 *       /      \
+			 *    *slot     ...
+			 *      / \
+			 *    YYA YYC
+			 *    /     \
+			 *   ...   ...
+			 *
+			 * We need to compare the first bytes of key and
+			 * leaf_key to decide where to continue our search (for
+			 * AXXB we would compare X with Y).
+			 */
+
+			/* If next byte in key is less than in leaf_key it means
+			 * that the target node must be within *slot's subtree.
+			 * The left siblings of *slot are all less than the
+			 * looked-for key (this is the case fo AXXB from the
+			 * example above). */
+			if (key[diff] < leaf_key[diff]) {
+				auto target_leaf =
+					find_leaf<node::direction::Forward>(n);
+
+				if (!target_leaf)
+					continue;
+
+				result = const_iterator(target_leaf, this);
+			} else if (slot == &root) {
+				result = const_iterator(nullptr, this);
+			} else {
+				assert(key[diff] > leaf_key[diff]);
+
+				/* Since next byte in key is greater
+				 * than in leaf_key, the target node
+				 * must be within subtree of a right
+				 * sibling of *slot. All leaves in the
+				 * subtree under *slot are smaller than
+				 * key (this is the case of AZZB). This
+				 * is because the tree is compressed so
+				 * all nodes under *slot share common prefix
+				 * ("YY" in the example above) - leaf_key[diff]
+				 * is the same for all keys under *slot. */
+				auto target_leaf = next_leaf<
+					node::direction::Forward>(
+					prev->template make_iterator<
+						node::direction::Forward>(slot),
+					prev, k);
+
+				result = const_iterator(target_leaf, this);
+			}
+		}
+
+		/* If some node on the path was modified, the calculated result
+		 * might not be correct. */
+		if (!validate_path(path))
+			continue;
+
+		assert(validate_bound<Lower>(result, k));
+
+		return result;
 	}
-
-	/* Descend into the tree again. */
-	const atomic_pointer_type *slot;
-	pointer_type prev;
-	std::tie(slot, prev) = descend(key, diff, sh);
-
-	if (!slot->load_acquire()) {
-		leaf = next_leaf<node::direction::Forward>(
-			prev->template make_iterator<node::direction::Forward>(
-				slot),
-			prev);
-
-		return const_iterator(leaf, this);
-	}
-
-	/* The looked-for key is a prefix of the leaf key. The target node must
-	 * be the smallest leaf within *slot subtree. Key represented by a path
-	 * from root to n is larger than the looked-for key. Additionally keys
-	 * under right siblings of *slot are > key and keys under left siblings
-	 * are < key. */
-	if (diff == key.size()) {
-		leaf = find_leaf<node::direction::Forward>(
-			slot->load_acquire());
-		return const_iterator(leaf, this);
-	}
-
-	/* Leaf's key is a prefix of the looked-for key. Leaf's key is the
-	 * biggest key less than the looked-for key.
-	 * The target node must be the next leaf. */
-	if (diff == leaf_key.size())
-		return ++const_iterator(leaf, this);
-
-	/* *slot is the point of divergence. */
-	assert(diff < leaf_key.size() && diff < key.size());
-
-	/* The target node must be within *slot subtree. The left siblings
-	 * of *slot are all less than the looked-for key. */
-	if (compare(key, leaf_key, diff) < 0) {
-		leaf = find_leaf<node::direction::Forward>(
-			slot->load_acquire());
-		return const_iterator(leaf, this);
-	}
-
-	if (slot == &root) {
-		return const_iterator(nullptr, this);
-	}
-
-	/* Since looked-for key is larger than *slot, the target node must be
-	 * within subtree of a right sibling of *slot. */
-	leaf = next_leaf<node::direction::Forward>(
-		prev->template make_iterator<node::direction::Forward>(slot),
-		prev);
-
-	return const_iterator(leaf, this);
 }
 
 /**
@@ -2304,13 +2455,17 @@ template <typename Key, typename Value, typename BytesView>
 typename radix_tree<Key, Value, BytesView>::const_iterator
 radix_tree<Key, Value, BytesView>::cbegin() const
 {
-	if (!root.load_acquire())
-		return const_iterator(nullptr, this);
+	while (true) {
+		auto root_ptr = root.load_acquire();
+		if (!root_ptr)
+			return const_iterator(nullptr, this);
 
-	return const_iterator(
-		radix_tree::find_leaf<radix_tree::node::direction::Forward>(
-			root.load_acquire()),
-		this);
+		auto leaf = find_leaf<radix_tree::node::direction::Forward>(
+			root_ptr);
+		if (leaf) {
+			return const_iterator(leaf, this);
+		}
+	}
 }
 
 /**
@@ -2423,6 +2578,7 @@ void
 radix_tree<Key, Value, BytesView>::print_rec(std::ostream &os,
 					     radix_tree::pointer_type n)
 {
+	// XXX - do all loads only once
 	if (!is_leaf(n)) {
 		os << "\"" << get_node(n) << "\""
 		   << " [style=filled,color=\"blue\"]" << std::endl;
@@ -2785,18 +2941,22 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++()
 {
 	assert(leaf_);
 
+	constexpr auto direction = radix_tree::node::direction::Forward;
+	auto parent_ptr = leaf_->parent.load_acquire();
+
 	/* leaf is root, there is no other leaf in the tree */
-	if (!leaf_->parent.load_acquire())
+	if (!parent_ptr)
 		leaf_ = nullptr;
 	else {
-		auto it = leaf_->parent.load_acquire()
-				  ->template find_child<
-					  radix_tree::node::direction::Forward>(
-					  leaf_);
+		auto it = parent_ptr->template find_child<direction>(leaf_);
 
-		leaf_ = const_cast<leaf_ptr>(
-			next_leaf<radix_tree::node::direction::Forward>(
-				it, leaf_->parent.load_acquire()));
+		if (it == parent_ptr->template end<direction>()) {
+			*this = tree->upper_bound(leaf_->key());
+		} else {
+			leaf_ = const_cast<leaf_ptr>(
+				tree->template next_leaf<direction>(
+					it, parent_ptr, leaf_->key()));
+		}
 	}
 
 	return *this;
@@ -2808,27 +2968,44 @@ typename radix_tree<Key, Value,
 		    BytesView>::template radix_tree_iterator<IsConst> &
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
 {
-	if (!leaf_) {
-		/* this == end() */
-		leaf_ = const_cast<leaf_ptr>(
-			radix_tree::find_leaf<
-				radix_tree::node::direction::Reverse>(
-				tree->root.load_acquire()));
-	} else {
-		/* Iterator must be decrementable. */
-		assert(leaf_->parent.load_acquire());
+	constexpr auto direction = radix_tree::node::direction::Reverse;
 
-		auto it = leaf_->parent.load_acquire()
-				  ->template find_child<
-					  radix_tree::node::direction::Reverse>(
-					  leaf_);
+	while (true) {
+		if (!leaf_) {
+			/* this == end() */
+			auto r = tree->root.load_acquire();
 
-		leaf_ = const_cast<leaf_ptr>(
-			next_leaf<radix_tree::node::direction::Reverse>(
-				it, leaf_->parent.load_acquire()));
+			/* Iterator must be decrementable. */
+			assert(r);
+
+			leaf_ = const_cast<leaf_ptr>(
+				tree->template find_leaf<direction>(r));
+
+			if (leaf_)
+				return *this;
+		} else {
+			auto parent_ptr = leaf_->parent.load_acquire();
+
+			/* Iterator must be decrementable. */
+			assert(parent_ptr);
+
+			auto it = parent_ptr->template find_child<direction>(
+				leaf_);
+
+			if (it == parent_ptr->template end<direction>()) {
+				/* Search the tree from top - this iterator
+				 * might point to detached leaf. */
+				*this = --tree->lower_bound(leaf_->key());
+				return *this;
+			}
+
+			leaf_ = const_cast<leaf_ptr>(
+				tree->template next_leaf<direction>(
+					it, parent_ptr, leaf_->key()));
+
+			return *this;
+		}
 	}
-
-	return *this;
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2878,42 +3055,68 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator==(
 }
 
 /*
- * Returns next leaf (either with smaller or larger key, depending on
+ * Returns next leaf (either with smaller or larger key than k, depending on
  * ChildIterator type). This function might need to traverse the
- * tree upwards.
+ * tree upwards. Return value can be null if there is no such leaf.
+ *
+ * Parameter k is only used in case of confliciting, concurrent operation
+ * to restart from the top.
  */
 template <typename Key, typename Value, typename BytesView>
-template <bool Direction, typename Iterator>
-typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent)
+template <bool Direction, typename Iterator, typename K>
+const typename radix_tree<Key, Value, BytesView>::leaf *
+radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent,
+					     const K &k) const
 {
-	do {
+	auto fallback = [&] {
+		if (Direction == node::direction::Forward)
+			return upper_bound(k).leaf_;
+		else
+			return (--lower_bound(k)).leaf_;
+	};
+
+	while (true) {
 		++node;
-	} while (node != parent->template end<Direction>() &&
-		 !(node->load_acquire()));
 
-	/* No more children on this level, need to go up. */
-	if (node == parent->template end<Direction>()) {
-		auto p = parent->parent.load_acquire();
-		if (!p) // parent == root
-			return nullptr;
+		/* No more children on this level, need to go up. */
+		if (node == parent->template end<Direction>()) {
+			auto p = parent->parent.load_acquire();
+			if (!p) // parent == root
+				return nullptr;
 
-		auto p_it = p->template find_child<Direction>(parent);
-		return next_leaf<Direction>(p_it, p);
+			auto p_it = p->template find_child<Direction>(parent);
+			if (p_it == p->template end<Direction>()) {
+				/* Detached leaf, need to start from the top. */
+				return fallback();
+			}
+
+			return next_leaf<Direction>(p_it, p, k);
+		}
+
+		auto n = node->load_acquire();
+		if (!n)
+			continue;
+
+		auto leaf = find_leaf<Direction>(n);
+		if (!leaf)
+			return fallback();
+
+		return leaf;
 	}
-
-	return find_leaf<Direction>(node->load_acquire());
 }
 
 /*
  * Returns smallest (or biggest, depending on ChildIterator) leaf
  * in a subtree.
+ *
+ * Return value is null only if there was some concurrent, conflicting
+ * operation.
  */
 template <typename Key, typename Value, typename BytesView>
 template <bool Direction>
-typename radix_tree<Key, Value, BytesView>::leaf *
+const typename radix_tree<Key, Value, BytesView>::leaf *
 radix_tree<Key, Value, BytesView>::find_leaf(
-	typename radix_tree<Key, Value, BytesView>::pointer_type n)
+	typename radix_tree<Key, Value, BytesView>::pointer_type n) const
 {
 	assert(n);
 
@@ -2922,12 +3125,14 @@ radix_tree<Key, Value, BytesView>::find_leaf(
 
 	for (auto it = n->template begin<Direction>();
 	     it != n->template end<Direction>(); ++it) {
-		if (it->load_acquire())
-			return find_leaf<Direction>(it->load_acquire());
+		auto ptr = it->load_acquire();
+		if (ptr)
+			return find_leaf<Direction>(ptr);
 	}
 
-	/* There must be at least one leaf at the bottom. */
-	std::abort();
+	/* If there is no leaf at the bottom this means that concurrent erase
+	 * happened. */
+	return nullptr;
 }
 
 template <typename Key, typename Value, typename BytesView>

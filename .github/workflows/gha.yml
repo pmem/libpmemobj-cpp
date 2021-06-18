@@ -92,9 +92,6 @@ jobs:
     name: Windows
     runs-on: windows-latest
 
-    # XXX: enable once https://github.com/actions/virtual-environments/issues/3475 is solved
-    if: false
-
     env:
       platform: x64
       VCPKG_DEFAULT_TRIPLET: x64-windows

@@ -31,10 +31,13 @@
  * pmem::obj::experimental::mpsc_queue
  */
 
-#include <stdlib.h>
-
 #include "unittest.hpp"
+
+#include <random>
+
 #include <libpmemobj++/detail/ringbuf.hpp>
+
+static std::mt19937_64 generator;
 
 using namespace pmem::obj::experimental::ringbuf;
 
@@ -47,7 +50,7 @@ test_wraparound(void)
 	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, n);
 	ringbuf_worker_t *w;
 	size_t len, woff;
-	ssize_t off;
+	ptrdiff_t off;
 
 	/* Size n, but only (n - 1) can be produced at a time. */
 	w = ringbuf_register(r, 0);
@@ -90,7 +93,7 @@ test_multi(void)
 	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, 3);
 	ringbuf_worker_t *w;
 	size_t len, woff;
-	ssize_t off;
+	ptrdiff_t off;
 
 	w = ringbuf_register(r, 0);
 
@@ -159,7 +162,7 @@ test_overlap(void)
 	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, 10);
 	ringbuf_worker_t *w1, *w2;
 	size_t len, woff;
-	ssize_t off;
+	ptrdiff_t off;
 
 	w1 = ringbuf_register(r, 0);
 	w2 = ringbuf_register(r, 1);
@@ -241,7 +244,7 @@ test_overlap(void)
 static void
 test_random(void)
 {
-	ssize_t off1 = -1, off2 = -1;
+	ptrdiff_t off1 = -1, off2 = -1;
 	unsigned n = 1000 * 1000 * 50;
 	constexpr size_t buff_size = 500;
 	unsigned char buf[buff_size];
@@ -255,8 +258,8 @@ test_random(void)
 	while (n--) {
 		size_t len, woff;
 
-		len = static_cast<size_t>(random()) % (sizeof(buf) / 2) + 1;
-		switch (random() % 3) {
+		len = static_cast<size_t>(generator()) % (sizeof(buf) / 2) + 1;
+		switch (generator() % 3) {
 			/* consumer */
 			case 0:
 				len = ringbuf_consume(r, &woff);
@@ -314,6 +317,11 @@ test_random(void)
 int
 main(void)
 {
+	std::random_device rd;
+	auto seed = rd();
+	std::cout << "rand seed: " << seed << std::endl;
+	generator = std::mt19937_64(seed);
+
 	test_wraparound();
 	test_multi();
 	test_overlap();

@@ -185,7 +185,7 @@ stable_seenoff(ringbuf_worker_t *w)
  * => On success: returns the offset at which the space is available.
  * => On failure: returns -1.
  */
-inline ssize_t
+inline ptrdiff_t
 ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 {
 	ringbuf_off_t seen, next, target;
@@ -286,7 +286,7 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 			std::memory_order_release);
 	}
 	assert((target & RBUF_OFF_MASK) <= rbuf->space);
-	return (ssize_t)next;
+	return (ptrdiff_t)next;
 }
 
 /*

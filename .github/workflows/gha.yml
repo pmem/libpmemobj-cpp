@@ -91,6 +91,7 @@ jobs:
   windows:
     name: Windows
     runs-on: windows-latest
+
     env:
       platform: x64
       VCPKG_DEFAULT_TRIPLET: x64-windows
@@ -154,7 +155,6 @@ jobs:
                     -DTESTS_TBB=ON
                     -DDEVELOPER_MODE=ON
                     -DCXX_STANDARD="${{ matrix.CXX_STANDARD }}"
-                    -DTEST_MPSC_QUEUE=OFF
 
       - name: Build
         run: msbuild build/ALL_BUILD.vcxproj /property:Configuration=${{ matrix.BUILD_TYPE }} /verbosity:minimal /m

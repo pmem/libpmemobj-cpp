@@ -63,8 +63,9 @@ test_write_iterate(nvobj::pool<root> &pop,
 			UT_ASSERTeq(cnt, INITIAL_ELEMENTS);
 		}};
 
-	parallel_write_read(writer, readers, threads);
+	parallel_modify_read(writer, readers, threads);
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
@@ -123,8 +124,9 @@ test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 		},
 	};
 
-	parallel_write_read(writer, readers, threads);
+	parallel_modify_read(writer, readers, threads);
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
 
@@ -274,9 +276,10 @@ test_erase_upper_lower_bounds_neighbours(
 				}
 			}};
 
-		parallel_write_read(eraser, readers, threads);
+		parallel_modify_read(eraser, readers, threads);
 	}
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<container_string>(ptr); });
 
@@ -364,11 +367,12 @@ test_write_erase_upper_lower_bounds_split(
 				}
 			}};
 
-		parallel_write_read(writer_eraser, readers, threads);
+		parallel_modify_read(writer_eraser, readers, threads);
 
 		UT_ASSERTeq(number_of_elements, ptr->size());
 	}
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<container_string>(ptr); });
 

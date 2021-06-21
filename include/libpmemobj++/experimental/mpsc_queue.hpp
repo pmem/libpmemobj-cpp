@@ -124,8 +124,10 @@ public:
 	public:
 		pmem_log_type(size_t size);
 
+		pmem::obj::string_view data();
+
 	private:
-		pmem::obj::vector<char> data;
+		pmem::obj::vector<char> data_;
 		pmem::obj::p<size_t> written;
 
 		friend class mpsc_queue;
@@ -136,14 +138,10 @@ mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
 {
 	pop = pmem::obj::pool_by_vptr(&pmem);
 
-	auto addr = reinterpret_cast<uintptr_t>(&pmem.data[0]);
-	auto aligned_addr =
-		pmem::detail::align_up(addr, pmem::detail::CACHELINE_SIZE);
+	auto buf_data = pmem.data();
 
-	buf = reinterpret_cast<char *>(aligned_addr);
-	buff_size_ = pmem.data.size() - (aligned_addr - addr);
-	buff_size_ = pmem::detail::align_down(buff_size_,
-					      pmem::detail::CACHELINE_SIZE);
+	buf = const_cast<char *>(buf_data.data());
+	buff_size_ = buf_data.size();
 
 	ring_buffer = std::unique_ptr<ringbuf::ringbuf_t>(
 		new ringbuf::ringbuf_t(max_workers, buff_size_));
@@ -225,8 +223,23 @@ mpsc_queue::restore_offsets()
 }
 
 mpsc_queue::pmem_log_type::pmem_log_type(size_t size)
-    : data(size, 0), written(0)
+    : data_(size, 0), written(0)
 {
+}
+
+inline pmem::obj::string_view
+mpsc_queue::pmem_log_type::data()
+{
+	auto addr = reinterpret_cast<uintptr_t>(&data_[0]);
+	auto aligned_addr =
+		pmem::detail::align_up(addr, pmem::detail::CACHELINE_SIZE);
+
+	auto size = data_.size() - (aligned_addr - addr);
+	auto aligned_size =
+		pmem::detail::align_down(size, pmem::detail::CACHELINE_SIZE);
+
+	return pmem::obj::string_view(
+		reinterpret_cast<const char *>(aligned_addr), aligned_size);
 }
 
 inline pmem::detail::id_manager &

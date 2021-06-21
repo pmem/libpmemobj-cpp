@@ -44,6 +44,9 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb", "cccc"};
 
 	std::atomic<size_t> threads_counter(concurrency);
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	VALGRIND_HG_DISABLE_CHECKING(&threads_counter, sizeof(threads_counter));
+#endif
 
 	std::vector<std::string> values_on_pmem;
 	parallel_exec(concurrency + 1, [&](size_t thread_id) {
@@ -111,7 +114,9 @@ test(int argc, char *argv[])
 
 	const char *path = argv[1];
 
-	constexpr size_t concurrency = 16;
+	size_t concurrency = 48;
+	if (On_valgrind)
+		concurrency = 2;
 
 	pmem::obj::pool<struct root> pop;
 

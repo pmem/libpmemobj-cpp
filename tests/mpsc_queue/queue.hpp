@@ -21,7 +21,7 @@ get_queue_capacity(queue_type &q, size_t element_size)
 		;
 
 	/* Clear the queue */
-	auto ret = q.try_consume([](queue_type::read_accessor acc) {
+	auto ret = q.try_consume_batch([](queue_type::batch_type acc) {
 		for (const auto &e : acc)
 			(void)e;
 	});
@@ -54,9 +54,9 @@ make_queue_with_first_half_empty(queue_type &q, size_t capacity,
 
 		if (produced == capacity / 2) {
 			size_t cnt_consumed = 0;
-			auto ret = q.try_consume(
+			auto ret = q.try_consume_batch(
 				[&](pmem::obj::experimental::mpsc_queue::
-					    read_accessor acc) {
+					    batch_type acc) {
 					for (const auto &str : acc) {
 						(void)str;
 						cnt_consumed++;

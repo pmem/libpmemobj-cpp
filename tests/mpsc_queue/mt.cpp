@@ -37,8 +37,8 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 
 	auto queue = queue_type(*proot->log, concurrency);
 
-	bool consumed = queue.try_consume(
-		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	bool consumed = queue.try_consume_batch(
+		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb", "cccc"};
@@ -53,14 +53,16 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 		if (thread_id == 0) {
 			/* Read data while writting */
 			while (threads_counter.load() > 0) {
-				queue.try_consume([&](pmem::obj::experimental::
-							      mpsc_queue::read_accessor
-								      rd_acc) {
-					for (auto str : rd_acc) {
-						values_on_pmem.emplace_back(
-							str.data(), str.size());
-					}
-				});
+				queue.try_consume_batch(
+					[&](pmem::obj::experimental::
+						    mpsc_queue::batch_type
+							    rd_acc) {
+						for (auto str : rd_acc) {
+							values_on_pmem.emplace_back(
+								str.data(),
+								str.size());
+						}
+					});
 			}
 			UT_ASSERTeq(values_on_pmem.empty(), false);
 		} else {
@@ -88,15 +90,15 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 	});
 
 	/* Consume the rest of the data. */
-	queue.try_consume([&](queue_type::read_accessor rd_acc1) {
+	queue.try_consume_batch([&](queue_type::batch_type rd_acc1) {
 		for (auto str : rd_acc1) {
 			values_on_pmem.emplace_back(str.data(), str.size());
 		}
 	});
 
 	/* At this moment queue should be empty */
-	consumed = queue.try_consume(
-		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	consumed = queue.try_consume_batch(
+		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
 	for (auto &v : values) {

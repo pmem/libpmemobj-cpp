@@ -33,7 +33,8 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency, size_t buffer_size)
 	auto queue = pmem::obj::experimental::mpsc_queue(
 		proot->log, buffer_size, concurrency);
 
-	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb", "cccc"};
+	std::vector<std::string> values = {"xxx",  "aaaaaaa", "bbbbb",
+					   "cccc", "dddd",    "eee"};
 
 	std::atomic<size_t> threads_counter(concurrency);
 
@@ -107,6 +108,90 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency, size_t buffer_size)
 	return 0;
 }
 
+/* multithreaded for produce-consume */
+int
+mt_blocking_methods_test(pmem::obj::pool<root> pop, size_t concurrency,
+			 size_t buffer_size)
+{
+
+	auto proot = pop.root();
+
+	auto queue = pmem::obj::experimental::mpsc_queue(
+		proot->log, buffer_size, concurrency);
+
+	std::vector<std::string> values = {"xxx",  "aaaaaaa", "bbbbb",
+					   "cccc", "dddd",    "eeeeee"};
+
+	std::atomic<size_t> threads_counter(concurrency);
+
+	std::vector<std::string> values_on_pmem;
+	parallel_exec(concurrency + 1, [&](size_t thread_id) {
+		if (thread_id == 0) {
+			/* Read data while writting */
+			while (threads_counter.load() > 0) {
+				queue.consume([&](pmem::obj::experimental::
+							  mpsc_queue::read_accessor
+								  rd_acc) {
+					for (auto str : rd_acc) {
+						values_on_pmem.emplace_back(
+							str.data(), str.size());
+					}
+				});
+			}
+			UT_ASSERTeq(values_on_pmem.empty(), false);
+		} else {
+			/* Concurrently add data to queue */
+			auto worker = queue.register_worker();
+			size_t x = 0;
+			for (auto &e : values) {
+				worker.produce(
+					e.size(),
+					[&](pmem::obj::slice<char *> range) {
+						x++;
+						std::copy_n(e.begin(), e.size(),
+							    range.begin());
+					});
+			}
+			UT_ASSERTeq(x, values.size());
+			threads_counter--;
+		}
+	});
+
+	/* Consume the rest of the data. Need to call try_consume twice, as some
+	 * data may be at the end of buffer, and some may be at the beginning.
+	 * Ringbuffer do not merge those two pats into one try_consume. If all
+	 * data was consumed during first try_consume, second would fail.
+	 */
+	for (int i = 0; i < 2; i++) {
+		queue.try_consume(
+			[&](pmem::obj::experimental::mpsc_queue::read_accessor
+				    rd_acc1) {
+				for (auto str : rd_acc1) {
+					values_on_pmem.emplace_back(str.data(),
+								    str.size());
+					/* let's sleep for a while to increase
+					 * probability of deadlock */
+					std::this_thread::sleep_for(
+						std::chrono::milliseconds(100));
+				}
+			});
+	}
+
+	/* At this moment queue should be empty */
+	bool consumed = queue.try_consume(
+		[&](pmem::obj::experimental::mpsc_queue::read_accessor rd_acc) {
+			ASSERT_UNREACHABLE;
+		});
+	UT_ASSERTeq(consumed, false);
+
+	for (auto &v : values) {
+		auto count = std::count(values_on_pmem.begin(),
+					values_on_pmem.end(), v);
+		UT_ASSERTeq(count, static_cast<int>(concurrency));
+	}
+	return 0;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -130,5 +215,8 @@ main(int argc, char *argv[])
 			pmem::obj::make_persistent<char[]>(buffer_size);
 	});
 
-	return run_test([&] { mt_test(pop, concurrency, buffer_size); });
+	return run_test([&] {
+		mt_test(pop, concurrency, buffer_size);
+		mt_blocking_methods_test(pop, concurrency, buffer_size);
+	});
 }

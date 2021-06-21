@@ -27,34 +27,23 @@ struct root {
 	pmem::obj::persistent_ptr<queue_type::pmem_log_type> log;
 };
 
-/* Test to consume from empty queue */
+/* Iterate over data in consume multiple times */
 static void
-consume_empty(pmem::obj::pool<root> pop)
+consume_multipass(pmem::obj::pool<root> pop, size_t n_iters)
 {
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, 1);
 	auto worker = queue.register_worker();
 
-	bool consumed = queue.try_consume_batch(
-		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
-	UT_ASSERTeq(consumed, false);
-}
+	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb",
+					   std::string(120, 'a')};
+	std::string store_to_next_run = "old";
 
-/* Test if user may continue to consume, when all data is already consumed */
-static void
-consume_empty_after_insertion(pmem::obj::pool<root> pop)
-{
-	auto proot = pop.root();
-	auto queue = queue_type(*proot->log, 1);
+	auto ret = queue.try_consume_batch(
+		[&](queue_type::batch_type acc) { ASSERT_UNREACHABLE; });
+	UT_ASSERT(!ret);
 
-	bool consumed = queue.try_consume_batch(
-		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
-	UT_ASSERTeq(consumed, false);
-
-	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
-
-	auto worker = queue.register_worker();
-	/* Insert some data */
+	/* Insert the data */
 	for (const auto &e : values) {
 		auto ret = worker.try_produce(
 			e.size(), [&](pmem::obj::slice<char *> range) {
@@ -62,25 +51,27 @@ consume_empty_after_insertion(pmem::obj::pool<root> pop)
 			});
 		UT_ASSERT(ret);
 	}
-	/* Consume all of it */
-	size_t i = 0;
-	auto ret = queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
-		for (const auto &str : rd_acc) {
-			(void)str;
-			i++;
+
+	/* Consume all the data */
+	std::vector<std::string> values_on_pmem;
+	ret = queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
+		for (size_t i = 0; i < n_iters; i++) {
+			for (const auto &str : rd_acc) {
+				values_on_pmem.emplace_back(str.data(),
+							    str.size());
+			}
 		}
 	});
 	UT_ASSERT(ret);
-	UT_ASSERTeq(i, values.size());
+	UT_ASSERTeq(values_on_pmem.size(), values.size() * n_iters);
 
-	/* Try to consume empty queue */
-	for (int i = 0; i < 10; i++) {
-		bool consumed = queue.try_consume_batch(
-			[&](queue_type::batch_type rd_acc1) {
-				ASSERT_UNREACHABLE;
-			});
-		UT_ASSERTeq(consumed, false);
+	for (size_t i = 0; i < values.size() * n_iters; i++) {
+		UT_ASSERT(values_on_pmem[i] == values[i % values.size()]);
 	}
+
+	ret = queue.try_consume_batch(
+		[&](queue_type::batch_type acc) { ASSERT_UNREACHABLE; });
+	UT_ASSERT(!ret);
 }
 
 static void
@@ -91,9 +82,7 @@ test(int argc, char *argv[])
 
 	const char *path = argv[1];
 
-	pmem::obj::pool<struct root> pop;
-
-	pop = pmem::obj::pool<root>::create(
+	pmem::obj::pool<struct root> pop = pmem::obj::pool<root>::create(
 		std::string(path), LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 
 	pmem::obj::transaction::run(pop, [&] {
@@ -102,8 +91,8 @@ test(int argc, char *argv[])
 				QUEUE_SIZE);
 	});
 
-	consume_empty(pop);
-	consume_empty_after_insertion(pop);
+	consume_multipass(pop, 0);
+	consume_multipass(pop, 2);
 
 	pop.close();
 }

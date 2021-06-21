@@ -30,49 +30,67 @@ namespace experimental
 
 /* XXX: Add documentation */
 class mpsc_queue {
-private:
-	struct first_block;
-
 public:
-	class read_accessor;
 	class worker;
 	class pmem_log_type;
+	class batch_type;
 
 	mpsc_queue(pmem_log_type &pmem, size_t max_workers = 1);
 
 	worker register_worker();
 
 	template <typename Function>
-	bool try_consume(Function &&f);
+	bool try_consume_batch(Function &&f);
 
-	class read_accessor {
+private:
+	struct first_block {
+		static constexpr size_t CAPACITY =
+			pmem::detail::CACHELINE_SIZE - sizeof(size_t);
+		static constexpr size_t DIRTY_FLAG = (1ULL << 63);
+
+		pmem::obj::p<size_t> size;
+		char data[CAPACITY];
+	};
+
+	struct iterator {
+		iterator(mpsc_queue *queue, char *data, char *end);
+
+		iterator &operator++();
+
+		bool operator==(const iterator &rhs);
+		bool operator!=(const iterator &rhs);
+
+		pmem::obj::string_view operator*() const;
+
 	private:
-		struct iterator {
-			iterator(mpsc_queue *queue, char *data, char *end);
+		first_block *seek_next(first_block *);
 
-			iterator &operator++();
+		mpsc_queue *queue;
+		char *data;
+		char *end;
+	};
 
-			bool operator==(const iterator &rhs);
-			bool operator!=(const iterator &rhs);
+	void clear_cachelines(first_block *block, size_t size);
+	void restore_offsets();
+	inline pmem::detail::id_manager &get_id_manager();
 
-			pmem::obj::string_view operator*() const;
+	std::unique_ptr<ringbuf::ringbuf_t> ring_buffer;
+	char *buf;
+	pmem::obj::pool_base pop;
+	size_t buff_size_;
+	pmem_log_type *pmem;
 
-		private:
-			first_block *skip_consumed(first_block *);
-
-			mpsc_queue *queue;
-			char *data;
-			char *end;
-		};
-
-		iterator begin_;
-		iterator end_;
-
+public:
+	class batch_type {
 	public:
-		read_accessor(mpsc_queue *queue, char *data, size_t len);
+		batch_type(iterator begin, iterator end);
 
 		iterator begin();
 		iterator end();
+
+	private:
+		iterator begin_;
+		iterator end_;
 	};
 
 	/* All workers should be destroyed before destruction of mpsc_queue */
@@ -110,26 +128,6 @@ public:
 
 		friend class mpsc_queue;
 	};
-
-private:
-	struct first_block {
-		static constexpr size_t CAPACITY =
-			pmem::detail::CACHELINE_SIZE - sizeof(size_t);
-		static constexpr size_t DIRTY_FLAG = (1ULL << 63);
-
-		pmem::obj::p<size_t> size;
-		char data[CAPACITY];
-	};
-
-	inline pmem::detail::id_manager &get_id_manager();
-
-	std::unique_ptr<ringbuf::ringbuf_t> ring_buffer;
-	char *buf;
-	pmem::obj::pool_base pop;
-	size_t buff_size_;
-	pmem_log_type *pmem;
-
-	void restore_offsets();
 };
 
 mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
@@ -244,7 +242,7 @@ mpsc_queue::register_worker()
 
 template <typename Function>
 inline bool
-mpsc_queue::try_consume(Function &&f)
+mpsc_queue::try_consume_batch(Function &&f)
 {
 	if (pmemobj_tx_stage() != TX_STAGE_NONE)
 		throw pmem::transaction_scope_error(
@@ -257,32 +255,43 @@ mpsc_queue::try_consume(Function &&f)
 	ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
 #endif
 
-	if (len != 0) {
-		pmem->written = offset;
-		pop.persist(pmem->written);
+	if (!len)
+		return false;
 
-		auto acc = read_accessor(this, buf + offset, len);
+	auto data = buf + offset;
 
-		// XXX - we can mark begin/end as && (can only by called on
-		// std::move(acc))
-		bool elements_to_consume = (acc.begin() != acc.end());
+	auto begin = iterator(this, data, data + len);
+	auto end = iterator(this, data + len, data + len);
+
+	auto elements_to_consume = begin != end;
+
+	pmem::obj::flat_transaction::run(pop, [&] {
 		if (elements_to_consume)
-			f(acc);
+			f(batch_type(begin, end));
+
+		auto b = reinterpret_cast<first_block *>(data);
+		clear_cachelines(b, len);
+
+		if (offset + len < buff_size_)
+			pmem->written = offset + len;
+		else if (offset + len == buff_size_)
+			pmem->written = 0;
+		else
+			assert(false);
+	});
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-		ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
+	ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
 #endif
 
-		ringbuf_release(ring_buffer.get(), len);
+	ringbuf_release(ring_buffer.get(), len);
 
-		/* XXX: it would be better to call f once - hide
-		 * wraparound behind iterators */
-		/* XXX: add param to ringbuf_consume and do not
-		 * call store_explicit in consume */
-		return try_consume(std::forward<Function>(f)) ||
-			elements_to_consume;
-	}
-	return false;
+	/* XXX: it would be better to call f once - hide
+	 * wraparound behind iterators */
+	/* XXX: add param to ringbuf_consume and do not
+	 * call store_explicit in consume */
+	return try_consume_batch(std::forward<Function>(f)) ||
+		elements_to_consume;
 }
 
 inline mpsc_queue::worker::worker(mpsc_queue *q)
@@ -484,119 +493,94 @@ mpsc_queue::worker::store_to_log(pmem::obj::string_view data, char *log_data)
 		       pmem::detail::CACHELINE_SIZE, PMEMOBJ_F_MEM_NONTEMPORAL);
 }
 
-inline mpsc_queue::read_accessor::read_accessor(mpsc_queue *queue, char *data,
-						size_t len)
-    : begin_(queue, data, data + len), end_(queue, data + len, data + len)
+inline mpsc_queue::batch_type::batch_type(iterator begin_, iterator end_)
+    : begin_(begin_), end_(end_)
 {
 }
 
-inline mpsc_queue::read_accessor::iterator
-mpsc_queue::read_accessor::begin()
+inline mpsc_queue::iterator
+mpsc_queue::batch_type::begin()
 {
 	return begin_;
 }
 
-inline mpsc_queue::read_accessor::iterator
-mpsc_queue::read_accessor::end()
+inline mpsc_queue::iterator
+mpsc_queue::batch_type::end()
 {
 	return end_;
 }
 
-inline mpsc_queue::read_accessor::iterator::iterator(mpsc_queue *queue,
-						     char *data, char *end)
+mpsc_queue::iterator::iterator(mpsc_queue *queue, char *data, char *end)
     : queue(queue), data(data), end(end)
 {
-	auto pop = pmem::obj::pool_by_vptr(data);
-	pmem::obj::flat_transaction::run(pop, [&] {
-		auto b = reinterpret_cast<first_block *>(data);
-		auto unconsumed = skip_consumed(b);
-
-		assert(unconsumed >= b);
-		queue->pmem->written += static_cast<size_t>(unconsumed - b) *
-			sizeof(first_block);
-		if (queue->pmem->written == queue->buff_size_)
-			queue->pmem->written = 0;
-
-		this->data = reinterpret_cast<char *>(unconsumed);
-	});
+	auto b = reinterpret_cast<first_block *>(data);
+	auto next = seek_next(b);
+	assert(next >= b);
+	this->data = reinterpret_cast<char *>(next);
 }
 
-/* Invalidates data after increment */
-inline mpsc_queue::read_accessor::iterator &
-mpsc_queue::read_accessor::iterator::operator++()
+void
+mpsc_queue::clear_cachelines(first_block *block, size_t size)
 {
-	auto pop = pmem::obj::pool_by_vptr(data);
+	assert(size % pmem::detail::CACHELINE_SIZE == 0);
+	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 
+	auto end = block +
+		static_cast<ptrdiff_t>(size / pmem::detail::CACHELINE_SIZE);
+
+	while (block < end) {
+		/* data in block might be uninitialized. */
+		detail::conditional_add_to_tx(&block->size, 1,
+					      POBJ_XADD_ASSUME_INITIALIZED);
+		block->size = 0;
+		block++;
+	}
+
+	assert(end <= reinterpret_cast<first_block *>(buf + buff_size_));
+}
+
+mpsc_queue::iterator &
+mpsc_queue::iterator::iterator::operator++()
+{
 	auto block = reinterpret_cast<first_block *>(data);
-
 	assert(block->size != 0);
 
 	auto element_size =
 		pmem::detail::align_up(block->size + sizeof(block->size),
 				       pmem::detail::CACHELINE_SIZE);
-	auto element_end = reinterpret_cast<first_block *>(
-		data + static_cast<ptrdiff_t>(element_size));
 
-	assert(element_end <=
-	       reinterpret_cast<first_block *>(queue->buf + queue->buff_size_));
+	block += element_size / pmem::detail::CACHELINE_SIZE;
 
-	/* Mark all cachelines as consumed. */
-	pmem::obj::flat_transaction::run(pop, [&] {
-		while (block < element_end) {
-			/* data in block might be uninitialized. */
-			detail::conditional_add_to_tx(
-				&block->size, 1, POBJ_XADD_ASSUME_INITIALIZED);
-			block->size = 0;
-			block++;
-		}
-
-		queue->pmem->written += pmem::detail::align_up(
-			element_size, pmem::detail::CACHELINE_SIZE);
-
-		/* Go to the next, unconsumed element. */
-		auto unconsumed = skip_consumed(block);
-
-		assert(unconsumed >= block);
-		queue->pmem->written +=
-			static_cast<size_t>(unconsumed - block) *
-			sizeof(first_block);
-		if (queue->pmem->written == queue->buff_size_)
-			queue->pmem->written = 0;
-
-		block = unconsumed;
-	});
+	auto next = seek_next(block);
+	assert(next >= block);
+	block = next;
 
 	data = reinterpret_cast<char *>(block);
 
 	return *this;
 }
 
-inline bool
-mpsc_queue::read_accessor::iterator::operator==(
-	const mpsc_queue::read_accessor::iterator &rhs)
+bool
+mpsc_queue::iterator::operator==(const mpsc_queue::iterator &rhs)
 {
 	return data == rhs.data;
 }
 
-inline bool
-mpsc_queue::read_accessor::iterator::operator!=(
-	const mpsc_queue::read_accessor::iterator &rhs)
+bool
+mpsc_queue::iterator::operator!=(const mpsc_queue::iterator &rhs)
 {
 	return data != rhs.data;
 }
 
-inline pmem::obj::string_view
-	mpsc_queue::read_accessor::iterator::operator*() const
+pmem::obj::string_view mpsc_queue::iterator::operator*() const
 {
 	auto b = reinterpret_cast<first_block *>(data);
 	return pmem::obj::string_view(b->data, b->size);
 }
 
-inline mpsc_queue::first_block *
-mpsc_queue::read_accessor::iterator::skip_consumed(mpsc_queue::first_block *b)
+mpsc_queue::first_block *
+mpsc_queue::iterator::seek_next(mpsc_queue::first_block *b)
 {
-	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-
 	auto e = reinterpret_cast<first_block *>(end);
 
 	/* Advance to first, unconsumed element. Each cacheline can be in one of
@@ -607,11 +591,6 @@ mpsc_queue::read_accessor::iterator::skip_consumed(mpsc_queue::first_block *b)
 	 * size bytes are junk.
 	 * 3. First 8 bytes (size) are non-zero and have dirty flag unset - next
 	 * size bytes are ready to be consumed (they represent consistent data).
-	 *
-	 * Invariant: producer can only produce data to cachelines which have
-	 * first 8 bytes zeroed. If we detect that there was a crash during
-	 * producing data (DIRTY_FLAG is set) we must clear those cachline in
-	 * consume.
 	 */
 	while (b < e) {
 		if (b->size == 0) {
@@ -622,13 +601,8 @@ mpsc_queue::read_accessor::iterator::skip_consumed(mpsc_queue::first_block *b)
 			auto aligned_size = pmem::detail::align_up(
 				size + sizeof(b->size),
 				pmem::detail::CACHELINE_SIZE);
-			auto e =
-				b + aligned_size / pmem::detail::CACHELINE_SIZE;
 
-			while (b < e) {
-				b->size = 0;
-				b++;
-			}
+			b += aligned_size / pmem::detail::CACHELINE_SIZE;
 		} else {
 			break;
 		}

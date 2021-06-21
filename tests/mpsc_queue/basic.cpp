@@ -41,8 +41,8 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 					   std::string(120, 'a')};
 	std::string store_to_next_run = "old";
 	if (create) {
-		auto ret =
-			queue.try_consume([&](queue_type::read_accessor acc) {
+		auto ret = queue.try_consume_batch(
+			[&](queue_type::batch_type acc) {
 				ASSERT_UNREACHABLE;
 			});
 		UT_ASSERT(!ret);
@@ -59,12 +59,13 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 		/* Consume all the data */
 		std::vector<std::string> values_on_pmem;
-		ret = queue.try_consume([&](queue_type::read_accessor rd_acc) {
-			for (const auto &str : rd_acc) {
-				values_on_pmem.emplace_back(str.data(),
-							    str.size());
-			}
-		});
+		ret = queue.try_consume_batch(
+			[&](queue_type::batch_type rd_acc) {
+				for (const auto &str : rd_acc) {
+					values_on_pmem.emplace_back(str.data(),
+								    str.size());
+				}
+			});
 		UT_ASSERT(ret);
 
 		/* Insert new data, which may be recovered in next run of
@@ -80,7 +81,7 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 	} else {
 		std::vector<std::string> values_on_pmem;
 		/* Recover the data in second run of application */
-		queue.try_consume([&](queue_type::read_accessor acc) {
+		queue.try_consume_batch([&](queue_type::batch_type acc) {
 			for (const auto &entry : acc)
 				values_on_pmem.emplace_back(entry.data(),
 							    entry.size());

@@ -36,8 +36,8 @@ consume_empty(pmem::obj::pool<root> pop)
 	auto queue = queue_type(*proot->log, 1);
 
 	auto worker = queue.register_worker();
-	bool consumed = queue.try_consume(
-		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	bool consumed = queue.try_consume_batch(
+		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 }
 
@@ -48,8 +48,8 @@ consume_empty_after_insertion(pmem::obj::pool<root> pop)
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, 1);
 
-	bool consumed = queue.try_consume(
-		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	bool consumed = queue.try_consume_batch(
+		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
@@ -65,7 +65,7 @@ consume_empty_after_insertion(pmem::obj::pool<root> pop)
 	}
 	/* Consume all of it */
 	size_t i = 0;
-	auto ret = queue.try_consume([&](queue_type::read_accessor rd_acc) {
+	auto ret = queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
 		for (const auto &str : rd_acc) {
 			(void)str;
 			i++;
@@ -76,8 +76,8 @@ consume_empty_after_insertion(pmem::obj::pool<root> pop)
 
 	/* Try to consume empty queue */
 	for (int i = 0; i < 10; i++) {
-		bool consumed = queue.try_consume(
-			[&](queue_type::read_accessor rd_acc1) {
+		bool consumed = queue.try_consume_batch(
+			[&](queue_type::batch_type rd_acc1) {
 				ASSERT_UNREACHABLE;
 			});
 		UT_ASSERTeq(consumed, false);

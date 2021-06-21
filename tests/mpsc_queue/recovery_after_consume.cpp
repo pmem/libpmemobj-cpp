@@ -44,8 +44,8 @@ run_consistent(pmem::obj::pool<root> pop)
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, concurrency);
 
-	bool consumed = queue.try_consume(
-		[&](queue_type::read_accessor rd_acc) { ASSERT_UNREACHABLE; });
+	bool consumed = queue.try_consume_batch(
+		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
 	for (size_t i = 0; i < concurrency; i++)
@@ -104,7 +104,7 @@ check_consistency(pmem::obj::pool<root> pop)
 	}
 
 	std::vector<std::string> values_on_pmem;
-	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+	queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
 		for (auto entry : rd_acc)
 			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});
@@ -132,7 +132,7 @@ check_consistency(pmem::obj::pool<root> pop)
 	}
 
 	values_on_pmem.clear();
-	auto ret = queue.try_consume([&](queue_type::read_accessor rd_acc) {
+	auto ret = queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
 		for (auto entry : rd_acc)
 			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});

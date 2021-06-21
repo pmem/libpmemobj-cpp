@@ -404,6 +404,22 @@ mpsc_queue::worker::store_to_log(pmem::obj::string_view data, char *log_data)
 		       pmem::detail::CACHELINE_SIZE ==
 	       0);
 
+/* Invariant: producer can only produce data to cachelines which have
+ * first 8 bytes zeroed.
+ */
+#ifndef NDEBUG
+	auto b = reinterpret_cast<first_block *>(log_data);
+	auto s = pmem::detail::align_up(data.size() + sizeof(first_block::size),
+					pmem::detail::CACHELINE_SIZE);
+	auto e = b + s / pmem::detail::CACHELINE_SIZE;
+	while (b < e) {
+		assert(b->size == 0);
+		b++;
+	}
+#endif
+
+	assert(reinterpret_cast<first_block *>(log_data)->size == 0);
+
 	first_block fblock;
 	fblock.size = data.size() | size_t(first_block::DIRTY_FLAG);
 
@@ -591,21 +607,28 @@ mpsc_queue::read_accessor::iterator::skip_consumed(mpsc_queue::first_block *b)
 	 * size bytes are junk.
 	 * 3. First 8 bytes (size) are non-zero and have dirty flag unset - next
 	 * size bytes are ready to be consumed (they represent consistent data).
+	 *
+	 * Invariant: producer can only produce data to cachelines which have
+	 * first 8 bytes zeroed. If we detect that there was a crash during
+	 * producing data (DIRTY_FLAG is set) we must clear those cachline in
+	 * consume.
 	 */
 	while (b < e) {
 		if (b->size == 0) {
 			b++;
 		} else if (b->size & size_t(first_block::DIRTY_FLAG)) {
-			// XXX - we should clear the cachelines here!!!! (add
-			// test for this)
-
 			auto size =
 				b->size & (~size_t(first_block::DIRTY_FLAG));
 			auto aligned_size = pmem::detail::align_up(
 				size + sizeof(b->size),
 				pmem::detail::CACHELINE_SIZE);
+			auto e =
+				b + aligned_size / pmem::detail::CACHELINE_SIZE;
 
-			b += aligned_size / pmem::detail::CACHELINE_SIZE;
+			while (b < e) {
+				b->size = 0;
+				b++;
+			}
 		} else {
 			break;
 		}

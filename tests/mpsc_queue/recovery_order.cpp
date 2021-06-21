@@ -46,8 +46,8 @@ test_recovery(pmem::obj::pool<root> pop, bool create)
 	};
 
 	if (create) {
-		bool consumed = queue.try_consume(
-			[&](queue_type::read_accessor rd_acc) {
+		bool consumed = queue.try_consume_batch(
+			[&](queue_type::batch_type rd_acc) {
 				ASSERT_UNREACHABLE;
 			});
 		UT_ASSERTeq(consumed, false);
@@ -73,7 +73,7 @@ test_recovery(pmem::obj::pool<root> pop, bool create)
 	} else {
 		std::vector<size_t> values_on_pmem;
 		/* Recover the data in second run of application */
-		queue.try_consume([&](queue_type::read_accessor rd_acc) {
+		queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
 			for (auto entry : rd_acc) {
 				auto element =
 					std::string(entry.data(), entry.size());

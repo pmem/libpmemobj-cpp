@@ -40,8 +40,8 @@ run_consistent(pmem::obj::pool<root> pop, bool break_produce, bool synchronized)
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, concurrency);
 
-	auto ret = queue.try_consume(
-		[&](queue_type::read_accessor acc) { ASSERT_UNREACHABLE; });
+	auto ret = queue.try_consume_batch(
+		[&](queue_type::batch_type acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERT(!ret);
 
 	for (size_t i = 0; i < MAX_CONCURRENCY; i++)
@@ -91,7 +91,7 @@ check_consistency(pmem::obj::pool<root> pop, bool already_consumed)
 	}
 
 	std::vector<std::string> values_on_pmem;
-	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+	queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
 		for (auto entry : rd_acc)
 			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});
@@ -121,7 +121,7 @@ run_break_recovery(pmem::obj::pool<root> pop)
 	VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
 
 	std::vector<std::string> values_on_pmem;
-	queue.try_consume([&](queue_type::read_accessor rd_acc) {
+	queue.try_consume_batch([&](queue_type::batch_type rd_acc) {
 		for (auto entry : rd_acc)
 			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});

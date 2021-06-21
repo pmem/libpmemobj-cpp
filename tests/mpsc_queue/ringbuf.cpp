@@ -31,6 +31,7 @@
  * pmem::obj::experimental::mpsc_queue
  */
 
+#include "size_literals.hpp"
 #include "unittest.hpp"
 
 #include <random>
@@ -44,42 +45,45 @@ using namespace pmem::obj::experimental::ringbuf;
 #define MAX_WORKERS 2
 
 static void
-test_wraparound(void)
+test_wraparound(size_t n)
 {
-	const size_t n = 1000;
 	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, n);
 	ringbuf_worker_t *w;
 	size_t len, woff;
 	ptrdiff_t off;
-
+	std::cout << "test_wraparound for " << n
+		  << " elements managed by ringbuffer" << std::endl;
 	/* Size n, but only (n - 1) can be produced at a time. */
 	w = ringbuf_register(r, 0);
 
 	/* Produce (n / 2 + 1) and then attempt another (n / 2 - 1). */
 	off = ringbuf_acquire(r, w, n / 2 + 1);
-	UT_ASSERT(off == 0);
+	UT_ASSERTeq(off, 0);
 	ringbuf_produce(r, w);
 
 	off = ringbuf_acquire(r, w, n / 2 - 1);
-	UT_ASSERT(off == -1);
+	UT_ASSERTeq(off, -1);
 
 	/* Consume (n / 2 + 1) bytes. */
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == (n / 2 + 1) && woff == 0);
+	UT_ASSERTeq(len, (n / 2 + 1));
+	UT_ASSERTeq(woff, 0);
 	ringbuf_release(r, len);
 
 	/* All consumed, attempt (n / 2 + 1) now. */
 	off = ringbuf_acquire(r, w, n / 2 + 1);
-	UT_ASSERT(off == -1);
+	UT_ASSERTeq(off, -1);
 
 	/* However, wraparound can be successful with (n / 2). */
 	off = ringbuf_acquire(r, w, n / 2);
-	UT_ASSERT(off == 0);
+	UT_ASSERTeq(off, 0);
 	ringbuf_produce(r, w);
 
 	/* Consume (n / 2) bytes. */
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == (n / 2) && woff == 0);
+	UT_ASSERTeq(len, (n / 2));
+	UT_ASSERTeq(woff, 0);
+
 	ringbuf_release(r, len);
 
 	ringbuf_unregister(r, w);
@@ -157,9 +161,9 @@ test_multi(void)
 }
 
 static void
-test_overlap(void)
+test_overlap(size_t n)
 {
-	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, 10);
+	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, n);
 	ringbuf_worker_t *w1, *w2;
 	size_t len, woff;
 	ptrdiff_t off;
@@ -168,59 +172,63 @@ test_overlap(void)
 	w2 = ringbuf_register(r, 1);
 
 	/*
-	 * Producer 1: acquire 5 bytes.  Consumer should fail.
+	 * Producer 1: acquire half of ringbufer size. Consumer should fail.
 	 */
-	off = ringbuf_acquire(r, w1, 5);
-	UT_ASSERT(off == 0);
+	off = ringbuf_acquire(r, w1, n / 2);
+	UT_ASSERTeq(off, 0);
 
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 0);
+	UT_ASSERTeq(len, 0);
 
 	/*
-	 * Producer 2: acquire 3 bytes.  Consumer should still fail.
+	 * Producer 2: acquire 1/3 of ringbufer size. Consumer should still
+	 * fail.
 	 */
-	off = ringbuf_acquire(r, w2, 3);
-	UT_ASSERT(off == 5);
+	off = ringbuf_acquire(r, w2, n / 3);
+	UT_ASSERTeq((size_t)off, n / 2);
 
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 0);
+	UT_ASSERTeq(len, 0);
 
 	/*
-	 * Producer 1: commit.  Consumer can get the first range.
+	 * Producer 1: commit. Consumer can get the first range.
 	 */
 	ringbuf_produce(r, w1);
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 5 && woff == 0);
+	UT_ASSERTeq(len, n / 2);
+	UT_ASSERTeq(woff, 0);
 	ringbuf_release(r, len);
 
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 0);
+	UT_ASSERTeq(len, 0);
 
 	/*
-	 * Producer 1: acquire-produce 4 bytes, triggering wrap-around.
-	 * Consumer should still fail.
+	 * Producer 1: acquire-produce 1/4 of ringbufer size, triggering
+	 * wrap-around. Consumer should still fail.
 	 */
-	off = ringbuf_acquire(r, w1, 4);
-	UT_ASSERT(off == 0);
+	off = ringbuf_acquire(r, w1, n / 4);
+	UT_ASSERTeq(off, 0);
 
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 0);
+	UT_ASSERTeq(len, 0);
 
 	ringbuf_produce(r, w1);
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 0);
+	UT_ASSERTeq(len, 0);
 
 	/*
-	 * Finally, producer 2 commits its 3 bytes.
+	 * Finally, producer 2 commits its 1/3 of ringbuffer size.
 	 * Consumer can proceed for both ranges.
 	 */
 	ringbuf_produce(r, w2);
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 3 && woff == 5);
+	UT_ASSERTeq(len, n / 3);
+	UT_ASSERTeq(woff, n / 2);
 	ringbuf_release(r, len);
 
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 4 && woff == 0);
+	UT_ASSERTeq(len, n / 4);
+	UT_ASSERTeq(woff, 0);
 	ringbuf_release(r, len);
 
 	/*
@@ -236,18 +244,17 @@ test_overlap(void)
 	 * After unregistration of all producers, consumer should still fail
 	 */
 	len = ringbuf_consume(r, &woff);
-	UT_ASSERT(len == 0);
+	UT_ASSERTeq(len, 0);
 
 	delete r;
 }
 
 static void
-test_random(void)
+test_random(size_t buff_size, size_t iterations)
 {
 	ptrdiff_t off1 = -1, off2 = -1;
-	unsigned n = 1000 * 1000 * 50;
-	constexpr size_t buff_size = 500;
-	unsigned char buf[buff_size];
+
+	auto buf = std::unique_ptr<size_t[]>(new size_t[buff_size]);
 
 	ringbuf_t *r = new ringbuf_t(MAX_WORKERS, buff_size);
 	ringbuf_worker_t *w1, *w2;
@@ -255,20 +262,19 @@ test_random(void)
 	w1 = ringbuf_register(r, 0);
 	w2 = ringbuf_register(r, 1);
 
-	while (n--) {
+	while (iterations--) {
 		size_t len, woff;
 
-		len = static_cast<size_t>(generator()) % (sizeof(buf) / 2) + 1;
+		len = static_cast<size_t>(generator()) % (buff_size / 2) + 1;
 		switch (generator() % 3) {
 			/* consumer */
 			case 0:
 				len = ringbuf_consume(r, &woff);
 				if (len > 0) {
 					size_t vlen = 0;
-					UT_ASSERT(woff < sizeof(buf));
+					UT_ASSERT(woff < buff_size);
 					while (vlen < len) {
-						size_t mlen =
-							(unsigned)buf[woff];
+						size_t mlen = buf[woff];
 						UT_ASSERT(mlen > 0);
 						vlen += mlen;
 						woff += mlen;
@@ -283,11 +289,11 @@ test_random(void)
 					if ((off1 = ringbuf_acquire(
 						     r, w1, len)) >= 0) {
 						UT_ASSERT((size_t)off1 <
-							  sizeof(buf));
-						buf[off1] = len - 1;
+							  buff_size);
+						buf[(size_t)off1] = len - 1;
 					}
 				} else {
-					buf[off1]++;
+					buf[(size_t)off1]++;
 					ringbuf_produce(r, w1);
 					off1 = -1;
 				}
@@ -298,11 +304,11 @@ test_random(void)
 					if ((off2 = ringbuf_acquire(
 						     r, w2, len)) >= 0) {
 						UT_ASSERT((size_t)off2 <
-							  sizeof(buf));
-						buf[off2] = len - 1;
+							  buff_size);
+						buf[(size_t)off2] = len - 1;
 					}
 				} else {
-					buf[off2]++;
+					buf[(size_t)off2]++;
 					ringbuf_produce(r, w2);
 					off2 = -1;
 				}
@@ -322,9 +328,14 @@ main(void)
 	std::cout << "rand seed: " << seed << std::endl;
 	generator = std::mt19937_64(seed);
 
-	test_wraparound();
+	test_overlap(4_Giga);
+	test_overlap(24_Peta);
+
+	test_wraparound(100_Giga);
+	test_wraparound(48_Peta);
+
+	test_random(1_Mega, 1000 * 1000);
+
 	test_multi();
-	test_overlap();
-	test_random();
 	return 0;
 }

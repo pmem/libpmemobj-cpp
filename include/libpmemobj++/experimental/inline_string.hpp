@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -29,6 +29,9 @@ namespace experimental
 /**
  * This class serves similar purpose to pmem::obj::string, but
  * keeps the data within the same allocation as inline_string itself.
+ *
+ * Unlike other containers, can be used on pmem and dram. Modifiers (like
+ * assign() can only be called if inline string is kept on pmem).
  *
  * The data is always kept right after the inline_string structure.
  * It means that creating an object of inline_string must be done
@@ -97,17 +100,12 @@ using inline_u32string = basic_inline_string<char32_t>;
 
 /**
  * Constructs inline string from a string_view.
- *
- * @throw pool_error if inline_string doesn't reside on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits>::basic_inline_string(
 	basic_string_view<CharT, Traits> v)
     : size_(v.size()), capacity_(v.size())
 {
-	if (nullptr == pmemobj_pool_by_ptr(this))
-		throw pmem::pool_error("Invalid pool handle.");
-
 	std::copy(v.data(), v.data() + static_cast<ptrdiff_t>(size_), data());
 
 	data()[static_cast<ptrdiff_t>(size_)] = '\0';
@@ -115,32 +113,22 @@ basic_inline_string<CharT, Traits>::basic_inline_string(
 
 /**
  * Constructs empty inline_string with specified capacity.
- *
- * @throw pool_error if inline_string doesn't reside on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits>::basic_inline_string(size_type capacity)
     : size_(0), capacity_(capacity)
 {
-	if (nullptr == pmemobj_pool_by_ptr(this))
-		throw pmem::pool_error("Invalid pool handle.");
-
 	data()[static_cast<ptrdiff_t>(size_)] = '\0';
 }
 
 /**
  * Copy constructor
- *
- * @throw pool_error if inline_string doesn't reside on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits>::basic_inline_string(
 	const basic_inline_string &rhs)
     : size_(rhs.size()), capacity_(rhs.capacity())
 {
-	if (nullptr == pmemobj_pool_by_ptr(this))
-		throw pmem::pool_error("Invalid pool handle.");
-
 	std::copy(rhs.data(), rhs.data() + static_cast<ptrdiff_t>(size_),
 		  data());
 
@@ -366,12 +354,17 @@ basic_inline_string<CharT, Traits>::snapshotted_data(size_t p, size_t n)
  * Transactionally assign content of basic_string_view.
  *
  * @throw std::out_of_range if rhs is larger than capacity.
+ * @throw pool_error is inline string is not on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits> &
 basic_inline_string<CharT, Traits>::assign(basic_string_view<CharT, Traits> rhs)
 {
-	auto pop = obj::pool_base(pmemobj_pool_by_ptr(this));
+	auto cpop = pmemobj_pool_by_ptr(this);
+	if (nullptr == cpop)
+		throw pmem::pool_error("Invalid pool handle.");
+
+	auto pop = pool_base(cpop);
 
 	if (rhs.size() > capacity())
 		throw std::out_of_range("inline_string capacity exceeded.");

@@ -115,6 +115,22 @@ struct ringbuf_t {
 		space = length;
 		end = RBUF_OFF_MAX;
 		nworkers = max_workers;
+
+		/* Helgrind/Drd does not understand std::atomic */
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		VALGRIND_HG_DISABLE_CHECKING(&next, sizeof(next));
+		VALGRIND_HG_DISABLE_CHECKING(&end, sizeof(end));
+		VALGRIND_HG_DISABLE_CHECKING(&written, sizeof(written));
+
+		for (size_t i = 0; i < max_workers; i++) {
+			VALGRIND_HG_DISABLE_CHECKING(
+				&workers[i].seen_off,
+				sizeof(workers[i].seen_off));
+			VALGRIND_HG_DISABLE_CHECKING(
+				&workers[i].registered,
+				sizeof(workers[i].registered));
+		}
+#endif
 	}
 };
 

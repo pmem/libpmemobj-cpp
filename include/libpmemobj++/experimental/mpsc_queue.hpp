@@ -252,6 +252,11 @@ mpsc_queue::try_consume(Function &&f)
 
 	size_t offset;
 	size_t len = ringbuf_consume(ring_buffer.get(), &offset);
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
+#endif
+
 	if (len != 0) {
 		pmem->written = offset;
 		pop.persist(pmem->written);
@@ -263,6 +268,10 @@ mpsc_queue::try_consume(Function &&f)
 		bool elements_to_consume = (acc.begin() != acc.end());
 		if (elements_to_consume)
 			f(acc);
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
+#endif
 
 		ringbuf_release(ring_buffer.get(), len);
 
@@ -280,6 +289,13 @@ inline mpsc_queue::worker::worker(mpsc_queue *q)
 {
 	queue = q;
 	auto &manager = queue->get_id_manager();
+
+#if LIBPMEMOBJ_CPP_VG_DRD_ENABLED
+	ANNOTATE_BENIGN_RACE_SIZED(
+		&manager, sizeof(std::mutex),
+		"https://bugs.kde.org/show_bug.cgi?id=416286");
+#endif
+
 	id = manager.get();
 
 	assert(id < q->ring_buffer->nworkers);
@@ -330,6 +346,10 @@ mpsc_queue::worker::try_produce(size_t size, Function &&f)
 					       pmem::detail::CACHELINE_SIZE);
 	auto offset = ringbuf_acquire(queue->ring_buffer.get(), w, req_size);
 
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(queue->ring_buffer.get());
+#endif
+
 	if (offset == -1)
 		return false;
 
@@ -341,6 +361,10 @@ mpsc_queue::worker::try_produce(size_t size, Function &&f)
 
 	store_to_log(pmem::obj::string_view(data.get(), size),
 		     queue->buf + offset);
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_BEFORE(queue->ring_buffer.get());
+#endif
 
 	ringbuf_produce(queue->ring_buffer.get(), w);
 
@@ -355,10 +379,18 @@ mpsc_queue::worker::try_produce(pmem::obj::string_view data)
 				       pmem::detail::CACHELINE_SIZE);
 	auto offset = ringbuf_acquire(queue->ring_buffer.get(), w, req_size);
 
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_AFTER(queue->ring_buffer.get());
+#endif
+
 	if (offset == -1)
 		return false;
 
 	store_to_log(data, queue->buf + offset);
+
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+	ANNOTATE_HAPPENS_BEFORE(queue->ring_buffer.get());
+#endif
 
 	ringbuf_produce(queue->ring_buffer.get(), w);
 

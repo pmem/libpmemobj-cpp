@@ -65,18 +65,19 @@ namespace experimental
 
 namespace ringbuf
 {
-static constexpr size_t RBUF_OFF_MASK = 0x00000000ffffffffUL;
-static constexpr size_t WRAP_LOCK_BIT = 0x8000000000000000UL;
-static constexpr size_t RBUF_OFF_MAX = UINT64_MAX & ~WRAP_LOCK_BIT;
-
-static constexpr size_t WRAP_COUNTER = 0x7fffffff00000000UL;
-static size_t
-WRAP_INCR(size_t x)
-{
-	return ((x + 0x100000000UL) & WRAP_COUNTER);
-}
 
 typedef uint64_t ringbuf_off_t;
+
+static constexpr ringbuf_off_t RBUF_OFF_MASK = UINT64_MAX >> 8;
+static constexpr ringbuf_off_t WRAP_LOCK_BIT = 0x1ULL << 63;
+static constexpr ringbuf_off_t RBUF_OFF_MAX = UINT64_MAX & ~WRAP_LOCK_BIT;
+
+static constexpr uint64_t WRAP_COUNTER = 0x7000000000000000ULL;
+static ringbuf_off_t
+WRAP_INCR(size_t x)
+{
+	return ((x + (0x1ULL << 57)) & WRAP_COUNTER);
+}
 
 struct ringbuf_worker_t {
 	std::atomic<ringbuf_off_t> seen_off;

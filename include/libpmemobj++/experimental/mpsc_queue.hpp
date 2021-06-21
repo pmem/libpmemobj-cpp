@@ -106,7 +106,12 @@ public:
 
 		template <typename Function>
 		bool try_produce(size_t size, Function &&f);
-		bool try_produce(pmem::obj::string_view data);
+
+		template <typename Function = void (*)(pmem::obj::string_view)>
+		bool try_produce(
+			pmem::obj::string_view data,
+			Function &&on_produce =
+				[](pmem::obj::string_view target) {});
 
 	private:
 		mpsc_queue *queue;
@@ -377,8 +382,10 @@ mpsc_queue::worker::try_produce(size_t size, Function &&f)
 	return true;
 }
 
-inline bool
-mpsc_queue::worker::try_produce(pmem::obj::string_view data)
+template <typename Function>
+bool
+mpsc_queue::worker::try_produce(pmem::obj::string_view data,
+				Function &&on_produce)
 {
 	auto req_size =
 		pmem::detail::align_up(data.size() + sizeof(first_block::size),
@@ -397,6 +404,9 @@ mpsc_queue::worker::try_produce(pmem::obj::string_view data)
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_BEFORE(queue->ring_buffer.get());
 #endif
+
+	on_produce(pmem::obj::string_view(
+		queue->buf + offset + sizeof(first_block::size), data.size()));
 
 	ringbuf_produce(queue->ring_buffer.get(), w);
 

@@ -113,6 +113,34 @@ check_consistency(pmem::obj::pool<root> pop)
 	for (auto &str : values_on_pmem) {
 		UT_ASSERT(str == std::string(produce_size, fill_pattern));
 	}
+
+	auto worker = queue.register_worker();
+
+	static const auto overwrite_pattern = char(2);
+	static const auto overwrite_size = 64;
+
+	while (true) {
+		auto ret = worker.try_produce(
+			overwrite_size, [&](pmem::obj::slice<char *> range) {
+				std::fill_n(range.begin(), overwrite_size,
+					    overwrite_pattern);
+			});
+
+		if (!ret)
+			break;
+	}
+
+	values_on_pmem.clear();
+	auto ret = queue.try_consume([&](queue_type::read_accessor rd_acc) {
+		for (auto entry : rd_acc)
+			values_on_pmem.emplace_back(entry.data(), entry.size());
+	});
+	UT_ASSERT(ret);
+
+	for (auto &str : values_on_pmem) {
+		UT_ASSERT(str ==
+			  std::string(overwrite_size, overwrite_pattern));
+	}
 }
 
 void

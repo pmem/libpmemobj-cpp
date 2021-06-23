@@ -2362,7 +2362,8 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
  * Private helper function. Must be called during transaction. Allocates new
  * memory for capacity_new number of elements and copies or moves old elements
  * to new memory area. If the current size is greater than capacity_new, the
- * container is reduced to its first capacity_new elements.
+ * container is reduced to its first capacity_new elements. If was never
+ * allocated behaves as an alloc call.
  *
  * param[in] capacity_new new capacity.
  *
@@ -2380,6 +2381,13 @@ void
 vector<T>::realloc(size_type capacity_new)
 {
 	assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+
+	/*
+	 * If _data == nullptr this object has never allocated any memory
+	 * so we need to behave as alloc instead.
+	 */
+	if (_data == nullptr)
+		return alloc(capacity_new);
 
 	/*
 	 * XXX: future optimization: we don't have to snapshot data

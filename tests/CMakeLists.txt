@@ -9,23 +9,18 @@ include(ctest_helpers.cmake)
 add_custom_target(tests)
 
 # Add checks when DEVELOPER_MODE is ON
-add_cppstyle(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
-						  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
-						  ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-						  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
-						  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
-						  ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*pp
-						  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp
-						  ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
+set(common_files ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
+				 ${CMAKE_CURRENT_SOURCE_DIR}/*.c
+				 ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+				 ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+				 ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
+				 ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*pp
+				 ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp
+				 ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp
+				 ${CMAKE_CURRENT_SOURCE_DIR}/mpsc_queue/*.*pp)
 
-add_check_whitespace(tests-common ${CMAKE_CURRENT_SOURCE_DIR}/common/*.*pp
-								  ${CMAKE_CURRENT_SOURCE_DIR}/*.c
-								  ${CMAKE_CURRENT_SOURCE_DIR}/*.h
-								  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
-								  ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
-								  ${CMAKE_CURRENT_SOURCE_DIR}/check_is_pmem/*.*pp
-								  ${CMAKE_CURRENT_SOURCE_DIR}/container_generic/*.*pp
-								  ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
+add_cppstyle(tests-common ${common_files})
+add_check_whitespace(tests-common ${common_files})
 add_check_whitespace(tests-cmake ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 # Set up compilation flags
@@ -963,15 +958,36 @@ endif()
 ################################################################################
 #################################### MPSC_QUEUE ################################
 if(TEST_MPSC_QUEUE)
-	#Test for internal implementation of ringbuffer
+	# Test for internal implementation of ringbuffer
 	build_test(ringbuf mpsc_queue/ringbuf.cpp)
-	add_test_generic(NAME ringbuf TRACERS none)
+	add_test_generic(NAME ringbuf TRACERS none memcheck drd helgrind)
 
-	build_test(mpsc_queue_mt mpsc_queue/mt.cpp)
-	add_test_generic(NAME mpsc_queue_mt TRACERS none)
+	# XXX: debug this test
+	# build_test(mpsc_queue_mt mpsc_queue/mt.cpp)
+	# add_test_generic(NAME mpsc_queue_mt TRACERS none drd helgrind memcheck pmemcheck)
+
+	build_test(mpsc_queue_consume_multipass mpsc_queue/consume_multipass.cpp)
+	add_test_generic(NAME mpsc_queue_consume_multipass TRACERS none memcheck pmemcheck)
 
 	build_test(mpsc_queue_basic mpsc_queue/basic.cpp)
-	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none)
+	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none memcheck pmemcheck)
+
+	build_test(mpsc_queue_empty mpsc_queue/empty.cpp)
+	add_test_generic(NAME mpsc_queue_empty TRACERS none memcheck pmemcheck)
+
+	build_test(mpsc_queue_recovery_order mpsc_queue/recovery_order.cpp)
+	add_test_generic(NAME mpsc_queue_recovery_order SCRIPT mpsc_queue/mpsc_queue_recovery_order.cmake TRACERS none memcheck pmemcheck)
+
+	if(PMREORDER_SUPPORTED)
+		build_test(mpsc_queue_recovery mpsc_queue/recovery.cpp)
+		add_test_generic(NAME mpsc_queue_recovery CASE 0 SCRIPT mpsc_queue/recovery_0.cmake TRACERS none)
+		add_test_generic(NAME mpsc_queue_recovery CASE 1 SCRIPT mpsc_queue/recovery_1.cmake TRACERS none)
+		add_test_generic(NAME mpsc_queue_recovery CASE 2 SCRIPT mpsc_queue/recovery_2.cmake TRACERS none)
+		add_test_generic(NAME mpsc_queue_recovery CASE 3 SCRIPT mpsc_queue/recovery_3.cmake TRACERS none)
+
+		build_test(mpsc_queue_recovery_after_consume mpsc_queue/recovery_after_consume.cpp)
+		add_test_generic(NAME mpsc_queue_recovery_after_consume SCRIPT mpsc_queue/recovery_after_consume_0.cmake TRACERS none)
+	endif()
 endif()
 ################################################################################
 #################################### RADIX_TREE ################################

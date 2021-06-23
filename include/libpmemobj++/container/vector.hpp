@@ -1387,7 +1387,11 @@ vector<T>::reserve(size_type capacity_new)
 		return;
 
 	pool_base pb = get_pool();
-	flat_transaction::run(pb, [&] { realloc(capacity_new); });
+	flat_transaction::run(pb, [&] {
+		if (_data == nullptr)
+			alloc(capacity_new);
+		else
+			realloc(capacity_new); });
 }
 
 /**

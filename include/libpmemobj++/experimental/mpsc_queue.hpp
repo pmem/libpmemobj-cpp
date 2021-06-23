@@ -263,50 +263,52 @@ mpsc_queue::try_consume_batch(Function &&f)
 		throw pmem::transaction_scope_error(
 			"Function called inside a transaction scope.");
 
-	size_t offset;
-	size_t len = ringbuf_consume(ring_buffer.get(), &offset);
+	bool consumed = false;
+	for (int i = 0; i < 2; i++) {
+		size_t offset;
+		size_t len = ringbuf_consume(ring_buffer.get(), &offset);
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
+		ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
 #endif
 
-	if (!len)
-		return false;
+		if (!len)
+			return consumed;
 
-	auto data = buf + offset;
+		auto data = buf + offset;
+		auto begin = iterator(data, data + len);
+		auto end = iterator(data + len, data + len);
 
-	auto begin = iterator(data, data + len);
-	auto end = iterator(data + len, data + len);
+		pmem::obj::flat_transaction::run(pop, [&] {
+			if (begin != end) {
+				consumed = true;
+				f(batch_type(begin, end));
+			}
 
-	auto elements_to_consume = begin != end;
+			auto b = reinterpret_cast<first_block *>(data);
+			clear_cachelines(b, len);
 
-	pmem::obj::flat_transaction::run(pop, [&] {
-		if (elements_to_consume)
-			f(batch_type(begin, end));
-
-		auto b = reinterpret_cast<first_block *>(data);
-		clear_cachelines(b, len);
-
-		if (offset + len < buff_size_)
-			pmem->written = offset + len;
-		else if (offset + len == buff_size_)
-			pmem->written = 0;
-		else
-			assert(false);
-	});
+			if (offset + len < buff_size_)
+				pmem->written = offset + len;
+			else if (offset + len == buff_size_)
+				pmem->written = 0;
+			else
+				assert(false);
+		});
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
+		ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
 #endif
 
-	ringbuf_release(ring_buffer.get(), len);
+		ringbuf_release(ring_buffer.get(), len);
 
-	/* XXX: it would be better to call f once - hide
-	 * wraparound behind iterators */
-	/* XXX: add param to ringbuf_consume and do not
-	 * call store_explicit in consume */
-	return try_consume_batch(std::forward<Function>(f)) ||
-		elements_to_consume;
+		/* XXX: it would be better to call f once - hide
+		 * wraparound behind iterators */
+		/* XXX: add param to ringbuf_consume and do not
+		 * call store_explicit in consume */
+	}
+
+	return consumed;
 }
 
 inline mpsc_queue::worker::worker(mpsc_queue *q)

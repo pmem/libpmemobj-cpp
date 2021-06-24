@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2021, Intel Corporation */
 
+/**
+ * @file
+ * Persistent tagged pointer.
+ */
+
 #ifndef LIBPMEMOBJ_CPP_TAGGED_PTR
 #define LIBPMEMOBJ_CPP_TAGGED_PTR
 
@@ -163,10 +168,8 @@ private:
 
 	PointerType ptr;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-	friend std::atomic<tagged_ptr_impl<
+	friend struct std::atomic<tagged_ptr_impl<
 		P1, P2, obj::experimental::self_relative_ptr<void>>>;
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 
 template <typename P1, typename P2>

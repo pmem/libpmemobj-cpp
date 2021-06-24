@@ -46,7 +46,8 @@ private:
 	struct first_block {
 		static constexpr size_t CAPACITY =
 			pmem::detail::CACHELINE_SIZE - sizeof(size_t);
-		static constexpr size_t DIRTY_FLAG = (1ULL << 63);
+		static constexpr size_t DIRTY_FLAG =
+			(1ULL << (sizeof(size_t) * 8 - 1));
 
 		pmem::obj::p<size_t> size;
 		char data[CAPACITY];
@@ -267,8 +268,8 @@ mpsc_queue::try_consume_batch(Function &&f)
 
 	/* Need to call try_consume twice, as some data may be at the end
 	 * of buffer, and some may be at the beginning. Ringbuffer does not
-	 * merge those two pats into one try_consume. If all data was
-	 * consumed during first try_consume, second would fail. */
+	 * merge those two parts into one try_consume. If all data was
+	 * consumed during first try_consume, second will do nothing. */
 	for (int i = 0; i < 2; i++) {
 		size_t offset;
 		size_t len = ringbuf_consume(ring_buffer.get(), &offset);

@@ -27,7 +27,10 @@ jobs:
         CONFIG: ["TYPE=debug OS=ubuntu OS_VER=20.04 TESTS_USAN=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 TESTS_UBSAN=1",
                  "TYPE=valgrind OS=fedora OS_VER=rawhide TESTS_PMREORDER=0",
-                 "TYPE=memcheck_drd OS=fedora OS_VER=rawhide TESTS_PMREORDER=0"]
+                 "TYPE=memcheck_drd OS=fedora OS_VER=rawhide TESTS_PMREORDER=0",
+                 "TYPE=package OS=fedora OS_VER=34",
+                 "TYPE=package OS=fedora OS_VER=rawhide TESTS_PMREORDER=0",
+                 "TYPE=package OS=ubuntu OS_VER=devel"]
     steps:
       - name: Clone the git repo
         uses: actions/checkout@v2

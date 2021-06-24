@@ -126,7 +126,7 @@ run_break_recovery(pmem::obj::pool<root> pop)
 			values_on_pmem.emplace_back(entry.data(), entry.size());
 	});
 
-	VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
+	VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.END");
 
 	UT_ASSERT(values_on_pmem.size() >= expected);
 

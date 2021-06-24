@@ -28,7 +28,7 @@ struct root {
 static void
 test_recovery(pmem::obj::pool<root> pop, bool create)
 {
-	const auto produce_size = 64;
+	const size_t produce_size = 64;
 
 	auto proot = pop.root();
 

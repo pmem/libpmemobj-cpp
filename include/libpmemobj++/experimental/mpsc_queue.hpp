@@ -46,7 +46,8 @@ private:
 	struct first_block {
 		static constexpr size_t CAPACITY =
 			pmem::detail::CACHELINE_SIZE - sizeof(size_t);
-		static constexpr size_t DIRTY_FLAG = (1ULL << 63);
+		static constexpr size_t DIRTY_FLAG =
+			(1ULL << (sizeof(size_t) * 8 - 1));
 
 		pmem::obj::p<size_t> size;
 		char data[CAPACITY];

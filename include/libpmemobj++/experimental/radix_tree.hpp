@@ -2192,12 +2192,24 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 
 			result = const_iterator(target_leaf, this);
 		} else if (diff == leaf_key.size()) {
+			assert(n == leaf);
+
 			/* Leaf's key is a prefix of the looked-for key. Leaf's
 			 * key is the biggest key less than the looked-for key.
-			 * The target node must be the next leaf. */
-			result = const_iterator(leaf, this);
-			if (!result.try_increment())
+			 * The target node must be the next leaf. Note that we
+			 * cannot just call const_iterator(leaf,
+			 * this).try_increment() because some other element with
+			 * key larger than leaf and smaller than k could be
+			 * inserted concurrently. */
+			auto target_leaf = next_leaf<node::direction::Forward>(
+				prev->template make_iterator<
+					node::direction::Forward>(slot),
+				prev);
+
+			if (!target_leaf.first)
 				continue;
+
+			result = const_iterator(target_leaf.second, this);
 		} else {
 			assert(diff < leaf_key.size() && diff < key.size());
 

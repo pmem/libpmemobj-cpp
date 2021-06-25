@@ -154,14 +154,6 @@ elseif(NOT VALGRIND_FOUND)
 	message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
 endif()
 
-# Find Clang
-find_program(CLANG NAMES clang)
-if(CLANG)
-	message(STATUS "Found clang: ${CLANG} (version: ${CLANG_VERSION})")
-else()
-	message(STATUS "clang not found")
-endif()
-
 if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_BENCHMARKS)
 	# Find libpmem and libpmemobj (PMDK libraries)
 	if(PKG_CONFIG_FOUND)
@@ -174,10 +166,9 @@ if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_BENCHMARKS)
 
 	# Some tests and examples require clang >= 8.0, because of the bug
 	# (https://bugs.llvm.org/show_bug.cgi?id=28280), which is fixed in clang v8.0.
-	set(CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG "8.0")
-	if(CLANG)
-		get_program_version_major_minor(${CLANG} CLANG_VERSION)
-		if(CLANG_VERSION VERSION_LESS CLANG_REQUIRED_BY_DESTRUCTOR_REFERENCE_BUG)
+
+	if("${CMAKE_C_COMPILER_ID}" MATCHES "Clang" AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+		if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "8.0")
 			set(CLANG_DESTRUCTOR_REFERENCE_BUG_PRESENT 1)
 		endif()
 	endif()

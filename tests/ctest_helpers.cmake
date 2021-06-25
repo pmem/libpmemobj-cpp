@@ -139,7 +139,7 @@ endfunction()
 # Function to build test with atomic
 function(build_test_atomic name)
 	build_test(${name} ${ARGN})
-	if(CLANG)
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 		target_link_libraries(${name} atomic)
 	endif()
 endfunction()

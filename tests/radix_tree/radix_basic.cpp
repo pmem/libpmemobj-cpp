@@ -399,6 +399,27 @@ test_find(nvobj::pool<root> &pop)
 
 		UT_ASSERTeq(num_allocs(pop), 0);
 	}
+
+	{
+		auto r = pop.root();
+
+		nvobj::transaction::run(pop, [&] {
+			r->radix_str =
+				nvobj::make_persistent<container_string>();
+		});
+
+		r->radix_str->try_emplace(std::string(1, char(1)), "");
+
+		auto ub = r->radix_str->upper_bound(std::string(1, char(-1)));
+		UT_ASSERT(ub == r->radix_str->end());
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_string>(
+				r->radix_str);
+		});
+
+		UT_ASSERTeq(num_allocs(pop), 0);
+	}
 }
 
 const auto compressed_path_len = 4;

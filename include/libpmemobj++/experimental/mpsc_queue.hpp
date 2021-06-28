@@ -80,6 +80,15 @@ private:
 	size_t buff_size_;
 	pmem_log_type *pmem;
 
+	static constexpr size_t consume_invalid =
+		std::numeric_limits<size_t>::max();
+
+	/* Stores offset and length of next message to be consumed. If
+	 * The values are set to `consume_invalid` next message must be
+	 * obtained from ringbug_consume. */
+	size_t consume_offset = size_t(consume_invalid);
+	size_t consume_len = size_t(consume_invalid);
+
 public:
 	class batch_type {
 	public:
@@ -271,19 +280,29 @@ mpsc_queue::try_consume_batch(Function &&f)
 	 * merge those two parts into one try_consume. If all data was
 	 * consumed during first try_consume, second will do nothing. */
 	for (int i = 0; i < 2; i++) {
-		size_t offset;
-		size_t len = ringbuf_consume(ring_buffer.get(), &offset);
+		/* consume_offset might be != consume_invalid if previous
+		 * try_consume_batch failed. In that case, call f() with the
+		 * same offset/len as before. */
+		if (consume_offset == consume_invalid) {
+			size_t offset;
+			auto len = ringbuf_consume(ring_buffer.get(), &offset);
+			if (!len)
+				return consumed;
+
+			consume_offset = offset;
+			consume_len = len;
+		} else {
+			assert(consume_len != 0 &&
+			       consume_len != consume_invalid);
+		}
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 		ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
 #endif
 
-		if (!len)
-			return consumed;
-
-		auto data = buf + offset;
-		auto begin = iterator(data, data + len);
-		auto end = iterator(data + len, data + len);
+		auto data = buf + consume_offset;
+		auto begin = iterator(data, data + consume_len);
+		auto end = iterator(data + consume_len, data + consume_len);
 
 		pmem::obj::flat_transaction::run(pop, [&] {
 			if (begin != end) {
@@ -292,11 +311,11 @@ mpsc_queue::try_consume_batch(Function &&f)
 			}
 
 			auto b = reinterpret_cast<first_block *>(data);
-			clear_cachelines(b, len);
+			clear_cachelines(b, consume_len);
 
-			if (offset + len < buff_size_)
-				pmem->written = offset + len;
-			else if (offset + len == buff_size_)
+			if (consume_offset + consume_len < buff_size_)
+				pmem->written = consume_offset + consume_len;
+			else if (consume_offset + consume_len == buff_size_)
 				pmem->written = 0;
 			else
 				assert(false);
@@ -306,7 +325,10 @@ mpsc_queue::try_consume_batch(Function &&f)
 		ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
 #endif
 
-		ringbuf_release(ring_buffer.get(), len);
+		ringbuf_release(ring_buffer.get(), consume_len);
+
+		consume_offset = consume_invalid;
+		consume_len = consume_invalid;
 
 		/* XXX: it would be better to call f once - hide
 		 * wraparound behind iterators */

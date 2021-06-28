@@ -969,6 +969,9 @@ if(TEST_MPSC_QUEUE)
 	build_test(mpsc_queue_consume_multipass mpsc_queue/consume_multipass.cpp)
 	add_test_generic(NAME mpsc_queue_consume_multipass TRACERS none memcheck pmemcheck)
 
+	build_test(mpsc_queue_consume_interrupt mpsc_queue/consume_interrupt.cpp)
+	add_test_generic(NAME mpsc_queue_consume_interrupt SCRIPT mpsc_queue/mpsc_queue_consume_interrupt.cmake TRACERS none memcheck pmemcheck)
+
 	build_test(mpsc_queue_basic mpsc_queue/basic.cpp)
 	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none memcheck pmemcheck)
 

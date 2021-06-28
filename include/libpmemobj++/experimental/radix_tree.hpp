@@ -2209,7 +2209,8 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 			 * The left siblings of *slot are all less than the
 			 * looked-for key (this is the case fo AXXB from the
 			 * example above). */
-			if (key[diff] < leaf_key[diff]) {
+			if (static_cast<unsigned char>(key[diff]) <
+			    static_cast<unsigned char>(leaf_key[diff])) {
 				auto target_leaf =
 					find_leaf<node::direction::Forward>(n);
 
@@ -2220,7 +2221,9 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 			} else if (slot == &root) {
 				result = const_iterator(nullptr, this);
 			} else {
-				assert(key[diff] > leaf_key[diff]);
+				assert(static_cast<unsigned char>(key[diff]) >
+				       static_cast<unsigned char>(
+					       leaf_key[diff]));
 
 				/* Since next byte in key is greater
 				 * than in leaf_key, the target node

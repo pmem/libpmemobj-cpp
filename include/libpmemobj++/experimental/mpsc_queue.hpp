@@ -46,7 +46,8 @@ private:
 	struct first_block {
 		static constexpr size_t CAPACITY =
 			pmem::detail::CACHELINE_SIZE - sizeof(size_t);
-		static constexpr size_t DIRTY_FLAG = (1ULL << 63);
+		static constexpr size_t DIRTY_FLAG =
+			(1ULL << (sizeof(size_t) * 8 - 1));
 
 		pmem::obj::p<size_t> size;
 		char data[CAPACITY];
@@ -106,7 +107,12 @@ public:
 
 		template <typename Function>
 		bool try_produce(size_t size, Function &&f);
-		bool try_produce(pmem::obj::string_view data);
+
+		template <typename Function = void (*)(pmem::obj::string_view)>
+		bool try_produce(
+			pmem::obj::string_view data,
+			Function &&on_produce =
+				[](pmem::obj::string_view target) {});
 
 	private:
 		mpsc_queue *queue;
@@ -119,8 +125,10 @@ public:
 	public:
 		pmem_log_type(size_t size);
 
+		pmem::obj::string_view data();
+
 	private:
-		pmem::obj::vector<char> data;
+		pmem::obj::vector<char> data_;
 		pmem::obj::p<size_t> written;
 
 		friend class mpsc_queue;
@@ -131,14 +139,10 @@ mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
 {
 	pop = pmem::obj::pool_by_vptr(&pmem);
 
-	auto addr = reinterpret_cast<uintptr_t>(&pmem.data[0]);
-	auto aligned_addr =
-		pmem::detail::align_up(addr, pmem::detail::CACHELINE_SIZE);
+	auto buf_data = pmem.data();
 
-	buf = reinterpret_cast<char *>(aligned_addr);
-	buff_size_ = pmem.data.size() - (aligned_addr - addr);
-	buff_size_ = pmem::detail::align_down(buff_size_,
-					      pmem::detail::CACHELINE_SIZE);
+	buf = const_cast<char *>(buf_data.data());
+	buff_size_ = buf_data.size();
 
 	ring_buffer = std::unique_ptr<ringbuf::ringbuf_t>(
 		new ringbuf::ringbuf_t(max_workers, buff_size_));
@@ -220,8 +224,23 @@ mpsc_queue::restore_offsets()
 }
 
 mpsc_queue::pmem_log_type::pmem_log_type(size_t size)
-    : data(size, 0), written(0)
+    : data_(size, 0), written(0)
 {
+}
+
+inline pmem::obj::string_view
+mpsc_queue::pmem_log_type::data()
+{
+	auto addr = reinterpret_cast<uintptr_t>(&data_[0]);
+	auto aligned_addr =
+		pmem::detail::align_up(addr, pmem::detail::CACHELINE_SIZE);
+
+	auto size = data_.size() - (aligned_addr - addr);
+	auto aligned_size =
+		pmem::detail::align_down(size, pmem::detail::CACHELINE_SIZE);
+
+	return pmem::obj::string_view(
+		reinterpret_cast<const char *>(aligned_addr), aligned_size);
 }
 
 inline pmem::detail::id_manager &
@@ -245,50 +264,57 @@ mpsc_queue::try_consume_batch(Function &&f)
 		throw pmem::transaction_scope_error(
 			"Function called inside a transaction scope.");
 
-	size_t offset;
-	size_t len = ringbuf_consume(ring_buffer.get(), &offset);
+	bool consumed = false;
+
+	/* Need to call try_consume twice, as some data may be at the end
+	 * of buffer, and some may be at the beginning. Ringbuffer does not
+	 * merge those two parts into one try_consume. If all data was
+	 * consumed during first try_consume, second will do nothing. */
+	for (int i = 0; i < 2; i++) {
+		size_t offset;
+		size_t len = ringbuf_consume(ring_buffer.get(), &offset);
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
+		ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
 #endif
 
-	if (!len)
-		return false;
+		if (!len)
+			return consumed;
 
-	auto data = buf + offset;
+		auto data = buf + offset;
+		auto begin = iterator(data, data + len);
+		auto end = iterator(data + len, data + len);
 
-	auto begin = iterator(data, data + len);
-	auto end = iterator(data + len, data + len);
+		pmem::obj::flat_transaction::run(pop, [&] {
+			if (begin != end) {
+				consumed = true;
+				f(batch_type(begin, end));
+			}
 
-	auto elements_to_consume = begin != end;
+			auto b = reinterpret_cast<first_block *>(data);
+			clear_cachelines(b, len);
 
-	pmem::obj::flat_transaction::run(pop, [&] {
-		if (elements_to_consume)
-			f(batch_type(begin, end));
-
-		auto b = reinterpret_cast<first_block *>(data);
-		clear_cachelines(b, len);
-
-		if (offset + len < buff_size_)
-			pmem->written = offset + len;
-		else if (offset + len == buff_size_)
-			pmem->written = 0;
-		else
-			assert(false);
-	});
+			if (offset + len < buff_size_)
+				pmem->written = offset + len;
+			else if (offset + len == buff_size_)
+				pmem->written = 0;
+			else
+				assert(false);
+		});
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
+		ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
 #endif
 
-	ringbuf_release(ring_buffer.get(), len);
+		ringbuf_release(ring_buffer.get(), len);
 
-	/* XXX: it would be better to call f once - hide
-	 * wraparound behind iterators */
-	/* XXX: add param to ringbuf_consume and do not
-	 * call store_explicit in consume */
-	return try_consume_batch(std::forward<Function>(f)) ||
-		elements_to_consume;
+		/* XXX: it would be better to call f once - hide
+		 * wraparound behind iterators */
+		/* XXX: add param to ringbuf_consume and do not
+		 * call store_explicit in consume */
+	}
+
+	return consumed;
 }
 
 inline mpsc_queue::worker::worker(mpsc_queue *q)
@@ -377,8 +403,10 @@ mpsc_queue::worker::try_produce(size_t size, Function &&f)
 	return true;
 }
 
-inline bool
-mpsc_queue::worker::try_produce(pmem::obj::string_view data)
+template <typename Function>
+bool
+mpsc_queue::worker::try_produce(pmem::obj::string_view data,
+				Function &&on_produce)
 {
 	auto req_size =
 		pmem::detail::align_up(data.size() + sizeof(first_block::size),
@@ -397,6 +425,9 @@ mpsc_queue::worker::try_produce(pmem::obj::string_view data)
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_BEFORE(queue->ring_buffer.get());
 #endif
+
+	on_produce(pmem::obj::string_view(
+		queue->buf + offset + sizeof(first_block::size), data.size()));
 
 	ringbuf_produce(queue->ring_buffer.get(), w);
 

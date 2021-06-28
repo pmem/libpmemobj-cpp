@@ -106,6 +106,9 @@ struct ringbuf_t {
 	unsigned nworkers;
 	std::unique_ptr<ringbuf_worker_t[]> workers;
 
+	/* Set by ringbuf_consume, reset by ringbuf_release. */
+	bool consume_in_progress;
+
 	ringbuf_t(size_t max_workers, size_t length)
 	    : workers(new ringbuf_worker_t[max_workers])
 	{
@@ -115,6 +118,7 @@ struct ringbuf_t {
 		space = length;
 		end = RBUF_OFF_MAX;
 		nworkers = max_workers;
+		consume_in_progress = false;
 
 		/* Helgrind/Drd does not understand std::atomic */
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
@@ -321,10 +325,14 @@ ringbuf_produce(ringbuf_t *rbuf, ringbuf_worker_t *w)
 
 /*
  * ringbuf_consume: get a contiguous range which is ready to be consumed.
+ *
+ * Nested consumes are not allowed.
  */
 inline size_t
 ringbuf_consume(ringbuf_t *rbuf, size_t *offset)
 {
+	assert(!rbuf->consume_in_progress);
+
 	ringbuf_off_t written = rbuf->written, next, ready;
 	size_t towrite;
 retry:
@@ -430,6 +438,9 @@ retry:
 
 	assert(ready >= written);
 	assert(towrite <= rbuf->space);
+
+	rbuf->consume_in_progress = true;
+
 	return towrite;
 }
 
@@ -439,6 +450,8 @@ retry:
 inline void
 ringbuf_release(ringbuf_t *rbuf, size_t nbytes)
 {
+	rbuf->consume_in_progress = false;
+
 	const size_t nwritten = rbuf->written + nbytes;
 
 	assert(rbuf->written <= rbuf->space);

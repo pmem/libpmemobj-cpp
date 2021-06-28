@@ -29,7 +29,7 @@ struct root {
 
 /* Basic try_produce-consume-recovery scenario */
 static void
-basic_test(pmem::obj::pool<root> pop, bool create)
+consume_interrupt(pmem::obj::pool<root> pop, bool create)
 {
 	auto proot = pop.root();
 
@@ -39,7 +39,7 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb",
 					   std::string(120, 'a')};
-	std::string store_to_next_run = "old";
+
 	if (create) {
 		auto ret = queue.try_consume_batch(
 			[&](queue_type::batch_type acc) {
@@ -47,9 +47,24 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 			});
 		UT_ASSERT(!ret);
 
+		/* XXX: this is to make sure that try_consume_batch later in the
+		 * test returns all elements within a single callback call. */
+		ret = worker.try_produce(values[0]);
+		UT_ASSERT(ret);
+		ret = queue.try_consume_batch(
+			[&](queue_type::batch_type rd_acc) {
+				std::vector<std::string> v;
+				for (const auto &str : rd_acc)
+					v.emplace_back(str.data(), str.size());
+
+				UT_ASSERTeq(v.size(), 1);
+				UT_ASSERT(v[0] == values[0]);
+			});
+		UT_ASSERT(ret);
+
 		/* Insert the data */
 		for (const auto &e : values) {
-			auto ret = worker.try_produce(
+			ret = worker.try_produce(
 				e.size(), [&](pmem::obj::slice<char *> range) {
 					std::copy_n(e.begin(), e.size(),
 						    range.begin());
@@ -59,32 +74,33 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 		/* Consume all the data */
 		std::vector<std::string> values_on_pmem;
-		ret = queue.try_consume_batch(
-			[&](queue_type::batch_type rd_acc) {
-				for (const auto &str : rd_acc) {
-					values_on_pmem.emplace_back(str.data(),
-								    str.size());
-				}
-			});
-		UT_ASSERT(ret);
+		const int retries = 3;
 
-		UT_ASSERTeq(values_on_pmem.size(), values.size());
+		for (int i = 0; i < retries; i++) {
+			try {
+				ret = queue.try_consume_batch(
+					[&](queue_type::batch_type rd_acc) {
+						for (const auto &str : rd_acc) {
+							values_on_pmem.emplace_back(
+								str.data(),
+								str.size());
+						}
+
+						throw std::runtime_error("");
+					});
+				ASSERT_UNREACHABLE;
+			} catch (std::runtime_error &) {
+			} catch (...) {
+				ASSERT_UNREACHABLE;
+			}
+		}
+
+		UT_ASSERTeq(values_on_pmem.size(), values.size() * retries);
 		for (auto &str : values) {
 			auto count = std::count(values_on_pmem.begin(),
 						values_on_pmem.end(), str);
-			UT_ASSERTeq(count, 1);
+			UT_ASSERTeq(count, retries);
 		}
-
-		/* Insert new data, which may be recovered in next run of
-		 * application */
-		ret = worker.try_produce(
-			store_to_next_run.size(),
-			[&](pmem::obj::slice<char *> range) {
-				std::copy_n(store_to_next_run.begin(),
-					    store_to_next_run.size(),
-					    range.begin());
-			});
-		UT_ASSERT(ret);
 	} else {
 		std::vector<std::string> values_on_pmem;
 		/* Recover the data in second run of application */
@@ -95,9 +111,12 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 						entry.data(), entry.size());
 			});
 		UT_ASSERT(ret);
-		UT_ASSERTeq(values_on_pmem.size(), 1);
-		UT_ASSERTeq(values_on_pmem[0].size(), store_to_next_run.size());
-		UT_ASSERT(values_on_pmem[0] == store_to_next_run);
+		UT_ASSERTeq(values_on_pmem.size(), values.size());
+		for (auto &str : values) {
+			auto count = std::count(values_on_pmem.begin(),
+						values_on_pmem.end(), str);
+			UT_ASSERTeq(count, 1);
+		}
 	}
 }
 
@@ -125,7 +144,7 @@ test(int argc, char *argv[])
 		pop = pmem::obj::pool<root>::open(std::string(path), LAYOUT);
 	}
 
-	basic_test(pop, create);
+	consume_interrupt(pop, create);
 
 	pop.close();
 }

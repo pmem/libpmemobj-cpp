@@ -42,8 +42,8 @@ There are also another blog posts regarding **C++ bindings**:
 
 ## Releases' support status
 
-Only some of branches/releases are fully supported. Latest releases can be
-seen on the ["releases" tab on the GitHub page](https://github.com/pmem/libpmemobj-cpp/releases).
+Only some of the latest branches/releases are fully supported. The most recent releases can be found
+on the ["releases" tab on the GitHub page](https://github.com/pmem/libpmemobj-cpp/releases).
 
 | Version branch | First release date | Last patch release | Maintenance status |
 | -------------- | ------------------ | ------------------ | ------------------ |
@@ -51,10 +51,10 @@ seen on the ["releases" tab on the GitHub page](https://github.com/pmem/libpmemo
 | stable-1.11 | Sep 30, 2020 | N/A | Full |
 | stable-1.10 | May 28, 2020 | N/A | Full |
 | stable-1.9 | Jan 31, 2020 | N/A | Full |
-| stable-1.8 | Oct 3, 2019 | 1.8.1 (Jan 24, 2020) | Full |
-| stable-1.7 | Jun 26, 2019 | N/A | Full |
-| stable-1.6 | Mar 15, 2019 | N/A | Limited |
-| stable-1.5 | Oct 26, 2018 | 1.5.1 (Feb 19, 2019) | Limited |
+| stable-1.8 | Oct 3, 2019 | 1.8.2 (TBD, 2021) | EOL |
+| stable-1.7 | Jun 26, 2019 | 1.7.1 (TBD, 2021) | EOL |
+| stable-1.6 | Mar 15, 2019 | 1.6.1 (TBD, 2021) | EOL |
+| stable-1.5 | Oct 26, 2018 | 1.5.2 (Jun 28, 2021) | EOL |
 
 Possible statuses:
 1. Full maintenance:
@@ -74,10 +74,13 @@ Possible statuses:
 ## Older documentation
 
 Older branches docs:
-* for [v1.11](./v1.11/doxygen/index.html)
-* for [v1.10](./v1.10/doxygen/index.html)
-* for [v1.9](./v1.9/doxygen/index.html)
-* for [v1.8](./v1.8/doxygen/index.html)
-* for [v1.7](./v1.7/doxygen/index.html)
-* for [v1.6](./v1.6/doxygen/index.html)
-* for [v1.5](./v1.5/doxygen/index.html)
+* for [stable-1.11](./v1.11/doxygen/index.html)
+* for [stable-1.10](./v1.10/doxygen/index.html)
+* for [stable-1.9](./v1.9/doxygen/index.html)
+
+### Archived documentation
+
+* for version [1.8.2](./v1.8/doxygen/index.html)
+* for version [1.7.1](./v1.7/doxygen/index.html)
+* for version [1.6.1](./v1.6/doxygen/index.html)
+* for version [1.5.2](./v1.5/doxygen/index.html)

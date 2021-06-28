@@ -1,8 +1,8 @@
-Mon Jun 21 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+Mon Jun 28 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
-	* Version 1.5.2-rc1
+	* Version 1.5.2
 
-	This release fixes minor bugs and typos.
+	This release fixes minor bugs.
 
 	This is the last patch release for libpmemobj-cpp 1.5 version.
 	Maintenance of this version is no longer supported.
@@ -11,7 +11,7 @@ Mon Jun 21 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 	- operator[] for contiguous_iterator takes signed integral instead of
 		unsigned
 	- throw an exception when pmemobj_mutex_unlock fail
-	- fix crash when previous transaction failed to start because of
+	- fix crash when a previous transaction failed to start because of
 		already taken lock.
 
 Tue Feb 19 2019 Marcin Ślusarz <marcin.slusarz@intel.com>

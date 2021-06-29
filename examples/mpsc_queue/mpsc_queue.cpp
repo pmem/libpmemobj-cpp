@@ -42,23 +42,28 @@ single_threaded(pmem::obj::pool<root> pop)
 
 	/* Consume data, which was left in the queue from the previous run of
 	 * application */
+	//! [try_consume_batch]
 	queue.try_consume_batch(
 		[&](pmem::obj::experimental::mpsc_queue::batch_type rd_acc) {
 			for (pmem::obj::string_view str : rd_acc) {
 				std::cout << str.data() << std::endl;
 			}
 		});
-	/* Produce and consume data */
+	//! [try_consume_batch]
+	//! [register_worker]
 	pmem::obj::experimental::mpsc_queue::worker worker =
 		queue.register_worker();
-
+	//! [register_worker]
 	for (size_t i = 0; i < values_to_produce.size(); i++) {
 		std::string v = values_to_produce[i];
+		//! [try_produce]
+		/* Produce data. */
 		worker.try_produce(
 			v.size(), [&](pmem::obj::slice<char *> range) {
 				std::copy_n(v.begin(), v.size(), range.begin());
 			});
-		/* consume produced data */
+		//! [try_produce]
+		/* Consume produced data. */
 		queue.try_consume_batch(
 			[&](pmem::obj::experimental::mpsc_queue::batch_type
 				    rd_acc) {
@@ -69,8 +74,10 @@ single_threaded(pmem::obj::pool<root> pop)
 				}
 			});
 	}
-	/* Porduce data to be for next run */
+	//! [try_produce_string_view]
+	/* Porduce data to be consumed in next run of application. */
 	worker.try_produce("Left for next run");
+	//! [try_produce_string_view]
 }
 
 //! [mpsc_queue_single_threaded_example]

@@ -2852,6 +2852,7 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<
 	IsConst>::radix_tree_iterator(leaf_ptr leaf_, tree_ptr tree)
     : leaf_(leaf_), tree(tree)
 {
+	assert(tree);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2859,8 +2860,9 @@ template <bool IsConst>
 template <bool C, typename Enable>
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<
 	IsConst>::radix_tree_iterator(const radix_tree_iterator<false> &rhs)
-    : leaf_(rhs.leaf_)
+    : leaf_(rhs.leaf_), tree(rhs.tree)
 {
+	assert(tree);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2871,6 +2873,8 @@ typename radix_tree<Key, Value,
 		   BytesView>::radix_tree_iterator<IsConst>::operator*() const
 {
 	assert(leaf_);
+	assert(tree);
+
 	return *leaf_;
 }
 
@@ -2882,6 +2886,8 @@ typename radix_tree<Key, Value,
 		   BytesView>::radix_tree_iterator<IsConst>::operator->() const
 {
 	assert(leaf_);
+	assert(tree);
+
 	return leaf_;
 }
 
@@ -2903,6 +2909,9 @@ void
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	basic_string_view<typename V::value_type, typename V::traits_type> rhs)
 {
+	assert(leaf_);
+	assert(tree);
+
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
 	if (rhs.size() <= leaf_->value().capacity() && !tree->mt.get(false)) {
@@ -2988,6 +2997,7 @@ bool
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_increment()
 {
 	assert(leaf_);
+	assert(tree);
 
 	constexpr auto direction = radix_tree::node::direction::Forward;
 	auto parent_ptr = leaf_->parent.load_acquire();
@@ -3035,6 +3045,7 @@ bool
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_decrement()
 {
 	constexpr auto direction = radix_tree::node::direction::Reverse;
+	assert(tree);
 
 	while (true) {
 		if (!leaf_) {

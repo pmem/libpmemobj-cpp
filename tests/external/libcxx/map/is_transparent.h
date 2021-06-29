@@ -6,7 +6,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2020, Intel Corporation
+// Copyright 2020-2021, Intel Corporation
 //
 // testing transparent
 //
@@ -170,31 +170,31 @@ struct transparent_less_not_referenceable {
 struct heterogeneous_bytes_view {
 	heterogeneous_bytes_view(const int *value)
 	{
-		v = (unsigned)(*value + (std::numeric_limits<int>::max)() + 1);
+		v = (unsigned)(*value) + (std::numeric_limits<int>::max)() + 1;
 	}
 
 	heterogeneous_bytes_view(const C2Int *value)
 	{
-		v = (unsigned)(value->get() +
-			       (std::numeric_limits<int>::max)() + 1);
+		v = (unsigned)(value->get()) +
+			(std::numeric_limits<int>::max)() + 1;
 	}
 
 	heterogeneous_bytes_view(const Moveable *value)
 	{
-		v = (unsigned)(value->get() +
-			       (std::numeric_limits<int>::max)() + 1);
+		v = (unsigned)(value->get()) +
+			(std::numeric_limits<int>::max)() + 1;
 	}
 
 	heterogeneous_bytes_view(const MoveableWrapper *value)
 	{
-		v = (unsigned)(value->get().get() +
-			       (std::numeric_limits<int>::max)() + 1);
+		v = (unsigned)(value->get().get()) +
+			(std::numeric_limits<int>::max)() + 1;
 	}
 
 	heterogeneous_bytes_view(const PrivateConstructor *value)
 	{
-		v = (unsigned)(value->get() +
-			       (std::numeric_limits<int>::max)() + 1);
+		v = (unsigned)(value->get()) +
+			(std::numeric_limits<int>::max)() + 1;
 	}
 
 	size_t

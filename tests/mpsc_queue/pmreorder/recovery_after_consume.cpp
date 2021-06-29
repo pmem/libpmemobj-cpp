@@ -6,7 +6,7 @@
  * which breaks produce after produce/consume cycle.
  */
 
-#include "queue.hpp"
+#include "../queue.hpp"
 
 #include <algorithm>
 #include <string>

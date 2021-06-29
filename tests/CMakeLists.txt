@@ -970,23 +970,23 @@ if(TEST_MPSC_QUEUE)
 	add_test_generic(NAME mpsc_queue_consume_multipass TRACERS none memcheck pmemcheck)
 
 	build_test(mpsc_queue_basic mpsc_queue/basic.cpp)
-	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/mpsc_queue_basic_0.cmake TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME mpsc_queue_basic SCRIPT mpsc_queue/basic.cmake TRACERS none memcheck pmemcheck)
 
 	build_test(mpsc_queue_empty mpsc_queue/empty.cpp)
 	add_test_generic(NAME mpsc_queue_empty TRACERS none memcheck pmemcheck)
 
 	build_test(mpsc_queue_recovery_order mpsc_queue/recovery_order.cpp)
-	add_test_generic(NAME mpsc_queue_recovery_order SCRIPT mpsc_queue/mpsc_queue_recovery_order.cmake TRACERS none memcheck pmemcheck)
+	add_test_generic(NAME mpsc_queue_recovery_order SCRIPT mpsc_queue/recovery_order.cmake TRACERS none memcheck pmemcheck)
 
 	if(PMREORDER_SUPPORTED)
-		build_test(mpsc_queue_recovery mpsc_queue/recovery.cpp)
-		add_test_generic(NAME mpsc_queue_recovery CASE 0 SCRIPT mpsc_queue/recovery_0.cmake TRACERS none)
-		add_test_generic(NAME mpsc_queue_recovery CASE 1 SCRIPT mpsc_queue/recovery_1.cmake TRACERS none)
-		add_test_generic(NAME mpsc_queue_recovery CASE 2 SCRIPT mpsc_queue/recovery_2.cmake TRACERS none)
-		add_test_generic(NAME mpsc_queue_recovery CASE 3 SCRIPT mpsc_queue/recovery_3.cmake TRACERS none)
+		build_test(mpsc_queue_recovery_pmreorder mpsc_queue/pmreorder/recovery.cpp)
+		add_test_generic(NAME mpsc_queue_recovery_pmreorder CASE 0 SCRIPT mpsc_queue/pmreorder/recovery_0.cmake TRACERS none)
+		add_test_generic(NAME mpsc_queue_recovery_pmreorder CASE 1 SCRIPT mpsc_queue/pmreorder/recovery_1.cmake TRACERS none)
+		add_test_generic(NAME mpsc_queue_recovery_pmreorder CASE 2 SCRIPT mpsc_queue/pmreorder/recovery_2.cmake TRACERS none)
+		add_test_generic(NAME mpsc_queue_recovery_pmreorder CASE 3 SCRIPT mpsc_queue/pmreorder/recovery_3.cmake TRACERS none)
 
-		build_test(mpsc_queue_recovery_after_consume mpsc_queue/recovery_after_consume.cpp)
-		add_test_generic(NAME mpsc_queue_recovery_after_consume SCRIPT mpsc_queue/recovery_after_consume_0.cmake TRACERS none)
+		build_test(mpsc_queue_recovery_after_consume_pmreorder mpsc_queue/pmreorder/recovery_after_consume.cpp)
+		add_test_generic(NAME mpsc_queue_recovery_after_consume_pmreorder SCRIPT mpsc_queue/pmreorder/recovery_after_consume.cmake TRACERS none)
 	endif()
 endif()
 ################################################################################

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019, Intel Corporation
+ * Copyright 2018-2021, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -668,7 +668,7 @@ vector<T>::assign(size_type count, const_reference value)
 			add_data_to_tx(0, size_old);
 
 			std::fill_n(
-				&_data[0],
+				_data.get(),
 				(std::min)(count,
 					   static_cast<size_type>(size_old)),
 				value);
@@ -1600,7 +1600,7 @@ vector<T>::insert(const_iterator pos, size_type count, const value_type &value)
 			single_element_iterator<value_type>(&value, count));
 	});
 
-	return iterator(&_data[static_cast<difference_type>(idx)]);
+	return iterator(_data.get() + static_cast<difference_type>(idx));
 }
 
 /**
@@ -1843,7 +1843,7 @@ typename vector<T>::iterator
 vector<T>::erase(const_iterator first, const_iterator last)
 {
 	size_type idx = static_cast<size_type>(
-		std::distance(const_iterator(&_data[0]), first));
+		std::distance(const_iterator(_data.get()), first));
 	size_type count = static_cast<size_type>(std::distance(first, last));
 
 	if (count == 0)
@@ -2306,10 +2306,11 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 	auto count = static_cast<size_type>(std::distance(first, last));
 
 	if (_capacity >= size() + count) {
-		pointer dest =
-			&_data[static_cast<difference_type>(size() + count)];
-		pointer begin = &_data[static_cast<difference_type>(idx)];
-		pointer end = &_data[static_cast<difference_type>(size())];
+		pointer dest = _data.get() +
+			static_cast<difference_type>(size() + count);
+		pointer begin = _data.get() + static_cast<difference_type>(idx);
+		pointer end =
+			_data.get() + static_cast<difference_type>(size());
 
 		add_data_to_tx(idx, size() - idx + count);
 
@@ -2327,9 +2328,11 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 
 		auto old_data = _data;
 		auto old_size = _size;
-		pointer old_begin = &_data[0];
-		pointer old_mid = &_data[static_cast<difference_type>(idx)];
-		pointer old_end = &_data[static_cast<difference_type>(size())];
+		pointer old_begin = _data.get();
+		pointer old_mid =
+			_data.get() + static_cast<difference_type>(idx);
+		pointer old_end =
+			_data.get() + static_cast<difference_type>(size());
 
 		_data = nullptr;
 		_size = _capacity = 0;
@@ -2397,7 +2400,7 @@ vector<T>::realloc(size_type capacity_new)
 
 	auto old_data = _data;
 	auto old_size = _size;
-	pointer old_begin = &_data[0];
+	pointer old_begin = _data.get();
 	pointer old_end = capacity_new < _size
 		? &_data[static_cast<difference_type>(capacity_new)]
 		: &_data[static_cast<difference_type>(size())];

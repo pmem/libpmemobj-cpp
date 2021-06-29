@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /**
  * @file
@@ -213,7 +213,7 @@ struct range_snapshotting_iterator
 	{
 		assert(data <= ptr);
 
-		if (snapshot_size > 0)
+		if (snapshot_size > 0 && ptr)
 			snapshot_range(ptr);
 	}
 

@@ -90,6 +90,8 @@ test(int argc, char *argv[])
 	}
 
 	run(pop);
+
+	pop.close();
 }
 
 int

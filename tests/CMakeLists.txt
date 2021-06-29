@@ -210,8 +210,11 @@ if(NOT USE_ASAN)
 	add_test_generic(NAME ptr_arith TRACERS none)
 endif()
 
-build_test(p_ext p_ext/p_ext.cpp)
-add_test_generic(NAME p_ext TRACERS none pmemcheck)
+if(NOT USE_UBSAN)
+	# We want to test overflow which is reported by UBSAN
+	build_test(p_ext p_ext/p_ext.cpp)
+	add_test_generic(NAME p_ext TRACERS none pmemcheck)
+endif()
 
 if(NOT WIN32)
 	build_test(shared_mutex_posix mutex/shared_mutex_posix.cpp)
@@ -582,8 +585,11 @@ if(TEST_CONCURRENT_HASHMAP)
 	build_test(concurrent_hash_map_singlethread concurrent_hash_map/concurrent_hash_map_singlethread.cpp)
 	add_test_generic(NAME concurrent_hash_map_singlethread TRACERS none memcheck pmemcheck)
 
-	build_test(concurrent_hash_map_layout concurrent_hash_map/concurrent_hash_map_layout.cpp)
-	add_test_generic(NAME concurrent_hash_map_layout TRACERS none)
+	if(NOT USE_UBSAN)
+		# ASSERT_ALIGNED_FIELD is not compatible with UBSAN
+		build_test(concurrent_hash_map_layout concurrent_hash_map/concurrent_hash_map_layout.cpp)
+		add_test_generic(NAME concurrent_hash_map_layout TRACERS none)
+	endif()
 
 	if(GDB_FOUND)
 		build_test(concurrent_hash_map_rehash_break concurrent_hash_map_rehash_break/concurrent_hash_map_rehash_break.cpp)

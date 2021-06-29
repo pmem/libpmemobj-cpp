@@ -1,3 +1,19 @@
+Mon Jun 28 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.5.2
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.5 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- operator[] for contiguous_iterator takes signed integral instead of
+		unsigned
+	- throw an exception when pmemobj_mutex_unlock fail
+	- fix crash when a previous transaction failed to start because of
+		already taken lock.
+
 Fri Mar 15 2019 Igor Chorążewicz <igor.chorazewicz@intel.com>
 
 	* Version 1.6
@@ -30,7 +46,7 @@ Fri Mar 15 2019 Igor Chorążewicz <igor.chorazewicz@intel.com>
 	- decrease number of persistent_ptr dereferences in
 	  make_persistent_array
 
-Tue Feb 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
+Tue Feb 19 2019 Marcin Ślusarz <marcin.slusarz@intel.com>
 
 	* Version 1.5.1
 

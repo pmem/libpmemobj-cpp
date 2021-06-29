@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2021, Intel Corporation */
 
+/**
+ * @file
+ * Implementation of persistent multi producer single consumer queue.
+ */
+
 #ifndef LIBPMEMOBJ_MPSC_QUEUE_HPP
 #define LIBPMEMOBJ_MPSC_QUEUE_HPP
 
@@ -27,7 +32,21 @@ namespace obj
 namespace experimental
 {
 
-/* XXX: Add documentation */
+/**
+ * Persistent memory aware implementation of multi producer single consumer
+ * queue.
+ *
+ * In case of crash or shutdown, reading and writing may be continued
+ * by new process, from the last position without loss of any, already produced
+ * data.
+ *
+ * @note try_consume_batch() MUST be called after creation of mpsc_queue object
+ * if pmem_log_type objcect was already used by instance of mpsc_queue - e.g. in
+ * previous run of application. If try_consume_batch() is not called, produce
+ * may fail, even if the queue is empty.
+ *
+ * @snippet mpsc_queue/mpsc_queue.cpp mpsc_queue_single_threaded_example
+ */
 class mpsc_queue {
 public:
 	class worker;
@@ -92,6 +111,10 @@ private:
 	size_t consume_len = 0;
 
 public:
+	/**
+	 * Type representing the range of the mpsc_queue elements. May be used
+	 * in the range-based loops over accessed elements.
+	 * */
 	class batch_type {
 	public:
 		batch_type(iterator begin, iterator end);
@@ -104,7 +127,17 @@ public:
 		iterator end_;
 	};
 
-	/* All workers should be destroyed before destruction of mpsc_queue */
+	/**
+	 * mpsc_queue producer worker class. To write data concurrently into the
+	 * mpsc_queue in the multi-threaded application, each producer thread
+	 * have to use its own worker object. Workers might be added
+	 * concurrently to the mpsc_queue.
+	 *
+	 * @note  All workers have to be destroyed before destruction of
+	 * the mpsc_queue
+	 *
+	 * @see mpsc_queue:try_produce_batch()
+	 */
 	class worker {
 	public:
 		worker(mpsc_queue *q);
@@ -134,6 +167,16 @@ public:
 		friend class mpsc_queue;
 	};
 
+	/**
+	 * Type representing persistent data, which may be managed by
+	 * mpsc_queue.
+	 *
+	 * Object of this type has to be managed by pmem::obj::pool, to be
+	 * usable in mpsc_queue.
+	 * Once created, pmem_log_type object cannot be resized.
+	 *
+	 * @param size size of the log.
+	 */
 	class pmem_log_type {
 	public:
 		pmem_log_type(size_t size);
@@ -148,6 +191,13 @@ public:
 	};
 };
 
+/**
+ * mpsc_queue constructor.
+ *
+ * @param[in] pmem reference to already allocated pmem_log_type object
+ * @param[in] max_workers maximum number of workers which may be added to
+ * mpsc_queue at the same time.
+ */
 mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
 {
 	pop = pmem::obj::pool_by_vptr(&pmem);
@@ -273,11 +323,22 @@ mpsc_queue::restore_offsets()
 	w.produce_cachelines();
 }
 
+/**
+ * Constructs pmem_log_type object
+ *
+ * @param size size of the log
+ */
 mpsc_queue::pmem_log_type::pmem_log_type(size_t size)
     : data_(size, 0), written(0)
 {
 }
 
+/**
+ * Returns  pmem::obj::string_view which allows to read-only access to the
+ * underlying buffer.
+ *
+ * @return pmem::obj::string_view of the log data.
+ */
 inline pmem::obj::string_view
 mpsc_queue::pmem_log_type::data()
 {
@@ -300,12 +361,39 @@ mpsc_queue::get_id_manager()
 	return manager;
 }
 
+/**
+ * Registers the producer worker. Number of workers have to be less or equal
+ * to max_workers specified in the mpsc_queue constructor.
+ *
+ * @return producer worker object.
+ *
+ * @snippet mpsc_queue/mpsc_queue.cpp register_worker
+ */
 inline mpsc_queue::worker
 mpsc_queue::register_worker()
 {
 	return worker(this);
 }
 
+/**
+ * Evaluates callback function f() for the data, which is ready to be
+ * consumed. try_consume_batch() accesses data, and evaluates callback inside a
+ * transaction. If an exception is thrown within callback, it gets
+ * propagated to the caller and causes a transaction abort. In such case, next
+ * try_consume_batch() call would consume the same data.
+ *
+ * @return true if consumed any data, false otherwise.
+ *
+ * @throws transaction_scope_error
+ *
+ * @note try_consume_batch() MUST be called after creation of mpsc_queue object
+ * if pmem_log_type objcect was already used by any instance of mpsc_queue.
+ * Otherwise produce might fail even if the queue is empty)
+ *
+ * @see mpsc_queue::worker::try_produce()
+ *
+ * @snippet mpsc_queue/mpsc_queue.cpp try_consume_batch
+ */
 template <typename Function>
 inline bool
 mpsc_queue::try_consume_batch(Function &&f)
@@ -423,6 +511,18 @@ inline mpsc_queue::worker::~worker()
 	}
 }
 
+/**
+ * Copies data from pmem::obj::string_view into the mpsc_queue.
+ *
+ * @param[in] data Data to be copied into mpsc_queue
+ * @param[in] on_produce Function evaluated on the data in queue, before
+ * the data is visible for the consumer. By default do nothing.
+ *
+ * @return true if f were evaluated, all data copied by it saved in the
+ *  mpsc_queue, and are visible for the consumer.
+ *
+ * @snippet mpsc_queue/mpsc_queue.cpp try_produce_string_view
+ */
 template <typename Function>
 bool
 mpsc_queue::worker::try_produce(pmem::obj::string_view data,
@@ -546,11 +646,23 @@ inline mpsc_queue::batch_type::batch_type(iterator begin_, iterator end_)
 {
 }
 
+/**
+ * Returns an iterator to the beginning of the accessed range of the
+ * mpsc_queue.
+ *
+ * @return Iterator to the first element.
+ */
 inline mpsc_queue::iterator
 mpsc_queue::batch_type::begin() const
 {
 	return begin_;
 }
+
+/**
+ * Returns an iterator to the end of the accessed range of the mpsc_queue.
+ *
+ * @return Iterator to the last element.
+ */
 
 inline mpsc_queue::iterator
 mpsc_queue::batch_type::end() const

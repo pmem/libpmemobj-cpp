@@ -53,7 +53,7 @@ struct test_bytes_view<
 
 struct test_bytes_view_int {
 	test_bytes_view_int(const int *v)
-	    : v((unsigned)(*v + std::numeric_limits<int>::max() + 1))
+	    : v(static_cast<unsigned>(*v) + std::numeric_limits<int>::max() + 1)
 	{
 	}
 

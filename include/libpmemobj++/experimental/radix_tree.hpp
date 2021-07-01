@@ -2852,6 +2852,7 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<
 	IsConst>::radix_tree_iterator(leaf_ptr leaf_, tree_ptr tree)
     : leaf_(leaf_), tree(tree)
 {
+	assert(tree);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2859,8 +2860,9 @@ template <bool IsConst>
 template <bool C, typename Enable>
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<
 	IsConst>::radix_tree_iterator(const radix_tree_iterator<false> &rhs)
-    : leaf_(rhs.leaf_)
+    : leaf_(rhs.leaf_), tree(rhs.tree)
 {
+	assert(tree);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2871,6 +2873,8 @@ typename radix_tree<Key, Value,
 		   BytesView>::radix_tree_iterator<IsConst>::operator*() const
 {
 	assert(leaf_);
+	assert(tree);
+
 	return *leaf_;
 }
 
@@ -2882,6 +2886,8 @@ typename radix_tree<Key, Value,
 		   BytesView>::radix_tree_iterator<IsConst>::operator->() const
 {
 	assert(leaf_);
+	assert(tree);
+
 	return leaf_;
 }
 
@@ -2903,6 +2909,9 @@ void
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	basic_string_view<typename V::value_type, typename V::traits_type> rhs)
 {
+	assert(leaf_);
+	assert(tree);
+
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
 	if (rhs.size() <= leaf_->value().capacity() && !tree->mt.get(false)) {
@@ -2988,6 +2997,7 @@ bool
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_increment()
 {
 	assert(leaf_);
+	assert(tree);
 
 	constexpr auto direction = radix_tree::node::direction::Forward;
 	auto parent_ptr = leaf_->parent.load_acquire();
@@ -3035,6 +3045,7 @@ bool
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_decrement()
 {
 	constexpr auto direction = radix_tree::node::direction::Reverse;
+	assert(tree);
 
 	while (true) {
 		if (!leaf_) {
@@ -3198,18 +3209,16 @@ template <typename Key, typename Value, typename BytesView>
 Key &
 radix_tree<Key, Value, BytesView>::leaf::key()
 {
-	return *reinterpret_cast<Key *>(this + 1);
+	auto &const_key = const_cast<const leaf *>(this)->key();
+	return *const_cast<Key *>(&const_key);
 }
 
 template <typename Key, typename Value, typename BytesView>
 Value &
 radix_tree<Key, Value, BytesView>::leaf::value()
 {
-	auto key_dst = reinterpret_cast<char *>(this + 1);
-	auto val_dst = reinterpret_cast<Value *>(
-		key_dst + total_sizeof<Key>::value(key()));
-
-	return *reinterpret_cast<Value *>(val_dst);
+	auto &const_value = const_cast<const leaf *>(this)->value();
+	return *const_cast<Value *>(&const_value);
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -3224,10 +3233,12 @@ const Value &
 radix_tree<Key, Value, BytesView>::leaf::value() const
 {
 	auto key_dst = reinterpret_cast<const char *>(this + 1);
-	auto val_dst = reinterpret_cast<const Value *>(
-		key_dst + total_sizeof<Key>::value(key()));
+	auto key_size = total_sizeof<Key>::value(key());
+	auto padding = detail::align_up(key_size, alignof(Value)) - key_size;
+	auto val_dst =
+		reinterpret_cast<const Value *>(key_dst + padding + key_size);
 
-	return *reinterpret_cast<const Value *>(val_dst);
+	return *val_dst;
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -3348,12 +3359,16 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 	auto key_size = total_sizeof<Key>::value(std::get<I1>(first_args)...);
 	auto val_size =
 		total_sizeof<Value>::value(std::get<I2>(second_args)...);
+	auto padding = detail::align_up(key_size, alignof(Value)) - key_size;
 	auto ptr = static_cast<persistent_ptr<leaf>>(
-		a.allocate(sizeof(leaf) + key_size + val_size));
+		a.allocate(sizeof(leaf) + key_size + padding + val_size));
 
 	auto key_dst = reinterpret_cast<Key *>(ptr.get() + 1);
 	auto val_dst = reinterpret_cast<Value *>(
-		reinterpret_cast<char *>(key_dst) + key_size);
+		reinterpret_cast<char *>(key_dst) + padding + key_size);
+
+	assert(reinterpret_cast<uintptr_t>(key_dst) % alignof(Key) == 0);
+	assert(reinterpret_cast<uintptr_t>(val_dst) % alignof(Value) == 0);
 
 	new (ptr.get()) leaf();
 	new (key_dst) Key(std::forward<Args1>(std::get<I1>(first_args))...);

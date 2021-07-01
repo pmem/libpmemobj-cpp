@@ -1,3 +1,18 @@
+Fri Jul 02 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.6.1-rc1
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.6 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- string: fix max_size() return value
+	- allocation_flag: mark constructor as explicit
+	- peristent_ptr: change ptr_offset_magic to be properly aligned
+	- fix few headers' includes
+
 Mon Jun 28 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
 	* Version 1.5.2

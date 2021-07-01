@@ -333,9 +333,9 @@ private:
 	static bool keys_equal(const K1 &k1, const K2 &k2);
 	template <typename K1, typename K2>
 	static int compare(const K1 &k1, const K2 &k2, byten_t offset = 0);
-	template <bool Direction, typename Iterator, typename K>
-	const leaf *next_leaf(Iterator child, pointer_type parent,
-			      const K &k) const;
+	template <bool Direction, typename Iterator>
+	std::pair<bool, const leaf *> next_leaf(Iterator child,
+						pointer_type parent) const;
 	template <bool Direction>
 	const leaf *find_leaf(pointer_type n) const;
 	static unsigned slice_index(char k, uint8_t shift);
@@ -619,6 +619,9 @@ private:
 
 	template <typename T>
 	void replace_val(T &&rhs);
+
+	bool try_increment();
+	bool try_decrement();
 };
 
 template <typename Key, typename Value, typename BytesView>
@@ -2108,6 +2111,9 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
+	path_type path;
+	const_iterator result;
+
 	while (true) {
 		auto r = root.load_acquire();
 
@@ -2123,7 +2129,7 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 		 */
 		auto ret = descend(r, key);
 		auto leaf = ret.first;
-		auto path = ret.second;
+		path = ret.second;
 
 		if (!leaf)
 			continue;
@@ -2134,10 +2140,17 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 
 		/* Key exists. */
 		if (diff == key.size() && leaf_key.size() == key.size()) {
+			result = const_iterator(leaf, this);
+
+			/* For lower_bound, result is looked-for element. */
 			if (Lower)
-				return const_iterator(leaf, this);
-			else
-				return ++const_iterator(leaf, this);
+				break;
+
+			/* For upper_bound, we need to find larger element. */
+			if (result.try_increment())
+				break;
+
+			continue;
 		}
 
 		/* Descend the tree again by following the path. */
@@ -2146,8 +2159,6 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 		auto n = node_d.node;
 		auto slot = node_d.slot;
 		auto prev = node_d.prev;
-
-		const_iterator result;
 
 		/*
 		 * n would point to element with key which we are looking for
@@ -2160,9 +2171,12 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 			auto target_leaf = next_leaf<node::direction::Forward>(
 				prev->template make_iterator<
 					node::direction::Forward>(slot),
-				prev, k);
+				prev);
 
-			result = const_iterator(target_leaf, this);
+			if (!target_leaf.first)
+				continue;
+
+			result = const_iterator(target_leaf.second, this);
 		} else if (diff == key.size()) {
 			/* The looked-for key is a prefix of the leaf key. The
 			 * target node must be the smallest leaf within *slot's
@@ -2178,10 +2192,24 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 
 			result = const_iterator(target_leaf, this);
 		} else if (diff == leaf_key.size()) {
+			assert(n == leaf);
+
 			/* Leaf's key is a prefix of the looked-for key. Leaf's
 			 * key is the biggest key less than the looked-for key.
-			 * The target node must be the next leaf. */
-			result = ++const_iterator(leaf, this);
+			 * The target node must be the next leaf. Note that we
+			 * cannot just call const_iterator(leaf,
+			 * this).try_increment() because some other element with
+			 * key larger than leaf and smaller than k could be
+			 * inserted concurrently. */
+			auto target_leaf = next_leaf<node::direction::Forward>(
+				prev->template make_iterator<
+					node::direction::Forward>(slot),
+				prev);
+
+			if (!target_leaf.first)
+				continue;
+
+			result = const_iterator(target_leaf.second, this);
 		} else {
 			assert(diff < leaf_key.size() && diff < key.size());
 
@@ -2236,21 +2264,25 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
 					node::direction::Forward>(
 					prev->template make_iterator<
 						node::direction::Forward>(slot),
-					prev, k);
+					prev);
 
-				result = const_iterator(target_leaf, this);
+				if (!target_leaf.first)
+					continue;
+
+				result = const_iterator(target_leaf.second,
+							this);
 			}
 		}
 
 		/* If some node on the path was modified, the calculated result
 		 * might not be correct. */
-		if (!validate_path(path))
-			continue;
-
-		assert(validate_bound<Lower>(result, k));
-
-		return result;
+		if (validate_path(path))
+			break;
 	}
+
+	assert(validate_bound<Lower>(result, k));
+
+	return result;
 }
 
 /**
@@ -2939,27 +2971,45 @@ typename radix_tree<Key, Value,
 		    BytesView>::template radix_tree_iterator<IsConst> &
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++()
 {
+	/* Fallback to top-down search. */
+	if (!try_increment())
+		*this = tree->upper_bound(leaf_->key());
+
+	return *this;
+}
+
+/*
+ * Tries to increment iterator. Returns true on success, false otherwise.
+ * Increment can fail in case of concurrent, conflicting operation.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <bool IsConst>
+bool
+radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_increment()
+{
 	assert(leaf_);
 
 	constexpr auto direction = radix_tree::node::direction::Forward;
 	auto parent_ptr = leaf_->parent.load_acquire();
 
 	/* leaf is root, there is no other leaf in the tree */
-	if (!parent_ptr)
+	if (!parent_ptr) {
 		leaf_ = nullptr;
-	else {
+	} else {
 		auto it = parent_ptr->template find_child<direction>(leaf_);
 
-		if (it == parent_ptr->template end<direction>()) {
-			*this = tree->upper_bound(leaf_->key());
-		} else {
-			leaf_ = const_cast<leaf_ptr>(
-				tree->template next_leaf<direction>(
-					it, parent_ptr, leaf_->key()));
-		}
+		if (it == parent_ptr->template end<direction>())
+			return false;
+
+		auto ret = tree->template next_leaf<direction>(it, parent_ptr);
+
+		if (!ret.first)
+			return false;
+
+		leaf_ = const_cast<leaf_ptr>(ret.second);
 	}
 
-	return *this;
+	return true;
 }
 
 template <typename Key, typename Value, typename BytesView>
@@ -2967,6 +3017,22 @@ template <bool IsConst>
 typename radix_tree<Key, Value,
 		    BytesView>::template radix_tree_iterator<IsConst> &
 radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
+{
+	while (!try_decrement()) {
+		*this = tree->lower_bound(leaf_->key());
+	}
+
+	return *this;
+}
+
+/*
+ * Tries to decrement iterator. Returns true on success, false otherwise.
+ * Decrement can fail in case of concurrent, conflicting operation.
+ */
+template <typename Key, typename Value, typename BytesView>
+template <bool IsConst>
+bool
+radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_decrement()
 {
 	constexpr auto direction = radix_tree::node::direction::Reverse;
 
@@ -2982,7 +3048,7 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
 				tree->template find_leaf<direction>(r));
 
 			if (leaf_)
-				return *this;
+				return true;
 		} else {
 			auto parent_ptr = leaf_->parent.load_acquire();
 
@@ -2992,18 +3058,17 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
 			auto it = parent_ptr->template find_child<direction>(
 				leaf_);
 
-			if (it == parent_ptr->template end<direction>()) {
-				/* Search the tree from top - this iterator
-				 * might point to detached leaf. */
-				*this = --tree->lower_bound(leaf_->key());
-				return *this;
-			}
+			if (it == parent_ptr->template end<direction>())
+				return false;
 
-			leaf_ = const_cast<leaf_ptr>(
-				tree->template next_leaf<direction>(
-					it, parent_ptr, leaf_->key()));
+			auto ret = tree->template next_leaf<direction>(
+				it, parent_ptr);
 
-			return *this;
+			if (!ret.first)
+				return false;
+
+			leaf_ = const_cast<leaf_ptr>(ret.second);
+			return true;
 		}
 	}
 }
@@ -3055,42 +3120,36 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator==(
 }
 
 /*
- * Returns next leaf (either with smaller or larger key than k, depending on
+ * Returns a pair consisting of a bool and a leaf pointer to the
+ * next leaf (either with smaller or larger key than k, depending on
  * ChildIterator type). This function might need to traverse the
- * tree upwards. Return value can be null if there is no such leaf.
+ * tree upwards. Pointer can be null if there is no such leaf.
  *
- * Parameter k is only used in case of confliciting, concurrent operation
- * to restart from the top.
+ * Bool variable is set to true on success, false otherwise.
+ * Failure can occur in case of a concurrent, conflicting operation.
  */
 template <typename Key, typename Value, typename BytesView>
-template <bool Direction, typename Iterator, typename K>
-const typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent,
-					     const K &k) const
+template <bool Direction, typename Iterator>
+std::pair<bool, const typename radix_tree<Key, Value, BytesView>::leaf *>
+radix_tree<Key, Value, BytesView>::next_leaf(Iterator node,
+					     pointer_type parent) const
 {
-	auto fallback = [&] {
-		if (Direction == node::direction::Forward)
-			return upper_bound(k).leaf_;
-		else
-			return (--lower_bound(k)).leaf_;
-	};
-
 	while (true) {
 		++node;
 
 		/* No more children on this level, need to go up. */
 		if (node == parent->template end<Direction>()) {
 			auto p = parent->parent.load_acquire();
-			if (!p) // parent == root
-				return nullptr;
+			if (!p) /* parent == root */
+				return {true, nullptr};
 
 			auto p_it = p->template find_child<Direction>(parent);
 			if (p_it == p->template end<Direction>()) {
-				/* Detached leaf, need to start from the top. */
-				return fallback();
+				/* Detached leaf, cannot advance. */
+				return {false, nullptr};
 			}
 
-			return next_leaf<Direction>(p_it, p, k);
+			return next_leaf<Direction>(p_it, p);
 		}
 
 		auto n = node->load_acquire();
@@ -3099,9 +3158,9 @@ radix_tree<Key, Value, BytesView>::next_leaf(Iterator node, pointer_type parent,
 
 		auto leaf = find_leaf<Direction>(n);
 		if (!leaf)
-			return fallback();
+			return {false, nullptr};
 
-		return leaf;
+		return {true, leaf};
 	}
 }
 

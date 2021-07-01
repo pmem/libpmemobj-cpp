@@ -173,3 +173,5 @@ add_example(make_persistent make_persistent/make_persistent.cpp)
 add_example(persistent persistent/persistent.cpp)
 
 add_example(transaction transaction/transaction.cpp)
+
+add_example(mpsc_queue mpsc_queue/mpsc_queue.cpp)

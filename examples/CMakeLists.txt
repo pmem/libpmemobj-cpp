@@ -45,71 +45,11 @@ include_directories(${LIBPMEMOBJ_INCLUDE_DIRS} .)
 link_directories(${LIBPMEMOBJ_LIBRARY_DIRS})
 
 # Add developer checks
-add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
+add_cppstyle(examples ${CMAKE_CURRENT_SOURCE_DIR}/*/*.*pp)
+add_check_whitespace(examples ${CMAKE_CURRENT_SOURCE_DIR}/*.*)
+
+add_cppstyle(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.*pp)
 add_check_whitespace(examples-common ${CMAKE_CURRENT_SOURCE_DIR}/*.*)
-
-add_cppstyle(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*pp)
-add_check_whitespace(examples-array ${CMAKE_CURRENT_SOURCE_DIR}/array/*.*)
-
-add_cppstyle(examples-map_cli ${CMAKE_CURRENT_SOURCE_DIR}/map_cli/*.*pp)
-add_check_whitespace(examples-map_cli ${CMAKE_CURRENT_SOURCE_DIR}/map_cli/*.*)
-
-add_cppstyle(examples-panaconda ${CMAKE_CURRENT_SOURCE_DIR}/panaconda/*.*pp)
-add_check_whitespace(examples-panaconda ${CMAKE_CURRENT_SOURCE_DIR}/panaconda/*.*)
-
-add_cppstyle(examples-pman ${CMAKE_CURRENT_SOURCE_DIR}/pman/*.*pp)
-add_check_whitespace(examples-pman ${CMAKE_CURRENT_SOURCE_DIR}/pman/*.*)
-
-add_cppstyle(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*pp)
-add_check_whitespace(examples-pmpong ${CMAKE_CURRENT_SOURCE_DIR}/pmpong/*.*)
-
-add_cppstyle(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*pp)
-add_check_whitespace(examples-queue ${CMAKE_CURRENT_SOURCE_DIR}/queue/*.*)
-
-add_cppstyle(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*pp)
-add_check_whitespace(examples-simplekv ${CMAKE_CURRENT_SOURCE_DIR}/simplekv/*.*)
-
-add_cppstyle(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simplekv_rebuild/*.*pp)
-add_check_whitespace(examples-simplekv_rebuild ${CMAKE_CURRENT_SOURCE_DIR}/simplekv_rebuild/*.*)
-
-add_cppstyle(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*pp)
-add_check_whitespace(examples-slab ${CMAKE_CURRENT_SOURCE_DIR}/slab/*.*)
-
-add_cppstyle(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*pp)
-add_check_whitespace(examples-string ${CMAKE_CURRENT_SOURCE_DIR}/string/*.*)
-
-add_cppstyle(examples-v ${CMAKE_CURRENT_SOURCE_DIR}/v/*.*pp)
-add_check_whitespace(examples-v ${CMAKE_CURRENT_SOURCE_DIR}/v/*.*)
-
-add_cppstyle(examples-segment_vector ${CMAKE_CURRENT_SOURCE_DIR}/segment_vector/*.*pp)
-add_check_whitespace(examples-segment_vector ${CMAKE_CURRENT_SOURCE_DIR}/segment_vector/*.*)
-
-add_cppstyle(examples-concurrent_hash_map ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map/*.*pp)
-add_check_whitespace(examples-concurrent_hash_map ${CMAKE_CURRENT_SOURCE_DIR}/concurrent_hash_map/*.*)
-
-add_cppstyle(examples-defrag ${CMAKE_CURRENT_SOURCE_DIR}/defrag/*.*pp)
-add_check_whitespace(examples-defrag ${CMAKE_CURRENT_SOURCE_DIR}/defrag/*.*)
-
-add_cppstyle(examples-pool ${CMAKE_CURRENT_SOURCE_DIR}/pool/*.*pp)
-add_check_whitespace(examples-pool ${CMAKE_CURRENT_SOURCE_DIR}/pool/*.*)
-
-add_cppstyle(examples-mutex ${CMAKE_CURRENT_SOURCE_DIR}/mutex/*.*pp)
-add_check_whitespace(examples-mutex ${CMAKE_CURRENT_SOURCE_DIR}/mutex/*.*)
-
-add_cppstyle(examples-make_persistent ${CMAKE_CURRENT_SOURCE_DIR}/make_persistent/*.*pp)
-add_check_whitespace(examples-make_persistent ${CMAKE_CURRENT_SOURCE_DIR}/make_persistent/*.*)
-
-add_cppstyle(examples-persistent ${CMAKE_CURRENT_SOURCE_DIR}/persistent/*.*pp)
-add_check_whitespace(examples-persistent ${CMAKE_CURRENT_SOURCE_DIR}/persistent/*.*)
-
-add_cppstyle(examples-transaction ${CMAKE_CURRENT_SOURCE_DIR}/transaction/*.*pp)
-add_check_whitespace(examples-transaction ${CMAKE_CURRENT_SOURCE_DIR}/transaction/*.*)
-
-add_cppstyle(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_string/*.*pp)
-add_check_whitespace(examples-inline_string ${CMAKE_CURRENT_SOURCE_DIR}/inline_string/*.*)
-
-add_cppstyle(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*pp)
-add_check_whitespace(examples-radix_tree ${CMAKE_CURRENT_SOURCE_DIR}/radix_tree/*.*)
 
 # Find required packages for examples
 if(PKG_CONFIG_FOUND)

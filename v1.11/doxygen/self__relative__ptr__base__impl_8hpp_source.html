@@ -72,7 +72,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="self__relative__ptr__base__impl_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-License-Identifier: BSD-3-Clause</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/* Copyright 2020, Intel Corporation */</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/* Copyright 2020-2021, Intel Corporation */</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef LIBPMEMOBJ_CPP_SELF_RELATIVE_PTR_BASE_IMPL_HPP</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define LIBPMEMOBJ_CPP_SELF_RELATIVE_PTR_BASE_IMPL_HPP</span></div>
@@ -213,109 +213,108 @@ $(function() {
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment">        */</span></div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        uintptr_t mask = other_offset == nullptr_offset;</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        --mask;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        uintptr_t ptr = <span class="keyword">reinterpret_cast&lt;</span>uintptr_t<span class="keyword">&gt;</span>(</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(<span class="keyword">this</span>) +</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            other_offset + 1);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        ptr &amp;= mask;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span> *<span class="keyword">&gt;</span>(ptr);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    difference_type</div>
-<div class="line"><a name="l00236"></a><span class="lineno"><a class="line" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">  236</a></span>&#160;    <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">pointer_to_offset</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">self_relative_ptr_base_impl</a> &amp;ptr) <span class="keyword">const</span> noexcept</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    {</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">        This version without branches is vectorization-friendly.</span></div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">        mask = is_null() should not create a branch in the code.</span></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment">        In this line, we just assign 0 or 1 to the mask variable.</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">        This code is equal:</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">        return ptr.is_null()</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">            ? nullptr_offset</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">            : ptr.offset + this-&gt;distance_between_self(ptr);</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">        */</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        uintptr_t mask = ptr.is_null();</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        --mask;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        difference_type distance_between_self =</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(&amp;ptr) -</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        distance_between_self &amp;=</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>difference_type &amp;<span class="keyword">&gt;</span>(mask);</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keywordflow">return</span> ptr.offset + distance_between_self;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    }</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    difference_type</div>
-<div class="line"><a name="l00262"></a><span class="lineno"><a class="line" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a55695b88f5b6ed57c637b5821786d3ce">  262</a></span>&#160;    <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a55695b88f5b6ed57c637b5821786d3ce">pointer_to_offset</a>(<span class="keywordtype">void</span> *ptr) <span class="keyword">const</span> noexcept</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    {</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment">        This version without branches is vectorization-friendly.</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment">        mask = ptr == nullptr should not create a branch in the code.</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment">        In this line, we just assign 0 or 1 to the mask variable.</span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">        This code is equal:</span></div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">        if (ptr == nullptr)</span></div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">            return nullptr_offset</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">        else</span></div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">            return ptr - this - 1;</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="comment">        */</span></div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        uintptr_t mask = ptr == <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        --mask;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        difference_type new_offset = <span class="keyword">static_cast&lt;</span>byte_ptr_type<span class="keyword">&gt;</span>(ptr) -</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(<span class="keyword">this</span>) - 1;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        new_offset &amp;= <span class="keyword">reinterpret_cast&lt;</span>difference_type &amp;<span class="keyword">&gt;</span>(mask);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <span class="keywordflow">return</span> new_offset;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="comment">/* The offset from self */</span></div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    offset_type offset;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160; </div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keyword">static</span> constexpr difference_type nullptr_offset = 0;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classpmem_1_1detail_1_1self__relative__accessor.html">self_relative_accessor</a>;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;};</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00297"></a><span class="lineno"><a class="line" href="classpmem_1_1detail_1_1self__relative__accessor.html">  297</a></span>&#160;<span class="keyword">class </span><a class="code" href="classpmem_1_1detail_1_1self__relative__accessor.html">self_relative_accessor</a> {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keyword">using</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> = <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">self_relative_ptr_base_impl&lt;T&gt;</a>;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keyword">using</span> difference_type = <span class="keyword">typename</span> access_type::difference_type;</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Po<span class="keywordtype">int</span>erType&gt;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keyword">static</span> difference_type</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    pointer_to_offset(<span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;obj, PointerType *ptr)</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    {</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        <span class="keywordflow">return</span> obj.<a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">pointer_to_offset</a>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">void</span> *<span class="keyword">&gt;</span>(ptr));</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    }</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Po<span class="keywordtype">int</span>erType&gt;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keyword">static</span> PointerType *</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    offset_to_pointer(difference_type offset, <span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;obj)</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    {</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <span class="keyword">auto</span> ptr = obj.<a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a5bb5f5adce1968be8558bf21b190a823">offset_to_pointer</a>(offset);</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>PointerType *<span class="keyword">&gt;</span>(ptr);</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    }</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keyword">static</span> T &amp;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    get_offset(<a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;ptr)</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    {</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        <span class="keywordflow">return</span> ptr.offset;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    }</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> T &amp;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    get_offset(<span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;ptr)</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    {</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keywordflow">return</span> ptr.offset;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    }</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;};</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;} <span class="comment">/* namespace detail */</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160; </div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_SELF_RELATIVE_PTR_BASE_IMPL_HPP */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        uintptr_t ptr = <span class="keyword">static_cast&lt;</span>uintptr_t<span class="keyword">&gt;</span>(</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>intptr_t<span class="keyword">&gt;</span>(<span class="keyword">this</span>) + other_offset + 1);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        ptr &amp;= mask;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">void</span> *<span class="keyword">&gt;</span>(ptr);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    }</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    difference_type</div>
+<div class="line"><a name="l00235"></a><span class="lineno"><a class="line" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">  235</a></span>&#160;    <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">pointer_to_offset</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">self_relative_ptr_base_impl</a> &amp;ptr) <span class="keyword">const</span> noexcept</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">        This version without branches is vectorization-friendly.</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">        mask = is_null() should not create a branch in the code.</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">        In this line, we just assign 0 or 1 to the mask variable.</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="comment">        This code is equal:</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">        return ptr.is_null()</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="comment">            ? nullptr_offset</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="comment">            : ptr.offset + this-&gt;distance_between_self(ptr);</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">        */</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        uintptr_t mask = ptr.is_null();</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        --mask;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        difference_type distance_between_self =</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(&amp;ptr) -</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        distance_between_self &amp;=</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>difference_type &amp;<span class="keyword">&gt;</span>(mask);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="keywordflow">return</span> ptr.offset + distance_between_self;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    difference_type</div>
+<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a55695b88f5b6ed57c637b5821786d3ce">  261</a></span>&#160;    <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a55695b88f5b6ed57c637b5821786d3ce">pointer_to_offset</a>(<span class="keywordtype">void</span> *ptr) <span class="keyword">const</span> noexcept</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">        This version without branches is vectorization-friendly.</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment">        mask = ptr == nullptr should not create a branch in the code.</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment">        In this line, we just assign 0 or 1 to the mask variable.</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">        This code is equal:</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment">        if (ptr == nullptr)</span></div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment">            return nullptr_offset</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">        else</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="comment">            return ptr - this - 1;</span></div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">        */</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        uintptr_t mask = ptr == <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        --mask;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        difference_type new_offset = <span class="keyword">static_cast&lt;</span>byte_ptr_type<span class="keyword">&gt;</span>(ptr) -</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>const_byte_ptr_type<span class="keyword">&gt;</span>(<span class="keyword">this</span>) - 1;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        new_offset &amp;= <span class="keyword">reinterpret_cast&lt;</span>difference_type &amp;<span class="keyword">&gt;</span>(mask);</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        <span class="keywordflow">return</span> new_offset;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160; </div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="comment">/* The offset from self */</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    offset_type offset;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160; </div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keyword">static</span> constexpr difference_type nullptr_offset = 0;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classpmem_1_1detail_1_1self__relative__accessor.html">self_relative_accessor</a>;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;};</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="classpmem_1_1detail_1_1self__relative__accessor.html">  296</a></span>&#160;<span class="keyword">class </span><a class="code" href="classpmem_1_1detail_1_1self__relative__accessor.html">self_relative_accessor</a> {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keyword">using</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> = <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">self_relative_ptr_base_impl&lt;T&gt;</a>;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keyword">using</span> difference_type = <span class="keyword">typename</span> access_type::difference_type;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Po<span class="keywordtype">int</span>erType&gt;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keyword">static</span> difference_type</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    pointer_to_offset(<span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;obj, PointerType *ptr)</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    {</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        <span class="keywordflow">return</span> obj.<a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">pointer_to_offset</a>(<span class="keyword">static_cast&lt;</span><span class="keywordtype">void</span> *<span class="keyword">&gt;</span>(ptr));</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    }</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Po<span class="keywordtype">int</span>erType&gt;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keyword">static</span> PointerType *</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    offset_to_pointer(difference_type offset, <span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;obj)</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <span class="keyword">auto</span> ptr = obj.<a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a5bb5f5adce1968be8558bf21b190a823">offset_to_pointer</a>(offset);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span>PointerType *<span class="keyword">&gt;</span>(ptr);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    }</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160; </div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keyword">static</span> T &amp;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    get_offset(<a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;ptr)</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordflow">return</span> ptr.offset;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    }</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160; </div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> T &amp;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    get_offset(<span class="keyword">const</span> <a class="code" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">access_type</a> &amp;ptr)</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    {</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordflow">return</span> ptr.offset;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;};</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160; </div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;} <span class="comment">/* namespace detail */</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_SELF_RELATIVE_PTR_BASE_IMPL_HPP */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_a55695b88f5b6ed57c637b5821786d3ce"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a55695b88f5b6ed57c637b5821786d3ce">pmem::detail::self_relative_ptr_base_impl::pointer_to_offset</a></div><div class="ttdeci">difference_type pointer_to_offset(void *ptr) const noexcept</div><div class="ttdoc">Conversion pointer to offset.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:262</div></div>
+<div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_a55695b88f5b6ed57c637b5821786d3ce"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a55695b88f5b6ed57c637b5821786d3ce">pmem::detail::self_relative_ptr_base_impl::pointer_to_offset</a></div><div class="ttdeci">difference_type pointer_to_offset(void *ptr) const noexcept</div><div class="ttdoc">Conversion pointer to offset.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:261</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_abbc1dd29d634c370a0fa8ed352d7b734"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#abbc1dd29d634c370a0fa8ed352d7b734">pmem::detail::self_relative_ptr_base_impl::swap</a></div><div class="ttdeci">void swap(self_relative_ptr_base_impl &amp;other)</div><div class="ttdoc">Swaps two self_relative_ptr_base objects of the same type.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:129</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_a54699d0bc903b2f02c892b43ac14b991"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a54699d0bc903b2f02c892b43ac14b991">pmem::detail::self_relative_ptr_base_impl::to_void_pointer</a></div><div class="ttdeci">void * to_void_pointer() const noexcept</div><div class="ttdoc">Conversion to void*.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:154</div></div>
@@ -328,11 +327,11 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_a33096da94ecd88b680ee383a26193f62"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a33096da94ecd88b680ee383a26193f62">pmem::detail::self_relative_ptr_base_impl::self_relative_ptr_base_impl</a></div><div class="ttdeci">constexpr self_relative_ptr_base_impl(std::nullptr_t) noexcept</div><div class="ttdoc">Nullptr constructor.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:63</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_afe8fcf2b408022d57de72e2bc05b488d"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#afe8fcf2b408022d57de72e2bc05b488d">pmem::detail::self_relative_ptr_base_impl::operator=</a></div><div class="ttdeci">self_relative_ptr_base_impl &amp; operator=(std::nullptr_t &amp;&amp;)</div><div class="ttdoc">Nullptr move assignment operator.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:116</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_a657ec0425124c86d3403495d3e95c486"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a657ec0425124c86d3403495d3e95c486">pmem::detail::self_relative_ptr_base_impl::to_byte_pointer</a></div><div class="ttdeci">byte_ptr_type to_byte_pointer() const noexcept</div><div class="ttdoc">Conversion to byte pointer.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:145</div></div>
-<div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__accessor_html"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__accessor.html">pmem::detail::self_relative_accessor</a></div><div class="ttdoc">Static class accesssor to self_relative_ptr_base.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:297</div></div>
+<div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__accessor_html"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__accessor.html">pmem::detail::self_relative_accessor</a></div><div class="ttdoc">Static class accesssor to self_relative_ptr_base.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:296</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_ae4281f0d1a764abed72f0462cc2c7b28"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#ae4281f0d1a764abed72f0462cc2c7b28">pmem::detail::self_relative_ptr_base_impl::self_relative_ptr_base_impl</a></div><div class="ttdeci">self_relative_ptr_base_impl(void *ptr) noexcept</div><div class="ttdoc">Volatile pointer constructor.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:73</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_a5bb5f5adce1968be8558bf21b190a823"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a5bb5f5adce1968be8558bf21b190a823">pmem::detail::self_relative_ptr_base_impl::offset_to_pointer</a></div><div class="ttdeci">void * offset_to_pointer(difference_type other_offset) const noexcept</div><div class="ttdoc">Conversion to void* use other offset.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:209</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">pmem::detail::self_relative_ptr_base_impl</a></div><div class="ttdoc">self_relative_ptr base template class</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:39</div></div>
-<div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_af142914472e5c0fbe3405c62d96e4b69"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">pmem::detail::self_relative_ptr_base_impl::pointer_to_offset</a></div><div class="ttdeci">difference_type pointer_to_offset(const self_relative_ptr_base_impl &amp;ptr) const noexcept</div><div class="ttdoc">Conversion self_relative_ptr_base to offset from itself.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:236</div></div>
+<div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_af142914472e5c0fbe3405c62d96e4b69"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#af142914472e5c0fbe3405c62d96e4b69">pmem::detail::self_relative_ptr_base_impl::pointer_to_offset</a></div><div class="ttdeci">difference_type pointer_to_offset(const self_relative_ptr_base_impl &amp;ptr) const noexcept</div><div class="ttdoc">Conversion self_relative_ptr_base to offset from itself.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:235</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_ae88b7315bdb33b2f1cbd322a93c2be8f"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#ae88b7315bdb33b2f1cbd322a93c2be8f">pmem::detail::self_relative_ptr_base_impl::operator=</a></div><div class="ttdeci">self_relative_ptr_base_impl &amp; operator=(self_relative_ptr_base_impl const &amp;r)</div><div class="ttdoc">Assignment operator.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:100</div></div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1self__relative__ptr__base__impl_html_ad713d7670532e8f872f9ff4ba022a705"><div class="ttname"><a href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#ad713d7670532e8f872f9ff4ba022a705">pmem::detail::self_relative_ptr_base_impl::self_relative_ptr_base_impl</a></div><div class="ttdeci">constexpr self_relative_ptr_base_impl() noexcept</div><div class="ttdoc">Default constructor, equal the nullptr.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base_impl.hpp:55</div></div>
 <!-- start footer part -->

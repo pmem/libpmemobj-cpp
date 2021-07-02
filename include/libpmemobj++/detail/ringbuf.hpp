@@ -109,9 +109,17 @@ struct ringbuf_t {
 	/* Set by ringbuf_consume, reset by ringbuf_release. */
 	bool consume_in_progress;
 
+	/**
+	 * Creates new ringbuf_t instance.
+	 *
+	 * Length must be < RBUF_OFF_MASK
+	 */
 	ringbuf_t(size_t max_workers, size_t length)
 	    : workers(new ringbuf_worker_t[max_workers])
 	{
+		if (length >= RBUF_OFF_MASK)
+			throw std::out_of_range("ringbuf length too big");
+
 		written.store(0);
 		next.store(0);
 		end.store(0);

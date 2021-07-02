@@ -7,18 +7,18 @@
 
 using queue_type = pmem::obj::experimental::mpsc_queue;
 
+/* Returns capacity in bytes */
 size_t
-get_queue_capacity(queue_type &q, size_t element_size)
+get_queue_capacity(queue_type &q)
 {
 	auto worker = q.register_worker();
 
 	size_t capacity = 0;
-
+	auto e = std::string("b");
 	/* Check how many elements fit in the log. */
-	while (worker.try_produce(
-		element_size,
-		[&](pmem::obj::slice<char *> range) { capacity++; }))
-		;
+	while (worker.try_produce("b")) {
+		capacity++;
+	}
 
 	/* Clear the queue */
 	auto ret = q.try_consume_batch([](queue_type::batch_type acc) {
@@ -30,26 +30,20 @@ get_queue_capacity(queue_type &q, size_t element_size)
 	return capacity;
 }
 
-template <typename F>
 void
-make_queue_with_first_half_empty(queue_type &q, size_t capacity,
-				 size_t element_size, F &&f)
+make_queue_with_first_half_empty(queue_type &q)
 {
 	auto worker = q.register_worker();
+	auto capacity = get_queue_capacity(q);
 
 	size_t produced = 0;
-
 	while (produced < capacity) {
 		/* Produce half of the elements, call consume and
 		 * produce the rest. This should result in log being
 		 * consumed at the
 		 * beginning and unconsumed at the end. */
-		auto ret = worker.try_produce(
-			element_size, [&](pmem::obj::slice<char *> range) {
-				f(range);
-				produced++;
-			});
-
+		auto ret = worker.try_produce("x");
+		produced++;
 		UT_ASSERT(ret);
 
 		if (produced == capacity / 2) {

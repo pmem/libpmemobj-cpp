@@ -49,11 +49,7 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 		/* Insert the data */
 		for (const auto &e : values) {
-			auto ret = worker.try_produce(
-				e.size(), [&](pmem::obj::slice<char *> range) {
-					std::copy_n(e.begin(), e.size(),
-						    range.begin());
-				});
+			auto ret = worker.try_produce(e);
 			UT_ASSERT(ret);
 		}
 
@@ -77,13 +73,7 @@ basic_test(pmem::obj::pool<root> pop, bool create)
 
 		/* Insert new data, which may be recovered in next run of
 		 * application */
-		ret = worker.try_produce(
-			store_to_next_run.size(),
-			[&](pmem::obj::slice<char *> range) {
-				std::copy_n(store_to_next_run.begin(),
-					    store_to_next_run.size(),
-					    range.begin());
-			});
+		ret = worker.try_produce(store_to_next_run);
 		UT_ASSERT(ret);
 	} else {
 		std::vector<std::string> values_on_pmem;

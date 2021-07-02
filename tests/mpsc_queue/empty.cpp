@@ -51,15 +51,14 @@ consume_empty_after_insertion(pmem::obj::pool<root> pop)
 		[&](queue_type::batch_type rd_acc) { ASSERT_UNREACHABLE; });
 	UT_ASSERTeq(consumed, false);
 
-	std::vector<std::string> values = {"xxx", "aaaaaaa", "bbbbb"};
+	std::vector<std::string> values = {
+		"xxx", "aaaaaaa", "bbbbb",
+		std::string(QUEUE_SIZE / 2 - 1, 'a')};
 
 	auto worker = queue.register_worker();
 	/* Insert some data */
 	for (const auto &e : values) {
-		auto ret = worker.try_produce(
-			e.size(), [&](pmem::obj::slice<char *> range) {
-				std::copy_n(e.begin(), e.size(), range.begin());
-			});
+		auto ret = worker.try_produce(e);
 		UT_ASSERT(ret);
 	}
 	/* Consume all of it */

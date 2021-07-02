@@ -31,14 +31,14 @@ struct root {
 static constexpr size_t QUEUE_SIZE = 3000;
 static const auto produce_size = 128ULL;
 static const size_t concurrency = 4;
-static const auto fill_pattern = char(1);
+const auto fill_pattern = std::string(produce_size, 'x');
 
 void
 run_consistent(pmem::obj::pool<root> pop)
 {
 	const auto produce_size = 128ULL;
 	const size_t concurrency = 4;
-	const auto fill_pattern = char(1);
+	const auto fill_pattern = std::string(produce_size, 'x');
 
 	auto proot = pop.root();
 	auto queue = queue_type(*proot->log, concurrency);
@@ -50,18 +50,13 @@ run_consistent(pmem::obj::pool<root> pop)
 	for (size_t i = 0; i < concurrency; i++)
 		proot->written[i] = 0;
 
-	size_t capacity = get_queue_capacity(queue, produce_size);
+	size_t capacity = get_queue_capacity(queue);
 	UT_ASSERTne(capacity, 0);
 
 	proot->capacity = capacity;
 	pop.persist(proot->capacity);
 
-	make_queue_with_first_half_empty(queue, capacity, produce_size,
-					 [&](pmem::obj::slice<char *> range) {
-						 std::fill_n(range.begin(),
-							     produce_size, 1);
-					 });
-
+	make_queue_with_first_half_empty(queue);
 	/* Run this under pmreorder. After crash state of the queue should be
 	 * something like this: | produced | crashed | produced | empty |
 	 * produced |
@@ -73,12 +68,7 @@ run_consistent(pmem::obj::pool<root> pop)
 			if (id == 0)
 				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
 
-			auto ret = worker.try_produce(
-				produce_size,
-				[&](pmem::obj::slice<char *> range) {
-					std::fill_n(range.begin(), produce_size,
-						    fill_pattern);
-				});
+			auto ret = worker.try_produce(fill_pattern);
 
 			if (id == 0)
 				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.END");
@@ -111,20 +101,16 @@ check_consistency(pmem::obj::pool<root> pop)
 	UT_ASSERT(values_on_pmem.size() >= expected);
 
 	for (auto &str : values_on_pmem) {
-		UT_ASSERT(str == std::string(produce_size, fill_pattern));
+		UT_ASSERT(str == fill_pattern);
 	}
 
 	auto worker = queue.register_worker();
 
-	static const auto overwrite_pattern = char(2);
 	static const auto overwrite_size = 64;
+	static const auto overwrite_pattern = std::string(overwrite_size, 'y');
 
 	while (true) {
-		auto ret = worker.try_produce(
-			overwrite_size, [&](pmem::obj::slice<char *> range) {
-				std::fill_n(range.begin(), overwrite_size,
-					    overwrite_pattern);
-			});
+		auto ret = worker.try_produce(overwrite_pattern);
 
 		if (!ret)
 			break;
@@ -138,8 +124,7 @@ check_consistency(pmem::obj::pool<root> pop)
 	UT_ASSERT(ret);
 
 	for (auto &str : values_on_pmem) {
-		UT_ASSERT(str ==
-			  std::string(overwrite_size, overwrite_pattern));
+		UT_ASSERT(str == overwrite_pattern);
 	}
 }
 

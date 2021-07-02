@@ -73,14 +73,14 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 				bool insert_succeed = false;
 				while (!insert_succeed) {
 					insert_succeed = worker.try_produce(
-						e.size(),
-						[&](pmem::obj::slice<char *>
-							    range) {
+						e,
+						[&](pmem::obj::string_view
+							    target) {
+							UT_ASSERT(
+								pmem::obj::string_view(
+									e) ==
+								target);
 							x++;
-							std::copy_n(
-								e.begin(),
-								e.size(),
-								range.begin());
 						});
 				};
 			}

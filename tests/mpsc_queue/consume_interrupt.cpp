@@ -63,11 +63,7 @@ consume_interrupt(pmem::obj::pool<root> pop, bool create)
 
 		/* Insert the data */
 		for (const auto &e : values) {
-			ret = worker.try_produce(
-				e.size(), [&](pmem::obj::slice<char *> range) {
-					std::copy_n(e.begin(), e.size(),
-						    range.begin());
-				});
+			ret = worker.try_produce(e);
 			UT_ASSERT(ret);
 		}
 

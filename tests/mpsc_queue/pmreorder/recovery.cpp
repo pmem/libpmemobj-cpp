@@ -31,7 +31,7 @@ struct root {
 static constexpr size_t QUEUE_SIZE = 10000;
 static const auto produce_size = 128ULL;
 static const size_t concurrency = 4;
-static const auto fill_pattern = char(1);
+static const auto fill_pattern = std::string(produce_size, 'z');
 
 /* Break application during produce. */
 static void
@@ -54,8 +54,8 @@ run_consistent(pmem::obj::pool<root> pop, bool break_produce, bool synchronized)
 			if (id == 0 && break_produce)
 				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
 
-			worker.try_produce(produce_size,
-					   [&](pmem::obj::slice<char *> range) {
+			worker.try_produce(fill_pattern,
+					   [&](pmem::obj::string_view v) {
 						   if (synchronized) {
 							   /* Make sure that all
 							    * other threads
@@ -64,10 +64,6 @@ run_consistent(pmem::obj::pool<root> pop, bool break_produce, bool synchronized)
 							    */
 							   syncthreads();
 						   }
-
-						   std::fill_n(range.begin(),
-							       produce_size,
-							       fill_pattern);
 					   });
 
 			if (id == 0 && break_produce)
@@ -102,7 +98,7 @@ check_consistency(pmem::obj::pool<root> pop, bool already_consumed)
 		UT_ASSERT(values_on_pmem.size() >= expected);
 
 	for (auto &str : values_on_pmem) {
-		UT_ASSERT(str == std::string(produce_size, fill_pattern));
+		UT_ASSERT(str == fill_pattern);
 	}
 }
 
@@ -131,7 +127,7 @@ run_break_recovery(pmem::obj::pool<root> pop)
 	UT_ASSERT(values_on_pmem.size() >= expected);
 
 	for (auto &str : values_on_pmem) {
-		UT_ASSERT(str == std::string(produce_size, fill_pattern));
+		UT_ASSERT(str == fill_pattern);
 	}
 }
 

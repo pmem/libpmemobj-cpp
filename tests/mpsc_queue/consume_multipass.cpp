@@ -45,10 +45,7 @@ consume_multipass(pmem::obj::pool<root> pop, size_t n_iters)
 
 	/* Insert the data */
 	for (const auto &e : values) {
-		auto ret = worker.try_produce(
-			e.size(), [&](pmem::obj::slice<char *> range) {
-				std::copy_n(e.begin(), e.size(), range.begin());
-			});
+		auto ret = worker.try_produce(e);
 		UT_ASSERT(ret);
 	}
 

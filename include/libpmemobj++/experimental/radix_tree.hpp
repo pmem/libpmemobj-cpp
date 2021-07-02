@@ -1024,7 +1024,7 @@ void
 radix_tree<Key, Value, BytesView>::runtime_initialize_mt(ebr *e)
 {
 	mt.get(false) = true;
-#if LIBPMEMOBJ_CPP_ANY_VG_TOOL_ENABLED
+#if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 	VALGRIND_PMC_REMOVE_PMEM_MAPPING(&ebr_, sizeof(ebr *));
 #endif
 	ebr_ = e;

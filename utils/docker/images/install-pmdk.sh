@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,8 +38,8 @@ set -e
 
 PACKAGE_MANAGER=$1
 
-# tag: 1.8.1, 16.09.2020
-PMDK_VERSION="1.8.1"
+# master: 1.11.0, 02.07.2021
+PMDK_VERSION="8583fcfd68764ac6779e6f93db89b06971b26704"
 
 if [ "${SKIP_PMDK_BUILD}" ]; then
 	echo "Variable 'SKIP_PMDK_BUILD' is set; skipping building PMDK"

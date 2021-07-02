@@ -2691,6 +2691,8 @@ radix_tree<Key, Value, BytesView, MtMode>::end() const
 /**
  * Returns a reverse iterator to the beginning.
  *
+ * Using reverse iterators in concurrent environment is not safe.
+ *
  * @return reverse_iterator pointing to the last element in the vector.
  */
 template <typename Key, typename Value, typename BytesView, bool MtMode>
@@ -2702,6 +2704,8 @@ radix_tree<Key, Value, BytesView, MtMode>::rbegin()
 
 /**
  * Returns a reverse iterator to the end.
+ *
+ * Using reverse iterators in concurrent environment is not safe.
  *
  * @return reverse_iterator pointing to the theoretical element preceding the
  * first element in the vector.
@@ -2716,6 +2720,8 @@ radix_tree<Key, Value, BytesView, MtMode>::rend()
 /**
  * Returns a const, reverse iterator to the beginning.
  *
+ * Using reverse iterators in concurrent environment is not safe.
+ *
  * @return const_reverse_iterator pointing to the last element in the vector.
  */
 template <typename Key, typename Value, typename BytesView, bool MtMode>
@@ -2727,6 +2733,8 @@ radix_tree<Key, Value, BytesView, MtMode>::crbegin() const
 
 /**
  * Returns a const, reverse iterator to the end.
+ *
+ * Using reverse iterators in concurrent environment is not safe.
  *
  * @return const_reverse_iterator pointing to the theoretical element preceding
  * the first element in the vector.

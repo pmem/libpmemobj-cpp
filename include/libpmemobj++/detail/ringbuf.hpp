@@ -106,9 +106,17 @@ struct ringbuf_t {
 	unsigned nworkers;
 	std::unique_ptr<ringbuf_worker_t[]> workers;
 
+	/**
+	 * Creates new ringbuf_t instance.
+	 *
+	 * Length must be < RBUF_OFF_MASK
+	 */
 	ringbuf_t(size_t max_workers, size_t length)
 	    : workers(new ringbuf_worker_t[max_workers])
 	{
+		if (length >= RBUF_OFF_MASK)
+			throw std::out_of_range("ringbuf length too big");
+
 		written.store(0);
 		next.store(0);
 		end.store(0);

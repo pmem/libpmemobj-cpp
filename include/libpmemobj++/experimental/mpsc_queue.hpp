@@ -72,12 +72,19 @@ private:
 
 	void clear_cachelines(first_block *block, size_t size);
 	void restore_offsets();
+
+	size_t consume_cachelines(size_t *offset);
+	void release_cachelines(size_t len);
+
 	inline pmem::detail::id_manager &get_id_manager();
 
+	/* ringbuf_t handle. Important: mpsc_queue operates on cachelines hence
+	 * ringbuf_produce/release functions are called with number of
+	 * cachelines, not bytes. */
 	std::unique_ptr<ringbuf::ringbuf_t> ring_buffer;
 	char *buf;
 	pmem::obj::pool_base pop;
-	size_t buff_size_;
+	size_t buf_size;
 	pmem_log_type *pmem;
 
 public:
@@ -118,7 +125,12 @@ public:
 		mpsc_queue *queue;
 		ringbuf::ringbuf_worker_t *w;
 		size_t id;
+
+		ptrdiff_t acquire_cachelines(size_t len);
+		void produce_cachelines();
 		void store_to_log(pmem::obj::string_view data, char *log_data);
+
+		friend class mpsc_queue;
 	};
 
 	class pmem_log_type {
@@ -142,25 +154,66 @@ mpsc_queue::mpsc_queue(pmem_log_type &pmem, size_t max_workers)
 	auto buf_data = pmem.data();
 
 	buf = const_cast<char *>(buf_data.data());
-	buff_size_ = buf_data.size();
+	buf_size = buf_data.size();
 
-	ring_buffer = std::unique_ptr<ringbuf::ringbuf_t>(
-		new ringbuf::ringbuf_t(max_workers, buff_size_));
+	assert(buf_size % pmem::detail::CACHELINE_SIZE == 0);
+
+	ring_buffer =
+		std::unique_ptr<ringbuf::ringbuf_t>(new ringbuf::ringbuf_t(
+			max_workers, buf_size / pmem::detail::CACHELINE_SIZE));
 
 	this->pmem = &pmem;
 
 	restore_offsets();
 }
 
+ptrdiff_t
+mpsc_queue::worker::acquire_cachelines(size_t len)
+{
+	assert(len % pmem::detail::CACHELINE_SIZE == 0);
+	auto ret = ringbuf_acquire(queue->ring_buffer.get(), w,
+				   len / pmem::detail::CACHELINE_SIZE);
+
+	if (ret < 0)
+		return ret;
+
+	return ret * static_cast<ptrdiff_t>(pmem::detail::CACHELINE_SIZE);
+}
+
+void
+mpsc_queue::worker::produce_cachelines()
+{
+	ringbuf_produce(queue->ring_buffer.get(), w);
+}
+
+size_t
+mpsc_queue::consume_cachelines(size_t *offset)
+{
+	auto ret = ringbuf_consume(ring_buffer.get(), offset);
+	if (ret) {
+		*offset *= pmem::detail::CACHELINE_SIZE;
+		return ret * pmem::detail::CACHELINE_SIZE;
+	}
+
+	return 0;
+}
+
+void
+mpsc_queue::release_cachelines(size_t len)
+{
+	assert(len % pmem::detail::CACHELINE_SIZE == 0);
+	ringbuf_release(ring_buffer.get(), len / pmem::detail::CACHELINE_SIZE);
+}
+
 void
 mpsc_queue::restore_offsets()
 {
 	/* Invariant */
-	assert(pmem->written < buff_size_);
+	assert(pmem->written < buf_size);
 
 	/* XXX: implement restore_offset function in ringbuf */
 
-	auto w = ringbuf_register(ring_buffer.get(), 0);
+	auto w = register_worker();
 
 	if (!pmem->written) {
 		/* If pmem->written == 0 it means that consumer should start
@@ -169,14 +222,12 @@ mpsc_queue::restore_offsets()
 		 * from overwriting the original content - mark the entire log
 		 * as produced. */
 
-		auto acq = ringbuf_acquire(
-			ring_buffer.get(), w,
-			buff_size_ - pmem::detail::CACHELINE_SIZE);
+		auto acq = w.acquire_cachelines(buf_size -
+						pmem::detail::CACHELINE_SIZE);
 		assert(acq == 0);
 		(void)acq;
-		ringbuf_produce(ring_buffer.get(), w);
 
-		ringbuf_unregister(ring_buffer.get(), w);
+		w.produce_cachelines();
 
 		return;
 	}
@@ -196,31 +247,29 @@ mpsc_queue::restore_offsets()
 	 * CACHELINE_SIZE and consumer offset equal to pmem->written.
 	 */
 
-	auto acq = ringbuf_acquire(ring_buffer.get(), w, pmem->written);
+	auto acq = w.acquire_cachelines(pmem->written);
 	assert(acq == 0);
-	ringbuf_produce(ring_buffer.get(), w);
+	w.produce_cachelines();
 
 	/* Restore consumer offset */
 	size_t offset;
-	auto len = ringbuf_consume(ring_buffer.get(), &offset);
+	auto len = consume_cachelines(&offset);
 	assert(len == pmem->written);
-	ringbuf_release(ring_buffer.get(), len);
+	release_cachelines(len);
 
 	assert(offset == 0);
 	assert(len == pmem->written);
 
-	acq = ringbuf_acquire(ring_buffer.get(), w, buff_size_ - pmem->written);
-	assert(acq != -1);
+	acq = w.acquire_cachelines(buf_size - pmem->written);
+	assert(acq >= 0);
 	assert(static_cast<size_t>(acq) == pmem->written);
-	ringbuf_produce(ring_buffer.get(), w);
+	w.produce_cachelines();
 
-	acq = ringbuf_acquire(ring_buffer.get(), w,
-			      pmem->written - pmem::detail::CACHELINE_SIZE);
+	acq = w.acquire_cachelines(pmem->written -
+				   pmem::detail::CACHELINE_SIZE);
 	assert(acq == 0);
-	ringbuf_produce(ring_buffer.get(), w);
-
-	ringbuf_unregister(ring_buffer.get(), w);
 	(void)acq;
+	w.produce_cachelines();
 }
 
 mpsc_queue::pmem_log_type::pmem_log_type(size_t size)
@@ -272,7 +321,7 @@ mpsc_queue::try_consume_batch(Function &&f)
 	 * consumed during first try_consume, second will do nothing. */
 	for (int i = 0; i < 2; i++) {
 		size_t offset;
-		size_t len = ringbuf_consume(ring_buffer.get(), &offset);
+		size_t len = consume_cachelines(&offset);
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 		ANNOTATE_HAPPENS_AFTER(ring_buffer.get());
@@ -294,9 +343,9 @@ mpsc_queue::try_consume_batch(Function &&f)
 			auto b = reinterpret_cast<first_block *>(data);
 			clear_cachelines(b, len);
 
-			if (offset + len < buff_size_)
+			if (offset + len < buf_size)
 				pmem->written = offset + len;
-			else if (offset + len == buff_size_)
+			else if (offset + len == buf_size)
 				pmem->written = 0;
 			else
 				assert(false);
@@ -306,7 +355,7 @@ mpsc_queue::try_consume_batch(Function &&f)
 		ANNOTATE_HAPPENS_BEFORE(ring_buffer.get());
 #endif
 
-		ringbuf_release(ring_buffer.get(), len);
+		release_cachelines(len);
 
 		/* XXX: it would be better to call f once - hide
 		 * wraparound behind iterators */
@@ -376,7 +425,7 @@ mpsc_queue::worker::try_produce(size_t size, Function &&f)
 
 	auto req_size = pmem::detail::align_up(size + sizeof(first_block::size),
 					       pmem::detail::CACHELINE_SIZE);
-	auto offset = ringbuf_acquire(queue->ring_buffer.get(), w, req_size);
+	auto offset = acquire_cachelines(req_size);
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(queue->ring_buffer.get());
@@ -398,7 +447,7 @@ mpsc_queue::worker::try_produce(size_t size, Function &&f)
 	ANNOTATE_HAPPENS_BEFORE(queue->ring_buffer.get());
 #endif
 
-	ringbuf_produce(queue->ring_buffer.get(), w);
+	produce_cachelines();
 
 	return true;
 }
@@ -411,7 +460,7 @@ mpsc_queue::worker::try_produce(pmem::obj::string_view data,
 	auto req_size =
 		pmem::detail::align_up(data.size() + sizeof(first_block::size),
 				       pmem::detail::CACHELINE_SIZE);
-	auto offset = ringbuf_acquire(queue->ring_buffer.get(), w, req_size);
+	auto offset = acquire_cachelines(req_size);
 
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	ANNOTATE_HAPPENS_AFTER(queue->ring_buffer.get());
@@ -429,7 +478,7 @@ mpsc_queue::worker::try_produce(pmem::obj::string_view data,
 	on_produce(pmem::obj::string_view(
 		queue->buf + offset + sizeof(first_block::size), data.size()));
 
-	ringbuf_produce(queue->ring_buffer.get(), w);
+	produce_cachelines();
 
 	return true;
 }
@@ -563,7 +612,7 @@ mpsc_queue::clear_cachelines(first_block *block, size_t size)
 		block++;
 	}
 
-	assert(end <= reinterpret_cast<first_block *>(buf + buff_size_));
+	assert(end <= reinterpret_cast<first_block *>(buf + buf_size));
 }
 
 mpsc_queue::iterator &

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 #include "unittest.hpp"
 
@@ -247,59 +247,43 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 	});
 }
 
+/* test if inline_string can be placed on dram */
 template <typename T>
 void
-test_ctor_exception_nopmem(nvobj::pool<struct root<T>> &pop)
+test_dram(nvobj::pool<struct root<T>> &pop)
 {
-	auto bs1 = std::basic_string<T>(4, static_cast<T>('a'));
-	nvobj::basic_string_view<T> bsv_test_string1(bs1.data(), bs1.length());
+	using string_type = nvobj::experimental::basic_inline_string<T>;
 
+	constexpr size_t string_size = 20;
+	typename std::aligned_storage<sizeof(string_type) +
+					      (string_size + 1) * sizeof(T),
+				      alignof(string_type)>::type buffer;
+
+	std::basic_string<T> s(string_size, T('a'));
+
+	auto dram_location = reinterpret_cast<string_type *>(&buffer);
+	new (dram_location)
+		string_type(nvobj::basic_string_view<T>(s.data(), s.length()));
+
+	UT_ASSERT(nvobj::basic_string_view<T>(s.data(), s.length()) ==
+		  nvobj::basic_string_view<T>(*dram_location));
+
+	dram_location->~string_type();
+
+	new (dram_location) string_type(string_size);
+
+	UT_ASSERTeq(dram_location->capacity(), string_size);
+	UT_ASSERTeq(dram_location->size(), 0);
+
+	/* inline_string cannot be modified on dram. */
 	try {
-		std::string example_str("example");
-		std::basic_string<T> bs(example_str.begin(), example_str.end());
-		Object<T> o(
-			1, nvobj::basic_string_view<T>(bs.data(), bs.length()));
-		UT_ASSERT(0);
+		s = std::basic_string<T>(string_size / 2, T('b'));
+		dram_location->assign(s.data());
+
+		ASSERT_UNREACHABLE;
 	} catch (pmem::pool_error &) {
 	} catch (...) {
-		UT_ASSERT(0);
-	}
-
-	auto r = pop.root();
-
-	const auto req_capacity = 100;
-
-	nvobj::transaction::run(pop, [&] {
-		nvobj::standard_alloc_policy<void> allocator;
-		r->o1 = static_cast<nvobj::persistent_ptr<Object<T>>>(
-			allocator.allocate(sizeof(Object<T>) +
-					   req_capacity * sizeof(T)));
-
-		new (r->o1.get()) Object<T>(1, bsv_test_string1);
-
-		try {
-			Object<T> o(*r->o1);
-			UT_ASSERT(0);
-		} catch (pmem::pool_error &) {
-		} catch (...) {
-			UT_ASSERT(0);
-		}
-	});
-}
-
-template <typename T>
-void
-test_ctor_exception(void)
-{
-	try {
-		int capacity = 10;
-		nvobjex::basic_inline_string<T>(
-			static_cast<nvobjex::inline_string::size_type>(
-				capacity));
-		UT_ASSERT(0);
-	} catch (pmem::pool_error &) {
-	} catch (...) {
-		UT_ASSERT(0);
+		ASSERT_UNREACHABLE;
 	}
 }
 }
@@ -324,8 +308,8 @@ test(int argc, char *argv[])
 	}
 
 	test_inline_string<T>(pop);
-	test_ctor_exception_nopmem<T>(pop);
-	test_ctor_exception<T>();
+	test_dram<T>(pop);
+
 	pop.close();
 }
 

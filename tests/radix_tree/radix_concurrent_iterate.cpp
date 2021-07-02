@@ -63,14 +63,93 @@ test_write_iterate(nvobj::pool<root> &pop,
 			UT_ASSERTeq(cnt, INITIAL_ELEMENTS);
 		}};
 
-	parallel_write_read(writer, readers, threads);
+	parallel_modify_read(writer, readers, threads);
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<Container>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
+/* Insert INITIAL_ELEMENTS elements to the radix. After that, concurrently
+ * erase elements with even keys and iterate through the entire container to
+ * count elements with odd keys. */
+void
+test_erase_iterate(nvobj::pool<root> &pop,
+		   nvobj::persistent_ptr<container_int_int> &ptr)
+{
+	const size_t value_repeats = 1000;
+	size_t threads = 4;
+	if (On_drd)
+		threads = 2;
+
+	/* check how many allocs will remain after removing elements with even
+	 * keys */
+	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
+	for (size_t i = 0; i < INITIAL_ELEMENTS; i += 2) {
+		ptr->erase(key<container_int_int>(i));
+	}
+	auto expected_allocs = num_allocs(pop);
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
+
+	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
+	ptr->runtime_initialize_mt();
+
+	/* force 3 gc cycles to ensure that all garbage vectors will be
+	 * allocated */
+	for (size_t i = 0; i < 3; ++i) {
+		ptr->erase(key<container_int_int>(i));
+		ptr->garbage_collect();
+		ptr->emplace(key<container_int_int>(i),
+			     value<container_int_int>(i));
+	}
+
+	auto writer_f = [&] {
+		for (size_t i = 0; i < INITIAL_ELEMENTS; i += 2) {
+			ptr->erase(key<container_int_int>(i));
+			ptr->garbage_collect();
+		}
+	};
+
+	auto readers_f = std::vector<std::function<void()>>{
+		[&] {
+			auto w = ptr->register_worker();
+
+			size_t cnt = 0;
+			w.critical([&] {
+				for (auto it = ptr->begin(); it != ptr->end();
+				     ++it) {
+					if (it->key() % 2) {
+						++cnt;
+					}
+				}
+			});
+			UT_ASSERTeq(cnt, INITIAL_ELEMENTS / 2);
+		},
+	};
+
+	parallel_modify_read(writer_f, readers_f, threads);
+
+	UT_ASSERTeq(ptr->size(), INITIAL_ELEMENTS / 2);
+
+	ptr->garbage_collect_force();
+
+	/* num allocs == expected_allocs + 3 garbage vectors */
+	UT_ASSERTeq(num_allocs(pop), expected_allocs + 3);
+
+	ptr->runtime_finalize_mt();
+
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
+
+	UT_ASSERTeq(num_allocs(pop), 0);
+}
+
+/* Insert INITIAL_ELEMENTS/2 elements to the radix. After that concurrently
+ * write new elements from the writer thread and do lower_bound/upper_bound
+ * from the other threads. */
 void
 test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 			      nvobj::persistent_ptr<container_int_int> &ptr)
@@ -123,8 +202,9 @@ test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 		},
 	};
 
-	parallel_write_read(writer, readers, threads);
+	parallel_modify_read(writer, readers, threads);
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
 
@@ -274,9 +354,10 @@ test_erase_upper_lower_bounds_neighbours(
 				}
 			}};
 
-		parallel_write_read(eraser, readers, threads);
+		parallel_modify_read(eraser, readers, threads);
 	}
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<container_string>(ptr); });
 
@@ -364,13 +445,85 @@ test_write_erase_upper_lower_bounds_split(
 				}
 			}};
 
-		parallel_write_read(writer_eraser, readers, threads);
+		parallel_modify_read(writer_eraser, readers, threads);
 
 		UT_ASSERTeq(number_of_elements, ptr->size());
 	}
 
+	ptr->runtime_finalize_mt();
 	nvobj::transaction::run(
 		pop, [&] { nvobj::delete_persistent<container_string>(ptr); });
+
+	UT_ASSERTeq(num_allocs(pop), 0);
+}
+
+/* Insert INITIAL_ELEMENTS elements to the radix. After that concurrently
+ * erase elements in one thread and do lower_bound/upper_bound
+ * in the other threads. */
+void
+test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
+			      nvobj::persistent_ptr<container_int_int> &ptr)
+{
+	const size_t value_repeats = 10;
+	size_t threads = 4;
+	if (On_drd)
+		threads = 2;
+	const size_t batch_size = INITIAL_ELEMENTS / threads;
+
+	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
+	ptr->runtime_initialize_mt();
+
+	auto writer = [&]() {
+		for (size_t i = 0; i < INITIAL_ELEMENTS; i += 2) {
+			ptr->erase(key<container_int_int>(i));
+		}
+	};
+
+	std::atomic<size_t> reader_id;
+	reader_id.store(0);
+	auto readers = std::vector<std::function<void()>>{
+		[&]() {
+			auto id = reader_id++;
+			for (size_t i = id * batch_size;
+			     i < (id + 1) * batch_size; ++i) {
+				std::vector<unsigned int> keys;
+				auto it = ptr->lower_bound(i);
+				while (it != ptr->end()) {
+					keys.push_back(it->key());
+					++it;
+				}
+
+				for (auto &k : keys) {
+					UT_ASSERT(k >=
+						  key<container_int_int>(i));
+				}
+			}
+		},
+		[&]() {
+			auto id = reader_id++;
+			for (size_t i = id * batch_size;
+			     i < (id + 1) * batch_size; ++i) {
+				std::vector<unsigned int> keys;
+				auto it = ptr->upper_bound(i);
+				while (it != ptr->end()) {
+					keys.push_back(it->key());
+					++it;
+				}
+
+				for (auto &k : keys) {
+					UT_ASSERT(k >
+						  key<container_int_int>(i));
+				}
+			}
+		},
+	};
+
+	parallel_modify_read(writer, readers, threads);
+
+	ptr->runtime_finalize_mt();
+
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -403,6 +556,7 @@ test(int argc, char *argv[])
 	generator = std::mt19937_64(seed);
 
 	test_write_iterate(pop, pop.root()->radix_int_int);
+	test_erase_iterate(pop, pop.root()->radix_int_int);
 	test_write_upper_lower_bounds(pop, pop.root()->radix_int_int);
 	test_erase_upper_lower_bounds_neighbours(pop, pop.root()->radix_str);
 	test_write_erase_upper_lower_bounds_split(pop, pop.root()->radix_str);

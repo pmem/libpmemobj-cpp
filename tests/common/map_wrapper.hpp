@@ -48,7 +48,7 @@ struct test_bytes_view;
 template <typename T>
 struct test_bytes_view<
 	T, typename std::enable_if<!std::is_signed<T>::value>::type> {
-	using type = pmem::detail::bytes_view<T>;
+	using type = nvobjex::bytes_view<T>;
 };
 
 struct test_bytes_view_int {
@@ -93,7 +93,7 @@ erase(C &m, Args &&... args) -> decltype(m.erase(std::forward<Args>(args)...))
 #define MAP_VALUE value()
 #define TRANSPARENT_COMPARE heterogeneous_bytes_view
 #define TRANSPARENT_COMPARE_NOT_REFERENCEABLE heterogeneous_bytes_view
-#define TRANSPARENT_COMPARE_STRING pmem::detail::bytes_view<pmem::obj::string>
+#define TRANSPARENT_COMPARE_STRING nvobjex::bytes_view<pmem::obj::string>
 
 #endif
 

@@ -47,17 +47,14 @@
 namespace pmem
 {
 
-namespace detail
-{
-template <typename T, typename Enable = void>
-struct bytes_view;
-}
-
 namespace obj
 {
 
 namespace experimental
 {
+
+template <typename T, typename Enable = void>
+struct bytes_view;
 
 /**
  * Radix tree is an associative, ordered container. Its API is similar
@@ -100,11 +97,23 @@ namespace experimental
  *
  * swap() invalidates all references and iterators.
  *
+ * MtMode enables single-writer multiple-readers concurrency with read
+ * uncommitted isolation.
+ *
+ * This has the following effects:
+ * - erase and clear does not free nodes/leaves immediately, instead they are
+ * added to a garbage list which can be freed by calling garbage_collect()
+ * - insert_or_assign and iterator.assign_val do not perform in-place update,
+ * instead a new leaf is allocated and the old one is added to the garbage list
+ * - memory-reclamation mechanisms are initialized
+ *
+ * By default, concurrency is not enabled.
+ *
  * An example of custom BytesView implementation:
  * @snippet radix_tree/radix_tree_custom_key.cpp bytes_view_example
  */
-template <typename Key, typename Value,
-	  typename BytesView = detail::bytes_view<Key>>
+template <typename Key, typename Value, typename BytesView = bytes_view<Key>,
+	  bool MtMode = false>
 class radix_tree {
 	template <bool IsConst>
 	struct radix_tree_iterator;
@@ -281,12 +290,22 @@ public:
 	friend std::ostream &operator<<(std::ostream &os,
 					const radix_tree<K, V, BV> &tree);
 
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<Mt>::type>
 	void garbage_collect();
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<Mt>::type>
 	void garbage_collect_force();
 
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<Mt>::type>
 	void runtime_initialize_mt(ebr *e = new ebr());
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<Mt>::type>
 	void runtime_finalize_mt();
 
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<Mt>::type>
 	worker_type register_worker();
 
 private:
@@ -328,7 +347,6 @@ private:
 	/*** pmem members ***/
 	atomic_pointer_type root;
 	p<uint64_t> size_;
-	v<uint64_t> mt;
 	vector<pointer_type> garbages[EPOCHS_NUMBER];
 
 	ebr *ebr_ = nullptr;
@@ -357,7 +375,8 @@ private:
 	template <typename K1, typename K2>
 	static bitn_t bit_diff(const K1 &leaf_key, const K2 &key, byten_t diff);
 	template <typename K>
-	std::pair<typename radix_tree<Key, Value, BytesView>::leaf *, path_type>
+	std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::leaf *,
+		  path_type>
 	descend(pointer_type n, const K &key) const;
 	static void print_rec(std::ostream &os, radix_tree::pointer_type n);
 	template <typename K>
@@ -367,7 +386,12 @@ private:
 	template <bool Lower, typename K>
 	bool validate_bound(const_iterator it, const K &key) const;
 	node_desc follow_path(const path_type &, byten_t diff, bitn_t sh) const;
-	bool validate_path(const path_type &path) const;
+	template <bool Mt = MtMode>
+	typename std::enable_if<Mt, bool>::type
+	validate_path(const path_type &path) const;
+	template <bool Mt = MtMode>
+	typename std::enable_if<!Mt, bool>::type
+	validate_path(const path_type &path) const;
 	template <bool Lower, typename K>
 	const_iterator internal_bound(const K &k) const;
 	static bool is_leaf(const pointer_type &p);
@@ -384,9 +408,9 @@ private:
 		      "Internal node should have size equal to 256 bytes.");
 };
 
-template <typename Key, typename Value, typename BytesView>
-void swap(radix_tree<Key, Value, BytesView> &lhs,
-	  radix_tree<Key, Value, BytesView> &rhs);
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+void swap(radix_tree<Key, Value, BytesView, MtMode> &lhs,
+	  radix_tree<Key, Value, BytesView, MtMode> &rhs);
 
 /**
  * This is the structure which 'holds' key/value pair. The data
@@ -397,9 +421,9 @@ void swap(radix_tree<Key, Value, BytesView> &lhs,
  * Constructors of the leaf structure mimics those of std::pair<const Key,
  * Value>.
  */
-template <typename Key, typename Value, typename BytesView>
-struct radix_tree<Key, Value, BytesView>::leaf {
-	using tree_type = radix_tree<Key, Value, BytesView>;
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+struct radix_tree<Key, Value, BytesView, MtMode>::leaf {
+	using tree_type = radix_tree<Key, Value, BytesView, MtMode>;
 
 	leaf(const leaf &) = delete;
 	leaf(leaf &&) = delete;
@@ -444,7 +468,7 @@ struct radix_tree<Key, Value, BytesView>::leaf {
 					 const leaf &other);
 
 private:
-	friend class radix_tree<Key, Value, BytesView>;
+	friend class radix_tree<Key, Value, BytesView, MtMode>;
 
 	leaf() = default;
 
@@ -463,8 +487,8 @@ private:
  * This is internal node. It does not hold any values directly, but
  * can contain pointer to an embedded entry (see below).
  */
-template <typename Key, typename Value, typename BytesView>
-struct radix_tree<Key, Value, BytesView>::node {
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+struct radix_tree<Key, Value, BytesView, MtMode>::node {
 	node(pointer_type parent, byten_t byte, bitn_t bit);
 
 	/**
@@ -513,39 +537,39 @@ struct radix_tree<Key, Value, BytesView>::node {
 	template <bool Direction = direction::Forward>
 	typename std::enable_if<
 		Direction ==
-			radix_tree<Key, Value,
-				   BytesView>::node::direction::Forward,
-		typename radix_tree<Key, Value,
-				    BytesView>::node::forward_iterator>::type
+			radix_tree<Key, Value, BytesView,
+				   MtMode>::node::direction::Forward,
+		typename radix_tree<Key, Value, BytesView,
+				    MtMode>::node::forward_iterator>::type
 	begin() const;
 
 	template <bool Direction = direction::Forward>
 	typename std::enable_if<
 		Direction ==
-			radix_tree<Key, Value,
-				   BytesView>::node::direction::Forward,
-		typename radix_tree<Key, Value,
-				    BytesView>::node::forward_iterator>::type
+			radix_tree<Key, Value, BytesView,
+				   MtMode>::node::direction::Forward,
+		typename radix_tree<Key, Value, BytesView,
+				    MtMode>::node::forward_iterator>::type
 	end() const;
 
 	/* rbegin */
 	template <bool Direction = direction::Forward>
 	typename std::enable_if<
 		Direction ==
-			radix_tree<Key, Value,
-				   BytesView>::node::direction::Reverse,
-		typename radix_tree<Key, Value,
-				    BytesView>::node::reverse_iterator>::type
+			radix_tree<Key, Value, BytesView,
+				   MtMode>::node::direction::Reverse,
+		typename radix_tree<Key, Value, BytesView,
+				    MtMode>::node::reverse_iterator>::type
 	begin() const;
 
 	/* rend */
 	template <bool Direction = direction::Forward>
 	typename std::enable_if<
 		Direction ==
-			radix_tree<Key, Value,
-				   BytesView>::node::direction::Reverse,
-		typename radix_tree<Key, Value,
-				    BytesView>::node::reverse_iterator>::type
+			radix_tree<Key, Value, BytesView,
+				   MtMode>::node::direction::Reverse,
+		typename radix_tree<Key, Value, BytesView,
+				    MtMode>::node::reverse_iterator>::type
 	end() const;
 
 	template <bool Direction = direction::Forward, typename Ptr>
@@ -566,9 +590,9 @@ struct radix_tree<Key, Value, BytesView>::node {
  * If Value type is inline_string, calling (*it).second = "new_value"
  * might cause reallocation and invalidate iterators to that element.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-struct radix_tree<Key, Value, BytesView>::radix_tree_iterator {
+struct radix_tree<Key, Value, BytesView, MtMode>::radix_tree_iterator {
 private:
 	using leaf_ptr =
 		typename std::conditional<IsConst, const leaf *, leaf *>::type;
@@ -636,8 +660,8 @@ private:
 	bool try_decrement();
 };
 
-template <typename Key, typename Value, typename BytesView>
-struct radix_tree<Key, Value, BytesView>::node::forward_iterator {
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+struct radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator {
 	using difference_type = std::ptrdiff_t;
 	using value_type = atomic_pointer_type;
 	using pointer = const value_type *;
@@ -672,8 +696,9 @@ private:
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::radix_tree() : root(nullptr), size_(0)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree()
+    : root(nullptr), size_(0)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -698,9 +723,10 @@ radix_tree<Key, Value, BytesView>::radix_tree() : root(nullptr), size_(0)
  * inserted elements in transaction failed.
  * @throw rethrows element constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <class InputIt>
-radix_tree<Key, Value, BytesView>::radix_tree(InputIt first, InputIt last)
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree(InputIt first,
+						      InputIt last)
     : root(nullptr), size_(0)
 {
 	check_pmem();
@@ -725,8 +751,8 @@ radix_tree<Key, Value, BytesView>::radix_tree(InputIt first, InputIt last)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::radix_tree(const radix_tree &m)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree(const radix_tree &m)
     : root(nullptr), size_(0)
 {
 	check_pmem();
@@ -748,8 +774,8 @@ radix_tree<Key, Value, BytesView>::radix_tree(const radix_tree &m)
  * @throw pmem::transaction_scope_error if constructor wasn't called in
  * transaction.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::radix_tree(radix_tree &&m)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree(radix_tree &&m)
 {
 	check_pmem();
 	check_tx_stage_work();
@@ -774,8 +800,8 @@ radix_tree<Key, Value, BytesView>::radix_tree(radix_tree &&m)
  * transaction.
  * @throw rethrows element constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::radix_tree(
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree(
 	std::initializer_list<value_type> il)
     : radix_tree(il.begin(), il.end())
 {
@@ -790,9 +816,9 @@ radix_tree<Key, Value, BytesView>::radix_tree(
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  * @throw rethrows constructor's exception.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView> &
-radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode> &
+radix_tree<Key, Value, BytesView, MtMode>::operator=(const radix_tree &other)
 {
 	check_pmem();
 
@@ -821,9 +847,9 @@ radix_tree<Key, Value, BytesView>::operator=(const radix_tree &other)
  * @throw pmem::pool_error if an object is not in persistent memory.
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView> &
-radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode> &
+radix_tree<Key, Value, BytesView, MtMode>::operator=(radix_tree &&other)
 {
 	check_pmem();
 
@@ -854,9 +880,9 @@ radix_tree<Key, Value, BytesView>::operator=(radix_tree &&other)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw pmem::transaction_alloc_error when allocating new memory failed.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView> &
-radix_tree<Key, Value, BytesView>::operator=(
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode> &
+radix_tree<Key, Value, BytesView, MtMode>::operator=(
 	std::initializer_list<value_type> ilist)
 {
 	check_pmem();
@@ -879,8 +905,8 @@ radix_tree<Key, Value, BytesView>::operator=(
 /**
  * Destructor.
  */
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::~radix_tree()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::~radix_tree()
 {
 	try {
 		clear();
@@ -896,9 +922,9 @@ radix_tree<Key, Value, BytesView>::~radix_tree()
  *
  * @return true if container is empty, false otherwise.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 bool
-radix_tree<Key, Value, BytesView>::empty() const noexcept
+radix_tree<Key, Value, BytesView, MtMode>::empty() const noexcept
 {
 	return size_ == 0;
 }
@@ -906,9 +932,9 @@ radix_tree<Key, Value, BytesView>::empty() const noexcept
 /**
  * @return maximum number of elements the container is able to hold
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::max_size() const noexcept
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::size_type
+radix_tree<Key, Value, BytesView, MtMode>::max_size() const noexcept
 {
 	return std::numeric_limits<difference_type>::max();
 }
@@ -916,9 +942,9 @@ radix_tree<Key, Value, BytesView>::max_size() const noexcept
 /**
  * @return number of elements.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 uint64_t
-radix_tree<Key, Value, BytesView>::size() const noexcept
+radix_tree<Key, Value, BytesView, MtMode>::size() const noexcept
 {
 	return this->size_;
 }
@@ -928,9 +954,9 @@ radix_tree<Key, Value, BytesView>::size() const noexcept
  *
  * Exchanges *this with @param rhs
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
+radix_tree<Key, Value, BytesView, MtMode>::swap(radix_tree &rhs)
 {
 	auto pop = pool_by_vptr(this);
 
@@ -943,15 +969,16 @@ radix_tree<Key, Value, BytesView>::swap(radix_tree &rhs)
 /**
  * Performs full epochs synchronisation. Transactionally collects and frees all
  * garbage produced by erase, clear, insert_or_assign or assign_val in
- * concurrent mode (if runtime_initialize_mt was called).
+ * concurrent mode (if MtMode == true).
  *
  * Garbage is not automatically collected on move/copy ctor/assignment.
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt, typename Enable>
 void
-radix_tree<Key, Value, BytesView>::garbage_collect_force()
+radix_tree<Key, Value, BytesView, MtMode>::garbage_collect_force()
 {
 	ebr_->full_sync();
 	for (size_t i = 0; i < EPOCHS_NUMBER; ++i) {
@@ -961,25 +988,26 @@ radix_tree<Key, Value, BytesView>::garbage_collect_force()
 
 /**
  * Tries to collect and free some garbage produced by erase, clear,
- * insert_or_assign or assign_val in concurrent mode (if runtime_initialize_mt
- * was called). It is not guaranteed that this method will free any memory. It
+ * insert_or_assign or assign_val in concurrent mode (if MtMode == true).
+ * It is not guaranteed that this method will free any memory. It
  * depends on operations currently performed by other threads.
  *
  * Garbage is not automatically collected on move/copy ctor/assignment.
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt, typename Enable>
 void
-radix_tree<Key, Value, BytesView>::garbage_collect()
+radix_tree<Key, Value, BytesView, MtMode>::garbage_collect()
 {
 	ebr_->sync();
 	clear_garbage(ebr_->gc_epoch());
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::clear_garbage(size_t n)
+radix_tree<Key, Value, BytesView, MtMode>::clear_garbage(size_t n)
 {
 	assert(n >= 0 && n < EPOCHS_NUMBER);
 
@@ -1002,28 +1030,18 @@ radix_tree<Key, Value, BytesView>::clear_garbage(size_t n)
 }
 
 /**
- * Enables single-writer multiple-readers concurrency with read uncommitted
- * isolation. This property is NOT persistent. Enabling must be done after
+ * If MtMode == true, this function must be called after
  * each application restart. It is necessary to call runtime_finalize_mt()
  * before closing the application.
- *
- * This has the following effects:
- * - erase and clear does not free nodes/leaves immediately, instead they are
- * added to a garbage list which can be freed by calling garbage_collect()
- * - insert_or_assign and iterator.assign_val do not perform in-place update,
- * instead a new leaf is allocated and the old one is added to the garbage list
- * - memory-reclamation mechanisms are initialized
- *
- * By default, concurrency is not enabled.
  *
  * @param[in] e pointer to already created ebr, default it will be created
  * automatically.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt, typename Enable>
 void
-radix_tree<Key, Value, BytesView>::runtime_initialize_mt(ebr *e)
+radix_tree<Key, Value, BytesView, MtMode>::runtime_initialize_mt(ebr *e)
 {
-	mt.get(false) = true;
 #if LIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED
 	VALGRIND_PMC_REMOVE_PMEM_MAPPING(&ebr_, sizeof(ebr *));
 #endif
@@ -1031,16 +1049,14 @@ radix_tree<Key, Value, BytesView>::runtime_initialize_mt(ebr *e)
 }
 
 /**
- * Disables single-writer multiple-readers concurrency with read uncommitted
- * isolation. This property is NOT persistent. Disabling must be done before
- * each application close and before calling radix destructor or there will be
- * possible a memory leak.
+ * If MtMode == true, this function must be called before each application close
+ * and before calling radix destructor or there will be possible a memory leak.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt, typename Enable>
 void
-radix_tree<Key, Value, BytesView>::runtime_finalize_mt()
+radix_tree<Key, Value, BytesView, MtMode>::runtime_finalize_mt()
 {
-	mt.get(false) = false;
 	if (ebr_) {
 		delete ebr_;
 	}
@@ -1055,9 +1071,10 @@ radix_tree<Key, Value, BytesView>::runtime_finalize_mt()
  *
  * @return new registered worker.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::worker_type
-radix_tree<Key, Value, BytesView>::register_worker()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt, typename Enable>
+typename radix_tree<Key, Value, BytesView, MtMode>::worker_type
+radix_tree<Key, Value, BytesView, MtMode>::register_worker()
 {
 	assert(ebr_);
 
@@ -1067,9 +1084,9 @@ radix_tree<Key, Value, BytesView>::register_worker()
 /*
  * Returns reference to n->parent (handles both internal and leaf nodes).
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::atomic_pointer_type &
-radix_tree<Key, Value, BytesView>::parent_ref(pointer_type n)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::atomic_pointer_type &
+radix_tree<Key, Value, BytesView, MtMode>::parent_ref(pointer_type n)
 {
 	if (is_leaf(n))
 		return get_leaf(n)->parent;
@@ -1085,10 +1102,10 @@ radix_tree<Key, Value, BytesView>::parent_ref(pointer_type n)
  *
  * Can return nullptr if there is a conflicting, concurrent operation.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::any_leftmost_leaf(
-	typename radix_tree<Key, Value, BytesView>::pointer_type n,
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::leaf *
+radix_tree<Key, Value, BytesView, MtMode>::any_leftmost_leaf(
+	typename radix_tree<Key, Value, BytesView, MtMode>::pointer_type n,
 	size_type min_depth) const
 {
 	assert(n);
@@ -1123,12 +1140,12 @@ radix_tree<Key, Value, BytesView>::any_leftmost_leaf(
  *
  * Can return nullptr if there is a conflicting, concurrent operation.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K>
-std::pair<typename radix_tree<Key, Value, BytesView>::leaf *,
-	  typename radix_tree<Key, Value, BytesView>::path_type>
-radix_tree<Key, Value, BytesView>::descend(pointer_type root_snap,
-					   const K &key) const
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::leaf *,
+	  typename radix_tree<Key, Value, BytesView, MtMode>::path_type>
+radix_tree<Key, Value, BytesView, MtMode>::descend(pointer_type root_snap,
+						   const K &key) const
 {
 	assert(root_snap);
 
@@ -1172,10 +1189,10 @@ radix_tree<Key, Value, BytesView>::descend(pointer_type root_snap,
 	}
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K>
 BytesView
-radix_tree<Key, Value, BytesView>::bytes_view(const K &key)
+radix_tree<Key, Value, BytesView, MtMode>::bytes_view(const K &key)
 {
 	/* bytes_view accepts const pointer instead of reference to make sure
 	 * there is no implicit conversion to a temporary type (and hence
@@ -1183,9 +1200,9 @@ radix_tree<Key, Value, BytesView>::bytes_view(const K &key)
 	return BytesView(&key);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 string_view
-radix_tree<Key, Value, BytesView>::bytes_view(string_view key)
+radix_tree<Key, Value, BytesView, MtMode>::bytes_view(string_view key)
 {
 	return key;
 }
@@ -1193,10 +1210,11 @@ radix_tree<Key, Value, BytesView>::bytes_view(string_view key)
 /*
  * Checks for key equality.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K1, typename K2>
 bool
-radix_tree<Key, Value, BytesView>::keys_equal(const K1 &k1, const K2 &k2)
+radix_tree<Key, Value, BytesView, MtMode>::keys_equal(const K1 &k1,
+						      const K2 &k2)
 {
 	return k1.size() == k2.size() && compare(k1, k2) == 0;
 }
@@ -1204,11 +1222,11 @@ radix_tree<Key, Value, BytesView>::keys_equal(const K1 &k1, const K2 &k2)
 /*
  * Checks for key equality.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K1, typename K2>
 int
-radix_tree<Key, Value, BytesView>::compare(const K1 &k1, const K2 &k2,
-					   byten_t offset)
+radix_tree<Key, Value, BytesView, MtMode>::compare(const K1 &k1, const K2 &k2,
+						   byten_t offset)
 {
 	auto ret = prefix_diff(k1, k2, offset);
 
@@ -1221,11 +1239,12 @@ radix_tree<Key, Value, BytesView>::compare(const K1 &k1, const K2 &k2,
 /*
  * Returns length of common prefix of lhs and rhs.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K1, typename K2>
-typename radix_tree<Key, Value, BytesView>::byten_t
-radix_tree<Key, Value, BytesView>::prefix_diff(const K1 &lhs, const K2 &rhs,
-					       byten_t offset)
+typename radix_tree<Key, Value, BytesView, MtMode>::byten_t
+radix_tree<Key, Value, BytesView, MtMode>::prefix_diff(const K1 &lhs,
+						       const K2 &rhs,
+						       byten_t offset)
 {
 	byten_t diff;
 	for (diff = offset; diff < (std::min)(lhs.size(), rhs.size()); diff++) {
@@ -1240,19 +1259,19 @@ radix_tree<Key, Value, BytesView>::prefix_diff(const K1 &lhs, const K2 &rhs,
  * Checks whether length of the path from root to n is equal
  * to key_size.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 bool
-radix_tree<Key, Value, BytesView>::path_length_equal(size_t key_size,
-						     pointer_type n)
+radix_tree<Key, Value, BytesView, MtMode>::path_length_equal(size_t key_size,
+							     pointer_type n)
 {
 	return n->byte == key_size && n->bit == bitn_t(FIRST_NIB);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K1, typename K2>
-typename radix_tree<Key, Value, BytesView>::bitn_t
-radix_tree<Key, Value, BytesView>::bit_diff(const K1 &leaf_key, const K2 &key,
-					    byten_t diff)
+typename radix_tree<Key, Value, BytesView, MtMode>::bitn_t
+radix_tree<Key, Value, BytesView, MtMode>::bit_diff(const K1 &leaf_key,
+						    const K2 &key, byten_t diff)
 {
 	auto min_key_len = (std::min)(leaf_key.size(), key.size());
 	bitn_t sh = 8;
@@ -1273,10 +1292,11 @@ radix_tree<Key, Value, BytesView>::bit_diff(const K1 &leaf_key, const K2 &key,
  * Follows path saved in @param path until appropriate node is found
  * (for which @param diff and @param sh matches with byte and bit).
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node_desc
-radix_tree<Key, Value, BytesView>::follow_path(const path_type &path,
-					       byten_t diff, bitn_t sh) const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::node_desc
+radix_tree<Key, Value, BytesView, MtMode>::follow_path(const path_type &path,
+						       byten_t diff,
+						       bitn_t sh) const
 {
 	assert(path.size());
 
@@ -1296,10 +1316,11 @@ radix_tree<Key, Value, BytesView>::follow_path(const path_type &path,
 	return n;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename F, class... Args>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::internal_emplace(const K &k,
+							    F &&make_leaf)
 {
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
@@ -1472,11 +1493,11 @@ radix_tree<Key, Value, BytesView>::internal_emplace(const K &k, F &&make_leaf)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <class... Args>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::try_emplace(const key_type &k,
-					       Args &&... args)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::try_emplace(const key_type &k,
+						       Args &&... args)
 {
 	return internal_emplace(k, [&](pointer_type parent) {
 		size_++;
@@ -1511,10 +1532,10 @@ radix_tree<Key, Value, BytesView>::try_emplace(const key_type &k,
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <class... Args>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::emplace(Args &&... args)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::emplace(Args &&... args)
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 	std::pair<iterator, bool> ret;
@@ -1551,9 +1572,9 @@ radix_tree<Key, Value, BytesView>::emplace(Args &&... args)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert(const value_type &v)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::insert(const value_type &v)
 {
 	return try_emplace(v.first, v.second);
 }
@@ -1573,9 +1594,9 @@ radix_tree<Key, Value, BytesView>::insert(const value_type &v)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert(value_type &&v)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::insert(value_type &&v)
 {
 	return try_emplace(std::move(v.first), std::move(v.second));
 }
@@ -1599,10 +1620,10 @@ radix_tree<Key, Value, BytesView>::insert(value_type &&v)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename P, typename>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert(P &&p)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::insert(P &&p)
 {
 	return emplace(std::forward<P>(p));
 }
@@ -1618,11 +1639,11 @@ radix_tree<Key, Value, BytesView>::insert(P &&p)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename InputIterator>
 void
-radix_tree<Key, Value, BytesView>::insert(InputIterator first,
-					  InputIterator last)
+radix_tree<Key, Value, BytesView, MtMode>::insert(InputIterator first,
+						  InputIterator last)
 {
 	for (auto it = first; it != last; it++)
 		try_emplace((*it).first, (*it).second);
@@ -1638,9 +1659,10 @@ radix_tree<Key, Value, BytesView>::insert(InputIterator first,
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::insert(std::initializer_list<value_type> il)
+radix_tree<Key, Value, BytesView, MtMode>::insert(
+	std::initializer_list<value_type> il)
 {
 	insert(il.begin(), il.end());
 }
@@ -1669,10 +1691,11 @@ radix_tree<Key, Value, BytesView>::insert(std::initializer_list<value_type> il)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <class... Args>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::try_emplace(key_type &&k, Args &&... args)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::try_emplace(key_type &&k,
+						       Args &&... args)
 {
 	return internal_emplace(k, [&](pointer_type parent) {
 		size_++;
@@ -1709,17 +1732,18 @@ radix_tree<Key, Value, BytesView>::try_emplace(key_type &&k, Args &&... args)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename BV, class... Args>
 auto
-radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
-	typename std::enable_if<
+radix_tree<Key, Value, BytesView, MtMode>::try_emplace(K &&k, Args &&... args)
+	-> typename std::enable_if<
 		detail::has_is_transparent<BV>::value &&
 			!std::is_same<typename std::remove_const<
 					      typename std::remove_reference<
 						      K>::type>::type,
 				      key_type>::value,
-		std::pair<typename radix_tree<Key, Value, BytesView>::iterator,
+		std::pair<typename radix_tree<Key, Value, BytesView,
+					      MtMode>::iterator,
 			  bool>>::type
 
 {
@@ -1748,10 +1772,11 @@ radix_tree<Key, Value, BytesView>::try_emplace(K &&k, Args &&... args) ->
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename M>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert_or_assign(const key_type &k, M &&obj)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::insert_or_assign(const key_type &k,
+							    M &&obj)
 {
 	auto ret = try_emplace(k, std::forward<M>(obj));
 	if (!ret.second)
@@ -1777,10 +1802,11 @@ radix_tree<Key, Value, BytesView>::insert_or_assign(const key_type &k, M &&obj)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename M>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert_or_assign(key_type &&k, M &&obj)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::insert_or_assign(key_type &&k,
+							    M &&obj)
 {
 	auto ret = try_emplace(std::move(k), std::forward<M>(obj));
 	if (!ret.second)
@@ -1809,10 +1835,10 @@ radix_tree<Key, Value, BytesView>::insert_or_assign(key_type &&k, M &&obj)
  * failed.
  * @throw rethrows constructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename M, typename K, typename>
-std::pair<typename radix_tree<Key, Value, BytesView>::iterator, bool>
-radix_tree<Key, Value, BytesView>::insert_or_assign(K &&k, M &&obj)
+std::pair<typename radix_tree<Key, Value, BytesView, MtMode>::iterator, bool>
+radix_tree<Key, Value, BytesView, MtMode>::insert_or_assign(K &&k, M &&obj)
 {
 	auto ret = try_emplace(std::forward<K>(k), std::forward<M>(obj));
 	if (!ret.second)
@@ -1829,9 +1855,9 @@ radix_tree<Key, Value, BytesView>::insert_or_assign(K &&k, M &&obj)
  * @return Number of elements with key that compares equivalent to the
  * specified argument.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::count(const key_type &k) const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::size_type
+radix_tree<Key, Value, BytesView, MtMode>::count(const key_type &k) const
 {
 	return internal_find(k) != nullptr ? 1 : 0;
 }
@@ -1848,10 +1874,10 @@ radix_tree<Key, Value, BytesView>::count(const key_type &k) const
  * @return Number of elements with key that compares equivalent to the
  * specified argument.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::count(const K &k) const
+typename radix_tree<Key, Value, BytesView, MtMode>::size_type
+radix_tree<Key, Value, BytesView, MtMode>::count(const K &k) const
 {
 	return internal_find(k) != nullptr ? 1 : 0;
 }
@@ -1864,9 +1890,9 @@ radix_tree<Key, Value, BytesView>::count(const K &k) const
  * @return Iterator to an element with key equivalent to key. If no such
  * element is found, past-the-end iterator is returned.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::find(const key_type &k)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::find(const key_type &k)
 {
 	return iterator(internal_find(k), this);
 }
@@ -1879,9 +1905,9 @@ radix_tree<Key, Value, BytesView>::find(const key_type &k)
  * @return Const iterator to an element with key equivalent to key. If no such
  * element is found, past-the-end iterator is returned.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::find(const key_type &k) const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::find(const key_type &k) const
 {
 	return const_iterator(internal_find(k), this);
 }
@@ -1897,10 +1923,10 @@ radix_tree<Key, Value, BytesView>::find(const key_type &k) const
  * @return Iterator to an element with key equivalent to key. If no such
  * element is found, past-the-end iterator is returned.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::find(const K &k)
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::find(const K &k)
 {
 	return iterator(internal_find(k), this);
 }
@@ -1916,18 +1942,18 @@ radix_tree<Key, Value, BytesView>::find(const K &k)
  * @return Const iterator to an element with key equivalent to key. If no such
  * element is found, past-the-end iterator is returned.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::find(const K &k) const
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::find(const K &k) const
 {
 	return const_iterator(internal_find(k), this);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K>
-typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::internal_find(const K &k) const
+typename radix_tree<Key, Value, BytesView, MtMode>::leaf *
+radix_tree<Key, Value, BytesView, MtMode>::internal_find(const K &k) const
 {
 	auto key = bytes_view(k);
 
@@ -1958,9 +1984,9 @@ radix_tree<Key, Value, BytesView>::internal_find(const K &k) const
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::clear()
+radix_tree<Key, Value, BytesView, MtMode>::clear()
 {
 	if (size() != 0)
 		erase(begin(), end());
@@ -1981,9 +2007,9 @@ radix_tree<Key, Value, BytesView>::clear()
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::erase(const_iterator pos)
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
@@ -2061,10 +2087,10 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator pos)
  *
  * @throw pmem::transaction_error when snapshotting failed.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::erase(const_iterator first,
-					 const_iterator last)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::erase(const_iterator first,
+						 const_iterator last)
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
@@ -2089,9 +2115,9 @@ radix_tree<Key, Value, BytesView>::erase(const_iterator first,
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::erase(const key_type &k)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::size_type
+radix_tree<Key, Value, BytesView, MtMode>::erase(const key_type &k)
 {
 	auto it = const_iterator(internal_find(k), this);
 
@@ -2117,10 +2143,10 @@ radix_tree<Key, Value, BytesView>::erase(const key_type &k)
  * @throw pmem::transaction_error when snapshotting failed.
  * @throw rethrows destructor exception.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::size_type
-radix_tree<Key, Value, BytesView>::erase(const K &k)
+typename radix_tree<Key, Value, BytesView, MtMode>::size_type
+radix_tree<Key, Value, BytesView, MtMode>::erase(const K &k)
 {
 	auto it = const_iterator(internal_find(k), this);
 
@@ -2136,12 +2162,12 @@ radix_tree<Key, Value, BytesView>::erase(const K &k)
  * Deletes node/leaf pointed by ptr. If concurrent mode is used, adds element
  * to the garbage list. Otherwise, frees the element immediately.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename T>
 void
-radix_tree<Key, Value, BytesView>::free(persistent_ptr<T> ptr)
+radix_tree<Key, Value, BytesView, MtMode>::free(persistent_ptr<T> ptr)
 {
-	if (mt.get(false))
+	if (MtMode && ebr_ != nullptr)
 		garbages[ebr_->staging_epoch()].emplace_back(ptr);
 	else
 		delete_persistent<T>(ptr);
@@ -2151,11 +2177,11 @@ radix_tree<Key, Value, BytesView>::free(persistent_ptr<T> ptr)
  * Checks if iterator points to element which compares bigger (or equal)
  * to key.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Lower, typename K>
 bool
-radix_tree<Key, Value, BytesView>::validate_bound(const_iterator it,
-						  const K &key) const
+radix_tree<Key, Value, BytesView, MtMode>::validate_bound(const_iterator it,
+							  const K &key) const
 {
 	if (it == cend())
 		return true;
@@ -2169,13 +2195,12 @@ radix_tree<Key, Value, BytesView>::validate_bound(const_iterator it,
 /**
  * Checks if any node in the @param path was modified.
  */
-template <typename Key, typename Value, typename BytesView>
-bool
-radix_tree<Key, Value, BytesView>::validate_path(const path_type &path) const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt>
+typename std::enable_if<Mt, bool>::type
+radix_tree<Key, Value, BytesView, MtMode>::validate_path(
+	const path_type &path) const
 {
-	/* Path cannot change in a single-threaded workload */
-	// XXX - if (!mt) return true;
-
 	for (auto i = 0ULL; i < path.size(); i++) {
 		if (path[i].node != path[i].slot->load_acquire())
 			return false;
@@ -2188,10 +2213,19 @@ radix_tree<Key, Value, BytesView>::validate_path(const path_type &path) const
 	return true;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+template <bool Mt>
+typename std::enable_if<!Mt, bool>::type
+radix_tree<Key, Value, BytesView, MtMode>::validate_path(
+	const path_type &path) const
+{
+	return true;
+}
+
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Lower, typename K>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 {
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
@@ -2383,9 +2417,9 @@ radix_tree<Key, Value, BytesView>::internal_bound(const K &k) const
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const key_type &k) const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::lower_bound(const key_type &k) const
 {
 	return internal_bound<true>(k);
 }
@@ -2400,9 +2434,9 @@ radix_tree<Key, Value, BytesView>::lower_bound(const key_type &k) const
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const key_type &k)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::lower_bound(const key_type &k)
 {
 	auto it = const_cast<const radix_tree *>(this)->lower_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
@@ -2422,10 +2456,10 @@ radix_tree<Key, Value, BytesView>::lower_bound(const key_type &k)
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const K &k)
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::lower_bound(const K &k)
 {
 	auto it = const_cast<const radix_tree *>(this)->lower_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
@@ -2445,10 +2479,10 @@ radix_tree<Key, Value, BytesView>::lower_bound(const K &k)
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::lower_bound(const K &k) const
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::lower_bound(const K &k) const
 {
 	return internal_bound<true>(k);
 }
@@ -2463,9 +2497,9 @@ radix_tree<Key, Value, BytesView>::lower_bound(const K &k) const
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::upper_bound(const key_type &k) const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::upper_bound(const key_type &k) const
 {
 	return internal_bound<false>(k);
 }
@@ -2480,9 +2514,9 @@ radix_tree<Key, Value, BytesView>::upper_bound(const key_type &k) const
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::upper_bound(const key_type &k)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::upper_bound(const key_type &k)
 {
 	auto it = const_cast<const radix_tree *>(this)->upper_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
@@ -2502,10 +2536,10 @@ radix_tree<Key, Value, BytesView>::upper_bound(const key_type &k)
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::upper_bound(const K &k)
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::upper_bound(const K &k)
 {
 	auto it = const_cast<const radix_tree *>(this)->upper_bound(k);
 	return iterator(const_cast<typename iterator::leaf_ptr>(it.leaf_),
@@ -2525,10 +2559,10 @@ radix_tree<Key, Value, BytesView>::upper_bound(const K &k)
  * key. If no such element is found, a past-the-end iterator is
  * returned.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::upper_bound(const K &k) const
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::upper_bound(const K &k) const
 {
 	return internal_bound<false>(k);
 }
@@ -2539,9 +2573,9 @@ radix_tree<Key, Value, BytesView>::upper_bound(const K &k) const
  *
  * @return Iterator to the first element.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::begin()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::begin()
 {
 	auto const_begin = const_cast<const radix_tree *>(this)->begin();
 	return iterator(
@@ -2556,9 +2590,9 @@ radix_tree<Key, Value, BytesView>::begin()
  *
  * @return Iterator to the element following the last element.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::iterator
-radix_tree<Key, Value, BytesView>::end()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::iterator
+radix_tree<Key, Value, BytesView, MtMode>::end()
 {
 	auto const_end = const_cast<const radix_tree *>(this)->end();
 	return iterator(
@@ -2571,9 +2605,9 @@ radix_tree<Key, Value, BytesView>::end()
  *
  * @return const iterator to the first element.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::cbegin() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::cbegin() const
 {
 	while (true) {
 		auto root_ptr = root.load_acquire();
@@ -2595,9 +2629,9 @@ radix_tree<Key, Value, BytesView>::cbegin() const
  *
  * @return const iterator to the element following the last element.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::cend() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::cend() const
 {
 	return const_iterator(nullptr, this);
 }
@@ -2608,9 +2642,9 @@ radix_tree<Key, Value, BytesView>::cend() const
  *
  * @return const iterator to the first element.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::begin() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::begin() const
 {
 	return cbegin();
 }
@@ -2622,9 +2656,9 @@ radix_tree<Key, Value, BytesView>::begin() const
  *
  * @return const iterator to the element following the last element.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_iterator
-radix_tree<Key, Value, BytesView>::end() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
+radix_tree<Key, Value, BytesView, MtMode>::end() const
 {
 	return cend();
 }
@@ -2634,9 +2668,9 @@ radix_tree<Key, Value, BytesView>::end() const
  *
  * @return reverse_iterator pointing to the last element in the vector.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::reverse_iterator
-radix_tree<Key, Value, BytesView>::rbegin()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::reverse_iterator
+radix_tree<Key, Value, BytesView, MtMode>::rbegin()
 {
 	return reverse_iterator(end());
 }
@@ -2647,9 +2681,9 @@ radix_tree<Key, Value, BytesView>::rbegin()
  * @return reverse_iterator pointing to the theoretical element preceding the
  * first element in the vector.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::reverse_iterator
-radix_tree<Key, Value, BytesView>::rend()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::reverse_iterator
+radix_tree<Key, Value, BytesView, MtMode>::rend()
 {
 	return reverse_iterator(begin());
 }
@@ -2659,9 +2693,9 @@ radix_tree<Key, Value, BytesView>::rend()
  *
  * @return const_reverse_iterator pointing to the last element in the vector.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_reverse_iterator
-radix_tree<Key, Value, BytesView>::crbegin() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_reverse_iterator
+radix_tree<Key, Value, BytesView, MtMode>::crbegin() const
 {
 	return const_reverse_iterator(cend());
 }
@@ -2672,31 +2706,31 @@ radix_tree<Key, Value, BytesView>::crbegin() const
  * @return const_reverse_iterator pointing to the theoretical element preceding
  * the first element in the vector.
  */
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_reverse_iterator
-radix_tree<Key, Value, BytesView>::crend() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_reverse_iterator
+radix_tree<Key, Value, BytesView, MtMode>::crend() const
 {
 	return const_reverse_iterator(cbegin());
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_reverse_iterator
-radix_tree<Key, Value, BytesView>::rbegin() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_reverse_iterator
+radix_tree<Key, Value, BytesView, MtMode>::rbegin() const
 {
 	return const_reverse_iterator(cend());
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::const_reverse_iterator
-radix_tree<Key, Value, BytesView>::rend() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::const_reverse_iterator
+radix_tree<Key, Value, BytesView, MtMode>::rend() const
 {
 	return const_reverse_iterator(cbegin());
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::print_rec(std::ostream &os,
-					     radix_tree::pointer_type n)
+radix_tree<Key, Value, BytesView, MtMode>::print_rec(std::ostream &os,
+						     radix_tree::pointer_type n)
 {
 	// XXX - do all loads only once
 	if (!is_leaf(n)) {
@@ -2769,23 +2803,24 @@ operator<<(std::ostream &os, const radix_tree<K, V, BV> &tree)
 /*
  * internal: slice_index -- return index of child at the given nib
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 unsigned
-radix_tree<Key, Value, BytesView>::slice_index(char b, uint8_t bit)
+radix_tree<Key, Value, BytesView, MtMode>::slice_index(char b, uint8_t bit)
 {
 	return static_cast<unsigned>(b >> bit) & NIB;
 }
 
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::node::forward_iterator::forward_iterator(
-	pointer child, const node *n)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView,
+	   MtMode>::node::forward_iterator::forward_iterator(pointer child,
+							     const node *n)
     : child(child), n(n)
 {
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node::forward_iterator
-radix_tree<Key, Value, BytesView>::node::forward_iterator::operator++()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator
+radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator::operator++()
 {
 	if (child == &n->embedded_entry)
 		child = &n->child[0];
@@ -2795,16 +2830,16 @@ radix_tree<Key, Value, BytesView>::node::forward_iterator::operator++()
 	return *this;
 }
 
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::node::node(pointer_type parent, byten_t byte,
-					      bitn_t bit)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::node::node(pointer_type parent,
+						      byten_t byte, bitn_t bit)
     : parent(parent), byte(byte), bit(bit)
 {
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node::forward_iterator
-radix_tree<Key, Value, BytesView>::node::forward_iterator::operator--()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator
+radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator::operator--()
 {
 	if (child == &n->child[0])
 		child = &n->embedded_entry;
@@ -2814,106 +2849,111 @@ radix_tree<Key, Value, BytesView>::node::forward_iterator::operator--()
 	return *this;
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node::forward_iterator
-radix_tree<Key, Value, BytesView>::node::forward_iterator::operator++(int)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator
+radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator::operator++(
+	int)
 {
 	forward_iterator tmp(child, n);
 	operator++();
 	return tmp;
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node::forward_iterator::reference
-	radix_tree<Key, Value, BytesView>::node::forward_iterator::operator*()
-		const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::node::forward_iterator::reference
+	radix_tree<Key, Value, BytesView,
+		   MtMode>::node::forward_iterator::operator*() const
 {
 	return *child;
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node::forward_iterator::pointer
-	radix_tree<Key, Value, BytesView>::node::forward_iterator::operator->()
-		const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::node::forward_iterator::pointer
+	radix_tree<Key, Value, BytesView,
+		   MtMode>::node::forward_iterator::operator->() const
 {
 	return child;
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node::forward_iterator::pointer
-radix_tree<Key, Value, BytesView>::node::forward_iterator::get_node() const
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::node::forward_iterator::pointer
+radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator::get_node()
+	const
 {
 	return n;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 bool
-radix_tree<Key, Value, BytesView>::node::forward_iterator::operator==(
+radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator::operator==(
 	const forward_iterator &rhs) const
 {
 	return child == rhs.child && n == rhs.n;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 bool
-radix_tree<Key, Value, BytesView>::node::forward_iterator::operator!=(
+radix_tree<Key, Value, BytesView, MtMode>::node::forward_iterator::operator!=(
 	const forward_iterator &rhs) const
 {
 	return child != rhs.child || n != rhs.n;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction>
-typename std::enable_if<
-	Direction ==
-		radix_tree<Key, Value, BytesView>::node::direction::Forward,
-	typename radix_tree<Key, Value,
-			    BytesView>::node::forward_iterator>::type
-radix_tree<Key, Value, BytesView>::node::begin() const
+typename std::enable_if<Direction ==
+				radix_tree<Key, Value, BytesView,
+					   MtMode>::node::direction::Forward,
+			typename radix_tree<Key, Value, BytesView, MtMode>::
+				node::forward_iterator>::type
+radix_tree<Key, Value, BytesView, MtMode>::node::begin() const
 {
 	return forward_iterator(&embedded_entry, this);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction>
-typename std::enable_if<
-	Direction ==
-		radix_tree<Key, Value, BytesView>::node::direction::Forward,
-	typename radix_tree<Key, Value,
-			    BytesView>::node::forward_iterator>::type
-radix_tree<Key, Value, BytesView>::node::end() const
+typename std::enable_if<Direction ==
+				radix_tree<Key, Value, BytesView,
+					   MtMode>::node::direction::Forward,
+			typename radix_tree<Key, Value, BytesView, MtMode>::
+				node::forward_iterator>::type
+radix_tree<Key, Value, BytesView, MtMode>::node::end() const
 {
 	return forward_iterator(&child[SLNODES], this);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction>
-typename std::enable_if<
-	Direction ==
-		radix_tree<Key, Value, BytesView>::node::direction::Reverse,
-	typename radix_tree<Key, Value,
-			    BytesView>::node::reverse_iterator>::type
-radix_tree<Key, Value, BytesView>::node::begin() const
+typename std::enable_if<Direction ==
+				radix_tree<Key, Value, BytesView,
+					   MtMode>::node::direction::Reverse,
+			typename radix_tree<Key, Value, BytesView, MtMode>::
+				node::reverse_iterator>::type
+radix_tree<Key, Value, BytesView, MtMode>::node::begin() const
 {
 	return reverse_iterator(end<direction::Forward>());
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction>
-typename std::enable_if<
-	Direction ==
-		radix_tree<Key, Value, BytesView>::node::direction::Reverse,
-	typename radix_tree<Key, Value,
-			    BytesView>::node::reverse_iterator>::type
-radix_tree<Key, Value, BytesView>::node::end() const
+typename std::enable_if<Direction ==
+				radix_tree<Key, Value, BytesView,
+					   MtMode>::node::direction::Reverse,
+			typename radix_tree<Key, Value, BytesView, MtMode>::
+				node::reverse_iterator>::type
+radix_tree<Key, Value, BytesView, MtMode>::node::end() const
 {
 	return reverse_iterator(begin<direction::Forward>());
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction, typename Ptr>
 auto
-radix_tree<Key, Value, BytesView>::node::find_child(const Ptr &n) const
+radix_tree<Key, Value, BytesView, MtMode>::node::find_child(const Ptr &n) const
 	-> decltype(begin<Direction>())
 {
 	auto it = begin<Direction>();
@@ -2925,40 +2965,40 @@ radix_tree<Key, Value, BytesView>::node::find_child(const Ptr &n) const
 	return it;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction, typename Enable>
 auto
-radix_tree<Key, Value, BytesView>::node::make_iterator(
+radix_tree<Key, Value, BytesView, MtMode>::node::make_iterator(
 	const atomic_pointer_type *ptr) const -> decltype(begin<Direction>())
 {
 	return forward_iterator(ptr, this);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree_iterator<
 	IsConst>::radix_tree_iterator(leaf_ptr leaf_, tree_ptr tree)
     : leaf_(leaf_), tree(tree)
 {
 	assert(tree);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 template <bool C, typename Enable>
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree_iterator<
 	IsConst>::radix_tree_iterator(const radix_tree_iterator<false> &rhs)
     : leaf_(rhs.leaf_), tree(rhs.tree)
 {
 	assert(tree);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-typename radix_tree<Key, Value,
-		    BytesView>::template radix_tree_iterator<IsConst>::reference
-	radix_tree<Key, Value,
-		   BytesView>::radix_tree_iterator<IsConst>::operator*() const
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::template radix_tree_iterator<IsConst>::reference
+	radix_tree<Key, Value, BytesView,
+		   MtMode>::radix_tree_iterator<IsConst>::operator*() const
 {
 	assert(leaf_);
 	assert(tree);
@@ -2966,12 +3006,12 @@ typename radix_tree<Key, Value,
 	return *leaf_;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-typename radix_tree<Key, Value,
-		    BytesView>::template radix_tree_iterator<IsConst>::pointer
-	radix_tree<Key, Value,
-		   BytesView>::radix_tree_iterator<IsConst>::operator->() const
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::template radix_tree_iterator<IsConst>::pointer
+	radix_tree<Key, Value, BytesView,
+		   MtMode>::radix_tree_iterator<IsConst>::operator->() const
 {
 	assert(leaf_);
 	assert(tree);
@@ -2990,31 +3030,33 @@ typename radix_tree<Key, Value,
  *
  * @param[in] rhs value of type basic_string_view
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 template <typename V, typename Enable>
 void
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
-	basic_string_view<typename V::value_type, typename V::traits_type> rhs)
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree_iterator<
+	IsConst>::assign_val(basic_string_view<typename V::value_type,
+					       typename V::traits_type>
+				     rhs)
 {
 	assert(leaf_);
 	assert(tree);
 
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 
-	if (rhs.size() <= leaf_->value().capacity() && !tree->mt.get(false)) {
+	if (rhs.size() <= leaf_->value().capacity() && !MtMode) {
 		flat_transaction::run(pop, [&] { leaf_->value() = rhs; });
 	} else {
 		replace_val(rhs);
 	}
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 template <typename T>
 void
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::replace_val(
-	T &&rhs)
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::replace_val(T &&rhs)
 {
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 	atomic_pointer_type *slot;
@@ -3046,14 +3088,14 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::replace_val(
  *
  * @param[in] rhs value of type basic_string_view
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 template <typename T, typename V, typename Enable>
 void
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
-	T &&rhs)
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::assign_val(T &&rhs)
 {
-	if (tree->mt.get(false))
+	if (MtMode && tree->ebr_ != nullptr)
 		replace_val(std::forward<T>(rhs));
 	else {
 		auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
@@ -3062,11 +3104,12 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::assign_val(
 	}
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-typename radix_tree<Key, Value,
-		    BytesView>::template radix_tree_iterator<IsConst> &
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++()
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::template radix_tree_iterator<IsConst> &
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::operator++()
 {
 	/* Fallback to top-down search. */
 	if (!try_increment())
@@ -3079,10 +3122,11 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++()
  * Tries to increment iterator. Returns true on success, false otherwise.
  * Increment can fail in case of concurrent, conflicting operation.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 bool
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_increment()
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::try_increment()
 {
 	assert(leaf_);
 	assert(tree);
@@ -3110,11 +3154,12 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_increment()
 	return true;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-typename radix_tree<Key, Value,
-		    BytesView>::template radix_tree_iterator<IsConst> &
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::template radix_tree_iterator<IsConst> &
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::operator--()
 {
 	while (!try_decrement()) {
 		*this = tree->lower_bound(leaf_->key());
@@ -3127,10 +3172,11 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--()
  * Tries to decrement iterator. Returns true on success, false otherwise.
  * Decrement can fail in case of concurrent, conflicting operation.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 bool
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_decrement()
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::try_decrement()
 {
 	constexpr auto direction = radix_tree::node::direction::Reverse;
 	assert(tree);
@@ -3172,11 +3218,12 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::try_decrement()
 	}
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-typename radix_tree<Key, Value,
-		    BytesView>::template radix_tree_iterator<IsConst>
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++(int)
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::template radix_tree_iterator<IsConst>
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::operator++(int)
 {
 	auto tmp = *this;
 
@@ -3185,11 +3232,12 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator++(int)
 	return tmp;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
-typename radix_tree<Key, Value,
-		    BytesView>::template radix_tree_iterator<IsConst>
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--(int)
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::template radix_tree_iterator<IsConst>
+radix_tree<Key, Value, BytesView,
+	   MtMode>::radix_tree_iterator<IsConst>::operator--(int)
 {
 	auto tmp = *this;
 
@@ -3198,22 +3246,22 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator--(int)
 	return tmp;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 template <bool C>
 bool
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator!=(
-	const radix_tree_iterator<C> &rhs) const
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree_iterator<
+	IsConst>::operator!=(const radix_tree_iterator<C> &rhs) const
 {
 	return leaf_ != rhs.leaf_;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
 template <bool C>
 bool
-radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator==(
-	const radix_tree_iterator<C> &rhs) const
+radix_tree<Key, Value, BytesView, MtMode>::radix_tree_iterator<
+	IsConst>::operator==(const radix_tree_iterator<C> &rhs) const
 {
 	return !(*this != rhs);
 }
@@ -3227,11 +3275,12 @@ radix_tree<Key, Value, BytesView>::radix_tree_iterator<IsConst>::operator==(
  * Bool variable is set to true on success, false otherwise.
  * Failure can occur in case of a concurrent, conflicting operation.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction, typename Iterator>
-std::pair<bool, const typename radix_tree<Key, Value, BytesView>::leaf *>
-radix_tree<Key, Value, BytesView>::next_leaf(Iterator node,
-					     pointer_type parent) const
+std::pair<bool,
+	  const typename radix_tree<Key, Value, BytesView, MtMode>::leaf *>
+radix_tree<Key, Value, BytesView, MtMode>::next_leaf(Iterator node,
+						     pointer_type parent) const
 {
 	while (true) {
 		++node;
@@ -3270,11 +3319,12 @@ radix_tree<Key, Value, BytesView>::next_leaf(Iterator node,
  * Return value is null only if there was some concurrent, conflicting
  * operation.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction>
-const typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::find_leaf(
-	typename radix_tree<Key, Value, BytesView>::pointer_type n) const
+const typename radix_tree<Key, Value, BytesView, MtMode>::leaf *
+radix_tree<Key, Value, BytesView, MtMode>::find_leaf(
+	typename radix_tree<Key, Value, BytesView, MtMode>::pointer_type n)
+	const
 {
 	assert(n);
 
@@ -3293,32 +3343,32 @@ radix_tree<Key, Value, BytesView>::find_leaf(
 	return nullptr;
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 Key &
-radix_tree<Key, Value, BytesView>::leaf::key()
+radix_tree<Key, Value, BytesView, MtMode>::leaf::key()
 {
 	auto &const_key = const_cast<const leaf *>(this)->key();
 	return *const_cast<Key *>(&const_key);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 Value &
-radix_tree<Key, Value, BytesView>::leaf::value()
+radix_tree<Key, Value, BytesView, MtMode>::leaf::value()
 {
 	auto &const_value = const_cast<const leaf *>(this)->value();
 	return *const_cast<Value *>(&const_value);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 const Key &
-radix_tree<Key, Value, BytesView>::leaf::key() const
+radix_tree<Key, Value, BytesView, MtMode>::leaf::key() const
 {
 	return *reinterpret_cast<const Key *>(this + 1);
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 const Value &
-radix_tree<Key, Value, BytesView>::leaf::value() const
+radix_tree<Key, Value, BytesView, MtMode>::leaf::value() const
 {
 	auto key_dst = reinterpret_cast<const char *>(this + 1);
 	auto key_size = total_sizeof<Key>::value(key());
@@ -3329,16 +3379,16 @@ radix_tree<Key, Value, BytesView>::leaf::value() const
 	return *val_dst;
 }
 
-template <typename Key, typename Value, typename BytesView>
-radix_tree<Key, Value, BytesView>::leaf::~leaf()
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::~leaf()
 {
 	detail::destroy<Key>(key());
 	detail::destroy<Value>(value());
 }
 
-template <typename Key, typename Value, typename BytesView>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent)
 {
 	auto t = std::make_tuple();
 	return make(parent, std::piecewise_construct, t, t,
@@ -3346,102 +3396,101 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent)
 		    typename detail::make_index_sequence<>::type{});
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename... Args1, typename... Args2>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      std::piecewise_construct_t pc,
-					      std::tuple<Args1...> first_args,
-					      std::tuple<Args2...> second_args)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(
+	pointer_type parent, std::piecewise_construct_t pc,
+	std::tuple<Args1...> first_args, std::tuple<Args2...> second_args)
 {
 	return make(parent, pc, first_args, second_args,
 		    typename detail::make_index_sequence<Args1...>::type{},
 		    typename detail::make_index_sequence<Args2...>::type{});
 }
 
-template <typename Key, typename Value, typename BytesView>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent, const Key &k,
-					      const Value &v)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent,
+						      const Key &k,
+						      const Value &v)
 {
 	return make(parent, std::piecewise_construct, std::forward_as_tuple(k),
 		    std::forward_as_tuple(v));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename V>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent, K &&k, V &&v)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent,
+						      K &&k, V &&v)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(std::forward<K>(k)),
 		    std::forward_as_tuple(std::forward<V>(v)));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename... Args>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make_key_args(pointer_type parent,
-						       K &&k, Args &&... args)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make_key_args(
+	pointer_type parent, K &&k, Args &&... args)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(std::forward<K>(k)),
 		    std::forward_as_tuple(std::forward<Args>(args)...));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename V>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      detail::pair<K, V> &&p)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent,
+						      detail::pair<K, V> &&p)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(std::move(p.first)),
 		    std::forward_as_tuple(std::move(p.second)));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename V>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      const detail::pair<K, V> &p)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(
+	pointer_type parent, const detail::pair<K, V> &p)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(p.first),
 		    std::forward_as_tuple(p.second));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename V>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      std::pair<K, V> &&p)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent,
+						      std::pair<K, V> &&p)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(std::move(p.first)),
 		    std::forward_as_tuple(std::move(p.second)));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename K, typename V>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      const std::pair<K, V> &p)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent,
+						      const std::pair<K, V> &p)
 {
 	return make(parent, std::piecewise_construct,
 		    std::forward_as_tuple(p.first),
 		    std::forward_as_tuple(p.second));
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <typename... Args1, typename... Args2, size_t... I1, size_t... I2>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      std::piecewise_construct_t,
-					      std::tuple<Args1...> &first_args,
-					      std::tuple<Args2...> &second_args,
-					      detail::index_sequence<I1...>,
-					      detail::index_sequence<I2...>)
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(
+	pointer_type parent, std::piecewise_construct_t,
+	std::tuple<Args1...> &first_args, std::tuple<Args2...> &second_args,
+	detail::index_sequence<I1...>, detail::index_sequence<I2...>)
 {
 	standard_alloc_policy<void> a;
 	auto key_size = total_sizeof<Key>::value(std::get<I1>(first_args)...);
@@ -3467,10 +3516,10 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
 	return ptr;
 }
 
-template <typename Key, typename Value, typename BytesView>
-persistent_ptr<typename radix_tree<Key, Value, BytesView>::leaf>
-radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
-					      const leaf &other)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+persistent_ptr<typename radix_tree<Key, Value, BytesView, MtMode>::leaf>
+radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent,
+						      const leaf &other)
 {
 	return make(parent, other.key(), other.value());
 }
@@ -3481,9 +3530,9 @@ radix_tree<Key, Value, BytesView>::leaf::make(pointer_type parent,
  *
  * @throw pool_error if radix tree doesn't reside on pmem.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::check_pmem()
+radix_tree<Key, Value, BytesView, MtMode>::check_pmem()
 {
 	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pmem::pool_error("Invalid pool handle.");
@@ -3496,35 +3545,35 @@ radix_tree<Key, Value, BytesView>::check_pmem()
  * @throw pmem::transaction_scope_error if current transaction stage is not
  * equal to TX_STAGE_WORK.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-radix_tree<Key, Value, BytesView>::check_tx_stage_work()
+radix_tree<Key, Value, BytesView, MtMode>::check_tx_stage_work()
 {
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
 		throw pmem::transaction_scope_error(
 			"Function called out of transaction scope.");
 }
 
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 bool
-radix_tree<Key, Value, BytesView>::is_leaf(
-	const radix_tree<Key, Value, BytesView>::pointer_type &p)
+radix_tree<Key, Value, BytesView, MtMode>::is_leaf(
+	const radix_tree<Key, Value, BytesView, MtMode>::pointer_type &p)
 {
 	return p.template is<leaf>();
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::leaf *
-radix_tree<Key, Value, BytesView>::get_leaf(
-	const radix_tree<Key, Value, BytesView>::pointer_type &p)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::leaf *
+radix_tree<Key, Value, BytesView, MtMode>::get_leaf(
+	const radix_tree<Key, Value, BytesView, MtMode>::pointer_type &p)
 {
 	return p.template get<leaf>();
 }
 
-template <typename Key, typename Value, typename BytesView>
-typename radix_tree<Key, Value, BytesView>::node *
-radix_tree<Key, Value, BytesView>::get_node(
-	const radix_tree<Key, Value, BytesView>::pointer_type &p)
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::node *
+radix_tree<Key, Value, BytesView, MtMode>::get_node(
+	const radix_tree<Key, Value, BytesView, MtMode>::pointer_type &p)
 {
 	return p.template get<node>();
 }
@@ -3532,19 +3581,14 @@ radix_tree<Key, Value, BytesView>::get_node(
 /**
  * Non-member swap.
  */
-template <typename Key, typename Value, typename BytesView>
+template <typename Key, typename Value, typename BytesView, bool MtMode>
 void
-swap(radix_tree<Key, Value, BytesView> &lhs,
-     radix_tree<Key, Value, BytesView> &rhs)
+swap(radix_tree<Key, Value, BytesView, MtMode> &lhs,
+     radix_tree<Key, Value, BytesView, MtMode> &rhs)
 {
 	lhs.swap(rhs);
 }
 
-} /* namespace experimental */
-} /* namespace obj */
-
-namespace detail
-{
 /* Check if type is pmem::obj::basic_string or
  * pmem::obj::basic_inline_string */
 template <typename>
@@ -3619,8 +3663,9 @@ struct bytes_view<T,
 
 	const T *k;
 };
-} /* namespace detail */
 
+} /* namespace experimental */
+} /* namespace obj */
 } /* namespace pmem */
 
 #endif /* LIBPMEMOBJ_CPP_RADIX_HPP */

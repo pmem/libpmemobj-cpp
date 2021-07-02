@@ -57,7 +57,7 @@ test_write_find(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 /* this test only works with int as a key type */
 static void
 test_various_readers(nvobj::pool<root> &pop,
-		     nvobj::persistent_ptr<container_int_int> &ptr)
+		     nvobj::persistent_ptr<container_int_int_mt> &ptr)
 {
 	size_t threads = 16;
 	if (On_drd)
@@ -72,19 +72,20 @@ test_various_readers(nvobj::pool<root> &pop,
 	auto readers = std::vector<std::function<void()>>{
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				auto res = ptr->find(key<container_int_int>(i));
+				auto res =
+					ptr->find(key<container_int_int_mt>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<container_int_int>(i));
+					  value<container_int_int_mt>(i));
 			}
 		},
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
 				auto res = ptr->lower_bound(
-					key<container_int_int>(i));
+					key<container_int_int_mt>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<container_int_int>(i));
+					  value<container_int_int_mt>(i));
 			}
 		},
 		[&]() {
@@ -93,15 +94,16 @@ test_various_readers(nvobj::pool<root> &pop,
 					key<container_int_int>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<container_int_int>(i + 1));
+					  value<container_int_int_mt>(i + 1));
 			}
 		},
 	};
 
 	parallel_modify_read(writer, readers, threads);
 
-	nvobj::transaction::run(
-		pop, [&] { nvobj::delete_persistent<container_int_int>(ptr); });
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_int_int_mt>(ptr);
+	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -124,16 +126,17 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_write_find(pop, pop.root()->radix_int_int);
-	test_various_readers(pop, pop.root()->radix_int_int);
+	test_write_find(pop, pop.root()->radix_int_int_mt);
+	test_various_readers(pop, pop.root()->radix_int_int_mt);
 
 	if (!On_drd) {
-		test_write_find(pop, pop.root()->radix_int);
-		test_write_find(pop, pop.root()->radix_int_str);
-		test_write_find(pop, pop.root()->radix_str);
-		test_write_find(pop, pop.root()->radix_inline_s_wchart_wchart);
-		test_write_find(pop, pop.root()->radix_inline_s_wchart);
-		test_write_find(pop, pop.root()->radix_inline_s_u8t);
+		test_write_find(pop, pop.root()->radix_int_mt);
+		test_write_find(pop, pop.root()->radix_int_str_mt);
+		test_write_find(pop, pop.root()->radix_str_mt);
+		test_write_find(pop,
+				pop.root()->radix_inline_s_wchart_wchart_mt);
+		test_write_find(pop, pop.root()->radix_inline_s_wchart_mt);
+		test_write_find(pop, pop.root()->radix_inline_s_u8t_mt);
 	}
 
 	pop.close();

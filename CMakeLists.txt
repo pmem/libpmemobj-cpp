@@ -183,12 +183,15 @@ add_custom_target(check-license
 			${LIBPMEMOBJCPP_ROOT_DIR}
 			BSD-3-Clause)
 
+find_program(CLANG_FORMAT NAMES clang-format clang-format-9 clang-format-9.0)
+set(CLANG_FORMAT_REQUIRED "9.0")
+if(CLANG_FORMAT)
+	message(STATUS "Found clang-format: ${CLANG_FORMAT} (version: ${CLANG_FORMAT_VERSION})")
+	get_program_version_major_minor(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
+endif()
+
 if(CHECK_CPP_STYLE)
-	find_program(CLANG_FORMAT NAMES clang-format clang-format-9 clang-format-9.0)
-	set(CLANG_FORMAT_REQUIRED "9.0")
 	if(CLANG_FORMAT)
-		get_program_version_major_minor(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
-		message(STATUS "Found clang-format: ${CLANG_FORMAT} (version: ${CLANG_FORMAT_VERSION})")
 		if(NOT (CLANG_FORMAT_VERSION VERSION_EQUAL CLANG_FORMAT_REQUIRED))
 			message(FATAL_ERROR "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
 		endif()

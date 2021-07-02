@@ -289,9 +289,9 @@ public:
 
 	void swap(radix_tree &rhs);
 
-	template <typename K, typename V, typename BV>
+	template <typename K, typename V, typename BV, bool Mt>
 	friend std::ostream &operator<<(std::ostream &os,
-					const radix_tree<K, V, BV> &tree);
+					const radix_tree<K, V, BV, Mt> &tree);
 
 	template <bool Mt = MtMode,
 		  typename Enable = typename std::enable_if<Mt>::type>
@@ -331,8 +331,10 @@ private:
 	struct leaf;
 	struct node;
 
-	using atomic_pointer_type = std::atomic<detail::tagged_ptr<leaf, node>>;
 	using pointer_type = detail::tagged_ptr<leaf, node>;
+	using atomic_pointer_type =
+		typename std::conditional<MtMode, std::atomic<pointer_type>,
+					  pointer_type>::type;
 
 	/* This structure holds snapshotted view of a node. */
 	struct node_desc {
@@ -403,7 +405,12 @@ private:
 	template <typename T>
 	void free(persistent_ptr<T> ptr);
 	void clear_garbage(size_t n);
-
+	static pointer_type
+	load(const std::atomic<detail::tagged_ptr<leaf, node>> &ptr);
+	static pointer_type load(const pointer_type &ptr);
+	static void store(std::atomic<detail::tagged_ptr<leaf, node>> &ptr,
+			  pointer_type desired);
+	static void store(pointer_type &ptr, pointer_type desired);
 	void check_pmem();
 	void check_tx_stage_work();
 
@@ -783,9 +790,9 @@ radix_tree<Key, Value, BytesView, MtMode>::radix_tree(radix_tree &&m)
 	check_pmem();
 	check_tx_stage_work();
 
-	root.store_with_snapshot_release(m.root.load_acquire());
+	store(root, load(m.root));
 	size_ = m.size_;
-	m.root.store_with_snapshot_release(nullptr);
+	store(m.root, nullptr);
 	m.size_ = 0;
 }
 
@@ -831,7 +838,7 @@ radix_tree<Key, Value, BytesView, MtMode>::operator=(const radix_tree &other)
 		flat_transaction::run(pop, [&] {
 			clear();
 
-			this->root.store_with_snapshot_release(nullptr);
+			store(this->root, nullptr);
 			this->size_ = 0;
 
 			for (auto it = other.cbegin(); it != other.cend(); it++)
@@ -862,10 +869,9 @@ radix_tree<Key, Value, BytesView, MtMode>::operator=(radix_tree &&other)
 		flat_transaction::run(pop, [&] {
 			clear();
 
-			this->root.store_with_snapshot_release(
-				other.root.load_acquire());
+			store(this->root, load(other.root));
 			this->size_ = other.size_;
-			other.root.store_with_snapshot_release(nullptr);
+			store(other.root, nullptr);
 			other.size_ = 0;
 		});
 	}
@@ -895,7 +901,7 @@ radix_tree<Key, Value, BytesView, MtMode>::operator=(
 	transaction::run(pop, [&] {
 		clear();
 
-		this->root.store_with_snapshot_release(nullptr);
+		store(this->root, nullptr);
 		this->size_ = 0;
 
 		for (auto it = ilist.begin(); it != ilist.end(); it++)
@@ -1032,6 +1038,37 @@ radix_tree<Key, Value, BytesView, MtMode>::clear_garbage(size_t n)
 	});
 }
 
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::pointer_type
+radix_tree<Key, Value, BytesView, MtMode>::load(
+	const std::atomic<detail::tagged_ptr<leaf, node>> &ptr)
+{
+	return ptr.load_acquire();
+}
+
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+typename radix_tree<Key, Value, BytesView, MtMode>::pointer_type
+radix_tree<Key, Value, BytesView, MtMode>::load(const pointer_type &ptr)
+{
+	return ptr;
+}
+
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+void
+radix_tree<Key, Value, BytesView, MtMode>::store(
+	std::atomic<detail::tagged_ptr<leaf, node>> &ptr, pointer_type desired)
+{
+	ptr.store_with_snapshot_release(desired);
+}
+
+template <typename Key, typename Value, typename BytesView, bool MtMode>
+void
+radix_tree<Key, Value, BytesView, MtMode>::store(pointer_type &ptr,
+						 pointer_type desired)
+{
+	ptr = desired;
+}
+
 /**
  * If MtMode == true, this function must be called after
  * each application restart. It is necessary to call runtime_finalize_mt()
@@ -1114,13 +1151,13 @@ radix_tree<Key, Value, BytesView, MtMode>::any_leftmost_leaf(
 	assert(n);
 
 	while (n && !is_leaf(n)) {
-		auto ne = n->embedded_entry.load_acquire();
+		auto ne = load(n->embedded_entry);
 		if (ne && n->byte >= min_depth)
 			return get_leaf(ne);
 
 		pointer_type nn = nullptr;
 		for (size_t i = 0; i < SLNODES; i++) {
-			nn = n->child[i].load_acquire();
+			nn = load(n->child[i]);
 			if (nn) {
 				break;
 			}
@@ -1163,7 +1200,7 @@ radix_tree<Key, Value, BytesView, MtMode>::descend(pointer_type root_snap,
 	while (n && !is_leaf(n) && n->byte < key.size()) {
 		auto prev = n;
 		slot = &n->child[slice_index(key[n->byte], n->bit)];
-		auto nn = slot->load_acquire();
+		auto nn = load(*slot);
 
 		if (nn) {
 			path.push_back(node_desc{slot, nn, prev});
@@ -1328,12 +1365,12 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_emplace(const K &k,
 	auto key = bytes_view(k);
 	auto pop = pool_base(pmemobj_pool_by_ptr(this));
 
-	auto r = root.load_acquire();
+	auto r = load(root);
 	if (!r) {
 		pointer_type leaf;
 		flat_transaction::run(pop, [&] {
 			leaf = make_leaf(nullptr);
-			this->root.store_with_snapshot_release(leaf);
+			store(this->root, leaf);
 		});
 		return {iterator(get_leaf(leaf), this), true};
 	}
@@ -1373,25 +1410,22 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_emplace(const K &k,
 	if (!n) {
 		assert(diff < (std::min)(leaf_key.size(), key.size()));
 
-		flat_transaction::run(pop, [&] {
-			slot->store_with_snapshot_release(make_leaf(prev));
-		});
-		return {iterator(get_leaf(slot->load_acquire()), this), true};
+		flat_transaction::run(pop,
+				      [&] { store(*slot, make_leaf(prev)); });
+		return {iterator(get_leaf(load(*slot)), this), true};
 	}
 
 	/* New key is a prefix of the leaf key or they are equal. We need to add
 	 * leaf ptr to internal node. */
 	if (diff == key.size()) {
 		if (!is_leaf(n) && path_length_equal(key.size(), n)) {
-			assert(!n->embedded_entry.load_acquire());
+			assert(!load(n->embedded_entry));
 
 			flat_transaction::run(pop, [&] {
-				n->embedded_entry.store_with_snapshot_release(
-					make_leaf(n));
+				store(n->embedded_entry, make_leaf(n));
 			});
 
-			return {iterator(get_leaf(n->embedded_entry
-							  .load_acquire()),
+			return {iterator(get_leaf(load(n->embedded_entry)),
 					 this),
 				true};
 		}
@@ -1401,20 +1435,17 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_emplace(const K &k,
 		pointer_type node;
 		flat_transaction::run(pop, [&] {
 			node = make_persistent<radix_tree::node>(
-				parent_ref(n).load_acquire(), diff,
-				bitn_t(FIRST_NIB));
-			node->embedded_entry.store_with_snapshot_release(
-				make_leaf(node));
-			node->child[slice_index(leaf_key[diff],
-						bitn_t(FIRST_NIB))]
-				.store_with_snapshot_release(n);
+				load(parent_ref(n)), diff, bitn_t(FIRST_NIB));
+			store(node->embedded_entry, make_leaf(node));
+			store(node->child[slice_index(leaf_key[diff],
+						      bitn_t(FIRST_NIB))],
+			      n);
 
-			parent_ref(n).store_with_snapshot_release(node);
-			slot->store_with_snapshot_release(node);
+			store(parent_ref(n), node);
+			store(*slot, node);
 		});
 
-		return {iterator(get_leaf(node->embedded_entry.load_acquire()),
-				 this),
+		return {iterator(get_leaf(load(node->embedded_entry)), this),
 			true};
 	}
 
@@ -1426,22 +1457,19 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_emplace(const K &k,
 			/* We have to add new node at the edge from parent to n
 			 */
 			node = make_persistent<radix_tree::node>(
-				parent_ref(n).load_acquire(), diff,
-				bitn_t(FIRST_NIB));
-			node->embedded_entry.store_with_snapshot_release(n);
-			node->child[slice_index(key[diff], bitn_t(FIRST_NIB))]
-				.store_with_snapshot_release(make_leaf(node));
+				load(parent_ref(n)), diff, bitn_t(FIRST_NIB));
+			store(node->embedded_entry, n);
+			store(node->child[slice_index(key[diff],
+						      bitn_t(FIRST_NIB))],
+			      make_leaf(node));
 
-			parent_ref(n).store_with_snapshot_release(node);
-			slot->store_with_snapshot_release(node);
+			store(parent_ref(n), node);
+			store(*slot, node);
 		});
 
-		return {iterator(
-				get_leaf(node->child[slice_index(
-							     key[diff],
-							     bitn_t(FIRST_NIB))]
-						 .load_acquire()),
-				this),
+		return {iterator(get_leaf(load(node->child[slice_index(
+					 key[diff], bitn_t(FIRST_NIB))])),
+				 this),
 			true};
 	}
 
@@ -1451,20 +1479,18 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_emplace(const K &k,
 	 * node. */
 	pointer_type node;
 	flat_transaction::run(pop, [&] {
-		node = make_persistent<radix_tree::node>(
-			parent_ref(n).load_acquire(), diff, sh);
-		node->child[slice_index(leaf_key[diff], sh)]
-			.store_with_snapshot_release(n);
-		node->child[slice_index(key[diff], sh)]
-			.store_with_snapshot_release(make_leaf(node));
+		node = make_persistent<radix_tree::node>(load(parent_ref(n)),
+							 diff, sh);
+		store(node->child[slice_index(leaf_key[diff], sh)], n);
+		store(node->child[slice_index(key[diff], sh)], make_leaf(node));
 
-		parent_ref(n).store_with_snapshot_release(node);
-		slot->store_with_snapshot_release(node);
+		store(parent_ref(n), node);
+		store(*slot, node);
 	});
 
-	return {iterator(get_leaf(node->child[slice_index(key[diff], sh)]
-					  .load_acquire()),
-			 this),
+	return {iterator(
+			get_leaf(load(node->child[slice_index(key[diff], sh)])),
+			this),
 		true};
 }
 
@@ -1546,7 +1572,7 @@ radix_tree<Key, Value, BytesView, MtMode>::emplace(Args &&... args)
 	flat_transaction::run(pop, [&] {
 		auto leaf_ = leaf::make(nullptr, std::forward<Args>(args)...);
 		auto make_leaf = [&](pointer_type parent) {
-			leaf_->parent.store_with_snapshot_release(parent);
+			store(leaf_->parent, parent);
 			size_++;
 			return leaf_;
 		};
@@ -1960,15 +1986,14 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_find(const K &k) const
 {
 	auto key = bytes_view(k);
 
-	auto n = root.load_acquire();
+	auto n = load(root);
 	while (n && !is_leaf(n)) {
 		if (path_length_equal(key.size(), n))
-			n = n->embedded_entry.load_acquire();
+			n = load(n->embedded_entry);
 		else if (n->byte >= key.size())
 			return nullptr;
 		else
-			n = n->child[slice_index(key[n->byte], n->bit)]
-				    .load_acquire();
+			n = load(n->child[slice_index(key[n->byte], n->bit)]);
 	}
 
 	if (!n)
@@ -2018,7 +2043,7 @@ radix_tree<Key, Value, BytesView, MtMode>::erase(const_iterator pos)
 
 	flat_transaction::run(pop, [&] {
 		auto *leaf = pos.leaf_;
-		auto parent = leaf->parent.load_acquire();
+		auto parent = load(leaf->parent);
 
 		/* there are more elements in the container */
 		if (parent)
@@ -2030,45 +2055,45 @@ radix_tree<Key, Value, BytesView, MtMode>::erase(const_iterator pos)
 
 		/* was root */
 		if (!parent) {
-			this->root.store_with_snapshot_release(nullptr);
+			store(this->root, nullptr);
 			pos = begin();
 			return;
 		}
 
 		/* It's safe to cast because we're inside non-const method. */
-		const_cast<atomic_pointer_type &>(*parent->find_child(leaf))
-			.store_with_snapshot_release(nullptr);
+		store(const_cast<atomic_pointer_type &>(
+			      *parent->find_child(leaf)),
+		      nullptr);
 
 		/* Compress the tree vertically. */
 		auto n = parent;
-		parent = n->parent.load_acquire();
+		parent = load(n->parent);
 		pointer_type only_child = nullptr;
 		for (size_t i = 0; i < SLNODES; i++) {
-			if (n->child[i].load_acquire()) {
+			if (load(n->child[i])) {
 				if (only_child) {
 					/* more than one child */
 					return;
 				}
-				only_child = n->child[i].load_acquire();
+				only_child = load(n->child[i]);
 			}
 		}
 
-		if (only_child && n->embedded_entry.load_acquire()) {
+		if (only_child && load(n->embedded_entry)) {
 			/* There are actually 2 "children" so we can't compress.
 			 */
 			return;
-		} else if (n->embedded_entry.load_acquire()) {
-			only_child = n->embedded_entry.load_acquire();
+		} else if (load(n->embedded_entry)) {
+			only_child = load(n->embedded_entry);
 		}
 
 		assert(only_child);
-		parent_ref(only_child)
-			.store_with_snapshot_release(n->parent.load_acquire());
+		store(parent_ref(only_child), load(n->parent));
 
 		auto *child_slot = parent ? const_cast<atomic_pointer_type *>(
 						    &*parent->find_child(n))
 					  : &root;
-		child_slot->store_with_snapshot_release(only_child);
+		store(*child_slot, only_child);
 
 		free(persistent_ptr<radix_tree::node>(get_node(n)));
 	});
@@ -2205,11 +2230,11 @@ radix_tree<Key, Value, BytesView, MtMode>::validate_path(
 	const path_type &path) const
 {
 	for (auto i = 0ULL; i < path.size(); i++) {
-		if (path[i].node != path[i].slot->load_acquire())
+		if (path[i].node != load(*path[i].slot))
 			return false;
 
 		if (path[i].node &&
-		    parent_ref(path[i].node).load_acquire() != path[i].prev)
+		    load(parent_ref(path[i].node)) != path[i].prev)
 			return false;
 	}
 
@@ -2237,7 +2262,7 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 	const_iterator result;
 
 	while (true) {
-		auto r = root.load_acquire();
+		auto r = load(root);
 
 		if (!r)
 			return end();
@@ -2613,7 +2638,7 @@ typename radix_tree<Key, Value, BytesView, MtMode>::const_iterator
 radix_tree<Key, Value, BytesView, MtMode>::cbegin() const
 {
 	while (true) {
-		auto root_ptr = root.load_acquire();
+		auto root_ptr = load(root);
 		if (!root_ptr)
 			return const_iterator(nullptr, this);
 
@@ -2735,30 +2760,29 @@ void
 radix_tree<Key, Value, BytesView, MtMode>::print_rec(std::ostream &os,
 						     radix_tree::pointer_type n)
 {
-	// XXX - do all loads only once
 	if (!is_leaf(n)) {
 		os << "\"" << get_node(n) << "\""
 		   << " [style=filled,color=\"blue\"]" << std::endl;
 		os << "\"" << get_node(n) << "\" [label=\"byte:" << n->byte
 		   << ", bit:" << int(n->bit) << "\"]" << std::endl;
 
-		auto parent = n->parent.load_acquire()
-			? get_node(n->parent.load_acquire())
-			: 0;
+		auto p = load(n->parent);
+		auto parent = p ? get_node(p) : 0;
 		os << "\"" << get_node(n) << "\" -> "
 		   << "\"" << parent << "\" [label=\"parent\"]" << std::endl;
 
 		for (auto it = n->begin(); it != n->end(); ++it) {
-			if (!(it->load_acquire()))
+			auto c = load(*it);
+
+			if (!c)
 				continue;
 
-			auto ch = is_leaf(it->load_acquire())
-				? (void *)get_leaf(it->load_acquire())
-				: (void *)get_node(it->load_acquire());
+			auto ch = is_leaf(c) ? (void *)get_leaf(c)
+					     : (void *)get_node(c);
 
 			os << "\"" << get_node(n) << "\" -> \"" << ch << "\""
 			   << std::endl;
-			print_rec(os, it->load_acquire());
+			print_rec(os, c);
 		}
 	} else {
 		auto bv = bytes_view(get_leaf(n)->key());
@@ -2772,14 +2796,13 @@ radix_tree<Key, Value, BytesView, MtMode>::print_rec(std::ostream &os,
 
 		os << "\"]" << std::endl;
 
-		auto parent = get_leaf(n)->parent.load_acquire()
-			? get_node(get_leaf(n)->parent.load_acquire())
-			: nullptr;
+		auto p = load(get_leaf(n)->parent);
+		auto parent = p ? get_node(p) : nullptr;
 
 		os << "\"" << get_leaf(n) << "\" -> \"" << parent
 		   << "\" [label=\"parent\"]" << std::endl;
 
-		if (parent && n == parent->embedded_entry.load_acquire()) {
+		if (parent && n == load(parent->embedded_entry)) {
 			os << "{rank=same;\"" << parent << "\";\""
 			   << get_leaf(n) << "\"}" << std::endl;
 		}
@@ -2789,14 +2812,15 @@ radix_tree<Key, Value, BytesView, MtMode>::print_rec(std::ostream &os,
 /**
  * Prints tree in DOT format. Used for debugging.
  */
-template <typename K, typename V, typename BV>
+template <typename K, typename V, typename BV, bool MtMode>
 std::ostream &
-operator<<(std::ostream &os, const radix_tree<K, V, BV> &tree)
+operator<<(std::ostream &os, const radix_tree<K, V, BV, MtMode> &tree)
 {
 	os << "digraph Radix {" << std::endl;
 
-	if (tree.root.load_acquire())
-		radix_tree<K, V, BV>::print_rec(os, tree.root.load_acquire());
+	if (radix_tree<K, V, BV, MtMode>::load(tree.root))
+		radix_tree<K, V, BV, MtMode>::print_rec(
+			os, radix_tree<K, V, BV, MtMode>::load(tree.root));
 
 	os << "}" << std::endl;
 
@@ -2961,7 +2985,7 @@ radix_tree<Key, Value, BytesView, MtMode>::node::find_child(const Ptr &n) const
 {
 	auto it = begin<Direction>();
 	while (it != end<Direction>()) {
-		if (it->load_acquire() == n)
+		if (load(*it) == n)
 			return it;
 		++it;
 	}
@@ -3064,24 +3088,25 @@ radix_tree<Key, Value, BytesView,
 	auto pop = pool_base(pmemobj_pool_by_ptr(leaf_));
 	atomic_pointer_type *slot;
 
-	if (!leaf_->parent.load_acquire()) {
-		assert(get_leaf(tree->root.load_acquire()) == leaf_);
+	if (!load(leaf_->parent)) {
+		assert(get_leaf(load(tree->root)) == leaf_);
 		slot = &tree->root;
 	} else {
 		slot = const_cast<atomic_pointer_type *>(
-			&*leaf_->parent.load_acquire()->find_child(leaf_));
+			&*load(leaf_->parent)->find_child(leaf_));
 	}
 
 	auto old_leaf = leaf_;
 
 	flat_transaction::run(pop, [&] {
-		slot->store_with_snapshot_release(leaf::make_key_args(
-			old_leaf->parent.load_acquire(), old_leaf->key(),
-			std::forward<T>(rhs)));
+		store(*slot,
+		      leaf::make_key_args(load(old_leaf->parent),
+					  old_leaf->key(),
+					  std::forward<T>(rhs)));
 		tree->free(persistent_ptr<radix_tree::leaf>(old_leaf));
 	});
 
-	leaf_ = get_leaf(slot->load_acquire());
+	leaf_ = get_leaf(load(*slot));
 }
 
 /**
@@ -3135,7 +3160,7 @@ radix_tree<Key, Value, BytesView,
 	assert(tree);
 
 	constexpr auto direction = radix_tree::node::direction::Forward;
-	auto parent_ptr = leaf_->parent.load_acquire();
+	auto parent_ptr = load(leaf_->parent);
 
 	/* leaf is root, there is no other leaf in the tree */
 	if (!parent_ptr) {
@@ -3187,7 +3212,7 @@ radix_tree<Key, Value, BytesView,
 	while (true) {
 		if (!leaf_) {
 			/* this == end() */
-			auto r = tree->root.load_acquire();
+			auto r = load(tree->root);
 
 			/* Iterator must be decrementable. */
 			assert(r);
@@ -3198,7 +3223,7 @@ radix_tree<Key, Value, BytesView,
 			if (leaf_)
 				return true;
 		} else {
-			auto parent_ptr = leaf_->parent.load_acquire();
+			auto parent_ptr = load(leaf_->parent);
 
 			/* Iterator must be decrementable. */
 			assert(parent_ptr);
@@ -3290,7 +3315,7 @@ radix_tree<Key, Value, BytesView, MtMode>::next_leaf(Iterator node,
 
 		/* No more children on this level, need to go up. */
 		if (node == parent->template end<Direction>()) {
-			auto p = parent->parent.load_acquire();
+			auto p = load(parent->parent);
 			if (!p) /* parent == root */
 				return {true, nullptr};
 
@@ -3303,7 +3328,7 @@ radix_tree<Key, Value, BytesView, MtMode>::next_leaf(Iterator node,
 			return next_leaf<Direction>(p_it, p);
 		}
 
-		auto n = node->load_acquire();
+		auto n = load(*node);
 		if (!n)
 			continue;
 
@@ -3336,7 +3361,7 @@ radix_tree<Key, Value, BytesView, MtMode>::find_leaf(
 
 	for (auto it = n->template begin<Direction>();
 	     it != n->template end<Direction>(); ++it) {
-		auto ptr = it->load_acquire();
+		auto ptr = load(*it);
 		if (ptr)
 			return find_leaf<Direction>(ptr);
 	}
@@ -3514,7 +3539,7 @@ radix_tree<Key, Value, BytesView, MtMode>::leaf::make(
 	new (key_dst) Key(std::forward<Args1>(std::get<I1>(first_args))...);
 	new (val_dst) Value(std::forward<Args2>(std::get<I2>(second_args))...);
 
-	ptr->parent.store_with_snapshot_release(parent);
+	store(ptr->parent, parent);
 
 	return ptr;
 }

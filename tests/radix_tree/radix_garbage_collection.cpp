@@ -133,14 +133,14 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_memory_reclamation_erase(pop, pop.root()->radix_str);
-	test_memory_reclamation_erase(pop, pop.root()->radix_int_int);
+	test_memory_reclamation_erase(pop, pop.root()->radix_str_mt);
+	test_memory_reclamation_erase(pop, pop.root()->radix_int_int_mt);
 
-	test_memory_reclamation_assign(pop, pop.root()->radix_str);
-	test_memory_reclamation_assign(pop, pop.root()->radix_int_int);
+	test_memory_reclamation_assign(pop, pop.root()->radix_str_mt);
+	test_memory_reclamation_assign(pop, pop.root()->radix_int_int_mt);
 
-	test_memory_reclamation_dtor(pop, pop.root()->radix_str);
-	test_memory_reclamation_dtor(pop, pop.root()->radix_int_int);
+	test_memory_reclamation_dtor(pop, pop.root()->radix_str_mt);
+	test_memory_reclamation_dtor(pop, pop.root()->radix_int_int_mt);
 
 	pop.close();
 }

@@ -9,7 +9,6 @@
 #include <libpmemobj++/detail/ringbuf.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
-#include <libpmemobj++/slice.hpp>
 #include <libpmemobj++/string_view.hpp>
 #include <libpmemobj++/transaction.hpp>
 
@@ -116,9 +115,6 @@ public:
 
 		worker(worker &&other);
 		worker &operator=(worker &&other);
-
-		template <typename Function>
-		bool try_produce(size_t size, Function &&f);
 
 		template <typename Function = void (*)(pmem::obj::string_view)>
 		bool try_produce(
@@ -425,46 +421,6 @@ inline mpsc_queue::worker::~worker()
 		auto &manager = queue->get_id_manager();
 		manager.release(id);
 	}
-}
-
-/**
- * @param f cannot fail. Any exception thrown from f will result
- * in terminate().
- */
-template <typename Function>
-inline bool
-mpsc_queue::worker::try_produce(size_t size, Function &&f)
-{
-	auto data = std::unique_ptr<char[]>(new char[size]);
-	auto range = pmem::obj::slice<char *>(data.get(), data.get() + size);
-
-	auto req_size = pmem::detail::align_up(size + sizeof(first_block::size),
-					       pmem::detail::CACHELINE_SIZE);
-	auto offset = acquire_cachelines(req_size);
-
-#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_AFTER(queue->ring_buffer.get());
-#endif
-
-	if (offset == -1)
-		return false;
-
-	try {
-		f(range);
-	} catch (...) {
-		std::terminate();
-	}
-
-	store_to_log(pmem::obj::string_view(data.get(), size),
-		     queue->buf + offset);
-
-#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
-	ANNOTATE_HAPPENS_BEFORE(queue->ring_buffer.get());
-#endif
-
-	produce_cachelines();
-
-	return true;
 }
 
 template <typename Function>

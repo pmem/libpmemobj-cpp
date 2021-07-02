@@ -33,6 +33,32 @@ using container_inline_s_u8t =
 	nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>,
 			    nvobjex::basic_inline_string<uint8_t>>;
 
+using container_int_mt =
+	nvobjex::radix_tree<nvobjex::inline_string, nvobj::p<unsigned>,
+			    nvobjex::bytes_view<nvobjex::inline_string>, true>;
+using container_string_mt =
+	nvobjex::radix_tree<nvobjex::inline_string, nvobjex::inline_string,
+			    nvobjex::bytes_view<nvobjex::inline_string>, true>;
+
+using container_int_int_mt =
+	nvobjex::radix_tree<unsigned, nvobj::p<unsigned>,
+			    nvobjex::bytes_view<unsigned>, true>;
+using container_int_string_mt =
+	nvobjex::radix_tree<unsigned, nvobjex::inline_string,
+			    nvobjex::bytes_view<unsigned>, true>;
+
+using container_inline_s_wchart_mt = nvobjex::radix_tree<
+	nvobjex::basic_inline_string<wchar_t>, nvobj::p<unsigned>,
+	nvobjex::bytes_view<nvobjex::basic_inline_string<wchar_t>>, true>;
+using container_inline_s_wchart_wchart_mt = nvobjex::radix_tree<
+	nvobjex::basic_inline_string<wchar_t>,
+	nvobjex::basic_inline_string<wchar_t>,
+	nvobjex::bytes_view<nvobjex::basic_inline_string<wchar_t>>, true>;
+using container_inline_s_u8t_mt = nvobjex::radix_tree<
+	nvobjex::basic_inline_string<uint8_t>,
+	nvobjex::basic_inline_string<uint8_t>,
+	nvobjex::bytes_view<nvobjex::basic_inline_string<uint8_t>>, true>;
+
 struct root {
 	nvobj::persistent_ptr<container_int> radix_int;
 	nvobj::persistent_ptr<container_string> radix_str;
@@ -44,6 +70,18 @@ struct root {
 	nvobj::persistent_ptr<container_inline_s_wchart_wchart>
 		radix_inline_s_wchart_wchart;
 	nvobj::persistent_ptr<container_inline_s_u8t> radix_inline_s_u8t;
+
+	nvobj::persistent_ptr<container_int_mt> radix_int_mt;
+	nvobj::persistent_ptr<container_string_mt> radix_str_mt;
+
+	nvobj::persistent_ptr<container_int_int_mt> radix_int_int_mt;
+	nvobj::persistent_ptr<container_int_string_mt> radix_int_str_mt;
+
+	nvobj::persistent_ptr<container_inline_s_wchart_mt>
+		radix_inline_s_wchart_mt;
+	nvobj::persistent_ptr<container_inline_s_wchart_wchart_mt>
+		radix_inline_s_wchart_wchart_mt;
+	nvobj::persistent_ptr<container_inline_s_u8t_mt> radix_inline_s_u8t_mt;
 };
 
 template <typename Container,

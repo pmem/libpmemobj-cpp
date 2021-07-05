@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2018-2019, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ OS=$1
 echo "==== clone ndctl repo ===="
 git clone https://github.com/pmem/ndctl.git
 cd ndctl
-git checkout tags/v64.1
+git checkout v69
 
 if [ "$OS" = "fedora" ]; then
 

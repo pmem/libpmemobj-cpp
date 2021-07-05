@@ -14,7 +14,6 @@ get_queue_capacity(queue_type &q)
 	auto worker = q.register_worker();
 
 	size_t capacity = 0;
-	auto e = std::string("b");
 	/* Check how many elements fit in the log. */
 	while (worker.try_produce("b")) {
 		capacity++;

@@ -314,6 +314,22 @@ test_random(void)
 	delete r;
 }
 
+static void
+test_size()
+{
+	try {
+		auto size = (1ULL << 32) + 1;
+		auto r = new ringbuf_t(1, size);
+		(void)r;
+
+		ASSERT_UNREACHABLE;
+	} catch (std::out_of_range &) {
+
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
+}
+
 int
 main(void)
 {
@@ -326,5 +342,6 @@ main(void)
 	test_multi();
 	test_overlap();
 	test_random();
+	test_size();
 	return 0;
 }

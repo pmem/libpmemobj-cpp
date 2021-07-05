@@ -265,8 +265,10 @@ test_dram(nvobj::pool<struct root<T>> &pop)
 	new (dram_location)
 		string_type(nvobj::basic_string_view<T>(s.data(), s.length()));
 
-	UT_ASSERT(nvobj::basic_string_view<T>(s.data(), s.length()) ==
-		  nvobj::basic_string_view<T>(*dram_location));
+	UT_ASSERTeq(s.length(), dram_location->size());
+	UT_ASSERTeq(std::char_traits<T>::compare(
+			    s.data(), dram_location->data(), s.length()),
+		    0);
 
 	dram_location->~string_type();
 

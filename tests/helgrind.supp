@@ -1,0 +1,14 @@
+{
+   Pthread mutex lock false positive
+   Helgrind:Race
+   ...
+   fun:pthread_mutex_*lock*
+   ...
+}
+{
+   Pthread rwlock lock false positive
+   Helgrind:Race
+   ...
+   fun:pthread_rwlock_*lock*
+   ...
+}

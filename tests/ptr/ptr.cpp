@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020, Intel Corporation
+ * Copyright 2015-2021, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -385,6 +385,38 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 		UT_ASSERT(0);
 	}
 }
+
+/*
+ * test_offset_with_alignment -- test offset calculation within a hierarchy of
+ * objects with different alignments
+ */
+void
+test_offset_alignment(nvobj::pool<root> &pop)
+{
+	struct A {
+		char a;
+	};
+
+	struct B {
+		uint64_t b;
+	};
+
+	struct C : public A, public B {
+		uint64_t c;
+	};
+
+	try {
+		nvobj::transaction::run(pop, [] {
+			auto cptr = nvobj::make_persistent<C>();
+			nvobj::persistent_ptr<B> bptr = cptr;
+			UT_ASSERT((bptr.raw().off - cptr.raw().off) ==
+				  alignof(B));
+			nvobj::delete_persistent<C>(cptr);
+		});
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+}
 }
 
 int
@@ -412,6 +444,7 @@ main(int argc, char *argv[])
 	test_ptr_array(pop);
 	test_offset(pop);
 	test_base_ptr_casting(pop);
+	test_offset_alignment(pop);
 
 	pop.close();
 

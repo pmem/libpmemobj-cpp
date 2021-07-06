@@ -1,3 +1,34 @@
+Tue Jul 06 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.6.1
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.6 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- string: fix max_size() return value
+	- allocation_flag: mark constructor as explicit
+	- peristent_ptr: change ptr_offset_magic to be properly aligned
+	- fix few headers' includes
+
+Mon Jun 28 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.5.2
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.5 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- operator[] for contiguous_iterator takes signed integral instead of
+		unsigned
+	- throw an exception when pmemobj_mutex_unlock fail
+	- fix crash when a previous transaction failed to start because of
+		already taken lock.
+
 Fri Jan 31 2020 Szymon Romik <szymon.romik@intel.com>
 
 	* Version 1.9
@@ -121,7 +152,7 @@ Fri Mar 15 2019 Igor Chorążewicz <igor.chorazewicz@intel.com>
 	- decrease number of persistent_ptr dereferences in
 	  make_persistent_array
 
-Tue Feb 19 2018 Marcin Ślusarz <marcin.slusarz@intel.com>
+Tue Feb 19 2019 Marcin Ślusarz <marcin.slusarz@intel.com>
 
 	* Version 1.5.1
 

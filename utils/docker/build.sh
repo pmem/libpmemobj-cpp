@@ -58,7 +58,8 @@ if [[ -z "$COMMAND" ]]; then
 		;;
 	release)
 		builds=(tests_gcc_release_cpp17_no_valgrind
-				tests_clang_release_cpp11_no_valgrind)
+				tests_clang_release_cpp11_no_valgrind
+				build_clang_release_cpp20)
 		COMMAND="./run-build.sh ${builds[@]}";
 		;;
 	valgrind)

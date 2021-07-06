@@ -72,7 +72,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="vector_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2018-2019, Intel Corporation</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2018-2021, Intel Corporation</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Redistribution and use in source and binary forms, with or without</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * modification, are permitted provided that the following conditions</span></div>
@@ -536,7 +536,7 @@ $(function() {
 <div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;            add_data_to_tx(0, size_old);</div>
 <div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160; </div>
 <div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;            std::fill_n(</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                &amp;_data[0],</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                _data.get(),</div>
 <div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;                (std::min)(count,</div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;                       <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(size_old)),</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;                value);</div>
@@ -1016,7 +1016,7 @@ $(function() {
 <div class="line"><a name="l01600"></a><span class="lineno"> 1600</span>&#160;            single_element_iterator&lt;value_type&gt;(&amp;value, count));</div>
 <div class="line"><a name="l01601"></a><span class="lineno"> 1601</span>&#160;    });</div>
 <div class="line"><a name="l01602"></a><span class="lineno"> 1602</span>&#160; </div>
-<div class="line"><a name="l01603"></a><span class="lineno"> 1603</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html">iterator</a>(&amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(idx)]);</div>
+<div class="line"><a name="l01603"></a><span class="lineno"> 1603</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="structpmem_1_1detail_1_1basic__contiguous__iterator.html">iterator</a>(_data.get() + <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(idx));</div>
 <div class="line"><a name="l01604"></a><span class="lineno"> 1604</span>&#160;}</div>
 <div class="line"><a name="l01605"></a><span class="lineno"> 1605</span>&#160; </div>
 <div class="line"><a name="l01640"></a><span class="lineno"> 1640</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
@@ -1107,7 +1107,7 @@ $(function() {
 <div class="line"><a name="l01843"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#afe2d7919eadaceb0725d857a214b8d1a"> 1843</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#a8389c4654f1b30fe3d77c08b9bdf4891">vector&lt;T&gt;::erase</a>(const_iterator first, const_iterator last)</div>
 <div class="line"><a name="l01844"></a><span class="lineno"> 1844</span>&#160;{</div>
 <div class="line"><a name="l01845"></a><span class="lineno"> 1845</span>&#160;    size_type idx = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(</div>
-<div class="line"><a name="l01846"></a><span class="lineno"> 1846</span>&#160;        std::distance(const_iterator(&amp;_data[0]), first));</div>
+<div class="line"><a name="l01846"></a><span class="lineno"> 1846</span>&#160;        std::distance(const_iterator(_data.get()), first));</div>
 <div class="line"><a name="l01847"></a><span class="lineno"> 1847</span>&#160;    size_type count = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(std::distance(first, last));</div>
 <div class="line"><a name="l01848"></a><span class="lineno"> 1848</span>&#160; </div>
 <div class="line"><a name="l01849"></a><span class="lineno"> 1849</span>&#160;    <span class="keywordflow">if</span> (count == 0)</div>
@@ -1367,287 +1367,297 @@ $(function() {
 <div class="line"><a name="l02306"></a><span class="lineno"> 2306</span>&#160;    <span class="keyword">auto</span> count = <span class="keyword">static_cast&lt;</span>size_type<span class="keyword">&gt;</span>(std::distance(first, last));</div>
 <div class="line"><a name="l02307"></a><span class="lineno"> 2307</span>&#160; </div>
 <div class="line"><a name="l02308"></a><span class="lineno"> 2308</span>&#160;    <span class="keywordflow">if</span> (_capacity &gt;= size() + count) {</div>
-<div class="line"><a name="l02309"></a><span class="lineno"> 2309</span>&#160;        pointer dest =</div>
-<div class="line"><a name="l02310"></a><span class="lineno"> 2310</span>&#160;            &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size() + count)];</div>
-<div class="line"><a name="l02311"></a><span class="lineno"> 2311</span>&#160;        pointer <a class="code" href="array_8hpp.html#af7b865184397a869c6c3961222774c35">begin</a> = &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(idx)];</div>
-<div class="line"><a name="l02312"></a><span class="lineno"> 2312</span>&#160;        pointer <a class="code" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83">end</a> = &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size())];</div>
-<div class="line"><a name="l02313"></a><span class="lineno"> 2313</span>&#160; </div>
-<div class="line"><a name="l02314"></a><span class="lineno"> 2314</span>&#160;        add_data_to_tx(idx, size() - idx + count);</div>
-<div class="line"><a name="l02315"></a><span class="lineno"> 2315</span>&#160; </div>
-<div class="line"><a name="l02316"></a><span class="lineno"> 2316</span>&#160;        <span class="comment">/* Make a gap for new elements */</span></div>
-<div class="line"><a name="l02317"></a><span class="lineno"> 2317</span>&#160;        move_elements_backward(<a class="code" href="array_8hpp.html#af7b865184397a869c6c3961222774c35">begin</a>, <a class="code" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83">end</a>, dest);</div>
-<div class="line"><a name="l02318"></a><span class="lineno"> 2318</span>&#160; </div>
-<div class="line"><a name="l02319"></a><span class="lineno"> 2319</span>&#160;        <span class="comment">/* Construct new elements in the gap */</span></div>
-<div class="line"><a name="l02320"></a><span class="lineno"> 2320</span>&#160;        construct_or_assign(idx, first, last);</div>
-<div class="line"><a name="l02321"></a><span class="lineno"> 2321</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l02322"></a><span class="lineno"> 2322</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l02323"></a><span class="lineno"> 2323</span>&#160;<span class="comment">         * XXX: future optimization: we don&#39;t have to snapshot data</span></div>
-<div class="line"><a name="l02324"></a><span class="lineno"> 2324</span>&#160;<span class="comment">         * which we will copy (only snapshot for move)</span></div>
-<div class="line"><a name="l02325"></a><span class="lineno"> 2325</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l02326"></a><span class="lineno"> 2326</span>&#160;        add_data_to_tx(0, _size);</div>
-<div class="line"><a name="l02327"></a><span class="lineno"> 2327</span>&#160; </div>
-<div class="line"><a name="l02328"></a><span class="lineno"> 2328</span>&#160;        <span class="keyword">auto</span> old_data = _data;</div>
-<div class="line"><a name="l02329"></a><span class="lineno"> 2329</span>&#160;        <span class="keyword">auto</span> old_size = _size;</div>
-<div class="line"><a name="l02330"></a><span class="lineno"> 2330</span>&#160;        pointer old_begin = &amp;_data[0];</div>
-<div class="line"><a name="l02331"></a><span class="lineno"> 2331</span>&#160;        pointer old_mid = &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(idx)];</div>
-<div class="line"><a name="l02332"></a><span class="lineno"> 2332</span>&#160;        pointer old_end = &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size())];</div>
-<div class="line"><a name="l02333"></a><span class="lineno"> 2333</span>&#160; </div>
-<div class="line"><a name="l02334"></a><span class="lineno"> 2334</span>&#160;        _data = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l02335"></a><span class="lineno"> 2335</span>&#160;        _size = _capacity = 0;</div>
+<div class="line"><a name="l02309"></a><span class="lineno"> 2309</span>&#160;        pointer dest = _data.get() +</div>
+<div class="line"><a name="l02310"></a><span class="lineno"> 2310</span>&#160;            <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size() + count);</div>
+<div class="line"><a name="l02311"></a><span class="lineno"> 2311</span>&#160;        pointer <a class="code" href="array_8hpp.html#af7b865184397a869c6c3961222774c35">begin</a> = _data.get() + <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(idx);</div>
+<div class="line"><a name="l02312"></a><span class="lineno"> 2312</span>&#160;        pointer <a class="code" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83">end</a> =</div>
+<div class="line"><a name="l02313"></a><span class="lineno"> 2313</span>&#160;            _data.get() + <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size());</div>
+<div class="line"><a name="l02314"></a><span class="lineno"> 2314</span>&#160; </div>
+<div class="line"><a name="l02315"></a><span class="lineno"> 2315</span>&#160;        add_data_to_tx(idx, size() - idx + count);</div>
+<div class="line"><a name="l02316"></a><span class="lineno"> 2316</span>&#160; </div>
+<div class="line"><a name="l02317"></a><span class="lineno"> 2317</span>&#160;        <span class="comment">/* Make a gap for new elements */</span></div>
+<div class="line"><a name="l02318"></a><span class="lineno"> 2318</span>&#160;        move_elements_backward(<a class="code" href="array_8hpp.html#af7b865184397a869c6c3961222774c35">begin</a>, <a class="code" href="array_8hpp.html#a8c9a19e08dff0b1cba582993afd16b83">end</a>, dest);</div>
+<div class="line"><a name="l02319"></a><span class="lineno"> 2319</span>&#160; </div>
+<div class="line"><a name="l02320"></a><span class="lineno"> 2320</span>&#160;        <span class="comment">/* Construct new elements in the gap */</span></div>
+<div class="line"><a name="l02321"></a><span class="lineno"> 2321</span>&#160;        construct_or_assign(idx, first, last);</div>
+<div class="line"><a name="l02322"></a><span class="lineno"> 2322</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l02323"></a><span class="lineno"> 2323</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l02324"></a><span class="lineno"> 2324</span>&#160;<span class="comment">         * XXX: future optimization: we don&#39;t have to snapshot data</span></div>
+<div class="line"><a name="l02325"></a><span class="lineno"> 2325</span>&#160;<span class="comment">         * which we will copy (only snapshot for move)</span></div>
+<div class="line"><a name="l02326"></a><span class="lineno"> 2326</span>&#160;<span class="comment">         */</span></div>
+<div class="line"><a name="l02327"></a><span class="lineno"> 2327</span>&#160;        add_data_to_tx(0, _size);</div>
+<div class="line"><a name="l02328"></a><span class="lineno"> 2328</span>&#160; </div>
+<div class="line"><a name="l02329"></a><span class="lineno"> 2329</span>&#160;        <span class="keyword">auto</span> old_data = _data;</div>
+<div class="line"><a name="l02330"></a><span class="lineno"> 2330</span>&#160;        <span class="keyword">auto</span> old_size = _size;</div>
+<div class="line"><a name="l02331"></a><span class="lineno"> 2331</span>&#160;        pointer old_begin = _data.get();</div>
+<div class="line"><a name="l02332"></a><span class="lineno"> 2332</span>&#160;        pointer old_mid =</div>
+<div class="line"><a name="l02333"></a><span class="lineno"> 2333</span>&#160;            _data.get() + <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(idx);</div>
+<div class="line"><a name="l02334"></a><span class="lineno"> 2334</span>&#160;        pointer old_end =</div>
+<div class="line"><a name="l02335"></a><span class="lineno"> 2335</span>&#160;            _data.get() + <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size());</div>
 <div class="line"><a name="l02336"></a><span class="lineno"> 2336</span>&#160; </div>
-<div class="line"><a name="l02337"></a><span class="lineno"> 2337</span>&#160;        alloc(get_recommended_capacity(old_size + count));</div>
-<div class="line"><a name="l02338"></a><span class="lineno"> 2338</span>&#160; </div>
-<div class="line"><a name="l02339"></a><span class="lineno"> 2339</span>&#160;        <span class="comment">/* Move range before the idx to new array */</span></div>
-<div class="line"><a name="l02340"></a><span class="lineno"> 2340</span>&#160;        construct_at_end(std::make_move_iterator(old_begin),</div>
-<div class="line"><a name="l02341"></a><span class="lineno"> 2341</span>&#160;                 std::make_move_iterator(old_mid));</div>
-<div class="line"><a name="l02342"></a><span class="lineno"> 2342</span>&#160; </div>
-<div class="line"><a name="l02343"></a><span class="lineno"> 2343</span>&#160;        <span class="comment">/* Insert (first, last) range to the new array */</span></div>
-<div class="line"><a name="l02344"></a><span class="lineno"> 2344</span>&#160;        construct_at_end(first, last);</div>
+<div class="line"><a name="l02337"></a><span class="lineno"> 2337</span>&#160;        _data = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l02338"></a><span class="lineno"> 2338</span>&#160;        _size = _capacity = 0;</div>
+<div class="line"><a name="l02339"></a><span class="lineno"> 2339</span>&#160; </div>
+<div class="line"><a name="l02340"></a><span class="lineno"> 2340</span>&#160;        alloc(get_recommended_capacity(old_size + count));</div>
+<div class="line"><a name="l02341"></a><span class="lineno"> 2341</span>&#160; </div>
+<div class="line"><a name="l02342"></a><span class="lineno"> 2342</span>&#160;        <span class="comment">/* Move range before the idx to new array */</span></div>
+<div class="line"><a name="l02343"></a><span class="lineno"> 2343</span>&#160;        construct_at_end(std::make_move_iterator(old_begin),</div>
+<div class="line"><a name="l02344"></a><span class="lineno"> 2344</span>&#160;                 std::make_move_iterator(old_mid));</div>
 <div class="line"><a name="l02345"></a><span class="lineno"> 2345</span>&#160; </div>
-<div class="line"><a name="l02346"></a><span class="lineno"> 2346</span>&#160;        <span class="comment">/* Move remaining element ot the new array */</span></div>
-<div class="line"><a name="l02347"></a><span class="lineno"> 2347</span>&#160;        construct_at_end(std::make_move_iterator(old_mid),</div>
-<div class="line"><a name="l02348"></a><span class="lineno"> 2348</span>&#160;                 std::make_move_iterator(old_end));</div>
-<div class="line"><a name="l02349"></a><span class="lineno"> 2349</span>&#160; </div>
-<div class="line"><a name="l02350"></a><span class="lineno"> 2350</span>&#160;        <span class="comment">/* destroy and free old data */</span></div>
-<div class="line"><a name="l02351"></a><span class="lineno"> 2351</span>&#160;        <span class="keywordflow">for</span> (size_type i = 0; i &lt; old_size; ++i)</div>
-<div class="line"><a name="l02352"></a><span class="lineno"> 2352</span>&#160;            detail::destroy&lt;value_type&gt;(</div>
-<div class="line"><a name="l02353"></a><span class="lineno"> 2353</span>&#160;                old_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(i)]);</div>
-<div class="line"><a name="l02354"></a><span class="lineno"> 2354</span>&#160;        <span class="keywordflow">if</span> (pmemobj_tx_free(old_data.raw()) != 0)</div>
-<div class="line"><a name="l02355"></a><span class="lineno"> 2355</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>(</div>
-<div class="line"><a name="l02356"></a><span class="lineno"> 2356</span>&#160;                <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l02357"></a><span class="lineno"> 2357</span>&#160;                .with_pmemobj_errormsg();</div>
-<div class="line"><a name="l02358"></a><span class="lineno"> 2358</span>&#160;    }</div>
-<div class="line"><a name="l02359"></a><span class="lineno"> 2359</span>&#160;}</div>
-<div class="line"><a name="l02360"></a><span class="lineno"> 2360</span>&#160; </div>
-<div class="line"><a name="l02378"></a><span class="lineno"> 2378</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02379"></a><span class="lineno"> 2379</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l02380"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ab1f01f502d990c1837bba2724914da1f"> 2380</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ab1f01f502d990c1837bba2724914da1f">vector&lt;T&gt;::realloc</a>(size_type capacity_new)</div>
-<div class="line"><a name="l02381"></a><span class="lineno"> 2381</span>&#160;{</div>
-<div class="line"><a name="l02382"></a><span class="lineno"> 2382</span>&#160;    assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
-<div class="line"><a name="l02383"></a><span class="lineno"> 2383</span>&#160; </div>
-<div class="line"><a name="l02384"></a><span class="lineno"> 2384</span>&#160;    <span class="comment">/*</span></div>
-<div class="line"><a name="l02385"></a><span class="lineno"> 2385</span>&#160;<span class="comment">     * XXX: future optimization: we don&#39;t have to snapshot data</span></div>
-<div class="line"><a name="l02386"></a><span class="lineno"> 2386</span>&#160;<span class="comment">     * which we will not overwrite</span></div>
-<div class="line"><a name="l02387"></a><span class="lineno"> 2387</span>&#160;<span class="comment">     */</span></div>
-<div class="line"><a name="l02388"></a><span class="lineno"> 2388</span>&#160;    add_data_to_tx(0, _size);</div>
-<div class="line"><a name="l02389"></a><span class="lineno"> 2389</span>&#160; </div>
-<div class="line"><a name="l02390"></a><span class="lineno"> 2390</span>&#160;    <span class="keyword">auto</span> old_data = _data;</div>
-<div class="line"><a name="l02391"></a><span class="lineno"> 2391</span>&#160;    <span class="keyword">auto</span> old_size = _size;</div>
-<div class="line"><a name="l02392"></a><span class="lineno"> 2392</span>&#160;    pointer old_begin = &amp;_data[0];</div>
-<div class="line"><a name="l02393"></a><span class="lineno"> 2393</span>&#160;    pointer old_end = capacity_new &lt; _size</div>
-<div class="line"><a name="l02394"></a><span class="lineno"> 2394</span>&#160;        ? &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(capacity_new)]</div>
-<div class="line"><a name="l02395"></a><span class="lineno"> 2395</span>&#160;        : &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size())];</div>
-<div class="line"><a name="l02396"></a><span class="lineno"> 2396</span>&#160; </div>
-<div class="line"><a name="l02397"></a><span class="lineno"> 2397</span>&#160;    _data = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l02398"></a><span class="lineno"> 2398</span>&#160;    _size = _capacity = 0;</div>
-<div class="line"><a name="l02399"></a><span class="lineno"> 2399</span>&#160; </div>
-<div class="line"><a name="l02400"></a><span class="lineno"> 2400</span>&#160;    alloc(capacity_new);</div>
-<div class="line"><a name="l02401"></a><span class="lineno"> 2401</span>&#160; </div>
-<div class="line"><a name="l02402"></a><span class="lineno"> 2402</span>&#160;    construct_at_end(std::make_move_iterator(old_begin),</div>
-<div class="line"><a name="l02403"></a><span class="lineno"> 2403</span>&#160;             std::make_move_iterator(old_end));</div>
-<div class="line"><a name="l02404"></a><span class="lineno"> 2404</span>&#160; </div>
-<div class="line"><a name="l02405"></a><span class="lineno"> 2405</span>&#160;    <span class="comment">/* destroy and free old data */</span></div>
-<div class="line"><a name="l02406"></a><span class="lineno"> 2406</span>&#160;    <span class="keywordflow">for</span> (size_type i = 0; i &lt; old_size; ++i)</div>
-<div class="line"><a name="l02407"></a><span class="lineno"> 2407</span>&#160;        detail::destroy&lt;value_type&gt;(</div>
-<div class="line"><a name="l02408"></a><span class="lineno"> 2408</span>&#160;            old_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(i)]);</div>
-<div class="line"><a name="l02409"></a><span class="lineno"> 2409</span>&#160;    <span class="keywordflow">if</span> (pmemobj_tx_free(old_data.raw()) != 0)</div>
-<div class="line"><a name="l02410"></a><span class="lineno"> 2410</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>(</div>
-<div class="line"><a name="l02411"></a><span class="lineno"> 2411</span>&#160;            <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l02412"></a><span class="lineno"> 2412</span>&#160;            .with_pmemobj_errormsg();</div>
-<div class="line"><a name="l02413"></a><span class="lineno"> 2413</span>&#160;}</div>
-<div class="line"><a name="l02414"></a><span class="lineno"> 2414</span>&#160; </div>
-<div class="line"><a name="l02421"></a><span class="lineno"> 2421</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02422"></a><span class="lineno"> 2422</span>&#160;<span class="keyword">typename</span> vector&lt;T&gt;::size_type</div>
-<div class="line"><a name="l02423"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ac63134a4f0f0e72c005098c329030846"> 2423</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ac63134a4f0f0e72c005098c329030846">vector&lt;T&gt;::get_recommended_capacity</a>(size_type at_least)<span class="keyword"> const</span></div>
-<div class="line"><a name="l02424"></a><span class="lineno"> 2424</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l02425"></a><span class="lineno"> 2425</span>&#160;    <span class="keywordflow">return</span> detail::next_pow_2(at_least);</div>
-<div class="line"><a name="l02426"></a><span class="lineno"> 2426</span>&#160;}</div>
-<div class="line"><a name="l02427"></a><span class="lineno"> 2427</span>&#160; </div>
-<div class="line"><a name="l02444"></a><span class="lineno"> 2444</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02445"></a><span class="lineno"> 2445</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l02446"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ae632635f41cdfdbbfe06c50f755dce14"> 2446</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ae632635f41cdfdbbfe06c50f755dce14">vector&lt;T&gt;::shrink</a>(size_type size_new)</div>
-<div class="line"><a name="l02447"></a><span class="lineno"> 2447</span>&#160;{</div>
-<div class="line"><a name="l02448"></a><span class="lineno"> 2448</span>&#160;    assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
-<div class="line"><a name="l02449"></a><span class="lineno"> 2449</span>&#160;    assert(size_new &lt;= _size);</div>
-<div class="line"><a name="l02450"></a><span class="lineno"> 2450</span>&#160; </div>
-<div class="line"><a name="l02451"></a><span class="lineno"> 2451</span>&#160;    add_data_to_tx(size_new, _size - size_new);</div>
-<div class="line"><a name="l02452"></a><span class="lineno"> 2452</span>&#160; </div>
-<div class="line"><a name="l02453"></a><span class="lineno"> 2453</span>&#160;    <span class="keywordflow">for</span> (size_type i = size_new; i &lt; _size; ++i)</div>
-<div class="line"><a name="l02454"></a><span class="lineno"> 2454</span>&#160;        detail::destroy&lt;value_type&gt;(</div>
-<div class="line"><a name="l02455"></a><span class="lineno"> 2455</span>&#160;            _data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(i)]);</div>
-<div class="line"><a name="l02456"></a><span class="lineno"> 2456</span>&#160;    _size = size_new;</div>
-<div class="line"><a name="l02457"></a><span class="lineno"> 2457</span>&#160;}</div>
-<div class="line"><a name="l02458"></a><span class="lineno"> 2458</span>&#160; </div>
-<div class="line"><a name="l02468"></a><span class="lineno"> 2468</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02469"></a><span class="lineno"> 2469</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l02470"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848"> 2470</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848">vector&lt;T&gt;::add_data_to_tx</a>(size_type idx_first, size_type num)</div>
-<div class="line"><a name="l02471"></a><span class="lineno"> 2471</span>&#160;{</div>
-<div class="line"><a name="l02472"></a><span class="lineno"> 2472</span>&#160;    assert(idx_first + num &lt;= capacity());</div>
-<div class="line"><a name="l02473"></a><span class="lineno"> 2473</span>&#160; </div>
-<div class="line"><a name="l02474"></a><span class="lineno"> 2474</span>&#160;<span class="preprocessor">#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED</span></div>
-<div class="line"><a name="l02475"></a><span class="lineno"> 2475</span>&#160;    <span class="comment">/* Make sure that only data allocated by this vector is accessed */</span></div>
-<div class="line"><a name="l02476"></a><span class="lineno"> 2476</span>&#160;    assert(VALGRIND_CHECK_MEM_IS_ADDRESSABLE(_data.get() + idx_first,</div>
-<div class="line"><a name="l02477"></a><span class="lineno"> 2477</span>&#160;                         num * <span class="keyword">sizeof</span>(T)) == 0);</div>
-<div class="line"><a name="l02478"></a><span class="lineno"> 2478</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l02479"></a><span class="lineno"> 2479</span>&#160; </div>
-<div class="line"><a name="l02480"></a><span class="lineno"> 2480</span>&#160;    <span class="keyword">auto</span> initialized_num = size() - idx_first;</div>
-<div class="line"><a name="l02481"></a><span class="lineno"> 2481</span>&#160; </div>
-<div class="line"><a name="l02482"></a><span class="lineno"> 2482</span>&#160;    <span class="comment">/* Snapshot elements in range [idx_first,size()) */</span></div>
-<div class="line"><a name="l02483"></a><span class="lineno"> 2483</span>&#160;    detail::conditional_add_to_tx(_data.get() + idx_first,</div>
-<div class="line"><a name="l02484"></a><span class="lineno"> 2484</span>&#160;                      (std::min)(initialized_num, num),</div>
-<div class="line"><a name="l02485"></a><span class="lineno"> 2485</span>&#160;                      POBJ_XADD_ASSUME_INITIALIZED);</div>
-<div class="line"><a name="l02486"></a><span class="lineno"> 2486</span>&#160; </div>
-<div class="line"><a name="l02487"></a><span class="lineno"> 2487</span>&#160;    <span class="keywordflow">if</span> (num &gt; initialized_num) {</div>
-<div class="line"><a name="l02488"></a><span class="lineno"> 2488</span>&#160;        <span class="comment">/* Elements after size() do not have to be snapshotted */</span></div>
-<div class="line"><a name="l02489"></a><span class="lineno"> 2489</span>&#160;        detail::conditional_add_to_tx(_data.get() + size(),</div>
-<div class="line"><a name="l02490"></a><span class="lineno"> 2490</span>&#160;                          num - initialized_num,</div>
-<div class="line"><a name="l02491"></a><span class="lineno"> 2491</span>&#160;                          POBJ_XADD_NO_SNAPSHOT);</div>
-<div class="line"><a name="l02492"></a><span class="lineno"> 2492</span>&#160;    }</div>
-<div class="line"><a name="l02493"></a><span class="lineno"> 2493</span>&#160;}</div>
-<div class="line"><a name="l02494"></a><span class="lineno"> 2494</span>&#160; </div>
-<div class="line"><a name="l02506"></a><span class="lineno"> 2506</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02507"></a><span class="lineno"> 2507</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02508"></a><span class="lineno"><a class="line" href="vector_8hpp.html#aae7ea0da2be2d117a026e3fa58a3369d"> 2508</a></span>&#160;<a class="code" href="allocator_8hpp.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02509"></a><span class="lineno"> 2509</span>&#160;{</div>
-<div class="line"><a name="l02510"></a><span class="lineno"> 2510</span>&#160;    <span class="keywordflow">return</span> lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size</a>() == rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size</a>() &amp;&amp;</div>
-<div class="line"><a name="l02511"></a><span class="lineno"> 2511</span>&#160;        std::equal(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>());</div>
-<div class="line"><a name="l02512"></a><span class="lineno"> 2512</span>&#160;}</div>
-<div class="line"><a name="l02513"></a><span class="lineno"> 2513</span>&#160; </div>
-<div class="line"><a name="l02525"></a><span class="lineno"> 2525</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02526"></a><span class="lineno"> 2526</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02527"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a399b4199506661eccff459a7a878f3d9"> 2527</a></span>&#160;<a class="code" href="allocator_8hpp.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02528"></a><span class="lineno"> 2528</span>&#160;{</div>
-<div class="line"><a name="l02529"></a><span class="lineno"> 2529</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
-<div class="line"><a name="l02530"></a><span class="lineno"> 2530</span>&#160;}</div>
-<div class="line"><a name="l02531"></a><span class="lineno"> 2531</span>&#160; </div>
-<div class="line"><a name="l02542"></a><span class="lineno"> 2542</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02543"></a><span class="lineno"><a class="line" href="vector_8hpp.html#aec4bbcff4664436e0341275606b24314"> 2543</a></span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02544"></a><span class="lineno"> 2544</span>&#160;<a class="code" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02545"></a><span class="lineno"> 2545</span>&#160;{</div>
-<div class="line"><a name="l02546"></a><span class="lineno"> 2546</span>&#160;    <span class="keywordflow">return</span> std::lexicographical_compare(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(),</div>
-<div class="line"><a name="l02547"></a><span class="lineno"> 2547</span>&#160;                        rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>());</div>
-<div class="line"><a name="l02548"></a><span class="lineno"> 2548</span>&#160;}</div>
-<div class="line"><a name="l02549"></a><span class="lineno"> 2549</span>&#160; </div>
-<div class="line"><a name="l02560"></a><span class="lineno"> 2560</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02561"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a6442bae353bd3aab4417d4db85995b07"> 2561</a></span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02562"></a><span class="lineno"> 2562</span>&#160;<a class="code" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02563"></a><span class="lineno"> 2563</span>&#160;{</div>
-<div class="line"><a name="l02564"></a><span class="lineno"> 2564</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; lhs);</div>
-<div class="line"><a name="l02565"></a><span class="lineno"> 2565</span>&#160;}</div>
-<div class="line"><a name="l02566"></a><span class="lineno"> 2566</span>&#160; </div>
-<div class="line"><a name="l02578"></a><span class="lineno"> 2578</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02579"></a><span class="lineno"> 2579</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02580"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a2e824a963007146618891278f455c6df"> 2580</a></span>&#160;<a class="code" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02581"></a><span class="lineno"> 2581</span>&#160;{</div>
-<div class="line"><a name="l02582"></a><span class="lineno"> 2582</span>&#160;    <span class="keywordflow">return</span> rhs &lt; lhs;</div>
-<div class="line"><a name="l02583"></a><span class="lineno"> 2583</span>&#160;}</div>
-<div class="line"><a name="l02584"></a><span class="lineno"> 2584</span>&#160; </div>
-<div class="line"><a name="l02595"></a><span class="lineno"> 2595</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02596"></a><span class="lineno"> 2596</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02597"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a4d0311022343df6a9d6630d0025e99c1"> 2597</a></span>&#160;<a class="code" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02598"></a><span class="lineno"> 2598</span>&#160;{</div>
-<div class="line"><a name="l02599"></a><span class="lineno"> 2599</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
-<div class="line"><a name="l02600"></a><span class="lineno"> 2600</span>&#160;}</div>
-<div class="line"><a name="l02601"></a><span class="lineno"> 2601</span>&#160; </div>
-<div class="line"><a name="l02613"></a><span class="lineno"> 2613</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02614"></a><span class="lineno"> 2614</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02615"></a><span class="lineno"><a class="line" href="vector_8hpp.html#aef8f8bc8ee773cf3ba486df604a98504"> 2615</a></span>&#160;<a class="code" href="allocator_8hpp.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
-<div class="line"><a name="l02616"></a><span class="lineno"> 2616</span>&#160;{</div>
-<div class="line"><a name="l02617"></a><span class="lineno"> 2617</span>&#160;    <span class="keywordflow">return</span> lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size</a>() == rhs.size() &amp;&amp;</div>
-<div class="line"><a name="l02618"></a><span class="lineno"> 2618</span>&#160;        std::equal(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.begin());</div>
-<div class="line"><a name="l02619"></a><span class="lineno"> 2619</span>&#160;}</div>
-<div class="line"><a name="l02620"></a><span class="lineno"> 2620</span>&#160; </div>
-<div class="line"><a name="l02632"></a><span class="lineno"> 2632</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02633"></a><span class="lineno"> 2633</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02634"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a1fcbd0d2822d3f235950b044d0da6ac2"> 2634</a></span>&#160;<a class="code" href="allocator_8hpp.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
-<div class="line"><a name="l02635"></a><span class="lineno"> 2635</span>&#160;{</div>
-<div class="line"><a name="l02636"></a><span class="lineno"> 2636</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
-<div class="line"><a name="l02637"></a><span class="lineno"> 2637</span>&#160;}</div>
-<div class="line"><a name="l02638"></a><span class="lineno"> 2638</span>&#160; </div>
-<div class="line"><a name="l02649"></a><span class="lineno"> 2649</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02650"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a6bc8b97b7a1b71404a4da7907cc0a695"> 2650</a></span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02651"></a><span class="lineno"> 2651</span>&#160;<a class="code" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
-<div class="line"><a name="l02652"></a><span class="lineno"> 2652</span>&#160;{</div>
-<div class="line"><a name="l02653"></a><span class="lineno"> 2653</span>&#160;    <span class="keywordflow">return</span> std::lexicographical_compare(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.begin(),</div>
-<div class="line"><a name="l02654"></a><span class="lineno"> 2654</span>&#160;                        rhs.end());</div>
-<div class="line"><a name="l02655"></a><span class="lineno"> 2655</span>&#160;}</div>
-<div class="line"><a name="l02656"></a><span class="lineno"> 2656</span>&#160; </div>
-<div class="line"><a name="l02667"></a><span class="lineno"> 2667</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02668"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a4403e4fdd376acf1404d225856a6109f"> 2668</a></span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02669"></a><span class="lineno"> 2669</span>&#160;<a class="code" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
-<div class="line"><a name="l02670"></a><span class="lineno"> 2670</span>&#160;{</div>
-<div class="line"><a name="l02671"></a><span class="lineno"> 2671</span>&#160;    <span class="keywordflow">return</span> !(std::lexicographical_compare(rhs.begin(), rhs.end(),</div>
-<div class="line"><a name="l02672"></a><span class="lineno"> 2672</span>&#160;                          lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>()));</div>
-<div class="line"><a name="l02673"></a><span class="lineno"> 2673</span>&#160;}</div>
-<div class="line"><a name="l02674"></a><span class="lineno"> 2674</span>&#160; </div>
-<div class="line"><a name="l02686"></a><span class="lineno"> 2686</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02687"></a><span class="lineno"> 2687</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02688"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a5bfc1cf4bc0871a89bc16487bd6a8484"> 2688</a></span>&#160;<a class="code" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
-<div class="line"><a name="l02689"></a><span class="lineno"> 2689</span>&#160;{</div>
-<div class="line"><a name="l02690"></a><span class="lineno"> 2690</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt;= rhs);</div>
-<div class="line"><a name="l02691"></a><span class="lineno"> 2691</span>&#160;}</div>
-<div class="line"><a name="l02692"></a><span class="lineno"> 2692</span>&#160; </div>
-<div class="line"><a name="l02703"></a><span class="lineno"> 2703</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02704"></a><span class="lineno"> 2704</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02705"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a29cc30f96742b912f5c70bffcd87fe5a"> 2705</a></span>&#160;<a class="code" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
-<div class="line"><a name="l02706"></a><span class="lineno"> 2706</span>&#160;{</div>
-<div class="line"><a name="l02707"></a><span class="lineno"> 2707</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
-<div class="line"><a name="l02708"></a><span class="lineno"> 2708</span>&#160;}</div>
-<div class="line"><a name="l02709"></a><span class="lineno"> 2709</span>&#160; </div>
-<div class="line"><a name="l02721"></a><span class="lineno"> 2721</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02722"></a><span class="lineno"> 2722</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02723"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a5fa7985535467845be5c2e4605bab72e"> 2723</a></span>&#160;<a class="code" href="allocator_8hpp.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02724"></a><span class="lineno"> 2724</span>&#160;{</div>
-<div class="line"><a name="l02725"></a><span class="lineno"> 2725</span>&#160;    <span class="keywordflow">return</span> rhs == lhs;</div>
-<div class="line"><a name="l02726"></a><span class="lineno"> 2726</span>&#160;}</div>
-<div class="line"><a name="l02727"></a><span class="lineno"> 2727</span>&#160; </div>
-<div class="line"><a name="l02739"></a><span class="lineno"> 2739</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02740"></a><span class="lineno"> 2740</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02741"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a659d49015c82ef1dc044e2142224269d"> 2741</a></span>&#160;<a class="code" href="allocator_8hpp.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02742"></a><span class="lineno"> 2742</span>&#160;{</div>
-<div class="line"><a name="l02743"></a><span class="lineno"> 2743</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
-<div class="line"><a name="l02744"></a><span class="lineno"> 2744</span>&#160;}</div>
-<div class="line"><a name="l02745"></a><span class="lineno"> 2745</span>&#160; </div>
-<div class="line"><a name="l02756"></a><span class="lineno"> 2756</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02757"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a0dcb348e953ea0a5b1ed1a3f5c29d2dd"> 2757</a></span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02758"></a><span class="lineno"> 2758</span>&#160;<a class="code" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02759"></a><span class="lineno"> 2759</span>&#160;{</div>
-<div class="line"><a name="l02760"></a><span class="lineno"> 2760</span>&#160;    <span class="keywordflow">return</span> rhs &gt; lhs;</div>
-<div class="line"><a name="l02761"></a><span class="lineno"> 2761</span>&#160;}</div>
-<div class="line"><a name="l02762"></a><span class="lineno"> 2762</span>&#160; </div>
-<div class="line"><a name="l02773"></a><span class="lineno"> 2773</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02774"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a6137a8d89c6046241b600ab14a63b6de"> 2774</a></span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02775"></a><span class="lineno"> 2775</span>&#160;<a class="code" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02776"></a><span class="lineno"> 2776</span>&#160;{</div>
-<div class="line"><a name="l02777"></a><span class="lineno"> 2777</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; lhs);</div>
-<div class="line"><a name="l02778"></a><span class="lineno"> 2778</span>&#160;}</div>
-<div class="line"><a name="l02779"></a><span class="lineno"> 2779</span>&#160; </div>
-<div class="line"><a name="l02791"></a><span class="lineno"> 2791</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02792"></a><span class="lineno"> 2792</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02793"></a><span class="lineno"><a class="line" href="vector_8hpp.html#ad6ea4849c06b3f401ac3673ded5a3227"> 2793</a></span>&#160;<a class="code" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02794"></a><span class="lineno"> 2794</span>&#160;{</div>
-<div class="line"><a name="l02795"></a><span class="lineno"> 2795</span>&#160;    <span class="keywordflow">return</span> rhs &lt; lhs;</div>
-<div class="line"><a name="l02796"></a><span class="lineno"> 2796</span>&#160;}</div>
-<div class="line"><a name="l02797"></a><span class="lineno"> 2797</span>&#160; </div>
-<div class="line"><a name="l02808"></a><span class="lineno"> 2808</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02809"></a><span class="lineno"> 2809</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l02810"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a963062a2970d5133a82fa906f0b7eddd"> 2810</a></span>&#160;<a class="code" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02811"></a><span class="lineno"> 2811</span>&#160;{</div>
-<div class="line"><a name="l02812"></a><span class="lineno"> 2812</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
-<div class="line"><a name="l02813"></a><span class="lineno"> 2813</span>&#160;}</div>
-<div class="line"><a name="l02814"></a><span class="lineno"> 2814</span>&#160; </div>
-<div class="line"><a name="l02821"></a><span class="lineno"> 2821</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l02822"></a><span class="lineno"> 2822</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l02823"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a46a6c5333f2e9859d6f152f1dc8f1832"> 2823</a></span>&#160;<a class="code" href="array_8hpp.html#af36a1b526d5d5c81d35f02557c3b8e24">swap</a>(<a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
-<div class="line"><a name="l02824"></a><span class="lineno"> 2824</span>&#160;{</div>
-<div class="line"><a name="l02825"></a><span class="lineno"> 2825</span>&#160;    lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a625a28481ba78b461605458faad670b3">swap</a>(rhs);</div>
-<div class="line"><a name="l02826"></a><span class="lineno"> 2826</span>&#160;}</div>
-<div class="line"><a name="l02827"></a><span class="lineno"> 2827</span>&#160; </div>
-<div class="line"><a name="l02828"></a><span class="lineno"> 2828</span>&#160;} <span class="comment">/* namespace obj */</span></div>
-<div class="line"><a name="l02829"></a><span class="lineno"> 2829</span>&#160; </div>
-<div class="line"><a name="l02830"></a><span class="lineno"> 2830</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
-<div class="line"><a name="l02831"></a><span class="lineno"> 2831</span>&#160; </div>
-<div class="line"><a name="l02832"></a><span class="lineno"> 2832</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_VECTOR_HPP */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l02346"></a><span class="lineno"> 2346</span>&#160;        <span class="comment">/* Insert (first, last) range to the new array */</span></div>
+<div class="line"><a name="l02347"></a><span class="lineno"> 2347</span>&#160;        construct_at_end(first, last);</div>
+<div class="line"><a name="l02348"></a><span class="lineno"> 2348</span>&#160; </div>
+<div class="line"><a name="l02349"></a><span class="lineno"> 2349</span>&#160;        <span class="comment">/* Move remaining element ot the new array */</span></div>
+<div class="line"><a name="l02350"></a><span class="lineno"> 2350</span>&#160;        construct_at_end(std::make_move_iterator(old_mid),</div>
+<div class="line"><a name="l02351"></a><span class="lineno"> 2351</span>&#160;                 std::make_move_iterator(old_end));</div>
+<div class="line"><a name="l02352"></a><span class="lineno"> 2352</span>&#160; </div>
+<div class="line"><a name="l02353"></a><span class="lineno"> 2353</span>&#160;        <span class="comment">/* destroy and free old data */</span></div>
+<div class="line"><a name="l02354"></a><span class="lineno"> 2354</span>&#160;        <span class="keywordflow">for</span> (size_type i = 0; i &lt; old_size; ++i)</div>
+<div class="line"><a name="l02355"></a><span class="lineno"> 2355</span>&#160;            detail::destroy&lt;value_type&gt;(</div>
+<div class="line"><a name="l02356"></a><span class="lineno"> 2356</span>&#160;                old_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(i)]);</div>
+<div class="line"><a name="l02357"></a><span class="lineno"> 2357</span>&#160;        <span class="keywordflow">if</span> (pmemobj_tx_free(old_data.raw()) != 0)</div>
+<div class="line"><a name="l02358"></a><span class="lineno"> 2358</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>(</div>
+<div class="line"><a name="l02359"></a><span class="lineno"> 2359</span>&#160;                <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>)</div>
+<div class="line"><a name="l02360"></a><span class="lineno"> 2360</span>&#160;                .with_pmemobj_errormsg();</div>
+<div class="line"><a name="l02361"></a><span class="lineno"> 2361</span>&#160;    }</div>
+<div class="line"><a name="l02362"></a><span class="lineno"> 2362</span>&#160;}</div>
+<div class="line"><a name="l02363"></a><span class="lineno"> 2363</span>&#160; </div>
+<div class="line"><a name="l02382"></a><span class="lineno"> 2382</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02383"></a><span class="lineno"> 2383</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l02384"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ab1f01f502d990c1837bba2724914da1f"> 2384</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ab1f01f502d990c1837bba2724914da1f">vector&lt;T&gt;::realloc</a>(size_type capacity_new)</div>
+<div class="line"><a name="l02385"></a><span class="lineno"> 2385</span>&#160;{</div>
+<div class="line"><a name="l02386"></a><span class="lineno"> 2386</span>&#160;    assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
+<div class="line"><a name="l02387"></a><span class="lineno"> 2387</span>&#160; </div>
+<div class="line"><a name="l02388"></a><span class="lineno"> 2388</span>&#160;    <span class="comment">/*</span></div>
+<div class="line"><a name="l02389"></a><span class="lineno"> 2389</span>&#160;<span class="comment">     * If _data == nullptr this object has never allocated any memory</span></div>
+<div class="line"><a name="l02390"></a><span class="lineno"> 2390</span>&#160;<span class="comment">     * so we need to behave as alloc instead.</span></div>
+<div class="line"><a name="l02391"></a><span class="lineno"> 2391</span>&#160;<span class="comment">     */</span></div>
+<div class="line"><a name="l02392"></a><span class="lineno"> 2392</span>&#160;    <span class="keywordflow">if</span> (_data == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a name="l02393"></a><span class="lineno"> 2393</span>&#160;        <span class="keywordflow">return</span> alloc(capacity_new);</div>
+<div class="line"><a name="l02394"></a><span class="lineno"> 2394</span>&#160; </div>
+<div class="line"><a name="l02395"></a><span class="lineno"> 2395</span>&#160;    <span class="comment">/*</span></div>
+<div class="line"><a name="l02396"></a><span class="lineno"> 2396</span>&#160;<span class="comment">     * XXX: future optimization: we don&#39;t have to snapshot data</span></div>
+<div class="line"><a name="l02397"></a><span class="lineno"> 2397</span>&#160;<span class="comment">     * which we will not overwrite</span></div>
+<div class="line"><a name="l02398"></a><span class="lineno"> 2398</span>&#160;<span class="comment">     */</span></div>
+<div class="line"><a name="l02399"></a><span class="lineno"> 2399</span>&#160;    add_data_to_tx(0, _size);</div>
+<div class="line"><a name="l02400"></a><span class="lineno"> 2400</span>&#160; </div>
+<div class="line"><a name="l02401"></a><span class="lineno"> 2401</span>&#160;    <span class="keyword">auto</span> old_data = _data;</div>
+<div class="line"><a name="l02402"></a><span class="lineno"> 2402</span>&#160;    <span class="keyword">auto</span> old_size = _size;</div>
+<div class="line"><a name="l02403"></a><span class="lineno"> 2403</span>&#160;    pointer old_begin = _data.get();</div>
+<div class="line"><a name="l02404"></a><span class="lineno"> 2404</span>&#160;    pointer old_end = capacity_new &lt; _size</div>
+<div class="line"><a name="l02405"></a><span class="lineno"> 2405</span>&#160;        ? &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(capacity_new)]</div>
+<div class="line"><a name="l02406"></a><span class="lineno"> 2406</span>&#160;        : &amp;_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(size())];</div>
+<div class="line"><a name="l02407"></a><span class="lineno"> 2407</span>&#160; </div>
+<div class="line"><a name="l02408"></a><span class="lineno"> 2408</span>&#160;    _data = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l02409"></a><span class="lineno"> 2409</span>&#160;    _size = _capacity = 0;</div>
+<div class="line"><a name="l02410"></a><span class="lineno"> 2410</span>&#160; </div>
+<div class="line"><a name="l02411"></a><span class="lineno"> 2411</span>&#160;    alloc(capacity_new);</div>
+<div class="line"><a name="l02412"></a><span class="lineno"> 2412</span>&#160; </div>
+<div class="line"><a name="l02413"></a><span class="lineno"> 2413</span>&#160;    construct_at_end(std::make_move_iterator(old_begin),</div>
+<div class="line"><a name="l02414"></a><span class="lineno"> 2414</span>&#160;             std::make_move_iterator(old_end));</div>
+<div class="line"><a name="l02415"></a><span class="lineno"> 2415</span>&#160; </div>
+<div class="line"><a name="l02416"></a><span class="lineno"> 2416</span>&#160;    <span class="comment">/* destroy and free old data */</span></div>
+<div class="line"><a name="l02417"></a><span class="lineno"> 2417</span>&#160;    <span class="keywordflow">for</span> (size_type i = 0; i &lt; old_size; ++i)</div>
+<div class="line"><a name="l02418"></a><span class="lineno"> 2418</span>&#160;        detail::destroy&lt;value_type&gt;(</div>
+<div class="line"><a name="l02419"></a><span class="lineno"> 2419</span>&#160;            old_data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(i)]);</div>
+<div class="line"><a name="l02420"></a><span class="lineno"> 2420</span>&#160;    <span class="keywordflow">if</span> (pmemobj_tx_free(old_data.raw()) != 0)</div>
+<div class="line"><a name="l02421"></a><span class="lineno"> 2421</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>(</div>
+<div class="line"><a name="l02422"></a><span class="lineno"> 2422</span>&#160;            <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>)</div>
+<div class="line"><a name="l02423"></a><span class="lineno"> 2423</span>&#160;            .with_pmemobj_errormsg();</div>
+<div class="line"><a name="l02424"></a><span class="lineno"> 2424</span>&#160;}</div>
+<div class="line"><a name="l02425"></a><span class="lineno"> 2425</span>&#160; </div>
+<div class="line"><a name="l02432"></a><span class="lineno"> 2432</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02433"></a><span class="lineno"> 2433</span>&#160;<span class="keyword">typename</span> vector&lt;T&gt;::size_type</div>
+<div class="line"><a name="l02434"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ac63134a4f0f0e72c005098c329030846"> 2434</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ac63134a4f0f0e72c005098c329030846">vector&lt;T&gt;::get_recommended_capacity</a>(size_type at_least)<span class="keyword"> const</span></div>
+<div class="line"><a name="l02435"></a><span class="lineno"> 2435</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l02436"></a><span class="lineno"> 2436</span>&#160;    <span class="keywordflow">return</span> detail::next_pow_2(at_least);</div>
+<div class="line"><a name="l02437"></a><span class="lineno"> 2437</span>&#160;}</div>
+<div class="line"><a name="l02438"></a><span class="lineno"> 2438</span>&#160; </div>
+<div class="line"><a name="l02455"></a><span class="lineno"> 2455</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02456"></a><span class="lineno"> 2456</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l02457"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ae632635f41cdfdbbfe06c50f755dce14"> 2457</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ae632635f41cdfdbbfe06c50f755dce14">vector&lt;T&gt;::shrink</a>(size_type size_new)</div>
+<div class="line"><a name="l02458"></a><span class="lineno"> 2458</span>&#160;{</div>
+<div class="line"><a name="l02459"></a><span class="lineno"> 2459</span>&#160;    assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
+<div class="line"><a name="l02460"></a><span class="lineno"> 2460</span>&#160;    assert(size_new &lt;= _size);</div>
+<div class="line"><a name="l02461"></a><span class="lineno"> 2461</span>&#160; </div>
+<div class="line"><a name="l02462"></a><span class="lineno"> 2462</span>&#160;    add_data_to_tx(size_new, _size - size_new);</div>
+<div class="line"><a name="l02463"></a><span class="lineno"> 2463</span>&#160; </div>
+<div class="line"><a name="l02464"></a><span class="lineno"> 2464</span>&#160;    <span class="keywordflow">for</span> (size_type i = size_new; i &lt; _size; ++i)</div>
+<div class="line"><a name="l02465"></a><span class="lineno"> 2465</span>&#160;        detail::destroy&lt;value_type&gt;(</div>
+<div class="line"><a name="l02466"></a><span class="lineno"> 2466</span>&#160;            _data[<span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(i)]);</div>
+<div class="line"><a name="l02467"></a><span class="lineno"> 2467</span>&#160;    _size = size_new;</div>
+<div class="line"><a name="l02468"></a><span class="lineno"> 2468</span>&#160;}</div>
+<div class="line"><a name="l02469"></a><span class="lineno"> 2469</span>&#160; </div>
+<div class="line"><a name="l02479"></a><span class="lineno"> 2479</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02480"></a><span class="lineno"> 2480</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l02481"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848"> 2481</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848">vector&lt;T&gt;::add_data_to_tx</a>(size_type idx_first, size_type num)</div>
+<div class="line"><a name="l02482"></a><span class="lineno"> 2482</span>&#160;{</div>
+<div class="line"><a name="l02483"></a><span class="lineno"> 2483</span>&#160;    assert(idx_first + num &lt;= capacity());</div>
+<div class="line"><a name="l02484"></a><span class="lineno"> 2484</span>&#160; </div>
+<div class="line"><a name="l02485"></a><span class="lineno"> 2485</span>&#160;<span class="preprocessor">#if LIBPMEMOBJ_CPP_VG_MEMCHECK_ENABLED</span></div>
+<div class="line"><a name="l02486"></a><span class="lineno"> 2486</span>&#160;    <span class="comment">/* Make sure that only data allocated by this vector is accessed */</span></div>
+<div class="line"><a name="l02487"></a><span class="lineno"> 2487</span>&#160;    assert(VALGRIND_CHECK_MEM_IS_ADDRESSABLE(_data.get() + idx_first,</div>
+<div class="line"><a name="l02488"></a><span class="lineno"> 2488</span>&#160;                         num * <span class="keyword">sizeof</span>(T)) == 0);</div>
+<div class="line"><a name="l02489"></a><span class="lineno"> 2489</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l02490"></a><span class="lineno"> 2490</span>&#160; </div>
+<div class="line"><a name="l02491"></a><span class="lineno"> 2491</span>&#160;    <span class="keyword">auto</span> initialized_num = size() - idx_first;</div>
+<div class="line"><a name="l02492"></a><span class="lineno"> 2492</span>&#160; </div>
+<div class="line"><a name="l02493"></a><span class="lineno"> 2493</span>&#160;    <span class="comment">/* Snapshot elements in range [idx_first,size()) */</span></div>
+<div class="line"><a name="l02494"></a><span class="lineno"> 2494</span>&#160;    detail::conditional_add_to_tx(_data.get() + idx_first,</div>
+<div class="line"><a name="l02495"></a><span class="lineno"> 2495</span>&#160;                      (std::min)(initialized_num, num),</div>
+<div class="line"><a name="l02496"></a><span class="lineno"> 2496</span>&#160;                      POBJ_XADD_ASSUME_INITIALIZED);</div>
+<div class="line"><a name="l02497"></a><span class="lineno"> 2497</span>&#160; </div>
+<div class="line"><a name="l02498"></a><span class="lineno"> 2498</span>&#160;    <span class="keywordflow">if</span> (num &gt; initialized_num) {</div>
+<div class="line"><a name="l02499"></a><span class="lineno"> 2499</span>&#160;        <span class="comment">/* Elements after size() do not have to be snapshotted */</span></div>
+<div class="line"><a name="l02500"></a><span class="lineno"> 2500</span>&#160;        detail::conditional_add_to_tx(_data.get() + size(),</div>
+<div class="line"><a name="l02501"></a><span class="lineno"> 2501</span>&#160;                          num - initialized_num,</div>
+<div class="line"><a name="l02502"></a><span class="lineno"> 2502</span>&#160;                          POBJ_XADD_NO_SNAPSHOT);</div>
+<div class="line"><a name="l02503"></a><span class="lineno"> 2503</span>&#160;    }</div>
+<div class="line"><a name="l02504"></a><span class="lineno"> 2504</span>&#160;}</div>
+<div class="line"><a name="l02505"></a><span class="lineno"> 2505</span>&#160; </div>
+<div class="line"><a name="l02517"></a><span class="lineno"> 2517</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02518"></a><span class="lineno"> 2518</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02519"></a><span class="lineno"><a class="line" href="vector_8hpp.html#aae7ea0da2be2d117a026e3fa58a3369d"> 2519</a></span>&#160;<a class="code" href="allocator_8hpp.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02520"></a><span class="lineno"> 2520</span>&#160;{</div>
+<div class="line"><a name="l02521"></a><span class="lineno"> 2521</span>&#160;    <span class="keywordflow">return</span> lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size</a>() == rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size</a>() &amp;&amp;</div>
+<div class="line"><a name="l02522"></a><span class="lineno"> 2522</span>&#160;        std::equal(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>());</div>
+<div class="line"><a name="l02523"></a><span class="lineno"> 2523</span>&#160;}</div>
+<div class="line"><a name="l02524"></a><span class="lineno"> 2524</span>&#160; </div>
+<div class="line"><a name="l02536"></a><span class="lineno"> 2536</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02537"></a><span class="lineno"> 2537</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02538"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a399b4199506661eccff459a7a878f3d9"> 2538</a></span>&#160;<a class="code" href="allocator_8hpp.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02539"></a><span class="lineno"> 2539</span>&#160;{</div>
+<div class="line"><a name="l02540"></a><span class="lineno"> 2540</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
+<div class="line"><a name="l02541"></a><span class="lineno"> 2541</span>&#160;}</div>
+<div class="line"><a name="l02542"></a><span class="lineno"> 2542</span>&#160; </div>
+<div class="line"><a name="l02553"></a><span class="lineno"> 2553</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02554"></a><span class="lineno"><a class="line" href="vector_8hpp.html#aec4bbcff4664436e0341275606b24314"> 2554</a></span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02555"></a><span class="lineno"> 2555</span>&#160;<a class="code" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02556"></a><span class="lineno"> 2556</span>&#160;{</div>
+<div class="line"><a name="l02557"></a><span class="lineno"> 2557</span>&#160;    <span class="keywordflow">return</span> std::lexicographical_compare(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(),</div>
+<div class="line"><a name="l02558"></a><span class="lineno"> 2558</span>&#160;                        rhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>());</div>
+<div class="line"><a name="l02559"></a><span class="lineno"> 2559</span>&#160;}</div>
+<div class="line"><a name="l02560"></a><span class="lineno"> 2560</span>&#160; </div>
+<div class="line"><a name="l02571"></a><span class="lineno"> 2571</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02572"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a6442bae353bd3aab4417d4db85995b07"> 2572</a></span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02573"></a><span class="lineno"> 2573</span>&#160;<a class="code" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02574"></a><span class="lineno"> 2574</span>&#160;{</div>
+<div class="line"><a name="l02575"></a><span class="lineno"> 2575</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; lhs);</div>
+<div class="line"><a name="l02576"></a><span class="lineno"> 2576</span>&#160;}</div>
+<div class="line"><a name="l02577"></a><span class="lineno"> 2577</span>&#160; </div>
+<div class="line"><a name="l02589"></a><span class="lineno"> 2589</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02590"></a><span class="lineno"> 2590</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02591"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a2e824a963007146618891278f455c6df"> 2591</a></span>&#160;<a class="code" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02592"></a><span class="lineno"> 2592</span>&#160;{</div>
+<div class="line"><a name="l02593"></a><span class="lineno"> 2593</span>&#160;    <span class="keywordflow">return</span> rhs &lt; lhs;</div>
+<div class="line"><a name="l02594"></a><span class="lineno"> 2594</span>&#160;}</div>
+<div class="line"><a name="l02595"></a><span class="lineno"> 2595</span>&#160; </div>
+<div class="line"><a name="l02606"></a><span class="lineno"> 2606</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02607"></a><span class="lineno"> 2607</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02608"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a4d0311022343df6a9d6630d0025e99c1"> 2608</a></span>&#160;<a class="code" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02609"></a><span class="lineno"> 2609</span>&#160;{</div>
+<div class="line"><a name="l02610"></a><span class="lineno"> 2610</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
+<div class="line"><a name="l02611"></a><span class="lineno"> 2611</span>&#160;}</div>
+<div class="line"><a name="l02612"></a><span class="lineno"> 2612</span>&#160; </div>
+<div class="line"><a name="l02624"></a><span class="lineno"> 2624</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02625"></a><span class="lineno"> 2625</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02626"></a><span class="lineno"><a class="line" href="vector_8hpp.html#aef8f8bc8ee773cf3ba486df604a98504"> 2626</a></span>&#160;<a class="code" href="allocator_8hpp.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
+<div class="line"><a name="l02627"></a><span class="lineno"> 2627</span>&#160;{</div>
+<div class="line"><a name="l02628"></a><span class="lineno"> 2628</span>&#160;    <span class="keywordflow">return</span> lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a27626964bde91e30e421a1cd0481accc">size</a>() == rhs.size() &amp;&amp;</div>
+<div class="line"><a name="l02629"></a><span class="lineno"> 2629</span>&#160;        std::equal(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.begin());</div>
+<div class="line"><a name="l02630"></a><span class="lineno"> 2630</span>&#160;}</div>
+<div class="line"><a name="l02631"></a><span class="lineno"> 2631</span>&#160; </div>
+<div class="line"><a name="l02643"></a><span class="lineno"> 2643</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02644"></a><span class="lineno"> 2644</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02645"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a1fcbd0d2822d3f235950b044d0da6ac2"> 2645</a></span>&#160;<a class="code" href="allocator_8hpp.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
+<div class="line"><a name="l02646"></a><span class="lineno"> 2646</span>&#160;{</div>
+<div class="line"><a name="l02647"></a><span class="lineno"> 2647</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
+<div class="line"><a name="l02648"></a><span class="lineno"> 2648</span>&#160;}</div>
+<div class="line"><a name="l02649"></a><span class="lineno"> 2649</span>&#160; </div>
+<div class="line"><a name="l02660"></a><span class="lineno"> 2660</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02661"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a6bc8b97b7a1b71404a4da7907cc0a695"> 2661</a></span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02662"></a><span class="lineno"> 2662</span>&#160;<a class="code" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
+<div class="line"><a name="l02663"></a><span class="lineno"> 2663</span>&#160;{</div>
+<div class="line"><a name="l02664"></a><span class="lineno"> 2664</span>&#160;    <span class="keywordflow">return</span> std::lexicographical_compare(lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>(), rhs.begin(),</div>
+<div class="line"><a name="l02665"></a><span class="lineno"> 2665</span>&#160;                        rhs.end());</div>
+<div class="line"><a name="l02666"></a><span class="lineno"> 2666</span>&#160;}</div>
+<div class="line"><a name="l02667"></a><span class="lineno"> 2667</span>&#160; </div>
+<div class="line"><a name="l02678"></a><span class="lineno"> 2678</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02679"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a4403e4fdd376acf1404d225856a6109f"> 2679</a></span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02680"></a><span class="lineno"> 2680</span>&#160;<a class="code" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
+<div class="line"><a name="l02681"></a><span class="lineno"> 2681</span>&#160;{</div>
+<div class="line"><a name="l02682"></a><span class="lineno"> 2682</span>&#160;    <span class="keywordflow">return</span> !(std::lexicographical_compare(rhs.begin(), rhs.end(),</div>
+<div class="line"><a name="l02683"></a><span class="lineno"> 2683</span>&#160;                          lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a4176d4fa1e05d65753252a4d70372504">begin</a>(), lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#af65c4eccebb112cf59956e604de79f2a">end</a>()));</div>
+<div class="line"><a name="l02684"></a><span class="lineno"> 2684</span>&#160;}</div>
+<div class="line"><a name="l02685"></a><span class="lineno"> 2685</span>&#160; </div>
+<div class="line"><a name="l02697"></a><span class="lineno"> 2697</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02698"></a><span class="lineno"> 2698</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02699"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a5bfc1cf4bc0871a89bc16487bd6a8484"> 2699</a></span>&#160;<a class="code" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
+<div class="line"><a name="l02700"></a><span class="lineno"> 2700</span>&#160;{</div>
+<div class="line"><a name="l02701"></a><span class="lineno"> 2701</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt;= rhs);</div>
+<div class="line"><a name="l02702"></a><span class="lineno"> 2702</span>&#160;}</div>
+<div class="line"><a name="l02703"></a><span class="lineno"> 2703</span>&#160; </div>
+<div class="line"><a name="l02714"></a><span class="lineno"> 2714</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02715"></a><span class="lineno"> 2715</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02716"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a29cc30f96742b912f5c70bffcd87fe5a"> 2716</a></span>&#160;<a class="code" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> std::vector&lt;T&gt; &amp;rhs)</div>
+<div class="line"><a name="l02717"></a><span class="lineno"> 2717</span>&#160;{</div>
+<div class="line"><a name="l02718"></a><span class="lineno"> 2718</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
+<div class="line"><a name="l02719"></a><span class="lineno"> 2719</span>&#160;}</div>
+<div class="line"><a name="l02720"></a><span class="lineno"> 2720</span>&#160; </div>
+<div class="line"><a name="l02732"></a><span class="lineno"> 2732</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02733"></a><span class="lineno"> 2733</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02734"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a5fa7985535467845be5c2e4605bab72e"> 2734</a></span>&#160;<a class="code" href="allocator_8hpp.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02735"></a><span class="lineno"> 2735</span>&#160;{</div>
+<div class="line"><a name="l02736"></a><span class="lineno"> 2736</span>&#160;    <span class="keywordflow">return</span> rhs == lhs;</div>
+<div class="line"><a name="l02737"></a><span class="lineno"> 2737</span>&#160;}</div>
+<div class="line"><a name="l02738"></a><span class="lineno"> 2738</span>&#160; </div>
+<div class="line"><a name="l02750"></a><span class="lineno"> 2750</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02751"></a><span class="lineno"> 2751</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02752"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a659d49015c82ef1dc044e2142224269d"> 2752</a></span>&#160;<a class="code" href="allocator_8hpp.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02753"></a><span class="lineno"> 2753</span>&#160;{</div>
+<div class="line"><a name="l02754"></a><span class="lineno"> 2754</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
+<div class="line"><a name="l02755"></a><span class="lineno"> 2755</span>&#160;}</div>
+<div class="line"><a name="l02756"></a><span class="lineno"> 2756</span>&#160; </div>
+<div class="line"><a name="l02767"></a><span class="lineno"> 2767</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02768"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a0dcb348e953ea0a5b1ed1a3f5c29d2dd"> 2768</a></span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02769"></a><span class="lineno"> 2769</span>&#160;<a class="code" href="array_8hpp.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02770"></a><span class="lineno"> 2770</span>&#160;{</div>
+<div class="line"><a name="l02771"></a><span class="lineno"> 2771</span>&#160;    <span class="keywordflow">return</span> rhs &gt; lhs;</div>
+<div class="line"><a name="l02772"></a><span class="lineno"> 2772</span>&#160;}</div>
+<div class="line"><a name="l02773"></a><span class="lineno"> 2773</span>&#160; </div>
+<div class="line"><a name="l02784"></a><span class="lineno"> 2784</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02785"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a6137a8d89c6046241b600ab14a63b6de"> 2785</a></span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02786"></a><span class="lineno"> 2786</span>&#160;<a class="code" href="array_8hpp.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02787"></a><span class="lineno"> 2787</span>&#160;{</div>
+<div class="line"><a name="l02788"></a><span class="lineno"> 2788</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; lhs);</div>
+<div class="line"><a name="l02789"></a><span class="lineno"> 2789</span>&#160;}</div>
+<div class="line"><a name="l02790"></a><span class="lineno"> 2790</span>&#160; </div>
+<div class="line"><a name="l02802"></a><span class="lineno"> 2802</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02803"></a><span class="lineno"> 2803</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02804"></a><span class="lineno"><a class="line" href="vector_8hpp.html#ad6ea4849c06b3f401ac3673ded5a3227"> 2804</a></span>&#160;<a class="code" href="array_8hpp.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02805"></a><span class="lineno"> 2805</span>&#160;{</div>
+<div class="line"><a name="l02806"></a><span class="lineno"> 2806</span>&#160;    <span class="keywordflow">return</span> rhs &lt; lhs;</div>
+<div class="line"><a name="l02807"></a><span class="lineno"> 2807</span>&#160;}</div>
+<div class="line"><a name="l02808"></a><span class="lineno"> 2808</span>&#160; </div>
+<div class="line"><a name="l02819"></a><span class="lineno"> 2819</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02820"></a><span class="lineno"> 2820</span>&#160;<span class="keywordtype">bool</span></div>
+<div class="line"><a name="l02821"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a963062a2970d5133a82fa906f0b7eddd"> 2821</a></span>&#160;<a class="code" href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<span class="keyword">const</span> std::vector&lt;T&gt; &amp;lhs, <span class="keyword">const</span> <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02822"></a><span class="lineno"> 2822</span>&#160;{</div>
+<div class="line"><a name="l02823"></a><span class="lineno"> 2823</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
+<div class="line"><a name="l02824"></a><span class="lineno"> 2824</span>&#160;}</div>
+<div class="line"><a name="l02825"></a><span class="lineno"> 2825</span>&#160; </div>
+<div class="line"><a name="l02832"></a><span class="lineno"> 2832</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l02833"></a><span class="lineno"> 2833</span>&#160;<span class="keywordtype">void</span></div>
+<div class="line"><a name="l02834"></a><span class="lineno"><a class="line" href="vector_8hpp.html#a46a6c5333f2e9859d6f152f1dc8f1832"> 2834</a></span>&#160;<a class="code" href="array_8hpp.html#af36a1b526d5d5c81d35f02557c3b8e24">swap</a>(<a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1vector.html">vector&lt;T&gt;</a> &amp;rhs)</div>
+<div class="line"><a name="l02835"></a><span class="lineno"> 2835</span>&#160;{</div>
+<div class="line"><a name="l02836"></a><span class="lineno"> 2836</span>&#160;    lhs.<a class="code" href="classpmem_1_1obj_1_1vector.html#a625a28481ba78b461605458faad670b3">swap</a>(rhs);</div>
+<div class="line"><a name="l02837"></a><span class="lineno"> 2837</span>&#160;}</div>
+<div class="line"><a name="l02838"></a><span class="lineno"> 2838</span>&#160; </div>
+<div class="line"><a name="l02839"></a><span class="lineno"> 2839</span>&#160;} <span class="comment">/* namespace obj */</span></div>
+<div class="line"><a name="l02840"></a><span class="lineno"> 2840</span>&#160; </div>
+<div class="line"><a name="l02841"></a><span class="lineno"> 2841</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
+<div class="line"><a name="l02842"></a><span class="lineno"> 2842</span>&#160; </div>
+<div class="line"><a name="l02843"></a><span class="lineno"> 2843</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_VECTOR_HPP */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a8389c4654f1b30fe3d77c08b9bdf4891"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a8389c4654f1b30fe3d77c08b9bdf4891">pmem::obj::vector::erase</a></div><div class="ttdeci">iterator erase(const_iterator pos)</div><div class="ttdoc">Removes the element at pos.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1814</div></div>
 <div class="ttc" id="aiterator__traits_8hpp_html"><div class="ttname"><a href="iterator__traits_8hpp.html">iterator_traits.hpp</a></div><div class="ttdoc">Common iterator traits.</div></div>
@@ -1657,7 +1667,7 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a8cb928f5f3447de7ffad7ef4a8fe9f7b"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a8cb928f5f3447de7ffad7ef4a8fe9f7b">pmem::obj::vector::dealloc</a></div><div class="ttdeci">void dealloc()</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2200</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_aa959eefd3382ad89c2279acf502d10d7"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#aa959eefd3382ad89c2279acf502d10d7">pmem::obj::vector::vector</a></div><div class="ttdeci">vector(std::initializer_list&lt; T &gt; init)</div><div class="ttdoc">Constructs the container with the contents of the initializer list init.</div><div class="ttdef"><b>Definition:</b> vector.hpp:530</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a17c49134553103572a9192985bf9dc70"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a17c49134553103572a9192985bf9dc70">pmem::obj::vector::crend</a></div><div class="ttdeci">const_reverse_iterator crend() const noexcept</div><div class="ttdoc">Returns a const reverse iterator to the beginning.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1245</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ab1f01f502d990c1837bba2724914da1f"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ab1f01f502d990c1837bba2724914da1f">pmem::obj::vector::realloc</a></div><div class="ttdeci">void realloc(size_type size)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2380</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ab1f01f502d990c1837bba2724914da1f"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ab1f01f502d990c1837bba2724914da1f">pmem::obj::vector::realloc</a></div><div class="ttdeci">void realloc(size_type size)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2384</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_adbfef449079e6ee3cebc6764aeb19e82"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#adbfef449079e6ee3cebc6764aeb19e82">pmem::obj::vector::data</a></div><div class="ttdeci">value_type * data()</div><div class="ttdoc">Returns raw pointer to the underlying data and adds entire array to a transaction.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1062</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a22d864cbcda96aa86259aa293bba7a9a"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a22d864cbcda96aa86259aa293bba7a9a">pmem::obj::vector::const_at</a></div><div class="ttdeci">const_reference const_at(size_type n) const</div><div class="ttdoc">Access element at specific index with bounds checking.</div><div class="ttdef"><b>Definition:</b> vector.hpp:921</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a65e70790fcad53666d5bb1b47ba62e59"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a65e70790fcad53666d5bb1b47ba62e59">pmem::obj::vector::crbegin</a></div><div class="ttdeci">const_reverse_iterator crbegin() const noexcept</div><div class="ttdoc">Returns a const reverse iterator to the beginning.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1204</div></div>
@@ -1724,7 +1734,7 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a2dec52bb20b639053f4f3581c4a3d9f5"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a2dec52bb20b639053f4f3581c4a3d9f5">pmem::obj::vector::operator=</a></div><div class="ttdeci">vector &amp; operator=(const std::vector&lt; T &gt; &amp;other)</div><div class="ttdoc">Copy assignment operator.</div><div class="ttdef"><b>Definition:</b> vector.hpp:630</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_aca7d684a484d50945ff9d2d2c3bc9708"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#aca7d684a484d50945ff9d2d2c3bc9708">pmem::obj::vector::assign</a></div><div class="ttdeci">void assign(std::initializer_list&lt; T &gt; ilist)</div><div class="ttdoc">Replaces the contents with the elements from the initializer list ilist transactionally.</div><div class="ttdef"><b>Definition:</b> vector.hpp:773</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_af8bc6751cd9377a786ca97a4fd96710d"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#af8bc6751cd9377a786ca97a4fd96710d">pmem::obj::vector::vector</a></div><div class="ttdeci">vector(size_type count)</div><div class="ttdoc">Constructs the container with count copies of T default constructed values.</div><div class="ttdef"><b>Definition:</b> vector.hpp:402</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ae71417dbbcf02edad9114c0fb7891848"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848">pmem::obj::vector::add_data_to_tx</a></div><div class="ttdeci">void add_data_to_tx(size_type idx_first, size_type num)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2470</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ae71417dbbcf02edad9114c0fb7891848"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ae71417dbbcf02edad9114c0fb7891848">pmem::obj::vector::add_data_to_tx</a></div><div class="ttdeci">void add_data_to_tx(size_type idx_first, size_type num)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2481</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a301e3bedc083d1bd488fb9fd4ab17fb7"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a301e3bedc083d1bd488fb9fd4ab17fb7">pmem::obj::vector::range</a></div><div class="ttdeci">slice&lt; pointer &gt; range(size_type start, size_type n)</div><div class="ttdoc">Returns slice and snapshots requested range.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1265</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1slice_html"><div class="ttname"><a href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a></div><div class="ttdoc">pmem::obj::slice - provides interface to access sequence of objects.</div><div class="ttdef"><b>Definition:</b> slice.hpp:56</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a3668177a49bfe2419783334da826b103"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a3668177a49bfe2419783334da826b103">pmem::obj::vector::assign</a></div><div class="ttdeci">void assign(InputIt first, InputIt last)</div><div class="ttdoc">Replaces the contents with copies of those in the range [first, last) transactionally.</div><div class="ttdef"><b>Definition:</b> vector.hpp:713</div></div>
@@ -1735,7 +1745,7 @@ $(function() {
 <div class="ttc" id="astructpmem_1_1detail_1_1range__snapshotting__iterator_html"><div class="ttname"><a href="structpmem_1_1detail_1_1range__snapshotting__iterator.html">pmem::detail::range_snapshotting_iterator</a></div><div class="ttdoc">Non-const iterator which adds elements to a transaction in a bulk.</div><div class="ttdef"><b>Definition:</b> contiguous_iterator.hpp:221</div></div>
 <div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for destroying arrays.</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_aaf1b270bf5ab8b1bb34ee1759e7e71bc"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#aaf1b270bf5ab8b1bb34ee1759e7e71bc">pmem::obj::vector::rbegin</a></div><div class="ttdeci">reverse_iterator rbegin()</div><div class="ttdoc">Returns a reverse iterator to the beginning.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1178</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ae632635f41cdfdbbfe06c50f755dce14"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ae632635f41cdfdbbfe06c50f755dce14">pmem::obj::vector::shrink</a></div><div class="ttdeci">void shrink(size_type size_new)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2446</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ae632635f41cdfdbbfe06c50f755dce14"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ae632635f41cdfdbbfe06c50f755dce14">pmem::obj::vector::shrink</a></div><div class="ttdeci">void shrink(size_type size_new)</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2457</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a5fc4adb204b700aca1bb10a6e79d12f4"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a5fc4adb204b700aca1bb10a6e79d12f4">pmem::obj::vector::resize</a></div><div class="ttdeci">void resize(size_type count)</div><div class="ttdoc">Resizes the container to count elements transactionally.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1958</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:185</div></div>
 <div class="ttc" id="aarray_8hpp_html_a5034348e46ff8ebddb366634118bd6b5"><div class="ttname"><a href="array_8hpp.html#a5034348e46ff8ebddb366634118bd6b5">pmem::obj::operator&gt;=</a></div><div class="ttdeci">bool operator&gt;=(const array&lt; T, N &gt; &amp;lhs, const array&lt; T, N &gt; &amp;rhs)</div><div class="ttdoc">Non-member greater or equal operator.</div><div class="ttdef"><b>Definition:</b> array.hpp:773</div></div>
@@ -1745,7 +1755,7 @@ $(function() {
 <div class="ttc" id="apext_8hpp_html_a5f59f7775441952b264b2297a8e0ead0"><div class="ttname"><a href="pext_8hpp.html#a5f59f7775441952b264b2297a8e0ead0">pmem::obj::operator++</a></div><div class="ttdeci">p&lt; T &gt; &amp; operator++(p&lt; T &gt; &amp;pp)</div><div class="ttdoc">Prefix increment operator overload.</div><div class="ttdef"><b>Definition:</b> pext.hpp:77</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a4820e20ca9b0047918e0402ff2e1c610"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a4820e20ca9b0047918e0402ff2e1c610">pmem::obj::vector::pop_back</a></div><div class="ttdeci">void pop_back()</div><div class="ttdoc">Removes the last element of the container transactionally.</div><div class="ttdef"><b>Definition:</b> vector.hpp:1931</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ac0092fe151cec39994d10b0322249568"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ac0092fe151cec39994d10b0322249568">pmem::obj::vector::operator=</a></div><div class="ttdeci">vector &amp; operator=(std::initializer_list&lt; T &gt; ilist)</div><div class="ttdoc">Replaces the contents with those identified by initializer list ilist transactionally.</div><div class="ttdef"><b>Definition:</b> vector.hpp:609</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ac63134a4f0f0e72c005098c329030846"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ac63134a4f0f0e72c005098c329030846">pmem::obj::vector::get_recommended_capacity</a></div><div class="ttdeci">size_type get_recommended_capacity(size_type at_least) const</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2423</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ac63134a4f0f0e72c005098c329030846"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ac63134a4f0f0e72c005098c329030846">pmem::obj::vector::get_recommended_capacity</a></div><div class="ttdeci">size_type get_recommended_capacity(size_type at_least) const</div><div class="ttdoc">Private helper function.</div><div class="ttdef"><b>Definition:</b> vector.hpp:2434</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_a00839561efb42c539fdda81874d5ece0"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#a00839561efb42c539fdda81874d5ece0">pmem::obj::vector::front</a></div><div class="ttdeci">const_reference front() const</div><div class="ttdoc">Access the first element.</div><div class="ttdef"><b>Definition:</b> vector.hpp:987</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html">pmem::obj::pool_base</a></div><div class="ttdoc">The non-template pool base class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:67</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html_ac020b753ae744d72880add453b100caf"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">pmem::obj::vector::capacity</a></div><div class="ttdeci">size_type capacity() const noexcept</div><div class="ttdef"><b>Definition:</b> vector.hpp:1420</div></div>

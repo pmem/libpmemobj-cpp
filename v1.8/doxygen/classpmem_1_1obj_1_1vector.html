@@ -3241,7 +3241,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Private helper function. </p>
-<p>Must be called during transaction. Allocates new memory for capacity_new number of elements and copies or moves old elements to new memory area. If the current size is greater than capacity_new, the container is reduced to its first capacity_new elements.</p>
+<p>Must be called during transaction. Allocates new memory for capacity_new number of elements and copies or moves old elements to new memory area. If the current size is greater than capacity_new, the container is reduced to its first capacity_new elements. If was never allocated behaves as an alloc call.</p>
 <p>param[in] capacity_new new capacity.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>must be called in transaction scope.</dd></dl>
 <dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1vector.html#ac020b753ae744d72880add453b100caf">capacity()</a> == capacity_new</dd></dl>

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2020, Intel Corporation
+# Copyright 2018-2021, Intel Corporation
 
 #
 # ctest_helpers.cmake - helper functions for tests/CMakeLists.txt
@@ -109,6 +109,8 @@ function(build_test name)
 	endif()
 	if(WIN32)
 		target_link_libraries(${name} dbghelp)
+	else()
+		target_link_libraries(${name} atomic)
 	endif()
 	target_compile_definitions(${name} PRIVATE TESTS_LIBPMEMOBJ_VERSION=0x${LIBPMEMOBJ_VERSION_NUM})
 
@@ -128,14 +130,6 @@ endfunction()
 function(build_test_tbb name)
 	build_test(${name} ${ARGN})
 	target_link_libraries(${name} ${TBB_LIBRARIES})
-endfunction()
-
-# Function to build test with atomic
-function(build_test_atomic name)
-	build_test(${name} ${ARGN})
-	if(CLANG)
-		target_link_libraries(${name} atomic)
-	endif()
 endfunction()
 
 # Function to build a TBB test with mocked pmemobj_defrag() function

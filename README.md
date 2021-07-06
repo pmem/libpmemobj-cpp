@@ -26,6 +26,7 @@ Up-to-date support/maintenance status of branches/releases is available on [pmem
 	- valgrind-devel (at best with [pmemcheck support](https://github.com/pmem/valgrind))
 	- clang format 9.0
 	- perl
+	- libatomic
 
 ## On Linux ##
 

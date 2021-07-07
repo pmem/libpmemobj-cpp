@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # Dockerfile - a 'recipe' for Docker to build an image of debian-based
@@ -27,7 +27,7 @@ RUN apt-get update \
  && apt-get install -y software-properties-common \
 	asciidoc \
 	autoconf \
-	clang-9 \
+	clang \
 	clang-format \
 	cmake \
 	curl \

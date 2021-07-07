@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # pull-or-rebuild-image.sh - rebuilds the Docker image used in the
 #                            current Travis build if necessary.
 #
-# The script rebuilds the Docker image if the Dockerfile for the current
-# OS version (Dockerfile.${OS}-${OS_VER}) or any .sh script from the directory
-# with Dockerfiles were modified and committed.
+# The script rebuilds the Docker image if:
+# 1. the Dockerfile for the current OS version (Dockerfile.${OS}-${OS_VER})
+#    or any .sh script in the Dockerfiles directory were modified and committed, or
+# 2. "rebuild" param was passed as a first argument to this script.
 #
 # If the Travis build is not of the "pull_request" type (i.e. in case of
 # merge after pull_request) and it succeed, the Docker image should be pushed
@@ -16,7 +17,7 @@
 # further scripts.
 #
 # If the Docker image does not have to be rebuilt, it will be pulled from
-# Docker Hub.
+# the Docker Hub.
 #
 
 set -e
@@ -50,6 +51,18 @@ if [[ -z "$HOST_WORKDIR" ]]; then
 	exit 1
 fi
 
+# Path to directory with Dockerfiles and image building scripts
+images_dir_name=images
+base_dir=utils/docker/$images_dir_name
+
+# If "rebuild" param is passed to the script, force rebuild
+if [[ "${1}" == "rebuild" ]]; then
+	pushd ${images_dir_name}
+	./build-image.sh ${OS}-${OS_VER}
+	popd
+	exit 0
+fi
+
 # Find all the commits for the current build
 if [ -n "$CI_COMMIT_RANGE" ]; then
 	commits=$(git rev-list $CI_COMMIT_RANGE)
@@ -66,10 +79,6 @@ files=$(for commit in $commits; do git diff-tree --no-commit-id --name-only \
 echo "Files modified within the commit range:"
 for file in $files; do echo $file; done
 
-# Path to directory with Dockerfiles and image building scripts
-images_dir_name=images
-base_dir=utils/docker/$images_dir_name
-
 # Check if committed file modifications require the Docker image to be rebuilt
 for file in $files; do
 	# Check if modified files are relevant to the current build
@@ -78,7 +87,7 @@ for file in $files; do
 	then
 		# Rebuild Docker image for the current OS version
 		echo "Rebuilding the Docker image for the Dockerfile.$OS-$OS_VER"
-		pushd $images_dir_name
+		pushd ${images_dir_name}
 		./build-image.sh ${OS}-${OS_VER}
 		popd
 

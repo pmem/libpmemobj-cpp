@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -222,9 +222,8 @@ protected:
 		*/
 		uintptr_t mask = other_offset == nullptr_offset;
 		--mask;
-		uintptr_t ptr = reinterpret_cast<uintptr_t>(
-			reinterpret_cast<const_byte_ptr_type>(this) +
-			other_offset + 1);
+		uintptr_t ptr = static_cast<uintptr_t>(
+			reinterpret_cast<intptr_t>(this) + other_offset + 1);
 		ptr &= mask;
 		return reinterpret_cast<void *>(ptr);
 	}

@@ -146,6 +146,18 @@ CHECK_CXX_SOURCE_COMPILES(
 	AGGREGATE_INITIALIZATION_AVAILABLE
 )
 
+set(CMAKE_REQUIRED_FLAGS "--std=c++${CMAKE_CXX_STANDARD} -c")
+CHECK_CXX_SOURCE_COMPILES(
+	"#include <type_traits>
+	struct A {
+		A() = default;
+	};
+	int main() {
+	static_assert(std::is_aggregate<A>::value, \"\");
+	}"
+	ARRAY_IS_AGGREGATE
+)
+
 # Restore original, project's settings
 set(CMAKE_REQUIRED_FLAGS ${SAVED_CMAKE_REQUIRED_FLAGS})
 set(CMAKE_CXX_FLAGS ${SAVED_CMAKE_CXX_FLAGS})

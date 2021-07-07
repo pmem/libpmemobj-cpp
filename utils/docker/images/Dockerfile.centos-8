@@ -27,7 +27,7 @@ RUN dnf config-manager --set-enabled powertools
 
 # Install basic tools
 RUN dnf update -y \
- && dnf install -y \
+ && dnf install -y --nobest \
 	asciidoc \
 	autoconf \
 	automake \

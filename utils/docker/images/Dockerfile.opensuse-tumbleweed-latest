@@ -57,6 +57,7 @@ RUN zypper install -y \
 	rpm-build \
 	rpmdevtools \
 	sudo \
+	systemd \
 	tar \
 	tbb-devel \
 	wget \

@@ -283,10 +283,10 @@ if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr_arith ptr/self_relative_ptr_arith.cpp)
 	add_test_generic(NAME self_relative_ptr_arith TRACERS none memcheck pmemcheck)
 
-	build_test_atomic(self_relative_ptr_atomic ptr/self_relative_ptr_atomic.cpp)
+	build_test(self_relative_ptr_atomic ptr/self_relative_ptr_atomic.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic TRACERS none memcheck drd helgrind)
 
-	build_test_atomic(self_relative_ptr_atomic_pmem ptr/self_relative_ptr_atomic_pmem.cpp)
+	build_test(self_relative_ptr_atomic_pmem ptr/self_relative_ptr_atomic_pmem.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic_pmem TRACERS none memcheck pmemcheck drd helgrind)
 endif()
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # pull-or-rebuild-image.sh - rebuilds the Docker image used in the
@@ -80,7 +80,7 @@ for file in $files; do
 	then
 		# Rebuild Docker image for the current OS version
 		echo "Rebuilding the Docker image for the Dockerfile.$OS-$OS_VER"
-		pushd $images_dir_name
+		pushd ${images_dir_name}
 		./build-image.sh ${OS}-${OS_VER}
 		popd
 

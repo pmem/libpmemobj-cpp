@@ -13,6 +13,7 @@ jobs:
     env:
       DOCKERHUB_USER:          ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_PASSWORD:      ${{ secrets.DOCKERHUB_PASSWORD }}
+      GITHUB_TOKEN:   ${{ secrets.DOC_UPDATE_GITHUB_TOKEN }}
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     strategy:
@@ -20,20 +21,21 @@ jobs:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
-                 "TYPE=release OS=fedora OS_VER=32",
+                 "TYPE=release OS=fedora OS_VER=32 AUTO_DOC_UPDATE=1",
                  "TYPE=release OS=ubuntu OS_VER=20.04",
                  "TYPE=valgrind OS=ubuntu OS_VER=20.04",
                  "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04",
                  "TYPE=package OS=fedora OS_VER=32",
-                 "TYPE=package OS=ubuntu OS_VER=20.04"]
+                 "TYPE=package OS=ubuntu OS_VER=20.04",
+                 "TYPE=coverity OS=ubuntu OS_VER=20.04"]
     steps:
       - name: Clone the git repo
         uses: actions/checkout@v2
         with:
-          fetch-depth: 50
+          fetch-depth: 0
 
       - name: Pull or rebuild the image
-        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh
+        run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh rebuild
 
       - name: Run the build
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
@@ -66,7 +68,7 @@ jobs:
       - name: Clone the git repo
         uses: actions/checkout@v2
         with:
-          fetch-depth: 50
+          fetch-depth: 0
       - name: Run the build
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
   windows:
@@ -106,7 +108,7 @@ jobs:
       - name: Clone the git repo
         uses: actions/checkout@v2
         with:
-          fetch-depth: 50
+          fetch-depth: 0
 
       - name: Install PMDK
         run: |

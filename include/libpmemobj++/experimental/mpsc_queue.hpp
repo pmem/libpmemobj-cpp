@@ -58,8 +58,8 @@ private:
 
 		iterator &operator++();
 
-		bool operator==(const iterator &rhs);
-		bool operator!=(const iterator &rhs);
+		bool operator==(const iterator &rhs) const;
+		bool operator!=(const iterator &rhs) const;
 
 		pmem::obj::string_view operator*() const;
 
@@ -97,8 +97,8 @@ public:
 	public:
 		batch_type(iterator begin, iterator end);
 
-		iterator begin();
-		iterator end();
+		iterator begin() const;
+		iterator end() const;
 
 	private:
 		iterator begin_;
@@ -591,13 +591,13 @@ inline mpsc_queue::batch_type::batch_type(iterator begin_, iterator end_)
 }
 
 inline mpsc_queue::iterator
-mpsc_queue::batch_type::begin()
+mpsc_queue::batch_type::begin() const
 {
 	return begin_;
 }
 
 inline mpsc_queue::iterator
-mpsc_queue::batch_type::end()
+mpsc_queue::batch_type::end() const
 {
 	return end_;
 }
@@ -652,13 +652,13 @@ mpsc_queue::iterator::operator++()
 }
 
 bool
-mpsc_queue::iterator::operator==(const mpsc_queue::iterator &rhs)
+mpsc_queue::iterator::operator==(const mpsc_queue::iterator &rhs) const
 {
 	return data == rhs.data;
 }
 
 bool
-mpsc_queue::iterator::operator!=(const mpsc_queue::iterator &rhs)
+mpsc_queue::iterator::operator!=(const mpsc_queue::iterator &rhs) const
 {
 	return data != rhs.data;
 }

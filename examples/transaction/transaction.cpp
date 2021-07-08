@@ -302,6 +302,9 @@ struct simple_ptr {
 		} catch (pmem::transaction_free_error &e) {
 			std::cerr << e.what() << std::endl;
 			std::terminate();
+		} catch (pmem::transaction_scope_error &e) {
+			std::cerr << e.what() << std::endl;
+			std::terminate();
 		}
 	}
 

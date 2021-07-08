@@ -85,9 +85,14 @@ public:
 
 		bool result = accessor::get_offset(ptr).compare_exchange_weak(
 			expected_offset, desired_offset, success, failure);
-		if (!result)
-			expected = accessor::offset_to_pointer<T>(
-				expected_offset, ptr);
+		if (!result) {
+			try {
+				expected = accessor::offset_to_pointer<T>(
+					expected_offset, ptr);
+			} catch (...) {
+				std::terminate();
+			}
+		}
 		return result;
 	}
 
@@ -103,9 +108,14 @@ public:
 
 		bool result = accessor::get_offset(ptr).compare_exchange_weak(
 			expected_offset, desired_offset, order);
-		if (!result)
-			expected = accessor::offset_to_pointer<T>(
-				expected_offset, ptr);
+		if (!result) {
+			try {
+				expected = accessor::offset_to_pointer<T>(
+					expected_offset, ptr);
+			} catch (...) {
+				std::terminate();
+			}
+		}
 		return result;
 	}
 
@@ -121,9 +131,14 @@ public:
 
 		bool result = accessor::get_offset(ptr).compare_exchange_strong(
 			expected_offset, desired_offset, success, failure);
-		if (!result)
-			expected = accessor::offset_to_pointer<T>(
-				expected_offset, ptr);
+		if (!result) {
+			try {
+				expected = accessor::offset_to_pointer<T>(
+					expected_offset, ptr);
+			} catch (...) {
+				std::terminate();
+			}
+		}
 		return result;
 	}
 
@@ -139,9 +154,14 @@ public:
 
 		bool result = accessor::get_offset(ptr).compare_exchange_strong(
 			expected_offset, desired_offset, order);
-		if (!result)
-			expected = accessor::offset_to_pointer<T>(
-				expected_offset, ptr);
+		if (!result) {
+			try {
+				expected = accessor::offset_to_pointer<T>(
+					expected_offset, ptr);
+			} catch (...) {
+				std::terminate();
+			}
+		}
 		return result;
 	}
 
@@ -191,7 +211,13 @@ public:
 	value_type
 	operator++() noexcept
 	{
-		return this->fetch_add(1) + 1;
+		try {
+			return this->fetch_add(1) + 1;
+		} catch (...) {
+			/* This should never happen during normal program
+			 * execution */
+			std::terminate();
+		}
 	}
 
 	value_type
@@ -203,7 +229,13 @@ public:
 	value_type
 	operator--() noexcept
 	{
-		return this->fetch_sub(1) - 1;
+		try {
+			return this->fetch_sub(1) - 1;
+		} catch (...) {
+			/* This should never happen during normal program
+			 * execution */
+			std::terminate();
+		}
 	}
 
 	value_type
@@ -215,13 +247,25 @@ public:
 	value_type
 	operator+=(difference_type diff) noexcept
 	{
-		return this->fetch_add(diff) + diff;
+		try {
+			return this->fetch_add(diff) + diff;
+		} catch (...) {
+			/* This should never happen during normal program
+			 * execution */
+			std::terminate();
+		}
 	}
 
 	value_type
 	operator-=(difference_type diff) noexcept
 	{
-		return this->fetch_sub(diff) - diff;
+		try {
+			return this->fetch_sub(diff) - diff;
+		} catch (...) {
+			/* This should never happen during normal program
+			 * execution */
+			std::terminate();
+		}
 	}
 
 private:

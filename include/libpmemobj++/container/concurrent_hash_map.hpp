@@ -2828,7 +2828,7 @@ public:
 	 *	[start_percent, start_percent + amount_percent]
 	 *	is incorrect.
 	 *
-	 * @throw rethrows pmem::defrag_error when a failure during
+	 * @throw pmem::defrag_error rethrows defrag_error when a failure during
 	 *	defragmentation occurs. Even if this error is thrown,
 	 *	some of objects could have been relocated,
 	 *	see in such case defrag_error.result for summary stats.

@@ -46,7 +46,11 @@ public:
 	~Foo()
 	{
 		/* Close a pmemobj pool */
-		pop.close();
+		try {
+			pop.close();
+		} catch (...) {
+			/* Let's ignore all exceptions during close */
+		}
 	}
 
 	void

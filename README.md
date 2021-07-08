@@ -1,6 +1,5 @@
 # libpmemobj-cpp
 
-[![Build Status](https://travis-ci.org/pmem/libpmemobj-cpp.svg?branch=master)](https://travis-ci.org/pmem/libpmemobj-cpp)
 [![Build status](https://github.com/pmem/libpmemobj-cpp/workflows/CPP/badge.svg)](https://github.com/pmem/libpmemobj-cpp/actions)
 [![libpmemobj-cpp version](https://img.shields.io/github/tag/pmem/libpmemobj-cpp.svg)](https://github.com/pmem/libpmemobj-cpp/releases/latest)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/15911/badge.svg)](https://scan.coverity.com/projects/pmem-libpmemobj-cpp)
@@ -74,6 +73,7 @@ You will need the following packages for compilation:
 	- **valgrind-devel** (at best with [pmemcheck support](https://github.com/pmem/valgrind))
 	- **clang-format** 9.0
 	- **perl**
+	- **libatomic**
 - for Windows compilation:
 	- [**vcpkg**](https://github.com/microsoft/vcpkg#quick-start-windows)
 
@@ -170,4 +170,5 @@ or just use graphical CMake frontend like **cmake-qt-gui** or **cmake-curses-gui
 ## Contact us
 For more information on this library, contact Igor Chorążewicz (igor.chorazewicz@intel.com),
 Piotr Balcer (piotr.balcer@intel.com) or post on our **#pmem** Slack channel using
-[this invite link](https://join.slack.com/t/pmem-io/shared_invite/enQtNzU4MzQ2Mzk3MDQwLWQ1YThmODVmMGFkZWI0YTdhODg4ODVhODdhYjg3NmE4N2ViZGI5NTRmZTBiNDYyOGJjYTIyNmZjYzQxODcwNDg) or [Google group](https://groups.google.com/group/pmem).
+[this invite link](https://join.slack.com/t/pmem-io/shared_invite/enQtNzU4MzQ2Mzk3MDQwLWQ1YThmODVmMGFkZWI0YTdhODg4ODVhODdhYjg3NmE4N2ViZGI5NTRmZTBiNDYyOGJjYTIyNmZjYzQxODcwNDg)
+or [Google group](https://groups.google.com/group/pmem).

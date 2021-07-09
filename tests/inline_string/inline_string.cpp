@@ -247,43 +247,83 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 	});
 }
 
-/* test if inline_string can be placed on dram */
 template <typename T>
 void
-test_dram(nvobj::pool<struct root<T>> &pop)
+test_ctor_exception_nopmem(nvobj::pool<struct root<T>> &pop)
 {
-	using string_type = nvobj::experimental::basic_inline_string<T>;
+	auto bs1 = std::basic_string<T>(4, static_cast<T>('a'));
+	nvobj::basic_string_view<T> bsv_test_string1(bs1.data(), bs1.length());
 
-	constexpr size_t string_size = 20;
-	typename std::aligned_storage<sizeof(string_type) +
-					      (string_size + 1) * sizeof(T),
-				      alignof(string_type)>::type buffer;
-
-	std::basic_string<T> s(string_size, T('a'));
-
-	auto dram_location = reinterpret_cast<string_type *>(&buffer);
-	new (dram_location)
-		string_type(nvobj::basic_string_view<T>(s.data(), s.length()));
-
-	UT_ASSERTeq(s.length(), dram_location->size());
-	UT_ASSERTeq(std::char_traits<T>::compare(
-			    s.data(), dram_location->data(), s.length()),
-		    0);
-
-	dram_location->~string_type();
-
-	new (dram_location) string_type(string_size);
-
-	UT_ASSERTeq(dram_location->capacity(), string_size);
-	UT_ASSERTeq(dram_location->size(), 0);
-
-	/* inline_string cannot be modified on dram. */
 	try {
-		s = std::basic_string<T>(string_size / 2, T('b'));
-		dram_location->assign(s.data());
+		std::string example_str("example");
+		std::basic_string<T> bs(example_str.begin(), example_str.end());
+		Object<T> o(
+			1, nvobj::basic_string_view<T>(bs.data(), bs.length()));
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
 
+	auto r = pop.root();
+
+	const auto req_capacity = 100;
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::standard_alloc_policy<void> allocator;
+		r->o1 = static_cast<nvobj::persistent_ptr<Object<T>>>(
+			allocator.allocate(sizeof(Object<T>) +
+					   req_capacity * sizeof(T)));
+
+		new (r->o1.get()) Object<T>(1, bsv_test_string1);
+
+		try {
+			Object<T> o(*r->o1);
+			UT_ASSERT(0);
+		} catch (pmem::pool_error &) {
+		} catch (...) {
+			UT_ASSERT(0);
+		}
+	});
+
+	char buffer[128];
+	new (&buffer[0]) nvobjex::basic_inline_string<T>(bsv_test_string1,
+							 nvobjex::allow_dram{});
+
+	auto bs =
+		reinterpret_cast<nvobjex::basic_inline_string<T> *>(&buffer[0]);
+
+	try {
+		bs->assign(bsv_test_string1);
 		ASSERT_UNREACHABLE;
 	} catch (pmem::pool_error &) {
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
+}
+
+template <typename T>
+void
+test_ctor_exception(void)
+{
+	auto bs1 = std::basic_string<T>(4, static_cast<T>('a'));
+	nvobj::basic_string_view<T> bsv_test_string1(bs1.data(), bs1.length());
+
+	try {
+		int capacity = 10;
+		nvobjex::basic_inline_string<T>(
+			static_cast<nvobjex::inline_string::size_type>(
+				capacity));
+		UT_ASSERT(0);
+	} catch (pmem::pool_error &) {
+	} catch (...) {
+		UT_ASSERT(0);
+	}
+
+	try {
+		char buffer[128];
+		new (&buffer[0]) nvobjex::basic_inline_string<T>(
+			bsv_test_string1, nvobjex::allow_dram{});
 	} catch (...) {
 		ASSERT_UNREACHABLE;
 	}
@@ -310,8 +350,8 @@ test(int argc, char *argv[])
 	}
 
 	test_inline_string<T>(pop);
-	test_dram<T>(pop);
-
+	test_ctor_exception_nopmem<T>(pop);
+	test_ctor_exception<T>();
 	pop.close();
 }
 

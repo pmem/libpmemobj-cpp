@@ -26,12 +26,16 @@ namespace obj
 namespace experimental
 {
 
+struct allow_dram {
+};
+
 /**
  * This class serves similar purpose to pmem::obj::string, but
  * keeps the data within the same allocation as inline_string itself.
  *
  * Unlike other containers, it can be used on pmem and dram. Modifiers (like
- * assign()) can only be called if inline string is kept on pmem).
+ * assign()) can only be called if inline string is kept on pmem). To create
+ * inline_string on dram a special constructor must be used.
  *
  * The data is always kept right after the inline_string structure.
  * It means that creating an object of inline_string must be done
@@ -56,6 +60,7 @@ public:
 	using const_pointer = const value_type *;
 
 	basic_inline_string(basic_string_view<CharT, Traits> v);
+	basic_inline_string(basic_string_view<CharT, Traits> v, allow_dram);
 	basic_inline_string(size_type capacity);
 	basic_inline_string(const basic_inline_string &rhs);
 
@@ -99,11 +104,12 @@ using inline_u16string = basic_inline_string<char16_t>;
 using inline_u32string = basic_inline_string<char32_t>;
 
 /**
- * Constructs inline string from a string_view.
+ * Constructs inline string from a string_view. This constructor
+ * allows creating inline_string on DRAM.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits>::basic_inline_string(
-	basic_string_view<CharT, Traits> v)
+	basic_string_view<CharT, Traits> v, allow_dram)
     : size_(v.size()), capacity_(v.size())
 {
 	std::copy(v.data(), v.data() + static_cast<ptrdiff_t>(size_), data());
@@ -112,23 +118,51 @@ basic_inline_string<CharT, Traits>::basic_inline_string(
 }
 
 /**
+ * Constructs inline string from a string_view.
+ *
+ * @throw pool_error if inline_string doesn't reside on pmem.
+ */
+template <typename CharT, typename Traits>
+basic_inline_string<CharT, Traits>::basic_inline_string(
+	basic_string_view<CharT, Traits> v)
+    : size_(v.size()), capacity_(v.size())
+{
+	if (nullptr == pmemobj_pool_by_ptr(this))
+		throw pmem::pool_error("Invalid pool handle.");
+
+	std::copy(v.data(), v.data() + static_cast<ptrdiff_t>(size_), data());
+
+	data()[static_cast<ptrdiff_t>(size_)] = '\0';
+}
+
+/**
  * Constructs empty inline_string with specified capacity.
+ *
+ * @throw pool_error if inline_string doesn't reside on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits>::basic_inline_string(size_type capacity)
     : size_(0), capacity_(capacity)
 {
+	if (nullptr == pmemobj_pool_by_ptr(this))
+		throw pmem::pool_error("Invalid pool handle.");
+
 	data()[static_cast<ptrdiff_t>(size_)] = '\0';
 }
 
 /**
  * Copy constructor
+ *
+ * @throw pool_error if inline_string doesn't reside on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits>::basic_inline_string(
 	const basic_inline_string &rhs)
     : size_(rhs.size()), capacity_(rhs.capacity())
 {
+	if (nullptr == pmemobj_pool_by_ptr(this))
+		throw pmem::pool_error("Invalid pool handle.");
+
 	std::copy(rhs.data(), rhs.data() + static_cast<ptrdiff_t>(size_),
 		  data());
 
@@ -354,17 +388,16 @@ basic_inline_string<CharT, Traits>::snapshotted_data(size_t p, size_t n)
  * Transactionally assign content of basic_string_view.
  *
  * @throw std::out_of_range if rhs is larger than capacity.
- * @throw pool_error if inline string is not on pmem.
+ * @throw pool_error if inline_string doesn't reside on pmem.
  */
 template <typename CharT, typename Traits>
 basic_inline_string<CharT, Traits> &
 basic_inline_string<CharT, Traits>::assign(basic_string_view<CharT, Traits> rhs)
 {
-	auto cpop = pmemobj_pool_by_ptr(this);
-	if (nullptr == cpop)
+	if (nullptr == pmemobj_pool_by_ptr(this))
 		throw pmem::pool_error("Invalid pool handle.");
 
-	auto pop = pool_base(cpop);
+	auto pop = obj::pool_base(pmemobj_pool_by_ptr(this));
 
 	if (rhs.size() > capacity())
 		throw std::out_of_range("inline_string capacity exceeded.");

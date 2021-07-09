@@ -3157,9 +3157,11 @@ typename radix_tree<Key, Value, BytesView,
 radix_tree<Key, Value, BytesView,
 	   MtMode>::radix_tree_iterator<IsConst>::operator++()
 {
+	const auto &key = leaf_->key();
+
 	/* Fallback to top-down search. */
 	if (!try_increment())
-		*this = tree->upper_bound(leaf_->key());
+		*this = tree->upper_bound(key);
 
 	return *this;
 }
@@ -3207,8 +3209,12 @@ typename radix_tree<Key, Value, BytesView,
 radix_tree<Key, Value, BytesView,
 	   MtMode>::radix_tree_iterator<IsConst>::operator--()
 {
+	const auto &key = leaf_->key();
+
 	while (!try_decrement()) {
-		*this = tree->lower_bound(leaf_->key());
+		*this = tree->lower_bound(key);
+		if (*this == tree->cend())
+			return *this;
 	}
 
 	return *this;

@@ -248,6 +248,9 @@ public:
 		this->store_with_snapshot(tmp);
 	}
 
+	atomic<pmem::detail::tagged_ptr<P1, P2>> &
+	operator=(atomic<pmem::detail::tagged_ptr<P1, P2>> &) = delete;
+
 private:
 	ptr_type ptr;
 };

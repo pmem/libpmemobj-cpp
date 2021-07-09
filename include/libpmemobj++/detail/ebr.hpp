@@ -89,6 +89,9 @@ public:
 		worker(worker &&w) = default;
 		~worker();
 
+		worker &operator=(worker &w) = delete;
+		worker &operator=(worker &&w) = default;
+
 		template <typename F>
 		void critical(F &&f);
 

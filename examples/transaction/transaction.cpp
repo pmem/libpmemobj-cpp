@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /*
  * transaction.cpp -- C++ documentation snippets.
@@ -300,6 +300,9 @@ struct simple_ptr {
 		try {
 			delete_persistent<T>(ptr);
 		} catch (pmem::transaction_free_error &e) {
+			std::cerr << e.what() << std::endl;
+			std::terminate();
+		} catch (pmem::transaction_scope_error &e) {
 			std::cerr << e.what() << std::endl;
 			std::terminate();
 		}

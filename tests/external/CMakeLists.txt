@@ -101,17 +101,23 @@ if (TEST_ARRAY)
 	build_test(array_swap_2 libcxx/array/array.swap/swap.pass.cpp)
 	add_test_generic(NAME array_swap_2 TRACERS none)
 
-	build_test(array_get_const_rv libcxx/array/array.tuple/get_const_rv.pass.cpp)
-	add_test_generic(NAME array_get_const_rv TRACERS none)
-
 	build_test(array_get_const libcxx/array/array.tuple/get_const.pass.cpp)
 	add_test_generic(NAME array_get_const TRACERS none)
 
-	build_test(array_get_rv libcxx/array/array.tuple/get_rv.pass.cpp)
-	add_test_generic(NAME array_get_rv TRACERS none)
 
-	build_test(array_get libcxx/array/array.tuple/get.pass.cpp)
-	add_test_generic(NAME array_get TRACERS none)
+	if(CXX_STANDARD LESS 20)
+		build_test(array_get_const_rv libcxx/array/array.tuple/get_const_rv.pass.cpp)
+		add_test_generic(NAME array_get_const_rv TRACERS none)
+
+		build_test(array_get_rv libcxx/array/array.tuple/get_rv.pass.cpp)
+		add_test_generic(NAME array_get_rv TRACERS none)
+
+		build_test(array_get libcxx/array/array.tuple/get.pass.cpp)
+		add_test_generic(NAME array_get TRACERS none)
+
+		build_test(array_cons_implicit_copy_const libcxx/array/array.cons/implicit_copy_const.pass.cpp)
+		add_test_generic(NAME array_cons_implicit_copy_const TRACERS none)
+	endif()
 
 	add_test_expect_failure(array_get libcxx/array/array.tuple/get.fail.cpp)
 

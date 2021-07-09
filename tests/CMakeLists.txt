@@ -354,6 +354,10 @@ if(TEST_ARRAY)
 		add_test_generic(NAME array_slice_pmreorder CASE 0 TRACERS none SCRIPT array/array_slice_pmreorder_0.cmake)
 		add_test_generic(NAME array_slice_pmreorder CASE 1 TRACERS none SCRIPT array/array_slice_pmreorder_1.cmake)
 	endif()
+	if(CXX_STANDARD GREATER 14)
+		build_test(array_is_aggregate array/array_is_aggregate.cpp)
+		add_test_generic(NAME array_is_aggregate TRACERS none)
+	endif()
 endif()
 ################################################################################
 ###################################### VECTOR ##################################

@@ -304,6 +304,9 @@ if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr ptr/self_relative_ptr.cpp)
 	add_test_generic(NAME self_relative_ptr TRACERS none memcheck pmemcheck)
 
+	build_test(pa_self_relative_ptr ptr/pa_self_relative_ptr.cpp)
+	add_test_generic(NAME pa_self_relative_ptr TRACERS none memcheck pmemcheck)
+
 	build_test(self_relative_ptr_arith ptr/self_relative_ptr_arith.cpp)
 	add_test_generic(NAME self_relative_ptr_arith TRACERS none memcheck pmemcheck)
 

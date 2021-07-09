@@ -435,6 +435,50 @@ test_find(nvobj::pool<root> &pop)
 
 		UT_ASSERTeq(num_allocs(pop), 0);
 	}
+
+	/* Upper bound when there are multiple less elements with common prefix
+	 */
+	{
+		nvobj::transaction::run(pop, [&] {
+			r->radix_str =
+				nvobj::make_persistent<container_string>();
+		});
+
+		r->radix_str->try_emplace("in1", "");
+		r->radix_str->try_emplace("in2", "");
+		r->radix_str->try_emplace("in3", "");
+		r->radix_str->try_emplace("in4", "");
+
+		auto ub = r->radix_str->upper_bound("in6");
+		UT_ASSERT(ub == r->radix_str->end());
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_string>(
+				r->radix_str);
+		});
+
+		UT_ASSERTeq(num_allocs(pop), 0);
+	}
+
+	/* Upper bound when there is single, less element */
+	{
+		nvobj::transaction::run(pop, [&] {
+			r->radix_str =
+				nvobj::make_persistent<container_string>();
+		});
+
+		r->radix_str->try_emplace("in", "");
+
+		auto ub = r->radix_str->upper_bound("inA");
+		UT_ASSERT(ub == r->radix_str->end());
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_string>(
+				r->radix_str);
+		});
+
+		UT_ASSERTeq(num_allocs(pop), 0);
+	}
 }
 
 const auto compressed_path_len = 4;

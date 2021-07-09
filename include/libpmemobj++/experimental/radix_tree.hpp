@@ -2307,12 +2307,12 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 		auto slot = node_d.slot;
 		auto prev = node_d.prev;
 
-		/*
-		 * n would point to element with key which we are looking for
-		 * (if it existed). All elements on the left are smaller and all
-		 * element on the right are bigger.
-		 */
 		if (!n) {
+			/*
+			 * n would point to element with key which we are
+			 * looking for (if it existed). All elements on the left
+			 * are smaller and all element on the right are bigger.
+			 */
 			assert(prev && !is_leaf(prev));
 
 			auto target_leaf = next_leaf<node::direction::Forward>(
@@ -2341,22 +2341,31 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 		} else if (diff == leaf_key.size()) {
 			assert(n == leaf);
 
-			/* Leaf's key is a prefix of the looked-for key. Leaf's
-			 * key is the biggest key less than the looked-for key.
-			 * The target node must be the next leaf. Note that we
-			 * cannot just call const_iterator(leaf,
-			 * this).try_increment() because some other element with
-			 * key larger than leaf and smaller than k could be
-			 * inserted concurrently. */
-			auto target_leaf = next_leaf<node::direction::Forward>(
-				prev->template make_iterator<
-					node::direction::Forward>(slot),
-				prev);
+			if (!prev) {
+				/* There is only one element in the tree and
+				 * it's smaller. */
+				result = cend();
+			} else {
+				/* Leaf's key is a prefix of the looked-for key.
+				 * Leaf's key is the biggest key less than the
+				 * looked-for key. The target node must be the
+				 * next leaf. Note that we cannot just call
+				 * const_iterator(leaf, this).try_increment()
+				 * because some other element with key larger
+				 * than leaf and smaller than k could be
+				 * inserted concurrently. */
+				auto target_leaf = next_leaf<
+					node::direction::Forward>(
+					prev->template make_iterator<
+						node::direction::Forward>(slot),
+					prev);
 
-			if (!target_leaf.first)
-				continue;
+				if (!target_leaf.first)
+					continue;
 
-			result = const_iterator(target_leaf.second, this);
+				result = const_iterator(target_leaf.second,
+							this);
+			}
 		} else {
 			assert(diff < leaf_key.size() && diff < key.size());
 
@@ -2396,6 +2405,7 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 			} else if (slot == &root) {
 				result = const_iterator(nullptr, this);
 			} else {
+				assert(prev);
 				assert(static_cast<unsigned char>(key[diff]) >
 				       static_cast<unsigned char>(
 					       leaf_key[diff]));

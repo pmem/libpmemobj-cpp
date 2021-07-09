@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /**
  * @file
@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <functional>
 
+#include <initializer_list>
 #include <libpmemobj++/container/detail/contiguous_iterator.hpp>
 #include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
@@ -41,6 +42,15 @@ namespace obj
  *
  * When a non-const iterator is returned it adds part of the array
  * to a transaction while traversing.
+ *
+ * @note Accordingly to changes in C++ standard, pmem::obj::array is not an
+ * aggregate since C++20.
+ *
+ * @note Since C++20 pmem::obj::array cannot be used for types with deleted
+ * copy constructor. This may change in the future.
+ *
+ * @note Since C++20 pmem::obj::array cannot be used for const types. This may
+ * change in the future.
  */
 template <typename T, std::size_t N>
 struct array {
@@ -97,6 +107,19 @@ struct array {
 	 * transaction.
 	 */
 	array(array &&) = default;
+
+#if __cplusplus > 201703L
+	array(std::initializer_list<T> list)
+	{
+		if constexpr (N > 0) {
+			size_t i = 0;
+			for (auto &v : list) {
+				(*this)[i] = v;
+				i++;
+			}
+		}
+	}
+#endif /* __cplusplus */
 
 	/**
 	 * Copy assignment operator - perform assignment from other

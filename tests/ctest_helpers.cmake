@@ -116,6 +116,8 @@ function(build_test name)
 	endif()
 	if(WIN32)
 		target_link_libraries(${name} dbghelp)
+	else()
+		target_link_libraries(${name} atomic)
 	endif()
 
 	add_dependencies(tests ${name})
@@ -134,14 +136,6 @@ endfunction()
 function(build_test_tbb name)
 	build_test(${name} ${ARGN})
 	target_link_libraries(${name} ${TBB_LIBRARIES})
-endfunction()
-
-# Function to build test with atomic
-function(build_test_atomic name)
-	build_test(${name} ${ARGN})
-	if(CLANG)
-		target_link_libraries(${name} atomic)
-	endif()
 endfunction()
 
 # Function to build a TBB test with mocked pmemobj_defrag() function

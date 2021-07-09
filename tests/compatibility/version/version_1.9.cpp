@@ -6,6 +6,6 @@
 int
 main()
 {
-	static_assert(LIBPMEMOBJ_CPP_VERSION_MAJOR == 1, "");
-	static_assert(LIBPMEMOBJ_CPP_VERSION_MINOR == 9, "");
+	static_assert(LIBPMEMOBJ_CPP_VERSION_MAJOR == 1, "Wrong major version");
+	static_assert(LIBPMEMOBJ_CPP_VERSION_MINOR == 9, "Wrong minor version");
 }

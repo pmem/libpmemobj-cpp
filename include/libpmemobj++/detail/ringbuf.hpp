@@ -106,15 +106,43 @@ struct ringbuf_t {
 	unsigned nworkers;
 	std::unique_ptr<ringbuf_worker_t[]> workers;
 
+	/* Set by ringbuf_consume, reset by ringbuf_release. */
+	bool consume_in_progress;
+
+	/**
+	 * Creates new ringbuf_t instance.
+	 *
+	 * Length must be < RBUF_OFF_MASK
+	 */
 	ringbuf_t(size_t max_workers, size_t length)
 	    : workers(new ringbuf_worker_t[max_workers])
 	{
+		if (length >= RBUF_OFF_MASK)
+			throw std::out_of_range("ringbuf length too big");
+
 		written.store(0);
 		next.store(0);
 		end.store(0);
 		space = length;
 		end = RBUF_OFF_MAX;
 		nworkers = max_workers;
+		consume_in_progress = false;
+
+		/* Helgrind/Drd does not understand std::atomic */
+#if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
+		VALGRIND_HG_DISABLE_CHECKING(&next, sizeof(next));
+		VALGRIND_HG_DISABLE_CHECKING(&end, sizeof(end));
+		VALGRIND_HG_DISABLE_CHECKING(&written, sizeof(written));
+
+		for (size_t i = 0; i < max_workers; i++) {
+			VALGRIND_HG_DISABLE_CHECKING(
+				&workers[i].seen_off,
+				sizeof(workers[i].seen_off));
+			VALGRIND_HG_DISABLE_CHECKING(
+				&workers[i].registered,
+				sizeof(workers[i].registered));
+		}
+#endif
 	}
 };
 
@@ -185,7 +213,7 @@ stable_seenoff(ringbuf_worker_t *w)
  * => On success: returns the offset at which the space is available.
  * => On failure: returns -1.
  */
-inline ssize_t
+inline ptrdiff_t
 ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 {
 	ringbuf_off_t seen, next, target;
@@ -286,7 +314,7 @@ ringbuf_acquire(ringbuf_t *rbuf, ringbuf_worker_t *w, size_t len)
 			std::memory_order_release);
 	}
 	assert((target & RBUF_OFF_MASK) <= rbuf->space);
-	return (ssize_t)next;
+	return (ptrdiff_t)next;
 }
 
 /*
@@ -305,10 +333,14 @@ ringbuf_produce(ringbuf_t *rbuf, ringbuf_worker_t *w)
 
 /*
  * ringbuf_consume: get a contiguous range which is ready to be consumed.
+ *
+ * Nested consumes are not allowed.
  */
 inline size_t
 ringbuf_consume(ringbuf_t *rbuf, size_t *offset)
 {
+	assert(!rbuf->consume_in_progress);
+
 	ringbuf_off_t written = rbuf->written, next, ready;
 	size_t towrite;
 retry:
@@ -414,6 +446,10 @@ retry:
 
 	assert(ready >= written);
 	assert(towrite <= rbuf->space);
+
+	if (towrite)
+		rbuf->consume_in_progress = true;
+
 	return towrite;
 }
 
@@ -423,6 +459,8 @@ retry:
 inline void
 ringbuf_release(ringbuf_t *rbuf, size_t nbytes)
 {
+	rbuf->consume_in_progress = false;
+
 	const size_t nwritten = rbuf->written + nbytes;
 
 	assert(rbuf->written <= rbuf->space);

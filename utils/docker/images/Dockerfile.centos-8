@@ -81,7 +81,7 @@ RUN dnf update -y \
  && dnf install -y 'dnf-command(config-manager)' \
  && dnf config-manager --set-enabled powertools \
  && dnf update -y \
- && dnf install -y \
+ && dnf install -y --nobest \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
 	${PMDK_DEPS} \

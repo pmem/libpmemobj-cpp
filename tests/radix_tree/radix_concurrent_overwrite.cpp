@@ -13,7 +13,7 @@ static size_t INITIAL_ELEMENTS = 256;
 static void
 test_overwrite_bigger_size_find(
 	nvobj::pool<root> &pop,
-	nvobj::persistent_ptr<container_int_string> &ptr)
+	nvobj::persistent_ptr<container_int_string_mt> &ptr)
 {
 	size_t threads = 16;
 	if (On_drd)
@@ -27,8 +27,8 @@ test_overwrite_bigger_size_find(
 		for (size_t i = 0; i < INITIAL_ELEMENTS * 2; ++i) {
 			auto k = i % INITIAL_ELEMENTS;
 			ptr->insert_or_assign(
-				key<container_int_string>(k),
-				value<container_int_string>(i, 100));
+				key<container_int_string_mt>(k),
+				value<container_int_string_mt>(i, 100));
 		}
 	};
 
@@ -36,27 +36,30 @@ test_overwrite_bigger_size_find(
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS * 2; ++i) {
 				auto k = i % INITIAL_ELEMENTS;
-				auto res =
-					ptr->find(key<container_int_string>(k));
+				auto res = ptr->find(
+					key<container_int_string_mt>(k));
 				UT_ASSERT(res != ptr->end());
-				UT_ASSERT(res->value() ==
-						  value<container_int_string>(
-							  k) ||
-					  res->value() ==
-						  value<container_int_string>(
-							  k, 100) ||
-					  res->value() ==
-						  value<container_int_string>(
-							  k + INITIAL_ELEMENTS,
-							  100));
+				UT_ASSERT(
+					res->value() ==
+						value<container_int_string_mt>(
+							k) ||
+					res->value() ==
+						value<container_int_string_mt>(
+							k, 100) ||
+					res->value() ==
+						value<container_int_string_mt>(
+							k + INITIAL_ELEMENTS,
+							100));
 			}
 		},
 	};
 
-	parallel_write_read(writer, readers, threads);
+	parallel_modify_read(writer, readers, threads);
+
+	ptr->runtime_finalize_mt();
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_string>(ptr);
+		nvobj::delete_persistent<container_int_string_mt>(ptr);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -80,7 +83,7 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_overwrite_bigger_size_find(pop, pop.root()->radix_int_str);
+	test_overwrite_bigger_size_find(pop, pop.root()->radix_int_str_mt);
 
 	pop.close();
 }

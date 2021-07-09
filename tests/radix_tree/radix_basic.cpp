@@ -301,8 +301,6 @@ test_find(nvobj::pool<root> &pop)
 	}
 
 	{
-		auto r = pop.root();
-
 		nvobj::transaction::run(pop, [&] {
 			r->radix_str =
 				nvobj::make_persistent<container_string>();
@@ -391,6 +389,44 @@ test_find(nvobj::pool<root> &pop)
 		ub = r->radix_str->upper_bound(last_slot);
 
 		UT_ASSERTeq(std::distance(lb, ub), 8);
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_string>(
+				r->radix_str);
+		});
+
+		UT_ASSERTeq(num_allocs(pop), 0);
+	}
+
+	{
+		nvobj::transaction::run(pop, [&] {
+			r->radix_str =
+				nvobj::make_persistent<container_string>();
+		});
+
+		r->radix_str->try_emplace(std::string(1, char(1)), "");
+
+		auto ub = r->radix_str->upper_bound(std::string(1, char(-1)));
+		UT_ASSERT(ub == r->radix_str->end());
+
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<container_string>(
+				r->radix_str);
+		});
+
+		UT_ASSERTeq(num_allocs(pop), 0);
+	}
+
+	{
+		nvobj::transaction::run(pop, [&] {
+			r->radix_str =
+				nvobj::make_persistent<container_string>();
+		});
+
+		r->radix_str->try_emplace(std::string(1, char(-1)), "");
+
+		auto ub = r->radix_str->upper_bound(std::string(1, char(1)));
+		UT_ASSERT(ub == r->radix_str->begin());
 
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<container_string>(

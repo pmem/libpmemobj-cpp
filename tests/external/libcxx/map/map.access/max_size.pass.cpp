@@ -5,6 +5,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+//
+// Copyright 2020-2021, Intel Corporation
+//
+// Modified to test pmem::obj containers
+//
+//
 
 // <map>
 
@@ -25,7 +31,7 @@
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using container = container_t<char, int>;
+using container = container_t<int, int>;
 
 struct root {
 	nvobj::persistent_ptr<container> s;

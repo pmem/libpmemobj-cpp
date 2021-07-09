@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /*
  * concurrent_hash_map.cpp -- pmem::obj::concurrent_hash_map test
@@ -8,6 +8,7 @@
 
 #include "unittest.hpp"
 
+#include <libpmemobj++/detail/common.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/transaction.hpp>
 #include <libpmemobj++/p.hpp>
@@ -18,8 +19,6 @@ namespace nvobj = pmem::obj;
 
 static constexpr std::size_t HASHMAP_SIZE = 1312;
 static constexpr std::size_t BUCKET_SIZE = 80;
-
-static constexpr std::size_t CACHELINE_SIZE = 64;
 
 /*
  * Test is implemented in inherited class to get access to protected variables.
@@ -42,17 +41,17 @@ struct hashmap_test : public MapType {
 		ASSERT_ALIGNED_FIELD(T, t, my_mask);
 		ASSERT_ALIGNED_FIELD(T, t, value_size);
 		ASSERT_ALIGNED_FIELD(T, t, padding1);
-		ASSERT_OFFSET_CHECKPOINT(T, CACHELINE_SIZE);
+		ASSERT_OFFSET_CHECKPOINT(T, pmem::detail::CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, my_table);
 		ASSERT_ALIGNED_FIELD(T, t, my_size);
 		ASSERT_ALIGNED_FIELD(T, t, padding2);
-		ASSERT_OFFSET_CHECKPOINT(T, 16 * CACHELINE_SIZE);
+		ASSERT_OFFSET_CHECKPOINT(T, 16 * pmem::detail::CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, tls_ptr);
 		ASSERT_ALIGNED_FIELD(T, t, on_init_size);
 		ASSERT_ALIGNED_FIELD(T, t, reserved);
-		ASSERT_OFFSET_CHECKPOINT(T, 17 * CACHELINE_SIZE);
+		ASSERT_OFFSET_CHECKPOINT(T, 17 * pmem::detail::CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, my_segment_enable_mutex);
-		ASSERT_OFFSET_CHECKPOINT(T, 18 * CACHELINE_SIZE);
+		ASSERT_OFFSET_CHECKPOINT(T, 18 * pmem::detail::CACHELINE_SIZE);
 		ASSERT_ALIGNED_FIELD(T, t, my_embedded_segment);
 		ASSERT_ALIGNED_CHECK(T);
 		static_assert(sizeof(T) == HASHMAP_SIZE, "");

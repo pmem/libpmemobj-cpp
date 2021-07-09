@@ -7,7 +7,7 @@
 //
 //===----------------------------------------------------------------------===//
 //
-// Copyright 2018-2020, Intel Corporation
+// Copyright 2018-2021, Intel Corporation
 //
 // Modified to test pmem::obj containers
 //
@@ -206,6 +206,8 @@ test(int argc, char *argv[])
 	}
 
 	run(pop);
+
+	pop.close();
 }
 
 int

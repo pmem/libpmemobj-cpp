@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -1209,6 +1209,9 @@ template&lt;size_t SegmentSize = 1024, template&lt; typename &gt; class SegmentT
 <div class="line">        <span class="keywordflow">try</span> {</div>
 <div class="line">            delete_persistent&lt;T&gt;(ptr);</div>
 <div class="line">        } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a> &amp;e) {</div>
+<div class="line">            std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">            std::terminate();</div>
+<div class="line">        } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a> &amp;e) {</div>
 <div class="line">            std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
 <div class="line">            std::terminate();</div>
 <div class="line">        }</div>
@@ -4384,6 +4387,7 @@ template&lt;typename T &gt; </div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1transaction__base_html_a16c0d86f943d6727e1caa7573cc83edb"><div class="ttname"><a href="classpmem_1_1detail_1_1transaction__base.html#a16c0d86f943d6727e1caa7573cc83edb">pmem::detail::transaction_base&lt; false &gt;::commit</a></div><div class="ttdeci">static void commit()</div><div class="ttdoc">Manually commit a transaction.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:325</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_ad86b8b9def7073307927ba6e41d0fbf5"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#ad86b8b9def7073307927ba6e41d0fbf5">pmem::obj::basic_transaction::manual</a></div><div class="ttdeci">typename detail::transaction_base&lt; false &gt;::manual manual</div><div class="ttdoc">C++ manual scope transaction class.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:633</div></div>
 <div class="ttc" id="apext_8hpp_html"><div class="ttname"><a href="pext_8hpp.html">pext.hpp</a></div><div class="ttdoc">Convenience extensions for the resides on pmem property template.</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:176</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html">pmem::obj::pool_base</a></div><div class="ttdoc">The non-template pool base class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:50</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1shared__mutex_html"><div class="ttname"><a href="classpmem_1_1obj_1_1shared__mutex.html">pmem::obj::shared_mutex</a></div><div class="ttdoc">Persistent memory resident shared_mutex implementation.</div><div class="ttdef"><b>Definition:</b> shared_mutex.hpp:30</div></div>

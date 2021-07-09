@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -87,6 +87,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html">concurrent_map</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of Intel TBB <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_map.">concurrent_map</a>.  <a href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html">mpsc_queue</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of multi producer single consumer queue.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Radix tree is an associative, ordered container.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -116,15 +119,15 @@ template&lt;typename Key , typename Value , typename Comp , typename Allocator &
 <tr class="memitem:a63979f696761cff6a1d638c43cb6a9d8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a63979f696761cff6a1d638c43cb6a9d8">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html">concurrent_map</a>&lt; Key, Value, Comp, Allocator &gt; &amp;lhs, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html">concurrent_map</a>&lt; Key, Value, Comp, Allocator &gt; &amp;rhs)</td></tr>
 <tr class="memdesc:a63979f696761cff6a1d638c43cb6a9d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap. <br /></td></tr>
 <tr class="separator:a63979f696761cff6a1d638c43cb6a9d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a100362ca3634894e402c45c43f956d"><td class="memTemplParams" colspan="2"><a id="a7a100362ca3634894e402c45c43f956d"></a>
-template&lt;typename Key , typename Value , typename BytesView &gt; </td></tr>
-<tr class="memitem:a7a100362ca3634894e402c45c43f956d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a7a100362ca3634894e402c45c43f956d">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt; &amp;lhs, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a7a100362ca3634894e402c45c43f956d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap. <br /></td></tr>
-<tr class="separator:a7a100362ca3634894e402c45c43f956d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4023e4077dfcaf4188c99ec6664ce81d"><td class="memTemplParams" colspan="2">template&lt;typename K , typename V , typename BV &gt; </td></tr>
-<tr class="memitem:a4023e4077dfcaf4188c99ec6664ce81d"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a4023e4077dfcaf4188c99ec6664ce81d">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; K, V, BV &gt; &amp;tree)</td></tr>
-<tr class="memdesc:a4023e4077dfcaf4188c99ec6664ce81d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints tree in DOT format.  <a href="namespacepmem_1_1obj_1_1experimental.html#a4023e4077dfcaf4188c99ec6664ce81d">More...</a><br /></td></tr>
-<tr class="separator:a4023e4077dfcaf4188c99ec6664ce81d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="memTemplParams" colspan="2"><a id="a5a12a03034b4a8fe2bc03bd30ae9a573"></a>
+template&lt;typename Key , typename Value , typename BytesView , bool MtMode&gt; </td></tr>
+<tr class="memitem:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a5a12a03034b4a8fe2bc03bd30ae9a573">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView, MtMode &gt; &amp;lhs, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView, MtMode &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap. <br /></td></tr>
+<tr class="separator:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11752d9e029972df929edd9ef311a9be"><td class="memTemplParams" colspan="2">template&lt;typename K , typename V , typename BV , bool MtMode&gt; </td></tr>
+<tr class="memitem:a11752d9e029972df929edd9ef311a9be"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; K, V, BV, MtMode &gt; &amp;tree)</td></tr>
+<tr class="memdesc:a11752d9e029972df929edd9ef311a9be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints tree in DOT format.  <a href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">More...</a><br /></td></tr>
+<tr class="separator:a11752d9e029972df929edd9ef311a9be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac75de7906b43ca9e1fbf7006ce0493c4"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:ac75de7906b43ca9e1fbf7006ce0493c4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#ac75de7906b43ca9e1fbf7006ce0493c4">swap</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr</a>&lt; T &gt; &amp;a, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr</a>&lt; T &gt; &amp;b)</td></tr>
 <tr class="memdesc:ac75de7906b43ca9e1fbf7006ce0493c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swaps two <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> objects of the same type.  <a href="namespacepmem_1_1obj_1_1experimental.html#ac75de7906b43ca9e1fbf7006ce0493c4">More...</a><br /></td></tr>
@@ -344,13 +347,13 @@ template&lt;typename T , typename Y &gt; </div>
 
 </div>
 </div>
-<a id="a4023e4077dfcaf4188c99ec6664ce81d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4023e4077dfcaf4188c99ec6664ce81d">&#9670;&nbsp;</a></span>operator&lt;&lt;()</h2>
+<a id="a11752d9e029972df929edd9ef311a9be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11752d9e029972df929edd9ef311a9be">&#9670;&nbsp;</a></span>operator&lt;&lt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename K , typename V , typename BV &gt; </div>
+template&lt;typename K , typename V , typename BV , bool MtMode&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::ostream&amp; pmem::obj::experimental::operator&lt;&lt; </td>
@@ -361,7 +364,7 @@ template&lt;typename K , typename V , typename BV &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; K, V, BV &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; K, V, BV, MtMode &gt; &amp;&#160;</td>
           <td class="paramname"><em>tree</em>&#160;</td>
         </tr>
         <tr>

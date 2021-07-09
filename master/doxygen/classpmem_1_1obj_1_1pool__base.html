@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -265,7 +265,11 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <div class="line">    ~Foo()</div>
 <div class="line">    {</div>
 <div class="line">        <span class="comment">/* Close a pmemobj pool */</span></div>
-<div class="line">        pop.close();</div>
+<div class="line">        <span class="keywordflow">try</span> {</div>
+<div class="line">            pop.close();</div>
+<div class="line">        } <span class="keywordflow">catch</span> (...) {</div>
+<div class="line">            <span class="comment">/* Let&#39;s ignore all exceptions during close */</span></div>
+<div class="line">        }</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordtype">void</span></div>

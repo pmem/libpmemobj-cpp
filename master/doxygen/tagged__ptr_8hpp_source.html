@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -321,13 +321,16 @@ $(function() {
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        this-&gt;store_with_snapshot(tmp);</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    }</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    ptr_type ptr;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;};</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;} <span class="comment">/* namespace std */</span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_TAGGED_PTR */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    atomic&lt;pmem::detail::tagged_ptr&lt;P1, P2&gt;&gt; &amp;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    operator=(atomic&lt;pmem::detail::tagged_ptr&lt;P1, P2&gt;&gt; &amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    ptr_type ptr;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;};</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160; </div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;} <span class="comment">/* namespace std */</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_TAGGED_PTR */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>

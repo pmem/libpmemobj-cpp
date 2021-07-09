@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 
 <h3><a id="index_r"></a>- r -</h3><ul>
 <li>radix_tree()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#aa84c847e4cb5099cf290a16768032219">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#af6b9d3b178a7c3ca9c355cfa1965e09c">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
 </li>
 <li>random_level()
 : <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac5a500ba9a4e67dc7e81423c38a4ba43">pmem::detail::concurrent_skip_list&lt; Traits &gt;</a>
@@ -91,7 +91,7 @@ $(function() {
 <li>rbegin()
 : <a class="el" href="structpmem_1_1obj_1_1array.html#a055d6eaf7970468b686fce336d833a5c">pmem::obj::array&lt; T, N &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a172cb00f5cd230129b05252f82c57e74">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a9faf4315e1ab9d9e7e0d1e3ccb8e86a5">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a909dd4e599193a94bdd03c1c30254ed9">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a1f2470337050593000c1c8bdfb807d98">pmem::obj::segment_vector&lt; T, Policy &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1slice.html#a732394fce65ba31f11f4da6c2f591609">pmem::obj::slice&lt; Iterator &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1vector.html#aaf1b270bf5ab8b1bb34ee1759e7e71bc">pmem::obj::vector&lt; T &gt;</a>
@@ -109,6 +109,11 @@ $(function() {
 <li>register_callback()
 : <a class="el" href="classpmem_1_1detail_1_1transaction__base.html#abd22aa1c4862fc4e1974e39fca7f3dfa">pmem::detail::transaction_base&lt; is_flat &gt;</a>
 </li>
+<li>register_worker()
+: <a class="el" href="classpmem_1_1detail_1_1ebr.html#a2d05a3f5afcad90cded7d2ac1fb6f13c">pmem::detail::ebr</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#af69e1aa4181eb64d9a6add161661b28f">pmem::obj::experimental::mpsc_queue</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a9861008e30d654c81af8276216dc2314">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
+</li>
 <li>rehash()
 : <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a6b0d57542ac5e239ef908a2740216ad2">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 </li>
@@ -125,13 +130,13 @@ $(function() {
 <li>rend()
 : <a class="el" href="structpmem_1_1obj_1_1array.html#affb6e5f6089b57122988394e601647a0">pmem::obj::array&lt; T, N &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a6e9716ac6d20b6daf5602fe8bf2bdabd">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a2e3443d0cba350a025ca61b9c259767e">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a45c98bb49bccfe5827b8fa4ba3c11b17">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#aab0b4e0f74ef7c851b751dc77481dedc">pmem::obj::segment_vector&lt; T, Policy &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1slice.html#aa0cfcf09792f1ee98c3eff5e2715e04c">pmem::obj::slice&lt; Iterator &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1vector.html#a01e52263cb029ff772c15615d2dfcbbd">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>replace()
-: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a0d4d6318eb6a5f88f076a0ae576f86f8">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a6890ee3ca1ffbad2c11cb3b4f00f9279">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 </li>
 <li>replace_content()
 : <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a7ef4f3b4cd5c8d8285f7ef0477afea87">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
@@ -142,16 +147,16 @@ $(function() {
 , <a class="el" href="classpmem_1_1obj_1_1vector.html#ac7ec643f673ce9b9fbd5f8f3f14d16d4">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>resize()
-: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a866d03035d630d9571fab9ee805cac1e">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a02d8b0c71f5ea3733b85cee242f5f9aa">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a5d813b415ab367b9c3a10cb9af20bb76">pmem::obj::segment_vector&lt; T, Policy &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1vector.html#a5d52fe49e8562fc65dbcb8530dcc1582">pmem::obj::vector&lt; T &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1vector.html#a5fc4adb204b700aca1bb10a6e79d12f4">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>result
 : <a class="el" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7">pmem::defrag_error</a>
 </li>
 <li>rfind()
 : <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a0a82ceffdffb838156d555f7609764eb">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#a2eeced5fde0db16bf788220d1afd5159">pmem::obj::basic_string_view&lt; CharT, Traits &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#a0a38b6991c6caede4b821b64a8882a7b">pmem::obj::basic_string_view&lt; CharT, Traits &gt;</a>
 </li>
 <li>root()
 : <a class="el" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool&lt; T &gt;</a>
@@ -162,12 +167,15 @@ $(function() {
 , <a class="el" href="classpmem_1_1obj_1_1defrag.html#a1f6423b2fd9d9cb4f32d9bef585a75ec">pmem::obj::defrag</a>
 , <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction</a>
 </li>
+<li>runtime_finalize_mt()
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a4176931890eb262d3d95f08d513d2c3f">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
+</li>
 <li>runtime_initialize()
 : <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ac1ead701625a419d46f4592e88bbf6af">pmem::detail::concurrent_skip_list&lt; Traits &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#af1ca0393b5537618390728c764544a2e">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 </li>
 <li>runtime_initialize_mt()
-: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac9540a586ffa3718e3342e23e4f12234">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;</a>
+: <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a6f9f9f7d0de453b47651a789cbd8ce31">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

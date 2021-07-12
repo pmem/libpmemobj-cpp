@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -296,23 +296,23 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">    <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;root&gt;</a> pop;</div>
 <div class="line">    <span class="keywordtype">bool</span> remove_hashmap = <span class="keyword">false</span>;</div>
 <div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> (argc &lt; 2)</div>
+<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;usage: &quot;</span> &lt;&lt; argv[0]</div>
+<div class="line">              &lt;&lt; <span class="stringliteral">&quot; file-name [remove_hashmap]&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">auto</span> path = argv[1];</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> (argc == 3)</div>
+<div class="line">        remove_hashmap = std::string(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
+<div class="line"> </div>
 <div class="line">    <span class="keywordflow">try</span> {</div>
-<div class="line">        <span class="keywordflow">if</span> (argc &lt; 2)</div>
-<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;usage: &quot;</span> &lt;&lt; argv[0]</div>
-<div class="line">                  &lt;&lt; <span class="stringliteral">&quot; file-name [remove_hashmap]&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line">        pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;concurrent_hash_map&quot;</span>);</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1pool__error.html">pmem::pool_error</a> &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">        <span class="keywordflow">return</span> -1;</div>
+<div class="line">    }</div>
 <div class="line"> </div>
-<div class="line">        <span class="keyword">auto</span> path = argv[1];</div>
-<div class="line"> </div>
-<div class="line">        <span class="keywordflow">if</span> (argc == 3)</div>
-<div class="line">            remove_hashmap = std::string(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
-<div class="line"> </div>
-<div class="line">        <span class="keywordflow">try</span> {</div>
-<div class="line">            pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;concurrent_hash_map&quot;</span>);</div>
-<div class="line">        } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1pool__error.html">pmem::pool_error</a> &amp;e) {</div>
-<div class="line">            std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
-<div class="line">            <span class="keywordflow">return</span> -1;</div>
-<div class="line">        }</div>
-<div class="line"> </div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
 <div class="line">        <span class="keyword">auto</span> &amp;r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>()-&gt;pptr;</div>
 <div class="line"> </div>
 <div class="line">        <span class="keywordflow">if</span> (r == <span class="keyword">nullptr</span>) {</div>
@@ -443,16 +443,19 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">                r = <span class="keyword">nullptr</span>;</div>
 <div class="line">            });</div>
 <div class="line">        }</div>
-<div class="line">        pop.close();</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<span class="keyword">const</span> <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a> &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception occurred: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
 <div class="line">    } <span class="keywordflow">catch</span> (std::exception &amp;e) {</div>
 <div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception occurred: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
-<div class="line">        <span class="keywordflow">try</span> {</div>
-<div class="line">            pop.close();</div>
-<div class="line">        } <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::logic_error &amp;e) {</div>
-<div class="line">            std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
-<div class="line">        }</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
+<div class="line">        pop.close();</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::logic_error &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
 <div class="line">        <span class="keywordflow">return</span> -1;</div>
 <div class="line">    }</div>
+<div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 </div><!-- fragment --><p> The example of storing strings without necessity of using transactions would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
@@ -650,14 +653,17 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">                r = <span class="keyword">nullptr</span>;</div>
 <div class="line">            });</div>
 <div class="line">        }</div>
-<div class="line">    } <span class="keywordflow">catch</span> (std::exception &amp;e) {</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<span class="keyword">const</span> <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a> &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception occurred: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">        retval = -127;</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::exception &amp;e) {</div>
 <div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception occurred: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
 <div class="line">        retval = -1;</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">try</span> {</div>
 <div class="line">        pop.close();</div>
 <div class="line">    } <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::logic_error &amp;e) {</div>
-<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">        std::cerr &lt;&lt; <span class="stringliteral">&quot;Exception occurred: &quot;</span> &lt;&lt; e.what() &lt;&lt; std::endl;</div>
 <div class="line">        retval = -2;</div>
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> retval;</div>
@@ -998,7 +1004,7 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual , type
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::range_error</td><td>if the range: [start_percent, start_percent + amount_percent] is incorrect.</td></tr>
-    <tr><td class="paramname">rethrows</td><td><a class="el" href="classpmem_1_1defrag__error.html" title="Custom defrag error class.">pmem::defrag_error</a> when a failure during defragmentation occurs. Even if this error is thrown, some of objects could have been relocated, see in such case <a class="el" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7" title="Results of the defragmentation run.">defrag_error.result</a> for summary stats. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1defrag__error.html" title="Custom defrag error class.">pmem::defrag_error</a></td><td>rethrows <a class="el" href="classpmem_1_1defrag__error.html" title="Custom defrag error class.">defrag_error</a> when a failure during defragmentation occurs. Even if this error is thrown, some of objects could have been relocated, see in such case <a class="el" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7" title="Results of the defragmentation run.">defrag_error.result</a> for summary stats. </td></tr>
   </table>
   </dd>
 </dl>

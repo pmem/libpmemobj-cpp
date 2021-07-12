@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.12-git96.g73a0af78</span>
+   &#160;<span id="projectnumber">1.12-git225.g0bc64abf</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -97,6 +97,7 @@ $(function() {
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;<a class="el" href="common_8hpp_source.html">libpmemobj++/detail/common.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="ebr_8hpp_source.html">libpmemobj++/detail/ebr.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="integer__sequence_8hpp_source.html">libpmemobj++/detail/integer_sequence.hpp</a>&gt;</code><br />
 <code>#include &lt;libpmemobj++/detail/tagged_ptr.hpp&gt;</code><br />
 </div>
@@ -104,16 +105,16 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Radix tree is an associative, ordered container.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;::leaf</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;::leaf</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the structure which 'holds' key/value pair.  <a href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;::node</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;::node</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is internal node.  <a href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1node.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView &gt;::radix_tree_iterator&lt; IsConst &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;::radix_tree_iterator&lt; IsConst &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Radix tree iterator supports multipass and bidirectional iteration.  <a href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1radix__tree__iterator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -121,9 +122,6 @@ Classes</h2></td></tr>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacepmem"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem.html">pmem</a></td></tr>
 <tr class="memdesc:namespacepmem"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory namespace. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:namespacepmem_1_1detail"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html">pmem::detail</a></td></tr>
-<tr class="memdesc:namespacepmem_1_1detail"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation details. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespacepmem_1_1obj"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html">pmem::obj</a></td></tr>
 <tr class="memdesc:namespacepmem_1_1obj"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main libpmemobj namespace. <br /></td></tr>
@@ -134,15 +132,15 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a7a100362ca3634894e402c45c43f956d"><td class="memTemplParams" colspan="2"><a id="a7a100362ca3634894e402c45c43f956d"></a>
-template&lt;typename Key , typename Value , typename BytesView &gt; </td></tr>
-<tr class="memitem:a7a100362ca3634894e402c45c43f956d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a7a100362ca3634894e402c45c43f956d">pmem::obj::experimental::swap</a> (radix_tree&lt; Key, Value, BytesView &gt; &amp;lhs, radix_tree&lt; Key, Value, BytesView &gt; &amp;rhs)</td></tr>
-<tr class="memdesc:a7a100362ca3634894e402c45c43f956d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap. <br /></td></tr>
-<tr class="separator:a7a100362ca3634894e402c45c43f956d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4023e4077dfcaf4188c99ec6664ce81d"><td class="memTemplParams" colspan="2">template&lt;typename K , typename V , typename BV &gt; </td></tr>
-<tr class="memitem:a4023e4077dfcaf4188c99ec6664ce81d"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a4023e4077dfcaf4188c99ec6664ce81d">pmem::obj::experimental::operator&lt;&lt;</a> (std::ostream &amp;os, const radix_tree&lt; K, V, BV &gt; &amp;tree)</td></tr>
-<tr class="memdesc:a4023e4077dfcaf4188c99ec6664ce81d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints tree in DOT format.  <a href="namespacepmem_1_1obj_1_1experimental.html#a4023e4077dfcaf4188c99ec6664ce81d">More...</a><br /></td></tr>
-<tr class="separator:a4023e4077dfcaf4188c99ec6664ce81d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="memTemplParams" colspan="2"><a id="a5a12a03034b4a8fe2bc03bd30ae9a573"></a>
+template&lt;typename Key , typename Value , typename BytesView , bool MtMode&gt; </td></tr>
+<tr class="memitem:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a5a12a03034b4a8fe2bc03bd30ae9a573">pmem::obj::experimental::swap</a> (radix_tree&lt; Key, Value, BytesView, MtMode &gt; &amp;lhs, radix_tree&lt; Key, Value, BytesView, MtMode &gt; &amp;rhs)</td></tr>
+<tr class="memdesc:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="mdescLeft">&#160;</td><td class="mdescRight">Non-member swap. <br /></td></tr>
+<tr class="separator:a5a12a03034b4a8fe2bc03bd30ae9a573"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11752d9e029972df929edd9ef311a9be"><td class="memTemplParams" colspan="2">template&lt;typename K , typename V , typename BV , bool MtMode&gt; </td></tr>
+<tr class="memitem:a11752d9e029972df929edd9ef311a9be"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">pmem::obj::experimental::operator&lt;&lt;</a> (std::ostream &amp;os, const radix_tree&lt; K, V, BV, MtMode &gt; &amp;tree)</td></tr>
+<tr class="memdesc:a11752d9e029972df929edd9ef311a9be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints tree in DOT format.  <a href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">More...</a><br /></td></tr>
+<tr class="separator:a11752d9e029972df929edd9ef311a9be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of persistent radix tree. </p>

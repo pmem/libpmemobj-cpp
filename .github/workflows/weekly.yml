@@ -13,7 +13,7 @@ env:
   CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
   HOST_WORKDIR:   ${{ github.workspace }}
   WORKDIR:        utils/docker
-  TEST_TIMEOUT:   600
+  TEST_TIMEOUT:   900
   IMG_VER:        latest
   PUSH_IMAGE:     0
 

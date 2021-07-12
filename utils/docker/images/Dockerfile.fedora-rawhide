@@ -47,6 +47,7 @@ ARG TESTS_DEPS="\
 	libpmem-devel \
 	libunwind-devel \
 	pmempool \
+	rpm-build \
 	valgrind-devel"
 
 # Misc for our builds/CI (optional)

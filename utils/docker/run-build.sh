@@ -215,23 +215,21 @@ function tests_package() {
 
 	[ ! "${TESTS_PACKAGES}" = "ON" ] && echo "Skipping testing packages, TESTS_PACKAGES variable is not set."
 
-	if ! ls /opt/pmdk-pkg/libpmem* > /dev/null 2>&1; then
-		echo "ERROR: There are no PMDK packages in /opt/pmdk-pkg - they are required for package test(s)."
-		printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
-		return 1
-	fi
-
 	mkdir build
 	cd build
 
-	if [ ${PACKAGE_MANAGER} = "deb" ]; then
-		sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
-		sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
-	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
-		sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
-	else
-		echo "ERROR: skipping building of packages because PACKAGE_MANAGER is not equal to 'rpm' nor 'deb' ..."
-		return 1
+	if ls /opt/pmdk-pkg/libpmem* > /dev/null 2>&1; then
+		echo "There are packages to install in '/opt/pmdk-pkg'"
+
+		if [ ${PACKAGE_MANAGER} = "deb" ]; then
+			sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
+			sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
+		elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
+			sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
+		else
+			echo "ERROR: we found packages to install, but PACKAGE_MANAGER is not set (to 'rpm', or 'deb')!"
+			return 1
+		fi
 	fi
 
 	CC=gcc CXX=g++ \

@@ -10,34 +10,15 @@
 
 set -e
 
-if [[ -z "${WORKDIR}" ]]; then
-	echo "ERROR: The variable WORKDIR has to contain a path to the root " \
-		"of this project - 'build' sub-directory will be created there."
-	exit 1
-fi
-
 INSTALL_DIR=/tmp/libpmemobj-cpp
 EXAMPLE_TEST_DIR=/tmp/build_example
 TEST_DIR=${PMEMKV_TEST_DIR:-${DEFAULT_TEST_DIR}}
 
+### Helper functions, used in run-*.sh scripts
 function sudo_password() {
 	echo ${USERPASS} | sudo -Sk $*
 }
 
-echo "Current WORKDIR content:"
-ls ${WORKDIR} -alh
-
-if [ "${CI_RUN}" == "YES" ]; then
-	echo "CI build: change WORKDIR's owner and prepare tmpfs device"
-	sudo_password chown -R $(id -u).$(id -g) ${WORKDIR}
-
-	sudo_password mkdir ${TEST_DIR}
-	sudo_password chmod 0777 ${TEST_DIR}
-	sudo_password mount -o size=2G -t tmpfs none ${TEST_DIR}
-fi || true
-
-
-## Helper functions, used in run-*.sh scripts
 function workspace_cleanup() {
 	echo "Cleanup build dirs"
 
@@ -92,3 +73,20 @@ function compile_example_standalone() {
 	make -j$(nproc)
 	cd -
 }
+
+### Additional checks, to be run, when this file is sourced
+if [[ -z "${WORKDIR}" ]]; then
+	echo "ERROR: The variable WORKDIR has to contain a path to the root " \
+		"of this project - 'build' sub-directory will be created there."
+	exit 1
+fi
+
+# this should be run only on CIs
+if [ "${CI_RUN}" == "YES" ]; then
+	echo "CI build: change WORKDIR's owner and prepare tmpfs device"
+	sudo_password chown -R $(id -u).$(id -g) ${WORKDIR}
+
+	sudo_password mkdir ${TEST_DIR}
+	sudo_password chmod 0777 ${TEST_DIR}
+	sudo_password mount -o size=2G -t tmpfs none ${TEST_DIR}
+fi || true

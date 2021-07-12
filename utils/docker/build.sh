@@ -21,7 +21,7 @@
 
 set -e
 
-source $(dirname $0)/set-ci-vars.sh
+source $(dirname ${0})/set-ci-vars.sh
 IMG_VER=${IMG_VER:-devel}
 TAG="${OS}-${OS_VER}-${IMG_VER}"
 IMAGE_NAME=${CONTAINER_REG}:${TAG}
@@ -48,7 +48,7 @@ if [[ -z "${CONTAINER_REG}" ]]; then
 fi
 
 # Set command to execute in the Docker container
-if [[ -z "$COMMAND" ]]; then
+if [[ -z "${COMMAND}" ]]; then
 	echo "COMMAND will be based on the type of build: ${TYPE}"
 	case ${TYPE} in
 	debug)

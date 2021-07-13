@@ -49,17 +49,21 @@ test_write_iterate(nvobj::pool<root> &pop,
 			}
 			UT_ASSERTeq(cnt, INITIAL_ELEMENTS);
 		},
-		[&]() {
-			size_t cnt = 0;
-			for (auto it = --ptr->end(); it != ptr->end(); --it) {
-				if (it->value() !=
-				    value<Container>(INITIAL_ELEMENTS)) {
-					++cnt;
-				}
-			}
+		/* XXX: it's disabled due to:
+		 * https://github.com/pmem/libpmemobj-cpp/issues/1159
+		 */
+		// [&]() {
+		//	size_t cnt = 0;
+		//	for (auto it = --ptr->end(); it != ptr->end(); --it) {
+		//		if (it->value() !=
+		//		    value<Container>(INITIAL_ELEMENTS)) {
+		//			++cnt;
+		//		}
+		//	}
 
-			UT_ASSERTeq(cnt, INITIAL_ELEMENTS);
-		}};
+		//	UT_ASSERTeq(cnt, INITIAL_ELEMENTS);
+		// }
+	};
 
 	parallel_modify_read(writer, readers, threads);
 
@@ -250,7 +254,7 @@ test_erase_upper_lower_bounds_neighbours(
 		std::find(middle_key.begin(), middle_key.end(), separator[0]),
 		middle_key.end());
 
-	auto last = ptr->rbegin();
+	auto last = std::next(ptr->begin(), static_cast<int>(ptr->size() - 1));
 	auto last_key = std::string(last->key().data(), last->key().size());
 	last_key.erase(
 		std::find(last_key.begin(), last_key.end(), separator[0]),
@@ -275,10 +279,14 @@ test_erase_upper_lower_bounds_neighbours(
 			auto &tmp = std::next(it)->key();
 			keys_to_erase.emplace_back(tmp.data(), tmp.size());
 		}
-		if (it != ptr->begin()) {
-			auto &tmp = std::prev(it)->key();
-			keys_to_erase.emplace_back(tmp.data(), tmp.size());
-		}
+
+		/* XXX: it's disabled due to:
+		 * https://github.com/pmem/libpmemobj-cpp/issues/1159
+		 */
+		// if (it != ptr->begin()) {
+		//	auto &tmp = std::prev(it)->key();
+		//	keys_to_erase.emplace_back(tmp.data(), tmp.size());
+		// }
 
 		std::shuffle(keys_to_erase.begin(), keys_to_erase.end(),
 			     generator);
@@ -295,31 +303,41 @@ test_erase_upper_lower_bounds_neighbours(
 
 					/* There is no element
 						bigger/equal to k. */
-					if (lo == ptr->end())
+					if (lo == ptr->end()) {
+						auto last_el = ptr->begin();
+						auto it = ptr->begin();
+						while (it != ptr->end()) {
+							last_el = it;
+							it++;
+						}
 						UT_ASSERT(
-							ptr->rbegin()->key() <
+							last_el->key() <
 							pmem::obj::string_view(
 								k));
-					else
+					} else
 						UT_ASSERT(
 							lo->key() >=
 							pmem::obj::string_view(
 								k));
 
-					auto prev = std::prev(lo);
-
-					/* There is no element smaller than k.
+					/* XXX: it's disabled due to:
+					 * https://github.com/pmem/libpmemobj-cpp/issues/1159
 					 */
-					if (prev == ptr->end())
-						UT_ASSERT(
-							ptr->begin()->key() >=
-							pmem::obj::string_view(
-								k));
-					else
-						UT_ASSERT(
-							prev->key() <
-							pmem::obj::string_view(
-								k));
+					// auto prev = std::prev(lo);
+
+					// /* There is no element smaller than
+					// k.
+					//  */
+					// if (prev == ptr->end())
+					//	UT_ASSERT(
+					//		ptr->begin()->key() >=
+					//		pmem::obj::string_view(
+					//			k));
+					// else
+					//	UT_ASSERT(
+					//		prev->key() <
+					//		pmem::obj::string_view(
+					//			k));
 				}
 			},
 			[&] {
@@ -328,31 +346,41 @@ test_erase_upper_lower_bounds_neighbours(
 
 					/* There is no element
 					bigger than k. */
-					if (ub == ptr->end())
+					if (ub == ptr->end()) {
+						auto last_el = ptr->begin();
+						auto it = ptr->begin();
+						while (it != ptr->end()) {
+							last_el = it;
+							it++;
+						}
 						UT_ASSERT(
-							ptr->rbegin()->key() <=
+							last_el->key() <=
 							pmem::obj::string_view(
 								k));
-					else
+					} else
 						UT_ASSERT(
 							ub->key() >
 							pmem::obj::string_view(
 								k));
 
-					auto prev = std::prev(ub);
-
-					/* There is no element smaller than k.
+					/* XXX: it's disabled due to:
+					 * https://github.com/pmem/libpmemobj-cpp/issues/1159
 					 */
-					if (prev == ptr->end())
-						UT_ASSERT(
-							ptr->begin()->key() >
-							pmem::obj::string_view(
-								k));
-					else
-						UT_ASSERT(
-							prev->key() <=
-							pmem::obj::string_view(
-								k));
+					// auto prev = std::prev(ub);
+
+					// /* There is no element smaller than
+					// k.
+					//  */
+					// if (prev == ptr->end())
+					//	UT_ASSERT(
+					//		ptr->begin()->key() >
+					//		pmem::obj::string_view(
+					//			k));
+					// else
+					//	UT_ASSERT(
+					//		prev->key() <=
+					//		pmem::obj::string_view(
+					//			k));
 				}
 			}};
 

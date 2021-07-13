@@ -64,6 +64,122 @@ test_erase_find(nvobj::pool<root> &pop,
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
+/* operator-- does not work well when MtMode is enabled */
+
+/* Insert INITAL_ELEMENTS elements to the radix. After that concurrently try to
+ * erase some at the end and read them (and decrement) from the other threads.
+ */
+// static void
+// test_erase_decrement(nvobj::pool<root> &pop,
+//		nvobj::persistent_ptr<container_string_mt> &ptr)
+// {
+//	const size_t value_repeats = 512;
+//	size_t threads = 4;
+//	if (On_drd)
+//		threads = 2;
+
+//	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
+//	ptr->runtime_initialize_mt();
+
+//	auto erase_f = [&] {
+//		for (size_t i = INITIAL_ELEMENTS - 1; i >= 0; --i) {
+//			ptr->erase(key<container_string_mt>(i));
+//			ptr->garbage_collect();
+//		}
+//	};
+
+//	auto readers_f = std::vector<std::function<void()>>{
+//		[&] {
+//			auto w = ptr->register_worker();
+
+//			for (size_t i = INITIAL_ELEMENTS - 1; i >= 0; --i) {
+//				w.critical([&] {
+//					auto it = ptr->find(
+//						key<container_string_mt>(i));
+//					UT_ASSERT(
+//						it == ptr->end() ||
+//						it->value() ==
+//							value<container_string_mt>(
+//								i,
+//								value_repeats));
+//					--it;
+//				});
+//			}
+//		},
+//	};
+
+//	parallel_modify_read(erase_f, readers_f, threads);
+
+//	ptr->garbage_collect_force();
+//	UT_ASSERT(num_allocs(pop) <= 4);
+
+//	ptr->runtime_finalize_mt();
+
+//	nvobj::transaction::run(pop, [&] {
+//		nvobj::delete_persistent<container_string_mt>(ptr);
+//	});
+
+//	UT_ASSERTeq(num_allocs(pop), 0);
+// }
+
+/* Insert INITAL_ELEMENTS elements to the radix. After that concurrently try to
+ * erase some at the beginning and read them (and increment) from the other
+ * threads.
+ */
+static void
+test_erase_increment(nvobj::pool<root> &pop,
+		     nvobj::persistent_ptr<container_int_int_mt> &ptr)
+{
+	size_t threads = 4;
+	if (On_drd)
+		threads = 2;
+
+	init_container(pop, ptr, INITIAL_ELEMENTS);
+	ptr->runtime_initialize_mt();
+
+	auto erase_f = [&] {
+		for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
+			ptr->erase(key<container_int_int_mt>(i));
+			ptr->garbage_collect();
+		}
+	};
+
+	auto readers_f = std::vector<std::function<void()>>{
+		[&] {
+			auto w = ptr->register_worker();
+
+			/* start one element ahead */
+			for (size_t i = 1; i < INITIAL_ELEMENTS - 1; ++i) {
+				w.critical([&] {
+					auto k = key<container_int_int_mt>(i);
+					auto v = value<container_int_int_mt>(i);
+					auto it = ptr->find(k);
+					UT_ASSERT(it == ptr->end() ||
+						  it->value() == v);
+					if (it != ptr->end()) {
+						auto next = ++it;
+						UT_ASSERT(next != ptr->end());
+						UT_ASSERT(next->key() > k);
+					}
+				});
+			}
+		},
+	};
+
+	parallel_modify_read(erase_f, readers_f, threads);
+
+	ptr->garbage_collect_force();
+	UT_ASSERT(num_allocs(pop) <= 4);
+
+	ptr->runtime_finalize_mt();
+
+	nvobj::transaction::run(pop, [&] {
+		nvobj::delete_persistent<container_int_int_mt>(ptr);
+	});
+
+	UT_ASSERTeq(num_allocs(pop), 0);
+}
+
 /* Insert and erase the same element in loop for INITAL_ELEMENTS times.
  * Concurrently try to read this element from other threads */
 static void
@@ -206,6 +322,8 @@ test(int argc, char *argv[])
 	}
 
 	test_erase_find(pop, pop.root()->radix_str_mt);
+	// test_erase_decrement(pop, pop.root()->radix_str_mt);
+	test_erase_increment(pop, pop.root()->radix_int_int_mt);
 	test_write_erase_find(pop, pop.root()->radix_str_mt);
 	test_garbage_collection(pop, pop.root()->radix_str_mt);
 

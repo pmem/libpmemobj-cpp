@@ -14,7 +14,7 @@ static size_t INITIAL_ELEMENTS = 512;
  * erase all elements and read them from the other threads. */
 static void
 test_erase_find(nvobj::pool<root> &pop,
-		nvobj::persistent_ptr<container_string_mt> &ptr)
+		nvobj::persistent_ptr<cntr_string_mt> &ptr)
 {
 	const size_t value_repeats = 1000;
 	size_t threads = 4;
@@ -26,7 +26,7 @@ test_erase_find(nvobj::pool<root> &pop,
 
 	auto erase_f = [&] {
 		for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-			ptr->erase(key<container_string_mt>(i));
+			ptr->erase(key<cntr_string_mt>(i));
 			ptr->garbage_collect();
 		}
 	};
@@ -38,11 +38,11 @@ test_erase_find(nvobj::pool<root> &pop,
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
 				w.critical([&] {
 					auto res = ptr->find(
-						key<container_string_mt>(i));
+						key<cntr_string_mt>(i));
 					UT_ASSERT(
 						res == ptr->end() ||
 						res->value() ==
-							value<container_string_mt>(
+							value<cntr_string_mt>(
 								i,
 								value_repeats));
 				});
@@ -57,9 +57,8 @@ test_erase_find(nvobj::pool<root> &pop,
 
 	ptr->runtime_finalize_mt();
 
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_string_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -71,7 +70,7 @@ test_erase_find(nvobj::pool<root> &pop,
  */
 // static void
 // test_erase_decrement(nvobj::pool<root> &pop,
-// 		nvobj::persistent_ptr<container_string_mt> &ptr)
+// 		nvobj::persistent_ptr<cntr_string_mt> &ptr)
 // {
 // 	const size_t value_repeats = 512;
 // 	size_t threads = 4;
@@ -83,7 +82,7 @@ test_erase_find(nvobj::pool<root> &pop,
 
 // 	auto erase_f = [&] {
 // 		for (size_t i = INITIAL_ELEMENTS - 1; i >= 0; --i) {
-// 			ptr->erase(key<container_string_mt>(i));
+// 			ptr->erase(key<cntr_string_mt>(i));
 // 			ptr->garbage_collect();
 // 		}
 // 	};
@@ -95,11 +94,11 @@ test_erase_find(nvobj::pool<root> &pop,
 // 			for (size_t i = INITIAL_ELEMENTS - 1; i >= 0; --i) {
 // 				w.critical([&] {
 // 					auto it = ptr->find(
-// 						key<container_string_mt>(i));
+// 						key<cntr_string_mt>(i));
 // 					UT_ASSERT(
 // 						it == ptr->end() ||
 // 						it->value() ==
-// 							value<container_string_mt>(
+// 							value<cntr_string_mt>(
 // 								i,
 // 								value_repeats));
 // 					--it;
@@ -116,18 +115,19 @@ test_erase_find(nvobj::pool<root> &pop,
 // 	ptr->runtime_finalize_mt();
 
 // 	nvobj::transaction::run(pop, [&] {
-// 		nvobj::delete_persistent<container_string_mt>(ptr);
+// 		nvobj::delete_persistent<cntr_string_mt>(ptr);
 // 	});
 
 // 	UT_ASSERTeq(num_allocs(pop), 0);
 // }
 
 /* Insert INITAL_ELEMENTS elements to the radix. After that concurrently try to
- * erase some at the beginning and read them (and increment) from the other threads.
+ * erase some at the beginning and read them (and increment) from the other
+ * threads.
  */
 // static void
 // test_erase_increment(nvobj::pool<root> &pop,
-// 		nvobj::persistent_ptr<container_string_mt> &ptr)
+// 		nvobj::persistent_ptr<cntr_string_mt> &ptr)
 // {
 // 	const size_t value_repeats = 128;
 // 	size_t threads = 4;
@@ -139,7 +139,7 @@ test_erase_find(nvobj::pool<root> &pop,
 
 // 	auto erase_f = [&] {
 // 		for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-// 			ptr->erase(key<container_string_mt>(i));
+// 			ptr->erase(key<cntr_string_mt>(i));
 // 			ptr->garbage_collect();
 // 		}
 // 	};
@@ -151,11 +151,11 @@ test_erase_find(nvobj::pool<root> &pop,
 // 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
 // 				w.critical([&] {
 // 					auto it = ptr->find(
-// 						key<container_string_mt>(i));
+// 						key<cntr_string_mt>(i));
 // 					UT_ASSERT(
 // 						it == ptr->end() ||
 // 						it->value() ==
-// 							value<container_string_mt>(
+// 							value<cntr_string_mt>(
 // 								i,
 // 								value_repeats));
 // 					++it;
@@ -172,7 +172,7 @@ test_erase_find(nvobj::pool<root> &pop,
 // 	ptr->runtime_finalize_mt();
 
 // 	nvobj::transaction::run(pop, [&] {
-// 		nvobj::delete_persistent<container_string_mt>(ptr);
+// 		nvobj::delete_persistent<cntr_string_mt>(ptr);
 // 	});
 
 // 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -182,7 +182,7 @@ test_erase_find(nvobj::pool<root> &pop,
  * Concurrently try to read this element from other threads */
 static void
 test_write_erase_find(nvobj::pool<root> &pop,
-		      nvobj::persistent_ptr<container_string_mt> &ptr)
+		      nvobj::persistent_ptr<cntr_string_mt> &ptr)
 {
 	const size_t value_repeats = 1000;
 	size_t threads = 8;
@@ -194,10 +194,9 @@ test_write_erase_find(nvobj::pool<root> &pop,
 
 	auto writer_f = [&] {
 		for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-			ptr->emplace(
-				key<container_string_mt>(0),
-				value<container_string_mt>(0, value_repeats));
-			ptr->erase(key<container_string_mt>(0));
+			ptr->emplace(key<cntr_string_mt>(0),
+				     value<cntr_string_mt>(0, value_repeats));
+			ptr->erase(key<cntr_string_mt>(0));
 			ptr->garbage_collect();
 		}
 	};
@@ -209,11 +208,11 @@ test_write_erase_find(nvobj::pool<root> &pop,
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
 				w.critical([&] {
 					auto res = ptr->find(
-						key<container_string_mt>(0));
+						key<cntr_string_mt>(0));
 					UT_ASSERT(
 						res == ptr->end() ||
 						res->value() ==
-							value<container_string_mt>(
+							value<cntr_string_mt>(
 								0,
 								value_repeats));
 				});
@@ -227,9 +226,8 @@ test_write_erase_find(nvobj::pool<root> &pop,
 
 	ptr->runtime_finalize_mt();
 
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_string_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -240,7 +238,7 @@ test_write_erase_find(nvobj::pool<root> &pop,
  * deleting and reading elements */
 static void
 test_garbage_collection(nvobj::pool<root> &pop,
-			nvobj::persistent_ptr<container_string_mt> &ptr)
+			nvobj::persistent_ptr<cntr_string_mt> &ptr)
 {
 	const size_t value_repeats = 1000;
 	size_t threads = 8;
@@ -256,7 +254,7 @@ test_garbage_collection(nvobj::pool<root> &pop,
 		if (id == 0) {
 			/* deleter */
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				ptr->erase(key<container_string_mt>(i));
+				ptr->erase(key<cntr_string_mt>(i));
 
 				if (i % 50 == 0) {
 					syncthreads();
@@ -271,11 +269,11 @@ test_garbage_collection(nvobj::pool<root> &pop,
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
 				w.critical([&] {
 					auto res = ptr->find(
-						key<container_string_mt>(i));
+						key<cntr_string_mt>(i));
 					UT_ASSERT(
 						res == ptr->end() ||
 						res->value() ==
-							value<container_string_mt>(
+							value<cntr_string_mt>(
 								i,
 								value_repeats));
 				});
@@ -294,9 +292,8 @@ test_garbage_collection(nvobj::pool<root> &pop,
 
 	ptr->runtime_finalize_mt();
 
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_string_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }

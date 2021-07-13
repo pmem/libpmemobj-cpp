@@ -11,9 +11,8 @@
 static size_t INITIAL_ELEMENTS = 256;
 
 static void
-test_overwrite_bigger_size_find(
-	nvobj::pool<root> &pop,
-	nvobj::persistent_ptr<container_int_string_mt> &ptr)
+test_overwrite_bigger_size_find(nvobj::pool<root> &pop,
+				nvobj::persistent_ptr<cntr_int_string_mt> &ptr)
 {
 	size_t threads = 16;
 	if (On_drd)
@@ -27,8 +26,8 @@ test_overwrite_bigger_size_find(
 		for (size_t i = 0; i < INITIAL_ELEMENTS * 2; ++i) {
 			auto k = i % INITIAL_ELEMENTS;
 			ptr->insert_or_assign(
-				key<container_int_string_mt>(k),
-				value<container_int_string_mt>(i, 100));
+				key<cntr_int_string_mt>(k),
+				value<cntr_int_string_mt>(i, 100));
 		}
 	};
 
@@ -36,18 +35,17 @@ test_overwrite_bigger_size_find(
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS * 2; ++i) {
 				auto k = i % INITIAL_ELEMENTS;
-				auto res = ptr->find(
-					key<container_int_string_mt>(k));
+				auto res =
+					ptr->find(key<cntr_int_string_mt>(k));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(
 					res->value() ==
-						value<container_int_string_mt>(
-							k) ||
+						value<cntr_int_string_mt>(k) ||
 					res->value() ==
-						value<container_int_string_mt>(
+						value<cntr_int_string_mt>(
 							k, 100) ||
 					res->value() ==
-						value<container_int_string_mt>(
+						value<cntr_int_string_mt>(
 							k + INITIAL_ELEMENTS,
 							100));
 			}
@@ -59,7 +57,7 @@ test_overwrite_bigger_size_find(
 	ptr->runtime_finalize_mt();
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_string_mt>(ptr);
+		nvobj::delete_persistent<cntr_int_string_mt>(ptr);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);

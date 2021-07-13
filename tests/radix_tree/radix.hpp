@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2020-2021, Intel Corporation */
 
+#include <functional>
+#include <libpmemobj.h>
+#include <random>
+
 #include "transaction_helpers.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/inline_string.hpp>
 #include <libpmemobj++/experimental/radix_tree.hpp>
 
-#include <functional>
-
-#include <libpmemobj.h>
+static std::mt19937_64 generator;
 
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
@@ -86,6 +88,7 @@ struct root {
 	nvobj::persistent_ptr<container_inline_s_u8t_mt> radix_inline_s_u8t_mt;
 };
 
+/* Helper functions to access key/value of different types */
 template <typename Container,
 	  typename Enable = typename std::enable_if<
 		  std::is_same<typename Container::mapped_type,
@@ -108,9 +111,9 @@ value(unsigned v, int repeats = 1)
 {
 	using CharT = typename Container::mapped_type::value_type;
 
+	auto str = std::to_string(v);
 	auto s = std::basic_string<CharT>{};
 	for (int i = 0; i < repeats; i++) {
-		auto str = std::to_string(v);
 		s += std::basic_string<CharT>(str.begin(), str.end());
 	}
 
@@ -178,6 +181,7 @@ operator!=(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs,
 		       .compare(rhs) != 0;
 }
 
+/* verify all elements in container, using lower_/upper_bound and find */
 template <typename Container, typename K, typename F>
 void
 verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K &&key_f,
@@ -216,6 +220,8 @@ verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K &&key_f,
 	}
 }
 
+/* run 1 thread with modifications (erase/write/etc.) and multiple threads with
+ * reads */
 template <typename ModifyF, typename ReadF>
 static void
 parallel_modify_read(ModifyF modifier, std::vector<ReadF> &readers,
@@ -230,16 +236,30 @@ parallel_modify_read(ModifyF modifier, std::vector<ReadF> &readers,
 	});
 }
 
+/* each test suite should initialize generator at the beginning */
+void
+init_random()
+{
+	std::random_device rd;
+	auto seed = rd();
+	std::cout << "rand seed: " << seed << std::endl;
+	generator = std::mt19937_64(seed);
+}
+
 template <typename Container>
 static void
 init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr,
-	       const size_t initial_elements, const size_t value_repeats = 1)
+	       const size_t initial_elements, const size_t value_repeats = 1,
+	       bool rand_keys = false)
 {
 	nvobj::transaction::run(
 		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
 
 	for (size_t i = 0; i < initial_elements; ++i) {
-		ptr->emplace(key<Container>(i),
-			     value<Container>(i, value_repeats));
+		auto k = key<Container>(i);
+		if (rand_keys) {
+			k = key<Container>(static_cast<unsigned>(generator()));
+		}
+		ptr->emplace(k, value<Container>(i, value_repeats));
 	}
 }

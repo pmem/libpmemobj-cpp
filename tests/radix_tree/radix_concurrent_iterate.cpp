@@ -12,8 +12,6 @@
  * iterators.
  */
 
-static std::mt19937_64 generator;
-
 static size_t INITIAL_ELEMENTS = 256;
 
 /* Insert INITIAL_ELEMENTS elements to the radix. After that, concurrently
@@ -23,13 +21,13 @@ static size_t INITIAL_ELEMENTS = 256;
 template <typename Container>
 void
 test_write_iterate(nvobj::pool<root> &pop,
-		   nvobj::persistent_ptr<Container> &ptr)
+		   nvobj::persistent_ptr<Container> &ptr, bool rand_keys)
 {
 	size_t threads = 8;
 	if (On_drd)
 		threads = 2;
 
-	init_container(pop, ptr, INITIAL_ELEMENTS);
+	init_container(pop, ptr, INITIAL_ELEMENTS, 1, rand_keys);
 	ptr->runtime_initialize_mt();
 
 	auto writer = [&]() {
@@ -471,7 +469,8 @@ test_write_erase_upper_lower_bounds_split(
  * in the other threads. */
 void
 test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
-			      nvobj::persistent_ptr<container_int_int_mt> &ptr)
+			      nvobj::persistent_ptr<container_int_int_mt> &ptr,
+			      bool rand_keys)
 {
 	const size_t value_repeats = 10;
 	size_t threads = 4;
@@ -479,7 +478,7 @@ test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
 		threads = 2;
 	const size_t batch_size = INITIAL_ELEMENTS / threads;
 
-	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
+	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats, rand_keys);
 	ptr->runtime_initialize_mt();
 
 	auto writer = [&]() {
@@ -536,6 +535,7 @@ test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
+	UT_ASSERT(0);
 }
 
 static void
@@ -560,14 +560,16 @@ test(int argc, char *argv[])
 		INITIAL_ELEMENTS = 64;
 	}
 
-	std::random_device rd;
-	auto seed = rd();
-	std::cout << "rand seed: " << seed << std::endl;
-	generator = std::mt19937_64(seed);
+	init_random();
 
-	test_write_iterate(pop, pop.root()->radix_int_int_mt);
-	test_erase_iterate(pop, pop.root()->radix_int_int_mt);
+	for (int i = 0; i < 2; ++i) {
+		bool rand = static_cast<bool>(i);
+		test_write_iterate(pop, pop.root()->radix_int_int_mt, rand);
+		test_erase_upper_lower_bounds(pop, pop.root()->radix_int_int_mt,
+					      rand);
+	}
 	test_write_upper_lower_bounds(pop, pop.root()->radix_int_int_mt);
+	test_erase_iterate(pop, pop.root()->radix_int_int_mt);
 	test_erase_upper_lower_bounds_neighbours(pop, pop.root()->radix_str_mt);
 	test_write_erase_upper_lower_bounds_split(pop,
 						  pop.root()->radix_str_mt);

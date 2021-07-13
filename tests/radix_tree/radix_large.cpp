@@ -6,8 +6,6 @@
 #include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/experimental/radix_tree.hpp>
 
-#include <libpmemobj/iterator.h>
-
 namespace nvobj = pmem::obj;
 
 struct bytes_view {

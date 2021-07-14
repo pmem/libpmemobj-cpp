@@ -75,7 +75,7 @@ test_write_iterate(nvobj::pool<root> &pop,
  * count elements with odd keys. */
 void
 test_erase_iterate(nvobj::pool<root> &pop,
-		   nvobj::persistent_ptr<container_int_int_mt> &ptr)
+		   nvobj::persistent_ptr<cntr_int_int_mt> &ptr)
 {
 	const size_t value_repeats = 1000;
 	size_t threads = 4;
@@ -86,12 +86,11 @@ test_erase_iterate(nvobj::pool<root> &pop,
 	 * keys */
 	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
 	for (size_t i = 0; i < INITIAL_ELEMENTS; i += 2) {
-		ptr->erase(key<container_int_int_mt>(i));
+		ptr->erase(key<cntr_int_int_mt>(i));
 	}
 	auto expected_allocs = num_allocs(pop);
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_int_int_mt>(ptr); });
 
 	init_container(pop, ptr, INITIAL_ELEMENTS, value_repeats);
 	ptr->runtime_initialize_mt();
@@ -99,15 +98,15 @@ test_erase_iterate(nvobj::pool<root> &pop,
 	/* force 3 gc cycles to ensure that all garbage vectors will be
 	 * allocated */
 	for (size_t i = 0; i < 3; ++i) {
-		ptr->erase(key<container_int_int_mt>(i));
+		ptr->erase(key<cntr_int_int_mt>(i));
 		ptr->garbage_collect();
-		ptr->emplace(key<container_int_int_mt>(i),
-			     value<container_int_int_mt>(i));
+		ptr->emplace(key<cntr_int_int_mt>(i),
+			     value<cntr_int_int_mt>(i));
 	}
 
 	auto writer_f = [&] {
 		for (size_t i = 0; i < INITIAL_ELEMENTS; i += 2) {
-			ptr->erase(key<container_int_int_mt>(i));
+			ptr->erase(key<cntr_int_int_mt>(i));
 			ptr->garbage_collect();
 		}
 	};
@@ -140,9 +139,8 @@ test_erase_iterate(nvobj::pool<root> &pop,
 
 	ptr->runtime_finalize_mt();
 
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_int_int_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -152,7 +150,7 @@ test_erase_iterate(nvobj::pool<root> &pop,
  * from the other threads. */
 void
 test_write_upper_lower_bounds(nvobj::pool<root> &pop,
-			      nvobj::persistent_ptr<container_int_int_mt> &ptr)
+			      nvobj::persistent_ptr<cntr_int_int_mt> &ptr)
 {
 	const size_t value_repeats = 10;
 	size_t threads = 4;
@@ -160,22 +158,20 @@ test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 		threads = 2;
 	const size_t batch_size = INITIAL_ELEMENTS / threads;
 
-	nvobj::transaction::run(pop, [&] {
-		ptr = nvobj::make_persistent<container_int_int_mt>();
-	});
+	nvobj::transaction::run(
+		pop, [&] { ptr = nvobj::make_persistent<cntr_int_int_mt>(); });
 
 	ptr->runtime_initialize_mt();
 
 	for (size_t i = 0; i < 2 * INITIAL_ELEMENTS; i += 2) {
-		ptr->emplace(key<container_int_int_mt>(i),
-			     value<container_int_int_mt>(i, value_repeats));
+		ptr->emplace(key<cntr_int_int_mt>(i),
+			     value<cntr_int_int_mt>(i, value_repeats));
 	}
 
 	auto writer = [&]() {
 		for (size_t i = 1; i < 2 * INITIAL_ELEMENTS; i += 2) {
-			ptr->emplace(
-				key<container_int_int_mt>(i),
-				value<container_int_int_mt>(INITIAL_ELEMENTS));
+			ptr->emplace(key<cntr_int_int_mt>(i),
+				     value<cntr_int_int_mt>(INITIAL_ELEMENTS));
 		}
 	};
 
@@ -187,8 +183,7 @@ test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 			for (size_t i = id * batch_size;
 			     i < (id + 1) * batch_size; ++i) {
 				auto it = ptr->lower_bound(i);
-				UT_ASSERT(it->key() >=
-					  key<container_int_int_mt>(i));
+				UT_ASSERT(it->key() >= key<cntr_int_int_mt>(i));
 			}
 		},
 		[&]() {
@@ -196,8 +191,7 @@ test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 			for (size_t i = id * batch_size;
 			     i < (id + 1) * batch_size; ++i) {
 				auto it = ptr->upper_bound(i);
-				UT_ASSERT(it->key() >
-					  key<container_int_int_mt>(i));
+				UT_ASSERT(it->key() > key<cntr_int_int_mt>(i));
 			}
 		},
 	};
@@ -205,16 +199,15 @@ test_write_upper_lower_bounds(nvobj::pool<root> &pop,
 	parallel_modify_read(writer, readers, threads);
 
 	ptr->runtime_finalize_mt();
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_int_int_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
 test_erase_upper_lower_bounds_neighbours(
-	nvobj::pool<root> &pop, nvobj::persistent_ptr<container_string_mt> &ptr)
+	nvobj::pool<root> &pop, nvobj::persistent_ptr<cntr_string_mt> &ptr)
 {
 	const size_t value_repeats = 10;
 	const size_t repeats = 100;
@@ -222,19 +215,18 @@ test_erase_upper_lower_bounds_neighbours(
 	if (On_drd)
 		threads = 2;
 
-	nvobj::transaction::run(pop, [&] {
-		ptr = nvobj::make_persistent<container_string_mt>();
-	});
+	nvobj::transaction::run(
+		pop, [&] { ptr = nvobj::make_persistent<cntr_string_mt>(); });
 
 	ptr->runtime_initialize_mt();
 
 	const auto separator = "!!";
 	for (size_t i = 0; i < INITIAL_ELEMENTS / 2; i++) {
-		ptr->emplace(key<container_string_mt>(i),
-			     value<container_string_mt>(i, value_repeats));
-		ptr->emplace(key<container_string_mt>(i) + separator +
-				     key<container_string_mt>(i),
-			     value<container_string_mt>(i, value_repeats));
+		ptr->emplace(key<cntr_string_mt>(i),
+			     value<cntr_string_mt>(i, value_repeats));
+		ptr->emplace(key<cntr_string_mt>(i) + separator +
+				     key<cntr_string_mt>(i),
+			     value<cntr_string_mt>(i, value_repeats));
 	}
 
 	/* Run this test for first, last, middle keys and a few non-existent
@@ -360,16 +352,15 @@ test_erase_upper_lower_bounds_neighbours(
 	}
 
 	ptr->runtime_finalize_mt();
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_string_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
 
 void
 test_write_erase_upper_lower_bounds_split(
-	nvobj::pool<root> &pop, nvobj::persistent_ptr<container_string_mt> &ptr)
+	nvobj::pool<root> &pop, nvobj::persistent_ptr<cntr_string_mt> &ptr)
 {
 	const size_t value_repeats = 10;
 	const size_t repeats = 100;
@@ -377,9 +368,8 @@ test_write_erase_upper_lower_bounds_split(
 	if (On_drd)
 		threads = 2;
 
-	nvobj::transaction::run(pop, [&] {
-		ptr = nvobj::make_persistent<container_string_mt>();
-	});
+	nvobj::transaction::run(
+		pop, [&] { ptr = nvobj::make_persistent<cntr_string_mt>(); });
 
 	ptr->runtime_initialize_mt();
 
@@ -388,13 +378,12 @@ test_write_erase_upper_lower_bounds_split(
 
 	/* Generate two-level tree. */
 	for (size_t i = 0; i < n_child; i++) {
-		ptr->emplace(key<container_string_mt>(i),
-			     value<container_string_mt>(i, value_repeats));
+		ptr->emplace(key<cntr_string_mt>(i),
+			     value<cntr_string_mt>(i, value_repeats));
 		for (size_t j = 0; j < n_child; j++) {
-			ptr->emplace(
-				key<container_string_mt>(i) + separator +
-					key<container_string_mt>(j),
-				value<container_string_mt>(j, value_repeats));
+			ptr->emplace(key<cntr_string_mt>(i) + separator +
+					     key<cntr_string_mt>(j),
+				     value<cntr_string_mt>(j, value_repeats));
 		}
 	}
 
@@ -403,9 +392,8 @@ test_write_erase_upper_lower_bounds_split(
 	std::vector<size_t> key_nums_to_process = {0, n_child / 2, n_child - 1};
 	std::vector<std::string> keys_to_process;
 	for (auto &k : key_nums_to_process)
-		keys_to_process.push_back(key<container_string_mt>(k) +
-					  separator +
-					  key<container_string_mt>(k));
+		keys_to_process.push_back(key<cntr_string_mt>(k) + separator +
+					  key<cntr_string_mt>(k));
 
 	for (auto &k : keys_to_process) {
 
@@ -457,9 +445,8 @@ test_write_erase_upper_lower_bounds_split(
 	}
 
 	ptr->runtime_finalize_mt();
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_string_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }
@@ -469,7 +456,7 @@ test_write_erase_upper_lower_bounds_split(
  * in the other threads. */
 void
 test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
-			      nvobj::persistent_ptr<container_int_int_mt> &ptr,
+			      nvobj::persistent_ptr<cntr_int_int_mt> &ptr,
 			      bool rand_keys)
 {
 	const size_t value_repeats = 10;
@@ -483,7 +470,7 @@ test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
 
 	auto writer = [&]() {
 		for (size_t i = 0; i < INITIAL_ELEMENTS; i += 2) {
-			ptr->erase(key<container_int_int_mt>(i));
+			ptr->erase(key<cntr_int_int_mt>(i));
 		}
 	};
 
@@ -502,8 +489,7 @@ test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
 				}
 
 				for (auto &k : keys) {
-					UT_ASSERT(k >=
-						  key<container_int_int_mt>(i));
+					UT_ASSERT(k >= key<cntr_int_int_mt>(i));
 				}
 			}
 		},
@@ -519,8 +505,7 @@ test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
 				}
 
 				for (auto &k : keys) {
-					UT_ASSERT(k >
-						  key<container_int_int_mt>(i));
+					UT_ASSERT(k > key<cntr_int_int_mt>(i));
 				}
 			}
 		},
@@ -530,9 +515,8 @@ test_erase_upper_lower_bounds(nvobj::pool<root> &pop,
 
 	ptr->runtime_finalize_mt();
 
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_int_int_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 	UT_ASSERT(0);

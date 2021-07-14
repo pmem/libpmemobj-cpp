@@ -14,14 +14,14 @@ test_iterators(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_int = nvobj::make_persistent<container_int>();
+		r->radix_int = nvobj::make_persistent<cntr_int>();
 		r->radix_int->try_emplace("", 0U);
 		r->radix_int->try_emplace("ab", 1U);
 		r->radix_int->try_emplace("ba", 2U);
 		r->radix_int->try_emplace("a", 3U);
 		r->radix_int->try_emplace("b", 4U);
 
-		r->radix_str = nvobj::make_persistent<container_string>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
 		r->radix_str->try_emplace("", "");
 
 		r->radix_str->try_emplace(" ", "ab");
@@ -120,8 +120,8 @@ test_iterators(nvobj::pool<root> &pop)
 	ss << *r->radix_str;
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string>(r->radix_str);
-		nvobj::delete_persistent<container_int>(r->radix_int);
+		nvobj::delete_persistent<cntr_string>(r->radix_str);
+		nvobj::delete_persistent<cntr_int>(r->radix_int);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -133,8 +133,8 @@ test_ref_stability(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_str = nvobj::make_persistent<container_string>();
-		r->radix_int = nvobj::make_persistent<container_int>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
+		r->radix_int = nvobj::make_persistent<cntr_int>();
 	});
 
 	{
@@ -169,8 +169,8 @@ test_ref_stability(nvobj::pool<root> &pop)
 	}
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string>(r->radix_str);
-		nvobj::delete_persistent<container_int>(r->radix_int);
+		nvobj::delete_persistent<cntr_string>(r->radix_str);
+		nvobj::delete_persistent<cntr_int>(r->radix_int);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -184,8 +184,7 @@ test_find(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		UT_ASSERT(r->radix_str->lower_bound("") == r->radix_str->end());
@@ -279,8 +278,7 @@ test_find(nvobj::pool<root> &pop)
 			  r->radix_str->find("ad"));
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -288,8 +286,7 @@ test_find(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		r->radix_str->emplace("a", "");
@@ -329,8 +326,7 @@ test_find(nvobj::pool<root> &pop)
 			  r->radix_str->end());
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -338,8 +334,7 @@ test_find(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		r->radix_str->try_emplace("Y", "1");
@@ -427,8 +422,7 @@ test_find(nvobj::pool<root> &pop)
 		UT_ASSERTeq(std::distance(lb, ub), 8);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -436,8 +430,7 @@ test_find(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		r->radix_str->try_emplace(std::string(1, char(1)), "");
@@ -446,8 +439,7 @@ test_find(nvobj::pool<root> &pop)
 		UT_ASSERT(ub == r->radix_str->end());
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -455,8 +447,7 @@ test_find(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		r->radix_str->try_emplace(std::string(1, char(-1)), "");
@@ -465,8 +456,7 @@ test_find(nvobj::pool<root> &pop)
 		UT_ASSERT(ub == r->radix_str->begin());
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -475,8 +465,7 @@ test_find(nvobj::pool<root> &pop)
 	/* *_bound when there are multiple lesser elements with common prefix */
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		r->radix_str->try_emplace("in1", "");
@@ -501,8 +490,7 @@ test_find(nvobj::pool<root> &pop)
 		UT_ASSERT(it == r->radix_str->end());
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -511,8 +499,7 @@ test_find(nvobj::pool<root> &pop)
 	/* *_bound when there is a single lesser element */
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		r->radix_str->try_emplace("in", "");
@@ -524,8 +511,7 @@ test_find(nvobj::pool<root> &pop)
 		UT_ASSERT(it == r->radix_str->end());
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -536,7 +522,7 @@ const auto compressed_path_len = 4;
 const auto num_children = 3;
 
 static void
-generate_compressed_tree(nvobj::persistent_ptr<container_string> ptr,
+generate_compressed_tree(nvobj::persistent_ptr<cntr_string> ptr,
 			 std::string prefix, int level)
 {
 	/* it should be just one digit */
@@ -559,7 +545,7 @@ generate_compressed_tree(nvobj::persistent_ptr<container_string> ptr,
 }
 
 static void
-verify_bounds(nvobj::persistent_ptr<container_string> ptr,
+verify_bounds(nvobj::persistent_ptr<cntr_string> ptr,
 	      const std::vector<std::string> &keys)
 {
 	for (size_t i = 0; i < keys.size() - 1; i++) {
@@ -579,7 +565,7 @@ verify_bounds(nvobj::persistent_ptr<container_string> ptr,
 }
 
 static void
-verify_bounds_key(nvobj::persistent_ptr<container_string> ptr,
+verify_bounds_key(nvobj::persistent_ptr<cntr_string> ptr,
 		  const std::vector<std::string> &keys, const std::string &key)
 {
 	auto expected = std::lower_bound(keys.begin(), keys.end(), key);
@@ -601,7 +587,7 @@ test_compression(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_str = nvobj::make_persistent<container_string>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
 	});
 
 	generate_compressed_tree(r->radix_str, "", num_levels);
@@ -659,7 +645,7 @@ test_compression(nvobj::pool<root> &pop)
 	}
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string>(r->radix_str);
+		nvobj::delete_persistent<cntr_string>(r->radix_str);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -673,16 +659,14 @@ test_erase(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		std::unordered_set<std::string> set = {
 			"b", "ab", "acxxa", "acxxx", "acxxxa", "acxxx!"};
 
 		/* Used for testing iterator stability. */
-		std::unordered_map<std::string,
-				   typename container_string::iterator>
+		std::unordered_map<std::string, typename cntr_string::iterator>
 			its;
 
 		for (auto &s : set) {
@@ -725,8 +709,7 @@ test_erase(nvobj::pool<root> &pop)
 		UT_ASSERTeq(r->radix_str->size(), 0);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -734,8 +717,7 @@ test_erase(nvobj::pool<root> &pop)
 
 	{
 		nvobj::transaction::run(pop, [&] {
-			r->radix_str =
-				nvobj::make_persistent<container_string>();
+			r->radix_str = nvobj::make_persistent<cntr_string>();
 		});
 
 		std::vector<std::string> elements = {
@@ -793,8 +775,7 @@ test_erase(nvobj::pool<root> &pop)
 		UT_ASSERTeq(r->radix_str->size(), 0);
 
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<container_string>(
-				r->radix_str);
+			nvobj::delete_persistent<cntr_string>(r->radix_str);
 		});
 
 		UT_ASSERTeq(num_allocs(pop), 0);
@@ -810,11 +791,11 @@ test_binary_keys(nvobj::pool<root> &pop)
 	auto kv_f = [](unsigned i) { return i * 2; };
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_int_int = nvobj::make_persistent<container_int_int>();
+		r->radix_int_int = nvobj::make_persistent<cntr_int_int>();
 	});
 
 	/* Used for testing iterator stability. */
-	std::unordered_map<unsigned, typename container_int_int::iterator> its;
+	std::unordered_map<unsigned, typename cntr_int_int::iterator> its;
 
 	for (unsigned i = 2 * std::numeric_limits<uint16_t>::max(); i > 0;
 	     i -= 2) {
@@ -853,7 +834,7 @@ test_binary_keys(nvobj::pool<root> &pop)
 	}
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int>(r->radix_int_int);
+		nvobj::delete_persistent<cntr_int_int>(r->radix_int_int);
 	});
 
 	its = {};
@@ -861,7 +842,7 @@ test_binary_keys(nvobj::pool<root> &pop)
 	UT_ASSERTeq(num_allocs(pop), 0);
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_int_int = nvobj::make_persistent<container_int_int>();
+		r->radix_int_int = nvobj::make_persistent<cntr_int_int>();
 	});
 
 	for (unsigned i = 0; i < 2 * std::numeric_limits<uint16_t>::max();
@@ -895,7 +876,7 @@ test_binary_keys(nvobj::pool<root> &pop)
 	}
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int>(r->radix_int_int);
+		nvobj::delete_persistent<cntr_int_int>(r->radix_int_int);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -912,8 +893,7 @@ test_pre_post_fixes(nvobj::pool<root> &pop)
 	elements.push_back("0");
 
 	/* Used for testing iterator stability. */
-	std::unordered_map<std::string, typename container_string::iterator>
-		its;
+	std::unordered_map<std::string, typename cntr_string::iterator> its;
 
 	/* This loop creates string so that elements[i] is prefix of
 	 * elements[i + 1] and they differ only by 4 bits:
@@ -942,7 +922,7 @@ test_pre_post_fixes(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_str = nvobj::make_persistent<container_string>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
 	});
 
 	for (size_t i = elements.size(); i > 0; i--) {
@@ -973,7 +953,7 @@ test_pre_post_fixes(nvobj::pool<root> &pop)
 	}
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string>(r->radix_str);
+		nvobj::delete_persistent<cntr_string>(r->radix_str);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -987,7 +967,7 @@ test_assign_inline_string(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_str = nvobj::make_persistent<container_string>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
 		r->radix_str->try_emplace("key", test_value);
 	});
 
@@ -1002,7 +982,7 @@ test_assign_inline_string(nvobj::pool<root> &pop)
 		    0);
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string>(r->radix_str);
+		nvobj::delete_persistent<cntr_string>(r->radix_str);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -1016,7 +996,7 @@ test_inline_string_u8t_key(nvobj::pool<root> &pop)
 
 	nvobj::transaction::run(pop, [&] {
 		r->radix_inline_s_u8t =
-			nvobj::make_persistent<container_inline_s_u8t>();
+			nvobj::make_persistent<cntr_inline_s_u8t>();
 	});
 	auto &m = *r->radix_inline_s_u8t;
 
@@ -1056,7 +1036,7 @@ test_inline_string_u8t_key(nvobj::pool<root> &pop)
 	UT_ASSERT(it->value() == std::basic_string<uint8_t>({uint8_t(7)}));
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_inline_s_u8t>(
+		nvobj::delete_persistent<cntr_inline_s_u8t>(
 			r->radix_inline_s_u8t);
 	});
 
@@ -1070,7 +1050,7 @@ test_inline_string_wchart_key(nvobj::pool<root> &pop)
 
 	nvobj::transaction::run(pop, [&] {
 		r->radix_inline_s_wchart =
-			nvobj::make_persistent<container_inline_s_wchart>();
+			nvobj::make_persistent<cntr_inline_s_wchart>();
 	});
 	auto &m = *r->radix_inline_s_wchart;
 
@@ -1100,7 +1080,7 @@ test_inline_string_wchart_key(nvobj::pool<root> &pop)
 	UT_ASSERTeq(m.size(), 0);
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_inline_s_wchart>(
+		nvobj::delete_persistent<cntr_inline_s_wchart>(
 			r->radix_inline_s_wchart);
 	});
 
@@ -1114,7 +1094,7 @@ test_remove_inserted(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->radix_str = nvobj::make_persistent<container_string>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
 	});
 
 	/* remove element which was just inserted */
@@ -1149,7 +1129,7 @@ test_remove_inserted(nvobj::pool<root> &pop)
 	UT_ASSERTeq(r->radix_str->size(), 0);
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_string>(r->radix_str);
+		nvobj::delete_persistent<cntr_string>(r->radix_str);
 	});
 
 	UT_ASSERTeq(num_allocs(pop), 0);
@@ -1161,7 +1141,7 @@ test_error_handle(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	try {
-		r->radix_str = nvobj::make_persistent<container_string>();
+		r->radix_str = nvobj::make_persistent<cntr_string>();
 	} catch (pmem::transaction_scope_error &tse) {
 	} catch (...) {
 		UT_ASSERT(0);

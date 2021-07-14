@@ -57,7 +57,7 @@ test_write_find(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr)
 /* this test only works with int as a key type */
 static void
 test_various_readers(nvobj::pool<root> &pop,
-		     nvobj::persistent_ptr<container_int_int_mt> &ptr)
+		     nvobj::persistent_ptr<cntr_int_int_mt> &ptr)
 {
 	size_t threads = 16;
 	if (On_drd)
@@ -72,38 +72,36 @@ test_various_readers(nvobj::pool<root> &pop,
 	auto readers = std::vector<std::function<void()>>{
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
-				auto res =
-					ptr->find(key<container_int_int_mt>(i));
+				auto res = ptr->find(key<cntr_int_int_mt>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<container_int_int_mt>(i));
+					  value<cntr_int_int_mt>(i));
 			}
 		},
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS; ++i) {
 				auto res = ptr->lower_bound(
-					key<container_int_int_mt>(i));
+					key<cntr_int_int_mt>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<container_int_int_mt>(i));
+					  value<cntr_int_int_mt>(i));
 			}
 		},
 		[&]() {
 			for (size_t i = 0; i < INITIAL_ELEMENTS - 1; ++i) {
-				auto res = ptr->upper_bound(
-					key<container_int_int>(i));
+				auto res =
+					ptr->upper_bound(key<cntr_int_int>(i));
 				UT_ASSERT(res != ptr->end());
 				UT_ASSERT(res->value() ==
-					  value<container_int_int_mt>(i + 1));
+					  value<cntr_int_int_mt>(i + 1));
 			}
 		},
 	};
 
 	parallel_modify_read(writer, readers, threads);
 
-	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_int_int_mt>(ptr);
-	});
+	nvobj::transaction::run(
+		pop, [&] { nvobj::delete_persistent<cntr_int_int_mt>(ptr); });
 
 	UT_ASSERTeq(num_allocs(pop), 0);
 }

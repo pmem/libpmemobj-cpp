@@ -208,6 +208,49 @@ function tests_gcc_release_cpp17_no_valgrind() {
 }
 
 ###############################################################################
+# BUILD tests_clang_release_cpp20_no_valgrind llvm
+###############################################################################
+
+function tests_clang_release_cpp20_no_valgrind() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+
+	if [ ${CMAKE_VERSION_NUMBER} -lt 312 ]; then
+		echo "ERROR: C++20 is supported in CMake since 3.12, installed version: ${CMAKE_VERSION}"
+		exit 1
+	fi
+
+	mkdir build && cd build
+
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
+	CC=clang CXX=clang++ \
+	cmake .. -DDEVELOPER_MODE=1 \
+		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+		-DTRACE_TESTS=1 \
+		-DCOVERAGE=${COVERAGE} \
+		-DCXX_STANDARD=20 \
+		-DTESTS_USE_VALGRIND=0 \
+		-DTESTS_LONG=${TESTS_LONG} \
+		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
+		-DTEST_DIR=${TEST_DIR} \
+		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
+		-DTESTS_COMPATIBILITY=1 \
+		-DTESTS_CONCURRENT_GDB=1 \
+		-DUSE_ASAN=${TESTS_USAN} \
+		-DUSE_UBSAN=${TESTS_UBSAN}
+
+	make -j$(nproc)
+	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}
+	if [ "${COVERAGE}" == "1" ]; then
+		upload_codecov tests_clang_release_cpp20
+	fi
+
+	workspace_cleanup
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
+
+###############################################################################
 # BUILD tests_package
 ###############################################################################
 function tests_package() {

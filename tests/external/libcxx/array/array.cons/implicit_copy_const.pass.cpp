@@ -28,50 +28,44 @@ struct NoDefault {
 
 struct Testcase1 {
 	typedef double T;
-	typedef pmem::obj::array<T, 3> C;
+	typedef pmem::obj::array<const T, 3> C;
 	C c = {{1.1, 2.2, 3.3}};
 	C c2 = c;
-	C c3, c4;
-
-	Testcase1() : c3(c), c4(std::move(c3))
-	{
-	}
 
 	void
 	run()
 	{
-		c2 = c;
+		(void)c2;
 		static_assert(std::is_copy_constructible<C>::value, "");
-		static_assert(std::is_copy_assignable<C>::value, "");
 	}
 };
 
 struct Testcase2 {
+	// const arrays of size 0 should disable the implicit copy
+	// assignment operator.
 	typedef double T;
-	typedef pmem::obj::array<T, 0> C;
+	typedef pmem::obj::array<const T, 0> C;
 	C c = {{}};
 	C c2 = c;
+
 	void
 	run()
 	{
-		c2 = c;
+		(void)c2;
 		static_assert(std::is_copy_constructible<C>::value, "");
-		static_assert(std::is_copy_assignable<C>::value, "");
 	}
 };
 
 struct Testcase3 {
 	typedef NoDefault T;
-	typedef pmem::obj::array<T, 0> C;
+	typedef pmem::obj::array<const T, 0> C;
 	C c = {{}};
 	C c2 = c;
-
 	void
 	run()
 	{
-		c2 = c;
+		((void)c2);
 		static_assert(std::is_copy_constructible<C>::value, "");
-		static_assert(std::is_copy_assignable<C>::value, "");
 	}
 };
 

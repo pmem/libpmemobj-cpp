@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 /**
  * Helper classes that represent C++ concepts
@@ -357,7 +357,7 @@ struct CompoundType {
 	}
 
 	bool
-	operator==(const CompoundType &rhs)
+	operator==(const CompoundType &rhs) const
 	{
 		return counter == rhs.counter;
 	}

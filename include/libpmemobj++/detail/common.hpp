@@ -159,6 +159,17 @@ static constexpr size_t CACHELINE_SIZE = 128ULL;
 #error unable to recognize architecture at compile time
 #endif
 
+template <class T1 /* in case of ENOMEM */, class T2 /* otherwise */>
+void
+throw_when_errno(std::string exception_msg)
+{
+	if (errno == ENOMEM) {
+		throw T1(exception_msg).with_pmemobj_errormsg();
+	} else {
+		throw T2(exception_msg).with_pmemobj_errormsg();
+	}
+}
+
 /*
  * Conditionally add 'count' objects to a transaction.
  *
@@ -186,14 +197,9 @@ conditional_add_to_tx(const T *that, std::size_t count = 1, uint64_t flags = 0)
 		return;
 
 	if (pmemobj_tx_xadd_range_direct(that, sizeof(*that) * count, flags)) {
-		if (errno == ENOMEM)
-			throw pmem::transaction_out_of_memory(
-				"Could not add object(s) to the transaction.")
-				.with_pmemobj_errormsg();
-		else
-			throw pmem::transaction_error(
-				"Could not add object(s) to the transaction.")
-				.with_pmemobj_errormsg();
+		throw_when_errno<pmem::transaction_out_of_memory,
+				 pmem::transaction_error>(
+			"Could not add object(s) to the transaction.");
 	}
 }
 

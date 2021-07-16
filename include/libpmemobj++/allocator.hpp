@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -250,17 +250,11 @@ public:
 					       detail::type_num<value_type>());
 
 		if (ptr == nullptr) {
-			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
-			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
-			}
+			pmem::detail::throw_when_errno<
+				pmem::transaction_out_of_memory,
+				pmem::transaction_alloc_error>(
+				"Failed to allocate persistent memory object.");
 		}
-
 		return ptr;
 	}
 
@@ -364,15 +358,10 @@ public:
 		pointer ptr = pmemobj_tx_alloc(1 /* void size */ * cnt, 0);
 
 		if (ptr == nullptr) {
-			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
-			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
-			}
+			pmem::detail::throw_when_errno<
+				pmem::transaction_out_of_memory,
+				pmem::transaction_alloc_error>(
+				"Failed to allocate persistent memory object.");
 		}
 
 		return ptr;

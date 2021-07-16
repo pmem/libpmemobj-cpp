@@ -99,7 +99,7 @@ endmacro()
 # instead.
 # ${name} must be unique.
 function(add_cppstyle name)
-	if(NOT CLANG_FORMAT)
+	if(NOT CLANG_FORMAT AND NOT (CLANG_FORMAT_VERSION VERSION_EQUAL CLANG_FORMAT_REQUIRED))
 		return()
 	endif()
 

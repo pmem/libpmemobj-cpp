@@ -1,91 +1,91 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2020-2021, Intel Corporation */
 
+#include <functional>
+#include <libpmemobj.h>
+#include <random>
+
 #include "transaction_helpers.hpp"
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/inline_string.hpp>
 #include <libpmemobj++/experimental/radix_tree.hpp>
 
-#include <functional>
-
-#include <libpmemobj.h>
+static std::mt19937_64 generator;
 
 namespace nvobj = pmem::obj;
 namespace nvobjex = pmem::obj::experimental;
 
-using container_int =
+using cntr_int =
 	nvobjex::radix_tree<nvobjex::inline_string, nvobj::p<unsigned>>;
-using container_string =
+using cntr_string =
 	nvobjex::radix_tree<nvobjex::inline_string, nvobjex::inline_string>;
 
-using container_int_int =
-	nvobjex::radix_tree<unsigned, nvobj::p<unsigned>,
-			    nvobjex::bytes_view<unsigned>, false>;
-using container_int_string =
-	nvobjex::radix_tree<unsigned, nvobjex::inline_string>;
+using cntr_int_int = nvobjex::radix_tree<unsigned, nvobj::p<unsigned>,
+					 nvobjex::bytes_view<unsigned>, false>;
+using cntr_int_string = nvobjex::radix_tree<unsigned, nvobjex::inline_string>;
 
-using container_inline_s_wchart =
+using cntr_inline_s_wchart =
 	nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>,
 			    nvobj::p<unsigned>>;
-using container_inline_s_wchart_wchart =
+using cntr_inline_s_wchart_wchart =
 	nvobjex::radix_tree<nvobjex::basic_inline_string<wchar_t>,
 			    nvobjex::basic_inline_string<wchar_t>>;
-using container_inline_s_u8t =
+using cntr_inline_s_u8t =
 	nvobjex::radix_tree<nvobjex::basic_inline_string<uint8_t>,
 			    nvobjex::basic_inline_string<uint8_t>>;
 
-using container_int_mt =
+using cntr_int_mt =
 	nvobjex::radix_tree<nvobjex::inline_string, nvobj::p<unsigned>,
 			    nvobjex::bytes_view<nvobjex::inline_string>, true>;
-using container_string_mt =
+using cntr_string_mt =
 	nvobjex::radix_tree<nvobjex::inline_string, nvobjex::inline_string,
 			    nvobjex::bytes_view<nvobjex::inline_string>, true>;
 
-using container_int_int_mt =
+using cntr_int_int_mt =
 	nvobjex::radix_tree<unsigned, nvobj::p<unsigned>,
 			    nvobjex::bytes_view<unsigned>, true>;
-using container_int_string_mt =
+using cntr_int_string_mt =
 	nvobjex::radix_tree<unsigned, nvobjex::inline_string,
 			    nvobjex::bytes_view<unsigned>, true>;
 
-using container_inline_s_wchart_mt = nvobjex::radix_tree<
+using cntr_inline_s_wchart_mt = nvobjex::radix_tree<
 	nvobjex::basic_inline_string<wchar_t>, nvobj::p<unsigned>,
 	nvobjex::bytes_view<nvobjex::basic_inline_string<wchar_t>>, true>;
-using container_inline_s_wchart_wchart_mt = nvobjex::radix_tree<
+using cntr_inline_s_wchart_wchart_mt = nvobjex::radix_tree<
 	nvobjex::basic_inline_string<wchar_t>,
 	nvobjex::basic_inline_string<wchar_t>,
 	nvobjex::bytes_view<nvobjex::basic_inline_string<wchar_t>>, true>;
-using container_inline_s_u8t_mt = nvobjex::radix_tree<
+using cntr_inline_s_u8t_mt = nvobjex::radix_tree<
 	nvobjex::basic_inline_string<uint8_t>,
 	nvobjex::basic_inline_string<uint8_t>,
 	nvobjex::bytes_view<nvobjex::basic_inline_string<uint8_t>>, true>;
 
 struct root {
-	nvobj::persistent_ptr<container_int> radix_int;
-	nvobj::persistent_ptr<container_string> radix_str;
+	nvobj::persistent_ptr<cntr_int> radix_int;
+	nvobj::persistent_ptr<cntr_string> radix_str;
 
-	nvobj::persistent_ptr<container_int_int> radix_int_int;
-	nvobj::persistent_ptr<container_int_string> radix_int_str;
+	nvobj::persistent_ptr<cntr_int_int> radix_int_int;
+	nvobj::persistent_ptr<cntr_int_string> radix_int_str;
 
-	nvobj::persistent_ptr<container_inline_s_wchart> radix_inline_s_wchart;
-	nvobj::persistent_ptr<container_inline_s_wchart_wchart>
+	nvobj::persistent_ptr<cntr_inline_s_wchart> radix_inline_s_wchart;
+	nvobj::persistent_ptr<cntr_inline_s_wchart_wchart>
 		radix_inline_s_wchart_wchart;
-	nvobj::persistent_ptr<container_inline_s_u8t> radix_inline_s_u8t;
+	nvobj::persistent_ptr<cntr_inline_s_u8t> radix_inline_s_u8t;
 
-	nvobj::persistent_ptr<container_int_mt> radix_int_mt;
-	nvobj::persistent_ptr<container_string_mt> radix_str_mt;
+	nvobj::persistent_ptr<cntr_int_mt> radix_int_mt;
+	nvobj::persistent_ptr<cntr_string_mt> radix_str_mt;
 
-	nvobj::persistent_ptr<container_int_int_mt> radix_int_int_mt;
-	nvobj::persistent_ptr<container_int_string_mt> radix_int_str_mt;
+	nvobj::persistent_ptr<cntr_int_int_mt> radix_int_int_mt;
+	nvobj::persistent_ptr<cntr_int_string_mt> radix_int_str_mt;
 
-	nvobj::persistent_ptr<container_inline_s_wchart_mt>
-		radix_inline_s_wchart_mt;
-	nvobj::persistent_ptr<container_inline_s_wchart_wchart_mt>
+	nvobj::persistent_ptr<cntr_inline_s_wchart_mt> radix_inline_s_wchart_mt;
+	nvobj::persistent_ptr<cntr_inline_s_wchart_wchart_mt>
 		radix_inline_s_wchart_wchart_mt;
-	nvobj::persistent_ptr<container_inline_s_u8t_mt> radix_inline_s_u8t_mt;
+	nvobj::persistent_ptr<cntr_inline_s_u8t_mt> radix_inline_s_u8t_mt;
 };
 
+/* Helper functions to access key/value of different types */
 template <typename Container,
 	  typename Enable = typename std::enable_if<
 		  std::is_same<typename Container::mapped_type,
@@ -108,9 +108,9 @@ value(unsigned v, int repeats = 1)
 {
 	using CharT = typename Container::mapped_type::value_type;
 
+	auto str = std::to_string(v);
 	auto s = std::basic_string<CharT>{};
 	for (int i = 0; i < repeats; i++) {
-		auto str = std::to_string(v);
 		s += std::basic_string<CharT>(str.begin(), str.end());
 	}
 
@@ -178,6 +178,7 @@ operator!=(pmem::obj::experimental::basic_inline_string<CharT, Traits> &lhs,
 		       .compare(rhs) != 0;
 }
 
+/* verify all elements in container, using lower_/upper_bound and find */
 template <typename Container, typename K, typename F>
 void
 verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K &&key_f,
@@ -216,6 +217,8 @@ verify_elements(nvobj::persistent_ptr<Container> ptr, unsigned count, K &&key_f,
 	}
 }
 
+/* run 1 thread with modifications (erase/write/etc.) and multiple threads with
+ * reads */
 template <typename ModifyF, typename ReadF>
 static void
 parallel_modify_read(ModifyF modifier, std::vector<ReadF> &readers,
@@ -230,16 +233,30 @@ parallel_modify_read(ModifyF modifier, std::vector<ReadF> &readers,
 	});
 }
 
+/* each test suite should initialize generator at the beginning */
+void
+init_random()
+{
+	std::random_device rd;
+	auto seed = rd();
+	std::cout << "rand seed: " << seed << std::endl;
+	generator = std::mt19937_64(seed);
+}
+
 template <typename Container>
 static void
 init_container(nvobj::pool<root> &pop, nvobj::persistent_ptr<Container> &ptr,
-	       const size_t initial_elements, const size_t value_repeats = 1)
+	       const size_t initial_elements, const size_t value_repeats = 1,
+	       bool rand_keys = false)
 {
 	nvobj::transaction::run(
 		pop, [&] { ptr = nvobj::make_persistent<Container>(); });
 
 	for (size_t i = 0; i < initial_elements; ++i) {
-		ptr->emplace(key<Container>(i),
-			     value<Container>(i, value_repeats));
+		auto k = key<Container>(i);
+		if (rand_keys) {
+			k = key<Container>(static_cast<unsigned>(generator()));
+		}
+		ptr->emplace(k, value<Container>(i, value_repeats));
 	}
 }

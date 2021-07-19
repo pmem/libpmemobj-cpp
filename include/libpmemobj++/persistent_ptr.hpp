@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2020, Intel Corporation
+ * Copyright 2015-2021, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -636,7 +636,10 @@ protected:
 	inline ptrdiff_t
 	calculate_offset() const
 	{
-		static const ptrdiff_t ptr_offset_magic = 0xDEADBEEF;
+		static const ptrdiff_t ptr_offset_magic = 0xF00000000000000;
+
+		static_assert(ptr_offset_magic % alignof(U) == 0, "");
+		static_assert(ptr_offset_magic % alignof(T) == 0, "");
 
 		U *tmp{reinterpret_cast<U *>(ptr_offset_magic)};
 		T *diff = static_cast<T *>(tmp);

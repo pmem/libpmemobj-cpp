@@ -176,8 +176,9 @@ test_erase_increment(nvobj::pool<root> &pop,
 						  it->value() == v);
 					if (it != ptr->end()) {
 						auto next = ++it;
-						UT_ASSERT(next != ptr->end());
-						UT_ASSERT(next->key() > k);
+						if (next != ptr->end())
+							UT_ASSERT(next->key() >
+								  k);
 					}
 				});
 			}

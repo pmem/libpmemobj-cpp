@@ -90,3 +90,12 @@ if [ "${CI_RUN}" == "YES" ]; then
 	sudo_password chmod 0777 ${TEST_DIR}
 	sudo_password mount -o size=2G -t tmpfs none ${TEST_DIR}
 fi || true
+
+echo "CMake version:"
+cmake --version
+
+# assign CMake's version to variable(s)  - a single number representation for easier comparison
+CMAKE_VERSION=$(cmake --version | head -n1 | grep -P -o "\d+\.\d+")
+CMAKE_VERSION_MAJOR=$(echo ${CMAKE_VERSION} | cut -d. -f1)
+CMAKE_VERSION_MINOR=$(echo ${CMAKE_VERSION} | cut -d. -f2)
+CMAKE_VERSION_NUMBER=${CMAKE_VERSION_MAJOR}${CMAKE_VERSION_MINOR}

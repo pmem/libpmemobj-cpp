@@ -36,6 +36,15 @@ test_iterators(nvobj::pool<root> &pop)
 		r->radix_str->try_emplace("a", "a");
 		r->radix_str->try_emplace("b", "b");
 	});
+	/* Checks that inline_string copy constructor throws pmem::pool_error */
+	try {
+		auto k = r->radix_str->find("ab")->key();
+		(void)k;
+		ASSERT_UNREACHABLE;
+	} catch (pmem::pool_error &) {
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
 
 	auto it = r->radix_int->find("a");
 	UT_ASSERT(nvobj::string_view(it->key()).compare(std::string("a")) == 0);

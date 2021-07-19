@@ -247,12 +247,12 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 	});
 }
 
-/* test if inline_string can be placed on dram */
+/* test if dram_inline_string can be placed on dram */
 template <typename T>
 void
 test_dram(nvobj::pool<struct root<T>> &pop)
 {
-	using string_type = nvobj::experimental::basic_inline_string<T>;
+	using string_type = nvobj::experimental::basic_dram_inline_string<T>;
 
 	constexpr size_t string_size = 20;
 	typename std::aligned_storage<sizeof(string_type) +
@@ -288,6 +288,23 @@ test_dram(nvobj::pool<struct root<T>> &pop)
 		ASSERT_UNREACHABLE;
 	}
 }
+
+template <typename T>
+void
+test_pmem()
+{
+	using string_type = nvobj::experimental::basic_inline_string<T>;
+	try {
+		constexpr size_t string_size = 20;
+		string_type s(string_size);
+		(void)s;
+		ASSERT_UNREACHABLE;
+	} catch (pmem::pool_error &) {
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
+}
+
 }
 
 template <typename T>
@@ -311,6 +328,7 @@ test(int argc, char *argv[])
 
 	test_inline_string<T>(pop);
 	test_dram<T>(pop);
+	test_pmem<T>();
 
 	pop.close();
 }

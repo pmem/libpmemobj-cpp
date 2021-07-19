@@ -214,6 +214,11 @@ function tests_gcc_release_cpp17_no_valgrind() {
 function tests_clang_release_cpp20_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 
+	if [ ${CMAKE_VERSION_NUMBER} -lt 312 ]; then
+		echo "ERROR: C++20 is supported in CMake since 3.12, installed version: ${CMAKE_VERSION}"
+		exit 1
+	fi
+
 	mkdir build && cd build
 
 	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \

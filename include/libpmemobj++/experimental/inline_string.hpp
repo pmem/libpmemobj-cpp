@@ -61,7 +61,7 @@ public:
 	const_pointer data() const noexcept;
 	const_pointer cdata() const noexcept;
 
-	int compare(const basic_inline_string_base &rhs) const noexcept;
+	int compare(basic_string_view<CharT, Traits> rhs) const noexcept;
 
 	reference operator[](size_type p);
 	const_reference operator[](size_type p) const noexcept;
@@ -342,7 +342,7 @@ basic_inline_string_base<CharT, Traits>::cdata() const noexcept
 template <typename CharT, typename Traits>
 int
 basic_inline_string_base<CharT, Traits>::compare(
-	const basic_inline_string_base &rhs) const noexcept
+	basic_string_view<CharT, Traits> rhs) const noexcept
 {
 	return basic_string_view<CharT, Traits>(data(), size()).compare(rhs);
 }

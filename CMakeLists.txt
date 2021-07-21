@@ -10,8 +10,9 @@ set(LIBPMEMOBJCPP_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 ## Set required and useful variables
 # ----------------------------------------------------------------- #
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 12)
+set(VERSION_MINOR 13)
 set(VERSION_PATCH 0)
+set(VERSION_PRERELEASE rc1)
 
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 if(VERSION_PATCH GREATER 0)

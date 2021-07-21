@@ -1,17 +1,25 @@
-XXX XXX XXX Igor Chorążewicz <igor.chorazewicz@intel.com>
+Wed Jul 21 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>
 
-	* Version 1.13
+	* Version 1.13.0-rc1
+
+	This release introduces new concurrent data structure - MPSC queue and
+	implements limited concurrency support for radix tree.
 
 	New features:
-	-
+	- Introduce experimental MPSC queue (pmem::obj::experimental::mpsc_queue)
+	- Implement support for multi-reader single-writer concurrency in
+		pmem::obj::experimental::radix_tree
+	- Introduce basic_dram_inline_string which can be kept both on pmem and
+		dram
 
 	Bug fixes:
-	-
+	- Fix radix_tree leaf layout to ensure proper key/value alignment
 
 	Other changes:
-	- Switched default CMake's build type from "Debug" to "RelWithDebInfo"
+	- Switch default CMake's build type from "Debug" to "RelWithDebInfo"
 		it's relevant for a GitHub users (who may e.g. run some benchmarks)
-	-
+	- Add std::initializer_list constructor to pmem::obj::array to mimic
+		aggregate initialization post C++20
 
 Tue Jul 06 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 

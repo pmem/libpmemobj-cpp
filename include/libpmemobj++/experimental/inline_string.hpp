@@ -545,6 +545,23 @@ struct total_sizeof<basic_inline_string<CharT, Traits>> {
 			(s.size() + 1 /* '\0' */) * sizeof(CharT);
 	}
 };
+
+/**
+ * A helper trait which calculates required memory capacity (in bytes) for a
+ * type.
+ *
+ * Inline_string requires capacity of sizeof(basic_dram_inline_string<CharT>) +
+ * size of the data itself.
+ */
+template <typename CharT, typename Traits>
+struct total_sizeof<basic_dram_inline_string<CharT, Traits>> {
+	static size_t
+	value(const basic_string_view<CharT, Traits> &s)
+	{
+		return sizeof(basic_dram_inline_string<CharT, Traits>) +
+			(s.size() + 1 /* '\0' */) * sizeof(CharT);
+	}
+};
 } /* namespace experimental */
 } /* namespace obj */
 

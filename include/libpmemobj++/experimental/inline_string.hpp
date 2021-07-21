@@ -124,6 +124,14 @@ public:
 	    : basic_inline_string_base<CharT, Traits>(rhs)
 	{
 	}
+
+	basic_dram_inline_string &
+	operator=(const basic_dram_inline_string &rhs)
+	{
+		return static_cast<basic_dram_inline_string &>(this->operator=(
+			static_cast<const basic_inline_string_base<
+				CharT, Traits> &>(rhs)));
+	}
 };
 
 /**
@@ -177,6 +185,14 @@ public:
 	basic_inline_string(const basic_inline_string &rhs)
 	    : basic_inline_string_base<CharT, Traits>(check_forward(rhs))
 	{
+	}
+
+	basic_inline_string &
+	operator=(const basic_inline_string &rhs)
+	{
+		return static_cast<basic_inline_string &>(this->operator=(
+			static_cast<const basic_inline_string_base<
+				CharT, Traits> &>(rhs)));
 	}
 
 private:

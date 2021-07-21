@@ -296,6 +296,7 @@ test_pmem()
 	using string_type = nvobj::experimental::basic_inline_string<T>;
 	try {
 		constexpr size_t string_size = 20;
+
 		typename std::aligned_storage<
 			sizeof(string_type) + (string_size + 1) * sizeof(T),
 			alignof(string_type)>::type buffer;
@@ -308,6 +309,18 @@ test_pmem()
 	}
 }
 
+template <typename T, typename StringType>
+void
+test_traits()
+{
+	constexpr size_t string_size = 20;
+
+	UT_ASSERTeq(nvobj::experimental::total_sizeof<StringType>::value(
+			    std::basic_string<T>(string_size, T('x'))),
+		    sizeof(StringType) + (string_size + 1) * sizeof(T));
+
+	UT_ASSERTeq(pmem::detail::is_inline_string<StringType>::value, true);
+}
 }
 
 template <typename T>
@@ -332,6 +345,8 @@ test(int argc, char *argv[])
 	test_inline_string<T>(pop);
 	test_dram<T>(pop);
 	test_pmem<T>();
+	test_traits<T, nvobjex::basic_inline_string<T>>();
+	test_traits<T, nvobjex::basic_dram_inline_string<T>>();
 
 	pop.close();
 }

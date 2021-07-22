@@ -110,8 +110,6 @@ public:
 	constexpr pa_self_relative_ptr(std::nullptr_t) noexcept
 	    : self_relative_ptr_base()
 	{
-		//		std::cerr << "pa_self_relative_ptr 1" <<
-		//std::endl;
 	}
 	/**
 	 * Volatile pointer constructor.
@@ -122,14 +120,9 @@ public:
 			     bool flushNeeded = false) noexcept
 	    : base_type(self_offset(ptr))
 	{
-		//		std::cerr << "pa_self_relative_ptr 21:
-		//flushNeeded=" << flushNeeded << " : offset = " << std::hex <<
-		//this->offset << std::endl;
 		intptr_t mask = (flushNeeded == true);
 		--mask;
 		this->offset &= (mask | kFlushNeeded);
-		//		std::cerr << "pa_self_relative_ptr 22" << ":
-		//offset = " << std::hex << this->offset << std::endl;
 	}
 
 	/**
@@ -139,14 +132,9 @@ public:
 			     bool flushNeeded = false) noexcept
 	    : base_type(self_offset(ptr.get()))
 	{
-		//		std::cerr << "pa_self_relative_ptr 31:
-		//flushNeeded=" << flushNeeded << " : offset = " << std::hex <<
-		//this->offset << std::endl;
 		intptr_t mask = (flushNeeded == true);
 		--mask;
 		this->offset &= (mask | kFlushNeeded);
-		//		std::cerr << "pa_self_relative_ptr 32" << ":
-		//offset = " << std::hex << this->offset << std::endl;
 	}
 
 	/**
@@ -160,14 +148,9 @@ public:
 	    : base_type(self_offset(
 		      static_cast<element_type *>(pmemobj_direct(oid))))
 	{
-		//		std::cerr << "pa_self_relative_ptr 41:
-		//flushNeeded=" << flushNeeded << " : offset = " << std::hex <<
-		//this->offset << std::endl;
 		intptr_t mask = (flushNeeded == true);
 		--mask;
 		this->offset &= (mask | kFlushNeeded);
-		//		std::cerr << "pa_self_relative_ptr 42" << ":
-		//offset = " << std::hex << this->offset << std::endl;
 	}
 
 	/**
@@ -176,8 +159,6 @@ public:
 	pa_self_relative_ptr(const pa_self_relative_ptr &ptr) noexcept
 	    : base_type(ptr)
 	{
-		//		std::cerr << "pa_self_relative_ptr copy 1" << ":
-		//offset = " << std::hex << this->offset << std::endl;
 		this->offset &= ptr.flush_set_mask();
 	}
 
@@ -197,8 +178,6 @@ public:
 	pa_self_relative_ptr(pa_self_relative_ptr<U> const &r) noexcept
 	    : base_type(self_offset(static_cast<T *>(r.get())))
 	{
-		//		std::cerr << "pa_self_relative_ptr copy 2" << ":
-		//offset = " << std::hex << this->offset << std::endl;
 		this->offset &= r.flush_set_mask();
 	}
 
@@ -549,34 +528,6 @@ protected:
 		return base_type::offset_to_pointer(
 			(other_offset | ~kFlushNeeded) & mask);
 	}
-
-	//	/**
-	//	 * Conversion self_relative_ptr_base to offset from itself
-	//	 */
-	//	difference_type
-	//	pointer_to_offset(const pa_self_relative_ptr &ptr) const
-	//noexcept
-	//	{
-	//		/*
-	//		This version without branches is vectorization-friendly.
-	//		mask = is_null() should not create a branch in the code.
-	//		In this line, we just assign 0 or 1 to the mask
-	//variable.
-	//
-	//		This code is equal:
-	//		return ptr.is_null()
-	//			? nullptr_offset
-	//			: ptr.offset + this->distance_between_self(ptr);
-	//		*/
-	//		uintptr_t mask = ptr.is_null();
-	//		--mask;
-	//		difference_type distance_between_self =
-	//			reinterpret_cast<const_byte_ptr_type>(&ptr) -
-	//			reinterpret_cast<const_byte_ptr_type>(this);
-	//		distance_between_self &=
-	//			reinterpret_cast<difference_type &>(mask);
-	//		return ptr.offset + distance_between_self;
-	//	}
 
 private:
 	static constexpr difference_type nullptr_offset = 0;

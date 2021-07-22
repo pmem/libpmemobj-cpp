@@ -154,32 +154,34 @@ public:
 	 * Can`t be called concurrently
 	 * Should be called inside a transaction
 	 */
-	//	void
-	//	set_next_tx(size_type level, node_pointer next)
-	//	{
-	//		assert(level < height());
-	//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-	//		auto &node = get_next(level);
-	//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
-	//		node.store(next, std::memory_order_release);
-	//	}
-	//
-	//	void
-	//	set_next(obj::pool_base pop, size_type level, node_pointer next)
-	//	{
-	//		assert(level < height());
-	//		auto &node = get_next(level);
-	//		node.store(next, std::memory_order_release);
-	//		pop.persist(&node, sizeof(node));
-	//	}
+	/*
+	void
+	set_next_tx(size_type level, node_pointer next)
+	{
+		assert(level < height());
+		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+		auto &node = get_next(level);
+		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
+		node.store(next, std::memory_order_release);
+	}
+
+	void
+	set_next(obj::pool_base pop, size_type level, node_pointer next)
+	{
+		assert(level < height());
+		auto &node = get_next(level);
+		node.store(next, std::memory_order_release);
+		pop.persist(&node, sizeof(node));
+	}*/
 
 	void
 	set_next(size_type level, node_pointer next)
 	{
 		assert(level < height());
-		//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+		/* assert(pmemobj_tx_stage() == TX_STAGE_WORK); */
 		auto &node = get_next(level);
-		//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
+		/* obj::flat_transaction::snapshot<atomic_node_pointer>
+		 * (&node); */
 		node.store(node_pointer{next.get(), true},
 			   std::memory_order_release);
 	}
@@ -195,17 +197,17 @@ public:
 				       std::memory_order_relaxed);
 		}
 	}
+	/*
+	void
+	set_nexts(obj::pool_base pop, const node_pointer *new_nexts,
+		  size_type h)
+	{
+		set_nexts(new_nexts, h);
 
-	//	void
-	//	set_nexts(obj::pool_base pop, const node_pointer *new_nexts,
-	//		  size_type h)
-	//	{
-	//		set_nexts(new_nexts, h);
-	//
-	//		auto *nexts = get_nexts();
-	//		pop.persist(nexts, sizeof(nexts[0]) * h);
-	//	}
-
+		auto *nexts = get_nexts();
+		pop.persist(nexts, sizeof(nexts[0]) * h);
+	}
+	*/
 	/** @return number of layers */
 	size_type
 	height() const
@@ -1908,8 +1910,6 @@ public:
 
 			node_ptr head = dummy_head.get();
 			for (size_type i = 0; i < head->height(); ++i) {
-				//				head->set_next_tx(i,
-				//nullptr);
 				head->set_next(i, nullptr);
 			}
 
@@ -2443,9 +2443,6 @@ private:
 				-> persistent_node_ptr & {
 				assert(tls_entry.insert_stage == not_started);
 				assert(tls_entry.ptr != nullptr);
-
-				//				n->set_nexts(pop,
-				//next_nodes.data(), height);
 				n->set_nexts(next_nodes.data(), height);
 
 				tls_entry.insert_stage = in_progress;
@@ -2627,8 +2624,6 @@ private:
 			       next_nodes[level]);
 			assert(prev_nodes[level]->next(level) ==
 			       n->next(level));
-			//			prev_nodes[level]->set_next(pop,
-			//level, new_node);
 			prev_nodes[level]->set_next(level, new_node);
 		}
 
@@ -2842,8 +2837,6 @@ private:
 		     ++level) {
 			assert(prev_nodes[level]->height() > level);
 			assert(next_nodes[level].get() == erase_node);
-			//			prev_nodes[level]->set_next_tx(level,
-			//						       erase_node->next(level));
 			prev_nodes[level]->set_next(level,
 						    erase_node->next(level));
 		}
@@ -3133,8 +3126,6 @@ private:
 				/* Otherwise, node already linked on
 				 * this layer */
 				assert(n->next(level) == next_nodes[level]);
-				//				prev_nodes[level]->set_next(pop,
-				//level, node);
 				prev_nodes[level]->set_next(level, node);
 			}
 		}

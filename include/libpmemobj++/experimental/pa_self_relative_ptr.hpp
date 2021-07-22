@@ -242,16 +242,8 @@ public:
 	void *
 	to_void_pointer() const noexcept
 	{
-		//		std::cerr << "to_void_pointer 11: flushNeeded=" <<
-		//flush_needed() << " : offset = " << std::hex << this->offset
-		//<< std::endl; 		intptr_t mask = is_null() == true;
-		//		--mask;
-		//		std::cerr << "to_void_pointer 12: mask=" <<
-		//std::hex << mask << std::endl; 		std::cerr << "to_void_pointer
-		//13: ptr=" << std::hex << ((this->offset | ~kFlushNeeded) &
-		//mask) << std::endl;
 		return this->offset_to_pointer(
-			this->offset); // | ~kFlushNeeded) & mask);
+			this->offset);
 	}
 
 	/**
@@ -596,49 +588,6 @@ private:
 	template <typename P>
 	friend class pa_self_relative_accessor;
 };
-//
-///**
-// * Static class accessor to self_relative_ptr_base
-// */
-// template <typename P>
-// class pa_self_relative_accessor {
-// public:
-//	using access_type = pmem::detail::self_relative_ptr_base_impl<P>;
-//	using difference_type = typename access_type::difference_type;
-//
-//	template <typename PointerType>
-//	static difference_type
-//	pointer_to_offset(const access_type &obj, PointerType *ptr, bool
-//flush_needed)
-//	{
-//		intptr_t mask = (flush_needed == true);
-//		--mask;
-//		return ((mask | kFlushNeeded) &
-//obj.pointer_to_offset(static_cast<void *>(ptr)));
-//	}
-//
-//	template <typename PointerType>
-//	static PointerType *
-//	offset_to_pointer(difference_type offset, const access_type &obj)
-//	{
-//		intptr_t mask = (offset == access_type::nullptr_offset);
-//		--mask;
-//		auto ptr = obj.offset_to_pointer((offset | ~kFlushNeeded) &
-//mask); 		return static_cast<PointerType *>(ptr);
-//	}
-//
-//	static P &
-//	get_offset(access_type &ptr)
-//	{
-//		return ptr.offset;
-//	}
-//
-//	static const P &
-//	get_offset(const access_type &ptr)
-//	{
-//		return ptr.offset;
-//	}
-//};
 
 /**
  * Swaps two pa_self_relative_ptr objects of the same type.

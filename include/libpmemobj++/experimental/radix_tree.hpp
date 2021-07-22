@@ -3646,6 +3646,7 @@ radix_tree<Key, Value, BytesView, MtMode>::get_node(
 
 /**
  * Non-member swap.
+ * @relates radix_tree
  */
 template <typename Key, typename Value, typename BytesView, bool MtMode>
 void

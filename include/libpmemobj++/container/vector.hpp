@@ -252,7 +252,9 @@ private:
 	persistent_ptr<T[]> _data;
 };
 
-/* Non-member swap */
+/* Non-member swap
+ * @relates vector
+ */
 template <typename T>
 void swap(vector<T> &lhs, vector<T> &rhs);
 
@@ -2501,6 +2503,7 @@ vector<T>::add_data_to_tx(size_type idx_first, size_type num)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2520,6 +2523,7 @@ operator==(const vector<T> &lhs, const vector<T> &rhs)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2537,6 +2541,7 @@ operator!=(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2555,6 +2560,7 @@ operator<(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2572,6 +2578,7 @@ operator<=(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
+ * @relates vector
  */
 
 template <typename T>
@@ -2590,6 +2597,7 @@ operator>(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2608,6 +2616,7 @@ operator>=(const vector<T> &lhs, const vector<T> &rhs)
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2627,6 +2636,7 @@ operator==(const vector<T> &lhs, const std::vector<T> &rhs)
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2644,6 +2654,7 @@ operator!=(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2662,6 +2673,7 @@ operator<(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2680,8 +2692,8 @@ operator<=(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
+ * @relates vector
  */
-
 template <typename T>
 bool
 operator>(const vector<T> &lhs, const std::vector<T> &rhs)
@@ -2698,6 +2710,7 @@ operator>(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2716,6 +2729,7 @@ operator>=(const vector<T> &lhs, const std::vector<T> &rhs)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2734,6 +2748,7 @@ operator==(const std::vector<T> &lhs, const vector<T> &rhs)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2751,6 +2766,7 @@ operator!=(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2768,6 +2784,7 @@ operator<(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2785,6 +2802,7 @@ operator<=(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
+ * @relates vector
  */
 
 template <typename T>
@@ -2803,6 +2821,7 @@ operator>(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2816,6 +2835,7 @@ operator>=(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @param[in] lhs first vector
  * @param[in] rhs second vector
+ * @relates vector
  */
 template <typename T>
 void

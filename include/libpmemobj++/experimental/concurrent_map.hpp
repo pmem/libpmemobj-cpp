@@ -152,7 +152,9 @@ public:
 	}
 };
 
-/** Non-member swap */
+/** Non-member swap
+ * @relates concurrent_map
+ */
 template <typename Key, typename Value, typename Comp, typename Allocator>
 void
 swap(concurrent_map<Key, Value, Comp, Allocator> &lhs,

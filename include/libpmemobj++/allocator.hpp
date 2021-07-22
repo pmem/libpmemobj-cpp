@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -414,6 +414,7 @@ public:
  * Determines if memory from another allocator can be deallocated from this one.
  *
  * @return true.
+ * @relates standard_alloc_policy
  */
 template <typename T, typename T2>
 inline bool
@@ -426,6 +427,7 @@ operator==(standard_alloc_policy<T> const &, standard_alloc_policy<T2> const &)
  * Determines if memory from another allocator can be deallocated from this one.
  *
  * @return false.
+ * @relates standard_alloc_policy
  */
 template <typename T, typename OtherAllocator>
 inline bool
@@ -512,6 +514,7 @@ public:
  *
  * @return true if allocators are equivalent in terms of deallocation, false
  * otherwise.
+ * @relates allocator
  */
 template <typename T, typename P, typename Tr, typename T2, typename P2,
 	  typename Tr2>
@@ -530,6 +533,7 @@ operator==(const allocator<T, P, Tr> &lhs, const allocator<T2, P2, Tr2> &rhs)
  *
  * @return false if allocators are equivalent in terms of deallocation, true
  * otherwise.
+ * @relates allocator
  */
 template <typename T, typename P, typename Tr, typename OtherAllocator>
 inline bool

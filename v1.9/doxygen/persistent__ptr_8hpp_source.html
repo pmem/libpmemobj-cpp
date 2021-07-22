@@ -72,7 +72,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="persistent__ptr_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2015-2020, Intel Corporation</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2015-2021, Intel Corporation</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Redistribution and use in source and binary forms, with or without</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * modification, are permitted provided that the following conditions</span></div>
@@ -476,208 +476,211 @@ $(function() {
 <div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;    <span class="keyword">inline</span> ptrdiff_t</div>
 <div class="line"><a name="l00637"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1persistent__ptr.html#acd0cdb42d48a60e158e75638896b8687">  637</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html#acd0cdb42d48a60e158e75638896b8687">calculate_offset</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> ptrdiff_t ptr_offset_magic = 0xDEADBEEF;</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> ptrdiff_t ptr_offset_magic = 0xF00000000000000;</div>
 <div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160; </div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        U *tmp{<span class="keyword">reinterpret_cast&lt;</span>U *<span class="keyword">&gt;</span>(ptr_offset_magic)};</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;        T *diff = <span class="keyword">static_cast&lt;</span>T *<span class="keyword">&gt;</span>(tmp);</div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(diff) -</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(tmp);</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;    }</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;};</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160; </div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00656"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a28d6e952280db13f57d69be1b816d21c">  656</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#af36a1b526d5d5c81d35f02557c3b8e24">swap</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> &amp;a, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> &amp;b)</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;{</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;    a.swap(b);</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;}</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160; </div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00668"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a3c125ea043799ff6da2d44199cae94fc">  668</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;{</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;    <span class="keywordflow">return</span> OID_EQUALS(lhs.raw(), rhs.raw());</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;}</div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160; </div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00678"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a13f75da0b0c0f33e70bf063d076ca795">  678</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;{</div>
-<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
-<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;}</div>
-<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160; </div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00688"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a21d3883f8baf1ad981545d1fec7583f8">  688</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;{</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    <span class="keywordflow">return</span> lhs.get() == <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;}</div>
-<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160; </div>
-<div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00698"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a4bde8e9553ad80ff4dc0c4d57895f7eb">  698</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs) noexcept</div>
-<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;{</div>
-<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;    <span class="keywordflow">return</span> lhs.get() == <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00701"></a><span class="lineno">  701</span>&#160;}</div>
-<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160; </div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00708"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a1159c38406f6f82f34f7f5368e0c75eb">  708</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;{</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    <span class="keywordflow">return</span> lhs.get() != <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;}</div>
-<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160; </div>
-<div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00718"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a22a84b043623659a1a5d2b141613cdc6">  718</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs) noexcept</div>
-<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;{</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    <span class="keywordflow">return</span> lhs.get() != <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;}</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160; </div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
-<div class="line"><a name="l00731"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a49fd05c4944d079ea05dd0cb5b203b75">  731</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;{</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    <span class="keywordflow">if</span> (lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo)</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;        <span class="keywordflow">return</span> lhs.raw().off &lt; rhs.raw().off;</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;        <span class="keywordflow">return</span> lhs.raw().pool_uuid_lo &lt; rhs.raw().pool_uuid_lo;</div>
-<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;}</div>
-<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160; </div>
-<div class="line"><a name="l00745"></a><span class="lineno">  745</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
-<div class="line"><a name="l00746"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a48591ec64f0a18f0f81c9c7c79b265a3">  746</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00747"></a><span class="lineno">  747</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;{</div>
-<div class="line"><a name="l00749"></a><span class="lineno">  749</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; lhs);</div>
-<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;}</div>
-<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160; </div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00759"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a4b2a880e3da360c959414e7ea9268456">  759</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;{</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    <span class="keywordflow">return</span> (rhs &lt; lhs);</div>
-<div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;}</div>
-<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160; </div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00771"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a696298dbdd381bae03541da80cbe485d">  771</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;{</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;}</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160; </div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;<span class="comment">/* nullptr comparisons */</span></div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160; </div>
-<div class="line"><a name="l00781"></a><span class="lineno">  781</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00782"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a27abfc79d802449de289cfe2e88361c1">  782</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00783"></a><span class="lineno">  783</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
-<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;{</div>
-<div class="line"><a name="l00785"></a><span class="lineno">  785</span>&#160;    <span class="keywordflow">return</span> std::less&lt;typename persistent_ptr&lt;T&gt;::element_type *&gt;()(</div>
-<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;        lhs.get(), <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;}</div>
-<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160; </div>
-<div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00793"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a56b647ea69db1328f31e62154ce1d6fd">  793</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;{</div>
-<div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160;    <span class="keywordflow">return</span> std::less&lt;typename persistent_ptr&lt;T&gt;::element_type *&gt;()(</div>
-<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;        <span class="keyword">nullptr</span>, rhs.get());</div>
-<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;}</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160; </div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00804"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a64861e21a6605629695f095bbe5c7410">  804</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;{</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;    <span class="keywordflow">return</span> !(<span class="keyword">nullptr</span> &lt; lhs);</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;}</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160; </div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00814"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a0f9acbe58254818adf7020954bef2b68">  814</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;{</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;}</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160; </div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00825"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#af8b3e9171cdf63a8b4079ed074ae5c8c">  825</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;{</div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">nullptr</span> &lt; lhs;</div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;}</div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160; </div>
-<div class="line"><a name="l00833"></a><span class="lineno">  833</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00834"></a><span class="lineno">  834</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00835"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a65e4d4e7e1e419c60fd059942ac6920b">  835</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;{</div>
-<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;    <span class="keywordflow">return</span> rhs &lt; <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00838"></a><span class="lineno">  838</span>&#160;}</div>
-<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160; </div>
-<div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00845"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#ae48fe28bf817a7128c869d7562d66b53">  845</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
-<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;{</div>
-<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; <span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;}</div>
-<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160; </div>
-<div class="line"><a name="l00853"></a><span class="lineno">  853</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00854"></a><span class="lineno">  854</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00855"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#aaa1a2388280266f43940d6d16a4a38ca">  855</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
-<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;{</div>
-<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;    <span class="keywordflow">return</span> !(<span class="keyword">nullptr</span> &lt; rhs);</div>
-<div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;}</div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160; </div>
-<div class="line"><a name="l00863"></a><span class="lineno">  863</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;<span class="keyword">inline</span> persistent_ptr&lt;T&gt;</div>
-<div class="line"><a name="l00865"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a42d20c2164aec5110f85555477b01e3b">  865</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a42d20c2164aec5110f85555477b01e3b">operator+</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::ptrdiff_t s)</div>
-<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;{</div>
-<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;    PMEMoid noid;</div>
-<div class="line"><a name="l00868"></a><span class="lineno">  868</span>&#160;    noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;</div>
-<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;    noid.off = lhs.raw().off + <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(s) * <span class="keyword">sizeof</span>(T);</div>
-<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160; </div>
-<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a>(noid);</div>
-<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;}</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        static_assert(ptr_offset_magic % <span class="keyword">alignof</span>(U) == 0, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;        static_assert(ptr_offset_magic % <span class="keyword">alignof</span>(T) == 0, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160; </div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;        U *tmp{<span class="keyword">reinterpret_cast&lt;</span>U *<span class="keyword">&gt;</span>(ptr_offset_magic)};</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;        T *diff = <span class="keyword">static_cast&lt;</span>T *<span class="keyword">&gt;</span>(tmp);</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(diff) -</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;            <span class="keyword">reinterpret_cast&lt;</span>ptrdiff_t<span class="keyword">&gt;</span>(tmp);</div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;    }</div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;};</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160; </div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l00659"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a28d6e952280db13f57d69be1b816d21c">  659</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#af36a1b526d5d5c81d35f02557c3b8e24">swap</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> &amp;a, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> &amp;b)</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;{</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;    a.swap(b);</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;}</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160; </div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00671"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a3c125ea043799ff6da2d44199cae94fc">  671</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;{</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;    <span class="keywordflow">return</span> OID_EQUALS(lhs.raw(), rhs.raw());</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;}</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160; </div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00681"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a13f75da0b0c0f33e70bf063d076ca795">  681</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;{</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;    <span class="keywordflow">return</span> !(lhs == rhs);</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;}</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160; </div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00691"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a21d3883f8baf1ad981545d1fec7583f8">  691</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
+<div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;{</div>
+<div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="keywordflow">return</span> lhs.get() == <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;}</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160; </div>
+<div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00700"></a><span class="lineno">  700</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00701"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a4bde8e9553ad80ff4dc0c4d57895f7eb">  701</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad052dc252e327efbe5f17be6e840935d">operator==</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs) noexcept</div>
+<div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;{</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;    <span class="keywordflow">return</span> lhs.get() == <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;}</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160; </div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00711"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a1159c38406f6f82f34f7f5368e0c75eb">  711</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
+<div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;{</div>
+<div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;    <span class="keywordflow">return</span> lhs.get() != <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;}</div>
+<div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160; </div>
+<div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00721"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a22a84b043623659a1a5d2b141613cdc6">  721</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">operator!=</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs) noexcept</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;{</div>
+<div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;    <span class="keywordflow">return</span> lhs.get() != <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;}</div>
+<div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160; </div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
+<div class="line"><a name="l00734"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a49fd05c4944d079ea05dd0cb5b203b75">  734</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;{</div>
+<div class="line"><a name="l00737"></a><span class="lineno">  737</span>&#160;    <span class="keywordflow">if</span> (lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo)</div>
+<div class="line"><a name="l00738"></a><span class="lineno">  738</span>&#160;        <span class="keywordflow">return</span> lhs.raw().off &lt; rhs.raw().off;</div>
+<div class="line"><a name="l00739"></a><span class="lineno">  739</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;        <span class="keywordflow">return</span> lhs.raw().pool_uuid_lo &lt; rhs.raw().pool_uuid_lo;</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;}</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160; </div>
+<div class="line"><a name="l00748"></a><span class="lineno">  748</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
+<div class="line"><a name="l00749"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a48591ec64f0a18f0f81c9c7c79b265a3">  749</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;{</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; lhs);</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;}</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160; </div>
+<div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00762"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a4b2a880e3da360c959414e7ea9268456">  762</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;{</div>
+<div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;    <span class="keywordflow">return</span> (rhs &lt; lhs);</div>
+<div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;}</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160; </div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y&gt;</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00774"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a696298dbdd381bae03541da80cbe485d">  774</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;{</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; rhs);</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;}</div>
+<div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160; </div>
+<div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;<span class="comment">/* nullptr comparisons */</span></div>
+<div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160; </div>
+<div class="line"><a name="l00784"></a><span class="lineno">  784</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00785"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a27abfc79d802449de289cfe2e88361c1">  785</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00786"></a><span class="lineno">  786</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
+<div class="line"><a name="l00787"></a><span class="lineno">  787</span>&#160;{</div>
+<div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;    <span class="keywordflow">return</span> std::less&lt;typename persistent_ptr&lt;T&gt;::element_type *&gt;()(</div>
+<div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;        lhs.get(), <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;}</div>
+<div class="line"><a name="l00791"></a><span class="lineno">  791</span>&#160; </div>
+<div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00796"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a56b647ea69db1328f31e62154ce1d6fd">  796</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a32224cd97024c3031b0751af854ddd9c">operator&lt;</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;{</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    <span class="keywordflow">return</span> std::less&lt;typename persistent_ptr&lt;T&gt;::element_type *&gt;()(</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;        <span class="keyword">nullptr</span>, rhs.get());</div>
+<div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;}</div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160; </div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00807"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a64861e21a6605629695f095bbe5c7410">  807</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;{</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;    <span class="keywordflow">return</span> !(<span class="keyword">nullptr</span> &lt; lhs);</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;}</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160; </div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00817"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a0f9acbe58254818adf7020954bef2b68">  817</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a0d2c5f33d7ca7366bc34eef6d4a22039">operator&lt;=</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;{</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    <span class="keywordflow">return</span> !(rhs &lt; <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;}</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160; </div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00828"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#af8b3e9171cdf63a8b4079ed074ae5c8c">  828</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;{</div>
+<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">nullptr</span> &lt; lhs;</div>
+<div class="line"><a name="l00831"></a><span class="lineno">  831</span>&#160;}</div>
+<div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160; </div>
+<div class="line"><a name="l00836"></a><span class="lineno">  836</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00837"></a><span class="lineno">  837</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00838"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a65e4d4e7e1e419c60fd059942ac6920b">  838</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ad501de98b6764d3ff1e877c5d9291ad8">operator&gt;</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00839"></a><span class="lineno">  839</span>&#160;{</div>
+<div class="line"><a name="l00840"></a><span class="lineno">  840</span>&#160;    <span class="keywordflow">return</span> rhs &lt; <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00841"></a><span class="lineno">  841</span>&#160;}</div>
+<div class="line"><a name="l00842"></a><span class="lineno">  842</span>&#160; </div>
+<div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00848"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#ae48fe28bf817a7128c869d7562d66b53">  848</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::nullptr_t) noexcept</div>
+<div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160;{</div>
+<div class="line"><a name="l00850"></a><span class="lineno">  850</span>&#160;    <span class="keywordflow">return</span> !(lhs &lt; <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00851"></a><span class="lineno">  851</span>&#160;}</div>
+<div class="line"><a name="l00852"></a><span class="lineno">  852</span>&#160; </div>
+<div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span></div>
+<div class="line"><a name="l00858"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#aaa1a2388280266f43940d6d16a4a38ca">  858</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a5034348e46ff8ebddb366634118bd6b5">operator&gt;=</a>(std::nullptr_t, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;rhs) noexcept</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;{</div>
+<div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160;    <span class="keywordflow">return</span> !(<span class="keyword">nullptr</span> &lt; rhs);</div>
+<div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;}</div>
+<div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160; </div>
+<div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160;<span class="keyword">inline</span> persistent_ptr&lt;T&gt;</div>
+<div class="line"><a name="l00868"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a42d20c2164aec5110f85555477b01e3b">  868</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a42d20c2164aec5110f85555477b01e3b">operator+</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::ptrdiff_t s)</div>
+<div class="line"><a name="l00869"></a><span class="lineno">  869</span>&#160;{</div>
+<div class="line"><a name="l00870"></a><span class="lineno">  870</span>&#160;    PMEMoid noid;</div>
+<div class="line"><a name="l00871"></a><span class="lineno">  871</span>&#160;    noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;</div>
+<div class="line"><a name="l00872"></a><span class="lineno">  872</span>&#160;    noid.off = lhs.raw().off + <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(s) * <span class="keyword">sizeof</span>(T);</div>
 <div class="line"><a name="l00873"></a><span class="lineno">  873</span>&#160; </div>
-<div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;<span class="keyword">inline</span> persistent_ptr&lt;T&gt;</div>
-<div class="line"><a name="l00879"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">  879</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">operator-</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::ptrdiff_t s)</div>
-<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;{</div>
-<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;    PMEMoid noid;</div>
-<div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;    noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;</div>
-<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    noid.off = lhs.raw().off - <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(s) * <span class="keyword">sizeof</span>(T);</div>
-<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160; </div>
-<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a>(noid);</div>
-<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;}</div>
+<div class="line"><a name="l00874"></a><span class="lineno">  874</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a>(noid);</div>
+<div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;}</div>
+<div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160; </div>
+<div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160;<span class="keyword">inline</span> persistent_ptr&lt;T&gt;</div>
+<div class="line"><a name="l00882"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">  882</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">operator-</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, std::ptrdiff_t s)</div>
+<div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;{</div>
+<div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;    PMEMoid noid;</div>
+<div class="line"><a name="l00885"></a><span class="lineno">  885</span>&#160;    noid.pool_uuid_lo = lhs.raw().pool_uuid_lo;</div>
+<div class="line"><a name="l00886"></a><span class="lineno">  886</span>&#160;    noid.off = lhs.raw().off - <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(s) * <span class="keyword">sizeof</span>(T);</div>
 <div class="line"><a name="l00887"></a><span class="lineno">  887</span>&#160; </div>
-<div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y,</div>
-<div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;      <span class="keyword">typename</span> = <span class="keyword">typename</span> std::enable_if&lt;</div>
-<div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160;          std::is_same&lt;typename std::remove_cv&lt;T&gt;::type,</div>
-<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;                   <span class="keyword">typename</span> std::remove_cv&lt;Y&gt;::type&gt;::value&gt;&gt;</div>
-<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;<span class="keyword">inline</span> ptrdiff_t</div>
-<div class="line"><a name="l00900"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a9e4f2831cd0b0a9b8906f8413b282551">  900</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">operator-</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs)</div>
-<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;{</div>
-<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;    assert(lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo);</div>
-<div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;    <span class="keyword">auto</span> d = <span class="keyword">static_cast&lt;</span>std::ptrdiff_t<span class="keyword">&gt;</span>(lhs.raw().off - rhs.raw().off);</div>
-<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160; </div>
-<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;    <span class="keywordflow">return</span> d / <span class="keyword">static_cast&lt;</span>std::ptrdiff_t<span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(T));</div>
-<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;}</div>
+<div class="line"><a name="l00888"></a><span class="lineno">  888</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a>(noid);</div>
+<div class="line"><a name="l00889"></a><span class="lineno">  889</span>&#160;}</div>
+<div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160; </div>
+<div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> Y,</div>
+<div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;      <span class="keyword">typename</span> = <span class="keyword">typename</span> std::enable_if&lt;</div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;          std::is_same&lt;typename std::remove_cv&lt;T&gt;::type,</div>
+<div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160;                   <span class="keyword">typename</span> std::remove_cv&lt;Y&gt;::type&gt;::value&gt;&gt;</div>
+<div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;<span class="keyword">inline</span> ptrdiff_t</div>
+<div class="line"><a name="l00903"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a9e4f2831cd0b0a9b8906f8413b282551">  903</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">operator-</a>(<a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;lhs, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;Y&gt;</a> <span class="keyword">const</span> &amp;rhs)</div>
+<div class="line"><a name="l00904"></a><span class="lineno">  904</span>&#160;{</div>
+<div class="line"><a name="l00905"></a><span class="lineno">  905</span>&#160;    assert(lhs.raw().pool_uuid_lo == rhs.raw().pool_uuid_lo);</div>
+<div class="line"><a name="l00906"></a><span class="lineno">  906</span>&#160;    <span class="keyword">auto</span> d = <span class="keyword">static_cast&lt;</span>std::ptrdiff_t<span class="keyword">&gt;</span>(lhs.raw().off - rhs.raw().off);</div>
 <div class="line"><a name="l00907"></a><span class="lineno">  907</span>&#160; </div>
-<div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00912"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a3f38d4fb7dcf9ddf765fa9cef5aa10ce">  912</a></span>&#160;std::ostream &amp;</div>
-<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a3f38d4fb7dcf9ddf765fa9cef5aa10ce">operator&lt;&lt;</a>(std::ostream &amp;os, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;pptr)</div>
-<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;{</div>
-<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;    PMEMoid raw_oid = pptr.raw();</div>
-<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;    os &lt;&lt; std::hex &lt;&lt; <span class="stringliteral">&quot;0x&quot;</span> &lt;&lt; raw_oid.pool_uuid_lo &lt;&lt; <span class="stringliteral">&quot;, 0x&quot;</span> &lt;&lt; raw_oid.off</div>
-<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;       &lt;&lt; std::dec;</div>
-<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;    <span class="keywordflow">return</span> os;</div>
-<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;}</div>
-<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160; </div>
-<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;} <span class="comment">/* namespace obj */</span></div>
-<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160; </div>
-<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
-<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160; </div>
-<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_PERSISTENT_PTR_HPP */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00908"></a><span class="lineno">  908</span>&#160;    <span class="keywordflow">return</span> d / <span class="keyword">static_cast&lt;</span>std::ptrdiff_t<span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(T));</div>
+<div class="line"><a name="l00909"></a><span class="lineno">  909</span>&#160;}</div>
+<div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160; </div>
+<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00915"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a3f38d4fb7dcf9ddf765fa9cef5aa10ce">  915</a></span>&#160;std::ostream &amp;</div>
+<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a3f38d4fb7dcf9ddf765fa9cef5aa10ce">operator&lt;&lt;</a>(std::ostream &amp;os, <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">persistent_ptr&lt;T&gt;</a> <span class="keyword">const</span> &amp;pptr)</div>
+<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;{</div>
+<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;    PMEMoid raw_oid = pptr.raw();</div>
+<div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;    os &lt;&lt; std::hex &lt;&lt; <span class="stringliteral">&quot;0x&quot;</span> &lt;&lt; raw_oid.pool_uuid_lo &lt;&lt; <span class="stringliteral">&quot;, 0x&quot;</span> &lt;&lt; raw_oid.off</div>
+<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;       &lt;&lt; std::dec;</div>
+<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;    <span class="keywordflow">return</span> os;</div>
+<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160;}</div>
+<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160; </div>
+<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;} <span class="comment">/* namespace obj */</span></div>
+<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160; </div>
+<div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
+<div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160; </div>
+<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_PERSISTENT_PTR_HPP */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_ad725a74e0fa382ae9cafbe90dbc0c3b7"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#ad725a74e0fa382ae9cafbe90dbc0c3b7">pmem::obj::persistent_ptr&lt; T[]&gt;::difference_type</a></div><div class="ttdeci">std::ptrdiff_t difference_type</div><div class="ttdoc">The persistent_ptr difference type.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:576</div></div>
-<div class="ttc" id="anamespacepmem_1_1obj_html_a42d20c2164aec5110f85555477b01e3b"><div class="ttname"><a href="namespacepmem_1_1obj.html#a42d20c2164aec5110f85555477b01e3b">pmem::obj::operator+</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; operator+(persistent_ptr&lt; T &gt; const &amp;lhs, std::ptrdiff_t s)</div><div class="ttdoc">Addition operator for persistent pointers.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:865</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_html_a42d20c2164aec5110f85555477b01e3b"><div class="ttname"><a href="namespacepmem_1_1obj.html#a42d20c2164aec5110f85555477b01e3b">pmem::obj::operator+</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; operator+(persistent_ptr&lt; T &gt; const &amp;lhs, std::ptrdiff_t s)</div><div class="ttdoc">Addition operator for persistent pointers.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:868</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_ad45c60e7966d086029c42d151ce969e0"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#ad45c60e7966d086029c42d151ce969e0">pmem::obj::persistent_ptr::get</a></div><div class="ttdeci">element_type * get() const noexcept</div><div class="ttdoc">Get the direct pointer.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:538</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a7015e71f65550faab67a820744f6bfa1"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a7015e71f65550faab67a820744f6bfa1">pmem::obj::persistent_ptr&lt; T[]&gt;::reference</a></div><div class="ttdeci">T &amp; reference</div><div class="ttdoc">The reference type of the value pointed to by the persistent_ptr.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:586</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_acd0cdb42d48a60e158e75638896b8687"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#acd0cdb42d48a60e158e75638896b8687">pmem::obj::persistent_ptr::calculate_offset</a></div><div class="ttdeci">ptrdiff_t calculate_offset() const</div><div class="ttdoc">Calculate in-object offset for structures with inheritance.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:637</div></div>
@@ -702,7 +705,7 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a60126ca2fe1952c22d85ba73ea05575a"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a60126ca2fe1952c22d85ba73ea05575a">pmem::obj::persistent_ptr::operator-&gt;</a></div><div class="ttdeci">pmem::detail::sp_member_access&lt; T &gt;::type operator-&gt;() const noexcept</div><div class="ttdoc">Member access operator.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:325</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_aca1bd3321cb14059719ed1c8c89bfa05"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#aca1bd3321cb14059719ed1c8c89bfa05">pmem::obj::persistent_ptr::persistent_ptr</a></div><div class="ttdeci">persistent_ptr(persistent_ptr&lt; U &gt; const &amp;r) noexcept</div><div class="ttdoc">Copy constructor from a different persistent_ptr&lt;&gt;.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:293</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1p_html"><div class="ttname"><a href="classpmem_1_1obj_1_1p.html">pmem::obj::p</a></div><div class="ttdoc">Resides on pmem class.</div><div class="ttdef"><b>Definition:</b> p.hpp:64</div></div>
-<div class="ttc" id="anamespacepmem_1_1obj_html_a3f38d4fb7dcf9ddf765fa9cef5aa10ce"><div class="ttname"><a href="namespacepmem_1_1obj.html#a3f38d4fb7dcf9ddf765fa9cef5aa10ce">pmem::obj::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, persistent_ptr&lt; T &gt; const &amp;pptr)</div><div class="ttdoc">Ostream operator for the persistent pointer.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:913</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_html_a3f38d4fb7dcf9ddf765fa9cef5aa10ce"><div class="ttname"><a href="namespacepmem_1_1obj.html#a3f38d4fb7dcf9ddf765fa9cef5aa10ce">pmem::obj::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, persistent_ptr&lt; T &gt; const &amp;pptr)</div><div class="ttdoc">Ostream operator for the persistent pointer.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:916</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a22b7f8fa1c18dd36c4a726e3cb25e584"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a22b7f8fa1c18dd36c4a726e3cb25e584">pmem::obj::persistent_ptr::persistent_ptr</a></div><div class="ttdeci">persistent_ptr(persistent_ptr&lt; void &gt; const &amp;rhs) noexcept</div><div class="ttdoc">Explicit void specialization of the converting constructor.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:235</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a7cc718501518e2bbb567dcc12d501c44"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a7cc718501518e2bbb567dcc12d501c44">pmem::obj::persistent_ptr::operator-=</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; &amp; operator-=(std::ptrdiff_t s)</div><div class="ttdoc">Subtraction assignment operator.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:412</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a55bb784984c1e92e028d0d568e7db3ae"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a55bb784984c1e92e028d0d568e7db3ae">pmem::obj::persistent_ptr::operator*</a></div><div class="ttdeci">pmem::detail::sp_dereference&lt; T &gt;::type operator*() const noexcept</div><div class="ttdoc">Dereference operator.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:316</div></div>
@@ -710,7 +713,7 @@ $(function() {
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a51602c5383f310740e4e0c70c98b07b5"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a51602c5383f310740e4e0c70c98b07b5">pmem::obj::persistent_ptr::persistent_ptr_base</a></div><div class="ttdeci">persistent_ptr_base() noexcept</div><div class="ttdoc">Default constructor, zeroes the PMEMoid.</div><div class="ttdef"><b>Definition:</b> persistent_ptr_base.hpp:76</div></div>
 <div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_3_01void_01_4_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr_3_01void_01_4.html">pmem::obj::persistent_ptr&lt; void &gt;</a></div><div class="ttdoc">persistent_ptr void specialization.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:71</div></div>
-<div class="ttc" id="anamespacepmem_1_1obj_html_a1bace565133c41301ae02de3276920ef"><div class="ttname"><a href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">pmem::obj::operator-</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; operator-(persistent_ptr&lt; T &gt; const &amp;lhs, std::ptrdiff_t s)</div><div class="ttdoc">Subtraction operator for persistent pointers.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:879</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_html_a1bace565133c41301ae02de3276920ef"><div class="ttname"><a href="namespacepmem_1_1obj.html#a1bace565133c41301ae02de3276920ef">pmem::obj::operator-</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; operator-(persistent_ptr&lt; T &gt; const &amp;lhs, std::ptrdiff_t s)</div><div class="ttdoc">Subtraction operator for persistent pointers.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:882</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_af36a1b526d5d5c81d35f02557c3b8e24"><div class="ttname"><a href="namespacepmem_1_1obj.html#af36a1b526d5d5c81d35f02557c3b8e24">pmem::obj::swap</a></div><div class="ttdeci">void swap(pmem::obj::array&lt; T, N &gt; &amp;lhs, pmem::obj::array&lt; T, N &gt; &amp;rhs)</div><div class="ttdoc">Non-member swap function.</div><div class="ttdef"><b>Definition:</b> array.hpp:913</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_a641fa4c058284070e8b9c2c273b4ced3"><div class="ttname"><a href="namespacepmem_1_1obj.html#a641fa4c058284070e8b9c2c273b4ced3">pmem::obj::operator!=</a></div><div class="ttdeci">bool operator!=(const allocator&lt; T, P, Tr &gt; &amp;lhs, const OtherAllocator &amp;rhs)</div><div class="ttdoc">Determines if memory from another allocator can be deallocated from this one.</div><div class="ttdef"><b>Definition:</b> allocator.hpp:518</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html_a25a44b42d2e9466cff96b62d1439b559"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html#a25a44b42d2e9466cff96b62d1439b559">pmem::obj::persistent_ptr::persist</a></div><div class="ttdeci">void persist(pool_base &amp;pop)</div><div class="ttdoc">Persists the content of the underlying object.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:460</div></div>

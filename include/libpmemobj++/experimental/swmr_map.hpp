@@ -5,8 +5,8 @@
 #define PMEMOBJ_SWMR_MAP_HPP
 
 #include <libpmemobj++/allocator.hpp>
-#include <libpmemobj++/experimental/swmr_skip_list_impl.hpp>
 #include <libpmemobj++/detail/pair.hpp>
+#include <libpmemobj++/experimental/swmr_skip_list_impl.hpp>
 
 namespace pmem
 {
@@ -18,15 +18,14 @@ namespace experimental
  *
  */
 template <typename Key, typename Value, typename Comp = std::less<Key>,
-	typename Allocator =
-	pmem::obj::allocator<detail::pair<const Key, Value>>>
-class swmr_map
-	: public detail::swmr_skip_list<detail::map_traits<
-		Key, Value, Comp, detail::default_random_generator, Allocator,
-		false, 64>> {
+	  typename Allocator =
+		  pmem::obj::allocator<detail::pair<const Key, Value>>>
+class swmr_map : public detail::swmr_skip_list<detail::map_traits<
+			 Key, Value, Comp, detail::default_random_generator,
+			 Allocator, false, 64>> {
 	using traits_type = detail::map_traits<Key, Value, Comp,
-		detail::default_random_generator,
-		Allocator, false, 64>;
+					       detail::default_random_generator,
+					       Allocator, false, 64>;
 	using base_type = pmem::detail::swmr_skip_list<traits_type>;
 
 public:
@@ -67,8 +66,8 @@ public:
 	 * Construct the empty map
 	 */
 	explicit swmr_map(const key_compare &comp,
-				const allocator_type &alloc = allocator_type())
-		: base_type(comp, alloc)
+			  const allocator_type &alloc = allocator_type())
+	    : base_type(comp, alloc)
 	{
 	}
 
@@ -76,10 +75,9 @@ public:
 	 * Constructs the map with the contents of the range [first, last).
 	 */
 	template <class InputIt>
-	swmr_map(InputIt first, InputIt last,
-		       const key_compare &comp = Comp(),
-		       const allocator_type &alloc = allocator_type())
-		: base_type(first, last, comp, alloc)
+	swmr_map(InputIt first, InputIt last, const key_compare &comp = Comp(),
+		 const allocator_type &alloc = allocator_type())
+	    : base_type(first, last, comp, alloc)
 	{
 	}
 
@@ -87,7 +85,7 @@ public:
 	 * Constructs the map with initializer list
 	 */
 	swmr_map(std::initializer_list<value_type> ilist)
-		: base_type(ilist.begin(), ilist.end())
+	    : base_type(ilist.begin(), ilist.end())
 	{
 	}
 
@@ -97,8 +95,7 @@ public:
 	swmr_map &
 	operator=(const swmr_map &other)
 	{
-		return static_cast<swmr_map &>(
-			base_type::operator=(other));
+		return static_cast<swmr_map &>(base_type::operator=(other));
 	}
 
 	/**
@@ -117,8 +114,7 @@ public:
 	swmr_map &
 	operator=(std::initializer_list<value_type> ilist)
 	{
-		return static_cast<swmr_map &>(
-			base_type::operator=(ilist));
+		return static_cast<swmr_map &>(base_type::operator=(ilist));
 	}
 };
 

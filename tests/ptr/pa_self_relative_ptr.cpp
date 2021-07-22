@@ -53,7 +53,8 @@ test_offset(nvobj::pool<root> &pop)
 			auto distance =
 				self_relative_ptr_base::distance_between;
 
-			pa_self_relative_ptr<C> cptr = nvobj::make_persistent<C>();
+			pa_self_relative_ptr<C> cptr =
+				nvobj::make_persistent<C>();
 			pa_self_relative_ptr<B> bptr = cptr;
 			UT_ASSERT(distance(cptr, bptr) > 0);
 			UT_ASSERT(static_cast<std::size_t>(

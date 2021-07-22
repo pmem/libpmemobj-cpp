@@ -41,8 +41,7 @@ struct hetero_less {
 typedef nvobj::experimental::swmr_map<nvobj::p<int>, nvobj::p<int>>
 	persistent_map_type_int;
 
-typedef nvobj::experimental::swmr_map<nvobj::string, nvobj::string,
-					    hetero_less>
+typedef nvobj::experimental::swmr_map<nvobj::string, nvobj::string, hetero_less>
 	persistent_map_type_string;
 
 struct root {

@@ -135,7 +135,8 @@ void
 test_exchange()
 {
 	pa_self_relative_ptr<int> first = reinterpret_cast<int *>(uintptr_t{0});
-	pa_self_relative_ptr<int> second = reinterpret_cast<int *>(~uintptr_t{0});
+	pa_self_relative_ptr<int> second =
+		reinterpret_cast<int *>(~uintptr_t{0});
 
 	atomic_type<int, volatile_atomic> ptr;
 

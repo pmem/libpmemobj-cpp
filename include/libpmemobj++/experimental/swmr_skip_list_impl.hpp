@@ -23,9 +23,9 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
+#include <libpmemobj++/container/detail/concurrent_skip_list_impl.hpp>
 #include <libpmemobj++/experimental/atomic_pa_self_relative_ptr.hpp>
 #include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
-#include <libpmemobj++/container/detail/concurrent_skip_list_impl.hpp>
 
 namespace pmem
 {
@@ -119,7 +119,8 @@ public:
 	next(size_type level)
 	{
 		assert(level < height());
-		node_pointer current = get_next(level).load(std::memory_order_acquire);
+		node_pointer current =
+			get_next(level).load(std::memory_order_acquire);
 		if (!current.flush_needed()) {
 			return current;
 		}
@@ -127,13 +128,14 @@ public:
 		node_pointer desired;
 		while (true) {
 			desired = node_pointer{current.get(), false};
-			if (get_next(level).compare_exchange_weak(
-				current, desired)) {
+			if (get_next(level).compare_exchange_weak(current,
+								  desired)) {
 				auto &node = get_next(level);
 				pop.persist(&node, sizeof(node));
 				break;
 			}
-			current = get_next(level).load(std::memory_order_acquire);
+			current =
+				get_next(level).load(std::memory_order_acquire);
 			if (!current.flush_needed()) {
 				return current;
 			}
@@ -152,33 +154,34 @@ public:
 	 * Can`t be called concurrently
 	 * Should be called inside a transaction
 	 */
-//	void
-//	set_next_tx(size_type level, node_pointer next)
-//	{
-//		assert(level < height());
-//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-//		auto &node = get_next(level);
-//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
-//		node.store(next, std::memory_order_release);
-//	}
-//
-//	void
-//	set_next(obj::pool_base pop, size_type level, node_pointer next)
-//	{
-//		assert(level < height());
-//		auto &node = get_next(level);
-//		node.store(next, std::memory_order_release);
-//		pop.persist(&node, sizeof(node));
-//	}
+	//	void
+	//	set_next_tx(size_type level, node_pointer next)
+	//	{
+	//		assert(level < height());
+	//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+	//		auto &node = get_next(level);
+	//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
+	//		node.store(next, std::memory_order_release);
+	//	}
+	//
+	//	void
+	//	set_next(obj::pool_base pop, size_type level, node_pointer next)
+	//	{
+	//		assert(level < height());
+	//		auto &node = get_next(level);
+	//		node.store(next, std::memory_order_release);
+	//		pop.persist(&node, sizeof(node));
+	//	}
 
 	void
 	set_next(size_type level, node_pointer next)
 	{
 		assert(level < height());
-//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+		//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 		auto &node = get_next(level);
-//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
-		node.store(node_pointer{next.get(), true}, std::memory_order_release);
+		//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
+		node.store(node_pointer{next.get(), true},
+			   std::memory_order_release);
 	}
 
 	void
@@ -188,19 +191,20 @@ public:
 		auto *nexts = get_nexts();
 
 		for (size_type i = 0; i < h; i++) {
-			nexts[i].store(node_pointer{new_nexts[i].get(), true}, std::memory_order_relaxed);
+			nexts[i].store(node_pointer{new_nexts[i].get(), true},
+				       std::memory_order_relaxed);
 		}
 	}
 
-//	void
-//	set_nexts(obj::pool_base pop, const node_pointer *new_nexts,
-//		  size_type h)
-//	{
-//		set_nexts(new_nexts, h);
-//
-//		auto *nexts = get_nexts();
-//		pop.persist(nexts, sizeof(nexts[0]) * h);
-//	}
+	//	void
+	//	set_nexts(obj::pool_base pop, const node_pointer *new_nexts,
+	//		  size_type h)
+	//	{
+	//		set_nexts(new_nexts, h);
+	//
+	//		auto *nexts = get_nexts();
+	//		pop.persist(nexts, sizeof(nexts[0]) * h);
+	//	}
 
 	/** @return number of layers */
 	size_type
@@ -273,24 +277,28 @@ public:
 	}
 
 	/** Copy constructor. */
-	swmr_skip_list_iterator(const swmr_skip_list_iterator &other) : node(other.node)
+	swmr_skip_list_iterator(const swmr_skip_list_iterator &other)
+	    : node(other.node)
 	{
 	}
 
 	/** Copy constructor for const iterator from non-const iterator */
 	template <typename U = void,
 		  typename = typename std::enable_if<is_const, U>::type>
-	swmr_skip_list_iterator(const swmr_skip_list_iterator<node_type, false> &other)
+	swmr_skip_list_iterator(
+		const swmr_skip_list_iterator<node_type, false> &other)
 	    : node(other.node)
 	{
 	}
 
-	reference operator*() const
+	reference
+	operator*() const
 	{
 		return *(node->get());
 	}
 
-	pointer operator->() const
+	pointer
+	operator->() const
 	{
 		return node->get();
 	}
@@ -462,9 +470,8 @@ public:
 	 * @throw pmem::transaction_alloc_error when allocating memory for
 	 * inserted elements in transaction failed.
 	 */
-	explicit swmr_skip_list(
-		const key_compare &comp,
-		const allocator_type &alloc = allocator_type())
+	explicit swmr_skip_list(const key_compare &comp,
+				const allocator_type &alloc = allocator_type())
 	    : _node_allocator(alloc), _compare(comp)
 	{
 		check_tx_stage_work();
@@ -496,8 +503,8 @@ public:
 	 */
 	template <class InputIt>
 	swmr_skip_list(InputIt first, InputIt last,
-			     const key_compare &comp = key_compare(),
-			     const allocator_type &alloc = allocator_type())
+		       const key_compare &comp = key_compare(),
+		       const allocator_type &alloc = allocator_type())
 	    : _node_allocator(alloc), _compare(comp)
 	{
 		check_tx_stage_work();
@@ -555,8 +562,7 @@ public:
 	 * transaction.
 	 * @throw rethrows element constructor exception.
 	 */
-	swmr_skip_list(const swmr_skip_list &other,
-			     const allocator_type &alloc)
+	swmr_skip_list(const swmr_skip_list &other, const allocator_type &alloc)
 	    : _node_allocator(alloc),
 	      _compare(other._compare),
 	      _rnd_generator(other._rnd_generator)
@@ -614,8 +620,7 @@ public:
 	 * transaction.
 	 * @throw rethrows element constructor exception.
 	 */
-	swmr_skip_list(swmr_skip_list &&other,
-			     const allocator_type &alloc)
+	swmr_skip_list(swmr_skip_list &&other, const allocator_type &alloc)
 	    : _node_allocator(alloc),
 	      _compare(other._compare),
 	      _rnd_generator(other._rnd_generator)
@@ -992,7 +997,7 @@ public:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	emplace(Args &&... args)
+	emplace(Args &&...args)
 	{
 		return internal_emplace(std::forward<Args>(args)...);
 	}
@@ -1029,7 +1034,7 @@ public:
 	 */
 	template <typename... Args>
 	iterator
-	emplace_hint(const_iterator hint, Args &&... args)
+	emplace_hint(const_iterator hint, Args &&...args)
 	{
 		/* Ignore hint */
 		return emplace(std::forward<Args>(args)...).first;
@@ -1060,7 +1065,7 @@ public:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	try_emplace(const key_type &k, Args &&... args)
+	try_emplace(const key_type &k, Args &&...args)
 	{
 		return internal_try_emplace(k, std::forward<Args>(args)...);
 	}
@@ -1090,7 +1095,7 @@ public:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	try_emplace(key_type &&k, Args &&... args)
+	try_emplace(key_type &&k, Args &&...args)
 	{
 		return internal_try_emplace(std::move(k),
 					    std::forward<Args>(args)...);
@@ -1127,7 +1132,7 @@ public:
 		has_is_transparent<key_compare>::value &&
 			std::is_constructible<key_type, K &&>::value,
 		std::pair<iterator, bool>>::type
-	try_emplace(K &&k, Args &&... args)
+	try_emplace(K &&k, Args &&...args)
 	{
 		return internal_try_emplace(std::forward<K>(k),
 					    std::forward<Args>(args)...);
@@ -1903,7 +1908,8 @@ public:
 
 			node_ptr head = dummy_head.get();
 			for (size_type i = 0; i < head->height(); ++i) {
-//				head->set_next_tx(i, nullptr);
+				//				head->set_next_tx(i,
+				//nullptr);
 				head->set_next(i, nullptr);
 			}
 
@@ -2404,7 +2410,7 @@ private:
 
 	template <typename K, typename... Args>
 	std::pair<iterator, bool>
-	internal_try_emplace(K &&key, Args &&... args)
+	internal_try_emplace(K &&key, Args &&...args)
 	{
 		return internal_insert(
 			key, std::piecewise_construct,
@@ -2414,7 +2420,7 @@ private:
 
 	template <typename... Args>
 	std::pair<iterator, bool>
-	internal_emplace(Args &&... args)
+	internal_emplace(Args &&...args)
 	{
 		check_outside_tx();
 		tls_entry_type &tls_entry = tls_data.local();
@@ -2438,8 +2444,9 @@ private:
 				assert(tls_entry.insert_stage == not_started);
 				assert(tls_entry.ptr != nullptr);
 
-//				n->set_nexts(pop, next_nodes.data(), height);
-			  	n->set_nexts(next_nodes.data(), height);
+				//				n->set_nexts(pop,
+				//next_nodes.data(), height);
+				n->set_nexts(next_nodes.data(), height);
 
 				tls_entry.insert_stage = in_progress;
 				pop.persist(&(tls_entry.insert_stage),
@@ -2469,7 +2476,7 @@ private:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	internal_unsafe_emplace(Args &&... args)
+	internal_unsafe_emplace(Args &&...args)
 	{
 		check_tx_stage_work();
 
@@ -2506,7 +2513,7 @@ private:
 	 */
 	template <typename K, typename... Args>
 	std::pair<iterator, bool>
-	internal_insert(const K &key, Args &&... args)
+	internal_insert(const K &key, Args &&...args)
 	{
 		check_outside_tx();
 		tls_entry_type &tls_entry = tls_data.local();
@@ -2620,7 +2627,8 @@ private:
 			       next_nodes[level]);
 			assert(prev_nodes[level]->next(level) ==
 			       n->next(level));
-//			prev_nodes[level]->set_next(pop, level, new_node);
+			//			prev_nodes[level]->set_next(pop,
+			//level, new_node);
 			prev_nodes[level]->set_next(level, new_node);
 		}
 
@@ -2834,10 +2842,10 @@ private:
 		     ++level) {
 			assert(prev_nodes[level]->height() > level);
 			assert(next_nodes[level].get() == erase_node);
-//			prev_nodes[level]->set_next_tx(level,
-//						       erase_node->next(level));
+			//			prev_nodes[level]->set_next_tx(level,
+			//						       erase_node->next(level));
 			prev_nodes[level]->set_next(level,
-						       erase_node->next(level));
+						    erase_node->next(level));
 		}
 
 		return std::pair<persistent_node_ptr, persistent_node_ptr>(
@@ -2913,7 +2921,7 @@ private:
 	/** Creates new node */
 	template <typename... Args>
 	persistent_node_ptr
-	create_node(Args &&... args)
+	create_node(Args &&...args)
 	{
 		size_type levels = random_level();
 
@@ -2983,7 +2991,7 @@ private:
 	 */
 	template <typename... Args>
 	persistent_node_ptr
-	creates_dummy_node(size_type height, Args &&... args)
+	creates_dummy_node(size_type height, Args &&...args)
 	{
 		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 		size_type sz = calc_node_size(height);
@@ -3125,7 +3133,8 @@ private:
 				/* Otherwise, node already linked on
 				 * this layer */
 				assert(n->next(level) == next_nodes[level]);
-//				prev_nodes[level]->set_next(pop, level, node);
+				//				prev_nodes[level]->set_next(pop,
+				//level, node);
 				prev_nodes[level]->set_next(level, node);
 			}
 		}

@@ -49,7 +49,8 @@ public:
 	{
 		auto offset = accessor::pointer_to_offset(ptr, desired.get());
 		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_BEFORE(order, &ptr);
-		accessor::get_offset(ptr).store((offset & desired.flush_set_mask()), order);
+		accessor::get_offset(ptr).store(
+			(offset & desired.flush_set_mask()), order);
 	}
 
 	value_type
@@ -57,7 +58,8 @@ public:
 	{
 		auto offset = accessor::get_offset(ptr).load(order);
 		LIBPMEMOBJ_CPP_ANNOTATE_HAPPENS_AFTER(order, &ptr);
-		auto pointer = accessor::offset_to_pointer<T>(offset | ~(value_type::flush_set_mask(offset)), ptr);
+		auto pointer = accessor::offset_to_pointer<T>(
+			offset | ~(value_type::flush_set_mask(offset)), ptr);
 		return value_type{pointer, value_type::flush_needed(offset)};
 	}
 
@@ -67,30 +69,38 @@ public:
 	{
 		auto new_offset =
 			accessor::pointer_to_offset(ptr, desired.get());
-		auto old_offset =
-			accessor::get_offset(ptr).exchange(new_offset & desired.flush_set_mask(), order);
-		return value_type{
-			accessor::offset_to_pointer<T>(old_offset | ~(value_type::flush_set_mask(old_offset)), ptr), value_type::flush_needed(old_offset)};
+		auto old_offset = accessor::get_offset(ptr).exchange(
+			new_offset & desired.flush_set_mask(), order);
+		return value_type{accessor::offset_to_pointer<T>(
+					  old_offset |
+						  ~(value_type::flush_set_mask(
+							  old_offset)),
+					  ptr),
+				  value_type::flush_needed(old_offset)};
 	}
 
 	bool
-	compare_exchange_weak(value_type &expected,
-			      value_type desired,
+	compare_exchange_weak(value_type &expected, value_type desired,
 			      std::memory_order success,
 			      std::memory_order failure) noexcept
 	{
 		auto expected_offset =
 			accessor::pointer_to_offset(ptr, expected.get());
-		auto expected_actual = expected_offset & expected.flush_set_mask();
+		auto expected_actual =
+			expected_offset & expected.flush_set_mask();
 		auto desired_offset =
 			accessor::pointer_to_offset(ptr, desired.get());
 		auto desired_actual = desired_offset & desired.flush_set_mask();
 		bool result = accessor::get_offset(ptr).compare_exchange_weak(
 			expected_actual, desired_actual, success, failure);
 		if (!result) {
-			expected = value_type{accessor::offset_to_pointer<T>(
-				expected_actual | ~(value_type::flush_set_mask(expected_actual)), ptr),
-					      value_type::flush_needed(expected_actual)};
+			expected = value_type{
+				accessor::offset_to_pointer<T>(
+					expected_actual |
+						~(value_type::flush_set_mask(
+							expected_actual)),
+					ptr),
+				value_type::flush_needed(expected_actual)};
 		}
 		return result;
 	}
@@ -102,16 +112,21 @@ public:
 	{
 		auto expected_offset =
 			accessor::pointer_to_offset(ptr, expected.get());
-		auto expected_actual = expected_offset & expected.flush_set_mask();
+		auto expected_actual =
+			expected_offset & expected.flush_set_mask();
 		auto desired_offset =
 			accessor::pointer_to_offset(ptr, desired.get());
 		auto desired_actual = desired_offset & desired.flush_set_mask();
 		bool result = accessor::get_offset(ptr).compare_exchange_weak(
 			expected_actual, desired_actual, order);
 		if (!result) {
-			expected = value_type{accessor::offset_to_pointer<T>(
-				expected_actual | ~(value_type::flush_set_mask(expected_actual)), ptr),
-					      value_type::flush_needed(expected_actual)};
+			expected = value_type{
+				accessor::offset_to_pointer<T>(
+					expected_actual |
+						~(value_type::flush_set_mask(
+							expected_actual)),
+					ptr),
+				value_type::flush_needed(expected_actual)};
 		}
 		return result;
 	}
@@ -123,16 +138,21 @@ public:
 	{
 		auto expected_offset =
 			accessor::pointer_to_offset(ptr, expected.get());
-		auto expected_actual = expected_offset & expected.flush_set_mask();
+		auto expected_actual =
+			expected_offset & expected.flush_set_mask();
 		auto desired_offset =
 			accessor::pointer_to_offset(ptr, desired.get());
 		auto desired_actual = desired_offset & desired.flush_set_mask();
 		bool result = accessor::get_offset(ptr).compare_exchange_strong(
 			expected_actual, desired_actual, success, failure);
 		if (!result) {
-			expected = value_type{accessor::offset_to_pointer<T>(
-				expected_actual | ~(value_type::flush_set_mask(expected_actual)), ptr),
-					      value_type::flush_needed(expected_actual)};
+			expected = value_type{
+				accessor::offset_to_pointer<T>(
+					expected_actual |
+						~(value_type::flush_set_mask(
+							expected_actual)),
+					ptr),
+				value_type::flush_needed(expected_actual)};
 		}
 		return result;
 	}
@@ -144,16 +164,21 @@ public:
 	{
 		auto expected_offset =
 			accessor::pointer_to_offset(ptr, expected.get());
-		auto expected_actual = expected_offset & expected.flush_set_mask();
+		auto expected_actual =
+			expected_offset & expected.flush_set_mask();
 		auto desired_offset =
 			accessor::pointer_to_offset(ptr, desired.get());
 		auto desired_actual = desired_offset & desired.flush_set_mask();
 		bool result = accessor::get_offset(ptr).compare_exchange_strong(
 			expected_actual, desired_actual, order);
 		if (!result) {
-			expected = value_type{accessor::offset_to_pointer<T>(
-				expected_actual | ~(value_type::flush_set_mask(expected_actual)), ptr),
-					      value_type::flush_needed(expected_actual)};
+			expected = value_type{
+				accessor::offset_to_pointer<T>(
+					expected_actual |
+						~(value_type::flush_set_mask(
+							expected_actual)),
+					ptr),
+				value_type::flush_needed(expected_actual)};
 		}
 		return result;
 	}
@@ -164,7 +189,11 @@ public:
 	{
 		auto offset = accessor::get_offset(ptr).fetch_add(
 			val * static_cast<difference_type>(sizeof(T)), order);
-		return value_type{accessor::offset_to_pointer<T>(offset | ~(value_type::flush_set_mask(offset)), ptr), value_type::flush_needed(offset)};
+		return value_type{
+			accessor::offset_to_pointer<T>(
+				offset | ~(value_type::flush_set_mask(offset)),
+				ptr),
+			value_type::flush_needed(offset)};
 	}
 
 	value_type
@@ -173,7 +202,11 @@ public:
 	{
 		auto offset = accessor::get_offset(ptr).fetch_sub(
 			val * static_cast<difference_type>(sizeof(T)), order);
-		return value_type{accessor::offset_to_pointer<T>(offset | ~(value_type::flush_set_mask(offset)), ptr), value_type::flush_needed(offset)};
+		return value_type{
+			accessor::offset_to_pointer<T>(
+				offset | ~(value_type::flush_set_mask(offset)),
+				ptr),
+			value_type::flush_needed(offset)};
 	}
 
 	bool
@@ -250,17 +283,20 @@ namespace detail
 {
 
 /**
- * can_do_snapshot atomic specialization for pa_self_relative_ptr. Not thread safe.
+ * can_do_snapshot atomic specialization for pa_self_relative_ptr. Not thread
+ * safe.
  *
  * Use in a single threaded environment only.
  */
 template <typename T>
-struct can_do_snapshot<std::atomic<obj::experimental::pa_self_relative_ptr<T>>> {
+struct can_do_snapshot<
+	std::atomic<obj::experimental::pa_self_relative_ptr<T>>> {
 	using snapshot_type = obj::experimental::pa_self_relative_ptr<T>;
 	static constexpr bool value = sizeof(std::atomic<snapshot_type>) ==
-				      sizeof(typename snapshot_type::offset_type);
-	static_assert(value,
-		      "std::atomic<pa_self_relative_ptr> should be the same size");
+		sizeof(typename snapshot_type::offset_type);
+	static_assert(
+		value,
+		"std::atomic<pa_self_relative_ptr> should be the same size");
 };
 
 } /* namespace detail */

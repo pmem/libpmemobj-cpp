@@ -33,6 +33,10 @@ make cppformat
 
 **NOTE**: We're using specific clang-format - version exactly **9.0** is required.
 
+## Doxygen documentation
+
+* Each new feature should be documented using doxygen comment blocks.
+* Each non-member function should be added to corresponding class documentation by `@relates` tag
 # Submitting Pull Requests
 
 We take outside code contributions to `libpmemobj-cpp` through GitHub pull requests.

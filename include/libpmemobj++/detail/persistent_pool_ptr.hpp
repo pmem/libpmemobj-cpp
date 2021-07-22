@@ -440,6 +440,7 @@ private:
  * Equality operator.
  *
  * This checks if underlying PMEMoids are equal.
+ * @relates persistent_pool_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -451,6 +452,7 @@ operator==(const persistent_pool_ptr<T> &lhs,
 
 /**
  * Inequality operator.
+ * @relates persistent_pool_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -462,6 +464,7 @@ operator!=(const persistent_pool_ptr<T> &lhs,
 
 /**
  * Inequality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool
@@ -472,6 +475,7 @@ operator!=(const persistent_pool_ptr<T> &lhs, std::nullptr_t) noexcept
 
 /**
  * Inequality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool
@@ -482,6 +486,7 @@ operator!=(std::nullptr_t, const persistent_pool_ptr<T> &lhs) noexcept
 
 /**
  * Equality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool
@@ -492,6 +497,7 @@ operator==(const persistent_pool_ptr<T> &lhs, std::nullptr_t) noexcept
 
 /**
  * Equality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool

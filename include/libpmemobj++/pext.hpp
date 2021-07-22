@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -21,6 +21,7 @@ namespace obj
 
 /**
  * Ostream operator overload.
+ * @relates p
  */
 template <typename T>
 std::ostream &
@@ -31,6 +32,7 @@ operator<<(std::ostream &os, const p<T> &pp)
 
 /**
  * Istream operator overload.
+ * @relates p
  */
 template <typename T>
 std::istream &
@@ -42,6 +44,7 @@ operator>>(std::istream &is, p<T> &pp)
 
 /**
  * Prefix increment operator overload.
+ * @relates p
  */
 template <typename T>
 p<T> &
@@ -53,6 +56,7 @@ operator++(p<T> &pp)
 
 /**
  * Prefix decrement operator overload.
+ * @relates p
  */
 template <typename T>
 p<T> &
@@ -64,6 +68,7 @@ operator--(p<T> &pp)
 
 /**
  * Postfix increment operator overload.
+ * @relates p
  */
 template <typename T>
 p<T>
@@ -76,6 +81,7 @@ operator++(p<T> &pp, int)
 
 /**
  * Postfix decrement operator overload.
+ * @relates p
  */
 template <typename T>
 p<T>
@@ -88,6 +94,7 @@ operator--(p<T> &pp, int)
 
 /**
  * Addition assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -99,6 +106,7 @@ operator+=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Addition assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -110,6 +118,7 @@ operator+=(p<T> &lhs, const Y &rhs)
 
 /**
  * Subtraction assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -121,6 +130,7 @@ operator-=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Subtraction assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -132,6 +142,7 @@ operator-=(p<T> &lhs, const Y &rhs)
 
 /**
  * Multiplication assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -143,6 +154,7 @@ operator*=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Multiplication assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -154,6 +166,7 @@ operator*=(p<T> &lhs, const Y &rhs)
 
 /**
  * Division assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -165,6 +178,7 @@ operator/=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Division assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -176,6 +190,7 @@ operator/=(p<T> &lhs, const Y &rhs)
 
 /**
  * Modulo assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -187,6 +202,7 @@ operator%=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Modulo assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -198,6 +214,7 @@ operator%=(p<T> &lhs, const Y &rhs)
 
 /**
  * Bitwise AND assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -209,6 +226,7 @@ operator&=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Bitwise AND assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -220,6 +238,7 @@ operator&=(p<T> &lhs, const Y &rhs)
 
 /**
  * Bitwise OR assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -231,6 +250,7 @@ operator|=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Bitwise OR assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -242,6 +262,7 @@ operator|=(p<T> &lhs, const Y &rhs)
 
 /**
  * Bitwise XOR assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -253,6 +274,7 @@ operator^=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Bitwise XOR assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -264,6 +286,7 @@ operator^=(p<T> &lhs, const Y &rhs)
 
 /**
  * Bitwise left shift assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -275,6 +298,7 @@ operator<<=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Bitwise left shift assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -286,6 +310,7 @@ operator<<=(p<T> &lhs, const Y &rhs)
 
 /**
  * Bitwise right shift assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &
@@ -297,6 +322,7 @@ operator>>=(p<T> &lhs, const p<Y> &rhs)
 
 /**
  * Bitwise right shift assignment operator overload.
+ * @relates p
  */
 template <typename T, typename Y>
 p<T> &

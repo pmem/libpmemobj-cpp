@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /**
  * @file
@@ -174,6 +174,8 @@ private:
  *
  * Non-member swap function as required by Swappable concept.
  * en.cppreference.com/w/cpp/concept/Swappable
+ *
+ * @relates v
  */
 template <class T>
 inline void

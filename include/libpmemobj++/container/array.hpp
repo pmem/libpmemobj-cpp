@@ -722,6 +722,7 @@ private:
 
 /**
  * Non-member equal operator.
+ * @relates array
  */
 template <typename T, std::size_t N>
 inline bool
@@ -732,6 +733,7 @@ operator==(const array<T, N> &lhs, const array<T, N> &rhs)
 
 /**
  * Non-member not-equal operator.
+ * @relates array
  */
 template <typename T, std::size_t N>
 inline bool
@@ -742,6 +744,7 @@ operator!=(const array<T, N> &lhs, const array<T, N> &rhs)
 
 /**
  * Non-member less than operator.
+ * @relates array
  */
 template <typename T, std::size_t N>
 inline bool
@@ -753,6 +756,7 @@ operator<(const array<T, N> &lhs, const array<T, N> &rhs)
 
 /**
  * Non-member greater than operator.
+ * @relates array
  */
 template <typename T, std::size_t N>
 inline bool
@@ -763,6 +767,7 @@ operator>(const array<T, N> &lhs, const array<T, N> &rhs)
 
 /**
  * Non-member greater or equal operator.
+ * @relates array
  */
 template <typename T, std::size_t N>
 inline bool
@@ -773,6 +778,7 @@ operator>=(const array<T, N> &lhs, const array<T, N> &rhs)
 
 /**
  * Non-member less or equal operator.
+ * @relates array
  */
 template <typename T, std::size_t N>
 inline bool
@@ -783,6 +789,7 @@ operator<=(const array<T, N> &lhs, const array<T, N> &rhs)
 
 /**
  * Non-member cbegin.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_iterator
@@ -793,6 +800,7 @@ cbegin(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member cend.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_iterator
@@ -803,6 +811,7 @@ cend(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member crbegin.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_reverse_iterator
@@ -813,6 +822,7 @@ crbegin(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member crend.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_reverse_iterator
@@ -823,6 +833,7 @@ crend(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member begin.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::iterator
@@ -833,6 +844,7 @@ begin(pmem::obj::array<T, N> &a)
 
 /**
  * Non-member begin.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_iterator
@@ -843,6 +855,7 @@ begin(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member end.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::iterator
@@ -853,6 +866,7 @@ end(pmem::obj::array<T, N> &a)
 
 /**
  * Non-member end.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_iterator
@@ -863,6 +877,7 @@ end(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member rbegin.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::reverse_iterator
@@ -873,6 +888,7 @@ rbegin(pmem::obj::array<T, N> &a)
 
 /**
  * Non-member rbegin.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_reverse_iterator
@@ -883,6 +899,7 @@ rbegin(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member rend.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::reverse_iterator
@@ -893,6 +910,7 @@ rend(pmem::obj::array<T, N> &a)
 
 /**
  * Non-member rend.
+ * @relates array
  */
 template <typename T, std::size_t N>
 typename pmem::obj::array<T, N>::const_reverse_iterator
@@ -903,6 +921,7 @@ rend(const pmem::obj::array<T, N> &a)
 
 /**
  * Non-member swap function.
+ * @relates array
  */
 template <typename T, size_t N>
 inline void
@@ -913,6 +932,7 @@ swap(pmem::obj::array<T, N> &lhs, pmem::obj::array<T, N> &rhs)
 
 /**
  * Non-member get function.
+ * @relates array
  */
 template <size_t I, typename T, size_t N>
 T &
@@ -925,6 +945,7 @@ get(pmem::obj::array<T, N> &a)
 
 /**
  * Non-member get function.
+ * @relates array
  */
 template <size_t I, typename T, size_t N>
 T &&
@@ -937,6 +958,7 @@ get(pmem::obj::array<T, N> &&a)
 
 /**
  * Non-member get function.
+ * @relates array
  */
 template <size_t I, typename T, size_t N>
 const T &
@@ -949,6 +971,7 @@ get(const pmem::obj::array<T, N> &a) noexcept
 
 /**
  * Non-member get function.
+ * @relates array
  */
 template <size_t I, typename T, size_t N>
 const T &&

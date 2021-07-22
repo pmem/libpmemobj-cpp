@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2020, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
 
 /**
  * @file
@@ -655,7 +655,9 @@ private:
 	segment_vector_type _data;
 };
 
-/* Non-member swap */
+/* Non-member swap
+ * @relates segment_vector
+ * */
 template <typename T, typename Policy>
 void swap(segment_vector<T, Policy> &lhs, segment_vector<T, Policy> &rhs);
 
@@ -2744,6 +2746,7 @@ segment_vector<T, Policy>::segment_capacity_validation() const
  *
  * @param[in] lhs first segment_vector.
  * @param[in] rhs second segment_vector.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 void
@@ -2765,6 +2768,7 @@ swap(segment_vector<T, Policy> &lhs, segment_vector<T, Policy> &rhs)
  *
  * @return true if contents of the containers are equal, false
  * otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2789,6 +2793,7 @@ operator==(const segment_vector<T, Policy> &lhs,
  *
  * @return true if contents of the containers are not equal, false
  * otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2809,6 +2814,7 @@ operator!=(const segment_vector<T, Policy> &lhs,
  *
  * @return true if contents of lhs are lexicographically less than
  * contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2830,6 +2836,7 @@ operator<(const segment_vector<T, Policy> &lhs,
  *
  * @return true if contents of lhs are lexicographically lesser than or
  * equal to contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2850,6 +2857,7 @@ operator<=(const segment_vector<T, Policy> &lhs,
  *
  * @return true if contents of lhs are lexicographically greater than
  * contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2870,6 +2878,7 @@ operator>(const segment_vector<T, Policy> &lhs,
  *
  * @return true if contents of lhs are lexicographically greater than or
  * equal to contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2891,6 +2900,7 @@ operator>=(const segment_vector<T, Policy> &lhs,
  *
  * @return true if contents of the containers are equal, false
  * otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2912,6 +2922,7 @@ operator==(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of the containers are not equal, false
  * otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2930,6 +2941,7 @@ operator!=(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than
  * contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2949,6 +2961,7 @@ operator<(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or
  * equal to contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -2968,6 +2981,7 @@ operator<=(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than
  * contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 
 template <typename T, typename Policy>
@@ -2987,6 +3001,7 @@ operator>(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or
  * equal to contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -3007,6 +3022,7 @@ operator>=(const segment_vector<T, Policy> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of the containers are equal, false
  * otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -3027,6 +3043,7 @@ operator==(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
  *
  * @return true if contents of the containers are not equal, false
  * otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -3045,6 +3062,7 @@ operator!=(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than
  * contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -3063,6 +3081,7 @@ operator<(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or
  * equal to contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool
@@ -3081,6 +3100,7 @@ operator<=(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than
  * contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 
 template <typename T, typename Policy>
@@ -3100,6 +3120,7 @@ operator>(const std::vector<T> &lhs, const segment_vector<T, Policy> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or
  * equal to contents of rhs, false otherwise.
+ * @relates segment_vector
  */
 template <typename T, typename Policy>
 bool

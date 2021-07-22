@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -1124,6 +1124,7 @@ basic_string_view<CharT, Traits>::compare(const basic_string_view &other) const
 
 /**
  * Non-member equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1135,6 +1136,7 @@ operator==(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1147,6 +1149,7 @@ operator==(
 
 /**
  * Non-member equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1159,6 +1162,7 @@ operator==(
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1170,6 +1174,7 @@ operator!=(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1182,6 +1187,7 @@ operator!=(
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1194,6 +1200,7 @@ operator!=(
 
 /**
  * Non-member less than operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1205,6 +1212,7 @@ operator<(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member less than operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1216,6 +1224,7 @@ operator<(typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
 
 /**
  * Non-member less than operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1227,6 +1236,7 @@ operator<(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1238,6 +1248,7 @@ operator<=(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1250,6 +1261,7 @@ operator<=(
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1262,6 +1274,7 @@ operator<=(
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1273,6 +1286,7 @@ operator>(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1284,6 +1298,7 @@ operator>(typename std::common_type<basic_string_view<CharT, Traits>>::type lhs,
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1295,6 +1310,7 @@ operator>(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1306,6 +1322,7 @@ operator>=(basic_string_view<CharT, Traits> lhs,
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool
@@ -1318,6 +1335,7 @@ operator>=(
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string_view
  */
 template <class CharT, class Traits>
 constexpr bool

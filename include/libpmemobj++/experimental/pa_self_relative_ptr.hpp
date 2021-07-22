@@ -221,15 +221,13 @@ public:
 	void *
 	to_void_pointer() const noexcept
 	{
-		return this->offset_to_pointer(
-			this->offset);
+		return this->offset_to_pointer(this->offset);
 	}
 
 	/**
 	 * Explicit conversion operator to void*
 	 */
-	explicit
-	operator void *() const noexcept
+	explicit operator void *() const noexcept
 	{
 		return to_void_pointer();
 	}
@@ -340,8 +338,8 @@ public:
 	/**
 	 * Dereference operator.
 	 */
-	typename pmem::detail::sp_dereference<T>::type
-	operator*() const noexcept
+	typename pmem::detail::sp_dereference<T>::type operator*() const
+		noexcept
 	{
 		return *(this->get());
 	}
@@ -349,8 +347,8 @@ public:
 	/**
 	 * Member access operator.
 	 */
-	typename pmem::detail::sp_member_access<T>::type
-	operator->() const noexcept
+	typename pmem::detail::sp_member_access<T>::type operator->() const
+		noexcept
 	{
 		return this->get();
 	}

@@ -2435,7 +2435,7 @@ TEMPLATE_RELATIONS     = NO
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-INCLUDE_GRAPH          = YES
+INCLUDE_GRAPH          = NO
 
 # If the INCLUDED_BY_GRAPH, ENABLE_PREPROCESSING and SEARCH_INCLUDES tags are
 # set to YES then doxygen will generate a graph for each documented file showing

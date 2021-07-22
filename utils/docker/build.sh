@@ -21,7 +21,7 @@
 
 set -e
 
-source $(dirname $0)/set-ci-vars.sh
+source $(dirname ${0})/set-ci-vars.sh
 IMG_VER=${IMG_VER:-devel}
 TAG="${OS}-${OS_VER}-${IMG_VER}"
 IMAGE_NAME=${CONTAINER_REG}:${TAG}
@@ -48,7 +48,7 @@ if [[ -z "${CONTAINER_REG}" ]]; then
 fi
 
 # Set command to execute in the Docker container
-if [[ -z "$COMMAND" ]]; then
+if [[ -z "${COMMAND}" ]]; then
 	echo "COMMAND will be based on the type of build: ${TYPE}"
 	case ${TYPE} in
 	debug)
@@ -58,7 +58,8 @@ if [[ -z "$COMMAND" ]]; then
 		;;
 	release)
 		builds=(tests_gcc_release_cpp17_no_valgrind
-				tests_clang_release_cpp11_no_valgrind)
+				tests_clang_release_cpp11_no_valgrind
+				tests_clang_release_cpp20_no_valgrind)
 		COMMAND="./run-build.sh ${builds[@]}";
 		;;
 	valgrind)
@@ -136,7 +137,7 @@ docker run --privileged=true --name=${CONTAINER_NAME} -i \
 	--env TESTS_TBB=${TESTS_TBB:-ON} \
 	--env TESTS_PMREORDER=${TESTS_PMREORDER:-ON} \
 	--env TESTS_PACKAGES=${TESTS_PACKAGES:-ON} \
-	--env TESTS_USAN=${TESTS_USAN:-OFF} \
+	--env TESTS_ASAN=${TESTS_ASAN:-OFF} \
 	--env TESTS_UBSAN=${TESTS_UBSAN:-OFF} \
 	--env TEST_TIMEOUT=${TEST_TIMEOUT} \
 	--env TZ='Europe/Warsaw' \

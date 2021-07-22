@@ -202,14 +202,17 @@ main(int argc, char *argv[])
 				r = nullptr;
 			});
 		}
-	} catch (std::exception &e) {
+	} catch (const pmem::transaction_out_of_memory &e) {
+		std::cerr << "Exception occurred: " << e.what() << std::endl;
+		retval = -127;
+	} catch (const std::exception &e) {
 		std::cerr << "Exception occurred: " << e.what() << std::endl;
 		retval = -1;
 	}
 	try {
 		pop.close();
 	} catch (const std::logic_error &e) {
-		std::cerr << "Exception: " << e.what() << std::endl;
+		std::cerr << "Exception occurred: " << e.what() << std::endl;
 		retval = -2;
 	}
 	return retval;

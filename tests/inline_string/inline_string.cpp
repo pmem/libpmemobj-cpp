@@ -247,12 +247,12 @@ test_inline_string(nvobj::pool<struct root<T>> &pop)
 	});
 }
 
-/* test if inline_string can be placed on dram */
+/* test if dram_inline_string can be placed on dram */
 template <typename T>
 void
 test_dram(nvobj::pool<struct root<T>> &pop)
 {
-	using string_type = nvobj::experimental::basic_inline_string<T>;
+	using string_type = nvobj::experimental::basic_dram_inline_string<T>;
 
 	constexpr size_t string_size = 20;
 	typename std::aligned_storage<sizeof(string_type) +
@@ -288,6 +288,46 @@ test_dram(nvobj::pool<struct root<T>> &pop)
 		ASSERT_UNREACHABLE;
 	}
 }
+
+/* test if inline_string throws exception if placed on dram */
+template <typename T>
+void
+test_pmem()
+{
+	using string_type = nvobj::experimental::basic_inline_string<T>;
+	try {
+		constexpr size_t string_size = 20;
+
+		typename std::aligned_storage<
+			sizeof(string_type) + (string_size + 1) * sizeof(T),
+			alignof(string_type)>::type buffer;
+		auto dram_location = reinterpret_cast<string_type *>(&buffer);
+		new (dram_location) string_type(string_size);
+		ASSERT_UNREACHABLE;
+	} catch (pmem::pool_error &) {
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
+}
+
+/* test helper traits for inline_string and dram_inline_string */
+template <typename T, typename StringType>
+void
+test_traits()
+{
+	constexpr size_t string_size1 = 20;
+	constexpr size_t string_size2 = 128;
+
+	UT_ASSERTeq(nvobj::experimental::total_sizeof<StringType>::value(
+			    std::basic_string<T>(string_size1, T('x'))),
+		    sizeof(StringType) + (string_size1 + 1) * sizeof(T));
+
+	UT_ASSERTeq(nvobj::experimental::total_sizeof<StringType>::value(
+			    std::basic_string<T>(string_size2, T('x'))),
+		    sizeof(StringType) + (string_size2 + 1) * sizeof(T));
+
+	UT_ASSERTeq(pmem::detail::is_inline_string<StringType>::value, true);
+}
 }
 
 template <typename T>
@@ -311,6 +351,9 @@ test(int argc, char *argv[])
 
 	test_inline_string<T>(pop);
 	test_dram<T>(pop);
+	test_pmem<T>();
+	test_traits<T, nvobjex::basic_inline_string<T>>();
+	test_traits<T, nvobjex::basic_dram_inline_string<T>>();
 
 	pop.close();
 }

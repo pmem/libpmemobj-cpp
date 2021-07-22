@@ -1,5 +1,5 @@
 name: CPP
-# It runs deafult OSes for each PR, push event or a new tag,
+# It runs default OSes for each PR, push event or a new tag,
 # checks basic builds with various compilers and executes all sets of tests.
 
 on:

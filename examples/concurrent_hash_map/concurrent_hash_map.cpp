@@ -37,23 +37,23 @@ main(int argc, char *argv[])
 	pool<root> pop;
 	bool remove_hashmap = false;
 
+	if (argc < 2)
+		std::cerr << "usage: " << argv[0]
+			  << " file-name [remove_hashmap]" << std::endl;
+
+	auto path = argv[1];
+
+	if (argc == 3)
+		remove_hashmap = std::string(argv[2]) == "1";
+
 	try {
-		if (argc < 2)
-			std::cerr << "usage: " << argv[0]
-				  << " file-name [remove_hashmap]" << std::endl;
+		pop = pool<root>::open(path, "concurrent_hash_map");
+	} catch (pmem::pool_error &e) {
+		std::cerr << e.what() << std::endl;
+		return -1;
+	}
 
-		auto path = argv[1];
-
-		if (argc == 3)
-			remove_hashmap = std::string(argv[2]) == "1";
-
-		try {
-			pop = pool<root>::open(path, "concurrent_hash_map");
-		} catch (pmem::pool_error &e) {
-			std::cerr << e.what() << std::endl;
-			return -1;
-		}
-
+	try {
 		auto &r = pop.root()->pptr;
 
 		if (r == nullptr) {
@@ -184,16 +184,19 @@ main(int argc, char *argv[])
 				r = nullptr;
 			});
 		}
-		pop.close();
+	} catch (const pmem::transaction_out_of_memory &e) {
+		std::cerr << "Exception occurred: " << e.what() << std::endl;
 	} catch (std::exception &e) {
 		std::cerr << "Exception occurred: " << e.what() << std::endl;
-		try {
-			pop.close();
-		} catch (const std::logic_error &e) {
-			std::cerr << "Exception: " << e.what() << std::endl;
-		}
+	}
+
+	try {
+		pop.close();
+	} catch (const std::logic_error &e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
 		return -1;
 	}
+
 	return 0;
 }
 //! [concurrent_hash_map_ex]

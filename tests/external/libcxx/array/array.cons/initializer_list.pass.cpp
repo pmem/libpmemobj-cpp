@@ -50,8 +50,13 @@ struct Testcase2 {
 struct Testcase3 {
 	typedef double T;
 	typedef pmem::obj::array<T, 3> C;
+#if __cplusplus > 201703L
+	C c = {1};
+#else
+	/* This syntax causes warning: braces around scalar initializer
+	 * on C++20*/
 	C c = {{1}};
-
+#endif
 	void
 	run()
 	{

@@ -98,11 +98,11 @@ struct bytes_view;
  * swap() invalidates all references and iterators.
  *
  * MtMode enables single-writer multiple-readers concurrency with read
- * uncommitted isolation. In this, mode user HAS to call runtime_initialize_mt
+ * uncommitted isolation. In this, mode user HAS TO call runtime_initialize_mt
  * after each application restart and runtime_finalize_mt before destroying
  * radix tree.
  *
- * This has the following effects:
+ * Enabling MtMode has the following effects:
  * - erase and clear does not free nodes/leaves immediately, instead they are
  * added to a garbage list which can be freed by calling garbage_collect()
  * - insert_or_assign and iterator.assign_val do not perform an in-place update,
@@ -617,7 +617,9 @@ public:
 						    value_type &>::type;
 	using pointer = typename std::conditional<IsConst, value_type const *,
 						  value_type *>::type;
-	using iterator_category = std::bidirectional_iterator_tag;
+	using iterator_category = typename std::conditional<
+		MtMode, std::forward_iterator_tag,
+		std::bidirectional_iterator_tag>::type;
 
 	radix_tree_iterator() = default;
 	radix_tree_iterator(leaf_ptr leaf_, tree_ptr tree);
@@ -646,9 +648,13 @@ public:
 	void assign_val(T &&rhs);
 
 	radix_tree_iterator &operator++();
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<!Mt>::type>
 	radix_tree_iterator &operator--();
 
 	radix_tree_iterator operator++(int);
+	template <bool Mt = MtMode,
+		  typename Enable = typename std::enable_if<!Mt>::type>
 	radix_tree_iterator operator--(int);
 
 	template <bool C>
@@ -2307,12 +2313,12 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 		auto slot = node_d.slot;
 		auto prev = node_d.prev;
 
-		/*
-		 * n would point to element with key which we are looking for
-		 * (if it existed). All elements on the left are smaller and all
-		 * element on the right are bigger.
-		 */
 		if (!n) {
+			/*
+			 * n would point to element with key which we are
+			 * looking for (if it existed). All elements on the left
+			 * are smaller and all element on the right are bigger.
+			 */
 			assert(prev && !is_leaf(prev));
 
 			auto target_leaf = next_leaf<node::direction::Forward>(
@@ -2341,22 +2347,31 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 		} else if (diff == leaf_key.size()) {
 			assert(n == leaf);
 
-			/* Leaf's key is a prefix of the looked-for key. Leaf's
-			 * key is the biggest key less than the looked-for key.
-			 * The target node must be the next leaf. Note that we
-			 * cannot just call const_iterator(leaf,
-			 * this).try_increment() because some other element with
-			 * key larger than leaf and smaller than k could be
-			 * inserted concurrently. */
-			auto target_leaf = next_leaf<node::direction::Forward>(
-				prev->template make_iterator<
-					node::direction::Forward>(slot),
-				prev);
+			if (!prev) {
+				/* There is only one element in the tree and
+				 * it's smaller. */
+				result = cend();
+			} else {
+				/* Leaf's key is a prefix of the looked-for key.
+				 * Leaf's key is the biggest key less than the
+				 * looked-for key. The target node must be the
+				 * next leaf. Note that we cannot just call
+				 * const_iterator(leaf, this).try_increment()
+				 * because some other element with key larger
+				 * than leaf and smaller than k could be
+				 * inserted concurrently. */
+				auto target_leaf = next_leaf<
+					node::direction::Forward>(
+					prev->template make_iterator<
+						node::direction::Forward>(slot),
+					prev);
 
-			if (!target_leaf.first)
-				continue;
+				if (!target_leaf.first)
+					continue;
 
-			result = const_iterator(target_leaf.second, this);
+				result = const_iterator(target_leaf.second,
+							this);
+			}
 		} else {
 			assert(diff < leaf_key.size() && diff < key.size());
 
@@ -2396,6 +2411,7 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 			} else if (slot == &root) {
 				result = const_iterator(nullptr, this);
 			} else {
+				assert(prev);
 				assert(static_cast<unsigned char>(key[diff]) >
 				       static_cast<unsigned char>(
 					       leaf_key[diff]));
@@ -3190,8 +3206,15 @@ radix_tree<Key, Value, BytesView,
 	return true;
 }
 
+/*
+ * If MtMode == true it's not safe to use this operator (iterator may end up
+ * invalid if concurrent erase happen).
+ * XXX: it's not enabled in MtMode due to:
+ * https://github.com/pmem/libpmemobj-cpp/issues/1159
+ */
 template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
+template <bool Mt, typename Enable>
 typename radix_tree<Key, Value, BytesView,
 		    MtMode>::template radix_tree_iterator<IsConst> &
 radix_tree<Key, Value, BytesView,
@@ -3268,8 +3291,15 @@ radix_tree<Key, Value, BytesView,
 	return tmp;
 }
 
+/*
+ * If MtMode == true it's not safe to use this operator (iterator may end up
+ * invalid if concurrent erase happen).
+ * XXX: it's not enabled in MtMode due to:
+ * https://github.com/pmem/libpmemobj-cpp/issues/1159
+ */
 template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool IsConst>
+template <bool Mt, typename Enable>
 typename radix_tree<Key, Value, BytesView,
 		    MtMode>::template radix_tree_iterator<IsConst>
 radix_tree<Key, Value, BytesView,

@@ -21,7 +21,7 @@ TESTS_TBB=${TESTS_TBB:-ON}
 TESTS_PMREORDER=${TESTS_PMREORDER:-ON}
 TESTS_PACKAGES=${TESTS_PACKAGES:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-ON}
-TESTS_USAN=${TESTS_USAN:-OFF}
+TESTS_ASAN=${TESTS_ASAN:-OFF}
 TESTS_UBSAN=${TESTS_UBSAN:-OFF}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
@@ -52,7 +52,7 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_COMPATIBILITY=1 \
 		-DTESTS_CONCURRENT_GDB=1 \
-		-DUSE_ASAN=${TESTS_USAN} \
+		-DUSE_ASAN=${TESTS_ASAN} \
 		-DUSE_UBSAN=${TESTS_UBSAN}
 
 	make -j$(nproc)
@@ -89,7 +89,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_COMPATIBILITY=1 \
 		-DTESTS_CONCURRENT_GDB=1 \
-		-DUSE_ASAN=${TESTS_USAN} \
+		-DUSE_ASAN=${TESTS_ASAN} \
 		-DUSE_UBSAN=${TESTS_UBSAN}
 
 	make -j$(nproc)
@@ -127,7 +127,7 @@ function build_gcc_debug_cpp14() {
 		-DTESTS_CONCURRENT_HASH_MAP_DRD_HELGRIND=1 \
 		-DTESTS_COMPATIBILITY=1 \
 		-DTESTS_CONCURRENT_GDB=1 \
-		-DUSE_ASAN=${TESTS_USAN} \
+		-DUSE_ASAN=${TESTS_ASAN} \
 		-DUSE_UBSAN=${TESTS_UBSAN}
 
 	make -j$(nproc)
@@ -194,13 +194,56 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		-DBUILD_EXAMPLES=0 \
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_CONCURRENT_GDB=1 \
-		-DUSE_ASAN=${TESTS_USAN} \
+		-DUSE_ASAN=${TESTS_ASAN} \
 		-DUSE_UBSAN=${TESTS_UBSAN}
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout ${TEST_TIMEOUT}
 	if [ "${COVERAGE}" == "1" ]; then
 		upload_codecov tests_gcc_release_cpp17_no_valgrind
+	fi
+
+	workspace_cleanup
+	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
+}
+
+###############################################################################
+# BUILD tests_clang_release_cpp20_no_valgrind llvm
+###############################################################################
+
+function tests_clang_release_cpp20_no_valgrind() {
+	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
+
+	if [ ${CMAKE_VERSION_NUMBER} -lt 312 ]; then
+		echo "ERROR: C++20 is supported in CMake since 3.12, installed version: ${CMAKE_VERSION}"
+		exit 1
+	fi
+
+	mkdir build && cd build
+
+	PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/pmdk/lib/pkgconfig/ \
+	CC=clang CXX=clang++ \
+	cmake .. -DDEVELOPER_MODE=1 \
+		-DCHECK_CPP_STYLE=${CHECK_CPP_STYLE} \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+		-DTRACE_TESTS=1 \
+		-DCOVERAGE=${COVERAGE} \
+		-DCXX_STANDARD=20 \
+		-DTESTS_USE_VALGRIND=0 \
+		-DTESTS_LONG=${TESTS_LONG} \
+		-DTESTS_PMREORDER=${TESTS_PMREORDER} \
+		-DTEST_DIR=${TEST_DIR} \
+		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
+		-DTESTS_COMPATIBILITY=0 \
+		-DTESTS_CONCURRENT_GDB=1 \
+		-DUSE_ASAN=${TESTS_USAN} \
+		-DUSE_UBSAN=${TESTS_UBSAN}
+
+	make -j$(nproc)
+	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}
+	if [ "${COVERAGE}" == "1" ]; then
+		upload_codecov tests_clang_release_cpp20
 	fi
 
 	workspace_cleanup
@@ -215,23 +258,21 @@ function tests_package() {
 
 	[ ! "${TESTS_PACKAGES}" = "ON" ] && echo "Skipping testing packages, TESTS_PACKAGES variable is not set."
 
-	if ! ls /opt/pmdk-pkg/libpmem* > /dev/null 2>&1; then
-		echo "ERROR: There are no PMDK packages in /opt/pmdk-pkg - they are required for package test(s)."
-		printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
-		return 1
-	fi
-
 	mkdir build
 	cd build
 
-	if [ ${PACKAGE_MANAGER} = "deb" ]; then
-		sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
-		sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
-	elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
-		sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
-	else
-		echo "ERROR: skipping building of packages because PACKAGE_MANAGER is not equal to 'rpm' nor 'deb' ..."
-		return 1
+	if ls /opt/pmdk-pkg/libpmem* > /dev/null 2>&1; then
+		echo "There are packages to install in '/opt/pmdk-pkg'"
+
+		if [ ${PACKAGE_MANAGER} = "deb" ]; then
+			sudo_password dpkg -i /opt/pmdk-pkg/libpmem_*.deb /opt/pmdk-pkg/libpmem-dev_*.deb
+			sudo_password dpkg -i /opt/pmdk-pkg/libpmemobj_*.deb /opt/pmdk-pkg/libpmemobj-dev_*.deb
+		elif [ ${PACKAGE_MANAGER} = "rpm" ]; then
+			sudo_password rpm -i /opt/pmdk-pkg/libpmem*.rpm /opt/pmdk-pkg/pmdk-debuginfo-*.rpm
+		else
+			echo "ERROR: we found packages to install, but PACKAGE_MANAGER is not set (to 'rpm', or 'deb')!"
+			return 1
+		fi
 	fi
 
 	CC=gcc CXX=g++ \

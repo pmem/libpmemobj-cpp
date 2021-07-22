@@ -26,6 +26,60 @@ namespace obj
 namespace experimental
 {
 
+template <typename CharT, typename Traits = std::char_traits<CharT>>
+class basic_inline_string_base {
+public:
+	using traits_type = Traits;
+	using value_type = CharT;
+	using size_type = std::size_t;
+	using difference_type = std::ptrdiff_t;
+	using reference = value_type &;
+	using const_reference = const value_type &;
+	using pointer = value_type *;
+	using const_pointer = const value_type *;
+
+	basic_inline_string_base(basic_string_view<CharT, Traits> v);
+	basic_inline_string_base(size_type capacity);
+	basic_inline_string_base(const basic_inline_string_base &rhs);
+
+	basic_inline_string_base &
+	operator=(const basic_inline_string_base &rhs);
+
+	basic_inline_string_base &
+	operator=(basic_string_view<CharT, Traits> rhs);
+
+	basic_inline_string_base(basic_inline_string_base<CharT> &&) = delete;
+
+	basic_inline_string_base &
+	operator=(basic_inline_string_base &&) = delete;
+	operator basic_string_view<CharT, Traits>() const;
+
+	size_type size() const noexcept;
+	size_type capacity() const noexcept;
+
+	pointer data();
+	const_pointer data() const noexcept;
+	const_pointer cdata() const noexcept;
+
+	int compare(basic_string_view<CharT, Traits> rhs) const noexcept;
+
+	reference operator[](size_type p);
+	const_reference operator[](size_type p) const noexcept;
+
+	reference at(size_type p);
+	const_reference at(size_type p) const;
+
+	slice<pointer> range(size_type p, size_type count);
+
+	basic_inline_string_base &assign(basic_string_view<CharT, Traits> rhs);
+
+protected:
+	pointer snapshotted_data(size_t p, size_t n);
+
+	obj::p<uint64_t> size_;
+	obj::p<uint64_t> capacity_;
+};
+
 /**
  * This class serves similar purpose to pmem::obj::string, but
  * keeps the data within the same allocation as inline_string itself.
@@ -44,7 +98,8 @@ namespace experimental
  * @snippet inline_string/inline_string.cpp inline_string_example
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
-class basic_inline_string {
+class basic_dram_inline_string
+    : public basic_inline_string_base<CharT, Traits> {
 public:
 	using traits_type = Traits;
 	using value_type = CharT;
@@ -54,44 +109,107 @@ public:
 	using const_reference = const value_type &;
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
+	using basic_inline_string_base<CharT, Traits>::operator=;
 
-	basic_inline_string(basic_string_view<CharT, Traits> v);
-	basic_inline_string(size_type capacity);
-	basic_inline_string(const basic_inline_string &rhs);
+	basic_dram_inline_string(basic_string_view<CharT, Traits> v)
+	    : basic_inline_string_base<CharT, Traits>(v)
+	{
+	}
 
-	basic_inline_string &operator=(const basic_inline_string &rhs);
+	basic_dram_inline_string(size_type capacity)
+	    : basic_inline_string_base<CharT, Traits>(capacity)
+	{
+	}
+	basic_dram_inline_string(const basic_dram_inline_string &rhs)
+	    : basic_inline_string_base<CharT, Traits>(rhs)
+	{
+	}
 
-	basic_inline_string &operator=(basic_string_view<CharT, Traits> rhs);
+	basic_dram_inline_string &
+	operator=(const basic_dram_inline_string &rhs)
+	{
+		return static_cast<basic_dram_inline_string &>(this->operator=(
+			static_cast<const basic_inline_string_base<
+				CharT, Traits> &>(rhs)));
+	}
+};
 
-	basic_inline_string(basic_inline_string<CharT> &&) = delete;
-	basic_inline_string &operator=(basic_inline_string &&) = delete;
-	operator basic_string_view<CharT, Traits>() const;
+/**
+ * This class serves similar purpose to pmem::obj::string, but
+ * keeps the data within the same allocation as inline_string itself.
+ *
+ * It can be kept only on pmem.
+ *
+ * The data is always kept right after the inline_string structure.
+ * It means that creating an object of inline_string must be done
+ * as follows:
+ * 1. Allocate memory of sizeof(inline_string) + size of the characters string +
+ * sizeof('\0')
+ * 2. Use emplace new() to create inline_string
+ *
+ * Example:
+ * @snippet inline_string/inline_string.cpp inline_string_example
+ */
+template <typename CharT, typename Traits = std::char_traits<CharT>>
+class basic_inline_string : public basic_inline_string_base<CharT, Traits> {
+public:
+	using traits_type = Traits;
+	using value_type = CharT;
+	using size_type = std::size_t;
+	using difference_type = std::ptrdiff_t;
+	using reference = value_type &;
+	using const_reference = const value_type &;
+	using pointer = value_type *;
+	using const_pointer = const value_type *;
+	using basic_inline_string_base<CharT, Traits>::operator=;
 
-	size_type size() const noexcept;
-	size_type capacity() const noexcept;
+	/**
+	 * @throw pool_error if inline string is not on pmem.
+	 */
+	basic_inline_string(basic_string_view<CharT, Traits> v)
+	    : basic_inline_string_base<CharT, Traits>(check_forward(v))
+	{
+	}
 
-	pointer data();
-	const_pointer data() const noexcept;
-	const_pointer cdata() const noexcept;
+	/**
+	 * @throw pool_error if inline string is not on pmem.
+	 */
+	basic_inline_string(size_type capacity)
+	    : basic_inline_string_base<CharT, Traits>(check_forward(capacity))
+	{
+	}
 
-	int compare(const basic_inline_string &rhs) const noexcept;
+	/**
+	 * @throw pool_error if inline string is not on pmem.
+	 */
+	basic_inline_string(const basic_inline_string &rhs)
+	    : basic_inline_string_base<CharT, Traits>(check_forward(rhs))
+	{
+	}
 
-	reference operator[](size_type p);
-	const_reference operator[](size_type p) const noexcept;
-
-	reference at(size_type p);
-	const_reference at(size_type p) const;
-
-	slice<pointer> range(size_type p, size_type count);
-
-	basic_inline_string &assign(basic_string_view<CharT, Traits> rhs);
+	basic_inline_string &
+	operator=(const basic_inline_string &rhs)
+	{
+		return static_cast<basic_inline_string &>(this->operator=(
+			static_cast<const basic_inline_string_base<
+				CharT, Traits> &>(rhs)));
+	}
 
 private:
-	pointer snapshotted_data(size_t p, size_t n);
-
-	obj::p<uint64_t> size_;
-	obj::p<uint64_t> capacity_;
+	template <typename T>
+	T &&
+	check_forward(T &&t)
+	{
+		if (nullptr == pmemobj_pool_by_ptr(this))
+			throw pmem::pool_error("Invalid pool handle.");
+		return std::forward<T>(t);
+	}
 };
+
+using dram_inline_string = basic_dram_inline_string<char>;
+using dram_inline_wstring = basic_dram_inline_string<wchar_t>;
+using dram_inline_u16string = basic_dram_inline_string<char16_t>;
+using dram_inline_u32string = basic_dram_inline_string<char32_t>;
 
 using inline_string = basic_inline_string<char>;
 using inline_wstring = basic_inline_string<wchar_t>;
@@ -102,7 +220,7 @@ using inline_u32string = basic_inline_string<char32_t>;
  * Constructs inline string from a string_view.
  */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits>::basic_inline_string(
+basic_inline_string_base<CharT, Traits>::basic_inline_string_base(
 	basic_string_view<CharT, Traits> v)
     : size_(v.size()), capacity_(v.size())
 {
@@ -115,7 +233,8 @@ basic_inline_string<CharT, Traits>::basic_inline_string(
  * Constructs empty inline_string with specified capacity.
  */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits>::basic_inline_string(size_type capacity)
+basic_inline_string_base<CharT, Traits>::basic_inline_string_base(
+	size_type capacity)
     : size_(0), capacity_(capacity)
 {
 	data()[static_cast<ptrdiff_t>(size_)] = '\0';
@@ -125,8 +244,8 @@ basic_inline_string<CharT, Traits>::basic_inline_string(size_type capacity)
  * Copy constructor
  */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits>::basic_inline_string(
-	const basic_inline_string &rhs)
+basic_inline_string_base<CharT, Traits>::basic_inline_string_base(
+	const basic_inline_string_base &rhs)
     : size_(rhs.size()), capacity_(rhs.capacity())
 {
 	std::copy(rhs.data(), rhs.data() + static_cast<ptrdiff_t>(size_),
@@ -139,8 +258,9 @@ basic_inline_string<CharT, Traits>::basic_inline_string(
  * Copy assignment operator
  */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits> &
-basic_inline_string<CharT, Traits>::operator=(const basic_inline_string &rhs)
+basic_inline_string_base<CharT, Traits> &
+basic_inline_string_base<CharT, Traits>::operator=(
+	const basic_inline_string_base &rhs)
 {
 	if (this == &rhs)
 		return *this;
@@ -152,8 +272,8 @@ basic_inline_string<CharT, Traits>::operator=(const basic_inline_string &rhs)
  * Assignment operator from string_view.
  */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits> &
-basic_inline_string<CharT, Traits>::operator=(
+basic_inline_string_base<CharT, Traits> &
+basic_inline_string_base<CharT, Traits>::operator=(
 	basic_string_view<CharT, Traits> rhs)
 {
 	return assign(rhs);
@@ -161,16 +281,16 @@ basic_inline_string<CharT, Traits>::operator=(
 
 /** Conversion operator to string_view */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits>::operator basic_string_view<CharT, Traits>()
-	const
+basic_inline_string_base<CharT, Traits>::operator basic_string_view<
+	CharT, Traits>() const
 {
 	return {data(), size()};
 }
 
 /** @return size of the string */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::size_type
-basic_inline_string<CharT, Traits>::size() const noexcept
+typename basic_inline_string_base<CharT, Traits>::size_type
+basic_inline_string_base<CharT, Traits>::size() const noexcept
 {
 	return size_;
 }
@@ -183,8 +303,8 @@ basic_inline_string<CharT, Traits>::size() const noexcept
  * expanded.
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::size_type
-basic_inline_string<CharT, Traits>::capacity() const noexcept
+typename basic_inline_string_base<CharT, Traits>::size_type
+basic_inline_string_base<CharT, Traits>::capacity() const noexcept
 {
 	return capacity_;
 }
@@ -199,16 +319,16 @@ basic_inline_string<CharT, Traits>::capacity() const noexcept
  * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::pointer
-basic_inline_string<CharT, Traits>::data()
+typename basic_inline_string_base<CharT, Traits>::pointer
+basic_inline_string_base<CharT, Traits>::data()
 {
 	return snapshotted_data(0, size_);
 }
 
 /** @return const_pointer to the data (equal to (this + 1)) */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::const_pointer
-basic_inline_string<CharT, Traits>::data() const noexcept
+typename basic_inline_string_base<CharT, Traits>::const_pointer
+basic_inline_string_base<CharT, Traits>::data() const noexcept
 {
 	return cdata();
 }
@@ -221,8 +341,8 @@ basic_inline_string<CharT, Traits>::data() const noexcept
  * @return const_pointer to the data (equal to (this + 1))
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::const_pointer
-basic_inline_string<CharT, Traits>::cdata() const noexcept
+typename basic_inline_string_base<CharT, Traits>::const_pointer
+basic_inline_string_base<CharT, Traits>::cdata() const noexcept
 {
 	return reinterpret_cast<const CharT *>(this + 1);
 }
@@ -237,8 +357,8 @@ basic_inline_string<CharT, Traits>::cdata() const noexcept
  */
 template <typename CharT, typename Traits>
 int
-basic_inline_string<CharT, Traits>::compare(
-	const basic_inline_string &rhs) const noexcept
+basic_inline_string_base<CharT, Traits>::compare(
+	basic_string_view<CharT, Traits> rhs) const noexcept
 {
 	return basic_string_view<CharT, Traits>(data(), size()).compare(rhs);
 }
@@ -252,8 +372,8 @@ basic_inline_string<CharT, Traits>::compare(
  * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::reference
-	basic_inline_string<CharT, Traits>::operator[](size_type p)
+typename basic_inline_string_base<CharT, Traits>::reference
+	basic_inline_string_base<CharT, Traits>::operator[](size_type p)
 {
 	return snapshotted_data(p, 1)[0];
 }
@@ -265,8 +385,8 @@ typename basic_inline_string<CharT, Traits>::reference
  * @return const_reference to a CharT
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::const_reference
-	basic_inline_string<CharT, Traits>::operator[](size_type p) const
+typename basic_inline_string_base<CharT, Traits>::const_reference
+	basic_inline_string_base<CharT, Traits>::operator[](size_type p) const
 	noexcept
 {
 	return cdata()[p];
@@ -282,11 +402,11 @@ typename basic_inline_string<CharT, Traits>::const_reference
  * @throw std::out_of_range if p is not within the range of the container.
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::reference
-basic_inline_string<CharT, Traits>::at(size_type p)
+typename basic_inline_string_base<CharT, Traits>::reference
+basic_inline_string_base<CharT, Traits>::at(size_type p)
 {
 	if (p >= size())
-		throw std::out_of_range("basic_inline_string::at");
+		throw std::out_of_range("basic_inline_string_base::at");
 
 	return snapshotted_data(p, 1)[0];
 }
@@ -300,11 +420,11 @@ basic_inline_string<CharT, Traits>::at(size_type p)
  * @throw std::out_of_range if p is not within the range of the container.
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::const_reference
-basic_inline_string<CharT, Traits>::at(size_type p) const
+typename basic_inline_string_base<CharT, Traits>::const_reference
+basic_inline_string_base<CharT, Traits>::at(size_type p) const
 {
 	if (p >= size())
-		throw std::out_of_range("basic_inline_string::at");
+		throw std::out_of_range("basic_inline_string_base::at");
 
 	return cdata()[p];
 }
@@ -323,11 +443,11 @@ basic_inline_string<CharT, Traits>::at(size_type p) const
  * @throw pmem::transaction_error when snapshotting failed.
  */
 template <typename CharT, typename Traits>
-slice<typename basic_inline_string<CharT, Traits>::pointer>
-basic_inline_string<CharT, Traits>::range(size_type start, size_type n)
+slice<typename basic_inline_string_base<CharT, Traits>::pointer>
+basic_inline_string_base<CharT, Traits>::range(size_type start, size_type n)
 {
 	if (start + n > size())
-		throw std::out_of_range("basic_inline_string::range");
+		throw std::out_of_range("basic_inline_string_base::range");
 
 	auto data = snapshotted_data(start, n);
 
@@ -339,8 +459,8 @@ basic_inline_string<CharT, Traits>::range(size_type start, size_type n)
  * snapshot elements from p to p + n.
  */
 template <typename CharT, typename Traits>
-typename basic_inline_string<CharT, Traits>::pointer
-basic_inline_string<CharT, Traits>::snapshotted_data(size_t p, size_t n)
+typename basic_inline_string_base<CharT, Traits>::pointer
+basic_inline_string_base<CharT, Traits>::snapshotted_data(size_t p, size_t n)
 {
 	assert(p + n <= size());
 
@@ -357,8 +477,9 @@ basic_inline_string<CharT, Traits>::snapshotted_data(size_t p, size_t n)
  * @throw pool_error if inline string is not on pmem.
  */
 template <typename CharT, typename Traits>
-basic_inline_string<CharT, Traits> &
-basic_inline_string<CharT, Traits>::assign(basic_string_view<CharT, Traits> rhs)
+basic_inline_string_base<CharT, Traits> &
+basic_inline_string_base<CharT, Traits>::assign(
+	basic_string_view<CharT, Traits> rhs)
 {
 	auto cpop = pmemobj_pool_by_ptr(this);
 	if (nullptr == cpop)
@@ -420,7 +541,24 @@ struct total_sizeof<basic_inline_string<CharT, Traits>> {
 	static size_t
 	value(const basic_string_view<CharT, Traits> &s)
 	{
-		return sizeof(basic_inline_string<CharT, Traits>) +
+		return sizeof(basic_inline_string_base<CharT, Traits>) +
+			(s.size() + 1 /* '\0' */) * sizeof(CharT);
+	}
+};
+
+/**
+ * A helper trait which calculates required memory capacity (in bytes) for a
+ * type.
+ *
+ * Inline_string requires capacity of sizeof(basic_dram_inline_string<CharT>) +
+ * size of the data itself.
+ */
+template <typename CharT, typename Traits>
+struct total_sizeof<basic_dram_inline_string<CharT, Traits>> {
+	static size_t
+	value(const basic_string_view<CharT, Traits> &s)
+	{
+		return sizeof(basic_dram_inline_string<CharT, Traits>) +
 			(s.size() + 1 /* '\0' */) * sizeof(CharT);
 	}
 };
@@ -429,7 +567,8 @@ struct total_sizeof<basic_inline_string<CharT, Traits>> {
 
 namespace detail
 {
-/* Check if type is pmem::obj::basic_inline_string */
+/* Check if type is pmem::obj::basic_inline_string or
+ * pmem::obj::basic_dram_inline_string */
 template <typename>
 struct is_inline_string : std::false_type {
 };
@@ -438,6 +577,13 @@ template <typename CharT, typename Traits>
 struct is_inline_string<obj::experimental::basic_inline_string<CharT, Traits>>
     : std::true_type {
 };
+
+template <typename CharT, typename Traits>
+struct is_inline_string<
+	obj::experimental::basic_dram_inline_string<CharT, Traits>>
+    : std::true_type {
+};
+
 } /* namespace detail */
 
 } /* namespace pmem */

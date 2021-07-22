@@ -6,8 +6,6 @@
 #include <libpmemobj++/container/string.hpp>
 #include <libpmemobj++/experimental/radix_tree.hpp>
 
-#include <libpmemobj/iterator.h>
-
 namespace nvobj = pmem::obj;
 
 struct bytes_view {
@@ -29,12 +27,11 @@ struct bytes_view {
 	const nvobj::string *s;
 };
 
-using container_t =
-	nvobj::experimental::radix_tree<nvobj::string, int, bytes_view>;
+using cntr_t = nvobj::experimental::radix_tree<nvobj::string, int, bytes_view>;
 
 struct root {
 	nvobj::persistent_ptr<nvobj::string> str;
-	nvobj::persistent_ptr<container_t> map;
+	nvobj::persistent_ptr<cntr_t> map;
 };
 
 void
@@ -43,7 +40,7 @@ test_long_string(nvobj::pool<root> &pop)
 	auto r = pop.root();
 
 	nvobj::transaction::run(pop, [&] {
-		r->map = nvobj::make_persistent<container_t>();
+		r->map = nvobj::make_persistent<cntr_t>();
 		r->str = nvobj::make_persistent<nvobj::string>((1ULL << 32),
 							       'a');
 	});
@@ -55,7 +52,7 @@ test_long_string(nvobj::pool<root> &pop)
 	UT_ASSERT(!ret.second);
 
 	nvobj::transaction::run(pop, [&] {
-		nvobj::delete_persistent<container_t>(r->map);
+		nvobj::delete_persistent<cntr_t>(r->map);
 		nvobj::delete_persistent<nvobj::string>(r->str);
 	});
 

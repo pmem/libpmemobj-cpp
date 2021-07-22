@@ -150,7 +150,8 @@ namespace experimental
 namespace detail
 {
 
-#if defined(__x86_64) || defined(_M_X64) || defined(__aarch64__)
+#if defined(__x86_64) || defined(_M_X64) || defined(__aarch64__) ||            \
+	defined(__riscv)
 static constexpr size_t CACHELINE_SIZE = 64ULL;
 #elif defined(__PPC64__)
 static constexpr size_t CACHELINE_SIZE = 128ULL;

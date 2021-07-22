@@ -4,6 +4,7 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
@@ -28,6 +29,12 @@ assert_if_oid_is_null(pointer<int> &f)
 template <>
 void
 assert_if_oid_is_null(nvobjexp::self_relative_ptr<int> &f)
+{
+}
+
+template <>
+void
+assert_if_oid_is_null(nvobjexp::pa_self_relative_ptr<int> &f)
 {
 }
 

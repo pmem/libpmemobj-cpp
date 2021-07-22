@@ -18,9 +18,9 @@
  * Flush is needed if it is 0, not needed if it is 1.
  * */
 
-#define kFlushNeeded ~(1UL << 1)
+#define kFlushNeeded ~(1L << 1)
 // flag &= kFlushNeeded, to indicate it needs flush
-#define FlushNeeded(offset)	(!((offset >> 1) & 1U))
+#define FlushNeeded(offset)	(!((offset >> 1) & 1))
 // return true if needs explicit flush, false otherwise.
 
 namespace pmem
@@ -56,7 +56,7 @@ public:
 	get() const noexcept
 	{
 		return static_cast<element_type *>(
-			self_relative_ptr_base::to_void_pointer());
+			this->to_void_pointer());
 	}
 
 private:
@@ -105,28 +105,41 @@ public:
 	 * Default constructor, equal the nullptr
 	 */
 	constexpr pa_self_relative_ptr() noexcept = default;
+
+	/**
+	 * Nullptr constructor
+	 */
+	constexpr pa_self_relative_ptr(std::nullptr_t) noexcept
+	: self_relative_ptr_base()
+	{
+//		std::cerr << "pa_self_relative_ptr 1" << std::endl;
+	}
 	/**
 	 * Volatile pointer constructor.
 	 *
 	 * @param ptr volatile pointer, pointing to persistent memory.
 	 */
-	pa_self_relative_ptr(element_type *ptr, bool flushNeeded = true) noexcept
+	pa_self_relative_ptr(element_type *ptr, bool flushNeeded = false) noexcept
 	    : base_type(self_offset(ptr))
 	{
-		uintptr_t mask = (flushNeeded == true);
+//		std::cerr << "pa_self_relative_ptr 21: flushNeeded=" << flushNeeded << " : offset = " << std::hex << this->offset << std::endl;
+		intptr_t mask = (flushNeeded == true);
 		--mask;
 		this->offset &= (mask | kFlushNeeded);
+//		std::cerr << "pa_self_relative_ptr 22" << ": offset = " << std::hex << this->offset << std::endl;
 	}
 
 	/**
 	 * Constructor from persistent_ptr<T>
 	 */
-	pa_self_relative_ptr(persistent_ptr<T> ptr, bool flushNeeded = true) noexcept
+	pa_self_relative_ptr(persistent_ptr<T> ptr, bool flushNeeded = false) noexcept
 	    : base_type(self_offset(ptr.get()))
 	{
-		uintptr_t mask = (flushNeeded == true);
+//		std::cerr << "pa_self_relative_ptr 31: flushNeeded=" << flushNeeded << " : offset = " << std::hex << this->offset << std::endl;
+		intptr_t mask = (flushNeeded == true);
 		--mask;
 		this->offset &= (mask | kFlushNeeded);
+//		std::cerr << "pa_self_relative_ptr 32" << ": offset = " << std::hex << this->offset << std::endl;
 	}
 
 	/**
@@ -136,13 +149,15 @@ public:
 	 *
 	 * @param oid C-style persistent pointer
 	 */
-	pa_self_relative_ptr(PMEMoid oid, bool flushNeeded = true) noexcept
+	pa_self_relative_ptr(PMEMoid oid, bool flushNeeded = false) noexcept
 	    : base_type(self_offset(
 		      static_cast<element_type *>(pmemobj_direct(oid))))
 	{
-		uintptr_t mask = (flushNeeded == true);
+//		std::cerr << "pa_self_relative_ptr 41: flushNeeded=" << flushNeeded << " : offset = " << std::hex << this->offset << std::endl;
+		intptr_t mask = (flushNeeded == true);
 		--mask;
 		this->offset &= (mask | kFlushNeeded);
+//		std::cerr << "pa_self_relative_ptr 42" << ": offset = " << std::hex << this->offset << std::endl;
 	}
 
 	/**
@@ -151,6 +166,8 @@ public:
 	pa_self_relative_ptr(const pa_self_relative_ptr &ptr) noexcept
 	    : base_type(ptr)
 	{
+//		std::cerr << "pa_self_relative_ptr copy 1" << ": offset = " << std::hex << this->offset << std::endl;
+		this->offset &= ptr.flush_set_mask();
 	}
 
 	/**
@@ -169,11 +186,83 @@ public:
 	pa_self_relative_ptr(pa_self_relative_ptr<U> const &r) noexcept
 	    : base_type(self_offset(static_cast<T *>(r.get())))
 	{
+//		std::cerr << "pa_self_relative_ptr copy 2" << ": offset = " << std::hex << this->offset << std::endl;
+		this->offset &= r.flush_set_mask();
 	}
 
 	~pa_self_relative_ptr()
 	{
 		verify_type();
+	}
+	/**
+	 * Swaps two self_relative_ptr_base objects of the same type.
+	 *
+	 * @param[in,out] other the other self_relative_ptr to swap.
+	 */
+	void
+	swap(pa_self_relative_ptr &other)
+	{
+		if (this == &other)
+			return;
+		detail::conditional_add_to_tx(this);
+		detail::conditional_add_to_tx(&other);
+		auto first = this->to_byte_pointer();
+		auto mask = this->flush_set_mask();
+		auto second = other.to_byte_pointer();
+		this->offset = pointer_to_offset(second);
+		this->offset &= other.flush_set_mask();
+		other.offset = other.pointer_to_offset(first);
+		other.offset &= mask;
+	}
+
+	/**
+	 * Conversion to byte pointer
+	 */
+	byte_ptr_type
+	to_byte_pointer() const noexcept
+	{
+		return static_cast<byte_ptr_type>(this->to_void_pointer());
+	}
+
+	/**
+	 * Conversion to void*
+	 */
+	void *
+	to_void_pointer() const noexcept
+	{
+//		std::cerr << "to_void_pointer 11: flushNeeded=" << flush_needed() << " : offset = " << std::hex << this->offset << std::endl;
+//		intptr_t mask = is_null() == true;
+//		--mask;
+//		std::cerr << "to_void_pointer 12: mask=" << std::hex << mask << std::endl;
+//		std::cerr << "to_void_pointer 13: ptr=" << std::hex << ((this->offset | ~kFlushNeeded) & mask) << std::endl;
+		return this->offset_to_pointer(this->offset);// | ~kFlushNeeded) & mask);
+	}
+
+	/**
+	 * Explicit conversion operator to void*
+	 */
+	explicit
+	operator void *() const noexcept
+	{
+		return to_void_pointer();
+	}
+
+	/**
+	 * Explicit conversion operator to byte pointer
+	 */
+	explicit operator byte_ptr_type() const noexcept
+	{
+		return to_byte_pointer();
+	}
+
+	/**
+	 * Byte distance between two relative pointers
+	 */
+	static difference_type
+	distance_between(const pa_self_relative_ptr &first,
+			 const pa_self_relative_ptr &second)
+	{
+		return second.to_byte_pointer() - first.to_byte_pointer();
 	}
 
 	/**
@@ -184,8 +273,7 @@ public:
 	inline element_type *
 	get() const noexcept
 	{
-		return static_cast<element_type *>(base_type::offset_to_pointer(
-			this->offset | ~kFlushNeeded));
+		return static_cast<element_type *>(this->to_void_pointer());
 	}
 
 	/**
@@ -200,11 +288,36 @@ public:
 	/**
 	 * Check if flush is needed
 	 */
-	bool
+	inline bool
 	flush_needed() const
 	{
-		return FlushNeeded(this->offset);
+		return (!is_null() && FlushNeeded(this->offset));
 	}
+
+	static inline bool
+		flush_needed(offset_type offset) {
+		return ((offset != nullptr_offset) && FlushNeeded(offset));
+	}
+
+	/**
+	 * return mask for caller to & in order to set the flush_needed flag.
+	 * can also be used to clear the flag using offset |= ~flush_set_mask().
+	 */
+	inline intptr_t flush_set_mask() const {
+		intptr_t mask = flush_needed();
+		--mask;
+		return (mask | kFlushNeeded);
+	}
+	/**
+	 * static version of flush_set_mask() for the given offset.
+	 */
+	static inline intptr_t
+	flush_set_mask(offset_type offset) {
+		intptr_t mask = this_type::flush_needed(offset);
+		--mask;
+		return (mask | kFlushNeeded);
+	}
+
 	/**
 	 * return offset for debug only
 	 */
@@ -326,7 +439,7 @@ public:
 	operator++()
 	{
 		detail::conditional_add_to_tx(this);
-		uintptr_t mask = (this->flush_needed() == true);
+		intptr_t mask = (this->flush_needed() == true);
 		--mask;
 		this->offset = (mask | kFlushNeeded) &
 			((this->offset | ~kFlushNeeded)
@@ -353,7 +466,7 @@ public:
 	operator--()
 	{
 		detail::conditional_add_to_tx(this);
-		uintptr_t mask = (this->flush_needed() == true);
+		intptr_t mask = (this->flush_needed() == true);
 		--mask;
 		this->offset = (mask | kFlushNeeded) &
 			       ((this->offset | ~kFlushNeeded)
@@ -380,7 +493,7 @@ public:
 	operator+=(std::ptrdiff_t s)
 	{
 		detail::conditional_add_to_tx(this);
-		uintptr_t mask = (this->flush_needed() == true);
+		intptr_t mask = (this->flush_needed() == true);
 		--mask;
 		this->offset = (mask | kFlushNeeded) &
 			       ((this->offset | ~kFlushNeeded)
@@ -395,7 +508,7 @@ public:
 	operator-=(std::ptrdiff_t s)
 	{
 		detail::conditional_add_to_tx(this);
-		uintptr_t mask = (this->flush_needed() == true);
+		intptr_t mask = (this->flush_needed() == true);
 		--mask;
 		this->offset = (mask | kFlushNeeded) &
 			       ((this->offset | ~kFlushNeeded)
@@ -403,51 +516,6 @@ public:
 		return *this;
 	}
 
-	/**
-	 * Conversion to byte pointer
-	 */
-	byte_ptr_type
-	to_byte_pointer() const noexcept
-	{
-		return static_cast<byte_ptr_type>(this->to_void_pointer());
-	}
-
-	/**
-	 * Conversion to void*
-	 */
-	void *
-	to_void_pointer() const noexcept
-	{
-		return base_type::offset_to_pointer(this->offset |
-						    ~kFlushNeeded);
-	}
-
-	/**
-	 * Explicit conversion operator to void*
-	 */
-	explicit
-	operator void *() const noexcept
-	{
-		return to_void_pointer();
-	}
-
-	/**
-	 * Explicit conversion operator to byte pointer
-	 */
-	explicit operator byte_ptr_type() const noexcept
-	{
-		return to_byte_pointer();
-	}
-
-	/**
-	 * Byte distance between two relative pointers
-	 */
-	static difference_type
-	distance_between(const pa_self_relative_ptr &first,
-			 const pa_self_relative_ptr &second)
-	{
-		return second.to_byte_pointer() - first.to_byte_pointer();
-	}
 protected:
 	/**
 	 * Verify if element_type is not polymorphic
@@ -458,14 +526,94 @@ protected:
 		static_assert(!std::is_polymorphic<element_type>::value,
 			      "Polymorphic types are not supported");
 	}
+	/**
+	 * Conversion to void* use other offset
+	 */
+	void *
+	offset_to_pointer(difference_type other_offset) const noexcept
+	{
+		intptr_t mask = other_offset == nullptr_offset;
+		--mask;
+		return base_type::offset_to_pointer((other_offset | ~kFlushNeeded) & mask);
+	}
+
+//	/**
+//	 * Conversion self_relative_ptr_base to offset from itself
+//	 */
+//	difference_type
+//	pointer_to_offset(const pa_self_relative_ptr &ptr) const noexcept
+//	{
+//		/*
+//		This version without branches is vectorization-friendly.
+//		mask = is_null() should not create a branch in the code.
+//		In this line, we just assign 0 or 1 to the mask variable.
+//
+//		This code is equal:
+//		return ptr.is_null()
+//			? nullptr_offset
+//			: ptr.offset + this->distance_between_self(ptr);
+//		*/
+//		uintptr_t mask = ptr.is_null();
+//		--mask;
+//		difference_type distance_between_self =
+//			reinterpret_cast<const_byte_ptr_type>(&ptr) -
+//			reinterpret_cast<const_byte_ptr_type>(this);
+//		distance_between_self &=
+//			reinterpret_cast<difference_type &>(mask);
+//		return ptr.offset + distance_between_self;
+//	}
 
 private:
+	static constexpr difference_type nullptr_offset = 0;
 	difference_type
 	self_offset(element_type *ptr) const noexcept
 	{
 		return base_type::pointer_to_offset(static_cast<void *>(ptr));
 	}
+	template <typename P>
+	friend class pa_self_relative_accessor;
 };
+//
+///**
+// * Static class accessor to self_relative_ptr_base
+// */
+//template <typename P>
+//class pa_self_relative_accessor {
+//public:
+//	using access_type = pmem::detail::self_relative_ptr_base_impl<P>;
+//	using difference_type = typename access_type::difference_type;
+//
+//	template <typename PointerType>
+//	static difference_type
+//	pointer_to_offset(const access_type &obj, PointerType *ptr, bool flush_needed)
+//	{
+//		intptr_t mask = (flush_needed == true);
+//		--mask;
+//		return ((mask | kFlushNeeded) & obj.pointer_to_offset(static_cast<void *>(ptr)));
+//	}
+//
+//	template <typename PointerType>
+//	static PointerType *
+//	offset_to_pointer(difference_type offset, const access_type &obj)
+//	{
+//		intptr_t mask = (offset == access_type::nullptr_offset);
+//		--mask;
+//		auto ptr = obj.offset_to_pointer((offset | ~kFlushNeeded) & mask);
+//		return static_cast<PointerType *>(ptr);
+//	}
+//
+//	static P &
+//	get_offset(access_type &ptr)
+//	{
+//		return ptr.offset;
+//	}
+//
+//	static const P &
+//	get_offset(const access_type &ptr)
+//	{
+//		return ptr.offset;
+//	}
+//};
 
 /**
  * Swaps two pa_self_relative_ptr objects of the same type.
@@ -736,4 +884,6 @@ operator<<(std::ostream &os, pa_self_relative_ptr<T> const &ptr)
 }
 }
 }
+
+
 #endif // LIBPMEMOBJ_CPP_PA_SELF_RELATIVE_PTR_HPP

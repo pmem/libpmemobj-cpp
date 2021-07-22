@@ -23,9 +23,8 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/transaction.hpp>
 
-#include <libpmemobj++/experimental/atomic_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/atomic_pa_self_relative_ptr.hpp>
 #include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
-
 #include <libpmemobj++/container/detail/concurrent_skip_list_impl.hpp>
 
 namespace pmem
@@ -117,6 +116,32 @@ public:
 	}
 
 	node_pointer
+	next(size_type level)
+	{
+		assert(level < height());
+		node_pointer current = get_next(level).load(std::memory_order_acquire);
+		if (!current.flush_needed()) {
+			return current;
+		}
+		obj::pool_base pop = get_pool_base();
+		node_pointer desired;
+		while (true) {
+			desired = node_pointer{current.get(), false};
+			if (get_next(level).compare_exchange_weak(
+				current, desired)) {
+				auto &node = get_next(level);
+				pop.persist(&node, sizeof(node));
+				break;
+			}
+			current = get_next(level).load(std::memory_order_acquire);
+			if (!current.flush_needed()) {
+				return current;
+			}
+		}
+		return desired;
+	}
+
+	node_pointer
 	next(size_type level) const
 	{
 		assert(level < height());
@@ -127,23 +152,33 @@ public:
 	 * Can`t be called concurrently
 	 * Should be called inside a transaction
 	 */
-	void
-	set_next_tx(size_type level, node_pointer next)
-	{
-		assert(level < height());
-		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
-		auto &node = get_next(level);
-		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
-		node.store(next, std::memory_order_release);
-	}
+//	void
+//	set_next_tx(size_type level, node_pointer next)
+//	{
+//		assert(level < height());
+//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
+//		auto &node = get_next(level);
+//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
+//		node.store(next, std::memory_order_release);
+//	}
+//
+//	void
+//	set_next(obj::pool_base pop, size_type level, node_pointer next)
+//	{
+//		assert(level < height());
+//		auto &node = get_next(level);
+//		node.store(next, std::memory_order_release);
+//		pop.persist(&node, sizeof(node));
+//	}
 
 	void
-	set_next(obj::pool_base pop, size_type level, node_pointer next)
+	set_next(size_type level, node_pointer next)
 	{
 		assert(level < height());
+//		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 		auto &node = get_next(level);
-		node.store(next, std::memory_order_release);
-		pop.persist(&node, sizeof(node));
+//		obj::flat_transaction::snapshot<atomic_node_pointer>(&node);
+		node.store(node_pointer{next.get(), true}, std::memory_order_release);
 	}
 
 	void
@@ -153,19 +188,19 @@ public:
 		auto *nexts = get_nexts();
 
 		for (size_type i = 0; i < h; i++) {
-			nexts[i].store(new_nexts[i], std::memory_order_relaxed);
+			nexts[i].store(node_pointer{new_nexts[i].get(), true}, std::memory_order_relaxed);
 		}
 	}
 
-	void
-	set_nexts(obj::pool_base pop, const node_pointer *new_nexts,
-		  size_type h)
-	{
-		set_nexts(new_nexts, h);
-
-		auto *nexts = get_nexts();
-		pop.persist(nexts, sizeof(nexts[0]) * h);
-	}
+//	void
+//	set_nexts(obj::pool_base pop, const node_pointer *new_nexts,
+//		  size_type h)
+//	{
+//		set_nexts(new_nexts, h);
+//
+//		auto *nexts = get_nexts();
+//		pop.persist(nexts, sizeof(nexts[0]) * h);
+//	}
 
 	/** @return number of layers */
 	size_type
@@ -200,6 +235,12 @@ private:
 		auto *arr =
 			reinterpret_cast<const atomic_node_pointer *>(this + 1);
 		return arr[level];
+	}
+	obj::pool_base
+	get_pool_base() const
+	{
+		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
+		return obj::pool_base(pop);
 	}
 
 	mutex_type mutex;
@@ -291,7 +332,7 @@ private:
 	node_ptr node;
 
 	template <typename Traits>
-	friend class concurrent_skip_list;
+	friend class swmr_skip_list;
 
 	template <typename T, bool M, bool U>
 	friend bool operator==(const swmr_skip_list_iterator<T, M> &lhs,
@@ -1862,7 +1903,8 @@ public:
 
 			node_ptr head = dummy_head.get();
 			for (size_type i = 0; i < head->height(); ++i) {
-				head->set_next_tx(i, nullptr);
+//				head->set_next_tx(i, nullptr);
+				head->set_next(i, nullptr);
 			}
 
 			on_init_size = 0;
@@ -2396,7 +2438,8 @@ private:
 				assert(tls_entry.insert_stage == not_started);
 				assert(tls_entry.ptr != nullptr);
 
-				n->set_nexts(pop, next_nodes.data(), height);
+//				n->set_nexts(pop, next_nodes.data(), height);
+			  	n->set_nexts(next_nodes.data(), height);
 
 				tls_entry.insert_stage = in_progress;
 				pop.persist(&(tls_entry.insert_stage),
@@ -2577,7 +2620,8 @@ private:
 			       next_nodes[level]);
 			assert(prev_nodes[level]->next(level) ==
 			       n->next(level));
-			prev_nodes[level]->set_next(pop, level, new_node);
+//			prev_nodes[level]->set_next(pop, level, new_node);
+			prev_nodes[level]->set_next(level, new_node);
 		}
 
 #ifndef NDEBUG
@@ -2790,7 +2834,9 @@ private:
 		     ++level) {
 			assert(prev_nodes[level]->height() > level);
 			assert(next_nodes[level].get() == erase_node);
-			prev_nodes[level]->set_next_tx(level,
+//			prev_nodes[level]->set_next_tx(level,
+//						       erase_node->next(level));
+			prev_nodes[level]->set_next(level,
 						       erase_node->next(level));
 		}
 
@@ -3079,7 +3125,8 @@ private:
 				/* Otherwise, node already linked on
 				 * this layer */
 				assert(n->next(level) == next_nodes[level]);
-				prev_nodes[level]->set_next(pop, level, node);
+//				prev_nodes[level]->set_next(pop, level, node);
+				prev_nodes[level]->set_next(level, node);
 			}
 		}
 
@@ -3120,36 +3167,6 @@ private:
 	 */
 	obj::p<size_type> on_init_size;
 }; /* class swmr_skip_list */
-
-template <typename Key, typename Value, typename KeyCompare,
-	  typename RND_GENERATOR, typename Allocator, bool AllowMultimapping,
-	  size_t MAX_LEVEL>
-class map_traits {
-public:
-	static constexpr size_t max_level = MAX_LEVEL;
-	using random_generator_type = RND_GENERATOR;
-	using key_type = Key;
-	using mapped_type = Value;
-	using compare_type = KeyCompare;
-	using value_type = pair<const key_type, mapped_type>;
-	using reference = value_type &;
-	using const_reference = const value_type &;
-	using allocator_type = Allocator;
-
-	/**
-	 * pmem::detail::swmr_skip_list allows multimapping. If this flag
-	 * is true we can store multiple entries with the same key. For
-	 * concurrent_map it should be false; For concurrent_multimap it should
-	 * be true;
-	 */
-	constexpr static bool allow_multimapping = AllowMultimapping;
-
-	static const key_type &
-	get_key(const_reference val)
-	{
-		return val.first;
-	}
-}; /* class map_traits */
 
 } /* namespace detail */
 } /* namespace pmem */

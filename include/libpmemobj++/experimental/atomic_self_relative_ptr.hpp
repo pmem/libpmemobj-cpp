@@ -23,6 +23,7 @@ namespace std
  *
  * Doesn't automatically add itself to the transaction.
  * The user is responsible for persisting the data.
+ *
  */
 template <typename T>
 struct atomic<pmem::obj::experimental::self_relative_ptr<T>> {

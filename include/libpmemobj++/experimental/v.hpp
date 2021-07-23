@@ -37,6 +37,7 @@ namespace experimental
  *
  * Example usage:
  * @snippet v/v.cpp v_property_example
+ * @ingroup primitives
  */
 template <typename T>
 class v {

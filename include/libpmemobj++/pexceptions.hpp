@@ -41,6 +41,7 @@ errormsg(void)
  *
  * Thrown when there is a runtime problem with some action on the
  * pool.
+ * @ingroup exceptions
  */
 class pool_error : public std::runtime_error {
 public:
@@ -63,6 +64,7 @@ public:
  * Custom pool error class.
  *
  * Thrown when there is an invalid argument passed to create/open pool.
+ * @ingroup exceptions
  */
 class pool_invalid_argument : public pool_error {
 public:
@@ -84,6 +86,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is a runtime problem with a transaction.
+ * @ingroup exceptions
  */
 class transaction_error : public std::runtime_error {
 public:
@@ -106,6 +109,7 @@ public:
  *
  * Thrown when there is a runtime system error with an operation
  * on a lock.
+ * @ingroup exceptions
  */
 class lock_error : public std::system_error {
 public:
@@ -128,6 +132,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is a transactional allocation error.
+ * @ingroup exceptions
  */
 class transaction_alloc_error : public transaction_error {
 public:
@@ -149,6 +154,7 @@ public:
  * Custom out of memory error class.
  *
  * Thrown when there is out of memory error inside of transaction.
+ * @ingroup exceptions
  */
 class transaction_out_of_memory : public transaction_alloc_error,
 				  public std::bad_alloc {
@@ -173,6 +179,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is a transactional free error.
+ * @ingroup exceptions
  */
 class transaction_free_error : public transaction_alloc_error {
 public:
@@ -194,6 +201,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is an error with the scope of the transaction.
+ * @ingroup exceptions
  */
 class transaction_scope_error : public std::logic_error {
 public:
@@ -204,6 +212,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown on manual transaction abort.
+ * @ingroup exceptions
  */
 class manual_tx_abort : public std::runtime_error {
 public:
@@ -214,6 +223,7 @@ public:
  * Custom layout error class.
  *
  * Thrown when data layout is different than expected by the library.
+ * @ingroup exceptions
  */
 class layout_error : public std::runtime_error {
 public:
@@ -224,6 +234,7 @@ public:
  * Custom ctl error class.
  *
  * Thrown on ctl_[get|set|exec] failure.
+ * @ingroup exceptions
  */
 class ctl_error : public std::runtime_error {
 public:
@@ -246,6 +257,7 @@ public:
  *
  * Thrown when the defragmentation process fails
  * (possibly in the middle of a run).
+ * @ingroup exceptions
  */
 class defrag_error : public std::runtime_error {
 public:

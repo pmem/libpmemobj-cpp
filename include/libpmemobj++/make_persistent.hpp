@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -44,6 +44,7 @@ namespace obj
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
+ * @ingroup allocation
  */
 template <typename T, typename... Args>
 typename detail::pp_if_not_array<T>::type
@@ -86,6 +87,7 @@ make_persistent(allocation_flag flag, Args &&... args)
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
+ * @ingroup allocation
  */
 template <typename T, typename... Args>
 typename std::enable_if<
@@ -113,6 +115,7 @@ make_persistent(Args &&... args)
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_free_error on transactional free failure.
+ * @ingroup allocation
  */
 template <typename T>
 void

@@ -114,6 +114,7 @@ struct bytes_view;
  *
  * An example of custom BytesView implementation:
  * @snippet radix_tree/radix_tree_custom_key.cpp bytes_view_example
+ * @ingroup experimental_containers
  */
 template <typename Key, typename Value, typename BytesView = bytes_view<Key>,
 	  bool MtMode = false>

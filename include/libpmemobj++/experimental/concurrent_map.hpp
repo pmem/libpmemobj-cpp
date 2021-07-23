@@ -46,6 +46,7 @@ namespace experimental
  * Allocator type should satisfies the named requirements
  * (https://en.cppreference.com/w/cpp/named_req/Allocator). The allocate() and
  * deallocate() methods are called inside transactions.
+ * @ingroup experimental_containers
  */
 template <typename Key, typename Value, typename Comp = std::less<Key>,
 	  typename Allocator =

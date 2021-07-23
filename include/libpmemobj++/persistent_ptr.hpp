@@ -147,6 +147,7 @@ public:
  *
  * Below you can find an example how to and how NOT to cast persistent_ptr's:
  * @snippet persistent/persistent.cpp persistent_ptr_casting_example
+ * @ingroup primitives
  */
 template <typename T>
 class persistent_ptr : public persistent_ptr_base {

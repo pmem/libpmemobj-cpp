@@ -159,7 +159,7 @@ public:
 	pa_self_relative_ptr(const pa_self_relative_ptr &ptr) noexcept
 	    : base_type(ptr)
 	{
-		this->offset &= ptr.flush_set_mask();
+		/* this->offset &= ptr.flush_set_mask(); */
 	}
 
 	/**

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -26,6 +26,7 @@ namespace obj
  * satisfies all requirements of the SharedMutex and StandardLayoutType
  * concepts. The typical usage would be:
  * @snippet mutex/mutex.cpp shared_mutex_example
+ * @ingroup primitives
  */
 class shared_mutex {
 public:

@@ -25,6 +25,7 @@ namespace obj
 /**
  * Encapsulates object specific allocator functionality. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
+ * @ingroup residency
  */
 template <typename T>
 class object_traits {
@@ -137,6 +138,7 @@ public:
 /**
  * Object traits specialization for the void type. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
+ * @ingroup residency
  */
 template <>
 class object_traits<void> {
@@ -179,6 +181,7 @@ public:
  *
  * Can be specialized for a given type. Designed to be used with C++ allocators.
  * Can be specialized if necessary.
+ * @ingroup residency
  */
 template <typename T>
 class standard_alloc_policy {
@@ -298,6 +301,7 @@ public:
 
 /**
  * Void specialization of the standard allocation policy.
+ * @ingroup residency
  */
 template <>
 class standard_alloc_policy<void> {

@@ -41,6 +41,7 @@ using u32string_view = std::basic_string_view<char32_t>;
  *
  * If C++17's std::string_view implementation is not available, this one
  * is used to avoid unnecessary string copying.
+ * @ingroup accessors
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string_view {

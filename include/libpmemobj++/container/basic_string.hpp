@@ -41,6 +41,7 @@ namespace obj
  *
  * Simple example of pmem::obj::string usage
  * @snippet string/string.cpp string_example
+ * @ingroup containers
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string {

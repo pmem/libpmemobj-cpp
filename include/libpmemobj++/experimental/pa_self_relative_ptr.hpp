@@ -160,6 +160,8 @@ public:
 	    : base_type(ptr)
 	{
 		/* this->offset &= ptr.flush_set_mask(); */
+		/* the base_type calculates the offset based on the difference
+		 * of the volatile ptr, so no need to reset the mask. */
 	}
 
 	/**
@@ -179,6 +181,8 @@ public:
 	    : base_type(self_offset(static_cast<T *>(r.get())))
 	{
 		this->offset &= r.flush_set_mask();
+		/* the base_type set the offset using the volatile ptr, so
+		 * the mask must be set manually */
 	}
 
 	~pa_self_relative_ptr()
@@ -202,6 +206,9 @@ public:
 		auto second = other.to_byte_pointer();
 		this->offset = pointer_to_offset(second);
 		this->offset &= other.flush_set_mask();
+		/* pointer_to_offset after to_byte_pointer removes the
+		 * flush_needed flag, so it needs to be set manually
+		 * after the recalculation of offset */
 		other.offset = other.pointer_to_offset(first);
 		other.offset &= mask;
 	}
@@ -307,14 +314,6 @@ public:
 		return (mask | kFlushNeeded);
 	}
 
-	/**
-	 * return offset for debug only
-	 */
-	offset_type
-	get_offset() const
-	{
-		return this->offset;
-	}
 	/*
 	 * Operators
 	 */

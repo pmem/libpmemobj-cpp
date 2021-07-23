@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2021, 4Paradigm Inc. */
 
 /*
  * swmr_map.cpp -- pmem::obj::experimental::swmr_map test

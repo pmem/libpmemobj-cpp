@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020-2021, Intel Corporation */
+/* Copyright 2021, 4Paradigm Inc. */
 
 #ifndef LIBPMEMOBJ_CPP_ATOMIC_SELF_RELATIVE_PTR_HPP
 #define LIBPMEMOBJ_CPP_ATOMIC_SELF_RELATIVE_PTR_HPP

@@ -614,6 +614,7 @@ namespace obj
  *
  * The typical usage example would be:
  * @snippet transaction/transaction.cpp general_tx_example
+ * @ingroup transactions
  */
 class basic_transaction : public detail::transaction_base<false> {
 public:
@@ -741,6 +742,7 @@ public:
  * The typical usage example would be:
  * @snippet transaction/transaction.cpp tx_flat_example
  * @snippet transaction/transaction.cpp tx_nested_struct_example
+ * @ingroup transactions
  *
  */
 class flat_transaction : public detail::transaction_base<true> {

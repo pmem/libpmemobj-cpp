@@ -76,6 +76,7 @@ private:
  * to the second (convertible) type, the offset will be re-calculated.
  *
  * @includedoc shared/self_relative_pointer_implementation.txt
+ * @ingroup primitives
  */
 template <typename T>
 class self_relative_ptr : public self_relative_ptr_base {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /**
  * @file
@@ -45,6 +45,7 @@ namespace obj
 /**
  * pmem::obj::slice - provides interface to access
  * sequence of objects.
+ * @ingroup data_view
  */
 template <typename Iterator>
 class slice {

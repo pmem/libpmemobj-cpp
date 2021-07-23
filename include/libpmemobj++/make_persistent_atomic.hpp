@@ -44,6 +44,7 @@ namespace obj
  * passed to the objects constructor.
  *
  * @throw std::bad_alloc on allocation failure.
+ * @ingroup allocation
  */
 template <typename T, typename... Args>
 void
@@ -76,6 +77,7 @@ make_persistent_atomic(pool_base &pool,
  * passed to the objects constructor.
  *
  * @throw std::bad_alloc on allocation failure.
+ * @ingroup allocation
  */
 template <typename T, typename... Args>
 typename std::enable_if<!detail::is_first_arg_same<allocation_flag_atomic,
@@ -97,6 +99,7 @@ make_persistent_atomic(pool_base &pool,
  *
  * param[in,out] ptr the persistent_ptr whose pointee is to be
  * deallocated.
+ * @ingroup allocation
  */
 template <typename T>
 void

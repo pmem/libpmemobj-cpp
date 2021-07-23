@@ -1620,6 +1620,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * The example of storing strings without necessity of using transactions would
  * be:
  * @snippet concurrent_hash_map/concurrent_hash_map_string.cpp cmap_string_ex
+ * @ingroup containers
  */
 template <typename Key, typename T, typename Hash, typename KeyEqual,
 	  typename MutexType, typename ScopedLockType>

@@ -46,6 +46,7 @@ namespace experimental
  * may fail, even if the queue is empty.
  *
  * @snippet mpsc_queue/mpsc_queue.cpp mpsc_queue_single_threaded_example
+ * @ingroup experimental_containers
  */
 class mpsc_queue {
 public:

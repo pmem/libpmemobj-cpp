@@ -138,8 +138,6 @@ public:
 				pop.persist(&node, sizeof(node));
 				break;
 			}
-			current =
-				get_next(level).load(std::memory_order_acquire);
 			if (!current.flush_needed()) {
 				return current;
 			}

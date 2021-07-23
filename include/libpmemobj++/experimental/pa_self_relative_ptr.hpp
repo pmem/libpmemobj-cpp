@@ -9,12 +9,20 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 #include <type_traits>
 
-/* According to the definition of offset=real_offset-1, for 8-byte aligned
- * allocation, the lower 3 bits of the stored offset are always 1 (except
- * null_ptr). Therefore, the second lowest bit is used as the indicator of if
- * the data pointed by the pa_self_relative_ptr
- * (persistent-aware self_relative_ptr) needs explicit flush.
- * Flush is needed if it is 0, not needed if it is 1.
+/* To prevent concurrent read ops to see non-persistent data updated by a
+ * concurrent write op in PMem, expensive locks/txns are commonly used for
+ * write op, e.g., locks the data object during updates and flush, unlock it
+ * after flush is finished, or encapsulate the updates and flush in a PMDK txns.
+ * Persistent-aware self_relative_ptr aims to solve this problem without using
+ * locks or txns.
+ *
+ * Based on self_relative_ptr, the definition of the stored offset
+ * is real_offset-1, so for 8-byte aligned allocation, the lower 3 bits
+ * of the stored offset are always 1 (except null_ptr). Therefore, the second
+ * lowest bit can be used as the indicator of whether the
+ * pa_self_relative_ptr (persistent-aware self_relative_ptr) itself needs
+ * explicit flush. If a consequent (atomic) read sees the second lowest bit is
+ * 0, it uses CAS to reset the bit to 1 and explicitly performs the flush.
  * */
 
 #define kFlushNeeded ~(1L << 1)

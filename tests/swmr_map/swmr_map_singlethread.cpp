@@ -110,7 +110,7 @@ verify_elements(persistent_map_type &map, size_t elements)
 template <typename T, typename U, typename... Args>
 void
 tx_alloc_wrapper(nvobj::pool_base &pop, nvobj::persistent_ptr<U> &ptr,
-		 Args &&...args)
+		 Args &&... args)
 {
 	try {
 		nvobj::transaction::manual tx(pop);

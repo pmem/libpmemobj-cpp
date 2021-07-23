@@ -30,6 +30,7 @@ namespace obj
  * The p class is not designed to be used with compound types. For that see the
  * persistent_ptr.
  * @snippet persistent/persistent.cpp p_property_example
+ * @ingroup primitives
  */
 template <typename T>
 class p {

@@ -51,6 +51,7 @@ namespace obj
  *
  * @note Since C++20 pmem::obj::array for const types can be initialized only
  * via default constructor. This may change in the future.
+ * @ingroup containers
  */
 template <typename T, std::size_t N>
 struct array {

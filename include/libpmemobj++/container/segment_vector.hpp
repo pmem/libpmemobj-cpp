@@ -499,6 +499,7 @@ using exponential_size_vector_policy =
  *
  * Example usage:
  * @snippet segment_vector/segment_vector.cpp segment_vector_example
+ * @ingroup containers
  */
 template <typename T, typename Policy = exponential_size_vector_policy<>>
 class segment_vector {

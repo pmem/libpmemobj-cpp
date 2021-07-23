@@ -96,6 +96,7 @@ protected:
  *
  * Example:
  * @snippet inline_string/inline_string.cpp inline_string_example
+ * @ingroup experimental_containers
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_dram_inline_string
@@ -149,6 +150,7 @@ public:
  *
  * Example:
  * @snippet inline_string/inline_string.cpp inline_string_example
+ * @ingroup experimental_containers
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_inline_string : public basic_inline_string_base<CharT, Traits> {

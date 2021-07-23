@@ -46,6 +46,7 @@ class persistent_ptr;
  *
  * The exmple of using pool with RAII idiom:
  * @snippet pool/pool_as_class_member.cpp  pool_class_member_example
+ *
  */
 class pool_base {
 public:
@@ -477,6 +478,7 @@ protected:
  * This API should not be mixed with C API. For example explicitly calling
  * pmemobj_set_user_data(pop) on pool which is handled by C++ pool object
  * is undefined behaviour.
+ * @ingroup primitives
  */
 template <typename T>
 class pool : public pool_base {

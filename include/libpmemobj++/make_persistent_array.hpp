@@ -44,6 +44,7 @@ namespace obj
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
+ * @ingroup allocation
  */
 template <typename T>
 typename detail::pp_if_array<T>::type
@@ -111,6 +112,7 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
+ * @ingroup allocation
  */
 template <typename T>
 typename detail::pp_if_size_array<T>::type

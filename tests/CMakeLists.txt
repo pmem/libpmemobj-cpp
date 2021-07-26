@@ -57,6 +57,7 @@ add_flag(-Wsign-compare)
 add_flag(-Wunreachable-code-return)
 add_flag(-Wmissing-variable-declarations)
 add_flag(-fno-common)
+add_flag(-Wno-maybe-uninitialized)
 
 add_flag(-ggdb DEBUG)
 add_flag(-DDEBUG DEBUG)

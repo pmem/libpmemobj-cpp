@@ -15,6 +15,7 @@ add_flag(-Wmissing-variable-declarations)
 add_flag(-fno-common)
 add_flag(-Wunused-macros)
 add_flag(-Wsign-conversion)
+add_flag(-Wno-maybe-uninitialized)
 
 add_flag(-ggdb DEBUG)
 add_flag(-DDEBUG DEBUG)

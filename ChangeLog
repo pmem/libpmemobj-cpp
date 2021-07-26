@@ -1,6 +1,6 @@
-Wed Jul 21 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>
+Mon Jul 26 2021 Igor Chorążewicz <igor.chorazewicz@intel.com>
 
-	* Version 1.13.0-rc1
+	* Version 1.13.0-rc2
 
 	This release introduces new concurrent data structure - MPSC queue and
 	implements limited concurrency support for radix tree.

@@ -14,7 +14,7 @@ env:
   GITHUB_REPO:    pmem/libpmemobj-cpp
   CONTAINER_REG:  ghcr.io/pmem/libpmemobj-cpp
   HOST_WORKDIR:   ${{ github.workspace }}
-  TEST_TIMEOUT:   600
+  TEST_TIMEOUT:   800
   IMG_VER:        latest
 
 jobs:

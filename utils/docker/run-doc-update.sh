@@ -24,6 +24,7 @@ REPO_NAME=${REPO:-"libpmemobj-cpp"}
 export GITHUB_TOKEN=${DOC_UPDATE_GITHUB_TOKEN} # export for hub command
 REPO_DIR=$(mktemp -d -t libpmemobjcpp-XXX)
 ARTIFACTS_DIR=$(mktemp -d -t ARTIFACTS-XXX)
+LOCAL_REPO=$(git rev-parse --show-toplevel)
 
 # Only 'master' or 'stable-*' branches are valid; determine docs location dir on gh-pages branch
 TARGET_BRANCH=${CI_BRANCH}
@@ -46,8 +47,9 @@ UPSTREAM="https://github.com/${DOC_REPO_OWNER}/${REPO_NAME}"
 
 pushd ${REPO_DIR}
 echo "Clone repo:"
-git clone ${ORIGIN} ${REPO_DIR}
+git clone --origin Local ${LOCAL_REPO} ${REPO_DIR}
 cd ${REPO_DIR}
+git remote add origin ${UPSTREAM}
 git remote add upstream ${UPSTREAM}
 
 git config --local user.name ${BOT_NAME}
@@ -55,7 +57,7 @@ git config --local user.email "${BOT_NAME}@intel.com"
 hub config --global hub.protocol https
 
 git remote update
-git checkout -B ${TARGET_BRANCH} upstream/${TARGET_BRANCH}
+git checkout -B ${TARGET_BRANCH} Local/${TARGET_BRANCH}
 
 echo "Build docs:"
 mkdir -p ${REPO_DIR}/build

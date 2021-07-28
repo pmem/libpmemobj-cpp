@@ -13,7 +13,7 @@ scoped and closure transactions, locking primitives and many others.
 Doxygen documentation is available:
 
 * for the current [**master**](./master/doxygen/index.html)
-* for the latest stable branch: [**v1.12**](./v1.12/doxygen/index.html)
+* for the latest stable branch: [**v1.13**](./v1.13/doxygen/index.html)
 
 For older documentation [see below](#older-documentation).
 
@@ -47,6 +47,7 @@ on the ["releases" tab on the GitHub page](https://github.com/pmem/libpmemobj-cp
 
 | Version branch | First release date | Last patch release | Maintenance status |
 | -------------- | ------------------ | ------------------ | ------------------ |
+| stable-1.13 | Jul 27, 2021 | N/A | Full |
 | stable-1.12 | Feb 15, 2021 | N/A | Full |
 | stable-1.11 | Sep 30, 2020 | N/A | Full |
 | stable-1.10 | May 28, 2020 | N/A | Full |
@@ -74,6 +75,7 @@ Possible statuses:
 ## Older documentation
 
 Older branches docs:
+* for [stable-1.12](./v1.12/doxygen/index.html)
 * for [stable-1.11](./v1.11/doxygen/index.html)
 * for [stable-1.10](./v1.10/doxygen/index.html)
 * for [stable-1.9](./v1.9/doxygen/index.html)

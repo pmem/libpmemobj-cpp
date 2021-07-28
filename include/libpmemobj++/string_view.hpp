@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2020-2021, Intel Corporation */
 
 /**
  * @file
@@ -67,8 +67,18 @@ public:
 	constexpr basic_string_view(const std::basic_string<CharT, Traits> &s);
 	constexpr basic_string_view(const CharT *data);
 
+	/** Constructor initialized with the basic_string_view *rhs*.
+	 *
+	 * @param[in] rhs basic_string_view to initialize with
+	 */
 	constexpr basic_string_view(const basic_string_view &rhs) noexcept =
 		default;
+
+	/**
+	 * Replaces the view with that of *rhs*.
+	 *
+	 * @param[in] rhs basic_string_view to replace with
+	 */
 	basic_string_view &
 	operator=(const basic_string_view &rhs) noexcept = default;
 
@@ -165,7 +175,7 @@ constexpr inline basic_string_view<CharT, Traits>::basic_string_view() noexcept
 }
 
 /**
- * Constructor initialized by *data* and its *size*.
+ * Constructor initialized with *data* and its *size*.
  *
  * @param[in] data pointer to the C-like string to initialize with,
  *	it can contain null characters.
@@ -256,6 +266,13 @@ basic_string_view<CharT, Traits>::cend() const noexcept
 	return data_ + size_;
 }
 
+/**
+ * Returns a reverse_iterator to the character following the last character of
+ * the view (reverse beginning). Reverse iterators iterate backwards: increasing
+ * them moves them towards the beginning of the string.
+ *
+ * @return const_reverse_iterator to the character following the last character.
+ */
 template <typename CharT, typename Traits>
 constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
 basic_string_view<CharT, Traits>::rbegin() const noexcept
@@ -263,6 +280,13 @@ basic_string_view<CharT, Traits>::rbegin() const noexcept
 	return reverse_iterator(cend());
 }
 
+/**
+ * Returns a reverse_iterator to the character following the last character of
+ * the view (reverse beginning). Reverse iterators iterate backwards: increasing
+ * them moves them towards the beginning of the string.
+ *
+ * @return const_reverse_iterator to the character following the last character.
+ */
 template <typename CharT, typename Traits>
 constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
 basic_string_view<CharT, Traits>::crbegin() const noexcept
@@ -270,6 +294,15 @@ basic_string_view<CharT, Traits>::crbegin() const noexcept
 	return reverse_iterator(cend());
 }
 
+/**
+ * Returns an iterator to the first character of the view.
+ * Reverse iterators iterate backwards: increasing
+ * them moves them towards the beginning of the string.
+ * This character acts as a placeholder, attempting to access it results
+ * in undefined behavior.
+ *
+ * @return const_reverse_iterator to the first character
+ */
 template <typename CharT, typename Traits>
 constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
 basic_string_view<CharT, Traits>::rend() const noexcept
@@ -277,6 +310,15 @@ basic_string_view<CharT, Traits>::rend() const noexcept
 	return reverse_iterator(cbegin());
 }
 
+/**
+ * Returns an iterator to the first character of the view.
+ * Reverse iterators iterate backwards: increasing
+ * them moves them towards the beginning of the string.
+ * This character acts as a placeholder, attempting to access it results
+ * in undefined behavior.
+ *
+ * @return const_reverse_iterator to the first character
+ */
 template <typename CharT, typename Traits>
 constexpr typename basic_string_view<CharT, Traits>::const_reverse_iterator
 basic_string_view<CharT, Traits>::crend() const noexcept
@@ -444,7 +486,7 @@ basic_string_view<CharT, Traits>::swap(
 	std::swap(size_, v.size_);
 }
 
-/*
+/**
  * Finds the first substring equal to str.
  *
  * @param[in] str string to search for

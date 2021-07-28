@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 # check-headers.sh - check copyright and license in source files
 
@@ -8,9 +8,10 @@ SELF=$0
 
 function usage() {
 	echo "Usage: $SELF <source_root_path> <license_tag> [-h|-v|-a]"
-	echo "   -h, --help      this help message"
-	echo "   -v, --verbose   verbose mode"
-	echo "   -a, --all       check all files (only modified files are checked by default)"
+	echo "   -h, --help          this help message"
+	echo "   -v, --verbose       verbose mode"
+	echo "   -a, --all           check all files (only modified files are checked by default)"
+	echo "   -d, --update_dates  change Copyright dates in all analyzed files (rather not use with -a)"
 }
 
 if [ "$#" -lt 2 ]; then
@@ -49,6 +50,7 @@ fi
 
 VERBOSE=0
 CHECK_ALL=0
+UPDATE_DATES=0
 while [ "$1" != "" ]; do
 	case $1 in
 	-v|--verbose)
@@ -56,6 +58,9 @@ while [ "$1" != "" ]; do
 		;;
 	-a|--all)
 		CHECK_ALL=1
+		;;
+	-d|--update_dates)
+		UPDATE_DATES=1
 		;;
 	esac
 	shift
@@ -88,7 +93,7 @@ fi
 
 FILES=$($GIT $GIT_COMMAND | ${SOURCE_ROOT}/utils/check_license/file-exceptions.sh | \
 	grep    -E -e '*\.[chs]$' -e '*\.[ch]pp$' -e '*\.sh$' \
-		   -e '*\.py$' -e '*\.link$' -e 'Makefile*' -e 'TEST*' \
+		   -e '*\.link$' -e 'Makefile*' -e 'TEST*' \
 		   -e '/common.inc$' -e '/match$' -e '/check_whitespace$' \
 		   -e 'LICENSE$' -e 'CMakeLists.txt$' -e '*\.cmake$' | \
 	xargs)
@@ -104,7 +109,7 @@ for file in $FILES ; do
 	iconv -f $ENCODING -t "UTF-8" $src_path > $TEMPFILE
 
 	if ! grep -q "SPDX-License-Identifier: $LICENSE" $src_path; then
-		echo >&2 "$src_path:1: no $LICENSE SPDX tag found "
+		echo >&2 "error: no $LICENSE SPDX tag in file: $src_path"
 		RV=1
 	fi
 
@@ -135,7 +140,7 @@ for file in $FILES ; do
 s/.*Copyright \([0-9]\+\)-\([0-9]\+\),.*/\1-\2/
 s/.*Copyright \([0-9]\+\),.*/\1-\1/' $src_path`
 	if [ -z "$YEARS" ]; then
-		echo >&2 "$src_path:1: No copyright years found"
+		echo >&2 "No copyright years in $src_path"
 		RV=1
 		continue
 	fi
@@ -156,11 +161,15 @@ s/.*Copyright \([0-9]\+\),.*/\1-\1/' $src_path`
 			else
 				NEW=$COMMIT_FIRST-$COMMIT_LAST
 			fi
-			echo "$file:1: error: wrong copyright date: (is: $YEARS, should be: $NEW)" >&2
-			RV=1
+			if [ ${UPDATE_DATES} -eq 1 ]; then
+				sed -i "s/Copyright ${YEARS}/Copyright ${NEW}/g" "${src_path}"
+			else
+				echo "$file:1: error: wrong copyright date: (is: $YEARS, should be: $NEW)" >&2
+				RV=1
+			fi
 		fi
 	else
-		echo "$file:1: unknown commit dates" >&2
+		echo "error: unknown commit dates in file: $file" >&2
 		RV=1
 	fi
 done

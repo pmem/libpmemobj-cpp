@@ -183,6 +183,11 @@ add_custom_target(check-license
 	COMMAND ${LIBPMEMOBJCPP_ROOT_DIR}/utils/check_license/check-headers.sh
 			${LIBPMEMOBJCPP_ROOT_DIR}
 			BSD-3-Clause)
+add_custom_target(copyright-format
+	COMMAND ${LIBPMEMOBJCPP_ROOT_DIR}/utils/check_license/check-headers.sh
+			${LIBPMEMOBJCPP_ROOT_DIR}
+			BSD-3-Clause -d)
+
 
 if(CHECK_CPP_STYLE)
 	find_program(CLANG_FORMAT NAMES clang-format clang-format-9 clang-format-9.0)

@@ -2055,9 +2055,14 @@ vector<T>::alloc(size_type capacity_new)
 				 detail::type_num<value_type>());
 
 	if (res == nullptr) {
-		pmem::detail::throw_when_errno<pmem::transaction_out_of_memory,
-					       pmem::transaction_alloc_error>(
-			"Failed to allocate persistent memory object.");
+		if (errno == ENOMEM)
+			throw pmem::transaction_out_of_memory(
+				"Failed to allocate persistent memory object")
+				.with_pmemobj_errormsg();
+		else
+			throw pmem::transaction_alloc_error(
+				"Failed to allocate persistent memory object")
+				.with_pmemobj_errormsg();
 	}
 
 	_data = res;

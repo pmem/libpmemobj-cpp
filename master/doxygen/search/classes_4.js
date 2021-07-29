@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['ebr_507',['ebr',['../classpmem_1_1detail_1_1ebr.html',1,'pmem::detail']]],
-  ['enumerable_5fthread_5fspecific_508',['enumerable_thread_specific',['../classpmem_1_1detail_1_1enumerable__thread__specific.html',1,'pmem::detail']]],
-  ['enumerable_5fthread_5fspecific_3c_20tls_5fentry_5ftype_20_3e_509',['enumerable_thread_specific&lt; tls_entry_type &gt;',['../classpmem_1_1detail_1_1enumerable__thread__specific.html',1,'pmem::detail']]]
+  ['ebr_461',['ebr',['../classpmem_1_1detail_1_1ebr.html',1,'pmem::detail']]],
+  ['enumerable_5fthread_5fspecific_462',['enumerable_thread_specific',['../classpmem_1_1detail_1_1enumerable__thread__specific.html',1,'pmem::detail']]],
+  ['enumerable_5fthread_5fspecific_3c_20tls_5fentry_5ftype_20_3e_463',['enumerable_thread_specific&lt; tls_entry_type &gt;',['../classpmem_1_1detail_1_1enumerable__thread__specific.html',1,'pmem::detail']]]
 ];

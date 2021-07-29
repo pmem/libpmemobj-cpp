@@ -1,0 +1,10 @@
+<map id="libpmemobj++/detail/self_relative_ptr_base_impl.hpp" name="libpmemobj++/detail/self_relative_ptr_base_impl.hpp">
+<area shape="rect" id="node1" title="Base class for self_relative_ptr." alt="" coords="198,5,350,61"/>
+<area shape="rect" id="node2" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="247,288,435,329"/>
+<area shape="rect" id="node7" href="$self__relative__ptr__base_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="119,109,301,151"/>
+<area shape="rect" id="node3" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="260,377,421,433"/>
+<area shape="rect" id="node5" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="97,385,235,426"/>
+<area shape="rect" id="node4" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="249,481,432,523"/>
+<area shape="rect" id="node6" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="5,481,188,523"/>
+<area shape="rect" id="node8" href="$self__relative__ptr_8hpp.html" title="Persistent self&#45;relative smart pointer." alt="" coords="117,199,300,240"/>
+</map>

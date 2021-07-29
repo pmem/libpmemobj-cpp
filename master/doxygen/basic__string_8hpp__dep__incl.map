@@ -1,0 +1,5 @@
+<map id="libpmemobj++/container/basic_string.hpp" name="libpmemobj++/container/basic_string.hpp">
+<area shape="rect" id="node1" title="String container with std::basic_string compatible interface." alt="" coords="16,5,177,47"/>
+<area shape="rect" id="node2" href="$string_8hpp.html" title="String typedefs for common character types." alt="" coords="16,95,177,136"/>
+<area shape="rect" id="node3" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="5,184,188,225"/>
+</map>

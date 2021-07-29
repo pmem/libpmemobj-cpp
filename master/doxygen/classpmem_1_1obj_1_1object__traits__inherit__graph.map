@@ -1,0 +1,4 @@
+<map id="pmem::obj::object_traits&lt; T &gt;" name="pmem::obj::object_traits&lt; T &gt;">
+<area shape="rect" id="node1" title="Encapsulates object specific allocator functionality." alt="" coords="5,5,200,32"/>
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1allocator.html" title="(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK&#39;s..." alt="" coords="33,80,173,121"/>
+</map>

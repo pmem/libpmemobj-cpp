@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['count_969',['count',['../classpmem_1_1detail_1_1transaction__base_1_1automatic_1_1uncaught__exception__counter.html#aa7fd09de4f84f43c4024839c1a3bacac',1,'pmem::detail::transaction_base::automatic::uncaught_exception_counter']]]
+  ['default_5fmode_868',['DEFAULT_MODE',['../classpmem_1_1obj_1_1pool__base.html#a78d046f5b91b553db94c01d9e3a09a4e',1,'pmem::obj::pool_base']]]
 ];

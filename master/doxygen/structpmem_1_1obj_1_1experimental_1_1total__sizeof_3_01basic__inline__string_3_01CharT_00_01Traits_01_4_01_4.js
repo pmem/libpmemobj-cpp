@@ -1,0 +1,4 @@
+var structpmem_1_1obj_1_1experimental_1_1total__sizeof_3_01basic__inline__string_3_01CharT_00_01Traits_01_4_01_4 =
+[
+    [ "value", "structpmem_1_1obj_1_1experimental_1_1total__sizeof_3_01basic__inline__string_3_01CharT_00_01Traits_01_4_01_4.html#a1a697c9e99ac79aeadc0c8993f457c96", null ]
+];

@@ -19,6 +19,11 @@
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj/tx_base.h>
 
+/**
+ * Definition to enable back the old transaction behavior. If set to false,
+ * any failure in tx will immediately return from the scope (possibly of
+ * an inner tx). More details in the top-level README.
+ */
 #ifndef LIBPMEMOBJ_CPP_FLAT_TX_USE_FAILURE_RETURN
 #define LIBPMEMOBJ_CPP_FLAT_TX_USE_FAILURE_RETURN true
 #endif
@@ -609,6 +614,7 @@ namespace obj
  *
  * The typical usage example would be:
  * @snippet transaction/transaction.cpp general_tx_example
+ * @ingroup transactions
  */
 class basic_transaction : public detail::transaction_base<false> {
 public:
@@ -736,6 +742,7 @@ public:
  * The typical usage example would be:
  * @snippet transaction/transaction.cpp tx_flat_example
  * @snippet transaction/transaction.cpp tx_nested_struct_example
+ * @ingroup transactions
  *
  */
 class flat_transaction : public detail::transaction_base<true> {

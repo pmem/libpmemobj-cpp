@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Custom exceptions.
+ * Custom pmem exceptions.
  */
 
 #ifndef LIBPMEMOBJ_CPP_PEXCEPTIONS_HPP
@@ -41,11 +41,16 @@ errormsg(void)
  *
  * Thrown when there is a runtime problem with some action on the
  * pool.
+ * @ingroup exceptions
  */
 class pool_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
 
+	/**
+	 * Retrieves last error message from libpmemobj
+	 * and adds it to the current error.
+	 */
 	pool_error &
 	with_pmemobj_errormsg()
 	{
@@ -59,11 +64,15 @@ public:
  * Custom pool error class.
  *
  * Thrown when there is an invalid argument passed to create/open pool.
+ * @ingroup exceptions
  */
 class pool_invalid_argument : public pool_error {
 public:
 	using pool_error::pool_error;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	pool_invalid_argument &
 	with_pmemobj_errormsg()
 	{
@@ -77,11 +86,15 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is a runtime problem with a transaction.
+ * @ingroup exceptions
  */
 class transaction_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	transaction_error &
 	with_pmemobj_errormsg()
 	{
@@ -96,11 +109,15 @@ public:
  *
  * Thrown when there is a runtime system error with an operation
  * on a lock.
+ * @ingroup exceptions
  */
 class lock_error : public std::system_error {
 public:
 	using std::system_error::system_error;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	lock_error &
 	with_pmemobj_errormsg()
 	{
@@ -115,11 +132,15 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is a transactional allocation error.
+ * @ingroup exceptions
  */
 class transaction_alloc_error : public transaction_error {
 public:
 	using transaction_error::transaction_error;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	transaction_alloc_error &
 	with_pmemobj_errormsg()
 	{
@@ -133,6 +154,7 @@ public:
  * Custom out of memory error class.
  *
  * Thrown when there is out of memory error inside of transaction.
+ * @ingroup exceptions
  */
 class transaction_out_of_memory : public transaction_alloc_error,
 				  public std::bad_alloc {
@@ -140,6 +162,9 @@ public:
 	using transaction_alloc_error::transaction_alloc_error;
 	using transaction_alloc_error::what;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	transaction_out_of_memory &
 	with_pmemobj_errormsg()
 	{
@@ -154,11 +179,15 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is a transactional free error.
+ * @ingroup exceptions
  */
 class transaction_free_error : public transaction_alloc_error {
 public:
 	using transaction_alloc_error::transaction_alloc_error;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	transaction_free_error &
 	with_pmemobj_errormsg()
 	{
@@ -172,6 +201,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown when there is an error with the scope of the transaction.
+ * @ingroup exceptions
  */
 class transaction_scope_error : public std::logic_error {
 public:
@@ -182,6 +212,7 @@ public:
  * Custom transaction error class.
  *
  * Thrown on manual transaction abort.
+ * @ingroup exceptions
  */
 class manual_tx_abort : public std::runtime_error {
 public:
@@ -192,6 +223,7 @@ public:
  * Custom layout error class.
  *
  * Thrown when data layout is different than expected by the library.
+ * @ingroup exceptions
  */
 class layout_error : public std::runtime_error {
 public:
@@ -202,11 +234,15 @@ public:
  * Custom ctl error class.
  *
  * Thrown on ctl_[get|set|exec] failure.
+ * @ingroup exceptions
  */
 class ctl_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	ctl_error &
 	with_pmemobj_errormsg()
 	{
@@ -221,16 +257,26 @@ public:
  *
  * Thrown when the defragmentation process fails
  * (possibly in the middle of a run).
+ * @ingroup exceptions
  */
 class defrag_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
 
+	/**
+	 * Construct error with partial results.
+	 *
+	 * @param result potientially partial results of the defragmentation
+	 * @param msg error message
+	 */
 	defrag_error(pobj_defrag_result result, const std::string &msg)
 	    : std::runtime_error(msg), result(result)
 	{
 	}
 
+	/**
+	 * @copydoc pool_error::with_pmemobj_errormsg();
+	 */
 	defrag_error &
 	with_pmemobj_errormsg()
 	{

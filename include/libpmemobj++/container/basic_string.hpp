@@ -41,6 +41,7 @@ namespace obj
  *
  * Simple example of pmem::obj::string usage
  * @snippet string/string.cpp string_example
+ * @ingroup containers
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class basic_string {
@@ -4476,6 +4477,7 @@ basic_string<CharT, Traits>::insert(T param, size_type count, CharT ch)
 
 /**
  * Non-member equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4487,6 +4489,7 @@ operator==(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4498,6 +4501,7 @@ operator!=(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member less than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4509,6 +4513,7 @@ operator<(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4520,6 +4525,7 @@ operator<=(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4531,6 +4537,7 @@ operator>(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4542,6 +4549,7 @@ operator>=(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4552,6 +4560,7 @@ operator==(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4562,6 +4571,7 @@ operator!=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 
 /**
  * Non-member less than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4572,6 +4582,7 @@ operator<(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4582,6 +4593,7 @@ operator<=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4592,6 +4604,7 @@ operator>(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4602,6 +4615,7 @@ operator>=(const CharT *lhs, const basic_string<CharT, Traits> &rhs)
 
 /**
  * Non-member equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4612,6 +4626,7 @@ operator==(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4622,6 +4637,7 @@ operator!=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 
 /**
  * Non-member less than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4632,6 +4648,7 @@ operator<(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4642,6 +4659,7 @@ operator<=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4652,6 +4670,7 @@ operator>(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4662,6 +4681,7 @@ operator>=(const basic_string<CharT, Traits> &lhs, const CharT *rhs)
 
 /**
  * Non-member equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4673,6 +4693,7 @@ operator==(const std::basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4684,6 +4705,7 @@ operator!=(const std::basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member less than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4695,6 +4717,7 @@ operator<(const std::basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4706,6 +4729,7 @@ operator<=(const std::basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4717,6 +4741,7 @@ operator>(const std::basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4728,6 +4753,7 @@ operator>=(const std::basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4739,6 +4765,7 @@ operator==(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member not equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4750,6 +4777,7 @@ operator!=(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member less than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4761,6 +4789,7 @@ operator<(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member less or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4772,6 +4801,7 @@ operator<=(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member greater than operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4783,6 +4813,7 @@ operator>(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Non-member greater or equal operator.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 bool
@@ -4794,6 +4825,7 @@ operator>=(const basic_string<CharT, Traits> &lhs,
 
 /**
  * Swap the content of persistent strings.
+ * @relates basic_string
  */
 template <class CharT, class Traits>
 void

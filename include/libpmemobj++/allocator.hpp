@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -25,6 +25,7 @@ namespace obj
 /**
  * Encapsulates object specific allocator functionality. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
+ * @ingroup allocation
  */
 template <typename T>
 class object_traits {
@@ -137,6 +138,7 @@ public:
 /**
  * Object traits specialization for the void type. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
+ * @ingroup allocation
  */
 template <>
 class object_traits<void> {
@@ -179,6 +181,7 @@ public:
  *
  * Can be specialized for a given type. Designed to be used with C++ allocators.
  * Can be specialized if necessary.
+ * @ingroup allocation
  */
 template <typename T>
 class standard_alloc_policy {
@@ -298,6 +301,7 @@ public:
 
 /**
  * Void specialization of the standard allocation policy.
+ * @ingroup allocation
  */
 template <>
 class standard_alloc_policy<void> {
@@ -414,6 +418,7 @@ public:
  * Determines if memory from another allocator can be deallocated from this one.
  *
  * @return true.
+ * @relates standard_alloc_policy
  */
 template <typename T, typename T2>
 inline bool
@@ -426,6 +431,7 @@ operator==(standard_alloc_policy<T> const &, standard_alloc_policy<T2> const &)
  * Determines if memory from another allocator can be deallocated from this one.
  *
  * @return false.
+ * @relates standard_alloc_policy
  */
 template <typename T, typename OtherAllocator>
 inline bool
@@ -512,6 +518,7 @@ public:
  *
  * @return true if allocators are equivalent in terms of deallocation, false
  * otherwise.
+ * @relates allocator
  */
 template <typename T, typename P, typename Tr, typename T2, typename P2,
 	  typename Tr2>
@@ -530,6 +537,7 @@ operator==(const allocator<T, P, Tr> &lhs, const allocator<T2, P2, Tr2> &rhs)
  *
  * @return false if allocators are equivalent in terms of deallocation, true
  * otherwise.
+ * @relates allocator
  */
 template <typename T, typename P, typename Tr, typename OtherAllocator>
 inline bool

@@ -1,0 +1,5 @@
+var structpmem_1_1detail_1_1can__do__snapshot_3_01std_1_1atomic_3_01obj_1_1experimental_1_1self__relative__ptr_3_01T_01_4_01_4_01_4 =
+[
+    [ "snapshot_type", "structpmem_1_1detail_1_1can__do__snapshot_3_01std_1_1atomic_3_01obj_1_1experimental_1_1self__relative__ptr_3_01T_01_4_01_4_01_4.html#a2be725d08e6ba5be7110be0c3bd6fd30", null ],
+    [ "value", "structpmem_1_1detail_1_1can__do__snapshot_3_01std_1_1atomic_3_01obj_1_1experimental_1_1self__relative__ptr_3_01T_01_4_01_4_01_4.html#a6bb05cd105af179f418a30275910f41b", null ]
+];

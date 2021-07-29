@@ -1,0 +1,4 @@
+<map id="pmem::obj::standard_alloc_policy&lt; T &gt;" name="pmem::obj::standard_alloc_policy&lt; T &gt;">
+<area shape="rect" id="node1" title="The allocation policy template for a given type." alt="" coords="5,5,147,47"/>
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1allocator.html" title="(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK&#39;s..." alt="" coords="6,95,146,136"/>
+</map>

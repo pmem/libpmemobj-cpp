@@ -1,0 +1,6 @@
+<map id="libpmemobj++/detail/atomic_backoff.hpp" name="libpmemobj++/detail/atomic_backoff.hpp">
+<area shape="rect" id="node1" title="Atomic backoff, for time delay." alt="" coords="116,5,255,47"/>
+<area shape="rect" id="node2" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,95,184,136"/>
+<area shape="rect" id="node3" href="$ringbuf_8hpp_source.html" title=" " alt="" coords="208,95,347,136"/>
+<area shape="rect" id="node4" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="186,184,369,225"/>
+</map>

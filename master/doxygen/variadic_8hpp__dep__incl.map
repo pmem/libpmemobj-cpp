@@ -1,0 +1,20 @@
+<map id="libpmemobj++/detail/variadic.hpp" name="libpmemobj++/detail/variadic.hpp">
+<area shape="rect" id="node1" title="Helper functionality for handling variadic templates." alt="" coords="604,5,743,47"/>
+<area shape="rect" id="node2" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="430,191,658,218"/>
+<area shape="rect" id="node16" href="$make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays." alt="" coords="502,95,706,136"/>
+<area shape="rect" id="node17" href="$make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays." alt="" coords="782,95,986,136"/>
+<area shape="rect" id="node18" href="$make__persistent__atomic_8hpp.html" title="Persistent_ptr atomic allocation functions for objects." alt="" coords="702,184,906,225"/>
+<area shape="rect" id="node3" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,742,184,783"/>
+<area shape="rect" id="node4" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="301,556,462,597"/>
+<area shape="rect" id="node8" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="498,742,681,783"/>
+<area shape="rect" id="node9" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="250,363,411,404"/>
+<area shape="rect" id="node12" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="633,645,815,687"/>
+<area shape="rect" id="node14" href="$inline__string_8hpp.html" title="Inline string implementation." alt="" coords="683,363,866,404"/>
+<area shape="rect" id="node15" href="$temp__value_8hpp.html" title="template class for caching objects." alt="" coords="368,273,507,315"/>
+<area shape="rect" id="node5" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="275,645,488,687"/>
+<area shape="rect" id="node6" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="301,735,462,791"/>
+<area shape="rect" id="node7" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="290,839,473,880"/>
+<area shape="rect" id="node10" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="57,459,218,501"/>
+<area shape="rect" id="node13" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="294,452,455,508"/>
+<area shape="rect" id="node11" href="$string_8hpp.html" title="String typedefs for common character types." alt="" coords="83,556,245,597"/>
+</map>

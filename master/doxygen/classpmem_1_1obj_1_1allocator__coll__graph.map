@@ -1,0 +1,5 @@
+<map id="pmem::obj::allocator&lt; T, Policy, Traits &gt;" name="pmem::obj::allocator&lt; T, Policy, Traits &gt;">
+<area shape="rect" id="node1" title="(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK&#39;s..." alt="" coords="102,95,242,136"/>
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1standard__alloc__policy.html" title="The allocation policy template for a given type." alt="" coords="5,5,147,47"/>
+<area shape="rect" id="node3" href="$classpmem_1_1obj_1_1object__traits.html" title="Encapsulates object specific allocator functionality." alt="" coords="171,13,365,39"/>
+</map>

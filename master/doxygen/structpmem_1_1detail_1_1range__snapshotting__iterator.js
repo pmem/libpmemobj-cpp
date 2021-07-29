@@ -1,0 +1,27 @@
+var structpmem_1_1detail_1_1range__snapshotting__iterator =
+[
+    [ "base_type", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a1c9ad2bcd833eeb998e23223db5e1c39", null ],
+    [ "difference_type", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#addd01f06846ed4371140e2ecb40448a7", null ],
+    [ "iterator_category", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a22c1927ee232e43ab8458c31943a93a2", null ],
+    [ "pointer", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a372ec15c33613cbeaae2bedcdf18c566", null ],
+    [ "reference", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a94facbc03359417c627849db536f7ed4", null ],
+    [ "value_type", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a79784dae8ab7d6a40ad39a5dc92baae4", null ],
+    [ "range_snapshotting_iterator", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a1e13a55cfdbbf43eba8572d5f2b706f5", null ],
+    [ "change_by", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a0f1f14695b67daa06263f7863e54a55b", null ],
+    [ "get_ptr", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a36ac8667f9b3b8ba92b4fa5113e08572", null ],
+    [ "operator const T *", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a74035fd7e9c92e36cf9bd7794bc80799", null ],
+    [ "operator*", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#aa1c244952163a57e150801d83d2047a4", null ],
+    [ "operator+", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a4dbcb3f32a1ad6c9e7339a4793d7bae0", null ],
+    [ "operator++", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#aeff2add485032026191c46811267a718", null ],
+    [ "operator++", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a5def8b276c2c7791fd996b3008471c1d", null ],
+    [ "operator+=", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a355b2b4ab43443d9dffb1f253fb34e16", null ],
+    [ "operator-", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a343fe18a44d37ed67713ae7a480a8270", null ],
+    [ "operator--", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a5874c403e790aa58639e652cd33e35f7", null ],
+    [ "operator--", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a2d6fc3b2b7e417fcb69dcc1030c36a41", null ],
+    [ "operator-=", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#ad08c2587348651d5e7b45b98ec49e677", null ],
+    [ "operator->", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a88a3cd7a7219972f1c8af33c0f0fd21b", null ],
+    [ "operator[]", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#acb9756a5c5e8c813003c8aaed1d9963d", null ],
+    [ "contiguous_iterator", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a7693dfd1d6b15dd0e5959a2b06cf1f55", null ],
+    [ "swap", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a080605355d1539ce04ff5120f2c0cccf", null ],
+    [ "ptr", "structpmem_1_1detail_1_1range__snapshotting__iterator.html#a1968960b75c2220bfd8b2d3c7d9f545a", null ]
+];

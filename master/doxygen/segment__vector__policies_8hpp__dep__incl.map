@@ -1,0 +1,9 @@
+<map id="libpmemobj++/container/detail/segment_vector_policies.hpp" name="libpmemobj++/container/detail/segment_vector_policies.hpp">
+<area shape="rect" id="node1" title="A persistent version of segment vector implementation." alt="" coords="209,5,370,61"/>
+<area shape="rect" id="node2" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="209,109,370,151"/>
+<area shape="rect" id="node3" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="183,199,396,240"/>
+<area shape="rect" id="node4" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,295,184,337"/>
+<area shape="rect" id="node5" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="209,288,370,344"/>
+<area shape="rect" id="node7" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="394,295,577,337"/>
+<area shape="rect" id="node6" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="198,392,381,433"/>
+</map>

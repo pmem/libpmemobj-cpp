@@ -58,14 +58,13 @@ make_persistent(allocation_flag flag, Args &&... args)
 		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(), flag.value);
 
 	if (ptr == nullptr) {
+		const char *msg = "Failed to allocate persistent memory object";
 		if (errno == ENOMEM)
-			throw pmem::transaction_out_of_memory(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw pmem::transaction_alloc_error(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_alloc_error>(msg);
 	}
 
 	detail::create<T, Args...>(ptr.get(), std::forward<Args>(args)...);
@@ -135,9 +134,9 @@ delete_persistent(typename detail::pp_if_not_array<T>::type ptr)
 	detail::destroy<T>(*ptr);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw pmem::transaction_free_error(
-			"failed to delete persistent memory object")
-			.with_pmemobj_errormsg();
+		throw detail::exception_with_errormsg<
+			pmem::transaction_free_error>(
+			"failed to delete persistent memory object");
 }
 
 } /* namespace obj */

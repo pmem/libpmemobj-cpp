@@ -424,9 +424,9 @@ public:
 					 &result);
 
 		if (ret != 0)
-			throw defrag_error(result, "Defragmentation failed")
-				.with_pmemobj_errormsg();
-
+			throw exception_with_errormsg<defrag_error>(
+				"Defragmentation failed")
+				.append_result(result);
 		return result;
 	}
 
@@ -435,15 +435,14 @@ protected:
 	check_pool(pmemobjpool *pop, std::string mode)
 	{
 		if (pop == nullptr) {
+			std::string msg = "Failed " + mode + " pool";
 			if (errno == EINVAL || errno == EFBIG ||
 			    errno == ENOENT || errno == EEXIST) {
-				throw pmem::pool_invalid_argument(
-					"Failed " + mode + " pool")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg<
+					pmem::pool_invalid_argument>(msg);
 			} else {
-				throw pmem::pool_error("Failed " + mode +
-						       " pool")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg<pmem::pool_error>(
+					msg);
 			}
 		}
 	}

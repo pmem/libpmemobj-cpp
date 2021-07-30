@@ -159,7 +159,17 @@ static constexpr size_t CACHELINE_SIZE = 128ULL;
 #error unable to recognize architecture at compile time
 #endif
 
-/*
+/**
+ * Generic error message decorator for pmemobj exceptions.
+ */
+template <class ExcT, typename MsgT>
+ExcT
+exception_with_errormsg(const MsgT &msg)
+{
+	return ExcT(msg + std::string(": ") + detail::errormsg());
+}
+
+/**
  * Conditionally add 'count' objects to a transaction.
  *
  * Adds count objects starting from `that` to the transaction if '*that' is
@@ -186,18 +196,17 @@ conditional_add_to_tx(const T *that, std::size_t count = 1, uint64_t flags = 0)
 		return;
 
 	if (pmemobj_tx_xadd_range_direct(that, sizeof(*that) * count, flags)) {
+		const char *msg = "Could not add object(s) to the transaction.";
 		if (errno == ENOMEM)
-			throw pmem::transaction_out_of_memory(
-				"Could not add object(s) to the transaction.")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw pmem::transaction_error(
-				"Could not add object(s) to the transaction.")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg<pmem::transaction_error>(
+				msg);
 	}
 }
 
-/*
+/**
  * Return type number for given type.
  */
 template <typename T>

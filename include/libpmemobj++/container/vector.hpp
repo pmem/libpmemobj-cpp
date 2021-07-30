@@ -33,6 +33,11 @@ namespace pmem
 namespace obj
 {
 
+namespace
+{
+using detail::exception_with_errormsg;
+}
+
 /**
  * pmem::obj::vector - persistent container with std::vector compatible
  * interface.
@@ -2055,16 +2060,14 @@ vector<T>::alloc(size_type capacity_new)
 				 detail::type_num<value_type>());
 
 	if (res == nullptr) {
+		const char *msg = "Failed to allocate persistent memory object";
 		if (errno == ENOMEM)
-			throw pmem::transaction_out_of_memory(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(
+				pmem::transaction_out_of_memory(msg));
 		else
-			throw pmem::transaction_alloc_error(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(
+				pmem::transaction_alloc_error(msg));
 	}
-
 	_data = res;
 }
 
@@ -2196,9 +2199,8 @@ vector<T>::dealloc()
 	if (_data != nullptr) {
 		shrink(0);
 		if (pmemobj_tx_free(*_data.raw_ptr()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(pmem::transaction_free_error(
+				"failed to delete persistent memory object"));
 		_data = nullptr;
 		_capacity = 0;
 	}
@@ -2345,9 +2347,8 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 			detail::destroy<value_type>(
 				old_data[static_cast<difference_type>(i)]);
 		if (pmemobj_tx_free(old_data.raw()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(pmem::transaction_free_error(
+				"failed to delete persistent memory object"));
 	}
 }
 
@@ -2408,9 +2409,8 @@ vector<T>::realloc(size_type capacity_new)
 		detail::destroy<value_type>(
 			old_data[static_cast<difference_type>(i)]);
 	if (pmemobj_tx_free(old_data.raw()) != 0)
-		throw pmem::transaction_free_error(
-			"failed to delete persistent memory object")
-			.with_pmemobj_errormsg();
+		throw exception_with_errormsg(pmem::transaction_free_error(
+			"failed to delete persistent memory object"));
 }
 
 /**

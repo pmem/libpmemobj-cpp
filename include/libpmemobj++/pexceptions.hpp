@@ -46,18 +46,6 @@ errormsg(void)
 class pool_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
-
-	/**
-	 * Retrieves last error message from libpmemobj
-	 * and adds it to the current error.
-	 */
-	pool_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = pool_error(what() + std::string(": ") +
-				     detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -69,17 +57,6 @@ public:
 class pool_invalid_argument : public pool_error {
 public:
 	using pool_error::pool_error;
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	pool_invalid_argument &
-	with_pmemobj_errormsg()
-	{
-		(*this) = pool_invalid_argument(what() + std::string(": ") +
-						detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -91,17 +68,6 @@ public:
 class transaction_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	transaction_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = transaction_error(what() + std::string(": ") +
-					    detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -114,7 +80,10 @@ public:
 class lock_error : public std::system_error {
 public:
 	using std::system_error::system_error;
-
+	lock_error(std::error_code ec, const std::string &msg)
+	    : system_error(ec, msg)
+	{
+	}
 	/**
 	 * @copydoc pool_error::with_pmemobj_errormsg();
 	 */
@@ -137,17 +106,6 @@ public:
 class transaction_alloc_error : public transaction_error {
 public:
 	using transaction_error::transaction_error;
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	transaction_alloc_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = transaction_alloc_error(what() + std::string(": ") +
-						  detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -161,18 +119,6 @@ class transaction_out_of_memory : public transaction_alloc_error,
 public:
 	using transaction_alloc_error::transaction_alloc_error;
 	using transaction_alloc_error::what;
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	transaction_out_of_memory &
-	with_pmemobj_errormsg()
-	{
-		(*this) = transaction_out_of_memory(
-			transaction_alloc_error::what() + std::string(": ") +
-			detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -184,17 +130,6 @@ public:
 class transaction_free_error : public transaction_alloc_error {
 public:
 	using transaction_alloc_error::transaction_alloc_error;
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	transaction_free_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = transaction_free_error(what() + std::string(": ") +
-						 detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -239,17 +174,6 @@ public:
 class ctl_error : public std::runtime_error {
 public:
 	using std::runtime_error::runtime_error;
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	ctl_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = ctl_error(what() + std::string(": ") +
-				    detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -272,18 +196,6 @@ public:
 	defrag_error(pobj_defrag_result result, const std::string &msg)
 	    : std::runtime_error(msg), result(result)
 	{
-	}
-
-	/**
-	 * @copydoc pool_error::with_pmemobj_errormsg();
-	 */
-	defrag_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = defrag_error(result,
-				       what() + std::string(": ") +
-					       detail::errormsg());
-		return *this;
 	}
 
 	/**

@@ -253,14 +253,14 @@ public:
 					       detail::type_num<value_type>());
 
 		if (ptr == nullptr) {
+			const char *msg =
+				"Failed to allocate persistent memory object";
 			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_out_of_memory>(msg);
 			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_alloc_error>(msg);
 			}
 		}
 
@@ -282,9 +282,9 @@ public:
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(*p.raw_ptr()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_free_error>(
+				"failed to delete persistent memory object");
 	}
 
 	/**
@@ -368,14 +368,14 @@ public:
 		pointer ptr = pmemobj_tx_alloc(1 /* void size */ * cnt, 0);
 
 		if (ptr == nullptr) {
+			const char *msg =
+				"Failed to allocate persistent memory object";
 			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_out_of_memory>(msg);
 			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_alloc_error>(msg);
 			}
 		}
 
@@ -397,9 +397,9 @@ public:
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(p.raw()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_free_error>(
+				"failed to delete persistent memory object");
 	}
 
 	/**

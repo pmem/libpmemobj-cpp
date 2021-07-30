@@ -84,18 +84,18 @@ public:
 			}
 
 			if (ret != 0)
-				throw pmem::transaction_error(
-					"failed to start transaction")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_error>(
+					"failed to start transaction");
 
 			auto err = add_lock(locks...);
 
 			if (err) {
 				pmemobj_tx_abort(EINVAL);
 				(void)pmemobj_tx_end();
-				throw pmem::transaction_error(
-					"failed to add lock")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_error>(
+					"failed to add lock");
 			}
 
 			set_failure_behavior();
@@ -437,14 +437,14 @@ public:
 				"wrong stage for taking a snapshot.");
 
 		if (pmemobj_tx_add_range_direct(addr, sizeof(*addr) * num)) {
+			const char *msg =
+				"Could not take a snapshot of given memory range.";
 			if (errno == ENOMEM)
-				throw pmem::transaction_out_of_memory(
-					"Could not take a snapshot of given memory range.")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_out_of_memory>(msg);
 			else
-				throw pmem::transaction_error(
-					"Could not take a snapshot of given memory range.")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_error>(msg);
 		}
 	}
 

@@ -424,8 +424,8 @@ public:
 					 &result);
 
 		if (ret != 0)
-			throw defrag_error(result, "Defragmentation failed")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(
+				defrag_error(result, "Defragmentation failed"));
 
 		return result;
 	}
@@ -437,13 +437,12 @@ protected:
 		if (pop == nullptr) {
 			if (errno == EINVAL || errno == EFBIG ||
 			    errno == ENOENT || errno == EEXIST) {
-				throw pmem::pool_invalid_argument(
-					"Failed " + mode + " pool")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg(
+					pmem::pool_invalid_argument(
+						"Failed " + mode + " pool"));
 			} else {
-				throw pmem::pool_error("Failed " + mode +
-						       " pool")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg(pmem::pool_error(
+					"Failed " + mode + " pool"));
 			}
 		}
 	}

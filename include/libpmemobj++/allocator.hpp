@@ -22,6 +22,11 @@ namespace pmem
 namespace obj
 {
 
+namespace
+{
+using detail::exception_with_errormsg;
+}
+
 /**
  * Encapsulates object specific allocator functionality. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
@@ -253,14 +258,14 @@ public:
 					       detail::type_num<value_type>());
 
 		if (ptr == nullptr) {
+			const char *msg =
+				"Failed to allocate persistent memory object";
 			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg(
+					pmem::transaction_out_of_memory(msg));
 			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg(
+					pmem::transaction_alloc_error(msg));
 			}
 		}
 
@@ -282,9 +287,8 @@ public:
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(*p.raw_ptr()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(pmem::transaction_free_error(
+				"failed to delete persistent memory object"));
 	}
 
 	/**
@@ -369,13 +373,11 @@ public:
 
 		if (ptr == nullptr) {
 			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg(pmem::transaction_out_of_memory(
+					"Failed to allocate persistent memory object"));
 			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw exception_with_errormsg(pmem::transaction_alloc_error(
+					"Failed to allocate persistent memory object"));
 			}
 		}
 
@@ -397,9 +399,8 @@ public:
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(p.raw()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw exception_with_errormsg(pmem::transaction_free_error(
+				"failed to delete persistent memory object"));
 	}
 
 	/**

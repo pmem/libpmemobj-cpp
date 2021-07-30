@@ -1,0 +1,4 @@
+<map id="pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::accessor" name="pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;::accessor">
+<area shape="rect" id="node1" title="Allows write access to elements and combines data access, locking, and garbage collection." alt="" coords="287,5,520,76"/>
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1concurrent__hash__map_1_1const__accessor.html" title="Combines data access, locking, and garbage collection." alt="" coords="5,5,239,76"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="pmem::obj::persistent_ptr_base" name="pmem::obj::persistent_ptr_base">
+<area shape="rect" id="node1" title="Persistent_ptr base (non&#45;template) class." alt="" coords="5,235,155,276"/>
+<area shape="rect" id="node2" href="$classpmem_1_1obj_1_1persistent__ptr.html" title=" " alt="" coords="203,5,352,47"/>
+<area shape="rect" id="node3" href="$classpmem_1_1obj_1_1persistent__ptr.html" title=" " alt="" coords="203,71,352,112"/>
+<area shape="rect" id="node4" href="$classpmem_1_1obj_1_1persistent__ptr.html" title=" " alt="" coords="203,136,352,177"/>
+<area shape="rect" id="node5" href="$classpmem_1_1obj_1_1persistent__ptr.html" title=" " alt="" coords="203,201,352,243"/>
+<area shape="rect" id="node6" href="$classpmem_1_1obj_1_1persistent__ptr.html" title=" " alt="" coords="203,267,352,308"/>
+<area shape="rect" id="node7" href="$classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class." alt="" coords="203,332,352,373"/>
+<area shape="rect" id="node8" href="$classpmem_1_1obj_1_1persistent__ptr_3_01const_01void_01_4.html" title="persistent_ptr const void specialization." alt="" coords="203,397,352,439"/>
+<area shape="rect" id="node9" href="$classpmem_1_1obj_1_1persistent__ptr_3_01void_01_4.html" title="persistent_ptr void specialization." alt="" coords="203,463,352,504"/>
+</map>

@@ -1,0 +1,14 @@
+<map id="libpmemobj++/detail/iterator_traits.hpp" name="libpmemobj++/detail/iterator_traits.hpp">
+<area shape="rect" id="node1" title="Common iterator traits." alt="" coords="119,5,258,47"/>
+<area shape="rect" id="node2" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="16,191,177,233"/>
+<area shape="rect" id="node5" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="184,95,345,136"/>
+<area shape="rect" id="node3" href="$string_8hpp.html" title="String typedefs for common character types." alt="" coords="16,288,177,329"/>
+<area shape="rect" id="node4" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="5,377,188,419"/>
+<area shape="rect" id="node6" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="201,184,363,240"/>
+<area shape="rect" id="node7" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="279,288,440,329"/>
+<area shape="rect" id="node8" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="253,377,466,419"/>
+<area shape="rect" id="node9" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="75,474,254,515"/>
+<area shape="rect" id="node10" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="279,467,440,523"/>
+<area shape="rect" id="node12" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="464,474,647,515"/>
+<area shape="rect" id="node11" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="268,571,451,612"/>
+</map>

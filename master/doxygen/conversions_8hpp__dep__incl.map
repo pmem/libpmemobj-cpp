@@ -1,0 +1,5 @@
+<map id="libpmemobj++/detail/conversions.hpp" name="libpmemobj++/detail/conversions.hpp">
+<area shape="rect" id="node1" title="Commonly used conversions." alt="" coords="103,5,241,47"/>
+<area shape="rect" id="node2" href="$condition__variable_8hpp.html" title="Pmem&#45;resident condition variable." alt="" coords="5,95,165,136"/>
+<area shape="rect" id="node3" href="$timed__mutex_8hpp.html" title="Pmem&#45;resident timed_mutex." alt="" coords="190,95,330,136"/>
+</map>

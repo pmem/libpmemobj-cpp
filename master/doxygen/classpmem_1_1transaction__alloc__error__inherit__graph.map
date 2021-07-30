@@ -1,0 +1,6 @@
+<map id="pmem::transaction_alloc_error" name="pmem::transaction_alloc_error">
+<area shape="rect" id="node1" title="Custom transaction error class." alt="" coords="93,80,257,121"/>
+<area shape="rect" id="node3" href="$classpmem_1_1transaction__free__error.html" title="Custom transaction error class." alt="" coords="5,169,164,211"/>
+<area shape="rect" id="node4" href="$classpmem_1_1transaction__out__of__memory.html" title="Custom out of memory error class." alt="" coords="189,169,343,211"/>
+<area shape="rect" id="node2" href="$classpmem_1_1transaction__error.html" title="Custom transaction error class." alt="" coords="94,5,257,32"/>
+</map>

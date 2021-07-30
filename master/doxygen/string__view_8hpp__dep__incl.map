@@ -1,0 +1,8 @@
+<map id="libpmemobj++/string_view.hpp" name="libpmemobj++/string_view.hpp">
+<area shape="rect" id="node1" title="Our partial std::string_view implementation." alt="" coords="160,5,300,47"/>
+<area shape="rect" id="node2" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="5,95,167,136"/>
+<area shape="rect" id="node4" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="113,273,296,315"/>
+<area shape="rect" id="node5" href="$inline__string_8hpp.html" title="Inline string implementation." alt="" coords="243,184,425,225"/>
+<area shape="rect" id="node6" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="293,95,476,136"/>
+<area shape="rect" id="node3" href="$string_8hpp.html" title="String typedefs for common character types." alt="" coords="5,184,167,225"/>
+</map>

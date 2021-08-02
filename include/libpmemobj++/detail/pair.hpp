@@ -28,9 +28,8 @@ struct pair {
 	template <typename... Args1, typename... Args2>
 	pair(std::piecewise_construct_t pc, std::tuple<Args1...> first_args,
 	     std::tuple<Args2...> second_args)
-	    : pair(pc, first_args, second_args,
-		   typename make_index_sequence<Args1...>::type{},
-		   typename make_index_sequence<Args2...>::type{})
+	    : pair(pc, first_args, second_args, index_sequence_for<Args1...>{},
+		   index_sequence_for<Args2...>{})
 	{
 	}
 

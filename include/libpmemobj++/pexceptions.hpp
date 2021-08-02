@@ -188,6 +188,15 @@ public:
 	using std::runtime_error::runtime_error;
 
 	/**
+	 * Construct error.
+	 *
+	 * @param msg error message
+	 */
+	defrag_error(const std::string &msg) : std::runtime_error(msg)
+	{
+	}
+
+	/**
 	 * Construct error with partial results.
 	 *
 	 * @param result potientially partial results of the defragmentation
@@ -196,6 +205,18 @@ public:
 	defrag_error(pobj_defrag_result result, const std::string &msg)
 	    : std::runtime_error(msg), result(result)
 	{
+	}
+
+	/**
+	 * Append partial results.
+	 *
+	 * @param result potientially partial results of the defragmentation
+	 */
+	defrag_error &
+	append_result(pobj_defrag_result result)
+	{
+		this->result = result;
+		return *this;
 	}
 
 	/**

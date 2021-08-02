@@ -40,8 +40,8 @@ ctl_get_detail(PMEMobjpool *pool, const std::string &name)
 	int ret = pmemobj_ctl_get(pool, name.c_str(), &tmp);
 #endif
 	if (ret)
-		throw exception_with_errormsg(
-			pmem::ctl_error("ctl_get failed"));
+		throw exception_with_errormsg<pmem::ctl_error>(
+			"ctl_get failed");
 
 	return tmp;
 }
@@ -56,8 +56,8 @@ ctl_set_detail(PMEMobjpool *pool, const std::string &name, T arg)
 	int ret = pmemobj_ctl_set(pool, name.c_str(), &arg);
 #endif
 	if (ret)
-		throw exception_with_errormsg(
-			pmem::ctl_error("ctl_set failed"));
+		throw exception_with_errormsg<pmem::ctl_error>(
+			"ctl_set failed");
 
 	return arg;
 }
@@ -72,8 +72,8 @@ ctl_exec_detail(PMEMobjpool *pool, const std::string &name, T arg)
 	int ret = pmemobj_ctl_exec(pool, name.c_str(), &arg);
 #endif
 	if (ret)
-		throw exception_with_errormsg(
-			pmem::ctl_error("ctl_exec failed"));
+		throw exception_with_errormsg<pmem::ctl_error>(
+			"ctl_exec failed");
 	return arg;
 }
 
@@ -86,8 +86,8 @@ ctl_get_detail(PMEMobjpool *pool, const std::wstring &name)
 
 	int ret = pmemobj_ctl_getW(pool, name.c_str(), &tmp);
 	if (ret)
-		throw exception_with_errormsg(
-			pmem::ctl_error("ctl_get failed"));
+		throw exception_with_errormsg<pmem::ctl_error>(
+			"ctl_get failed");
 
 	return tmp;
 }
@@ -98,8 +98,8 @@ ctl_set_detail(PMEMobjpool *pool, const std::wstring &name, T arg)
 {
 	int ret = pmemobj_ctl_setW(pool, name.c_str(), &arg);
 	if (ret)
-		throw exception_with_errormsg(
-			pmem::ctl_error("ctl_set failed"));
+		throw exception_with_errormsg<pmem::ctl_error>(
+			"ctl_set failed");
 
 	return arg;
 }
@@ -110,8 +110,8 @@ ctl_exec_detail(PMEMobjpool *pool, const std::wstring &name, T arg)
 {
 	int ret = pmemobj_ctl_execW(pool, name.c_str(), &arg);
 	if (ret)
-		throw exception_with_errormsg(
-			pmem::ctl_error("ctl_exec failed"));
+		throw exception_with_errormsg<pmem::ctl_error>(
+			"ctl_exec failed");
 	return arg;
 }
 #endif

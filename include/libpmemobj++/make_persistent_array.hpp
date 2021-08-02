@@ -70,11 +70,11 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
 	if (ptr == nullptr) {
 		const char *msg = "Failed to allocate persistent memory array";
 		if (errno == ENOMEM)
-			throw exception_with_errormsg(
-				pmem::transaction_out_of_memory(msg));
+			throw exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw exception_with_errormsg(
-				pmem::transaction_alloc_error(msg));
+			throw exception_with_errormsg<
+				pmem::transaction_alloc_error>(msg);
 	}
 
 	/*
@@ -130,11 +130,11 @@ make_persistent(allocation_flag flag = allocation_flag::none())
 	if (ptr == nullptr) {
 		const char *msg = "Failed to allocate persistent memory array";
 		if (errno == ENOMEM)
-			throw exception_with_errormsg(
-				pmem::transaction_out_of_memory(msg));
+			throw exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw exception_with_errormsg(
-				pmem::transaction_alloc_error(msg));
+			throw exception_with_errormsg<
+				pmem::transaction_alloc_error>(msg);
 	}
 
 	/*
@@ -199,8 +199,8 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
 			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw exception_with_errormsg(pmem::transaction_free_error(
-			"failed to delete persistent memory object"));
+		throw exception_with_errormsg<pmem::transaction_free_error>(
+			"failed to delete persistent memory object");
 }
 
 /**
@@ -228,8 +228,8 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 	enum { N = detail::pp_array_elems<T>::elems };
 
 	if (pmemobj_tx_stage() != TX_STAGE_WORK)
-		throw exception_with_errormsg(pmem::transaction_scope_error(
-			"refusing to free memory outside of transaction scope"));
+		throw exception_with_errormsg<pmem::transaction_scope_error>(
+			"refusing to free memory outside of transaction scope");
 
 	if (ptr == nullptr)
 		return;
@@ -245,8 +245,8 @@ delete_persistent(typename detail::pp_if_size_array<T>::type ptr)
 			data[static_cast<std::ptrdiff_t>(N) - 1 - i]);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw exception_with_errormsg(pmem::transaction_free_error(
-			"failed to delete persistent memory object"));
+		throw exception_with_errormsg<pmem::transaction_free_error>(
+			"failed to delete persistent memory object");
 }
 
 } /* namespace obj */

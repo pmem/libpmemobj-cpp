@@ -162,12 +162,11 @@ static constexpr size_t CACHELINE_SIZE = 128ULL;
 /**
  * Generic error message decorator for pmemobj exceptions.
  */
-template <class T>
-T &
-exception_with_errormsg(T &&obj)
+template <class ExcT, typename MsgT>
+ExcT
+exception_with_errormsg(MsgT msg)
 {
-	obj = std::move(T(obj.what() + std::string(": ") + detail::errormsg()));
-	return obj;
+	return ExcT(msg + std::string(": ") + detail::errormsg());
 }
 
 // /**
@@ -212,11 +211,11 @@ conditional_add_to_tx(const T *that, std::size_t count = 1, uint64_t flags = 0)
 	if (pmemobj_tx_xadd_range_direct(that, sizeof(*that) * count, flags)) {
 		const char *msg = "Could not add object(s) to the transaction.";
 		if (errno == ENOMEM)
-			throw exception_with_errormsg(
-				pmem::transaction_out_of_memory(msg));
+			throw exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw exception_with_errormsg(
-				pmem::transaction_error(msg));
+			throw exception_with_errormsg<pmem::transaction_error>(
+				msg);
 	}
 }
 

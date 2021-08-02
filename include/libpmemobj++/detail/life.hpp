@@ -119,9 +119,9 @@ c_style_construct(void *ptr, void *arg)
 {
 	auto *arg_pack = static_cast<Tuple *>(arg);
 
-	typedef typename make_index_sequence<Args...>::type index;
 	try {
-		create_from_tuple<T>(ptr, index(), std::move(*arg_pack));
+		create_from_tuple<T>(ptr, index_sequence_for<Args...>{},
+				     std::move(*arg_pack));
 	} catch (...) {
 		return -1;
 	}

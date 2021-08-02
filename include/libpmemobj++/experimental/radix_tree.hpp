@@ -3459,8 +3459,8 @@ radix_tree<Key, Value, BytesView, MtMode>::leaf::make(pointer_type parent)
 {
 	auto t = std::make_tuple();
 	return make(parent, std::piecewise_construct, t, t,
-		    typename detail::make_index_sequence<>::type{},
-		    typename detail::make_index_sequence<>::type{});
+		    detail::index_sequence_for<>{},
+		    detail::index_sequence_for<>{});
 }
 
 template <typename Key, typename Value, typename BytesView, bool MtMode>
@@ -3471,8 +3471,8 @@ radix_tree<Key, Value, BytesView, MtMode>::leaf::make(
 	std::tuple<Args1...> first_args, std::tuple<Args2...> second_args)
 {
 	return make(parent, pc, first_args, second_args,
-		    typename detail::make_index_sequence<Args1...>::type{},
-		    typename detail::make_index_sequence<Args2...>::type{});
+		    detail::index_sequence_for<Args1...>{},
+		    detail::index_sequence_for<Args2...>{});
 }
 
 template <typename Key, typename Value, typename BytesView, bool MtMode>

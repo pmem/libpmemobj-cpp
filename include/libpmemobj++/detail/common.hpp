@@ -160,16 +160,6 @@ static constexpr size_t CACHELINE_SIZE = 128ULL;
 #endif
 
 /**
- * Generic error message decorator for pmemobj-based exceptions.
- */
-template <class ExcT, typename MsgT>
-ExcT
-exception_with_errormsg(const MsgT &msg)
-{
-	return ExcT(msg + std::string(": ") + detail::errormsg());
-}
-
-/**
  * Conditionally add 'count' objects to a transaction.
  *
  * Adds count objects starting from `that` to the transaction if '*that' is

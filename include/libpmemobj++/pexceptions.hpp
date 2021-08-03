@@ -34,6 +34,16 @@ errormsg(void)
 	return std::string(pmemobj_errormsg());
 #endif
 }
+
+/**
+ * Generic error message decorator for pmemobj-based exceptions.
+ */
+template <class ExcT, typename MsgT>
+ExcT
+exception_with_errormsg(const MsgT &msg)
+{
+	return ExcT(msg + std::string(": ") + detail::errormsg());
+}
 } /* namespace detail */
 
 /**

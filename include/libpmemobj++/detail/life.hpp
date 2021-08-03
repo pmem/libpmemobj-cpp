@@ -3,11 +3,11 @@
 
 /**
  * @file
- * Functions for destroying arrays.
+ * Functions for lifetime management.
  */
 
-#ifndef LIBPMEMOBJ_CPP_DESTROYER_HPP
-#define LIBPMEMOBJ_CPP_DESTROYER_HPP
+#ifndef LIBPMEMOBJ_CPP_LIFE_HPP
+#define LIBPMEMOBJ_CPP_LIFE_HPP
 
 #include <cstddef>
 #include <tuple>
@@ -170,4 +170,4 @@ destroy(typename if_size_array<T>::type &arg)
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_CPP_DESTROYER_HPP */
+#endif /* LIBPMEMOBJ_CPP_LIFE_HPP */

@@ -118,19 +118,6 @@ public:
 class lock_error : public std::system_error {
 public:
 	using std::system_error::system_error;
-
-	/**
-	 * Retrieves last error message from libpmemobj
-	 * and adds it to the current error.
-	 */
-	lock_error &
-	with_pmemobj_errormsg()
-	{
-		(*this) = lock_error(code(),
-				     what() + std::string(": ") +
-					     detail::errormsg());
-		return *this;
-	}
 };
 
 /**
@@ -232,18 +219,6 @@ public:
 	defrag_error(pobj_defrag_result result, const std::string &msg)
 	    : std::runtime_error(msg), result(result)
 	{
-	}
-
-	/**
-	 * Append partial results.
-	 *
-	 * @param result potential partial results of the defragmentation
-	 */
-	defrag_error &
-	append_result(pobj_defrag_result result)
-	{
-		this->result = result;
-		return *this;
 	}
 
 	/**

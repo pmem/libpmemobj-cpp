@@ -425,8 +425,7 @@ public:
 
 		if (ret != 0)
 			throw detail::exception_with_errormsg<defrag_error>(
-				"Defragmentation failed")
-				.append_result(result);
+				result, "Defragmentation failed");
 		return result;
 	}
 

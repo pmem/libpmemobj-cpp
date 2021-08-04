@@ -73,10 +73,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_cond_signal(pop, &this->pcond))
-			throw pmem::lock_error(
+			throw detail::exception_with_errormsg<lock_error>(
 				ret, std::system_category(),
-				"Error notifying one on a condition variable.")
-				.with_pmemobj_errormsg();
+				"Error notifying one on a condition variable.");
 	}
 
 	/**
@@ -89,10 +88,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_cond_broadcast(pop, &this->pcond))
-			throw pmem::lock_error(
+			throw detail::exception_with_errormsg<lock_error>(
 				ret, std::system_category(),
-				"Error notifying all on a condition variable.")
-				.with_pmemobj_errormsg();
+				"Error notifying all on a condition variable.");
 	}
 
 	/**
@@ -479,10 +477,9 @@ private:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_cond_wait(pop, &this->pcond,
 						lock.native_handle()))
-			throw pmem::lock_error(
+			throw detail::exception_with_errormsg<lock_error>(
 				ret, std::system_category(),
-				"Error waiting on a condition variable.")
-				.with_pmemobj_errormsg();
+				"Error waiting on a condition variable.");
 	}
 
 	/**
@@ -523,10 +520,9 @@ private:
 		else if (ret == ETIMEDOUT)
 			return std::cv_status::timeout;
 		else
-			throw pmem::lock_error(
+			throw detail::exception_with_errormsg<lock_error>(
 				ret, std::system_category(),
-				"Error waiting on a condition variable.")
-				.with_pmemobj_errormsg();
+				"Error waiting on a condition variable.");
 	}
 
 	/**

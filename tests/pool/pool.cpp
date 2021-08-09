@@ -49,11 +49,15 @@ test_pool_exceptions()
  */
 void
 pool_create(const char *path, const char *layout, size_t poolsize,
-	    unsigned mode)
+	    unsigned mode, bool use_defaults = false)
 {
 	nvobj::pool<root> pop;
 	try {
-		pop = nvobj::pool<root>::create(path, layout, poolsize, mode);
+		if (use_defaults)
+			pop = nvobj::pool<root>::create(path, layout);
+		else
+			pop = nvobj::pool<root>::create(path, layout, poolsize,
+							mode);
 		nvobj::persistent_ptr<root> root = pop.root();
 		UT_ASSERT(root != nullptr);
 	} catch (pmem::pool_invalid_argument &e) {
@@ -178,6 +182,10 @@ test(int argc, char *argv[])
 			mode = static_cast<unsigned>(
 				std::stoul(argv[5], nullptr, 8));
 			pool_create(argv[2], layout, poolsize, mode);
+			break;
+		case 't':
+			/* default size and mode */
+			pool_create(argv[2], layout, 0, 0, true);
 			break;
 		case 'o':
 			pool_open(argv[2], layout);

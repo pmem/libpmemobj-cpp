@@ -5,10 +5,10 @@ include(${SRC_DIR}/../helpers.cmake)
 
 setup()
 
-# test proper create & open
-execute(${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
-execute(${TEST_EXECUTABLE} o ${DIR}/testfile "test" 20 0600)
-
+# properly create using default size and mode
+execute(${TEST_EXECUTABLE} t ${DIR}/testfile "test")
 check_file_exists(${DIR}/testfile)
+
+execute(${TEST_EXECUTABLE} o ${DIR}/testfile "test")
 
 finish()

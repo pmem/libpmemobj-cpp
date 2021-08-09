@@ -183,6 +183,8 @@ if (NOT WIN32)
 	add_test_generic(NAME pool CASE 8 TRACERS none)
 endif()
 add_test_generic(NAME pool CASE 9 TRACERS none)
+add_test_generic(NAME pool CASE 10 TRACERS none)
+add_test_generic(NAME pool CASE 11 TRACERS none)
 
 if(WIN32)
 	build_test(pool_win pool/pool_win.cpp)

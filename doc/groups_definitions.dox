@@ -3,7 +3,79 @@
 
 /** @defgroup containers  Containers*/
 /** @defgroup experimental_containers Experimental Containers */
-/** @defgroup transactions Transactions*/
+
+/** @defgroup transactions Transactions
+  * This section introduces transaction feature in libpmemobj-cpp.
+  *
+  * ## General info about transactions
+  *
+  * The heart of the libpmemobj are transactions, and they are designed to be developer-friendly.
+  * Let's take a look at the following snippet:
+  *
+  * @snippet transaction/transaction.cpp general_tx_example
+  *
+  * Code snippet above is an example how automatic transaction can look like.
+  * After object creation there are a few statements executed within a transaction.
+  * Transaction will be committed during *tx* object's destruction at the end of scope.
+  *
+  * It's worth noticing that @ref pmem::obj::flat_transaction is recommended to use over @ref pmem::obj::basic_transaction.
+  * An extra explanation is provided inline an example in @ref pmem::obj::flat_transaction description.
+  *
+  * Mentioned above transactions are handled through two internal classes:
+  * - **manual** transactions has to be committed explicitly, otherwise it will abort.
+  * All operations between creating and destroying the transaction
+  * object are treated as performed in a transaction block and
+  * can be rolled back.
+  * The locks are held for the entire duration of the transaction. They
+  * are released at the end of the scope, so within the `catch` block,
+  * they are already unlocked.
+  * More about executing transaction is here: @ref pmem::obj::transaction::run
+  * - **automatic** transactions are only available in C++17. All operations
+  * between creating and destroying the transaction object are treated as
+  * performed in a transaction block and can be rolled back.
+  * If you have a C++17 compliant compiler, the automatic transaction will
+  * commit and abort automatically depending on the context of object's destruction.
+  * The locks are held for the entire duration of the transaction. They
+  * are released at the end of the scope, so within the `catch` block,
+  * they are already unlocked.
+  *
+  * If you want to read more and see example usages of both, you have to see
+  * flat or basic transaction documentation, because each implementation may differ.
+  *
+  * ## Lifecycle and stages:
+  *
+  * When you are using transaction API a transaction can be in one of the following states:
+  * - *TX_STAGE_NONE*
+  * - *TX_STAGE_WORK*
+  * - *TX_STAGE_ONCOMMIT*
+  * - *TX_STAGE_FINALLY*
+  * - *TX_STAGE_ONABORT*
+  *
+  * Moving from one stage to another is possible under some conditions, but
+  * in libpmemobj-cpp it's transparent for user, so please focus on relationships between stages.
+  * Look at the diagram below:
+  *
+  * ![lifecycle](https://pmem.io/assets/lifecycle.png "Transaction lifecycle")
+  *
+  * To be more familiar with functions used in diagram read:
+  * [pmemobj_tx_begin manpage](https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3.html).
+  *
+  * If you need to read general information about transaction move to the *Additional resources* section.
+  *
+  * ## Example of flat_transaction
+  * For comparison with the previous snippet, here is a code snippet of
+  * @ref pmem::obj::flat_transaction which is listed below with basic explanation inline.
+  * @snippet transaction/transaction.cpp tx_nested_struct_example
+  * If you read the inline comments you should be able to notice the difference
+  * between @ref pmem::obj::flat_transaction and @ref pmem::obj::basic_transaction.
+  * For more examples please look at the
+  * [examples directory](https://github.com/pmem/libpmemobj-cpp/tree/master/examples) in libpmemobj-cpp repository.
+  *
+  * ## Additional resources
+  * - [blog post about transactions](https://pmem.io/2016/05/25/cpp-07.html)
+  * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
+  */
+
 /** @defgroup allocation Allocation*/
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/

@@ -350,6 +350,10 @@ public:
 	/**
 	 * Execute a closure-like transaction and lock `locks`.
 	 *
+	 * Starts new transaction (nested when inside another transaction)
+	 * and executes passed `tx` function transactionally.
+	 * Transaction can only start when stage is WORK or NONE.
+	 *
 	 * The locks have to be persistent memory resident locks. An
 	 * attempt to lock the locks will be made. If any of the
 	 * specified locks is already locked, the method will block.
@@ -667,6 +671,9 @@ public:
 	/**
 	 * Execute a closure-like transaction and lock `locks`.
 	 *
+	 * Starts new transaction and executes passed `tx` function
+	 * transactionally. Transaction can only start when stage is NONE.
+	 *
 	 * The locks have to be persistent memory resident locks. An
 	 * attempt to lock the locks will be made. If any of the
 	 * specified locks is already locked, the method will block.
@@ -795,35 +802,7 @@ public:
 	using automatic = typename detail::transaction_base<true>::automatic;
 #endif /* __cpp_lib_uncaught_exceptions */
 	/**
-	 * Execute a closure-like transaction and lock `locks`.
-	 *
-	 * The locks have to be persistent memory resident locks. An
-	 * attempt to lock the locks will be made. If any of the
-	 * specified locks is already locked, the method will block.
-	 * The locks are held until the end of the transaction. The
-	 * transaction does not have to be committed manually. Manual
-	 * aborts will end the transaction with an active exception.
-	 *
-	 * If an exception is thrown within the transaction, it gets propagated
-	 * to the outer most transaction. If the exception is not caught, it
-	 * will result in a transaction abort.
-	 *
-	 * The locks are held for the entire duration of the transaction. They
-	 * are released at the end of the scope, so within the `catch` block,
-	 * they are already unlocked. If the cleanup action requires access to
-	 * data within a critical section, the locks have to be manually
-	 * acquired once again.
-	 *
-	 * @param[in,out] pool the pool in which the transaction will take
-	 *	place.
-	 * @param[in] tx an std::function<void ()> which will perform
-	 *	operations within this transaction.
-	 * @param[in,out] locks locks to be taken for the duration of
-	 *	the transaction.
-	 *
-	 * @throw transaction_error on any error pertaining the execution
-	 *	of the transaction.
-	 * @throw manual_tx_abort on manual transaction abort.
+	 * @copydoc detail::transaction_base<is_flat>::run()
 	 */
 	template <typename... Locks>
 	static void

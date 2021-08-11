@@ -1,9 +1,52 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright 2021, Intel Corporation
 
+/** @defgroup transactions Transactions
+  * This section introduces transaction feature in libpmemobj-cpp.
+  *
+  * ## General info about transaction
+  *
+  * The heart of the libpmemobj are transactions and they are designed to be developer friendly.
+  * Let's take a look at the following snippet:
+  *
+  * @snippet transaction/transaction.cpp general_tx_example
+  *
+  * Worth to notice is that @ref pmem::obj::flat_transaction is recommended to use over @ref pmem::obj::basic_transaction.
+  Extra explanation is provided inline in example in @ref pmem::obj::flat_transaction description.
+  *
+  * Mentioned above scoped transactions are handled through two internal classes: manual and automatic.
+  * - **manual** transactions need to be committed manually, otherwise they will be aborted on object destruction.
+  * The locks are held for the entire duration of the transaction.
+  * - **automatic** transactions are only available in C++17. They handle transaction commit/abort automatically.
+  *
+  * If you want to read more about specific transaction types enter the class you want to read about.
+  *
+  * ## Lifecycle and stages:
+  *
+  * When you are using transaction API your transaction can be in one of the following states:
+  * - *TX_STAGE_NONE*
+  * - *TX_STAGE_WORK*
+  * - *TX_STAGE_ONCOMMIT*
+  * - *TX_STAGE_FINALLY*
+  * - *TX_STAGE_ONABORT*
+  *
+  * This stages also have defined transitions between them. Look at the diagram below:
+  *
+  * ![lifecycle](https://pmem.io/assets/lifecycle.png "Transaction lifecycle")
+  *
+  * If you need to read general informations about transaction look at the our [pmem.io](https://pmem.io/libpmemobj-cpp/) blog.
+  *
+  * ## Example of flat_transaction
+  * Example of @ref pmem::obj::flat_transaction is listed below with basic explanation.
+  * @snippet transaction/transaction.cpp tx_flat_example
+  * For more examples please look at the examples directory in libpmemobj-cpp repository.
+  *
+  * ## Additional sources
+  * - [transactions](https://pmem.io/2016/05/25/cpp-07.html)
+  * - [transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
+  */
 /** @defgroup containers  Containers*/
 /** @defgroup experimental_containers Experimental Containers */
-/** @defgroup transactions Transactions*/
 /** @defgroup allocation Allocation*/
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/

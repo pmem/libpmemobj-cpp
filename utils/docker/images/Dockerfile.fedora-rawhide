@@ -57,17 +57,27 @@ ARG MISC_DEPS="\
 	pkgconf \
 	sudo"
 
+# pmem's Valgrind (optional; valgrind-devel may be used instead)
+ARG VALGRIND_DEPS="\
+	autoconf \
+	automake"
+
 # Update packages and install basic tools
 RUN dnf update -y \
  && dnf install -y \
 	${BASE_DEPS} \
 	${LIBPMEMOBJ_CPP_DEPS} \
+	${VALGRIND_DEPS} \
 	${EXAMPLES_DEPS} \
 	${DOC_DEPS} \
 	${TESTS_DEPS} \
 	${MISC_DEPS} \
  && dnf debuginfo-install -y glibc \
  && dnf clean all
+
+# Install valgrind
+COPY install-valgrind.sh install-valgrind.sh
+RUN ./install-valgrind.sh
 
 # Add user
 ENV USER user

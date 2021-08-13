@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2021, Intel Corporation
 
 #
 # install-valgrind.sh - installs valgrind for persistent memory
@@ -13,10 +13,10 @@ if [ "${SKIP_VALGRIND_BUILD}" ]; then
 	exit
 fi
 
-git clone --recursive https://github.com/pmem/valgrind.git
+git clone --recursive https://github.com/lukaszstolarczuk/valgrind
 cd valgrind
-# pmem-3.15: Merge pull request #81 from marcinslusarz/pmem-3.15
-git checkout 09f75f69683d862f8456f75484fcdc0dc5508900
+# pmem-3.17
+git checkout pmem-3.17
 
 ./autogen.sh
 ./configure --prefix=/usr

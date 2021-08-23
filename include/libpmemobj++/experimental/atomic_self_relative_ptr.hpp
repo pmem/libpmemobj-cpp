@@ -290,7 +290,8 @@ private:
 
 public:
 	using this_type = atomic;
-	using value_type = pmem::obj::experimental::self_relative_ptr<T, true_type>;
+	using value_type =
+		pmem::obj::experimental::self_relative_ptr<T, true_type>;
 	using difference_type = typename value_type::difference_type;
 
 	/*

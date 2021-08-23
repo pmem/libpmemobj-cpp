@@ -37,7 +37,8 @@ using size_type = std::ptrdiff_t;
 template <typename U>
 using persistent_ptr = pmem::obj::persistent_ptr<U>;
 template <typename U>
-using self_relative_ptr = pmem::obj::experimental::self_relative_ptr<U, std::false_type>;
+using self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<U, std::false_type>;
 template <typename U>
 using vector = pmem::obj::vector<U>;
 
@@ -62,19 +63,22 @@ prepare_array(pmem::obj::pool_base &pop,
 	}
 }
 
-template <template <typename U> class pointer>
+template <template <typename U, typename PersistentAware> class pointer>
 void
-benchmark_swap(pointer<pointer<value_type>[]> &array, pointer<value_type> value)
+benchmark_swap(
+	pointer<pointer<value_type, std::false_type>[], std::false_type> &array,
+	pointer<value_type, std::false_type> value)
 {
 	for (size_type i = 0; i < ARR_SIZE; i++) {
 		swap(array[i], value);
 	}
 }
 
-template <template <typename U> class pointer>
+template <template <typename U, typename PersistentAware> class pointer>
 void
-benchmark_assignment(pointer<pointer<value_type>[]> &array,
-		     pointer<value_type> value)
+benchmark_assignment(
+	pointer<pointer<value_type, std::false_type>[], std::false_type> &array,
+	pointer<value_type, std::false_type> value)
 {
 	for (size_type i = 0; i < ARR_SIZE; i++) {
 		array[i] = value;

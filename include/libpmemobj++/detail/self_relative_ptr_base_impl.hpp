@@ -159,8 +159,7 @@ public:
 	/**
 	 * Explicit conversion operator to void*
 	 */
-	explicit
-	operator void *() const noexcept
+	explicit operator void *() const noexcept
 	{
 		return to_void_pointer();
 	}
@@ -197,18 +196,22 @@ public:
 	static inline bool
 	is_dirty(difference_type other_offset)
 	{
-		return ((other_offset != nullptr_offset) && !((other_offset>>1) & 1));
+		return ((other_offset != nullptr_offset) &&
+			!((other_offset >> 1) & 1));
 	}
-	bool is_dirty()
+	bool
+	is_dirty()
 	{
-		return (!is_null() && !((difference_type(offset)>>1) & 1));
+		return (!is_null() && !((difference_type(offset) >> 1) & 1));
 	}
-	void set_dirty_flag(bool dirty)
+	void
+	set_dirty_flag(bool dirty)
 	{
 		intptr_t dirty_mask = dirty == true;
 		--dirty_mask;
 		offset &= (dirty_mask | dirty_flag);
 	}
+
 protected:
 	/**
 	 * Offset constructor.

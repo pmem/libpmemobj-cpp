@@ -261,8 +261,8 @@ public:
 	/**
 	 * Dereference operator.
 	 */
-	typename pmem::detail::sp_dereference<T>::type
-	operator*() const noexcept
+	typename pmem::detail::sp_dereference<T>::type operator*() const
+		noexcept
 	{
 		return *(this->get());
 	}
@@ -270,8 +270,8 @@ public:
 	/**
 	 * Member access operator.
 	 */
-	typename pmem::detail::sp_member_access<T>::type
-	operator->() const noexcept
+	typename pmem::detail::sp_member_access<T>::type operator->() const
+		noexcept
 	{
 		return this->get();
 	}

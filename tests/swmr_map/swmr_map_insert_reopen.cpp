@@ -115,9 +115,9 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	size_t concurrency = 8;
+	size_t concurrency = 1;
 	if (On_drd)
-		concurrency = 2;
+		concurrency = 1;
 	std::cout << "Running tests for " << concurrency << " threads"
 		  << std::endl;
 

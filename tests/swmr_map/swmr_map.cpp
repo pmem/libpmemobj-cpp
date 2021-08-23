@@ -83,17 +83,17 @@ emplace_and_lookup_test(nvobj::pool<root> &pop, MapType *map)
 	const size_t NUMBER_ITEMS_INSERT = 50;
 
 	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 8;
+	const size_t concurrency = 4;
 
-	size_t TOTAL_ITEMS = NUMBER_ITEMS_INSERT * concurrency;
+	size_t TOTAL_ITEMS = NUMBER_ITEMS_INSERT * (concurrency - 1);
 
 	UT_ASSERT(map != nullptr);
 
 	map->runtime_initialize();
 
-	parallel_exec(concurrency, [&](size_t thread_id) {
-		int begin = thread_id * NUMBER_ITEMS_INSERT;
-		int end = begin + int(NUMBER_ITEMS_INSERT);
+	parallel_exec(1, [&](size_t thread_id) {
+		int begin = 0;
+		int end = begin + int(TOTAL_ITEMS);
 		for (int i = begin; i < end; ++i) {
 			auto ret = map->emplace(gen_key(*map, i),
 						gen_key(*map, i));
@@ -107,7 +107,6 @@ emplace_and_lookup_test(nvobj::pool<root> &pop, MapType *map)
 			UT_ASSERT(it->first == gen_key(*map, i));
 			UT_ASSERT(it->second == gen_key(*map, i));
 		}
-
 		for (int i = begin; i < end; ++i) {
 			typename MapType::const_iterator it =
 				map->find(gen_key(*map, i));
@@ -117,21 +116,54 @@ emplace_and_lookup_test(nvobj::pool<root> &pop, MapType *map)
 		}
 	});
 
+	parallel_exec(concurrency, [&](size_t thread_id) {
+		if (thread_id == 0) {
+			int begin = int(TOTAL_ITEMS);
+			int end = 2 * int(TOTAL_ITEMS);
+			for (int i = begin; i < end; ++i) {
+				auto ret = map->emplace(gen_key(*map, i),
+							gen_key(*map, i));
+				UT_ASSERT(ret.second == true);
+
+				UT_ASSERT(map->count(gen_key(*map, i)) == 1);
+			}
+		} else {
+			int begin = (thread_id - 1) * NUMBER_ITEMS_INSERT;
+			int end = begin + int(NUMBER_ITEMS_INSERT);
+			for (int i = begin; i < end; ++i) {
+				typename MapType::iterator it =
+					map->find(gen_key(*map, i));
+				UT_ASSERT(it != map->end());
+				UT_ASSERT(it->first == gen_key(*map, i));
+				UT_ASSERT(it->second == gen_key(*map, i));
+			}
+
+			for (int i = begin; i < end; ++i) {
+				typename MapType::const_iterator it =
+					map->find(gen_key(*map, i));
+				UT_ASSERT(it != map->end());
+				UT_ASSERT(it->first == gen_key(*map, i));
+				UT_ASSERT(it->second == gen_key(*map, i));
+			}
+		}
+	});
+
 	check_sorted(map);
 
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
+	UT_ASSERT(map->size() == 2 * TOTAL_ITEMS);
 
-	UT_ASSERT(std::distance(map->begin(), map->end()) == int(TOTAL_ITEMS));
+	UT_ASSERT(std::distance(map->begin(), map->end()) ==
+		  2 * int(TOTAL_ITEMS));
 
 	check_sorted(map);
 
 	map->runtime_initialize();
 
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
+	UT_ASSERT(map->size() == 2 * TOTAL_ITEMS);
 
 	map->runtime_initialize();
 
-	UT_ASSERT(map->size() == TOTAL_ITEMS);
+	UT_ASSERT(map->size() == 2 * TOTAL_ITEMS);
 
 	map->clear();
 
@@ -150,7 +182,7 @@ emplace_and_lookup_duplicates_test(nvobj::pool<root> &pop, MapType *map)
 	const size_t NUMBER_ITEMS_INSERT = 50;
 
 	// Adding more concurrency will increase DRD test time
-	const size_t concurrency = 4;
+	const size_t concurrency = 1;
 
 	UT_ASSERT(map != nullptr);
 

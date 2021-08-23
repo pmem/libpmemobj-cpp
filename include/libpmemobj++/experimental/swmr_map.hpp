@@ -6,7 +6,7 @@
 
 #include <libpmemobj++/allocator.hpp>
 #include <libpmemobj++/detail/pair.hpp>
-#include <libpmemobj++/experimental/swmr_skip_list_impl.hpp>
+#include <libpmemobj++/container/detail/concurrent_skip_list_impl.hpp>
 
 namespace pmem
 {
@@ -20,13 +20,13 @@ namespace experimental
 template <typename Key, typename Value, typename Comp = std::less<Key>,
 	  typename Allocator =
 		  pmem::obj::allocator<detail::pair<const Key, Value>>>
-class swmr_map : public detail::swmr_skip_list<detail::map_traits<
+class swmr_map : public detail::concurrent_skip_list<detail::map_traits<
 			 Key, Value, Comp, detail::default_random_generator,
-			 Allocator, false, 64>> {
+			 Allocator, false, 64, std::true_type>> {
 	using traits_type = detail::map_traits<Key, Value, Comp,
 					       detail::default_random_generator,
-					       Allocator, false, 64>;
-	using base_type = pmem::detail::swmr_skip_list<traits_type>;
+					       Allocator, false, 64, std::true_type>;
+	using base_type = pmem::detail::concurrent_skip_list<traits_type>;
 
 public:
 	using key_type = typename base_type::key_type;

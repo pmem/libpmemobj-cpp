@@ -4,7 +4,6 @@
 #include "unittest.hpp"
 
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
-#include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
@@ -19,22 +18,27 @@
 namespace nvobj = pmem::obj;
 namespace nvobjexp = nvobj::experimental;
 
-template <template <typename U> class pointer>
+template <template <typename U, typename PersistentAware> class pointer>
 void
-assert_if_oid_is_null(pointer<int> &f)
+assert_if_oid_is_null(pointer<int, std::true_type> &f)
 {
 	UT_ASSERT(OID_IS_NULL(f.raw()));
 }
 
-template <>
+template <template <typename U, typename PersistentAware> class pointer>
 void
-assert_if_oid_is_null(nvobjexp::self_relative_ptr<int> &f)
+assert_if_oid_is_null(pointer<int, std::false_type> &f)
+{
+	UT_ASSERT(OID_IS_NULL(f.raw()));
+}
+
+void
+assert_if_oid_is_null(nvobjexp::self_relative_ptr<int, std::true_type> &f)
 {
 }
 
-template <>
 void
-assert_if_oid_is_null(nvobjexp::pa_self_relative_ptr<int> &f)
+assert_if_oid_is_null(nvobjexp::self_relative_ptr<int, std::false_type> &f)
 {
 }
 
@@ -42,9 +46,20 @@ assert_if_oid_is_null(nvobjexp::pa_self_relative_ptr<int> &f)
  * test_null_ptr -- verifies if the pointer correctly behaves like a
  * nullptr-value
  */
-template <template <typename U> class pointer>
+template <template <typename U, typename PersistentAware> class pointer>
 void
-test_null_ptr(pointer<int> &f)
+test_null_ptr(pointer<int, std::true_type> &f)
+{
+	assert_if_oid_is_null(f);
+	UT_ASSERT((bool)f == false);
+	UT_ASSERT(!f);
+	UT_ASSERTeq(f.get(), nullptr);
+	UT_ASSERT(f == nullptr);
+}
+
+template <template <typename U, typename PersistentAware> class pointer>
+void
+test_null_ptr(pointer<int, std::false_type> &f)
 {
 	assert_if_oid_is_null(f);
 	UT_ASSERT((bool)f == false);
@@ -109,7 +124,7 @@ struct nested {
 template <template <typename U> class pointer, class pointer_base>
 struct templated_root {
 	pointer<foo> pfoo;
-	pointer<nvobj::p<int>[(long unsigned) TEST_ARR_SIZE]> parr;
+	pointer<nvobj::p<int>[(long unsigned)TEST_ARR_SIZE]> parr;
 	pointer_base arr[3];
 
 	/* This variable is unused, but it's here to check if the persistent_ptr

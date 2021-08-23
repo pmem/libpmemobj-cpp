@@ -20,8 +20,9 @@ using pmem::obj::experimental::self_relative_ptr;
 template <typename T, bool need_volatile>
 using atomic_type = typename std::conditional<
 	need_volatile,
-	typename std::add_volatile<std::atomic<self_relative_ptr<T>>>::type,
-	std::atomic<self_relative_ptr<T>>>::type;
+	typename std::add_volatile<
+		std::atomic<self_relative_ptr<T, std::false_type>>>::type,
+	std::atomic<self_relative_ptr<T, std::false_type>>>::type;
 
 template <bool volatile_atomic>
 void
@@ -134,8 +135,8 @@ template <bool volatile_atomic>
 void
 test_exchange()
 {
-	self_relative_ptr<int> first = reinterpret_cast<int *>(uintptr_t{0});
-	self_relative_ptr<int> second = reinterpret_cast<int *>(~uintptr_t{0});
+	self_relative_ptr<int, std::false_type> first = reinterpret_cast<int *>(uintptr_t{0});
+	self_relative_ptr<int, std::false_type> second = reinterpret_cast<int *>(~uintptr_t{0});
 
 	atomic_type<int, volatile_atomic> ptr;
 
@@ -174,7 +175,7 @@ test_compare_exchange()
 		// tst_val != atomic_ptr  ==>  tst_val is modified
 		// tst_val == atomic_ptr  ==>  atomic_ptr is modified
 
-		self_relative_ptr<int> tst_val{first}, new_val{second};
+		self_relative_ptr<int, std::false_type> tst_val{first}, new_val{second};
 		if (atomic_ptr.compare_exchange_strong(tst_val, new_val)) {
 			++exchanged;
 		} else {
@@ -190,7 +191,7 @@ test_compare_exchange()
 		// tst_val != atomic_ptr  ==>  tst_val is modified
 		// tst_val == atomic_ptr  ==>  atomic_ptr is modified
 
-		self_relative_ptr<int> tst_val{first}, new_val{second};
+		self_relative_ptr<int, std::false_type> tst_val{first}, new_val{second};
 		if (atomic_ptr.compare_exchange_strong(
 			    tst_val, new_val, std::memory_order_acquire,
 			    std::memory_order_relaxed)) {
@@ -213,7 +214,7 @@ public:
 	struct node;
 
 	using value_type = size_t;
-	using node_ptr_type = self_relative_ptr<node>;
+	using node_ptr_type = self_relative_ptr<node, std::false_type>;
 
 	struct node {
 		size_t value;

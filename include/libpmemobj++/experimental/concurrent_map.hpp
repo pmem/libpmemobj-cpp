@@ -46,10 +46,10 @@ template <typename Key, typename Value, typename Comp = std::less<Key>,
 class concurrent_map
     : public detail::concurrent_skip_list<detail::map_traits<
 	      Key, Value, Comp, detail::default_random_generator, Allocator,
-	      false, 64>> {
+	      false, 64, std::false_type>> {
 	using traits_type = detail::map_traits<Key, Value, Comp,
 					       detail::default_random_generator,
-					       Allocator, false, 64>;
+					       Allocator, false, 64, std::false_type>;
 	using base_type = pmem::detail::concurrent_skip_list<traits_type>;
 
 public:

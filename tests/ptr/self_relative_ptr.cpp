@@ -22,7 +22,7 @@
 #define LAYOUT "cpp"
 
 template <typename T>
-using self_relative_ptr = nvobj::experimental::self_relative_ptr<T>;
+using self_relative_ptr = nvobj::experimental::self_relative_ptr<T,std::false_type>;
 using self_relative_ptr_base = nvobj::experimental::self_relative_ptr_base;
 
 namespace

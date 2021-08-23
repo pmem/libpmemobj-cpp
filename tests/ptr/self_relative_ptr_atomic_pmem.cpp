@@ -20,7 +20,8 @@
 namespace nvobj = pmem::obj;
 
 template <typename T>
-using self_relative_ptr = pmem::obj::experimental::self_relative_ptr<T>;
+using self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<T, std::false_type>;
 template <typename T>
 using atomic_ptr = std::atomic<self_relative_ptr<T>>;
 

@@ -3,8 +3,12 @@
 
 #include "ptr_arith.hpp"
 
-#include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
+
+template <typename T>
+using pa_self_relative_ptr =
+	nvobj::experimental::self_relative_ptr<T, std::true_type>;
 
 #define LAYOUT "cpp"
 
@@ -25,8 +29,8 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_arith<nvobjexp::pa_self_relative_ptr>(pop);
-	test_relational<nvobjexp::pa_self_relative_ptr>(pop);
+	test_arith<pa_self_relative_ptr>(pop);
+	test_relational<pa_self_relative_ptr>(pop);
 
 	pop.close();
 }

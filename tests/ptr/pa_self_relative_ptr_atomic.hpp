@@ -4,8 +4,8 @@
 #include "thread_helpers.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/atomic_pa_self_relative_ptr.hpp>
-#include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/atomic_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/self_relative_ptr.hpp>
 
 #include <algorithm>
 #include <memory>
@@ -15,7 +15,10 @@ constexpr size_t CONCURRENCY = 20;
 constexpr size_t MEAN_CONCURRENCY = CONCURRENCY * 2;
 constexpr size_t HIGH_CONCURRENCY = CONCURRENCY * 5;
 
-using pmem::obj::experimental::pa_self_relative_ptr;
+template <typename T>
+using pa_self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<T, std::true_type>;
+using self_relative_ptr_base = pmem::obj::experimental::self_relative_ptr_base;
 
 template <typename T, bool need_volatile>
 using atomic_type = typename std::conditional<

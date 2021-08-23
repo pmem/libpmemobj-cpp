@@ -9,7 +9,7 @@
 #include "ptr.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
@@ -22,7 +22,8 @@
 #define LAYOUT "cpp"
 
 template <typename T>
-using pa_self_relative_ptr = nvobj::experimental::pa_self_relative_ptr<T>;
+using pa_self_relative_ptr =
+	nvobj::experimental::self_relative_ptr<T, std::true_type>;
 using self_relative_ptr_base = nvobj::experimental::self_relative_ptr_base;
 
 namespace

@@ -4,8 +4,8 @@
 #include "thread_helpers.hpp"
 #include "unittest.hpp"
 
-#include <libpmemobj++/experimental/atomic_pa_self_relative_ptr.hpp>
-#include <libpmemobj++/experimental/pa_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/atomic_self_relative_ptr.hpp>
+#include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/make_persistent.hpp>
 #include <libpmemobj++/make_persistent_array_atomic.hpp>
 #include <libpmemobj++/make_persistent_atomic.hpp>
@@ -20,7 +20,8 @@
 namespace nvobj = pmem::obj;
 
 template <typename T>
-using pa_self_relative_ptr = pmem::obj::experimental::pa_self_relative_ptr<T>;
+using pa_self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<T, std::true_type>;
 template <typename T>
 using atomic_ptr = std::atomic<pa_self_relative_ptr<T>>;
 

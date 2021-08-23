@@ -6,6 +6,11 @@
 #include <libpmemobj++/experimental/self_relative_ptr.hpp>
 #include <libpmemobj++/persistent_ptr.hpp>
 
+template <typename T>
+using self_relative_ptr =
+	nvobj::experimental::self_relative_ptr<T, std::false_type>;
+using self_relative_ptr_base = nvobj::experimental::self_relative_ptr_base;
+
 #define LAYOUT "cpp"
 
 static void
@@ -25,8 +30,8 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_arith<nvobjexp::self_relative_ptr>(pop);
-	test_relational<nvobjexp::self_relative_ptr>(pop);
+	test_arith<self_relative_ptr>(pop);
+	test_relational<self_relative_ptr>(pop);
 
 	pop.close();
 }

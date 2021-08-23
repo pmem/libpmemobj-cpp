@@ -162,7 +162,7 @@ public:
 	}
 
 	self_relative_ptr(persistent_ptr<T> ptr, bool dirty) noexcept
-	    : self_relative_ptr_base(self_offset(ptr.get(),dirty))
+	    : self_relative_ptr_base(self_offset(ptr.get(), dirty))
 	{
 	}
 
@@ -436,9 +436,9 @@ private:
 	{
 		intptr_t dirty_mask = dirty == true;
 		--dirty_mask;
-		return (base_type::pointer_to_offset(static_cast<void *>(ptr)) & (dirty_mask | dirty_flag));
+		return (base_type::pointer_to_offset(static_cast<void *>(ptr)) &
+			(dirty_mask | dirty_flag));
 	}
-
 };
 
 /**
@@ -701,7 +701,7 @@ template <typename T, typename Y,
 	  typename = typename std::enable_if<
 		  std::is_same<typename std::remove_cv<T>::type,
 			       typename std::remove_cv<Y>::type>::value>,
-	typename PersistentAware>
+	  typename PersistentAware>
 inline ptrdiff_t
 operator-(self_relative_ptr<T, PersistentAware> const &lhs,
 	  self_relative_ptr<Y, PersistentAware> const &rhs)

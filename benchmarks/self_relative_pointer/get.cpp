@@ -82,7 +82,8 @@ main(int argc, char *argv[])
 		root->pptr = prepare_array(pop, ARR_SIZE);
 
 		pmem::obj::persistent_ptr<value_type> pptr = root->pptr;
-		pmem::obj::experimental::self_relative_ptr<value_type, std::false_type>
+		pmem::obj::experimental::self_relative_ptr<value_type,
+							   std::false_type>
 			offset_ptr = root->pptr;
 		int *vptr = root->pptr.get();
 

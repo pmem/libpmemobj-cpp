@@ -37,7 +37,8 @@ using size_type = std::ptrdiff_t;
 template <typename U>
 using persistent_ptr = pmem::obj::persistent_ptr<U>;
 template <typename U>
-using self_relative_ptr = pmem::obj::experimental::self_relative_ptr<U, std::false_type>;
+using self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<U, std::false_type>;
 template <typename U>
 using vector = pmem::obj::vector<U>;
 

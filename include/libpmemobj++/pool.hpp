@@ -46,6 +46,7 @@ class persistent_ptr;
  *
  * The exmple of using pool with RAII idiom:
  * @snippet pool/pool_as_class_member.cpp  pool_class_member_example
+ * @ingroup primitives
  */
 class pool_base {
 public:
@@ -423,9 +424,8 @@ public:
 					 &result);
 
 		if (ret != 0)
-			throw defrag_error(result, "Defragmentation failed")
-				.with_pmemobj_errormsg();
-
+			throw detail::exception_with_errormsg<defrag_error>(
+				result, "Defragmentation failed");
 		return result;
 	}
 
@@ -434,15 +434,14 @@ protected:
 	check_pool(pmemobjpool *pop, std::string mode)
 	{
 		if (pop == nullptr) {
+			std::string msg = "Failed " + mode + " pool";
 			if (errno == EINVAL || errno == EFBIG ||
 			    errno == ENOENT || errno == EEXIST) {
-				throw pmem::pool_invalid_argument(
-					"Failed " + mode + " pool")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::pool_invalid_argument>(msg);
 			} else {
-				throw pmem::pool_error("Failed " + mode +
-						       " pool")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::pool_error>(msg);
 			}
 		}
 	}
@@ -477,6 +476,7 @@ protected:
  * This API should not be mixed with C API. For example explicitly calling
  * pmemobj_set_user_data(pop) on pool which is handled by C++ pool object
  * is undefined behaviour.
+ * @ingroup primitives
  */
 template <typename T>
 class pool : public pool_base {

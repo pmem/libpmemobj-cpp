@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -44,6 +44,7 @@ namespace obj
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
+ * @ingroup allocation
  */
 template <typename T, typename... Args>
 typename detail::pp_if_not_array<T>::type
@@ -57,14 +58,13 @@ make_persistent(allocation_flag flag, Args &&... args)
 		pmemobj_tx_xalloc(sizeof(T), detail::type_num<T>(), flag.value);
 
 	if (ptr == nullptr) {
+		const char *msg = "Failed to allocate persistent memory object";
 		if (errno == ENOMEM)
-			throw pmem::transaction_out_of_memory(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw pmem::transaction_alloc_error(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_alloc_error>(msg);
 	}
 
 	detail::create<T, Args...>(ptr.get(), std::forward<Args>(args)...);
@@ -86,6 +86,7 @@ make_persistent(allocation_flag flag, Args &&... args)
  * transaction
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
+ * @ingroup allocation
  */
 template <typename T, typename... Args>
 typename std::enable_if<
@@ -113,6 +114,7 @@ make_persistent(Args &&... args)
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_free_error on transactional free failure.
+ * @ingroup allocation
  */
 template <typename T>
 void
@@ -132,9 +134,9 @@ delete_persistent(typename detail::pp_if_not_array<T>::type ptr)
 	detail::destroy<T>(*ptr);
 
 	if (pmemobj_tx_free(*ptr.raw_ptr()) != 0)
-		throw pmem::transaction_free_error(
-			"failed to delete persistent memory object")
-			.with_pmemobj_errormsg();
+		throw detail::exception_with_errormsg<
+			pmem::transaction_free_error>(
+			"failed to delete persistent memory object");
 }
 
 } /* namespace obj */

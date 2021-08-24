@@ -84,6 +84,7 @@ private:
  * to the second (convertible) type, the offset will be re-calculated.
  *
  * @includedoc shared/self_relative_pointer_implementation.txt
+ * @ingroup primitives
  */
 template <typename T, typename PersistentAware>
 class self_relative_ptr : public self_relative_ptr_base {
@@ -446,6 +447,8 @@ private:
  *
  * Non-member swap function as required by Swappable concept.
  * en.cppreference.com/w/cpp/concept/Swappable
+ *
+ * @relates self_relative_ptr
  */
 template <class T, typename PersistentAware>
 inline void
@@ -457,6 +460,7 @@ swap(self_relative_ptr<T, PersistentAware> &a,
 
 /**
  * Equality operator.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y, typename PersistentAware>
 inline bool
@@ -468,6 +472,7 @@ operator==(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Inequality operator.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y, typename PersistentAware>
 inline bool
@@ -479,6 +484,7 @@ operator!=(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Equality operator with nullptr.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -490,6 +496,7 @@ operator==(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Equality operator with nullptr.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -501,6 +508,7 @@ operator==(std::nullptr_t,
 
 /**
  * Inequality operator with nullptr.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -512,6 +520,7 @@ operator!=(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Inequality operator with nullptr.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -526,6 +535,7 @@ operator!=(std::nullptr_t,
  *
  * @return true if the sum(this, offset) of lhs is less than the sum(this,
  * offset) of rhs. Returns false otherwise.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y, typename PersistentAware>
 inline bool
@@ -539,6 +549,7 @@ operator<(self_relative_ptr<T, PersistentAware> const &lhs,
  * Less or equal than operator.
  *
  * See less than operator for comparison rules.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y, typename PersistentAware>
 inline bool
@@ -552,6 +563,7 @@ operator<=(self_relative_ptr<T, PersistentAware> const &lhs,
  * Greater than operator.
  *
  * See less than operator for comparison rules.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y, typename PersistentAware>
 inline bool
@@ -565,6 +577,7 @@ operator>(self_relative_ptr<T, PersistentAware> const &lhs,
  * Greater or equal than operator.
  *
  * See less than operator for comparison rules.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y, typename PersistentAware>
 inline bool
@@ -578,6 +591,7 @@ operator>=(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -590,6 +604,7 @@ operator<(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -602,6 +617,7 @@ operator<(std::nullptr_t,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -613,6 +629,7 @@ operator<=(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -624,6 +641,7 @@ operator<=(std::nullptr_t,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -635,6 +653,7 @@ operator>(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -646,6 +665,7 @@ operator>(std::nullptr_t,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -657,6 +677,7 @@ operator>=(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Compare a self_relative_ptr with a null pointer.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline bool
@@ -668,6 +689,7 @@ operator>=(std::nullptr_t,
 
 /**
  * Addition operator for self-relative pointers.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline self_relative_ptr<T, PersistentAware>
@@ -680,6 +702,7 @@ operator+(self_relative_ptr<T, PersistentAware> const &lhs, std::ptrdiff_t s)
 
 /**
  * Subtraction operator for self-relative pointers.
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 inline self_relative_ptr<T, PersistentAware>
@@ -696,6 +719,7 @@ operator-(self_relative_ptr<T, PersistentAware> const &lhs, std::ptrdiff_t s)
  * Calculates the offset difference.
  * Calculating the difference of pointers from objects of
  * different pools is not allowed.
+ * @relates self_relative_ptr
  */
 template <typename T, typename Y,
 	  typename = typename std::enable_if<
@@ -712,6 +736,7 @@ operator-(self_relative_ptr<T, PersistentAware> const &lhs,
 
 /**
  * Ostream operator
+ * @relates self_relative_ptr
  */
 template <typename T, typename PersistentAware>
 std::ostream &

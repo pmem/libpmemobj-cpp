@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Copyright 2021, Intel Corporation
+
+/** @defgroup containers  Containers*/
+/** @defgroup experimental_containers Experimental Containers */
+/** @defgroup transactions Transactions*/
+/** @defgroup allocation Allocation*/
+/** @defgroup data_view Data View*/
+/** @defgroup synchronization Synchronization Primitives*/
+/** @defgroup primitives Primitives*/
+/** @defgroup exceptions Exceptions*/

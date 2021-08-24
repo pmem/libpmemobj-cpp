@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2020, Intel Corporation */
+/* Copyright 2019-2021, Intel Corporation */
+
+/**
+ * @file
+ * Persistent memory aware implementation of Intel TBB concurrent_map.
+ */
 
 #ifndef PMEMOBJ_CONCURRENT_MAP_HPP
 #define PMEMOBJ_CONCURRENT_MAP_HPP
@@ -14,15 +19,17 @@ namespace obj
 {
 namespace experimental
 {
+
 /**
- * Persistent memory aware implementation of Intel TBB concurrent_map. It is a
- * sorted associative container that contains key-value pairs with unique keys.
- * Keys are sorted by using the comparison function Compare. Search, removal,
- * and insertion operations have average logarithmic complexity. Everywhere the
- * concurrent_map uses the Compare requirements, uniqueness is determined by
- * using the equivalence relation. In imprecise terms, two objects a and b are
- * considered equivalent (not unique) if neither compares less than the other:
- * !comp(a, b) && !comp(b, a).
+ * Persistent memory aware implementation of Intel TBB concurrent_map.
+ *
+ * A sorted associative container that contains key-value pairs with unique
+ * keys. Keys are sorted by using the comparison function Compare. Search,
+ * removal, and insertion operations have average logarithmic complexity.
+ * Everywhere the concurrent_map uses the Compare requirements, uniqueness is
+ * determined by using the equivalence relation. In imprecise terms, two objects
+ * a and b are considered equivalent (not unique) if neither compares less than
+ * the other: !comp(a, b) && !comp(b, a).
  *
  * The implementation is based on the lock-based concurrent skip list algorithm
  * described in
@@ -39,6 +46,7 @@ namespace experimental
  * Allocator type should satisfies the named requirements
  * (https://en.cppreference.com/w/cpp/named_req/Allocator). The allocate() and
  * deallocate() methods are called inside transactions.
+ * @ingroup experimental_containers
  */
 template <typename Key, typename Value, typename Comp = std::less<Key>,
 	  typename Allocator =
@@ -146,7 +154,9 @@ public:
 	}
 };
 
-/** Non-member swap */
+/** Non-member swap
+ * @relates concurrent_map
+ */
 template <typename Key, typename Value, typename Comp, typename Allocator>
 void
 swap(concurrent_map<Key, Value, Comp, Allocator> &lhs,

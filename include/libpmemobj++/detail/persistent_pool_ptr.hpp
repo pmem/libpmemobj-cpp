@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2019, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
+
+/**
+ * @file
+ * Persistent pointer for pool handle.
+ */
 
 #ifndef PMEMOBJ_PERSISTENT_POOL_PTR_HPP
 #define PMEMOBJ_PERSISTENT_POOL_PTR_HPP
@@ -420,7 +425,7 @@ public:
 	}
 
 private:
-	/* offset of persistent object in a persistent memory pool*/
+	/* offset of persistent object in a persistent memory pool */
 	uint64_t off;
 
 	void
@@ -435,6 +440,7 @@ private:
  * Equality operator.
  *
  * This checks if underlying PMEMoids are equal.
+ * @relates persistent_pool_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -446,6 +452,7 @@ operator==(const persistent_pool_ptr<T> &lhs,
 
 /**
  * Inequality operator.
+ * @relates persistent_pool_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -457,6 +464,7 @@ operator!=(const persistent_pool_ptr<T> &lhs,
 
 /**
  * Inequality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool
@@ -467,6 +475,7 @@ operator!=(const persistent_pool_ptr<T> &lhs, std::nullptr_t) noexcept
 
 /**
  * Inequality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool
@@ -477,6 +486,7 @@ operator!=(std::nullptr_t, const persistent_pool_ptr<T> &lhs) noexcept
 
 /**
  * Equality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool
@@ -487,6 +497,7 @@ operator==(const persistent_pool_ptr<T> &lhs, std::nullptr_t) noexcept
 
 /**
  * Equality operator with nullptr.
+ * @relates persistent_pool_ptr
  */
 template <typename T>
 inline bool

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2015-2020, Intel Corporation */
+/* Copyright 2015-2021, Intel Corporation */
 
 /**
  * @file
@@ -30,6 +30,7 @@ namespace obj
  * The p class is not designed to be used with compound types. For that see the
  * persistent_ptr.
  * @snippet persistent/persistent.cpp p_property_example
+ * @ingroup primitives
  */
 template <typename T>
 class p {
@@ -153,6 +154,7 @@ private:
  *
  * Non-member swap function as required by Swappable concept.
  * en.cppreference.com/w/cpp/concept/Swappable
+ * @relates p
  */
 template <class T>
 inline void

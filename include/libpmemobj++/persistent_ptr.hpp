@@ -147,6 +147,7 @@ public:
  *
  * Below you can find an example how to and how NOT to cast persistent_ptr's:
  * @snippet persistent/persistent.cpp persistent_ptr_casting_example
+ * @ingroup primitives
  */
 template <typename T>
 class persistent_ptr : public persistent_ptr_base {
@@ -593,6 +594,7 @@ protected:
  *
  * Non-member swap function as required by Swappable concept.
  * en.cppreference.com/w/cpp/concept/Swappable
+ * @relates persistent_ptr
  */
 template <class T>
 inline void
@@ -605,6 +607,7 @@ swap(persistent_ptr<T> &a, persistent_ptr<T> &b)
  * Equality operator.
  *
  * This checks if underlying PMEMoids are equal.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -615,6 +618,7 @@ operator==(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs) noexcept
 
 /**
  * Inequality operator.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -625,6 +629,7 @@ operator!=(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs) noexcept
 
 /**
  * Equality operator with nullptr.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -635,6 +640,7 @@ operator==(persistent_ptr<T> const &lhs, std::nullptr_t) noexcept
 
 /**
  * Equality operator with nullptr.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -645,6 +651,7 @@ operator==(std::nullptr_t, persistent_ptr<T> const &lhs) noexcept
 
 /**
  * Inequality operator with nullptr.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -655,6 +662,7 @@ operator!=(persistent_ptr<T> const &lhs, std::nullptr_t) noexcept
 
 /**
  * Inequality operator with nullptr.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -669,6 +677,7 @@ operator!=(std::nullptr_t, persistent_ptr<T> const &lhs) noexcept
  * @return true if the uuid_lo of lhs is less than the uuid_lo of rhs,
  * should they be equal, the offsets are compared. Returns false
  * otherwise.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -684,6 +693,7 @@ operator<(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs) noexcept
  * Less or equal than operator.
  *
  * See less than operator for comparison rules.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -696,6 +706,7 @@ operator<=(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs) noexcept
  * Greater than operator.
  *
  * See less than operator for comparison rules.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -708,6 +719,7 @@ operator>(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs) noexcept
  * Greater or equal than operator.
  *
  * See less than operator for comparison rules.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y>
 inline bool
@@ -720,6 +732,7 @@ operator>=(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -731,6 +744,7 @@ operator<(persistent_ptr<T> const &lhs, std::nullptr_t) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -742,6 +756,7 @@ operator<(std::nullptr_t, persistent_ptr<T> const &rhs) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -752,6 +767,7 @@ operator<=(persistent_ptr<T> const &lhs, std::nullptr_t) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -762,6 +778,7 @@ operator<=(std::nullptr_t, persistent_ptr<T> const &rhs) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -772,6 +789,7 @@ operator>(persistent_ptr<T> const &lhs, std::nullptr_t) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -782,6 +800,7 @@ operator>(std::nullptr_t, persistent_ptr<T> const &rhs) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -792,6 +811,7 @@ operator>=(persistent_ptr<T> const &lhs, std::nullptr_t) noexcept
 
 /**
  * Compare a persistent_ptr with a null pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline bool
@@ -802,6 +822,7 @@ operator>=(std::nullptr_t, persistent_ptr<T> const &rhs) noexcept
 
 /**
  * Addition operator for persistent pointers.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline persistent_ptr<T>
@@ -816,6 +837,7 @@ operator+(persistent_ptr<T> const &lhs, std::ptrdiff_t s)
 
 /**
  * Subtraction operator for persistent pointers.
+ * @relates persistent_ptr
  */
 template <typename T>
 inline persistent_ptr<T>
@@ -834,6 +856,7 @@ operator-(persistent_ptr<T> const &lhs, std::ptrdiff_t s)
  * Calculates the offset difference of PMEMoids in terms of represented
  * objects. Calculating the difference of pointers from objects of
  * different pools is not allowed.
+ * @relates persistent_ptr
  */
 template <typename T, typename Y,
 	  typename = typename std::enable_if<
@@ -850,6 +873,7 @@ operator-(persistent_ptr<T> const &lhs, persistent_ptr<Y> const &rhs)
 
 /**
  * Ostream operator for the persistent pointer.
+ * @relates persistent_ptr
  */
 template <typename T>
 std::ostream &

@@ -3,11 +3,11 @@
 
 /**
  * @file
- * Functions for destroying arrays.
+ * Functions for lifetime management.
  */
 
-#ifndef LIBPMEMOBJ_CPP_DESTROYER_HPP
-#define LIBPMEMOBJ_CPP_DESTROYER_HPP
+#ifndef LIBPMEMOBJ_CPP_LIFE_HPP
+#define LIBPMEMOBJ_CPP_LIFE_HPP
 
 #include <cstddef>
 #include <tuple>
@@ -119,9 +119,9 @@ c_style_construct(void *ptr, void *arg)
 {
 	auto *arg_pack = static_cast<Tuple *>(arg);
 
-	typedef typename make_index_sequence<Args...>::type index;
 	try {
-		create_from_tuple<T>(ptr, index(), std::move(*arg_pack));
+		create_from_tuple<T>(ptr, index_sequence_for<Args...>{},
+				     std::move(*arg_pack));
 	} catch (...) {
 		return -1;
 	}
@@ -170,4 +170,4 @@ destroy(typename if_size_array<T>::type &arg)
 
 } /* namespace pmem */
 
-#endif /* LIBPMEMOBJ_CPP_DESTROYER_HPP */
+#endif /* LIBPMEMOBJ_CPP_LIFE_HPP */

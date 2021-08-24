@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2021, 4Paradigm Inc. */
 
+/**
+ * @file
+ * Atomic specialization for self_relative_ptr.
+ */
+
 #ifndef LIBPMEMOBJ_CPP_ATOMIC_SELF_RELATIVE_PTR_HPP
 #define LIBPMEMOBJ_CPP_ATOMIC_SELF_RELATIVE_PTR_HPP
 
@@ -627,9 +632,10 @@ namespace detail
 {
 
 /**
- * can_do_snapshot atomic specialization for self_relative_ptr. Not thread safe.
+ * pmem::detail::can_do_snapshot atomic specialization for self_relative_ptr.
+ * Not thread safe.
  *
- * Use in a single threaded environment only.
+ * Use in a single-threaded environment only.
  */
 template <typename T, typename PersistentAware>
 struct can_do_snapshot<

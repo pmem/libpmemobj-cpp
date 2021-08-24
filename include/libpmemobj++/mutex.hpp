@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -27,6 +27,7 @@ namespace obj
  * satisfies all requirements of the Mutex and StandardLayoutType
  * concepts. The typical usage example would be:
  * @snippet mutex/mutex.cpp unique_guard_example
+ * @ingroup synchronization
  */
 class mutex {
 public:
@@ -70,9 +71,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_mutex_lock(pop, &this->plock))
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a mutex.");
 	}
 
 	/**
@@ -100,9 +101,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a mutex.");
 	}
 
 	/**
@@ -118,9 +119,9 @@ public:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		int ret = pmemobj_mutex_unlock(pop, &this->plock);
 		if (ret)
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to unlock a mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to unlock a mutex.");
 	}
 
 	/**

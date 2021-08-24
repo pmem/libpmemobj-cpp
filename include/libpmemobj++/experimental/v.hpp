@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2018-2020, Intel Corporation */
+/* Copyright 2018-2021, Intel Corporation */
 
 /**
  * @file
@@ -37,6 +37,7 @@ namespace experimental
  *
  * Example usage:
  * @snippet v/v.cpp v_property_example
+ * @ingroup primitives
  */
 template <typename T>
 class v {
@@ -174,6 +175,8 @@ private:
  *
  * Non-member swap function as required by Swappable concept.
  * en.cppreference.com/w/cpp/concept/Swappable
+ *
+ * @relates v
  */
 template <class T>
 inline void

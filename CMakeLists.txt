@@ -12,7 +12,7 @@ set(LIBPMEMOBJCPP_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 13)
 set(VERSION_PATCH 0)
-set(VERSION_PRERELEASE rc1)
+#set(VERSION_PRERELEASE rc2)
 
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 if(VERSION_PATCH GREATER 0)
@@ -184,13 +184,21 @@ add_custom_target(check-license
 	COMMAND ${LIBPMEMOBJCPP_ROOT_DIR}/utils/check_license/check-headers.sh
 			${LIBPMEMOBJCPP_ROOT_DIR}
 			BSD-3-Clause)
+add_custom_target(copyright-format
+	COMMAND ${LIBPMEMOBJCPP_ROOT_DIR}/utils/check_license/check-headers.sh
+			${LIBPMEMOBJCPP_ROOT_DIR}
+			BSD-3-Clause -d)
+
+
+find_program(CLANG_FORMAT NAMES clang-format-9 clang-format-9.0 clang-format)
+set(CLANG_FORMAT_REQUIRED "9.0")
+if(CLANG_FORMAT)
+	get_program_version_major_minor(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
+	message(STATUS "Found clang-format: ${CLANG_FORMAT} (version: ${CLANG_FORMAT_VERSION})")
+endif()
 
 if(CHECK_CPP_STYLE)
-	find_program(CLANG_FORMAT NAMES clang-format clang-format-9 clang-format-9.0)
-	set(CLANG_FORMAT_REQUIRED "9.0")
 	if(CLANG_FORMAT)
-		get_program_version_major_minor(${CLANG_FORMAT} CLANG_FORMAT_VERSION)
-		message(STATUS "Found clang-format: ${CLANG_FORMAT} (version: ${CLANG_FORMAT_VERSION})")
 		if(NOT (CLANG_FORMAT_VERSION VERSION_EQUAL CLANG_FORMAT_REQUIRED))
 			message(FATAL_ERROR "required clang-format version is ${CLANG_FORMAT_REQUIRED}")
 		endif()

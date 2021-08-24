@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -25,6 +25,7 @@ namespace obj
 /**
  * Encapsulates object specific allocator functionality. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
+ * @ingroup allocation
  */
 template <typename T>
 class object_traits {
@@ -137,6 +138,7 @@ public:
 /**
  * Object traits specialization for the void type. Designed to be used
  * with C++ allocators. Can be specialized if necessary.
+ * @ingroup allocation
  */
 template <>
 class object_traits<void> {
@@ -179,6 +181,7 @@ public:
  *
  * Can be specialized for a given type. Designed to be used with C++ allocators.
  * Can be specialized if necessary.
+ * @ingroup allocation
  */
 template <typename T>
 class standard_alloc_policy {
@@ -250,14 +253,14 @@ public:
 					       detail::type_num<value_type>());
 
 		if (ptr == nullptr) {
+			const char *msg =
+				"Failed to allocate persistent memory object";
 			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_out_of_memory>(msg);
 			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_alloc_error>(msg);
 			}
 		}
 
@@ -279,9 +282,9 @@ public:
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(*p.raw_ptr()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_free_error>(
+				"failed to delete persistent memory object");
 	}
 
 	/**
@@ -298,6 +301,7 @@ public:
 
 /**
  * Void specialization of the standard allocation policy.
+ * @ingroup allocation
  */
 template <>
 class standard_alloc_policy<void> {
@@ -364,14 +368,14 @@ public:
 		pointer ptr = pmemobj_tx_alloc(1 /* void size */ * cnt, 0);
 
 		if (ptr == nullptr) {
+			const char *msg =
+				"Failed to allocate persistent memory object";
 			if (errno == ENOMEM) {
-				throw pmem::transaction_out_of_memory(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_out_of_memory>(msg);
 			} else {
-				throw pmem::transaction_alloc_error(
-					"Failed to allocate persistent memory object")
-					.with_pmemobj_errormsg();
+				throw detail::exception_with_errormsg<
+					pmem::transaction_alloc_error>(msg);
 			}
 		}
 
@@ -393,9 +397,9 @@ public:
 				"refusing to free memory outside of transaction scope");
 
 		if (pmemobj_tx_free(p.raw()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_free_error>(
+				"failed to delete persistent memory object");
 	}
 
 	/**
@@ -414,6 +418,7 @@ public:
  * Determines if memory from another allocator can be deallocated from this one.
  *
  * @return true.
+ * @relates standard_alloc_policy
  */
 template <typename T, typename T2>
 inline bool
@@ -426,6 +431,7 @@ operator==(standard_alloc_policy<T> const &, standard_alloc_policy<T2> const &)
  * Determines if memory from another allocator can be deallocated from this one.
  *
  * @return false.
+ * @relates standard_alloc_policy
  */
 template <typename T, typename OtherAllocator>
 inline bool
@@ -512,6 +518,7 @@ public:
  *
  * @return true if allocators are equivalent in terms of deallocation, false
  * otherwise.
+ * @relates allocator
  */
 template <typename T, typename P, typename Tr, typename T2, typename P2,
 	  typename Tr2>
@@ -530,6 +537,7 @@ operator==(const allocator<T, P, Tr> &lhs, const allocator<T2, P2, Tr2> &rhs)
  *
  * @return false if allocators are equivalent in terms of deallocation, true
  * otherwise.
+ * @relates allocator
  */
 template <typename T, typename P, typename Tr, typename OtherAllocator>
 inline bool

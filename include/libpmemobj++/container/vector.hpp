@@ -36,6 +36,7 @@ namespace obj
 /**
  * pmem::obj::vector - persistent container with std::vector compatible
  * interface.
+ * @ingroup containers
  */
 template <typename T>
 class vector {
@@ -252,7 +253,9 @@ private:
 	persistent_ptr<T[]> _data;
 };
 
-/* Non-member swap */
+/* Non-member swap
+ * @relates vector
+ */
 template <typename T>
 void swap(vector<T> &lhs, vector<T> &rhs);
 
@@ -2052,16 +2055,14 @@ vector<T>::alloc(size_type capacity_new)
 				 detail::type_num<value_type>());
 
 	if (res == nullptr) {
+		const char *msg = "Failed to allocate persistent memory object";
 		if (errno == ENOMEM)
-			throw pmem::transaction_out_of_memory(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_out_of_memory>(msg);
 		else
-			throw pmem::transaction_alloc_error(
-				"Failed to allocate persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_alloc_error>(msg);
 	}
-
 	_data = res;
 }
 
@@ -2193,9 +2194,9 @@ vector<T>::dealloc()
 	if (_data != nullptr) {
 		shrink(0);
 		if (pmemobj_tx_free(*_data.raw_ptr()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_free_error>(
+				"failed to delete persistent memory object");
 		_data = nullptr;
 		_capacity = 0;
 	}
@@ -2342,9 +2343,9 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
 			detail::destroy<value_type>(
 				old_data[static_cast<difference_type>(i)]);
 		if (pmemobj_tx_free(old_data.raw()) != 0)
-			throw pmem::transaction_free_error(
-				"failed to delete persistent memory object")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<
+				pmem::transaction_free_error>(
+				"failed to delete persistent memory object");
 	}
 }
 
@@ -2405,9 +2406,9 @@ vector<T>::realloc(size_type capacity_new)
 		detail::destroy<value_type>(
 			old_data[static_cast<difference_type>(i)]);
 	if (pmemobj_tx_free(old_data.raw()) != 0)
-		throw pmem::transaction_free_error(
-			"failed to delete persistent memory object")
-			.with_pmemobj_errormsg();
+		throw detail::exception_with_errormsg<
+			pmem::transaction_free_error>(
+			"failed to delete persistent memory object");
 }
 
 /**
@@ -2501,6 +2502,7 @@ vector<T>::add_data_to_tx(size_type idx_first, size_type num)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2520,6 +2522,7 @@ operator==(const vector<T> &lhs, const vector<T> &rhs)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2537,6 +2540,7 @@ operator!=(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2555,6 +2559,7 @@ operator<(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2572,6 +2577,7 @@ operator<=(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
+ * @relates vector
  */
 
 template <typename T>
@@ -2590,6 +2596,7 @@ operator>(const vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2608,6 +2615,7 @@ operator>=(const vector<T> &lhs, const vector<T> &rhs)
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2627,6 +2635,7 @@ operator==(const vector<T> &lhs, const std::vector<T> &rhs)
  * @param[in] rhs second vector of type std::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2644,6 +2653,7 @@ operator!=(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2662,6 +2672,7 @@ operator<(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2680,8 +2691,8 @@ operator<=(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
+ * @relates vector
  */
-
 template <typename T>
 bool
 operator>(const vector<T> &lhs, const std::vector<T> &rhs)
@@ -2698,6 +2709,7 @@ operator>(const vector<T> &lhs, const std::vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2716,6 +2728,7 @@ operator>=(const vector<T> &lhs, const std::vector<T> &rhs)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2734,6 +2747,7 @@ operator==(const std::vector<T> &lhs, const vector<T> &rhs)
  * @param[in] rhs second vector of type pmem::obj::vector<T>
  *
  * @return true if contents of the containers are not equal, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2751,6 +2765,7 @@ operator!=(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically less than contents of
  * rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2768,6 +2783,7 @@ operator<(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically lesser than or equal to
  * contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2785,6 +2801,7 @@ operator<=(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than contents
  * of rhs, false otherwise
+ * @relates vector
  */
 
 template <typename T>
@@ -2803,6 +2820,7 @@ operator>(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @return true if contents of lhs are lexicographically greater than or equal
  * to contents of rhs, false otherwise
+ * @relates vector
  */
 template <typename T>
 bool
@@ -2816,6 +2834,7 @@ operator>=(const std::vector<T> &lhs, const vector<T> &rhs)
  *
  * @param[in] lhs first vector
  * @param[in] rhs second vector
+ * @relates vector
  */
 template <typename T>
 void

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -26,6 +26,7 @@ namespace obj
  * satisfies all requirements of the SharedMutex and StandardLayoutType
  * concepts. The typical usage would be:
  * @snippet mutex/mutex.cpp shared_mutex_example
+ * @ingroup synchronization
  */
 class shared_mutex {
 public:
@@ -71,9 +72,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_rwlock_wrlock(pop, &this->plock))
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a shared mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a shared mutex.");
 	}
 
 	/**
@@ -96,7 +97,7 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_rwlock_rdlock(pop, &this->plock))
-			throw pmem::lock_error(
+			throw detail::exception_with_errormsg<lock_error>(
 				ret, std::system_category(),
 				"Failed to shared lock a shared mutex.");
 	}
@@ -126,9 +127,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a shared mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a shared mutex.");
 	}
 
 	/**
@@ -158,9 +159,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a shared mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a shared mutex.");
 	}
 
 	/**
@@ -175,10 +176,9 @@ public:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		int ret = pmemobj_rwlock_unlock(pop, &this->plock);
 		if (ret)
-			throw pmem::lock_error(
+			throw detail::exception_with_errormsg<lock_error>(
 				ret, std::system_category(),
-				"Failed to unlock a shared mutex.")
-				.with_pmemobj_errormsg();
+				"Failed to unlock a shared mutex.");
 	}
 
 	/**

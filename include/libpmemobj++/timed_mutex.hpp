@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
@@ -28,6 +28,7 @@ namespace obj
  * satisfies all requirements of the TimedMutex and StandardLayoutType
  * concepts. The typical usage example would be:
  * @snippet mutex/mutex.cpp timed_mutex_example
+ * @ingroup primitives
  */
 class timed_mutex {
 	typedef std::chrono::system_clock clock_type;
@@ -73,9 +74,9 @@ public:
 	{
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		if (int ret = pmemobj_mutex_lock(pop, &this->plock))
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a mutex.");
 	}
 
 	/**
@@ -103,9 +104,9 @@ public:
 		else if (ret == EBUSY)
 			return false;
 		else
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a mutex.");
 	}
 
 	/**
@@ -170,9 +171,9 @@ public:
 		PMEMobjpool *pop = pmemobj_pool_by_ptr(this);
 		int ret = pmemobj_mutex_unlock(pop, &this->plock);
 		if (ret)
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to unlock a mutex.")
-				.with_pmemobj_errormsg();
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to unlock a mutex.");
 	}
 
 	/**
@@ -221,8 +222,9 @@ private:
 		else if (ret == ETIMEDOUT)
 			return false;
 		else
-			throw pmem::lock_error(ret, std::system_category(),
-					       "Failed to lock a mutex");
+			throw detail::exception_with_errormsg<lock_error>(
+				ret, std::system_category(),
+				"Failed to lock a mutex");
 	}
 
 	/** A POSIX style PMEM-resident timed_mutex.*/

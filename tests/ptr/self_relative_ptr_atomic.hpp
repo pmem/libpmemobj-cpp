@@ -135,8 +135,10 @@ template <bool volatile_atomic>
 void
 test_exchange()
 {
-	self_relative_ptr<int, std::false_type> first = reinterpret_cast<int *>(uintptr_t{0});
-	self_relative_ptr<int, std::false_type> second = reinterpret_cast<int *>(~uintptr_t{0});
+	self_relative_ptr<int, std::false_type> first =
+		reinterpret_cast<int *>(uintptr_t{0});
+	self_relative_ptr<int, std::false_type> second =
+		reinterpret_cast<int *>(~uintptr_t{0});
 
 	atomic_type<int, volatile_atomic> ptr;
 
@@ -175,7 +177,8 @@ test_compare_exchange()
 		// tst_val != atomic_ptr  ==>  tst_val is modified
 		// tst_val == atomic_ptr  ==>  atomic_ptr is modified
 
-		self_relative_ptr<int, std::false_type> tst_val{first}, new_val{second};
+		self_relative_ptr<int, std::false_type> tst_val{first},
+			new_val{second};
 		if (atomic_ptr.compare_exchange_strong(tst_val, new_val)) {
 			++exchanged;
 		} else {
@@ -191,7 +194,8 @@ test_compare_exchange()
 		// tst_val != atomic_ptr  ==>  tst_val is modified
 		// tst_val == atomic_ptr  ==>  atomic_ptr is modified
 
-		self_relative_ptr<int, std::false_type> tst_val{first}, new_val{second};
+		self_relative_ptr<int, std::false_type> tst_val{first},
+			new_val{second};
 		if (atomic_ptr.compare_exchange_strong(
 			    tst_val, new_val, std::memory_order_acquire,
 			    std::memory_order_relaxed)) {

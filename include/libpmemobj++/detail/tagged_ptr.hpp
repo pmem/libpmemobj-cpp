@@ -126,8 +126,7 @@ struct tagged_ptr_impl {
 		return static_cast<P2 *>(ptr.to_void_pointer());
 	}
 
-	P2 *
-	operator->() const
+	P2 *operator->() const
 	{
 		return get<P2>();
 	}

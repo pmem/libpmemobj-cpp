@@ -32,6 +32,13 @@ assert_if_oid_is_null(pointer<int, std::false_type> &f)
 	UT_ASSERT(OID_IS_NULL(f.raw()));
 }
 
+template <template <typename U> class pointer>
+void
+assert_if_oid_is_null(pointer<int> &f)
+{
+	UT_ASSERT(OID_IS_NULL(f.raw()));
+}
+
 void
 assert_if_oid_is_null(nvobjexp::self_relative_ptr<int, std::true_type> &f)
 {
@@ -60,6 +67,17 @@ test_null_ptr(pointer<int, std::true_type> &f)
 template <template <typename U, typename PersistentAware> class pointer>
 void
 test_null_ptr(pointer<int, std::false_type> &f)
+{
+	assert_if_oid_is_null(f);
+	UT_ASSERT((bool)f == false);
+	UT_ASSERT(!f);
+	UT_ASSERTeq(f.get(), nullptr);
+	UT_ASSERT(f == nullptr);
+}
+
+template <template <typename U> class pointer>
+void
+test_null_ptr(pointer<int> &f)
 {
 	assert_if_oid_is_null(f);
 	UT_ASSERT((bool)f == false);

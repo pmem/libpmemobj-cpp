@@ -207,6 +207,11 @@ public:
 		return get_next(level).load(std::memory_order_acquire);
 	}
 
+	template <typename U = void,
+		  typename = typename std::enable_if<
+			  std::is_same<UsePersistentAwarePtr,
+				       std::true_type>::value,
+			  U>::type>
 	node_pointer
 	next(size_type level)
 	{
@@ -348,12 +353,14 @@ public:
 	{
 	}
 
-	reference operator*() const
+	reference
+	operator*() const
 	{
 		return *(node->get());
 	}
 
-	pointer operator->() const
+	pointer
+	operator->() const
 	{
 		return node->get();
 	}
@@ -1106,7 +1113,7 @@ public:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	emplace(Args &&... args)
+	emplace(Args &&...args)
 	{
 		return internal_emplace(std::forward<Args>(args)...);
 	}
@@ -1143,7 +1150,7 @@ public:
 	 */
 	template <typename... Args>
 	iterator
-	emplace_hint(const_iterator hint, Args &&... args)
+	emplace_hint(const_iterator hint, Args &&...args)
 	{
 		/* Ignore hint */
 		return emplace(std::forward<Args>(args)...).first;
@@ -1174,7 +1181,7 @@ public:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	try_emplace(const key_type &k, Args &&... args)
+	try_emplace(const key_type &k, Args &&...args)
 	{
 		return internal_try_emplace(k, std::forward<Args>(args)...);
 	}
@@ -1204,7 +1211,7 @@ public:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	try_emplace(key_type &&k, Args &&... args)
+	try_emplace(key_type &&k, Args &&...args)
 	{
 		return internal_try_emplace(std::move(k),
 					    std::forward<Args>(args)...);
@@ -1241,7 +1248,7 @@ public:
 		has_is_transparent<key_compare>::value &&
 			std::is_constructible<key_type, K &&>::value,
 		std::pair<iterator, bool>>::type
-	try_emplace(K &&k, Args &&... args)
+	try_emplace(K &&k, Args &&...args)
 	{
 		return internal_try_emplace(std::forward<K>(k),
 					    std::forward<Args>(args)...);
@@ -2542,7 +2549,7 @@ private:
 
 	template <typename K, typename... Args>
 	std::pair<iterator, bool>
-	internal_try_emplace(K &&key, Args &&... args)
+	internal_try_emplace(K &&key, Args &&...args)
 	{
 		return internal_insert(
 			key, std::piecewise_construct,
@@ -2552,7 +2559,7 @@ private:
 
 	template <typename... Args>
 	std::pair<iterator, bool>
-	internal_emplace(Args &&... args)
+	internal_emplace(Args &&...args)
 	{
 		check_outside_tx();
 		tls_entry_type &tls_entry = tls_data.local();
@@ -2606,7 +2613,7 @@ private:
 	 */
 	template <typename... Args>
 	std::pair<iterator, bool>
-	internal_unsafe_emplace(Args &&... args)
+	internal_unsafe_emplace(Args &&...args)
 	{
 		check_tx_stage_work();
 
@@ -2643,7 +2650,7 @@ private:
 	 */
 	template <typename K, typename... Args>
 	std::pair<iterator, bool>
-	internal_insert(const K &key, Args &&... args)
+	internal_insert(const K &key, Args &&...args)
 	{
 		check_outside_tx();
 		tls_entry_type &tls_entry = tls_data.local();
@@ -3065,7 +3072,7 @@ private:
 	/** Creates new node */
 	template <typename... Args>
 	persistent_node_ptr
-	create_node(Args &&... args)
+	create_node(Args &&...args)
 	{
 		size_type levels = random_level();
 
@@ -3135,7 +3142,7 @@ private:
 	 */
 	template <typename... Args>
 	persistent_node_ptr
-	creates_dummy_node(size_type height, Args &&... args)
+	creates_dummy_node(size_type height, Args &&...args)
 	{
 		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 		size_type sz = calc_node_size(height);

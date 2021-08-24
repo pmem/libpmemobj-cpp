@@ -164,7 +164,7 @@ private:
 	PointerType ptr;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-	friend std::atomic<tagged_ptr_impl<
+	friend struct std::atomic<tagged_ptr_impl<
 		P1, P2,
 		obj::experimental::self_relative_ptr<void, std::false_type>>>;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

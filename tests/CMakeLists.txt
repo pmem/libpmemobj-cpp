@@ -320,9 +320,6 @@ if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr_atomic ptr/self_relative_ptr_atomic.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic TRACERS none memcheck drd helgrind)
 
-	build_test(pa_self_relative_ptr_atomic ptr/pa_self_relative_ptr_atomic.cpp)
-	add_test_generic(NAME pa_self_relative_ptr_atomic TRACERS none memcheck drd helgrind)
-
 	build_test(self_relative_ptr_atomic_pmem ptr/self_relative_ptr_atomic_pmem.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic_pmem TRACERS none memcheck pmemcheck drd helgrind)
 

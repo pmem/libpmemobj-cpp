@@ -37,6 +37,10 @@ public:
 	    : self_relative_ptr_base()
 	{
 	}
+	constexpr self_relative_ptr(std::nullptr_t, bool dirty) noexcept
+	    : self_relative_ptr_base()
+	{
+	}
 
 	self_relative_ptr(element_type *ptr) noexcept
 	    : self_relative_ptr_base(self_offset(ptr))
@@ -44,11 +48,8 @@ public:
 	}
 
 	self_relative_ptr(element_type *ptr, bool dirty) noexcept
-	    : self_relative_ptr_base(self_offset(ptr))
+	    : self_relative_ptr_base(self_offset(ptr, dirty))
 	{
-		intptr_t dirty_mask = dirty == true;
-		--dirty_mask;
-		offset &= (dirty_mask | dirty_flag);
 	}
 
 	inline element_type *
@@ -63,6 +64,14 @@ private:
 	self_offset(element_type *ptr) const noexcept
 	{
 		return base_type::pointer_to_offset(static_cast<void *>(ptr));
+	}
+	difference_type
+	self_offset(element_type *ptr, bool dirty) const noexcept
+	{
+		intptr_t dirty_mask = dirty == true;
+		--dirty_mask;
+		return (base_type::pointer_to_offset(static_cast<void *>(ptr)) &
+			(dirty_mask | dirty_flag));
 	}
 };
 
@@ -262,8 +271,8 @@ public:
 	/**
 	 * Dereference operator.
 	 */
-	typename pmem::detail::sp_dereference<T>::type operator*() const
-		noexcept
+	typename pmem::detail::sp_dereference<T>::type
+	operator*() const noexcept
 	{
 		return *(this->get());
 	}
@@ -271,8 +280,8 @@ public:
 	/**
 	 * Member access operator.
 	 */
-	typename pmem::detail::sp_member_access<T>::type operator->() const
-		noexcept
+	typename pmem::detail::sp_member_access<T>::type
+	operator->() const noexcept
 	{
 		return this->get();
 	}

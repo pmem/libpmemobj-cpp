@@ -160,8 +160,7 @@ public:
 	/**
 	 * Explicit conversion operator to void*
 	 */
-	explicit
-	operator void *() const noexcept
+	explicit operator void *() const noexcept
 	{
 		return to_void_pointer();
 	}

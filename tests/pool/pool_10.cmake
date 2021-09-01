@@ -5,10 +5,10 @@ include(${SRC_DIR}/../helpers.cmake)
 
 setup()
 
-# test proper create & open
+# properly create and try to open with different layout
 execute(${TEST_EXECUTABLE} c ${DIR}/testfile "test" 20 0600)
-execute(${TEST_EXECUTABLE} o ${DIR}/testfile "test" 20 0600)
-
 check_file_exists(${DIR}/testfile)
+
+execute(${TEST_EXECUTABLE} o ${DIR}/testfile "test_layout" 20 0600)
 
 finish()

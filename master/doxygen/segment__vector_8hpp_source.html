@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -836,7 +836,7 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="line"><a name="l01301"></a><span class="lineno"> 1301</span>&#160;    <span class="keywordflow">if</span> (n &gt;= size())</div>
 <div class="line"><a name="l01302"></a><span class="lineno"> 1302</span>&#160;        <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;segment_vector::at&quot;</span>);</div>
 <div class="line"><a name="l01303"></a><span class="lineno"> 1303</span>&#160; </div>
-<div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;    detail::conditional_add_to_tx(&amp;get(n), 1, POBJ_XADD_ASSUME_INITIALIZED);</div>
+<div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;get(n), 1, POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160; </div>
 <div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;    <span class="keywordflow">return</span> get(n);</div>
 <div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160;}</div>
@@ -865,7 +865,7 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="line"><a name="l01363"></a><span class="lineno"> 1363</span>&#160;{</div>
 <div class="line"><a name="l01364"></a><span class="lineno"> 1364</span>&#160;    reference element = get(n);</div>
 <div class="line"><a name="l01365"></a><span class="lineno"> 1365</span>&#160; </div>
-<div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;    detail::conditional_add_to_tx(&amp;element, 1,</div>
+<div class="line"><a name="l01366"></a><span class="lineno"> 1366</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;element, 1,</div>
 <div class="line"><a name="l01367"></a><span class="lineno"> 1367</span>&#160;                      POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l01368"></a><span class="lineno"> 1368</span>&#160; </div>
 <div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160;    <span class="keywordflow">return</span> element;</div>
@@ -882,7 +882,7 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160;<span class="keyword">typename</span> segment_vector&lt;T, Policy&gt;::reference</div>
 <div class="line"><a name="l01396"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1segment__vector.html#a043a0cd4aaee184668bc6a7a8d0d1297"> 1396</a></span>&#160;<a class="code" href="classpmem_1_1obj_1_1segment__vector.html#a043a0cd4aaee184668bc6a7a8d0d1297">segment_vector&lt;T, Policy&gt;::front</a>()</div>
 <div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;{</div>
-<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;    detail::conditional_add_to_tx(&amp;_data[0][0], 1,</div>
+<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;_data[0][0], 1,</div>
 <div class="line"><a name="l01399"></a><span class="lineno"> 1399</span>&#160;                      POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l01400"></a><span class="lineno"> 1400</span>&#160; </div>
 <div class="line"><a name="l01401"></a><span class="lineno"> 1401</span>&#160;    <span class="keywordflow">return</span> _data[0][0];</div>
@@ -908,7 +908,7 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="line"><a name="l01441"></a><span class="lineno"> 1441</span>&#160;{</div>
 <div class="line"><a name="l01442"></a><span class="lineno"> 1442</span>&#160;    reference element = get(size() - 1);</div>
 <div class="line"><a name="l01443"></a><span class="lineno"> 1443</span>&#160; </div>
-<div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160;    detail::conditional_add_to_tx(&amp;element, 1,</div>
+<div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;element, 1,</div>
 <div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;                      POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160; </div>
 <div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160;    <span class="keywordflow">return</span> element;</div>
@@ -1492,12 +1492,12 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="line"><a name="l02671"></a><span class="lineno"> 2671</span>&#160;    size_type count = policy::segment_top(segment + 1) - first;</div>
 <div class="line"><a name="l02672"></a><span class="lineno"> 2672</span>&#160; </div>
 <div class="line"><a name="l02673"></a><span class="lineno"> 2673</span>&#160;    <span class="keywordflow">while</span> (segment != end) {</div>
-<div class="line"><a name="l02674"></a><span class="lineno"> 2674</span>&#160;        detail::conditional_add_to_tx(&amp;cget(first), count,</div>
+<div class="line"><a name="l02674"></a><span class="lineno"> 2674</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;cget(first), count,</div>
 <div class="line"><a name="l02675"></a><span class="lineno"> 2675</span>&#160;                          POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l02676"></a><span class="lineno"> 2676</span>&#160;        first = policy::segment_top(++segment);</div>
 <div class="line"><a name="l02677"></a><span class="lineno"> 2677</span>&#160;        count = policy::segment_size(segment);</div>
 <div class="line"><a name="l02678"></a><span class="lineno"> 2678</span>&#160;    }</div>
-<div class="line"><a name="l02679"></a><span class="lineno"> 2679</span>&#160;    detail::conditional_add_to_tx(&amp;cget(first), last - first,</div>
+<div class="line"><a name="l02679"></a><span class="lineno"> 2679</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;cget(first), last - first,</div>
 <div class="line"><a name="l02680"></a><span class="lineno"> 2680</span>&#160;                      POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l02681"></a><span class="lineno"> 2681</span>&#160;}</div>
 <div class="line"><a name="l02682"></a><span class="lineno"> 2682</span>&#160; </div>
@@ -1690,7 +1690,7 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="line"><a name="l03135"></a><span class="lineno"> 3135</span>&#160; </div>
 <div class="line"><a name="l03136"></a><span class="lineno"> 3136</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_SEGMENT_VECTOR_HPP */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aarray_8hpp_html"><div class="ttname"><a href="array_8hpp.html">array.hpp</a></div><div class="ttdoc">Array container with std::array compatible interface.</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:830</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:810</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1p_html"><div class="ttname"><a href="classpmem_1_1obj_1_1p.html">pmem::obj::p&lt; size_type &gt;</a></div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html">pmem::obj::pool_base</a></div><div class="ttdoc">The non-template pool base class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:51</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator_html"><div class="ttname"><a href="classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html">pmem::obj::segment_vector_internal::segment_iterator</a></div><div class="ttdoc">Iterator for segment_vector.</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:46</div></div>
@@ -1763,8 +1763,9 @@ $(document).ready(function(){initNavTree('segment__vector_8hpp_source.html','');
 <div class="ttc" id="aclasspmem_1_1obj_1_1slice_html"><div class="ttname"><a href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a></div><div class="ttdoc">pmem::obj::slice - provides interface to access sequence of objects.</div><div class="ttdef"><b>Definition:</b> slice.hpp:51</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a></div><div class="ttdoc">pmem::obj::vector - persistent container with std::vector compatible interface.</div><div class="ttdef"><b>Definition:</b> vector.hpp:42</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>
-<div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for destroying arrays.</div></div>
+<div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for lifetime management.</div></div>
 <div class="ttc" id="amake__persistent_8hpp_html"><div class="ttname"><a href="make__persistent_8hpp.html">make_persistent.hpp</a></div><div class="ttdoc">Persistent_ptr transactional allocation functions for objects.</div></div>
+<div class="ttc" id="anamespacepmem_1_1detail_html_a1406353d3388f1a1bc26863edff9a125"><div class="ttname"><a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a></div><div class="ttdeci">void conditional_add_to_tx(const T *that, std::size_t count=1, uint64_t flags=0)</div><div class="ttdoc">Conditionally add 'count' objects to a transaction.</div><div class="ttdef"><b>Definition:</b> common.hpp:176</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_a526e84dce66d8c59cdc9070321b8d0d7"><div class="ttname"><a href="namespacepmem_1_1obj.html#a526e84dce66d8c59cdc9070321b8d0d7">pmem::obj::exponential_size_vector_policy</a></div><div class="ttdeci">segment_vector_internal::exponential_size_policy&lt; pmem::obj::vector, SegmentType &gt; exponential_size_vector_policy</div><div class="ttdoc">Exponential size policy with pmemobj vector as a type of segment vector, so this is a dynamic vector ...</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:484</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_a859b965166fda256885558839d7bb7ec"><div class="ttname"><a href="namespacepmem_1_1obj.html#a859b965166fda256885558839d7bb7ec">pmem::obj::fixed_size_vector_policy</a></div><div class="ttdeci">segment_vector_internal::fixed_size_policy&lt; pmem::obj::vector, SegmentType, SegmentSize &gt; fixed_size_vector_policy</div><div class="ttdoc">Fixed size policy with pmemobj vector of a given size as a type of segment vector,...</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:471</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_aaf75bf0b2a2f4bf0f6cf7ae612e30f8f"><div class="ttname"><a href="namespacepmem_1_1obj.html#aaf75bf0b2a2f4bf0f6cf7ae612e30f8f">pmem::obj::exponential_size_array_policy</a></div><div class="ttdeci">segment_vector_internal::exponential_size_policy&lt; segment_vector_internal::array_64, SegmentType &gt; exponential_size_array_policy</div><div class="ttdoc">Exponential size policy with pmemobj array of size 64 as a type of segment vector,...</div><div class="ttdef"><b>Definition:</b> segment_vector.hpp:457</div></div>

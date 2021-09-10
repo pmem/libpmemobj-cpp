@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -89,6 +89,9 @@ $(document).ready(function(){initNavTree('group__transactions.html',''); initRes
 <div class="title">Transactions</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This section introduces transaction feature in libpmemobj-cpp.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -100,6 +103,235 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>This section introduces transaction feature in libpmemobj-cpp. </p>
+<h2><a class="anchor" id="autotoc_md7"></a>
+General info about transactions</h2>
+<p>The heart of the libpmemobj are transactions, and they are designed to be developer-friendly. Let's take a look at the following snippet:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="mutex_8hpp.html">libpmemobj++/mutex.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pext_8hpp.html">libpmemobj++/pext.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="shared__mutex_8hpp.html">libpmemobj++/shared_mutex.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="transaction_8hpp.html">libpmemobj++/transaction.hpp</a>&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">general_tx_example()</div>
+<div class="line">{</div>
+<div class="line">    <span class="comment">/* pool root structure */</span></div>
+<div class="line">    <span class="keyword">struct </span>root {</div>
+<div class="line">        mutex pmutex;</div>
+<div class="line">        shared_mutex shared_pmutex;</div>
+<div class="line">        p&lt;int&gt; count;</div>
+<div class="line">        persistent_ptr&lt;root&gt; another_root;</div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* create a pmemobj pool */</span></div>
+<div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>, PMEMOBJ_MIN_POOL);</div>
+<div class="line">    <span class="keyword">auto</span> proot = pop.root();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* typical usage schemes */</span></div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
+<div class="line">        <span class="comment">/* take locks and start a transaction */</span></div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">transaction::run</a>(</div>
+<div class="line">            pop,</div>
+<div class="line">            [&amp;]() {</div>
+<div class="line">                <span class="comment">/* atomically allocate objects */</span></div>
+<div class="line">                proot-&gt;another_root = make_persistent&lt;root&gt;();</div>
+<div class="line"> </div>
+<div class="line">                <span class="comment">/* atomically modify objects */</span></div>
+<div class="line">                proot-&gt;count++;</div>
+<div class="line">            },</div>
+<div class="line">            proot-&gt;pmutex, proot-&gt;shared_pmutex);</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1transaction__error.html">pmem::transaction_error</a> &amp;) {</div>
+<div class="line">        <span class="comment">/* a transaction error occurred, transaction got aborted</span></div>
+<div class="line"><span class="comment">         * reacquire locks if necessary */</span></div>
+<div class="line">    } <span class="keywordflow">catch</span> (...) {</div>
+<div class="line">        <span class="comment">/* some other exception got propagated from within the tx</span></div>
+<div class="line"><span class="comment">         * reacquire locks if necessary */</span></div>
+<div class="line">    }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:694</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__error_html"><div class="ttname"><a href="classpmem_1_1transaction__error.html">pmem::transaction_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:106</div></div>
+<div class="ttc" id="amake__persistent_8hpp_html"><div class="ttname"><a href="make__persistent_8hpp.html">make_persistent.hpp</a></div><div class="ttdoc">Persistent_ptr transactional allocation functions for objects.</div></div>
+<div class="ttc" id="amutex_8hpp_html"><div class="ttname"><a href="mutex_8hpp.html">mutex.hpp</a></div><div class="ttdoc">Pmem-resident mutex.</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
+<div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
+<div class="ttc" id="apext_8hpp_html"><div class="ttname"><a href="pext_8hpp.html">pext.hpp</a></div><div class="ttdoc">Convenience extensions for the resides on pmem property template.</div></div>
+<div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>
+<div class="ttc" id="ashared__mutex_8hpp_html"><div class="ttname"><a href="shared__mutex_8hpp.html">shared_mutex.hpp</a></div><div class="ttdoc">Pmem-resident shared mutex.</div></div>
+<div class="ttc" id="atransaction_8hpp_html"><div class="ttname"><a href="transaction_8hpp.html">transaction.hpp</a></div><div class="ttdoc">C++ pmemobj transactions.</div></div>
+</div><!-- fragment --><p> Code snippet above is an example how automatic transaction can look like. After object creation there are a few statements executed within a transaction. Transaction will be committed during <em>tx</em> object's destruction at the end of scope.</p>
+<p>It's worth noticing that <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> is recommended to use over <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html">pmem::obj::basic_transaction</a>. An extra explanation is provided inline an example in <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> description.</p>
+<p>Mentioned above transactions are handled through two internal classes:</p><ul>
+<li><b>manual</b> transactions has to be committed explicitly, otherwise it will abort. All operations between creating and destroying the transaction object are treated as performed in a transaction block and can be rolled back. The locks are held for the entire duration of the transaction. They are released at the end of the scope, so within the <code>catch</code> block, they are already unlocked. The best way to use manual transactions is by <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>, which is used in example above.</li>
+<li><b>automatic</b> transactions are only available in C++17. All operations between creating and destroying the transaction object are treated as performed in a transaction block and can be rolled back. If you have a C++17 compliant compiler, the automatic transaction will commit and abort automatically depending on the context of object's destruction. The locks are held for the entire duration of the transaction. They are released at the end of the scope, so within the <code>catch</code> block, they are already unlocked.</li>
+</ul>
+<p>If you want to read more and see example usages of both, you have to see flat or basic transaction documentation, because each implementation may differ.</p>
+<h2><a class="anchor" id="autotoc_md8"></a>
+Lifecycle and stages:</h2>
+<p>When you are using transaction API a transaction can be in one of the following states:</p><ul>
+<li><em>TX_STAGE_NONE</em> - no open transaction in this thread</li>
+<li><em>TX_STAGE_WORK</em> - the transaction in progress</li>
+<li><em>TX_STAGE_ONCOMMIT</em> - the transaction is successfully committed</li>
+<li><em>TX_STAGE_FINALLY</em> - ready for clean up</li>
+<li><em>TX_STAGE_ONABORT</em> - starting the transaction failed or transaction aborted</li>
+</ul>
+<p>Moving from one stage to another is possible under some conditions, but in libpmemobj-cpp it's transparent for user, so please focus on relationships between stages. Look at the diagram below:</p>
+<p><img src="https://pmem.io/assets/lifecycle.png" alt="lifecycle" title="Transaction lifecycle" class="inline"/></p>
+<p>To be more familiar with functions used in diagram read: <a href="https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3.html">pmemobj_tx_begin manpage</a>, this is a C API manpage for <a href="https://pmem.io/pmdk/libpmemobj/">libpmemobj</a>.</p>
+<p>If you need to read general information about transaction move to the <em>Additional resources</em> section.</p>
+<h2><a class="anchor" id="autotoc_md9"></a>
+Example of flat_transaction</h2>
+<p>For comparison with the previous snippet, here is a code snippet of <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> which is listed below with basic explanation inline. </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pext_8hpp.html">libpmemobj++/pext.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="transaction_8hpp.html">libpmemobj++/transaction.hpp</a>&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><span class="keyword">struct </span>simple_ptr {</div>
+<div class="line">    simple_ptr()</div>
+<div class="line">    {</div>
+<div class="line">        assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
+<div class="line">        ptr = make_persistent&lt;T&gt;();</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    ~simple_ptr()</div>
+<div class="line">    {</div>
+<div class="line">        assert(pmemobj_tx_stage() == TX_STAGE_WORK);</div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordflow">try</span> {</div>
+<div class="line">            delete_persistent&lt;T&gt;(ptr);</div>
+<div class="line">        } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a> &amp;e) {</div>
+<div class="line">            std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">            std::terminate();</div>
+<div class="line">        } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a> &amp;e) {</div>
+<div class="line">            std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">            std::terminate();</div>
+<div class="line">        }</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    persistent_ptr&lt;T&gt; ptr;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>A {</div>
+<div class="line">    A() : ptr1(), ptr2()</div>
+<div class="line">    {</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    simple_ptr&lt;int&gt; ptr1;</div>
+<div class="line">    simple_ptr&lt;<span class="keywordtype">char</span>[(1ULL &lt;&lt; 30)]&gt; ptr2;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>B {</div>
+<div class="line">    B() : ptr1(), ptr2()</div>
+<div class="line">    {</div>
+<div class="line">        <span class="keyword">auto</span> pop = pool_base(pmemobj_pool_by_ptr(<span class="keyword">this</span>));</div>
+<div class="line"> </div>
+<div class="line">        <span class="comment">// It would result in a crash!</span></div>
+<div class="line">        <span class="comment">// basic_transaction::run(pop, [&amp;]{ throw</span></div>
+<div class="line">        <span class="comment">// std::runtime_error(&quot;Error&quot;); });</span></div>
+<div class="line"> </div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(</div>
+<div class="line">            pop, [&amp;] { <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Error&quot;</span>); });</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    simple_ptr&lt;int&gt; ptr1;</div>
+<div class="line">    simple_ptr&lt;int&gt; ptr2;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">tx_nested_struct_example()</div>
+<div class="line">{</div>
+<div class="line">    <span class="comment">/* pool root structure */</span></div>
+<div class="line">    <span class="keyword">struct </span>root {</div>
+<div class="line">        persistent_ptr&lt;A&gt; ptrA;</div>
+<div class="line">        persistent_ptr&lt;B&gt; ptrB;</div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* create a pmemobj pool */</span></div>
+<div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>, PMEMOBJ_MIN_POOL);</div>
+<div class="line">    <span class="keyword">auto</span> proot = pop.root();</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">auto</span> create_a = [&amp;] { proot-&gt;ptrA = make_persistent&lt;A&gt;(); };</div>
+<div class="line">    <span class="keyword">auto</span> create_b = [&amp;] { proot-&gt;ptrB = make_persistent&lt;B&gt;(); };</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
+<div class="line">        <span class="comment">// It would result in a crash!</span></div>
+<div class="line">        <span class="comment">// basic_transaction::run(pop, create_a);</span></div>
+<div class="line"> </div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pop, create_a);</div>
+<div class="line"> </div>
+<div class="line">        <span class="comment">/* To see why flat_transaction is necessary let&#39;s</span></div>
+<div class="line"><span class="comment">         * consider what happens when calling A ctor. The call stack</span></div>
+<div class="line"><span class="comment">         * will look like this:</span></div>
+<div class="line"><span class="comment">         *</span></div>
+<div class="line"><span class="comment">         *  | ptr2 ctor |</span></div>
+<div class="line"><span class="comment">         *  |-----------|</span></div>
+<div class="line"><span class="comment">         *  | ptr1 ctor |</span></div>
+<div class="line"><span class="comment">         *  |-----------|</span></div>
+<div class="line"><span class="comment">         *  |  A ctor   |</span></div>
+<div class="line"><span class="comment">         *</span></div>
+<div class="line"><span class="comment">         * Since ptr2 is a pointer to some huge array of elements,</span></div>
+<div class="line"><span class="comment">         * calling ptr2 ctor will most likely result in make_persistent</span></div>
+<div class="line"><span class="comment">         * throwing an exception (due to out of memory). This exception</span></div>
+<div class="line"><span class="comment">         * will, in turn, cause stack unwinding - already constructed</span></div>
+<div class="line"><span class="comment">         * elements must be destroyed (in this example ptr1 destructor</span></div>
+<div class="line"><span class="comment">         * will be called).</span></div>
+<div class="line"><span class="comment">         *</span></div>
+<div class="line"><span class="comment">         * If we&#39;d use basic_transaction the allocation failure, apart</span></div>
+<div class="line"><span class="comment">         * from throwing an exception, would also cause the transaction</span></div>
+<div class="line"><span class="comment">         * to abort (by default, in basic_transaction, all transactional</span></div>
+<div class="line"><span class="comment">         * functions failures cause tx abort). This is problematic since</span></div>
+<div class="line"><span class="comment">         * the ptr1 destructor, which is called during stack unwinding,</span></div>
+<div class="line"><span class="comment">         * expects the transaction to be in WORK stage (and the actual</span></div>
+<div class="line"><span class="comment">         * stage is ABORTED). As a result the application will fail on</span></div>
+<div class="line"><span class="comment">         * assert (and probably crash in NDEBUG mode).</span></div>
+<div class="line"><span class="comment">         *</span></div>
+<div class="line"><span class="comment">         * Now, consider what will happen if we&#39;d use flat_transaction</span></div>
+<div class="line"><span class="comment">         * instead. In this case, make_persistent failure will not abort</span></div>
+<div class="line"><span class="comment">         * the transaction, it will only result in an exception. This</span></div>
+<div class="line"><span class="comment">         * means that the transaction is still in WORK stage during</span></div>
+<div class="line"><span class="comment">         * stack unwinding. Only after it completes, the transaction is</span></div>
+<div class="line"><span class="comment">         * aborted (it&#39;s happening at the outermost level, when exiting</span></div>
+<div class="line"><span class="comment">         * create_a lambda).</span></div>
+<div class="line"><span class="comment">         */</span></div>
+<div class="line">    } <span class="keywordflow">catch</span> (std::runtime_error &amp;) {</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">basic_transaction::run</a>(pop, create_b);</div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">flat_transaction::run</a>(pop, create_b);</div>
+<div class="line"> </div>
+<div class="line">        <span class="comment">/* Running create_b can be done both within basic and flat</span></div>
+<div class="line"><span class="comment">         * transaction. However, note that the transaction used in the B</span></div>
+<div class="line"><span class="comment">         * constructor MUST be a flat_transaction. This is because</span></div>
+<div class="line"><span class="comment">         * flat_transaction does not abort immediately when catching an</span></div>
+<div class="line"><span class="comment">         * exception. Instead it passes it to the outermost transaction</span></div>
+<div class="line"><span class="comment">         * - the abort is performed at that outermost level. In case of</span></div>
+<div class="line"><span class="comment">         * a basic_transaction the abort would be done within the B ctor</span></div>
+<div class="line"><span class="comment">         * and it would result in the same problems as with the previous</span></div>
+<div class="line"><span class="comment">         * example.</span></div>
+<div class="line"><span class="comment">         */</span></div>
+<div class="line">    } <span class="keywordflow">catch</span> (std::runtime_error &amp;) {</div>
+<div class="line">    }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:810</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:153</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:164</div></div>
+</div><!-- fragment --><p>If you read the inline comments you should be able to notice the difference between <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> and <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html">pmem::obj::basic_transaction</a>. For more examples please look at the <a href="https://github.com/pmem/libpmemobj-cpp/tree/master/examples">examples directory</a> in libpmemobj-cpp repository.</p>
+<h2><a class="anchor" id="autotoc_md10"></a>
+Additional resources</h2>
+<ul>
+<li><a href="https://pmem.io/2016/05/25/cpp-07.html">blog post about transactions</a></li>
+<li><a href="https://pmem.io/2016/05/19/cpp-06.html">blog post about transactional allocations</a> </li>
+</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

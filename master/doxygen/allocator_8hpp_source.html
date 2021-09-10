@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -142,7 +142,7 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <span class="stringliteral">&quot;construct is called outside of transaction scope&quot;</span>);</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="comment">/* construct called on newly allocated objects */</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        detail::conditional_add_to_tx(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.get());</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.get());</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keyword">new</span> (<span class="keyword">static_cast&lt;</span><span class="keywordtype">void</span> *<span class="keyword">&gt;</span>(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.get())) value_type(t);</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
@@ -154,7 +154,7 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a>(</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                <span class="stringliteral">&quot;construct is called outside of transaction scope&quot;</span>);</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        detail::conditional_add_to_tx(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.get());</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.get());</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keyword">new</span> (<span class="keyword">static_cast&lt;</span><span class="keywordtype">void</span> *<span class="keyword">&gt;</span>(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.get()))</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            value_type(std::forward&lt;Args&gt;(args)...);</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
@@ -239,14 +239,14 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                           detail::type_num&lt;value_type&gt;());</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keywordflow">if</span> (ptr == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordflow">if</span> (errno == ENOMEM) {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a>(</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                    <span class="stringliteral">&quot;Failed to allocate persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                    .<a class="code" href="classpmem_1_1transaction__out__of__memory.html#a870e6d23c19bbf0e56c1b142c11c5e82">with_pmemobj_errormsg</a>();</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a>(</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                    <span class="stringliteral">&quot;Failed to allocate persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    .<a class="code" href="classpmem_1_1transaction__alloc__error.html#a03b7bf3725178a9974e586d9d4f5e4aa">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">char</span> *msg =</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                <span class="stringliteral">&quot;Failed to allocate persistent memory object&quot;</span>;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            <span class="keywordflow">if</span> (errno == ENOMEM) {</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                    <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a>&gt;(msg);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    <a class="code" href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a>&gt;(msg);</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            }</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        }</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
@@ -261,9 +261,9 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                <span class="stringliteral">&quot;refusing to free memory outside of transaction scope&quot;</span>);</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        <span class="keywordflow">if</span> (pmemobj_tx_free(*<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.raw_ptr()) != 0)</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>(</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                .<a class="code" href="classpmem_1_1transaction__free__error.html#abcd5b00758bf775297d503c685b1aa21">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>&gt;(</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>);</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    }</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    size_type</div>
@@ -316,14 +316,14 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">pointer</a> ptr = pmemobj_tx_alloc(1 <span class="comment">/* void size */</span> * cnt, 0);</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        <span class="keywordflow">if</span> (ptr == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            <span class="keywordflow">if</span> (errno == ENOMEM) {</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a>(</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;                    <span class="stringliteral">&quot;Failed to allocate persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;                    .<a class="code" href="classpmem_1_1transaction__out__of__memory.html#a870e6d23c19bbf0e56c1b142c11c5e82">with_pmemobj_errormsg</a>();</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a>(</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;                    <span class="stringliteral">&quot;Failed to allocate persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                    .<a class="code" href="classpmem_1_1transaction__alloc__error.html#a03b7bf3725178a9974e586d9d4f5e4aa">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">char</span> *msg =</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                <span class="stringliteral">&quot;Failed to allocate persistent memory object&quot;</span>;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;            <span class="keywordflow">if</span> (errno == ENOMEM) {</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;                    <a class="code" href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a>&gt;(msg);</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                    <a class="code" href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a>&gt;(msg);</div>
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;            }</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        }</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160; </div>
@@ -338,9 +338,9 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                <span class="stringliteral">&quot;refusing to free memory outside of transaction scope&quot;</span>);</div>
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160; </div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;        <span class="keywordflow">if</span> (pmemobj_tx_free(<a class="code" href="classpmem_1_1obj_1_1p.html">p</a>.raw()) != 0)</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>(</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>)</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;                .<a class="code" href="classpmem_1_1transaction__free__error.html#abcd5b00758bf775297d503c685b1aa21">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                <a class="code" href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a>&gt;(</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;                <span class="stringliteral">&quot;failed to delete persistent memory object&quot;</span>);</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    }</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    size_type</div>
@@ -468,15 +468,14 @@ $(document).ready(function(){initNavTree('allocator_8hpp_source.html',''); initR
 <div class="ttc" id="aclasspmem_1_1obj_1_1standard__alloc__policy_html_aaf9ce43199d07cbea95de2fc0e552df1"><div class="ttname"><a href="classpmem_1_1obj_1_1standard__alloc__policy.html#aaf9ce43199d07cbea95de2fc0e552df1">pmem::obj::standard_alloc_policy::deallocate</a></div><div class="ttdeci">void deallocate(pointer p, size_type=0)</div><div class="ttdoc">Deallocates storage pointed to p, which must be a value returned by a previous call to allocate that ...</div><div class="ttdef"><b>Definition:</b> allocator.hpp:278</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1standard__alloc__policy_html_ad1395e663555d8856a2b057866dec365"><div class="ttname"><a href="classpmem_1_1obj_1_1standard__alloc__policy.html#ad1395e663555d8856a2b057866dec365">pmem::obj::standard_alloc_policy::standard_alloc_policy</a></div><div class="ttdeci">standard_alloc_policy(standard_alloc_policy&lt; U &gt; const &amp;)</div><div class="ttdoc">Type converting constructor.</div><div class="ttdef"><b>Definition:</b> allocator.hpp:229</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1standard__alloc__policy_html_ad194b3c5d5bd37b2cecd598c4f1635bc"><div class="ttname"><a href="classpmem_1_1obj_1_1standard__alloc__policy.html#ad194b3c5d5bd37b2cecd598c4f1635bc">pmem::obj::standard_alloc_policy::standard_alloc_policy</a></div><div class="ttdeci">standard_alloc_policy(standard_alloc_policy const &amp;)</div><div class="ttdoc">Explicit copy constructor.</div><div class="ttdef"><b>Definition:</b> allocator.hpp:219</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__alloc__error_html"><div class="ttname"><a href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:137</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__alloc__error_html_a03b7bf3725178a9974e586d9d4f5e4aa"><div class="ttname"><a href="classpmem_1_1transaction__alloc__error.html#a03b7bf3725178a9974e586d9d4f5e4aa">pmem::transaction_alloc_error::with_pmemobj_errormsg</a></div><div class="ttdeci">transaction_alloc_error &amp; with_pmemobj_errormsg()</div><div class="ttdoc">Retrieves last error message from libpmemobj and adds it to the current error.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:145</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:184</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__free__error_html_abcd5b00758bf775297d503c685b1aa21"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html#abcd5b00758bf775297d503c685b1aa21">pmem::transaction_free_error::with_pmemobj_errormsg</a></div><div class="ttdeci">transaction_free_error &amp; with_pmemobj_errormsg()</div><div class="ttdoc">Retrieves last error message from libpmemobj and adds it to the current error.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:192</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:160</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html_a870e6d23c19bbf0e56c1b142c11c5e82"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html#a870e6d23c19bbf0e56c1b142c11c5e82">pmem::transaction_out_of_memory::with_pmemobj_errormsg</a></div><div class="ttdeci">transaction_out_of_memory &amp; with_pmemobj_errormsg()</div><div class="ttdoc">Retrieves last error message from libpmemobj and adds it to the current error.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:169</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:206</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__alloc__error_html"><div class="ttname"><a href="classpmem_1_1transaction__alloc__error.html">pmem::transaction_alloc_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:129</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:153</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:141</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:164</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>
-<div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for destroying arrays.</div></div>
+<div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for lifetime management.</div></div>
+<div class="ttc" id="anamespacepmem_1_1detail_html_a1406353d3388f1a1bc26863edff9a125"><div class="ttname"><a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a></div><div class="ttdeci">void conditional_add_to_tx(const T *that, std::size_t count=1, uint64_t flags=0)</div><div class="ttdoc">Conditionally add 'count' objects to a transaction.</div><div class="ttdef"><b>Definition:</b> common.hpp:176</div></div>
+<div class="ttc" id="anamespacepmem_1_1detail_html_a5888feacbab544664437549db7e5018a"><div class="ttname"><a href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">pmem::detail::exception_with_errormsg</a></div><div class="ttdeci">ExcT exception_with_errormsg(Args &amp;&amp;... args)</div><div class="ttdoc">Generic error message decorator for pmemobj-based exceptions.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:69</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
 <div class="ttc" id="apexceptions_8hpp_html"><div class="ttname"><a href="pexceptions_8hpp.html">pexceptions.hpp</a></div><div class="ttdoc">Custom pmem exceptions.</div></div>

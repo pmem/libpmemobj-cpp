@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -90,8 +90,8 @@ $(document).ready(function(){initNavTree('life_8hpp_source.html',''); initResiza
 <a href="life_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// SPDX-License-Identifier: BSD-3-Clause</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">/* Copyright 2016-2021, Intel Corporation */</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef LIBPMEMOBJ_CPP_DESTROYER_HPP</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define LIBPMEMOBJ_CPP_DESTROYER_HPP</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#ifndef LIBPMEMOBJ_CPP_LIFE_HPP</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#define LIBPMEMOBJ_CPP_LIFE_HPP</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;cstddef&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
@@ -203,9 +203,9 @@ $(document).ready(function(){initNavTree('life_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;{</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keyword">auto</span> *arg_pack = <span class="keyword">static_cast&lt;</span>Tuple *<span class="keyword">&gt;</span>(arg);</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keyword">typedef</span> <span class="keyword">typename</span> make_index_sequence&lt;Args...&gt;::type index;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        create_from_tuple&lt;T&gt;(ptr, index(), std::move(*arg_pack));</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        create_from_tuple&lt;T&gt;(ptr, index_sequence_for&lt;Args...&gt;{},</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                     std::move(*arg_pack));</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    } <span class="keywordflow">catch</span> (...) {</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div>
@@ -254,7 +254,7 @@ $(document).ready(function(){initNavTree('life_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_DESTROYER_HPP */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_LIFE_HPP */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aarray__traits_8hpp_html"><div class="ttname"><a href="array__traits_8hpp.html">array_traits.hpp</a></div><div class="ttdoc">Common array traits.</div></div>
 <div class="ttc" id="ainteger__sequence_8hpp_html"><div class="ttname"><a href="integer__sequence_8hpp.html">integer_sequence.hpp</a></div><div class="ttdoc">Create c++14 style index sequence.</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>

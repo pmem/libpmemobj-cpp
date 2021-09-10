@@ -1,5 +1,8 @@
 var NAVTREEINDEX0 =
 {
+"":[2,0,0,1,0],
+"":[2,0,0,1,1,0],
+"":[2,0,1],
 "allocation__flag_8hpp.html":[4,0,0,3],
 "allocation__flag_8hpp_source.html":[4,0,0,3],
 "allocator_8hpp.html":[4,0,0,4],
@@ -19,10 +22,8 @@ var NAVTREEINDEX0 =
 "check__persistent__ptr__array_8hpp_source.html":[4,0,0,1,2],
 "classes.html":[3,1],
 "classpmem_1_1ctl__error.html":[1,7,10],
-"classpmem_1_1ctl__error.html#abefbfaf6ec0cc188dd0306938138b59d":[1,7,10,0],
 "classpmem_1_1defrag__error.html":[1,7,11],
-"classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7":[1,7,11,2],
-"classpmem_1_1defrag__error.html#ae425a09aeeb048dae0a2a8d51cdfc36c":[1,7,11,1],
+"classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7":[1,7,11,1],
 "classpmem_1_1defrag__error.html#ae630abb03e4ff8ae7a2fd97600becddf":[1,7,11,0],
 "classpmem_1_1detail_1_1concurrent__skip__list.html":[3,0,0,0,0],
 "classpmem_1_1detail_1_1concurrent__skip__list.html#a04467f3a4568fa18556b3fdb7f6d9a43":[3,0,0,0,0,5],
@@ -215,7 +216,6 @@ var NAVTREEINDEX0 =
 "classpmem_1_1detail_1_1volatile__state.html#acbff0de7340fcdaf30088c68d6934467":[3,0,0,0,16,2],
 "classpmem_1_1layout__error.html":[1,7,9],
 "classpmem_1_1lock__error.html":[1,7,3],
-"classpmem_1_1lock__error.html#ae3be22845605a2b6430d8b29c54ee004":[1,7,3,0],
 "classpmem_1_1manual__tx__abort.html":[1,7,8],
 "classpmem_1_1obj_1_1allocator.html":[3,0,0,1,8],
 "classpmem_1_1obj_1_1allocator.html#a0316f8bc0a2566fb8d092014530129a1":[3,0,0,1,8,9],

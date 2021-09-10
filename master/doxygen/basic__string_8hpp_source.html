@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -2234,7 +2234,7 @@ $(document).ready(function(){initNavTree('basic__string_8hpp_source.html',''); i
 <div class="line"><a name="l04049"></a><span class="lineno"> 4049</span>&#160;<span class="comment">     * a constructor.</span></div>
 <div class="line"><a name="l04050"></a><span class="lineno"> 4050</span>&#160;<span class="comment">     */</span></div>
 <div class="line"><a name="l04051"></a><span class="lineno"> 4051</span>&#160;    <span class="keywordflow">if</span> (!is_sso_used()) {</div>
-<div class="line"><a name="l04052"></a><span class="lineno"> 4052</span>&#160;        detail::conditional_add_to_tx(&amp;non_sso_data(), 1,</div>
+<div class="line"><a name="l04052"></a><span class="lineno"> 4052</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;non_sso_data(), 1,</div>
 <div class="line"><a name="l04053"></a><span class="lineno"> 4053</span>&#160;                          POBJ_XADD_NO_SNAPSHOT);</div>
 <div class="line"><a name="l04054"></a><span class="lineno"> 4054</span>&#160;        detail::create&lt;non_sso_type&gt;(&amp;non_sso_data());</div>
 <div class="line"><a name="l04055"></a><span class="lineno"> 4055</span>&#160;        non_sso_data().reserve(n + 1);</div>
@@ -2320,7 +2320,7 @@ $(document).ready(function(){initNavTree('basic__string_8hpp_source.html',''); i
 <div class="line"><a name="l04153"></a><span class="lineno"> 4153</span>&#160;        ptr = assign_sso_data(other.cbegin(), other.cend());</div>
 <div class="line"><a name="l04154"></a><span class="lineno"> 4154</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l04155"></a><span class="lineno"> 4155</span>&#160;        disable_sso();</div>
-<div class="line"><a name="l04156"></a><span class="lineno"> 4156</span>&#160;        detail::conditional_add_to_tx(&amp;non_sso_data(), 1,</div>
+<div class="line"><a name="l04156"></a><span class="lineno"> 4156</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;non_sso_data(), 1,</div>
 <div class="line"><a name="l04157"></a><span class="lineno"> 4157</span>&#160;                          POBJ_XADD_NO_SNAPSHOT);</div>
 <div class="line"><a name="l04158"></a><span class="lineno"> 4158</span>&#160;        detail::create&lt;non_sso_type&gt;(&amp;non_sso_data());</div>
 <div class="line"><a name="l04159"></a><span class="lineno"> 4159</span>&#160; </div>
@@ -2414,12 +2414,12 @@ $(document).ready(function(){initNavTree('basic__string_8hpp_source.html',''); i
 <div class="line"><a name="l04269"></a><span class="lineno"> 4269</span>&#160;    <span class="keyword">auto</span> initialized_num = get_sso_size() + 1 - idx_first;</div>
 <div class="line"><a name="l04270"></a><span class="lineno"> 4270</span>&#160; </div>
 <div class="line"><a name="l04271"></a><span class="lineno"> 4271</span>&#160;    <span class="comment">/* Snapshot elements in range [idx_first, sso_size + 1 (null)) */</span></div>
-<div class="line"><a name="l04272"></a><span class="lineno"> 4272</span>&#160;    detail::conditional_add_to_tx(&amp;sso_data()._data[0] + idx_first,</div>
+<div class="line"><a name="l04272"></a><span class="lineno"> 4272</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(&amp;sso_data()._data[0] + idx_first,</div>
 <div class="line"><a name="l04273"></a><span class="lineno"> 4273</span>&#160;                      (std::min)(initialized_num, num));</div>
 <div class="line"><a name="l04274"></a><span class="lineno"> 4274</span>&#160; </div>
 <div class="line"><a name="l04275"></a><span class="lineno"> 4275</span>&#160;    <span class="keywordflow">if</span> (num &gt; initialized_num) {</div>
 <div class="line"><a name="l04276"></a><span class="lineno"> 4276</span>&#160;        <span class="comment">/* Elements after sso_size + 1 do not have to be snapshotted */</span></div>
-<div class="line"><a name="l04277"></a><span class="lineno"> 4277</span>&#160;        detail::conditional_add_to_tx(</div>
+<div class="line"><a name="l04277"></a><span class="lineno"> 4277</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(</div>
 <div class="line"><a name="l04278"></a><span class="lineno"> 4278</span>&#160;            &amp;sso_data()._data[0] + get_sso_size() + 1,</div>
 <div class="line"><a name="l04279"></a><span class="lineno"> 4279</span>&#160;            num - initialized_num, POBJ_XADD_NO_SNAPSHOT);</div>
 <div class="line"><a name="l04280"></a><span class="lineno"> 4280</span>&#160;    }</div>
@@ -2893,18 +2893,19 @@ $(document).ready(function(){initNavTree('basic__string_8hpp_source.html',''); i
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html_aea71e877ed2340e0aa1e8d77de749ec1"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html#aea71e877ed2340e0aa1e8d77de749ec1">pmem::obj::basic_string::crange</a></div><div class="ttdeci">slice&lt; const_iterator &gt; crange(size_type start, size_type n) const</div><div class="ttdoc">Returns const slice.</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:1478</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html_aeefa6e9d09253187dae757fa292bd1be"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html#aeefa6e9d09253187dae757fa292bd1be">pmem::obj::basic_string::operator==</a></div><div class="ttdeci">bool operator==(const basic_string&lt; CharT, Traits &gt; &amp;lhs, const basic_string&lt; CharT, Traits &gt; &amp;rhs)</div><div class="ttdoc">Non-member equal operator.</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:4484</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html_af0c917521b02d15c7eb501b9294a6fb4"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html#af0c917521b02d15c7eb501b9294a6fb4">pmem::obj::basic_string::operator=</a></div><div class="ttdeci">basic_string &amp; operator=(const basic_string &amp;other)</div><div class="ttdoc">Copy assignment operator.</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:792</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:830</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:810</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1p_html"><div class="ttname"><a href="classpmem_1_1obj_1_1p.html">pmem::obj::p</a></div><div class="ttdoc">Resides on pmem class.</div><div class="ttdef"><b>Definition:</b> p.hpp:36</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr__base_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr__base.html">pmem::obj::persistent_ptr_base</a></div><div class="ttdoc">Persistent_ptr base (non-template) class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr_base.hpp:42</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html">pmem::obj::pool_base</a></div><div class="ttdoc">The non-template pool base class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:51</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1slice_html"><div class="ttname"><a href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a></div><div class="ttdoc">pmem::obj::slice - provides interface to access sequence of objects.</div><div class="ttdef"><b>Definition:</b> slice.hpp:51</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1vector_html"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector&lt; value_type &gt;</a></div></div>
-<div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:46</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:206</div></div>
+<div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:84</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:164</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>
 <div class="ttc" id="acontiguous__iterator_8hpp_html"><div class="ttname"><a href="contiguous__iterator_8hpp.html">contiguous_iterator.hpp</a></div><div class="ttdoc">Iterators for contiguous persistent containers.</div></div>
 <div class="ttc" id="aiterator__traits_8hpp_html"><div class="ttname"><a href="iterator__traits_8hpp.html">iterator_traits.hpp</a></div><div class="ttdoc">Common iterator traits.</div></div>
-<div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for destroying arrays.</div></div>
+<div class="ttc" id="alife_8hpp_html"><div class="ttname"><a href="life_8hpp.html">life.hpp</a></div><div class="ttdoc">Functions for lifetime management.</div></div>
+<div class="ttc" id="anamespacepmem_1_1detail_html_a1406353d3388f1a1bc26863edff9a125"><div class="ttname"><a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a></div><div class="ttdeci">void conditional_add_to_tx(const T *that, std::size_t count=1, uint64_t flags=0)</div><div class="ttdoc">Conditionally add 'count' objects to a transaction.</div><div class="ttdef"><b>Definition:</b> common.hpp:176</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_ac392b8f634101ffeebb3c6838ebe3f8a"><div class="ttname"><a href="namespacepmem_1_1obj.html#ac392b8f634101ffeebb3c6838ebe3f8a">pmem::obj::pool_by_vptr</a></div><div class="ttdeci">pool_base pool_by_vptr(const T *that)</div><div class="ttdoc">Retrieve pool handle for the given pointer.</div><div class="ttdef"><b>Definition:</b> utils.hpp:32</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>

@@ -284,9 +284,9 @@ var group__containers =
       [ "_data", "classpmem_1_1obj_1_1basic__string.html#a8b9cfa79c37dc2e87dcbc18ebc1e86be", null ],
       [ "_data", "classpmem_1_1obj_1_1basic__string.html#aed0fc771f2d5fa9ee93ac6ec1c4cc03f", null ],
       [ "_size", "classpmem_1_1obj_1_1basic__string.html#afd307c12ebb3aa8ee23d60ae59dcf2f9", null ],
-      [ "non_sso", "classpmem_1_1obj_1_1basic__string.html#aa7e4c25ae3a88be53ab3889960730a75", null ],
+      [ "non_sso", "classpmem_1_1obj_1_1basic__string.html#a2b55f69243fd808443c448ed047e20bc", null ],
       [ "npos", "classpmem_1_1obj_1_1basic__string.html#aa9739ff4cc3c853a04e5b16fe6c50a95", null ],
-      [ "sso", "classpmem_1_1obj_1_1basic__string.html#a723c89cada2e1c59af52535335a95b3f", null ],
+      [ "sso", "classpmem_1_1obj_1_1basic__string.html#a72199acd8593e5d1bea890f97f4a094d", null ],
       [ "sso_capacity", "classpmem_1_1obj_1_1basic__string.html#aa971ff002342b63f9b8eedd81b434323", null ]
     ] ],
     [ "concurrent_hash_map", "classpmem_1_1obj_1_1concurrent__hash__map.html", [

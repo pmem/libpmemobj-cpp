@@ -69,14 +69,14 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"allocation__flag_8hpp.html",
+"",
 "classpmem_1_1obj_1_1basic__string.html#a0a82ceffdffb838156d555f7609764eb",
 "classpmem_1_1obj_1_1basic__string__view.html#a9917fcf935a843b79c53c8b8298a3fc6",
 "classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#a6fd8c4e4a04036885e1c6bf8dd93c147",
 "classpmem_1_1obj_1_1mutex.html#a4357943ecf5ce2745d517c1fe6f79136",
 "classpmem_1_1obj_1_1segment__vector.html#a08440744ce64d6792270c34a17a7ebcb",
 "classpmem_1_1obj_1_1vector.html#a6d456eb0a79289883dc8d012ec9ae726",
-"life_8hpp.html",
+"life_8hpp.html#a8fb430f51a167d68645a0fbe34cae817",
 "segment__vector_8hpp.html#a89e6aab454db03fee92e3b417ea94bd0",
 "structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html#ac5439db73f655ddc5eae08c334d14c1b"
 ];

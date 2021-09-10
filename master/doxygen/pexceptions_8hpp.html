@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -97,8 +97,10 @@ $(document).ready(function(){initNavTree('pexceptions_8hpp.html',''); initResiza
 <div class="textblock"><code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;system_error&gt;</code><br />
+<code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;libpmemobj/atomic_base.h&gt;</code><br />
 <code>#include &lt;libpmemobj/base.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="integer__sequence_8hpp_source.html">libpmemobj++/detail/integer_sequence.hpp</a>&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
@@ -128,9 +130,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <area shape="rect" href="contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers." alt="" coords="2374,735,2570,776"/>
 <area shape="rect" href="vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="2694,824,2855,865"/>
 <area shape="rect" href="ebr_8hpp.html" title="C++ EBR API." alt="" coords="403,259,541,300"/>
-<area shape="rect" href="tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="711,921,849,962"/>
 <area shape="rect" href="self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="667,541,819,597"/>
 <area shape="rect" href="atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="505,824,693,865"/>
+<area shape="rect" href="tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="711,921,849,962"/>
 <area shape="rect" href="volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="920,824,1059,865"/>
 <area shape="rect" href="v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="617,259,799,300"/>
 <area shape="rect" href="p_8hpp.html" title="Resides on pmem property template." alt="" coords="1217,177,1357,203"/>
@@ -206,6 +208,14 @@ Functions</h2></td></tr>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html#ab6f0c138fffd276b8a5da225bbf4048f">pmem::detail::errormsg</a> (void)</td></tr>
 <tr class="memdesc:ab6f0c138fffd276b8a5da225bbf4048f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return last libpmemobj error message as a std::string. <br /></td></tr>
 <tr class="separator:ab6f0c138fffd276b8a5da225bbf4048f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19517dbf6b62d06c2279dc05c4b42d19"><td class="memTemplParams" colspan="2">template&lt;typename ExcT , size_t... I, typename Tuple &gt; </td></tr>
+<tr class="memitem:a19517dbf6b62d06c2279dc05c4b42d19"><td class="memTemplItemLeft" align="right" valign="top">ExcT&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html#a19517dbf6b62d06c2279dc05c4b42d19">pmem::detail::exception_with_errormsg_helper</a> (index_sequence&lt; I... &gt;, Tuple &amp;&amp;args)</td></tr>
+<tr class="memdesc:a19517dbf6b62d06c2279dc05c4b42d19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for exception_with_errormsg.  <a href="namespacepmem_1_1detail.html#a19517dbf6b62d06c2279dc05c4b42d19">More...</a><br /></td></tr>
+<tr class="separator:a19517dbf6b62d06c2279dc05c4b42d19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5888feacbab544664437549db7e5018a"><td class="memTemplParams" colspan="2">template&lt;class ExcT , typename... Args&gt; </td></tr>
+<tr class="memitem:a5888feacbab544664437549db7e5018a"><td class="memTemplItemLeft" align="right" valign="top">ExcT&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">pmem::detail::exception_with_errormsg</a> (Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a5888feacbab544664437549db7e5018a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic error message decorator for pmemobj-based exceptions.  <a href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">More...</a><br /></td></tr>
+<tr class="separator:a5888feacbab544664437549db7e5018a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Custom pmem exceptions. </p>

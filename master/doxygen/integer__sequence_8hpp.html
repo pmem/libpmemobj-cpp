@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -94,35 +94,59 @@ $(document).ready(function(){initNavTree('integer__sequence_8hpp.html',''); init
 <p>Create c++14 style index sequence.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="integer__sequence_8hpp__dep__incl.png" border="0" usemap="#alibpmemobj_09_09_2detail_2integer__sequence_8hppdep" alt=""/></div>
 <map name="alibpmemobj_09_09_2detail_2integer__sequence_8hppdep" id="alibpmemobj_09_09_2detail_2integer__sequence_8hppdep">
-<area shape="rect" title="Create c++14 style index sequence." alt="" coords="923,5,1077,47"/>
-<area shape="rect" href="life_8hpp.html" title="Functions for destroying arrays." alt="" coords="681,95,820,136"/>
-<area shape="rect" href="radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="771,735,954,776"/>
-<area shape="rect" href="make__atomic__impl_8hpp.html" title="Implementation details of atomic allocation and construction." alt="" coords="1289,184,1447,225"/>
-<area shape="rect" href="pair_8hpp.html" title="Pair implementation." alt="" coords="5,645,144,687"/>
-<area shape="rect" href="allocator_8hpp.html" title="Persistent memory aware allocator." alt="" coords="1030,653,1213,679"/>
-<area shape="rect" href="basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="670,549,831,590"/>
-<area shape="rect" href="concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="99,824,261,880"/>
-<area shape="rect" href="segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="289,645,450,687"/>
-<area shape="rect" href="vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="319,452,481,493"/>
-<area shape="rect" href="volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="435,184,573,225"/>
-<area shape="rect" href="v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="929,452,1111,493"/>
-<area shape="rect" href="make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="497,281,725,307"/>
-<area shape="rect" href="make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays." alt="" coords="649,184,853,225"/>
-<area shape="rect" href="concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="89,928,271,969"/>
-<area shape="rect" href="string_8hpp.html" title="String typedefs for common character types." alt="" coords="670,645,831,687"/>
-<area shape="rect" href="enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="264,735,477,776"/>
-<area shape="rect" href="concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="285,831,464,873"/>
-<area shape="rect" href="mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="691,831,874,873"/>
-<area shape="rect" href="segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="281,541,442,597"/>
-<area shape="rect" href="make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays." alt="" coords="1373,273,1577,315"/>
-<area shape="rect" href="make__persistent__atomic_8hpp.html" title="Persistent_ptr atomic allocation functions for objects." alt="" coords="1314,363,1518,404"/>
-<area shape="rect" href="temp__value_8hpp.html" title="template class for caching objects." alt="" coords="405,363,544,404"/>
-<area shape="rect" href="inline__string_8hpp.html" title="Inline string implementation." alt="" coords="670,452,853,493"/>
+<area shape="rect" title="Create c++14 style index sequence." alt="" coords="3242,5,3395,47"/>
+<area shape="rect" href="life_8hpp.html" title="Functions for lifetime management." alt="" coords="2859,437,2997,479"/>
+<area shape="rect" href="radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="1014,1181,1197,1223"/>
+<area shape="rect" href="make__atomic__impl_8hpp.html" title="Implementation details of atomic allocation and construction." alt="" coords="2849,534,3007,575"/>
+<area shape="rect" href="pair_8hpp.html" title="Pair implementation." alt="" coords="93,1092,232,1133"/>
+<area shape="rect" href="pexceptions_8hpp.html" title="Custom pmem exceptions." alt="" coords="3388,95,3591,121"/>
+<area shape="rect" href="allocator_8hpp.html" title="Persistent memory aware allocator." alt="" coords="834,906,1017,933"/>
+<area shape="rect" href="basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="2177,995,2338,1037"/>
+<area shape="rect" href="concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="502,1271,663,1327"/>
+<area shape="rect" href="segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="2978,1092,3139,1133"/>
+<area shape="rect" href="vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="3054,899,3215,940"/>
+<area shape="rect" href="volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="2401,809,2540,851"/>
+<area shape="rect" href="v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="1253,534,1435,575"/>
+<area shape="rect" href="make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="3335,727,3563,754"/>
+<area shape="rect" href="make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays." alt="" coords="3357,631,3561,672"/>
+<area shape="rect" href="concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="491,1375,674,1416"/>
+<area shape="rect" href="string_8hpp.html" title="String typedefs for common character types." alt="" coords="1405,1092,1566,1133"/>
+<area shape="rect" href="enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="3316,1181,3529,1223"/>
+<area shape="rect" href="concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="1895,1278,2073,1319"/>
+<area shape="rect" href="mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="3811,1278,3994,1319"/>
+<area shape="rect" href="segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="2817,988,2978,1044"/>
+<area shape="rect" href="make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays." alt="" coords="2747,631,2951,672"/>
+<area shape="rect" href="make__persistent__atomic_8hpp.html" title="Persistent_ptr atomic allocation functions for objects." alt="" coords="2817,720,3021,761"/>
+<area shape="rect" href="temp__value_8hpp.html" title="template class for caching objects." alt="" coords="3372,809,3511,851"/>
+<area shape="rect" href="inline__string_8hpp.html" title="Inline string implementation." alt="" coords="1557,809,1739,851"/>
+<area shape="rect" href="common_8hpp.html" title="Commonly used functionality." alt="" coords="2285,169,2424,211"/>
+<area shape="rect" href="pool_8hpp.html" title="C++ pmemobj pool." alt="" coords="1583,355,1740,382"/>
+<area shape="rect" href="utils_8hpp.html" title="Libpmemobj C++ utils." alt="" coords="2937,817,3095,843"/>
+<area shape="rect" href="transaction_8hpp.html" title="C++ pmemobj transactions." alt="" coords="1695,727,1892,754"/>
+<area shape="rect" href="ctl_8hpp.html" title="C++ ctl API." alt="" coords="872,169,1011,211"/>
+<area shape="rect" href="mutex_8hpp.html" title="Pmem&#45;resident mutex." alt="" coords="3647,1099,3815,1126"/>
+<area shape="rect" href="array_8hpp.html" title="Array container with std::array compatible interface." alt="" coords="2547,899,2709,940"/>
+<area shape="rect" href="contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers." alt="" coords="2666,809,2862,851"/>
+<area shape="rect" href="ebr_8hpp.html" title="C++ EBR API." alt="" coords="329,348,468,389"/>
+<area shape="rect" href="self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="503,527,655,583"/>
+<area shape="rect" href="atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="381,809,569,851"/>
+<area shape="rect" href="tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="519,899,657,940"/>
+<area shape="rect" href="p_8hpp.html" title="Resides on pmem property template." alt="" coords="2133,266,2273,293"/>
+<area shape="rect" href="persistent__ptr_8hpp.html" title="Persistent smart pointer." alt="" coords="1866,437,2033,479"/>
+<area shape="rect" href="persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr." alt="" coords="1798,259,1965,300"/>
+<area shape="rect" href="self__relative__ptr__base_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="487,631,670,672"/>
+<area shape="rect" href="self__relative__ptr_8hpp.html" title="Persistent self&#45;relative smart pointer." alt="" coords="487,720,670,761"/>
+<area shape="rect" href="pext_8hpp.html" title="Convenience extensions for the resides on pmem property template." alt="" coords="2119,817,2276,843"/>
+<area shape="rect" href="defrag_8hpp.html" title="Defragmentation class." alt="" coords="1570,445,1739,471"/>
+<area shape="rect" href="check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent." alt="" coords="3031,527,3179,583"/>
+<area shape="rect" href="persistent__pool__ptr_8hpp.html" title="Persistent pointer for pool handle." alt="" coords="1809,995,1972,1037"/>
+<area shape="rect" href="condition__variable_8hpp.html" title="Pmem&#45;resident condition variable." alt="" coords="3655,1181,3815,1223"/>
 </map>
 </div>
 </div>
@@ -143,14 +167,18 @@ Typedefs</h2></td></tr>
 template&lt;size_t... Indices&gt; </td></tr>
 <tr class="memitem:a1fdcf1ce1f530ca958b475232b9bf9cf"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::index_sequence</b> = integer_sequence&lt; size_t, Indices... &gt;</td></tr>
 <tr class="separator:a1fdcf1ce1f530ca958b475232b9bf9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5dcbfd490f5901595cc5743f284bc0a"><td class="memTemplParams" colspan="2"><a id="aa5dcbfd490f5901595cc5743f284bc0a"></a>
-template&lt;typename... Types&gt; </td></tr>
-<tr class="memitem:aa5dcbfd490f5901595cc5743f284bc0a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::make_index_sequence</b> = make_integer_seq_impl&lt; size_t, 0, integer_sequence&lt; size_t &gt;, Types... &gt;</td></tr>
-<tr class="separator:aa5dcbfd490f5901595cc5743f284bc0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedffa6f523f4a14f7b9977e4361a7c7e"><td class="memTemplParams" colspan="2"><a id="aedffa6f523f4a14f7b9977e4361a7c7e"></a>
+<tr class="memitem:a1608b20f7d072378a3815ce1860d9e61"><td class="memTemplParams" colspan="2"><a id="a1608b20f7d072378a3815ce1860d9e61"></a>
+template&lt;typename T , T N&gt; </td></tr>
+<tr class="memitem:a1608b20f7d072378a3815ce1860d9e61"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::make_integer_sequence</b> = typename make_integer_seq_impl&lt; T, N, void &gt;::type</td></tr>
+<tr class="separator:a1608b20f7d072378a3815ce1860d9e61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab475c81a7cad4cf1e8bb1920af34082f"><td class="memTemplParams" colspan="2"><a id="ab475c81a7cad4cf1e8bb1920af34082f"></a>
+template&lt;size_t N&gt; </td></tr>
+<tr class="memitem:ab475c81a7cad4cf1e8bb1920af34082f"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::make_index_sequence</b> = make_integer_sequence&lt; size_t, N &gt;</td></tr>
+<tr class="separator:ab475c81a7cad4cf1e8bb1920af34082f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89687d51793b8f1c5e900a1309fe62c4"><td class="memTemplParams" colspan="2"><a id="a89687d51793b8f1c5e900a1309fe62c4"></a>
 template&lt;class... Types&gt; </td></tr>
-<tr class="memitem:aedffa6f523f4a14f7b9977e4361a7c7e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::index_sequence_for</b> = typename make_index_sequence&lt; Types... &gt;::type</td></tr>
-<tr class="separator:aedffa6f523f4a14f7b9977e4361a7c7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89687d51793b8f1c5e900a1309fe62c4"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::index_sequence_for</b> = make_index_sequence&lt; sizeof...(Types)&gt;</td></tr>
+<tr class="separator:a89687d51793b8f1c5e900a1309fe62c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Create c++14 style index sequence. </p>

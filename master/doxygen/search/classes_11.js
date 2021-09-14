@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['worker_540',['worker',['../classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html',1,'pmem::obj::experimental::mpsc_queue']]]
+  ['worker_543',['worker',['../classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html',1,'pmem::obj::experimental::mpsc_queue']]]
 ];

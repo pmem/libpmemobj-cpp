@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -210,9 +210,9 @@ static POBJ_CPP_DEPRECATED void&#160;</td><td class="memItemRight" valign="botto
 <div class="line"><span class="comment">         * reacquire locks if necessary */</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:700</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:696</div></div>
-<div class="ttc" id="aclasspmem_1_1transaction__error_html"><div class="ttname"><a href="classpmem_1_1transaction__error.html">pmem::transaction_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:91</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:694</div></div>
+<div class="ttc" id="aclasspmem_1_1transaction__error_html"><div class="ttname"><a href="classpmem_1_1transaction__error.html">pmem::transaction_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:106</div></div>
 <div class="ttc" id="amake__persistent_8hpp_html"><div class="ttname"><a href="make__persistent_8hpp.html">make_persistent.hpp</a></div><div class="ttdoc">Persistent_ptr transactional allocation functions for objects.</div></div>
 <div class="ttc" id="amutex_8hpp_html"><div class="ttname"><a href="mutex_8hpp.html">mutex.hpp</a></div><div class="ttdoc">Pmem-resident mutex.</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
@@ -285,7 +285,7 @@ static POBJ_CPP_DEPRECATED void&#160;</td><td class="memItemRight" valign="botto
 <div class="line"><span class="comment">     * the previous transaction. */</span></div>
 <div class="line">    <span class="keywordflow">return</span> transaction::error();</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a8ffae81b74ffe313eb2deb16573d70e1"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a8ffae81b74ffe313eb2deb16573d70e1">pmem::obj::basic_transaction::automatic</a></div><div class="ttdeci">typename detail::transaction_base&lt; false &gt;::automatic automatic</div><div class="ttdoc">C++ automatic scope transaction class.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:665</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a8ffae81b74ffe313eb2deb16573d70e1"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a8ffae81b74ffe313eb2deb16573d70e1">pmem::obj::basic_transaction::automatic</a></div><div class="ttdeci">typename detail::transaction_base&lt; false &gt;::automatic automatic</div><div class="ttdoc">C++ automatic scope transaction class.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:669</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -356,7 +356,7 @@ static POBJ_CPP_DEPRECATED void&#160;</td><td class="memItemRight" valign="botto
 <div class="line">    <span class="keywordflow">return</span> transaction::error();</div>
 <div class="line">}</div>
 <div class="ttc" id="aclasspmem_1_1detail_1_1transaction__base_html_a16c0d86f943d6727e1caa7573cc83edb"><div class="ttname"><a href="classpmem_1_1detail_1_1transaction__base.html#a16c0d86f943d6727e1caa7573cc83edb">pmem::detail::transaction_base&lt; false &gt;::commit</a></div><div class="ttdeci">static void commit()</div><div class="ttdoc">Manually commit a transaction.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:330</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_ad86b8b9def7073307927ba6e41d0fbf5"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#ad86b8b9def7073307927ba6e41d0fbf5">pmem::obj::basic_transaction::manual</a></div><div class="ttdeci">typename detail::transaction_base&lt; false &gt;::manual manual</div><div class="ttdoc">C++ manual scope transaction class.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:639</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_ad86b8b9def7073307927ba6e41d0fbf5"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#ad86b8b9def7073307927ba6e41d0fbf5">pmem::obj::basic_transaction::manual</a></div><div class="ttdeci">typename detail::transaction_base&lt; false &gt;::manual manual</div><div class="ttdoc">C++ manual scope transaction class.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:643</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -552,7 +552,7 @@ static POBJ_CPP_DEPRECATED void&#160;</td><td class="memItemRight" valign="botto
 <div class="line"><span class="comment">         * reacquire locks if necessary */</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasspmem_1_1detail_1_1transaction__base_html_abd22aa1c4862fc4e1974e39fca7f3dfa"><div class="ttname"><a href="classpmem_1_1detail_1_1transaction__base.html#abd22aa1c4862fc4e1974e39fca7f3dfa">pmem::detail::transaction_base&lt; false &gt;::register_callback</a></div><div class="ttdeci">static void register_callback(stage stg, std::function&lt; void()&gt; cb)</div><div class="ttdoc">Registers callback to be called on specified stage for the transaction.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:483</div></div>
+<div class="ttc" id="aclasspmem_1_1detail_1_1transaction__base_html_abd22aa1c4862fc4e1974e39fca7f3dfa"><div class="ttname"><a href="classpmem_1_1detail_1_1transaction__base.html#abd22aa1c4862fc4e1974e39fca7f3dfa">pmem::detail::transaction_base&lt; false &gt;::register_callback</a></div><div class="ttdeci">static void register_callback(stage stg, std::function&lt; void()&gt; cb)</div><div class="ttdoc">Registers callback to be called on specified stage for the transaction.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:487</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -599,6 +599,7 @@ template&lt;typename... Locks&gt; </div>
 </div><div class="memdoc">
 
 <p>Execute a closure-like transaction and lock <code>locks</code>. </p>
+<p>Starts new transaction (nested, if inside another transaction) and executes passed <code>tx</code> function transactionally. Transaction can only start when stage is WORK or NONE.</p>
 <p>The locks have to be persistent memory resident locks. An attempt to lock the locks will be made. If any of the specified locks is already locked, the method will block. The locks are held until the end of the transaction. The transaction does not have to be committed manually. Manual aborts will end the transaction with an active exception.</p>
 <p>If an exception is thrown within the transaction, it gets aborted and the exception is rethrown. Therefore extra care has to be taken with proper error handling.</p>
 <p>The locks are held for the entire duration of the transaction. They are released at the end of the scope, so within the <code>catch</code> block, they are already unlocked. If the cleanup action requires access to data within a critical section, the locks have to be manually acquired once again.</p>

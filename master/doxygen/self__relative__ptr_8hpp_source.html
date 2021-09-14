@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -277,7 +277,7 @@ $(document).ready(function(){initNavTree('self__relative__ptr_8hpp_source.html',
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
 <div class="line"><a name="l00311"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#acd01402f0ef7b1c9197aede9a9fa1a1c">  311</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr</a> &amp;<a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#acd01402f0ef7b1c9197aede9a9fa1a1c">operator=</a>(std::nullptr_t)</div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    {</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        detail::conditional_add_to_tx(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        this-&gt;offset = self_offset(<span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    }</div>
@@ -285,7 +285,7 @@ $(document).ready(function(){initNavTree('self__relative__ptr_8hpp_source.html',
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keyword">inline</span> <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr&lt;T&gt;</a> &amp;</div>
 <div class="line"><a name="l00322"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a6002055eb8589d7119aef75c62e652e8">  322</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a6002055eb8589d7119aef75c62e652e8">operator++</a>()</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    {</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        detail::conditional_add_to_tx(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        this-&gt;offset += <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(T));</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
@@ -303,7 +303,7 @@ $(document).ready(function(){initNavTree('self__relative__ptr_8hpp_source.html',
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keyword">inline</span> <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr&lt;T&gt;</a> &amp;</div>
 <div class="line"><a name="l00346"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a5b94e965b7ac0482e796ef889f5222d0">  346</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a5b94e965b7ac0482e796ef889f5222d0">operator--</a>()</div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    {</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        detail::conditional_add_to_tx(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        this-&gt;offset -= <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(T));</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
@@ -321,7 +321,7 @@ $(document).ready(function(){initNavTree('self__relative__ptr_8hpp_source.html',
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keyword">inline</span> <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr&lt;T&gt;</a> &amp;</div>
 <div class="line"><a name="l00370"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a04705aad40b6516a6fd81823fe756f95">  370</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a04705aad40b6516a6fd81823fe756f95">operator+=</a>(std::ptrdiff_t s)</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    {</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        detail::conditional_add_to_tx(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        this-&gt;offset += s * <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(T));</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    }</div>
@@ -329,7 +329,7 @@ $(document).ready(function(){initNavTree('self__relative__ptr_8hpp_source.html',
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="keyword">inline</span> <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">self_relative_ptr&lt;T&gt;</a> &amp;</div>
 <div class="line"><a name="l00381"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a7159febd82754998c2902084de5413a8">  381</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a7159febd82754998c2902084de5413a8">operator-=</a>(std::ptrdiff_t s)</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    {</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        detail::conditional_add_to_tx(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        this-&gt;offset -= s * <span class="keyword">static_cast&lt;</span>difference_type<span class="keyword">&gt;</span>(<span class="keyword">sizeof</span>(T));</div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    }</div>
@@ -587,6 +587,7 @@ $(document).ready(function(){initNavTree('self__relative__ptr_8hpp_source.html',
 <div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1self__relative__ptr_html_ad08081052f4859949c20d811801b4b08"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#ad08081052f4859949c20d811801b4b08">pmem::obj::experimental::self_relative_ptr::operator==</a></div><div class="ttdeci">bool operator==(std::nullptr_t, self_relative_ptr&lt; T &gt; const &amp;lhs) noexcept</div><div class="ttdoc">Equality operator with nullptr.</div><div class="ttdef"><b>Definition:</b> self_relative_ptr.hpp:463</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1self__relative__ptr_html_ad59315a07c5d3bfd6a761ac17007b23a"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#ad59315a07c5d3bfd6a761ac17007b23a">pmem::obj::experimental::self_relative_ptr::iterator_category</a></div><div class="ttdeci">std::random_access_iterator_tag iterator_category</div><div class="ttdoc">Random access iterator requirements (members)</div><div class="ttdef"><b>Definition:</b> self_relative_ptr.hpp:95</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:153</div></div>
+<div class="ttc" id="anamespacepmem_1_1detail_html_a1406353d3388f1a1bc26863edff9a125"><div class="ttname"><a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a></div><div class="ttdeci">void conditional_add_to_tx(const T *that, std::size_t count=1, uint64_t flags=0)</div><div class="ttdoc">Conditionally add 'count' objects to a transaction.</div><div class="ttdef"><b>Definition:</b> common.hpp:176</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_1_1experimental_html_a11752d9e029972df929edd9ef311a9be"><div class="ttname"><a href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">pmem::obj::experimental::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, const radix_tree&lt; K, V, BV, MtMode &gt; &amp;tree)</div><div class="ttdoc">Prints tree in DOT format.</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:2842</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_1_1experimental_html_af58574af7907e31bc547b8b79afbb9cc"><div class="ttname"><a href="namespacepmem_1_1obj_1_1experimental.html#af58574af7907e31bc547b8b79afbb9cc">pmem::obj::experimental::self_relative_ptr_base</a></div><div class="ttdeci">pmem::detail::self_relative_ptr_base_impl&lt; std::ptrdiff_t &gt; self_relative_ptr_base</div><div class="ttdoc">self_relative_ptr base (non-template) class</div><div class="ttdef"><b>Definition:</b> self_relative_ptr_base.hpp:36</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>

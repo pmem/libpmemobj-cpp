@@ -23,9 +23,9 @@
 <area shape="rect" id="node15" href="$contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers." alt="" coords="2374,735,2570,776"/>
 <area shape="rect" id="node16" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="2694,824,2855,865"/>
 <area shape="rect" id="node17" href="$ebr_8hpp.html" title="C++ EBR API." alt="" coords="403,259,541,300"/>
-<area shape="rect" id="node18" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="711,921,849,962"/>
-<area shape="rect" id="node19" href="$self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="667,541,819,597"/>
-<area shape="rect" id="node20" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="505,824,693,865"/>
+<area shape="rect" id="node18" href="$self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="667,541,819,597"/>
+<area shape="rect" id="node19" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="505,824,693,865"/>
+<area shape="rect" id="node20" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="711,921,849,962"/>
 <area shape="rect" id="node23" href="$volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="920,824,1059,865"/>
 <area shape="rect" id="node24" href="$v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="617,259,799,300"/>
 <area shape="rect" id="node31" href="$p_8hpp.html" title="Resides on pmem property template." alt="" coords="1217,177,1357,203"/>

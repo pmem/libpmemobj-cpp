@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -128,9 +128,9 @@ $(document).ready(function(){initNavTree('timed__mutex_8hpp_source.html',''); in
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    {</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        PMEMobjpool *pop = pmemobj_pool_by_ptr(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">if</span> (<span class="keywordtype">int</span> ret = pmemobj_mutex_lock(pop, &amp;this-&gt;plock))</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1lock__error.html">pmem::lock_error</a>(ret, std::system_category(),</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                           <span class="stringliteral">&quot;Failed to lock a mutex.&quot;</span>)</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                .<a class="code" href="classpmem_1_1lock__error.html#ae3be22845605a2b6430d8b29c54ee004">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">throw</span> detail::exception_with_errormsg&lt;lock_error&gt;(</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                ret, std::system_category(),</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                <span class="stringliteral">&quot;Failed to lock a mutex.&quot;</span>);</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordtype">bool</span></div>
@@ -144,9 +144,9 @@ $(document).ready(function(){initNavTree('timed__mutex_8hpp_source.html',''); in
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (ret == EBUSY)</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1lock__error.html">pmem::lock_error</a>(ret, std::system_category(),</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                           <span class="stringliteral">&quot;Failed to lock a mutex.&quot;</span>)</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                .<a class="code" href="classpmem_1_1lock__error.html#ae3be22845605a2b6430d8b29c54ee004">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            <span class="keywordflow">throw</span> detail::exception_with_errormsg&lt;lock_error&gt;(</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                ret, std::system_category(),</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                <span class="stringliteral">&quot;Failed to lock a mutex.&quot;</span>);</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> Clock, <span class="keyword">typename</span> Duration&gt;</div>
@@ -170,9 +170,9 @@ $(document).ready(function(){initNavTree('timed__mutex_8hpp_source.html',''); in
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        PMEMobjpool *pop = pmemobj_pool_by_ptr(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <span class="keywordtype">int</span> ret = pmemobj_mutex_unlock(pop, &amp;this-&gt;plock);</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        <span class="keywordflow">if</span> (ret)</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1lock__error.html">pmem::lock_error</a>(ret, std::system_category(),</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                           <span class="stringliteral">&quot;Failed to unlock a mutex.&quot;</span>)</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                .<a class="code" href="classpmem_1_1lock__error.html#ae3be22845605a2b6430d8b29c54ee004">with_pmemobj_errormsg</a>();</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            <span class="keywordflow">throw</span> detail::exception_with_errormsg&lt;lock_error&gt;(</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;                ret, std::system_category(),</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                <span class="stringliteral">&quot;Failed to unlock a mutex.&quot;</span>);</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    }</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1timed__mutex.html#ac561c19b42016f409ae142395645f99b">native_handle_type</a></div>
@@ -207,20 +207,20 @@ $(document).ready(function(){initNavTree('timed__mutex_8hpp_source.html',''); in
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (ret == ETIMEDOUT)</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classpmem_1_1lock__error.html">pmem::lock_error</a>(ret, std::system_category(),</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                           <span class="stringliteral">&quot;Failed to lock a mutex&quot;</span>);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    }</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    PMEMmutex plock;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;};</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;} <span class="comment">/* namespace obj */</span></div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160; </div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_TIMED_MUTEX_HPP */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="aclasspmem_1_1lock__error_html"><div class="ttname"><a href="classpmem_1_1lock__error.html">pmem::lock_error</a></div><div class="ttdoc">Custom lock error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:114</div></div>
-<div class="ttc" id="aclasspmem_1_1lock__error_html_ae3be22845605a2b6430d8b29c54ee004"><div class="ttname"><a href="classpmem_1_1lock__error.html#ae3be22845605a2b6430d8b29c54ee004">pmem::lock_error::with_pmemobj_errormsg</a></div><div class="ttdeci">lock_error &amp; with_pmemobj_errormsg()</div><div class="ttdoc">Retrieves last error message from libpmemobj and adds it to the current error.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:122</div></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            <span class="keywordflow">throw</span> detail::exception_with_errormsg&lt;lock_error&gt;(</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;                ret, std::system_category(),</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;                <span class="stringliteral">&quot;Failed to lock a mutex&quot;</span>);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    }</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    PMEMmutex plock;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;};</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;} <span class="comment">/* namespace obj */</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_TIMED_MUTEX_HPP */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="aclasspmem_1_1lock__error_html"><div class="ttname"><a href="classpmem_1_1lock__error.html">pmem::lock_error</a></div><div class="ttdoc">Custom lock error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:118</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1timed__mutex_html"><div class="ttname"><a href="classpmem_1_1obj_1_1timed__mutex.html">pmem::obj::timed_mutex</a></div><div class="ttdoc">Persistent memory resident timed_mutex implementation.</div><div class="ttdef"><b>Definition:</b> timed_mutex.hpp:33</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1timed__mutex_html_a17f544211bcf905cd600295e4e47b757"><div class="ttname"><a href="classpmem_1_1obj_1_1timed__mutex.html#a17f544211bcf905cd600295e4e47b757">pmem::obj::timed_mutex::lock</a></div><div class="ttdeci">void lock()</div><div class="ttdoc">Locks the mutex, blocks if already locked.</div><div class="ttdef"><b>Definition:</b> timed_mutex.hpp:73</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1timed__mutex_html_a1b511d4db388a6d3d069fc93bd4e982b"><div class="ttname"><a href="classpmem_1_1obj_1_1timed__mutex.html#a1b511d4db388a6d3d069fc93bd4e982b">pmem::obj::timed_mutex::native_handle</a></div><div class="ttdeci">native_handle_type native_handle() noexcept</div><div class="ttdoc">Access a native handle to this condition variable.</div><div class="ttdef"><b>Definition:</b> timed_mutex.hpp:185</div></div>

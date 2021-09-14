@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['libpmemobj_2dcpp_906',['libpmemobj-cpp',['../index.html',1,'']]]
+  ['libpmemobj_2dcpp_912',['libpmemobj-cpp',['../index.html',1,'']]]
 ];

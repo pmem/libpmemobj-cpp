@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -116,9 +116,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <area shape="rect" href="contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers." alt="" coords="814,660,1010,701"/>
 <area shape="rect" href="vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="763,749,925,791"/>
 <area shape="rect" href="ebr_8hpp.html" title="C++ EBR API." alt="" coords="3444,184,3583,225"/>
-<area shape="rect" href="tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="2875,846,3013,887"/>
 <area shape="rect" href="self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="3009,467,3161,523"/>
 <area shape="rect" href="atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="3033,749,3221,791"/>
+<area shape="rect" href="tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="2875,846,3013,887"/>
 <area shape="rect" href="volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="2667,749,2805,791"/>
 <area shape="rect" href="v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="2865,184,3047,225"/>
 <area shape="rect" href="make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="430,578,658,605"/>
@@ -182,13 +182,14 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1406353d3388f1a1bc26863edff9a125"><td class="memTemplParams" colspan="2"><a id="a1406353d3388f1a1bc26863edff9a125"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a1406353d3388f1a1bc26863edff9a125"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::conditional_add_to_tx</b> (const T *that, std::size_t count=1, uint64_t flags=0)</td></tr>
+<tr class="memitem:a1406353d3388f1a1bc26863edff9a125"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a1406353d3388f1a1bc26863edff9a125"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a> (const T *that, std::size_t count=1, uint64_t flags=0)</td></tr>
+<tr class="memdesc:a1406353d3388f1a1bc26863edff9a125"><td class="mdescLeft">&#160;</td><td class="mdescRight">Conditionally add 'count' objects to a transaction.  <a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">More...</a><br /></td></tr>
 <tr class="separator:a1406353d3388f1a1bc26863edff9a125"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec7b7d2dc38aaf71eff0f5e811931e1e"><td class="memTemplParams" colspan="2"><a id="aec7b7d2dc38aaf71eff0f5e811931e1e"></a>
 template&lt;typename T &gt; </td></tr>
-<tr class="memitem:aec7b7d2dc38aaf71eff0f5e811931e1e"><td class="memTemplItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memTemplItemRight" valign="bottom"><b>pmem::detail::type_num</b> ()</td></tr>
+<tr class="memitem:aec7b7d2dc38aaf71eff0f5e811931e1e"><td class="memTemplItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html#aec7b7d2dc38aaf71eff0f5e811931e1e">pmem::detail::type_num</a> ()</td></tr>
+<tr class="memdesc:aec7b7d2dc38aaf71eff0f5e811931e1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return type number for given type. <br /></td></tr>
 <tr class="separator:aec7b7d2dc38aaf71eff0f5e811931e1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd30b5517b612c517279a81956b8f0ff"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1detail.html#abd30b5517b612c517279a81956b8f0ff">pmem::detail::next_pow_2</a> (uint64_t v)</td></tr>
 <tr class="memdesc:abd30b5517b612c517279a81956b8f0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Round up to the next lowest power of 2.  <a href="namespacepmem_1_1detail.html#abd30b5517b612c517279a81956b8f0ff">More...</a><br /></td></tr>

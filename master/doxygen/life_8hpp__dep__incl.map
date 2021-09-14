@@ -1,5 +1,5 @@
 <map id="libpmemobj++/detail/life.hpp" name="libpmemobj++/detail/life.hpp">
-<area shape="rect" id="node1" title="Functions for destroying arrays." alt="" coords="563,5,702,47"/>
+<area shape="rect" id="node1" title="Functions for lifetime management." alt="" coords="563,5,702,47"/>
 <area shape="rect" id="node2" href="$allocator_8hpp.html" title="Persistent memory aware allocator." alt="" coords="5,563,188,590"/>
 <area shape="rect" id="node5" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="603,459,764,501"/>
 <area shape="rect" id="node7" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="145,735,307,791"/>

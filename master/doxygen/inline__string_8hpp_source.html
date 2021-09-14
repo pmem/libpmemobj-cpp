@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git21.g84041495</span>
+   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -409,7 +409,7 @@ $(document).ready(function(){initNavTree('inline__string_8hpp_source.html',''); 
 <div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;{</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;    assert(p + n &lt;= size());</div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160; </div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    detail::conditional_add_to_tx(<span class="keyword">reinterpret_cast&lt;</span>CharT *<span class="keyword">&gt;</span>(<span class="keyword">this</span> + 1) + p,</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(<span class="keyword">reinterpret_cast&lt;</span>CharT *<span class="keyword">&gt;</span>(<span class="keyword">this</span> + 1) + p,</div>
 <div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;                      n, POBJ_XADD_ASSUME_INITIALIZED);</div>
 <div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160; </div>
 <div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">reinterpret_cast&lt;</span>CharT *<span class="keyword">&gt;</span>(<span class="keyword">this</span> + 1) + p;</div>
@@ -433,10 +433,10 @@ $(document).ready(function(){initNavTree('inline__string_8hpp_source.html',''); 
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;        (std::min)(rhs.size(), size()) + 1 <span class="comment">/* sizeof(&#39;\0&#39;) */</span>;</div>
 <div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160; </div>
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    <a class="code" href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">obj::flat_transaction::run</a>(pop, [&amp;] {</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;        detail::conditional_add_to_tx(data(), initialized_mem);</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(data(), initialized_mem);</div>
 <div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160; </div>
 <div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;        <span class="keywordflow">if</span> (rhs.size() &gt; size())</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;            detail::conditional_add_to_tx(</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;            <a class="code" href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">detail::conditional_add_to_tx</a>(</div>
 <div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;                data() + initialized_mem,</div>
 <div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;                rhs.size() - initialized_mem + 1,</div>
 <div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;                POBJ_XADD_NO_SNAPSHOT);</div>
@@ -516,9 +516,10 @@ $(document).ready(function(){initNavTree('inline__string_8hpp_source.html',''); 
 <div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1basic__inline__string_html_a9c12bb1813a5c26bfb806f409a30ff99"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#a9c12bb1813a5c26bfb806f409a30ff99">pmem::obj::experimental::basic_inline_string::basic_inline_string</a></div><div class="ttdeci">basic_inline_string(const basic_inline_string &amp;rhs)</div><div class="ttdef"><b>Definition:</b> inline_string.hpp:187</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1basic__inline__string_html_afbfa4d1f4d0e569417854c9848fba11f"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#afbfa4d1f4d0e569417854c9848fba11f">pmem::obj::experimental::basic_inline_string::basic_inline_string</a></div><div class="ttdeci">basic_inline_string(size_type capacity)</div><div class="ttdef"><b>Definition:</b> inline_string.hpp:179</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1v_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1v.html">pmem::obj::experimental::v</a></div><div class="ttdoc">Volatile residing on pmem class.</div><div class="ttdef"><b>Definition:</b> v.hpp:43</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:830</div></div>
-<div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:46</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1flat__transaction_html_a6162d1d30b3c679814498da961147c54"><div class="ttname"><a href="classpmem_1_1obj_1_1flat__transaction.html#a6162d1d30b3c679814498da961147c54">pmem::obj::flat_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:810</div></div>
+<div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:84</div></div>
 <div class="ttc" id="amake__persistent_8hpp_html"><div class="ttname"><a href="make__persistent_8hpp.html">make_persistent.hpp</a></div><div class="ttdoc">Persistent_ptr transactional allocation functions for objects.</div></div>
+<div class="ttc" id="anamespacepmem_1_1detail_html_a1406353d3388f1a1bc26863edff9a125"><div class="ttname"><a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a></div><div class="ttdeci">void conditional_add_to_tx(const T *that, std::size_t count=1, uint64_t flags=0)</div><div class="ttdoc">Conditionally add 'count' objects to a transaction.</div><div class="ttdef"><b>Definition:</b> common.hpp:176</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
 <div class="ttc" id="aslice_8hpp_html"><div class="ttname"><a href="slice_8hpp.html">slice.hpp</a></div><div class="ttdoc">Interface to access sequence of objects.</div></div>

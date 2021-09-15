@@ -5,12 +5,8 @@
  * @file
  * Implementation of persistent radix tree.
  * Based on: https://github.com/pmem/vmemcache/blob/master/src/critnib.h
- *
- * The implementation is a variation of a PATRICIA trie - the internal
- * nodes do not store the path explicitly, but only a position at which
- * the keys differ. Keys are stored entirely in leaves.
- *
- * More info about radix tree: https://en.wikipedia.org/wiki/Radix_tree
+ * More info about radix tree data structure:
+ * https://en.wikipedia.org/wiki/Radix_tree
  */
 
 #ifndef LIBPMEMOBJ_CPP_RADIX_HPP
@@ -57,8 +53,14 @@ template <typename T, typename Enable = void>
 struct bytes_view;
 
 /**
- * Radix tree is an associative, ordered container. Its API is similar
- * to the API of std::map.
+ * Persistent associative, ordered container with API similar and partially
+ * compatible with the API of std::map.
+ *
+ * It is based on https://github.com/pmem/vmemcache/blob/master/src/critnib.h
+ * The implementation is a variation of a PATRICIA trie - the internal
+ * nodes do not store the path explicitly, but only a position at which
+ * the keys differ. Keys are stored entirely in leaves.
+ * More info about radix tree: https://en.wikipedia.org/wiki/Radix_tree
  *
  * Unlike std::map radix tree does not use comparison (std::less or equivalent)
  * to locate elements. Instead, keys are mapped to a sequence of bytes using
@@ -104,12 +106,12 @@ struct bytes_view;
  *
  * Enabling MtMode has the following effects:
  * - erase and clear does not free nodes/leaves immediately, instead they are
- * added to a garbage list which can be freed by calling garbage_collect()
+ * added to a garbage list which can be freed by calling garbage_collect(),
  * - insert_or_assign and iterator.assign_val do not perform an in-place update,
- * instead a new leaf is allocated and the old one is added to the garbage list
- * - memory-reclamation mechanisms are initialized
+ * instead a new leaf is allocated and the old one is added to the garbage list,
+ * - memory-reclamation mechanisms are initialized.
  *
- * By default, concurrency is not enabled (it is not allowed to perform
+ * @note By default, concurrency is not enabled (it is not allowed to perform
  * concurrent operations on radix tree).
  *
  * An example of custom BytesView implementation:
@@ -346,7 +348,7 @@ private:
 
 	using path_type = std::vector<node_desc>;
 
-	/* Arbitrarily choosen value, overhead of vector resizing for deep radix
+	/* Arbitrarily chosen value, overhead of vector resizing for deep radix
 	 * tree will not be noticeable. */
 	static constexpr size_t PATH_INIT_CAP = 64;
 
@@ -2398,7 +2400,7 @@ radix_tree<Key, Value, BytesView, MtMode>::internal_bound(const K &k) const
 			/* If next byte in key is less than in leaf_key it means
 			 * that the target node must be within *slot's subtree.
 			 * The left siblings of *slot are all less than the
-			 * looked-for key (this is the case fo AXXB from the
+			 * looked-for key (this is the case for AXXB from the
 			 * example above). */
 			if (static_cast<unsigned char>(key[diff]) <
 			    static_cast<unsigned char>(leaf_key[diff])) {

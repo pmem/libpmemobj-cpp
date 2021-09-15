@@ -36,7 +36,7 @@ make cppformat
 ## Doxygen documentation
 
 * Each new feature should be documented using doxygen comment blocks.
-* Each non-member function should be added to corresponding class documentation by `@relates` tag
+* Each non-member function should be added to corresponding class documentation by `@relates` tag.
 * Each new API should be assigned to group by `@ingroup` tag. See [groups definitions file](doc/groups_definitions.dox) in the repository for details.
 
 # Submitting Pull Requests
@@ -95,25 +95,29 @@ Author: Random J Developer <random@developer.example.org>
 When developing a persistent container make sure you follow the rules and steps described here.
 
 ## Steps
-1. Create container implementation
-2. Create doc_snippet/example
-3. Add TEST_CONTAINER CMake option for enabling/disabling container's testing.
-4. Add tests (+ if possible, enable libcxx tests in tests/external/libcxx)
 
-## Requirements:
+1. Create container implementation.
+2. Create doc_snippet(s) and example(s).
+3. Add `TEST_<CONTAINER>` CMake option for enabling/disabling container's testing.
+4. Add tests (including, if possible, adding new/enabling existing libcxx tests in `tests/external/libcxx`).
+
+## Requirements
+
 * Constructors should check whether the container is being constructed on pmem and within a transaction.
   If not, appropriate exception should be thrown.
 * If any operation has to or is not allowed to be called inside of a transaction there should be a proper check for that.
-* Operations which modify the entire container (like operator=, clear(), etc.) should be transactional.
-* If any operation inside destructor can fail there should be a separate method like free_data/destroy.
-* Each complex container should have a mechanism for checking layout compatibility. One way is to store size of key and value on pmem and compare it with sizeof(value_type) after pool reopen.
+* Operations which modify the entire container (like `operator=`, `clear()`, etc.) should be transactional.
+* If any operation inside destructor can fail there should be a separate method like `free_data` or `destroy`.
+* Each complex container should have a mechanism for checking layout compatibility.
+  One way is to store size of key and value on pmem and compare it with `sizeof(value_type)` after pool reopen.
 * Padding should always be explicit.
-* If any object from standard library is being stored on pmem its size should be verified by static_assert.
+* If any object from the standard library is being stored on pmem, its size should be verified by `static_assert`.
 * Public methods should be documented using doxygen comments.
 
-## Optional features:
-* for_each_ptr method for defragmentation purposes.
-* Containers with lower memory overhead (like vector) can implement some heuristic for verifying layout (like comparing pmemobj_alloc_usable_size with expected capacity).
+## Optional features
+
+* `for_each_ptr` method for defragmentation purposes.
+* Containers with lower memory overhead (like vector) can implement some heuristic for verifying layout (like comparing `pmemobj_alloc_usable_size` with expected capacity).
 
 # Configuring GitHub fork
 

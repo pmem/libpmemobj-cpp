@@ -27,6 +27,12 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2021, Intel Corporation */
 
+/**
+ * @file
+ * Lock-free multi-producer single-consumer (MPSC) ring buffer.
+ * Based on: https://github.com/rmind/ringbuf
+ */
+
 #ifndef RINGBUF_HPP
 #define RINGBUF_HPP
 

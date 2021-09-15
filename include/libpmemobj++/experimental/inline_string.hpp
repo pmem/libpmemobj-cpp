@@ -81,15 +81,18 @@ protected:
 };
 
 /**
- * This class serves similar purpose to pmem::obj::string, but
- * keeps the data within the same allocation as inline_string itself.
+ * Pmem/DRAM variation of pmem::obj::string, where data is kept right next
+ * to the inline_string structure.
  *
- * Unlike other containers, it can be used on pmem and dram. Modifiers (like
- * assign()) can only be called if inline string is kept on pmem).
+ * @note Unlike other containers, it can be used on pmem and dram. Modifiers
+ * (like assign()) can only be called if inline string is kept on pmem, though.
  *
- * The data is always kept right after the inline_string structure.
- * It means that creating an object of inline_string must be done
- * as follows:
+ * pmem::obj::experimental::basic_dram_inline_string serves similar purpose to
+ * pmem::obj::string, but keeps the data within the same allocation
+ * as inline_string itself. It means, the data is always kept right
+ * after the inline_string structure.
+ *
+ * Creating an object of inline_string must be hence done as follows:
  * 1. Allocate memory of sizeof(inline_string) + size of the characters string +
  * sizeof('\0')
  * 2. Use emplace new() to create inline_string
@@ -136,14 +139,17 @@ public:
 };
 
 /**
- * This class serves similar purpose to pmem::obj::string, but
- * keeps the data within the same allocation as inline_string itself.
+ * Pmem-only variation of pmem::obj::string, where data is kept right next
+ * to the inline_string structure.
  *
- * It can be kept only on pmem.
+ * @note It can be kept only on pmem.
  *
- * The data is always kept right after the inline_string structure.
- * It means that creating an object of inline_string must be done
- * as follows:
+ * pmem::obj::experimental::basic_inline_string serves similar purpose to
+ * pmem::obj::string, but keeps the data within the same allocation
+ * as inline_string itself. It means, the data is always kept right
+ * after the inline_string structure.
+ *
+ * Creating an object of inline_string must be hence done as follows:
  * 1. Allocate memory of sizeof(inline_string) + size of the characters string +
  * sizeof('\0')
  * 2. Use emplace new() to create inline_string

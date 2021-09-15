@@ -37,14 +37,15 @@ namespace experimental
  * queue.
  *
  * In case of crash or shutdown, reading and writing may be continued
- * by new process, from the last position without loss of any, already produced
- * data.
+ * by a new process, from the last position, without losing any
+ * already produced data.
  *
  * @note try_consume_batch() MUST be called after creation of mpsc_queue object
- * if pmem_log_type objcect was already used by instance of mpsc_queue - e.g. in
- * previous run of application. If try_consume_batch() is not called, produce
- * may fail, even if the queue is empty.
+ * if pmem_log_type object was already used by any instance of mpsc_queue - e.g.
+ * in previous run of the application. If try_consume_batch() is not called,
+ * produce may fail, even if the queue is empty.
  *
+ * Example:
  * @snippet mpsc_queue/mpsc_queue.cpp mpsc_queue_single_threaded_example
  * @ingroup experimental_containers
  */
@@ -115,7 +116,7 @@ public:
 	/**
 	 * Type representing the range of the mpsc_queue elements. May be used
 	 * in the range-based loops over accessed elements.
-	 * */
+	 */
 	class batch_type {
 	public:
 		batch_type(iterator begin, iterator end);
@@ -134,7 +135,7 @@ public:
 	 * have to use its own worker object. Workers might be added
 	 * concurrently to the mpsc_queue.
 	 *
-	 * @note  All workers have to be destroyed before destruction of
+	 * @note All workers have to be destroyed before destruction of
 	 * the mpsc_queue
 	 *
 	 * @see mpsc_queue:try_produce_batch()
@@ -378,7 +379,7 @@ mpsc_queue::register_worker()
 
 /**
  * Evaluates callback function f() for the data, which is ready to be
- * consumed. try_consume_batch() accesses data, and evaluates callback inside a
+ * consumed. try_consume_batch() accesses data and evaluates callback inside a
  * transaction. If an exception is thrown within callback, it gets
  * propagated to the caller and causes a transaction abort. In such case, next
  * try_consume_batch() call would consume the same data.
@@ -388,8 +389,8 @@ mpsc_queue::register_worker()
  * @throws transaction_scope_error
  *
  * @note try_consume_batch() MUST be called after creation of mpsc_queue object
- * if pmem_log_type objcect was already used by any instance of mpsc_queue.
- * Otherwise produce might fail even if the queue is empty)
+ * if pmem_log_type object was already used by any instance of mpsc_queue.
+ * Otherwise produce might fail, even if the queue is empty.
  *
  * @see mpsc_queue::worker::try_produce()
  *
@@ -466,6 +467,10 @@ mpsc_queue::try_consume_batch(Function &&f)
 	return consumed;
 }
 
+/**
+ * Default constructor of worker object.
+ * It's registered as a worker for passed mpsc_queue @param q .
+ */
 inline mpsc_queue::worker::worker(mpsc_queue *q)
 {
 	queue = q;
@@ -484,11 +489,17 @@ inline mpsc_queue::worker::worker(mpsc_queue *q)
 	w = ringbuf_register(queue->ring_buffer.get(), id);
 }
 
+/**
+ * Move constructor, from @param other worker.
+ */
 inline mpsc_queue::worker::worker(mpsc_queue::worker &&other)
 {
 	*this = std::move(other);
 }
 
+/**
+ * Move assignment operator, from @param other worker.
+ */
 inline mpsc_queue::worker &
 mpsc_queue::worker::operator=(worker &&other)
 {
@@ -503,6 +514,10 @@ mpsc_queue::worker::operator=(worker &&other)
 	return *this;
 }
 
+/**
+ * Default destructor of worker object.
+ * It unregisters the worker (in ringbuf and in queue's manager).
+ */
 inline mpsc_queue::worker::~worker()
 {
 	if (w) {
@@ -642,6 +657,12 @@ mpsc_queue::worker::store_to_log(pmem::obj::string_view data, char *log_data)
 		       pmem::detail::CACHELINE_SIZE, PMEMOBJ_F_MEM_NONTEMPORAL);
 }
 
+/**
+ * Constructs batch_type object.
+ *
+ * Represents the range (from @param begin_ to @param end_) of the
+ * mpsc_queue elements.
+ */
 inline mpsc_queue::batch_type::batch_type(iterator begin_, iterator end_)
     : begin_(begin_), end_(end_)
 {

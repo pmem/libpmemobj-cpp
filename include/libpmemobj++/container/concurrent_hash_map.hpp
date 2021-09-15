@@ -222,7 +222,7 @@ public:
 		return false;
 	}
 };
-}
+} /* namespace concurrent_hash_map_internal */
 
 template <typename Key, typename T, typename Hash = std::hash<Key>,
 	  typename KeyEqual = std::equal_to<Key>,
@@ -1375,7 +1375,7 @@ public:
 }; /* End of class hash_map_base */
 
 /**
- * Meets requirements of a forward iterator for STL
+ * Meets requirements of a forward iterator for STL.
  * Value is either the T or const T type of the container.
  * @ingroup containers
  */
@@ -1572,7 +1572,9 @@ operator!=(const hash_map_iterator<Container, M> &i,
 /** @endcond */
 
 /**
- * Persistent memory aware implementation of Intel TBB concurrent_hash_map.
+ * Persistent memory aware implementation of Intel TBB
+ * [concurrent_hash_map](https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_hash_map_cls.html)
+ *
  * The implementation is based on a concurrent hash table algorithm
  * (https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf) where elements
  * are assigned to buckets based on a hash code calculated from a key.
@@ -1580,6 +1582,9 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * employs resizing and on-demand per-bucket rehashing. The hash table consists
  * of an array of buckets, and each bucket consists of a list of nodes and a
  * read-write lock to control concurrent access by multiple threads.
+ *
+ * There's no STL counterpart for this container (only the TBB's
+ * implementation).
  *
  * Each time, the pool with concurrent_hash_map is being opened, the
  * concurrent_hash_map requires runtime_initialize() to be called (in order to
@@ -1609,10 +1614,9 @@ operator!=(const hash_map_iterator<Container, M> &i,
  * improve performance if MutexType supports efficient upgrading and
  * downgrading operations.
  *
- * Testing note:
- * In some case, helgrind and drd might report lock ordering errors for
- * concurrent_hash_map. This might happen when calling find, insert or erase
- * while already holding an accessor to some element.
+ * @note In some cases, when testing with Valgrind, helgrind and drd might
+ * report lock ordering errors. This might happen when calling find, insert or
+ * erase while already holding an accessor to some element.
  *
  * The typical usage example would be:
  * @snippet concurrent_hash_map/concurrent_hash_map.cpp concurrent_hash_map_ex

@@ -1,8 +1,69 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright 2021, Intel Corporation
 
-/** @defgroup containers  Containers*/
-/** @defgroup experimental_containers Experimental Containers */
+/** @defgroup containers Containers
+  * Custom (but STL-like) containers for persistent memory.
+  *
+  * Persistent containers are implemented-from-scratch with optimized on-media layouts
+  * and algorithms to fully exploit the potential and features of persistent memory
+  * These methods guarantee atomicity, consistency and durability. Besides specific
+  * internal implementation details, libpmemobj-cpp persistent memory containers
+  * have the well-known STL-like interface and they work with STL algorithms.
+  *
+  * There is a separate group/"feature" describing and listing all
+  * experimental containers, see @ref experimental_containers.
+  *
+  * # Rationale for implementing pmem-aware containers
+  *
+  * The C++ standard library containers collection is something that persistent
+  * memory programmers may want to use. Containers manage the lifetime of held
+  * objects through allocation/creation and deallocation/destruction with the use of
+  * allocators. Implementing custom persistent allocator for C++ STL (Standard
+  * Template Library) containers has two main downsides:
+  *
+  * Implementation details:
+  * - STL containers do not use algorithms optimal from persistent memory programming point of view.
+  * - Persistent memory containers should have durability and consistency properties,
+  *   while not every STL method guarantees strong exception safety.
+  * - Persistent memory containers should be designed with an awareness of
+  *   fragmentation limitations.
+  *
+  * Memory layout:
+  * - The STL does not guarantee that the container layout will remain unchanged in new library versions.
+  *
+  * Due to these obstacles, the libpmemobj-cpp contains the set of custom,
+  * implemented-from-scratch containers with optimized on-media layouts and
+  * algorithms to fully exploit the potential and features of persistent memory.
+  * These methods guarantee atomicity, consistency and durability. Besides specific
+  * internal implementation details, libpmemobj-cpp persistent memory containers
+  * have the well-known STL-like interface and they work with STL algorithms.
+  *
+  * # Additional resources
+  * - [Blog post on pmem.io about libpmemobj-cpp persistent containers](https://pmem.io/2018/11/20/cpp-persistent-containers.html)
+  * - [A blog post about array container](https://pmem.io/2018/11/02/cpp-array.html)
+  * - [Very first description of (then yet experimental) vector container](https://pmem.io/2019/02/20/cpp-vector.html)
+  *
+  * For curious readers - back then in 2017 - there was an approach to re-use and modify the
+  * STL containers to be pmem-aware. Story of implementing this experiment can be found in
+  * [the blog post on pmem.io](https://pmem.io/2017/07/10/cpp-containers.html).
+  * The repo with that code is now dead, but left for the reference and historical perspective.
+  */
+
+/** @defgroup experimental_containers Experimental Containers
+  * PMem containers still under development and/or in testing.
+  *
+  * It's very important to note:
+  * @note **Experimental API may change (with no backward compatibility)
+  * and it should not be used in a production environment**
+  *
+  * A container is considered experimental because:
+  * - it may not be a 100% functionally ready,
+  * - tests are not finished and there might be some gaps/corner cases to be discovered and fixed,
+  * - we may still tweak the API (if we find it's not well defined),
+  * - its layout may change.
+  *
+  * For general containers' description please see @ref containers.
+  */
 
 /** @defgroup transactions Transactions
   * This section introduces transaction feature in libpmemobj-cpp.

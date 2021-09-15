@@ -51,13 +51,7 @@ namespace detail
 {
 
 /**
- * Epoch-based reclamation (EBR). Reference:
- *
- *	K. Fraser, Practical lock-freedom,
- *	Technical Report UCAM-CL-TR-579, February 2004
- *	https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-579.pdf
- *
- * Summary:
+ * Epoch-based reclamation (EBR).
  *
  * Any workers (threads or processes) actively referencing (accessing)
  * the globally visible objects must do that in the critical path covered
@@ -66,7 +60,13 @@ namespace detail
  * each epoch). Objects in the current global epoch can be staged for
  * reclamation (garbage collection). Then, the objects in the target epoch can
  * be reclaimed after two successful increments of the global epoch. Only three
- * epochs are needed (e, e-1 and e-2), therefore we use clock arithmetics.
+ * epochs are needed (e, e-1 and e-2), therefore we use clock arithmetic.
+ *
+ * Reference:
+ *
+ *	K. Fraser, Practical lock-freedom,
+ *	Technical Report UCAM-CL-TR-579, February 2004
+ *	https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-579.pdf
  */
 class ebr {
 	using atomic = std::atomic<size_t>;

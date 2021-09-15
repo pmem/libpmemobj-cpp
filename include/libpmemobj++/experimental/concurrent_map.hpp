@@ -21,7 +21,8 @@ namespace experimental
 {
 
 /**
- * Persistent memory aware implementation of Intel TBB concurrent_map.
+ * Persistent memory aware implementation of Intel TBB concurrent_map with
+ * API partially compatible to std::map.
  *
  * A sorted associative container that contains key-value pairs with unique
  * keys. Keys are sorted by using the comparison function Compare. Search,

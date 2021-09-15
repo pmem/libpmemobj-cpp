@@ -105,39 +105,17 @@ Be aware that the old behavior can lead to segfaults in some cases
 
 # Persistent containers
 
-The C++ standard library containers collection is something that persistent
-memory programmers may want to use. Containers manage the lifetime of held
-objects through allocation/creation and deallocation/destruction with the use of
-allocators. Implementing custom persistent allocator for C++ STL (Standard
-Template Library) containers has two main downsides:
+Persistent containers are implemented-from-scratch with optimized on-media layouts
+and algorithms to fully exploit the potential and features of persistent memory.
+Methods implemented within containers guarantee atomicity, consistency and durability.
+Besides specific internal implementation details, libpmemobj-cpp persistent memory containers
+have the well-known STL-like interfaces and they work with STL algorithms.
 
-Implementation details:
- - STL containers do not use algorithms optimal from persistent memory programming point of view.
- - Persistent memory containers should have durability and consistency properties,
-    while not every STL method guarantees strong exception safety.
- - Persistent memory containers should be designed with an awareness of
-    fragmentation limitations.
+For more information and a complete list of available containers
+(including experimental containers and specializations) see @ref containers.
 
-Memory layout:
- - The STL does not guarantee that the container layout will remain unchanged in new library versions.
-
-Due to these obstacles, the libpmemobj-cpp contains the set of custom,
-implemented-from-scratch containers with optimized on-media layouts and
-algorithms to fully exploit the potential and features of persistent memory.
-These methods guarantee atomicity, consistency and durability. Besides specific
-internal implementation details, libpmemobj-cpp persistent memory containers
-have the well-known STL-like interface and they work with STL algorithms.
-
-## Available containers
-
- * array with STL-like interface - [pmem::obj::array](@ref pmem::obj::array)
- * string with STL-like interface - [pmem::obj::string](@ref pmem::obj::basic_string)
- * vector with STL-like interface - [pmem::obj::vector](@ref pmem::obj::vector)
- * segment_vector with std::vector-like interface (no STL counterpart) -
-    [pmem::obj::segment_vector](@ref pmem::obj::segment_vector)
- * concurrent_hash_map (no STL counterpart) -
-    [pmem::obj::concurrent_hash_map](@ref pmem::obj::concurrent_hash_map)
- * radix_tree (partially compatible with std::map) -
-    [pmem::obj::experimental::radix_tree](@ref pmem::obj::experimental::radix_tree)
- * concurrent_map (partially compatible with std::map) -
-    [pmem::obj::experimental::concurrent_map](@ref pmem::obj::experimental::concurrent_map)
+<!--
+If you're reading this in a markdown readme file you can found
+Containers Feature description in our Doxygen documentation online:
+https://pmem.io/libpmemobj-cpp/master/doxygen/group__containers.html
+-->

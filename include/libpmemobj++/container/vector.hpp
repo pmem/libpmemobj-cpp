@@ -34,8 +34,7 @@ namespace obj
 {
 
 /**
- * pmem::obj::vector - persistent container with std::vector compatible
- * interface.
+ * Persistent container with std::vector compatible interface.
  * @ingroup containers
  */
 template <typename T>

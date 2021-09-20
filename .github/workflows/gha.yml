@@ -39,7 +39,7 @@ jobs:
       - name: Get release version
         if: github.event_name == 'release'
         id: get_release_version
-        run: echo ::set-output name=VERSION::$(echo ${{ github.event.release.tag_name }} | grep -E "^[0-9]+.[0-9]+(-rc[0-9]+)?$" | cut -f 1,2 -d . | cut -f 1 -d -)
+        run: echo ::set-output name=VERSION::$(echo ${{ github.event.release.tag_name }} | awk -F '[.-]' '/^[0-9]+.[0-9]+[.0-9]*(-rc[0-9]+)?$/ {print $1 "." $2}')
 
       - name: Set image version and force image action for release
         if: github.event_name == 'release' && steps.get_release_version.outputs.VERSION != ''

@@ -71,6 +71,7 @@ jobs:
 
       - name: Run the build
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
+
   doc:
     name: build and publish docs
     runs-on: ubuntu-latest
@@ -86,6 +87,12 @@ jobs:
       matrix:
         CONFIG: ["TYPE=doc OS=fedora OS_VER=32"]
     steps:
+      - name: Set image version for stable branch
+        # doc update happens only on stable branch (not on PR), so we check only for heads ref
+        if: startsWith(github.ref, 'refs/heads/stable-')
+        run: |
+          echo "IMG_VER=$(echo ${GITHUB_REF#refs/heads/} | cut -d - -f 2)" >> $GITHUB_ENV
+
       - name: Clone the git repo
         uses: actions/checkout@v2
         with:

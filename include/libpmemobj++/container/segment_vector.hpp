@@ -484,7 +484,8 @@ using exponential_size_vector_policy =
 							 SegmentType>;
 
 /**
- * A persistent version of segment vector implementation.
+ * Persistent version of segment vector with std::vector compatible
+ * interface.
  *
  * Segment table is a data type with a vector-like interface. Differences
  * are: it does not do reallocations and iterators are not invalidated

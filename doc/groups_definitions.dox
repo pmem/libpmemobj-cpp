@@ -71,23 +71,37 @@
   */
 
 /** @defgroup transactions Transactions
-  * This section introduces transaction feature in libpmemobj-cpp.
+  * Transactional approach to store data on pmem.
   *
-  * ## General info about transactions
+  * # General info about transactions
   *
-  * The heart of the libpmemobj are transactions, and they are designed to be developer-friendly.
+  * The heart of the libpmemobj are transactions. A transaction is defined as series of operations on
+  * **persistent memory objects** that either all occur, or nothing occurs. In particular, if the execution
+  * of a transaction is interrupted by a power failure or a system crash, it is guaranteed that after
+  * system restart, all the changes made as a part of the uncompleted transaction will be rolled back,
+  * restoring the consistent state of the memory pool from the moment when the transaction was started.
+  *
+  * @note Any operations not using libpmemobj-cpp API (like `int x = 5` or `malloc()`) used within
+  * transaction will not be a part ot the transaction and won't be rolled back on failure! To properly
+  * store variables on pmem use @ref primitives , to allocate data on pmem see @ref allocation functions.
+  *
+  * In C++ bindings (*this library*) transactions were designed (in comparison to C API)
+  * to be as developer-friendly as possible. Even though libpmemobj++ are the bindings you should not
+  * mix these two APIs - using libpmemobj (C API) in C++ application will not work!
+  *
   * Let's take a look at the following snippet:
   *
   * @snippet transaction/transaction.cpp general_tx_example
   *
-  * Code snippet above is an example how automatic transaction can look like.
+  * Code above is an example how automatic transaction can look like.
   * After object creation there are a few statements executed within a transaction.
-  * Transaction will be committed during *tx* object's destruction at the end of scope.
+  * Transaction will be committed during *tx* object's destruction at the end of the scope.
   *
   * It's worth noticing that @ref pmem::obj::flat_transaction is recommended to use over @ref pmem::obj::basic_transaction.
   * An extra explanation is provided inline an example in @ref pmem::obj::flat_transaction description.
   *
   * Mentioned above transactions are handled through two internal classes:
+  *
   * - **manual** transactions has to be committed explicitly, otherwise it will abort.
   * All operations between creating and destroying the transaction
   * object are treated as performed in a transaction block and
@@ -97,6 +111,7 @@
   * they are already unlocked.
   * The best way to use manual transactions is by
   * @ref pmem::obj::transaction::run, which is used in example above.
+  *
   * - **automatic** transactions are only available in C++17. All operations
   * between creating and destroying the transaction object are treated as
   * performed in a transaction block and can be rolled back.
@@ -109,7 +124,7 @@
   * If you want to read more and see example usages of both, you have to see
   * flat or basic transaction documentation, because each implementation may differ.
   *
-  * ## Lifecycle and stages:
+  * # Lifecycle and stages:
   *
   * When you are using transaction API a transaction can be in one of the following states:
   * - *TX_STAGE_NONE* - no open transaction in this thread
@@ -124,13 +139,12 @@
   *
   * ![lifecycle](https://pmem.io/assets/lifecycle.png "Transaction lifecycle")
   *
-  * To be more familiar with functions used in diagram read:
-  * [pmemobj_tx_begin manpage](https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3.html),
-  * this is a C API manpage for [libpmemobj](https://pmem.io/pmdk/libpmemobj/).
+  * To be more familiar with functions used in diagram read e.g. **pmemobj_tx_begin**(3) manpage
+  * (C API for [libpmemobj](https://pmem.io/pmdk/libpmemobj/), link below in *Additional resources*).
   *
   * If you need to read general information about transaction move to the *Additional resources* section.
   *
-  * ## Example of flat_transaction
+  * # Example of flat_transaction
   * For comparison with the previous snippet, here is a code snippet of
   * @ref pmem::obj::flat_transaction which is listed below with basic explanation inline.
   * @snippet transaction/transaction.cpp tx_nested_struct_example
@@ -139,7 +153,8 @@
   * For more examples please look at the
   * [examples directory](https://github.com/pmem/libpmemobj-cpp/tree/master/examples) in libpmemobj-cpp repository.
   *
-  * ## Additional resources
+  * # Additional resources
+  * - [pmemobj_tx_begin(3) manpage with transaction description (C API)](https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3)
   * - [blog post about transactions](https://pmem.io/2016/05/25/cpp-07.html)
   * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
   */

@@ -44,7 +44,7 @@ class persistent_ptr;
  * example would be:
  * @snippet pool/pool.cpp pool_base_example
  *
- * The exmple of using pool with RAII idiom:
+ * The example of using pool with RAII idiom:
  * @snippet pool/pool_as_class_member.cpp  pool_class_member_example
  * @ingroup primitives
  */

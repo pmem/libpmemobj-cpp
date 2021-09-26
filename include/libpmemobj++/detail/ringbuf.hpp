@@ -27,6 +27,12 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /* Copyright 2021, Intel Corporation */
 
+/**
+ * @file
+ * Lock-free multi-producer single-consumer (MPSC) ring buffer.
+ * Based on: https://github.com/rmind/ringbuf
+ */
+
 #ifndef RINGBUF_HPP
 #define RINGBUF_HPP
 
@@ -79,14 +85,8 @@ WRAP_INCR(size_t x)
 typedef uint64_t ringbuf_off_t;
 
 struct ringbuf_worker_t {
-	std::atomic<ringbuf_off_t> seen_off;
-	std::atomic<int> registered;
-
-	ringbuf_worker_t()
-	{
-		seen_off.store(0);
-		registered.store(0);
-	}
+	std::atomic<ringbuf_off_t> seen_off{0};
+	std::atomic<int> registered{0};
 };
 
 struct ringbuf_t {
@@ -98,11 +98,11 @@ struct ringbuf_t {
 	 * WRAP_LOCK_BIT is set in case of wrap-around; in such case,
 	 * the producer can update the 'end' offset.
 	 */
-	std::atomic<ringbuf_off_t> next;
-	std::atomic<ringbuf_off_t> end;
+	std::atomic<ringbuf_off_t> next{0};
+	std::atomic<ringbuf_off_t> end{0};
 
 	/* The following are updated by the consumer. */
-	std::atomic<ringbuf_off_t> written;
+	std::atomic<ringbuf_off_t> written{0};
 	unsigned nworkers;
 	std::unique_ptr<ringbuf_worker_t[]> workers;
 
@@ -120,9 +120,6 @@ struct ringbuf_t {
 		if (length >= RBUF_OFF_MASK)
 			throw std::out_of_range("ringbuf length too big");
 
-		written.store(0);
-		next.store(0);
-		end.store(0);
 		space = length;
 		end = RBUF_OFF_MAX;
 		nworkers = max_workers;

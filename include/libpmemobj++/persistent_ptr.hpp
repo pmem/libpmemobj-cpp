@@ -380,7 +380,7 @@ public:
 		return *this;
 	}
 
-	/*
+	/**
 	 * Bool conversion operator.
 	 */
 	explicit operator bool() const noexcept

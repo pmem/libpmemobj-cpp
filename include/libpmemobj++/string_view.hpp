@@ -296,7 +296,7 @@ basic_string_view<CharT, Traits>::crbegin() const noexcept
 }
 
 /**
- * Returns an iterator to the first character of the view.
+ * Returns a reverse_iterator to the first character of the view.
  * Reverse iterators iterate backwards: increasing
  * them moves them towards the beginning of the string.
  * This character acts as a placeholder, attempting to access it results
@@ -312,7 +312,7 @@ basic_string_view<CharT, Traits>::rend() const noexcept
 }
 
 /**
- * Returns an iterator to the first character of the view.
+ * Returns a reverse_iterator to the first character of the view.
  * Reverse iterators iterate backwards: increasing
  * them moves them towards the beginning of the string.
  * This character acts as a placeholder, attempting to access it results

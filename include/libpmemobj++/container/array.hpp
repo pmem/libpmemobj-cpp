@@ -29,7 +29,7 @@ namespace obj
 {
 
 /**
- * pmem::obj::array - persistent container with std::array compatible interface.
+ * Persistent container with std::array compatible interface.
  *
  * pmem::obj::array can only be stored on pmem. Creating array on
  * stack will result with "pool_error" exception.
@@ -132,7 +132,7 @@ struct array {
 	 * Copy assignment operator - perform assignment from other
 	 * pmem::obj::array.
 	 *
-	 * This function creates a transaction internally.
+	 * This function internally creates a transaction.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.
@@ -163,7 +163,7 @@ struct array {
 	 * Move assignment operator - perform move assignment from other
 	 * pmem::obj::array.
 	 *
-	 * This function creates a transaction internally.
+	 * This function internally creates a transaction.
 	 *
 	 * @throw transaction_error when adding the object to the
 	 *		transaction failed.

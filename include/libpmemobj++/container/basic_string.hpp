@@ -34,12 +34,13 @@ namespace obj
 {
 
 /**
- * pmem::obj::string - persistent container with std::basic_string compatible
+ * Persistent string container with std::basic_string compatible
  * interface.
  *
- * The implementation is still missing some methods.
+ * The implementation is still missing some methods, but it doesn't
+ * impact regular use of this container.
  *
- * Simple example of pmem::obj::string usage
+ * Simple example of pmem::obj::string usage:
  * @snippet string/string.cpp string_example
  * @ingroup containers
  */

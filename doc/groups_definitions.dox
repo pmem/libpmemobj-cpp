@@ -1,9 +1,164 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright 2021, Intel Corporation
 
-/** @defgroup containers  Containers*/
-/** @defgroup experimental_containers Experimental Containers */
-/** @defgroup transactions Transactions*/
+/** @defgroup containers Containers
+  * Custom (but STL-like) containers for persistent memory.
+  *
+  * Persistent containers are implemented-from-scratch with optimized on-media layouts
+  * and algorithms to fully exploit the potential and features of persistent memory.
+  * Besides specific internal implementation details, libpmemobj-cpp persistent memory
+  * containers have (where possible) the well-known STL-like interface and they work
+  * with STL algorithms. Containers' methods guarantee atomicity, consistency and
+  * durability. Note that every single modifier method (any one modifying the state of
+  * the container, like resize or push_back) opens transaction internally and guarantees
+  * full exception safety (modifications will be either committed or rolled-back
+  * if an exception was thrown, or crash happened - for more info see @ref transactions).
+  * There is no need for using transaction when calling modifier methods whatsoever.
+  *
+  * There is a separate Feature describing and listing all
+  * experimental containers, see @ref experimental_containers.
+  *
+  * # Rationale for implementing pmem-aware containers
+  *
+  * The C++ standard library containers collection is something that persistent
+  * memory programmers may want to use. Containers manage the lifetime of held
+  * objects through allocation/creation and deallocation/destruction with the use of
+  * allocators. Implementing custom persistent allocator for C++ STL (Standard
+  * Template Library) containers has two main downsides:
+  *
+  * Implementation details:
+  * - STL containers do not use algorithms optimal from persistent memory programming point of view.
+  * - Persistent memory containers should have durability and consistency properties,
+  *   while not every STL method guarantees strong exception safety.
+  * - Persistent memory containers should be designed with an awareness of
+  *   fragmentation limitations.
+  *
+  * Memory layout:
+  * - The STL does not guarantee that the container layout will remain unchanged in new library versions.
+  *
+  * Due to these obstacles, the libpmemobj-cpp contains the set of custom,
+  * implemented-from-scratch containers with optimized on-media layouts and
+  * algorithms to fully exploit the potential and features of persistent memory.
+  * These methods guarantee atomicity, consistency and durability. Besides specific
+  * internal implementation details, libpmemobj-cpp persistent memory containers
+  * have the well-known STL-like interface and they work with STL algorithms.
+  *
+  * # Additional resources
+  * - [Blog post on pmem.io about libpmemobj-cpp persistent containers](https://pmem.io/2018/11/20/cpp-persistent-containers.html)
+  * - [A blog post about array container](https://pmem.io/2018/11/02/cpp-array.html)
+  * - [Very first description of (then yet experimental) vector container](https://pmem.io/2019/02/20/cpp-vector.html)
+  *
+  * For curious readers - back then in 2017 - there was an approach to re-use and modify the
+  * STL containers to be pmem-aware. Story of implementing this experiment can be found in
+  * [the blog post on pmem.io](https://pmem.io/2017/07/10/cpp-containers.html).
+  * The repo with that code is now dead, but left for the reference and historical perspective.
+  */
+
+/** @defgroup experimental_containers Experimental Containers
+  * PMem containers under development and/or in testing.
+  *
+  * It's very important to underline:
+  * @note **Experimental API may change (with no backward compatibility)
+  * and it should not be used in a production environment**
+  *
+  * A container is considered **experimental** because:
+  * - it may not be a 100% functionally ready,
+  * - tests are not finished and there might be some gaps/corner cases to be discovered and fixed,
+  * - we may still tweak the API (if we find it's not well defined),
+  * - its layout may change.
+  *
+  * For general containers' description please see @ref containers.
+  */
+
+/** @defgroup transactions Transactions
+  * Transactional approach to store data on pmem.
+  *
+  * # General info about transactions
+  *
+  * The heart of the libpmemobj are transactions. A transaction is defined as series of operations on
+  * **persistent memory objects** that either all occur, or nothing occurs. In particular, if the execution
+  * of a transaction is interrupted by a power failure or a system crash, it is guaranteed that after
+  * system restart, all the changes made as a part of the uncompleted transaction will be rolled back,
+  * restoring the consistent state of the memory pool from the moment when the transaction was started.
+  *
+  * @note Any operations not using libpmemobj-cpp API (like `int x = 5` or `malloc()`) used within
+  * transaction will not be a part ot the transaction and won't be rolled back on failure! To properly
+  * store variables on pmem use @ref primitives , to allocate data on pmem see @ref allocation functions.
+  *
+  * In C++ bindings (*this library*) transactions were designed (in comparison to C API)
+  * to be as developer-friendly as possible. Even though libpmemobj++ are the bindings you should not
+  * mix these two APIs - using libpmemobj (C API) in C++ application will not work!
+  *
+  * Let's take a look at the following snippet:
+  *
+  * @snippet transaction/transaction.cpp general_tx_example
+  *
+  * Code above is an example how automatic transaction can look like.
+  * After object creation there are a few statements executed within a transaction.
+  * Transaction will be committed during *tx* object's destruction at the end of the scope.
+  *
+  * It's worth noticing that @ref pmem::obj::flat_transaction is recommended to use over @ref pmem::obj::basic_transaction.
+  * An extra explanation is provided inline an example in @ref pmem::obj::flat_transaction description.
+  *
+  * Mentioned above transactions are handled through two internal classes:
+  *
+  * - **manual** transactions has to be committed explicitly, otherwise it will abort.
+  * All operations between creating and destroying the transaction
+  * object are treated as performed in a transaction block and
+  * can be rolled back.
+  * The locks are held for the entire duration of the transaction. They
+  * are released at the end of the scope, so within the `catch` block,
+  * they are already unlocked.
+  * The best way to use manual transactions is by
+  * @ref pmem::obj::transaction::run, which is used in example above.
+  *
+  * - **automatic** transactions are only available in C++17. All operations
+  * between creating and destroying the transaction object are treated as
+  * performed in a transaction block and can be rolled back.
+  * If you have a C++17 compliant compiler, the automatic transaction will
+  * commit and abort automatically depending on the context of object's destruction.
+  * The locks are held for the entire duration of the transaction. They
+  * are released at the end of the scope, so within the `catch` block,
+  * they are already unlocked.
+  *
+  * If you want to read more and see example usages of both, you have to see
+  * flat or basic transaction documentation, because each implementation may differ.
+  *
+  * # Lifecycle and stages:
+  *
+  * When you are using transaction API a transaction can be in one of the following states:
+  * - *TX_STAGE_NONE* - no open transaction in this thread
+  * - *TX_STAGE_WORK* - the transaction in progress
+  * - *TX_STAGE_ONCOMMIT* - the transaction is successfully committed
+  * - *TX_STAGE_FINALLY* - ready for clean up
+  * - *TX_STAGE_ONABORT* - starting the transaction failed or transaction aborted
+  *
+  * Moving from one stage to another is possible under some conditions, but
+  * in libpmemobj-cpp it's transparent for user, so please focus on relationships between stages.
+  * Look at the diagram below:
+  *
+  * ![lifecycle](https://pmem.io/assets/lifecycle.png "Transaction lifecycle")
+  *
+  * To be more familiar with functions used in diagram read e.g. **pmemobj_tx_begin**(3) manpage
+  * (C API for [libpmemobj](https://pmem.io/pmdk/libpmemobj/), link below in *Additional resources*).
+  *
+  * If you need to read general information about transaction move to the *Additional resources* section.
+  *
+  * # Example of flat_transaction
+  * For comparison with the previous snippet, here is a code snippet of
+  * @ref pmem::obj::flat_transaction which is listed below with basic explanation inline.
+  * @snippet transaction/transaction.cpp tx_nested_struct_example
+  * If you read the inline comments you should be able to notice the difference
+  * between @ref pmem::obj::flat_transaction and @ref pmem::obj::basic_transaction.
+  * For more examples please look at the
+  * [examples directory](https://github.com/pmem/libpmemobj-cpp/tree/master/examples) in libpmemobj-cpp repository.
+  *
+  * # Additional resources
+  * - [pmemobj_tx_begin(3) manpage with transaction description (C API)](https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3)
+  * - [blog post about transactions](https://pmem.io/2016/05/25/cpp-07.html)
+  * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
+  */
+
 /** @defgroup allocation Allocation*/
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/

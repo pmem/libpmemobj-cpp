@@ -318,6 +318,9 @@ if(TEST_SELF_RELATIVE_POINTER)
 
 	build_test(self_relative_ptr_atomic_pmem ptr/self_relative_ptr_atomic_pmem.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic_pmem TRACERS none memcheck pmemcheck drd helgrind)
+
+	build_test(atomic_persistent_aware_ptr_pmem ptr/atomic_persistent_aware_ptr_pmem.cpp)
+	add_test_generic(NAME atomic_persistent_aware_ptr_pmem TRACERS none memcheck pmemcheck drd helgrind)
 endif()
 
 add_subdirectory(external)

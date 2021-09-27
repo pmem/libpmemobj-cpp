@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020-2021, Intel Corporation */
+/* Copyright 2021-2022, Intel Corporation */
 
 /**
  * @file
@@ -288,8 +288,8 @@ namespace detail
 {
 
 /**
- * pmem::detail::can_do_snapshot atomic specialization for self_relative_ptr.
- * Not thread safe.
+ * pmem::detail::can_do_snapshot atomic specialization for persistent-aware
+ * self_relative_ptr. Not thread safe.
  *
  * Use in a single-threaded environment only.
  */
@@ -302,7 +302,7 @@ struct can_do_snapshot<
 		sizeof(obj::experimental::atomic_persistent_aware_ptr<
 			T, ReadOptimized>) == sizeof(snapshot_type);
 	static_assert(value,
-		      "std::atomic<self_relative_ptr> should be the same size");
+		      "atomic_persistent_aware_ptr should be the same size");
 };
 
 } /* namespace detail */

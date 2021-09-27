@@ -14,7 +14,7 @@ set -e
 source $(dirname ${0})/prepare-for-build.sh
 
 # params set for this file; if not previously set, the right-hand param is used
-TEST_DIR=${PMEMKV_TEST_DIR:-${DEFAULT_TEST_DIR}}
+TEST_DIR=${LIBPMEMOBJCPP_TEST_DIR:-${DEFAULT_TEST_DIR}}
 CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-ON}
 TESTS_LONG=${TESTS_LONG:-OFF}
 TESTS_TBB=${TESTS_TBB:-ON}

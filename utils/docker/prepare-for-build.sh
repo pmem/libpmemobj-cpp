@@ -12,7 +12,7 @@ set -e
 
 INSTALL_DIR=/tmp/libpmemobj-cpp
 EXAMPLE_TEST_DIR=/tmp/build_example
-TEST_DIR=${PMEMKV_TEST_DIR:-${DEFAULT_TEST_DIR}}
+TEST_DIR=${LIBPMEMOBJCPP_TEST_DIR:-${DEFAULT_TEST_DIR}}
 
 ### Helper functions, used in run-*.sh scripts
 function sudo_password() {

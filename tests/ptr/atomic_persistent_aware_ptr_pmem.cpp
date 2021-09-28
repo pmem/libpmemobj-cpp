@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2021, Intel Corporation */
 
 #include "thread_helpers.hpp"
 #include "unittest.hpp"
@@ -49,7 +49,7 @@ test_ptr_transactional(nvobj::pool<root<ReadOptimized>> &pop)
 			r->ptr = nvobj::make_persistent<int>();
 		});
 	} catch (...) {
-		UT_ASSERT(0);
+		ASSERT_UNREACHABLE;
 	}
 
 	UT_ASSERT(r->ptr.load() != nullptr);
@@ -62,7 +62,7 @@ test_ptr_transactional(nvobj::pool<root<ReadOptimized>> &pop)
 			r->ptr.store(nullptr);
 		});
 	} catch (...) {
-		UT_ASSERT(0);
+		ASSERT_UNREACHABLE;
 	}
 
 	UT_ASSERT(r->ptr.load() == nullptr);
@@ -73,27 +73,24 @@ test_ptr_transactional(nvobj::pool<root<ReadOptimized>> &pop)
 inline const char *const
 BoolToString(bool b)
 {
-	return b ? "_readopt" : "_writeopt";
+	return b ? "_ropt" : "_wopt";
 }
 
 template <typename ReadOptimized>
 static void
-test(int argc, char *argv[])
+test(char *path)
 {
-	if (argc != 2)
-		UT_FATAL("usage: %s file-name", argv[0]);
-
-	char path[100];
-	strcpy(path, argv[1]);
-	strcat(path, BoolToString(ReadOptimized::value));
+	char path_opt[100];
+	strcpy(path_opt, path);
+	strncat(path_opt, BoolToString(ReadOptimized::value), 5);
 
 	nvobj::pool<root<ReadOptimized>> pop;
 
 	try {
 		pop = nvobj::pool<root<ReadOptimized>>::create(
-			path, LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+			path_opt, LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 	} catch (pmem::pool_error &pe) {
-		UT_FATAL("!pool::create: %s %s", pe.what(), path);
+		UT_FATAL("!pool::create: %s %s", pe.what(), path_opt);
 	}
 
 	test_ptr_transactional(pop);
@@ -104,8 +101,9 @@ test(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-	auto ret_writeopt =
-		run_test([&] { test<std::false_type>(argc, argv); });
-	auto ret_readopt = run_test([&] { test<std::true_type>(argc, argv); });
+	if (argc != 2)
+		UT_FATAL("usage: %s file-name", argv[0]);
+	auto ret_writeopt = run_test([&] { test<std::false_type>(argv[1]); });
+	auto ret_readopt = run_test([&] { test<std::true_type>(argv[1]); });
 	return (ret_writeopt && ret_readopt);
 }

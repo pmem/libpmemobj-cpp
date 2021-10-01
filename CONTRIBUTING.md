@@ -5,6 +5,7 @@
 - [Submitting Pull Requests](#submitting-pull-requests)
 - [Implementing persistent containers](#implementing-persistent-containers)
 - [Configuring GitHub fork](#configuring-github-fork)
+- [Debugging](#Debugging)
 
 # Opening New Issues
 
@@ -148,3 +149,17 @@ To enable automatic images pushing to GitHub Container Registry, following varia
   (with only read & write packages permissions), to be generated as described
   [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token)
   for selected account (user defined in above variable).
+
+# Debugging
+
+Test framework supports debugging under gdb.
+
+* For remote debugging set `GDBSERVER` environment variable. Its content will be passed to gdbserver
+application as first positional argument, so it should define how gdbserver will communicate with gdb.
+Example usage with a single test:
+
+```sh
+GDBSERVER=localhost:4444 ctest -R vector_comp_operators_0_none --output-on-failure
+```
+
+* For local debugging in graphical environment using cgdb, set `CGDB` environment variable to `gnome-terminal` or `konsole` accordingly to your setup.

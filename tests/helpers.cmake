@@ -133,7 +133,12 @@ function(execute_common expect_success output_file name)
 
     set(cmd ${TRACE} ${name} ${ARGN})
 
-    if($ENV{CGDB})
+    if(DEFINED ENV{CGDB} AND DEFINED ENV{GDBSERVER})
+        message(FATAL_ERROR "CGDB and GDBSERVER shouldn't be used at the same time."
+                "You should choose one way of debugging and probably refill your coffee.")
+    endif()
+
+    if(DEFINED ENV{CGDB})
         find_program(KONSOLE NAMES konsole)
         find_program(GNOME_TERMINAL NAMES gnome-terminal)
         find_program(CGDB NAMES cgdb)
@@ -151,6 +156,18 @@ function(execute_common expect_success output_file name)
                 set(cmd gnome-terminal --tab --active --wait -- cgdb --args ${cmd})
             endif()
         endif()
+    endif()
+
+    if(DEFINED ENV{GDBSERVER})
+        find_program(GDBSERVER NAMES gdbserver)
+        set(GDBSERVER_SETTINGS $ENV{GDBSERVER})
+        if (NOT GDBSERVER)
+            message(FATAL_ERROR "gdbserver not found.")
+        endif()
+        if(NOT (${TRACER} STREQUAL none))
+            message(FATAL_ERROR "Cannot use gdbserver with ${TRACER}")
+        endif()
+        set(cmd ${GDBSERVER} ${GDBSERVER_SETTINGS} ${cmd})
     endif()
 
     if(${output_file} STREQUAL none)

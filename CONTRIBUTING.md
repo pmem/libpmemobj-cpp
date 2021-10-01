@@ -148,3 +148,16 @@ To enable automatic images pushing to GitHub Container Registry, following varia
   (with only read & write packages permissions), to be generated as described
   [here](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token#creating-a-token)
   for selected account (user defined in above variable).
+
+# Debugging
+
+Test framework supports debugging under gdb.
+
+* For remote debugging set `GDBSERVER` environment variable, which would be passed as argument to gdbserver
+application:
+
+```
+GDBSERVER=localhost:4444 ctest -R vector_comp_operators_0_none --output-on-failure
+```
+
+* For local debugging in graphical environment using cgdb, set `CGDB` environment variable to `gnome-terminal` or `konsole` accordingly to your setup.

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;T</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;ctl_get_detail(PMEMobjpool *pool, <span class="keyword">const</span> std::string &amp;name)</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;ctl_get_detail(PMEMobjpool *pool, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name)</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    T tmp;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
@@ -127,7 +127,7 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;T</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;ctl_set_detail(PMEMobjpool *pool, <span class="keyword">const</span> std::string &amp;name, T arg)</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;ctl_set_detail(PMEMobjpool *pool, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;{</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">int</span> ret = pmemobj_ctl_setU(pool, name.c_str(), &amp;arg);</div>
@@ -143,7 +143,7 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;T</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;ctl_exec_detail(PMEMobjpool *pool, <span class="keyword">const</span> std::string &amp;name, T arg)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;ctl_exec_detail(PMEMobjpool *pool, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">int</span> ret = pmemobj_ctl_execU(pool, name.c_str(), &amp;arg);</div>
@@ -159,7 +159,7 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;T</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;ctl_get_detail(PMEMobjpool *pool, <span class="keyword">const</span> std::wstring &amp;name)</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;ctl_get_detail(PMEMobjpool *pool, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name)</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;{</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    T tmp;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
@@ -173,7 +173,7 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;T</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;ctl_set_detail(PMEMobjpool *pool, <span class="keyword">const</span> std::wstring &amp;name, T arg)</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;ctl_set_detail(PMEMobjpool *pool, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">int</span> ret = pmemobj_ctl_setW(pool, name.c_str(), &amp;arg);</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">if</span> (ret)</div>
@@ -185,7 +185,7 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;T</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;ctl_exec_detail(PMEMobjpool *pool, <span class="keyword">const</span> std::wstring &amp;name, T arg)</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;ctl_exec_detail(PMEMobjpool *pool, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;{</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordtype">int</span> ret = pmemobj_ctl_execW(pool, name.c_str(), &amp;arg);</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">if</span> (ret)</div>
@@ -200,6 +200,8 @@ $(document).ready(function(){initNavTree('ctl_8hpp_source.html',''); initResizab
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;} <span class="comment">/* namespace pmem */</span></div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* LIBPMEMOBJ_CPP_CTL_HPP */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__containers_html_ga0d1bf59e796791b4e701e11d5e364cbc"><div class="ttname"><a href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">pmem::obj::string</a></div><div class="ttdeci">basic_string&lt; char &gt; string</div><div class="ttdoc">The most typical string usage - the char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:24</div></div>
+<div class="ttc" id="agroup__containers_html_gac64a29a801a006e76d058bf9700af95b"><div class="ttname"><a href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">pmem::obj::wstring</a></div><div class="ttdeci">basic_string&lt; wchar_t &gt; wstring</div><div class="ttdoc">The wide char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:30</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="apexceptions_8hpp_html"><div class="ttname"><a href="pexceptions_8hpp.html">pexceptions.hpp</a></div><div class="ttdoc">Custom pmem exceptions.</div></div>
 </div><!-- fragment --></div><!-- contents -->

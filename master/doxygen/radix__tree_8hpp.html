@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -122,7 +122,7 @@ $(document).ready(function(){initNavTree('radix__tree_8hpp.html',''); initResiza
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Radix tree is an associative, ordered container.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent associative, ordered container with API similar and partially compatible with the API of std::map.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;::leaf</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This is the structure which 'holds' key/value pair.  <a href="structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html#details">More...</a><br /></td></tr>
@@ -156,9 +156,7 @@ template&lt;typename Key , typename Value , typename BytesView , bool MtMode&gt;
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of persistent radix tree. </p>
-<p>Based on: <a href="https://github.com/pmem/vmemcache/blob/master/src/critnib.h">https://github.com/pmem/vmemcache/blob/master/src/critnib.h</a></p>
-<p>The implementation is a variation of a PATRICIA trie - the internal nodes do not store the path explicitly, but only a position at which the keys differ. Keys are stored entirely in leaves.</p>
-<p>More info about radix tree: <a href="https://en.wikipedia.org/wiki/Radix_tree">https://en.wikipedia.org/wiki/Radix_tree</a> </p>
+<p>Based on: <a href="https://github.com/pmem/vmemcache/blob/master/src/critnib.h">https://github.com/pmem/vmemcache/blob/master/src/critnib.h</a> More info about radix tree data structure: <a href="https://en.wikipedia.org/wiki/Radix_tree">https://en.wikipedia.org/wiki/Radix_tree</a> </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -109,13 +109,13 @@ $(document).ready(function(){initNavTree('pexceptions_8hpp_source.html',''); ini
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">namespace </span>detail</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">inline</span> std::string</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">inline</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a></div>
 <div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="namespacepmem_1_1detail.html#ab6f0c138fffd276b8a5da225bbf4048f">   32</a></span>&#160;<a class="code" href="namespacepmem_1_1detail.html#ab6f0c138fffd276b8a5da225bbf4048f">errormsg</a>(<span class="keywordtype">void</span>)</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordflow">return</span> std::string(pmemobj_errormsgU());</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(pmemobj_errormsgU());</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#else</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordflow">return</span> std::string(pmemobj_errormsg());</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(pmemobj_errormsg());</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
@@ -126,7 +126,7 @@ $(document).ready(function(){initNavTree('pexceptions_8hpp_source.html',''); ini
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    static_assert(std::is_rvalue_reference&lt;decltype(args)&gt;::value,</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;              <span class="stringliteral">&quot;args should be rvalue reference!&quot;</span>);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">auto</span> msg = std::get&lt;<span class="keyword">sizeof</span>...(I)&gt;(std::move(args)) + std::string(<span class="stringliteral">&quot;: &quot;</span>) +</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">auto</span> msg = std::get&lt;<span class="keyword">sizeof</span>...(I)&gt;(std::move(args)) + <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(<span class="stringliteral">&quot;: &quot;</span>) +</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <a class="code" href="namespacepmem_1_1detail.html#ab6f0c138fffd276b8a5da225bbf4048f">detail::errormsg</a>();</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordflow">return</span> ExcT(std::get&lt;I&gt;(std::move(args))..., std::move(msg));</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
@@ -202,7 +202,7 @@ $(document).ready(function(){initNavTree('pexceptions_8hpp_source.html',''); ini
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keyword">using</span> std::runtime_error::runtime_error;</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
-<div class="line"><a name="l00219"></a><span class="lineno"><a class="line" href="classpmem_1_1defrag__error.html#ae630abb03e4ff8ae7a2fd97600becddf">  219</a></span>&#160;    <a class="code" href="classpmem_1_1defrag__error.html#ae630abb03e4ff8ae7a2fd97600becddf">defrag_error</a>(pobj_defrag_result <a class="code" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7">result</a>, <span class="keyword">const</span> std::string &amp;msg)</div>
+<div class="line"><a name="l00219"></a><span class="lineno"><a class="line" href="classpmem_1_1defrag__error.html#ae630abb03e4ff8ae7a2fd97600becddf">  219</a></span>&#160;    <a class="code" href="classpmem_1_1defrag__error.html#ae630abb03e4ff8ae7a2fd97600becddf">defrag_error</a>(pobj_defrag_result <a class="code" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7">result</a>, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;msg)</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        : std::runtime_error(msg), <a class="code" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7">result</a>(<a class="code" href="classpmem_1_1defrag__error.html#a1a50dcf9b7eec99e293bd3cdc3f876b7">result</a>)</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    {</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    }</div>
@@ -227,6 +227,7 @@ $(document).ready(function(){initNavTree('pexceptions_8hpp_source.html',''); ini
 <div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:153</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:141</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:164</div></div>
+<div class="ttc" id="agroup__containers_html_ga0d1bf59e796791b4e701e11d5e364cbc"><div class="ttname"><a href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">pmem::obj::string</a></div><div class="ttdeci">basic_string&lt; char &gt; string</div><div class="ttdoc">The most typical string usage - the char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:24</div></div>
 <div class="ttc" id="ainteger__sequence_8hpp_html"><div class="ttname"><a href="integer__sequence_8hpp.html">integer_sequence.hpp</a></div><div class="ttdoc">Create c++14 style index sequence.</div></div>
 <div class="ttc" id="anamespacepmem_1_1detail_html_a19517dbf6b62d06c2279dc05c4b42d19"><div class="ttname"><a href="namespacepmem_1_1detail.html#a19517dbf6b62d06c2279dc05c4b42d19">pmem::detail::exception_with_errormsg_helper</a></div><div class="ttdeci">ExcT exception_with_errormsg_helper(index_sequence&lt; I... &gt;, Tuple &amp;&amp;args)</div><div class="ttdoc">Helper for exception_with_errormsg.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:51</div></div>
 <div class="ttc" id="anamespacepmem_1_1detail_html_a5888feacbab544664437549db7e5018a"><div class="ttname"><a href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">pmem::detail::exception_with_errormsg</a></div><div class="ttdeci">ExcT exception_with_errormsg(Args &amp;&amp;... args)</div><div class="ttdoc">Generic error message decorator for pmemobj-based exceptions.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:69</div></div>

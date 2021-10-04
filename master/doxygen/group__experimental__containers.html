@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -89,26 +89,38 @@ $(document).ready(function(){initNavTree('group__experimental__containers.html',
 <div class="title">Experimental Containers</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>PMem containers under development and/or in testing.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html">pmem::obj::experimental::concurrent_map&lt; Key, Value, Comp, Allocator &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of Intel TBB <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_map.">concurrent_map</a>.  <a href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of Intel TBB <a href="https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_map_cls.html">concurrent_map with</a> API partially compatible to std::map.  <a href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">pmem::obj::experimental::basic_dram_inline_string&lt; CharT, Traits &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation as inline_string itself.  <a href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pmem/DRAM variation of <a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc" title="The most typical string usage - the char specialization.">pmem::obj::string</a>, where data is kept right next to the inline_string structure.  <a href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">pmem::obj::experimental::basic_inline_string&lt; CharT, Traits &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation as inline_string itself.  <a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pmem-only variation of <a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc" title="The most typical string usage - the char specialization.">pmem::obj::string</a>, where data is kept right next to the inline_string structure.  <a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html">pmem::obj::experimental::mpsc_queue</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of multi producer single consumer queue.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Radix tree is an associative, ordered container.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent associative, ordered container with API similar and partially compatible with the API of std::map.  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>PMem containers under development and/or in testing. </p>
+<p>It's very important to underline: </p><dl class="section note"><dt>Note</dt><dd><b>Experimental API may change (with no backward compatibility) and it should not be used in a production environment</b></dd></dl>
+<p>A container is considered <b>experimental</b> because:</p><ul>
+<li>it may not be a 100% functionally ready,</li>
+<li>tests are not finished and there might be some gaps/corner cases to be discovered and fixed,</li>
+<li>we may still tweak the API (if we find it's not well defined),</li>
+<li>its layout may change.</li>
+</ul>
+<p>For general containers' description please see <a class="el" href="group__containers.html">Containers</a>. </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

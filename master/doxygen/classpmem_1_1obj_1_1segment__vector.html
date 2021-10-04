@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -93,7 +93,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1segment__vector.ht
 </div><!--header-->
 <div class="contents">
 
-<p>A persistent version of segment vector implementation.  
+<p>Persistent version of segment vector with std::vector compatible interface.  
  <a href="classpmem_1_1obj_1_1segment__vector.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="segment__vector_8hpp_source.html">libpmemobj++/container/segment_vector.hpp</a>&gt;</code></p>
@@ -296,7 +296,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a210708c6c989ed613c8f9696b4c0e43c"><td class="memItemLeft" align="right" valign="top">constexpr size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a210708c6c989ed613c8f9696b4c0e43c">max_size</a> () const noexcept</td></tr>
 <tr class="separator:a210708c6c989ed613c8f9696b4c0e43c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05513b713163031d760155e6b8d4f642"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a05513b713163031d760155e6b8d4f642">reserve</a> (size_type capacity_new)</td></tr>
-<tr class="memdesc:a05513b713163031d760155e6b8d4f642"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the capacity of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> to capacity_new transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#a05513b713163031d760155e6b8d4f642">More...</a><br /></td></tr>
+<tr class="memdesc:a05513b713163031d760155e6b8d4f642"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increases the capacity of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> to capacity_new transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#a05513b713163031d760155e6b8d4f642">More...</a><br /></td></tr>
 <tr class="separator:a05513b713163031d760155e6b8d4f642"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a136120e5690d247804ecabdaf36ffa8c"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a136120e5690d247804ecabdaf36ffa8c">capacity</a> () const noexcept</td></tr>
 <tr class="separator:a136120e5690d247804ecabdaf36ffa8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -304,10 +304,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:acad9be236869b89fdc734635e5eced88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests transactional removal of unused capacity.  <a href="classpmem_1_1obj_1_1segment__vector.html#acad9be236869b89fdc734635e5eced88">More...</a><br /></td></tr>
 <tr class="separator:acad9be236869b89fdc734635e5eced88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33fc50106c73f4c7def2de10a4d70b9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a33fc50106c73f4c7def2de10a4d70b9e">clear</a> ()</td></tr>
-<tr class="memdesc:a33fc50106c73f4c7def2de10a4d70b9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#a33fc50106c73f4c7def2de10a4d70b9e">More...</a><br /></td></tr>
+<tr class="memdesc:a33fc50106c73f4c7def2de10a4d70b9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#a33fc50106c73f4c7def2de10a4d70b9e">More...</a><br /></td></tr>
 <tr class="separator:a33fc50106c73f4c7def2de10a4d70b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98574d45630348a10be67222fc3487b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a98574d45630348a10be67222fc3487b2">free_data</a> ()</td></tr>
-<tr class="memdesc:a98574d45630348a10be67222fc3487b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> and frees all allocated persistent memory for data transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#a98574d45630348a10be67222fc3487b2">More...</a><br /></td></tr>
+<tr class="memdesc:a98574d45630348a10be67222fc3487b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> and frees all allocated persistent memory for data transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#a98574d45630348a10be67222fc3487b2">More...</a><br /></td></tr>
 <tr class="separator:a98574d45630348a10be67222fc3487b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd54d7f0382914d1ced6497811f441cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#acd54d7f0382914d1ced6497811f441cc">insert</a> (<a class="el" href="classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html">const_iterator</a> pos, const T &amp;value)</td></tr>
 <tr class="memdesc:acd54d7f0382914d1ced6497811f441cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts value before pos in the container transactionally.  <a href="classpmem_1_1obj_1_1segment__vector.html#acd54d7f0382914d1ced6497811f441cc">More...</a><br /></td></tr>
@@ -444,7 +444,7 @@ Related Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename T, typename Policy = exponential_size_vector_policy&lt;&gt;&gt;<br />
 class pmem::obj::segment_vector&lt; T, Policy &gt;</h3>
 
-<p>A persistent version of segment vector implementation. </p>
+<p>Persistent version of segment vector with std::vector compatible interface. </p>
 <p>Segment table is a data type with a vector-like interface. Differences are: it does not do reallocations and iterators are not invalidated when adding new elements.</p>
 <dl class="section pre"><dt>Precondition</dt><dd>if SegmentType for policy is specified it must contain such functions as: default constructor, destructor, assign, operator[], free_data, emplace_back, clear, resize, reserve, erase, <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a136120e5690d247804ecabdaf36ffa8c">capacity()</a>, <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a8506fe2d9375b3158806066c99c58a63">size()</a>. They must have signature the same as in vector. Also must support iterators.</dd></dl>
 <p>Policy template represents Segments storing type and managing methods.</p>
@@ -598,7 +598,7 @@ class pmem::obj::segment_vector&lt; T, Policy &gt;</h3>
 <div class="ttc" id="aclasspmem_1_1manual__tx__abort_html"><div class="ttname"><a href="classpmem_1_1manual__tx__abort.html">pmem::manual_tx_abort</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:175</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a1dcc1ec8833d4a9215ce3b6d24f51a79"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool::open</a></div><div class="ttdeci">static pool&lt; T &gt; open(const std::string &amp;path, const std::string &amp;layout)</div><div class="ttdoc">Opens an existing object store memory pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:672</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a></div><div class="ttdoc">pmem::obj::vector - persistent container with std::vector compatible interface.</div><div class="ttdef"><b>Definition:</b> vector.hpp:42</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1vector_html"><div class="ttname"><a href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a></div><div class="ttdoc">Persistent container with std::vector compatible interface.</div><div class="ttdef"><b>Definition:</b> vector.hpp:41</div></div>
 <div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:84</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__error_html"><div class="ttname"><a href="classpmem_1_1transaction__error.html">pmem::transaction_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:106</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:153</div></div>
@@ -824,7 +824,7 @@ template&lt;typename T , typename Policy &gt; </div>
 <p>Constructs the container with the copy of the contents of other.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">other</td><td>reference to the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> to be copied.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">other</td><td>reference to the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> to be copied.</td></tr>
   </table>
   </dd>
 </dl>
@@ -869,7 +869,7 @@ template&lt;typename T , typename Policy &gt; </div>
 <p>Constructs the container with the contents of other using move semantics. After the move, other is guaranteed to be <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a0dfb91c313b6c7f32e499d248b36228e" title="Checks whether the container is empty.">empty()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">other</td><td>rvalue reference to the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> to be moved from.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">other</td><td>rvalue reference to the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> to be moved from.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1396,7 +1396,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns an iterator to the beginning. </p>
-<dl class="section return"><dt>Returns</dt><dd>iterator pointing to the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>iterator pointing to the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1423,7 +1423,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns const iterator to the beginning. </p>
-<dl class="section return"><dt>Returns</dt><dd>const_iterator pointing to the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_iterator pointing to the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1496,7 +1496,7 @@ template&lt;typename T , typename Policy &gt; </div>
 
 <p>Returns const iterator to the beginning. </p>
 <p>In contradiction to <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a5cc964fecbe98f99e9cb949d5e59053a" title="Returns an iterator to the beginning.">begin()</a>, <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#afb09b8e2f0be380778a99173d859ab5b" title="Returns const iterator to the beginning.">cbegin()</a> will return const_iterator not depending on the const-qualification of the object it is called on.</p>
-<dl class="section return"><dt>Returns</dt><dd>const_iterator pointing to the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_iterator pointing to the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1524,7 +1524,7 @@ template&lt;typename T , typename Policy &gt; </div>
 
 <p>Returns a const iterator to the end. </p>
 <p>In contradiction to <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#ab792d2e3506aeaf34a86326514f097a9" title="Returns an iterator to past the end.">end()</a>, <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#ad59833e40dfcf4b317b2d59773206d0e" title="Returns a const iterator to the end.">cend()</a> will return const_iterator not depending on the const-qualification of the object it is called on.</p>
-<dl class="section return"><dt>Returns</dt><dd>const_iterator referring to the past-the-end element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_iterator referring to the past-the-end element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1562,7 +1562,7 @@ template&lt;typename T , typename Policy &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> transactionally. </p>
+<p>Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> transactionally. </p>
 <dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a8506fe2d9375b3158806066c99c58a63">size()</a> == 0</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -1652,7 +1652,7 @@ template&lt;typename T , typename Policy &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>slice from start to start + n.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
+    <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1683,7 +1683,7 @@ template&lt;typename T , typename Policy &gt; </div>
 
 <p>Returns a const reverse iterator to the beginning. </p>
 <p>In contradiction to <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a1f2470337050593000c1c8bdfb807d98" title="Returns a reverse iterator to the beginning.">rbegin()</a>, <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a0e09ee9c8c2f1d3d334e8e9be13e6a7a" title="Returns a const reverse iterator to the beginning.">crbegin()</a> will return const_reverse_iterator not depending on the const-qualification of the object it is called on.</p>
-<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the last element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the last element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1711,7 +1711,7 @@ template&lt;typename T , typename Policy &gt; </div>
 
 <p>Returns a const reverse iterator to the beginning. </p>
 <p>In contradiction to <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#aab0b4e0f74ef7c851b751dc77481dedc" title="Returns a reverse iterator to the end.">rend()</a>, <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a70d737c6c08e62cde1c1f577f115acbe" title="Returns a const reverse iterator to the beginning.">crend()</a> will return const_reverse_iterator not depending on the const-qualification of the object it is called on.</p>
-<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the theoretical element preceding the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the theoretical element preceding the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1856,7 +1856,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns an iterator to past the end. </p>
-<dl class="section return"><dt>Returns</dt><dd>iterator referring to the past-the-end element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>iterator referring to the past-the-end element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1883,7 +1883,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns a const iterator to past the end. </p>
-<dl class="section return"><dt>Returns</dt><dd>const_iterator referring to the past-the-end element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_iterator referring to the past-the-end element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -1992,7 +1992,7 @@ template&lt;typename T , typename Policy &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> and frees all allocated persistent memory for data transactionally. </p>
+<p>Clears the content of a <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> and frees all allocated persistent memory for data transactionally. </p>
 <dl class="section post"><dt>Postcondition</dt><dd><a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a8506fe2d9375b3158806066c99c58a63">size()</a> == 0 </dd>
 <dd>
 <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a136120e5690d247804ecabdaf36ffa8c">capacity()</a> == 0</dd></dl>
@@ -2718,7 +2718,7 @@ template&lt;typename T , typename Policy &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>slice from start to start + n.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
+    <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__error.html" title="Custom transaction error class.">pmem::transaction_error</a></td><td>when snapshotting failed. </td></tr>
   </table>
   </dd>
@@ -2766,7 +2766,7 @@ template&lt;typename T , typename Policy &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>slice from start to start + n.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
+    <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2788,7 +2788,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns a reverse iterator to the beginning. </p>
-<dl class="section return"><dt>Returns</dt><dd>reverse_iterator pointing to the last element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>reverse_iterator pointing to the last element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -2815,7 +2815,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns a const reverse iterator to the beginning. </p>
-<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the last element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the last element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -2834,7 +2834,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns a reverse iterator to the end. </p>
-<dl class="section return"><dt>Returns</dt><dd>reverse_iterator pointing to the theoretical element preceding the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>reverse_iterator pointing to the theoretical element preceding the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -2861,7 +2861,7 @@ template&lt;typename T , typename Policy &gt; </div>
 </div><div class="memdoc">
 
 <p>Returns a const reverse iterator to the end. </p>
-<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the theoretical element preceding the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator pointing to the theoretical element preceding the first element in the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </dd></dl>
 
 </div>
 </div>
@@ -2883,7 +2883,7 @@ template&lt;typename T , typename Policy &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Increases the capacity of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a> to capacity_new transactionally. </p>
+<p>Increases the capacity of the <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a> to capacity_new transactionally. </p>
 <p>If segment where should be capacity_new is greater than the current capacity's segment, new segments allocated, otherwise the method does nothing. Past-the-end iterator invalidated if allocation occurs.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -3983,8 +3983,8 @@ template&lt;typename T , typename Policy &gt; </div>
 <p>Swaps the contents of lhs and rhs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="A persistent version of segment vector implementation.">segment_vector</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">lhs</td><td>first <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs</td><td>second <a class="el" href="classpmem_1_1obj_1_1segment__vector.html" title="Persistent version of segment vector with std::vector compatible interface.">segment_vector</a>. </td></tr>
   </table>
   </dd>
 </dl>

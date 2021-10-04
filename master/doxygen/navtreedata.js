@@ -31,9 +31,7 @@ var NAVTREE =
       [ "C++ standard notice", "index.html#autotoc_md2", null ],
       [ "Compatibility notice", "index.html#autotoc_md3", null ],
       [ "Important classes/functions", "index.html#autotoc_md4", null ],
-      [ "Persistent containers", "index.html#autotoc_md5", [
-        [ "Available containers", "index.html#autotoc_md6", null ]
-      ] ]
+      [ "Persistent containers", "index.html#autotoc_md5", null ]
     ] ],
     [ "Features", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
@@ -76,9 +74,9 @@ var NAVTREEINDEX =
 "classpmem_1_1obj_1_1mutex.html#a4357943ecf5ce2745d517c1fe6f79136",
 "classpmem_1_1obj_1_1segment__vector.html#a08440744ce64d6792270c34a17a7ebcb",
 "classpmem_1_1obj_1_1vector.html#a6d456eb0a79289883dc8d012ec9ae726",
-"life_8hpp.html#a8fb430f51a167d68645a0fbe34cae817",
-"segment__vector_8hpp.html#a89e6aab454db03fee92e3b417ea94bd0",
-"structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html#ac5439db73f655ddc5eae08c334d14c1b"
+"iterator__traits_8hpp.html",
+"ringbuf_8hpp.html#ae0935af9acfb387cd6723fbcbd91beef",
+"structpmem_1_1obj_1_1experimental_1_1radix__tree_1_1leaf.html#a199e62a3cbcf1c5841a93efd06fa59f1"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

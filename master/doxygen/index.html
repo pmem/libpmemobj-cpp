@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -131,27 +131,8 @@ Important classes/functions</h1>
 </ul>
 <h1><a class="anchor" id="autotoc_md5"></a>
 Persistent containers</h1>
-<p>The C++ standard library containers collection is something that persistent memory programmers may want to use. Containers manage the lifetime of held objects through allocation/creation and deallocation/destruction with the use of allocators. Implementing custom persistent allocator for C++ STL (Standard Template Library) containers has two main downsides:</p>
-<p>Implementation details:</p><ul>
-<li>STL containers do not use algorithms optimal from persistent memory programming point of view.</li>
-<li>Persistent memory containers should have durability and consistency properties, while not every STL method guarantees strong exception safety.</li>
-<li>Persistent memory containers should be designed with an awareness of fragmentation limitations.</li>
-</ul>
-<p>Memory layout:</p><ul>
-<li>The STL does not guarantee that the container layout will remain unchanged in new library versions.</li>
-</ul>
-<p>Due to these obstacles, the libpmemobj-cpp contains the set of custom, implemented-from-scratch containers with optimized on-media layouts and algorithms to fully exploit the potential and features of persistent memory. These methods guarantee atomicity, consistency and durability. Besides specific internal implementation details, libpmemobj-cpp persistent memory containers have the well-known STL-like interface and they work with STL algorithms.</p>
-<h2><a class="anchor" id="autotoc_md6"></a>
-Available containers</h2>
-<ul>
-<li>array with STL-like interface - <a class="el" href="structpmem_1_1obj_1_1array.html">pmem::obj::array</a></li>
-<li>string with STL-like interface - <a class="el" href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::string</a></li>
-<li>vector with STL-like interface - <a class="el" href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a></li>
-<li>segment_vector with std::vector-like interface (no STL counterpart) - <a class="el" href="classpmem_1_1obj_1_1segment__vector.html">pmem::obj::segment_vector</a></li>
-<li>concurrent_hash_map (no STL counterpart) - <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a></li>
-<li>radix_tree (partially compatible with std::map) - <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">pmem::obj::experimental::radix_tree</a></li>
-<li>concurrent_map (partially compatible with std::map) - <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html">pmem::obj::experimental::concurrent_map</a> </li>
-</ul>
+<p>Persistent containers are implemented-from-scratch with optimized on-media layouts and algorithms to fully exploit the potential and features of persistent memory. Methods implemented within containers guarantee atomicity, consistency and durability. Besides specific internal implementation details, libpmemobj-cpp persistent memory containers have the well-known STL-like interfaces and they work with STL algorithms.</p>
+<p>For more information and a complete list of available containers (including experimental containers and specializations) see <a class="el" href="group__containers.html">Containers</a>. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->

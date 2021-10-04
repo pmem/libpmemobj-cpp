@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -178,10 +178,10 @@ constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <tr class="memdesc:a2d32034ab17645ccf9a6c739f4e805d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reverse_iterator to the character following the last character of the view (reverse beginning).  <a href="classpmem_1_1obj_1_1basic__string__view.html#a2d32034ab17645ccf9a6c739f4e805d4">More...</a><br /></td></tr>
 <tr class="separator:a2d32034ab17645ccf9a6c739f4e805d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdf9e2f076fade5df53854e6dae1d9f2"><td class="memItemLeft" align="right" valign="top">constexpr const_reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#abdf9e2f076fade5df53854e6dae1d9f2">rend</a> () const noexcept</td></tr>
-<tr class="memdesc:abdf9e2f076fade5df53854e6dae1d9f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator to the first character of the view.  <a href="classpmem_1_1obj_1_1basic__string__view.html#abdf9e2f076fade5df53854e6dae1d9f2">More...</a><br /></td></tr>
+<tr class="memdesc:abdf9e2f076fade5df53854e6dae1d9f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reverse_iterator to the first character of the view.  <a href="classpmem_1_1obj_1_1basic__string__view.html#abdf9e2f076fade5df53854e6dae1d9f2">More...</a><br /></td></tr>
 <tr class="separator:abdf9e2f076fade5df53854e6dae1d9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86423592034d63704492e94972ae621d"><td class="memItemLeft" align="right" valign="top">constexpr const_reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#a86423592034d63704492e94972ae621d">crend</a> () const noexcept</td></tr>
-<tr class="memdesc:a86423592034d63704492e94972ae621d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator to the first character of the view.  <a href="classpmem_1_1obj_1_1basic__string__view.html#a86423592034d63704492e94972ae621d">More...</a><br /></td></tr>
+<tr class="memdesc:a86423592034d63704492e94972ae621d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reverse_iterator to the first character of the view.  <a href="classpmem_1_1obj_1_1basic__string__view.html#a86423592034d63704492e94972ae621d">More...</a><br /></td></tr>
 <tr class="separator:a86423592034d63704492e94972ae621d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5bd29aa877b4c9a3039448d61a14656"><td class="memItemLeft" align="right" valign="top">constexpr const CharT *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#ae5bd29aa877b4c9a3039448d61a14656">data</a> () const noexcept</td></tr>
 <tr class="memdesc:ae5bd29aa877b4c9a3039448d61a14656"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns pointer to data stored in this pmem::obj::string_view.  <a href="classpmem_1_1obj_1_1basic__string__view.html#ae5bd29aa877b4c9a3039448d61a14656">More...</a><br /></td></tr>
@@ -1146,7 +1146,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Returns an iterator to the first character of the view. </p>
+<p>Returns a reverse_iterator to the first character of the view. </p>
 <p>Reverse iterators iterate backwards: increasing them moves them towards the beginning of the string. This character acts as a placeholder, attempting to access it results in undefined behavior.</p>
 <dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator to the first character </dd></dl>
 
@@ -2423,7 +2423,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Returns an iterator to the first character of the view. </p>
+<p>Returns a reverse_iterator to the first character of the view. </p>
 <p>Reverse iterators iterate backwards: increasing them moves them towards the beginning of the string. This character acts as a placeholder, attempting to access it results in undefined behavior.</p>
 <dl class="section return"><dt>Returns</dt><dd>const_reverse_iterator to the first character </dd></dl>
 

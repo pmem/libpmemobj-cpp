@@ -1,4 +1,4 @@
 <map id="libpmemobj++/detail/ebr.hpp" name="libpmemobj++/detail/ebr.hpp">
-<area shape="rect" id="node1" title="C++ EBR API." alt="" coords="27,5,166,47"/>
+<area shape="rect" id="node1" title="C++ Epoch&#45;based reclamation API." alt="" coords="27,5,166,47"/>
 <area shape="rect" id="node2" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="5,95,188,136"/>
 </map>

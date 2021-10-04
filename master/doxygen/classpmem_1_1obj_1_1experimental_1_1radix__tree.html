@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -95,7 +95,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1experimental_1_1ra
 </div><!--header-->
 <div class="contents">
 
-<p>Radix tree is an associative, ordered container.  
+<p>Persistent associative, ordered container with API similar and partially compatible with the API of std::map.  
  <a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="radix__tree_8hpp_source.html">libpmemobj++/experimental/radix_tree.hpp</a>&gt;</code></p>
@@ -425,8 +425,8 @@ template&lt;typename Key , typename Value , typename BytesView , bool MtMode&gt;
 <div class="textblock"><h3>template&lt;typename Key, typename Value, typename BytesView = bytes_view&lt;Key&gt;, bool MtMode = false&gt;<br />
 class pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</h3>
 
-<p>Radix tree is an associative, ordered container. </p>
-<p>Its API is similar to the API of std::map.</p>
+<p>Persistent associative, ordered container with API similar and partially compatible with the API of std::map. </p>
+<p>It is based on <a href="https://github.com/pmem/vmemcache/blob/master/src/critnib.h">https://github.com/pmem/vmemcache/blob/master/src/critnib.h</a> The implementation is a variation of a PATRICIA trie - the internal nodes do not store the path explicitly, but only a position at which the keys differ. Keys are stored entirely in leaves. More info about radix tree: <a href="https://en.wikipedia.org/wiki/Radix_tree">https://en.wikipedia.org/wiki/Radix_tree</a></p>
 <p>Unlike std::map radix tree does not use comparison (std::less or equivalent) to locate elements. Instead, keys are mapped to a sequence of bytes using user-provided BytesView type. The key's bytes uniquely define the position of an element. In some way, it is similar to a hash table (BytesView can be treated as a hash function) but with sorted elements.</p>
 <p>The elements' ordering is defined based on the BytesView mapping. The byte sequences are compared using a function equivalent to std::string::compare.</p>
 <p>BytesView should accept a pointer to the key type in a constructor and provide operator[] (should return a byte at the specified position in the byte representation of value) and size (should return size of value in bytes) method. The declaration should be as following:</p>
@@ -435,18 +435,18 @@ class pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;
 <div class="line"> <span class="keywordtype">char</span> operator[](<span class="keywordtype">size_t</span> pos) <span class="keyword">const</span>; <span class="comment">// Must be const!</span></div>
 <div class="line"> <span class="keywordtype">size_t</span> <a class="code" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a5dc76a8444bd401b32ec64b3e55de57c">size</a>() <span class="keyword">const</span>; <span class="comment">// Must be const!</span></div>
 <div class="line">};</div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1radix__tree_html_a5dc76a8444bd401b32ec64b3e55de57c"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a5dc76a8444bd401b32ec64b3e55de57c">pmem::obj::experimental::radix_tree::size</a></div><div class="ttdeci">uint64_t size() const noexcept</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:963</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1radix__tree_html_a5dc76a8444bd401b32ec64b3e55de57c"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a5dc76a8444bd401b32ec64b3e55de57c">pmem::obj::experimental::radix_tree::size</a></div><div class="ttdeci">uint64_t size() const noexcept</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:965</div></div>
 </div><!-- fragment --><p>By default, implementation for pmem::obj::basic_inline_string&lt;CharT, Traits&gt; and unsigned integral types is provided. Note that integral types are assumed to be in little-endian.</p>
 <p>Iterators and references are stable (are not invalidated by inserts or erases of other elements nor by assigning to the value) for all value types except basic_inline_string&lt;CharT, Traits&gt;.</p>
 <p>In case of basic_inline_string&lt;CharT, Traits&gt;, iterators and references are not invalidated by other inserts or erases, but might be invalidated by assigning new value to the element. Using find(K).assign_val("new_value") may invalidate other iterators and references to the element with key K.</p>
 <p><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a48fb001c8541de8503662b912a08aa52" title="Member swap.">swap()</a> invalidates all references and iterators.</p>
 <p>MtMode enables single-writer multiple-readers concurrency with read uncommitted isolation. In this, mode user HAS TO call runtime_initialize_mt after each application restart and runtime_finalize_mt before destroying radix tree.</p>
 <p>Enabling MtMode has the following effects:</p><ul>
-<li>erase and clear does not free nodes/leaves immediately, instead they are added to a garbage list which can be freed by calling <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac4bd8a7e23e435112ef91e541c4ade89" title="Tries to collect and free some garbage produced by erase, clear, insert_or_assign or assign_val in co...">garbage_collect()</a></li>
-<li>insert_or_assign and iterator.assign_val do not perform an in-place update, instead a new leaf is allocated and the old one is added to the garbage list</li>
-<li>memory-reclamation mechanisms are initialized</li>
+<li>erase and clear does not free nodes/leaves immediately, instead they are added to a garbage list which can be freed by calling <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#ac4bd8a7e23e435112ef91e541c4ade89" title="Tries to collect and free some garbage produced by erase, clear, insert_or_assign or assign_val in co...">garbage_collect()</a>,</li>
+<li>insert_or_assign and iterator.assign_val do not perform an in-place update, instead a new leaf is allocated and the old one is added to the garbage list,</li>
+<li>memory-reclamation mechanisms are initialized.</li>
 </ul>
-<p>By default, concurrency is not enabled (it is not allowed to perform concurrent operations on radix tree).</p>
+<dl class="section note"><dt>Note</dt><dd>By default, concurrency is not enabled (it is not allowed to perform concurrent operations on radix tree).</dd></dl>
 <p>An example of custom BytesView implementation: </p><div class="fragment"><div class="line"><span class="keyword">struct </span>custom_key {</div>
 <div class="line">    <span class="keywordtype">int</span> x;</div>
 <div class="line">    <span class="keywordtype">int</span> y;</div>
@@ -582,7 +582,7 @@ template&lt;typename Key , typename Value , typename BytesView , bool MtMode&gt;
 <p>Constructs the container with the copy of the contents of other.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>reference to the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html" title="Radix tree is an associative, ordered container.">radix_tree</a> to be copied.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>reference to the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html" title="Persistent associative, ordered container with API similar and partially compatible with the API of s...">radix_tree</a> to be copied.</td></tr>
   </table>
   </dd>
 </dl>
@@ -621,7 +621,7 @@ template&lt;typename Key , typename Value , typename BytesView , bool MtMode&gt;
 <p>Constructs the container with the contents of other using move semantics. After the move, other is guaranteed to be <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a710ad84a2a88f32824bbe3892de1bede" title="Checks whether the container is empty.">empty()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>rvalue reference to the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html" title="Radix tree is an associative, ordered container.">radix_tree</a> to be moved from.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>rvalue reference to the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html" title="Persistent associative, ordered container with API similar and partially compatible with the API of s...">radix_tree</a> to be moved from.</td></tr>
   </table>
   </dd>
 </dl>

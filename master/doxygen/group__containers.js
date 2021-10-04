@@ -284,9 +284,9 @@ var group__containers =
       [ "_data", "classpmem_1_1obj_1_1basic__string.html#a8b9cfa79c37dc2e87dcbc18ebc1e86be", null ],
       [ "_data", "classpmem_1_1obj_1_1basic__string.html#aed0fc771f2d5fa9ee93ac6ec1c4cc03f", null ],
       [ "_size", "classpmem_1_1obj_1_1basic__string.html#afd307c12ebb3aa8ee23d60ae59dcf2f9", null ],
-      [ "non_sso", "classpmem_1_1obj_1_1basic__string.html#a2b55f69243fd808443c448ed047e20bc", null ],
+      [ "non_sso", "classpmem_1_1obj_1_1basic__string.html#aa7e4c25ae3a88be53ab3889960730a75", null ],
       [ "npos", "classpmem_1_1obj_1_1basic__string.html#aa9739ff4cc3c853a04e5b16fe6c50a95", null ],
-      [ "sso", "classpmem_1_1obj_1_1basic__string.html#a72199acd8593e5d1bea890f97f4a094d", null ],
+      [ "sso", "classpmem_1_1obj_1_1basic__string.html#a723c89cada2e1c59af52535335a95b3f", null ],
       [ "sso_capacity", "classpmem_1_1obj_1_1basic__string.html#aa971ff002342b63f9b8eedd81b434323", null ]
     ] ],
     [ "concurrent_hash_map", "classpmem_1_1obj_1_1concurrent__hash__map.html", [
@@ -635,5 +635,9 @@ var group__containers =
       [ "operator>=", "classpmem_1_1obj_1_1vector.html#a8316d4382372c117dcab5acb85707087", null ],
       [ "operator>=", "classpmem_1_1obj_1_1vector.html#a6780e7b2aab499e37c0f69dc14edaf02", null ],
       [ "swap", "classpmem_1_1obj_1_1vector.html#ae48540be30f44f0a097fedf3a17f60d9", null ]
-    ] ]
+    ] ],
+    [ "string", "group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc", null ],
+    [ "u16string", "group__containers.html#ga5bfd7d22ec6ca6d8c989a08800da30c9", null ],
+    [ "u32string", "group__containers.html#ga39fee64dd7c580144725686618f899ce", null ],
+    [ "wstring", "group__containers.html#gac64a29a801a006e76d058bf9700af95b", null ]
 ];

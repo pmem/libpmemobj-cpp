@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -132,19 +132,19 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory resident condition variable.  <a href="classpmem_1_1obj_1_1condition__variable.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1array.html">array</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structpmem_1_1obj_1_1array.html" title="pmem::obj::array - persistent container with std::array compatible interface.">pmem::obj::array</a> - persistent container with std::array compatible interface.  <a href="structpmem_1_1obj_1_1array.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent container with std::array compatible interface.  <a href="structpmem_1_1obj_1_1array.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">pmem::obj::string - persistent container with std::basic_string compatible interface.  <a href="classpmem_1_1obj_1_1basic__string.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent string container with std::basic_string compatible interface.  <a href="classpmem_1_1obj_1_1basic__string.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html">concurrent_hash_map</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of Intel TBB <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of Intel TBB <a href="https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_hash_map_cls.html">concurrent_hash_map</a>  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1segment__vector.html">segment_vector</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A persistent version of segment vector implementation.  <a href="classpmem_1_1obj_1_1segment__vector.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent version of segment vector with std::vector compatible interface.  <a href="classpmem_1_1obj_1_1segment__vector.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1vector.html">vector</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1vector.html" title="pmem::obj::vector - persistent container with std::vector compatible interface.">pmem::obj::vector</a> - persistent container with std::vector compatible interface.  <a href="classpmem_1_1obj_1_1vector.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent container with std::vector compatible interface.  <a href="classpmem_1_1obj_1_1vector.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1defrag.html">defrag</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defrag class.  <a href="classpmem_1_1obj_1_1defrag.html#details">More...</a><br /></td></tr>
@@ -206,18 +206,22 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a526e84dce66d8c59cdc9070321b8d0d7"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html#a526e84dce66d8c59cdc9070321b8d0d7">exponential_size_vector_policy</a> = segment_vector_internal::exponential_size_policy&lt; <a class="el" href="classpmem_1_1obj_1_1vector.html">pmem::obj::vector</a>, SegmentType &gt;</td></tr>
 <tr class="memdesc:a526e84dce66d8c59cdc9070321b8d0d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exponential size policy with pmemobj vector as a type of segment vector, so this is a dynamic vector of segments and each segment is of SegmentType.  <a href="namespacepmem_1_1obj.html#a526e84dce66d8c59cdc9070321b8d0d7">More...</a><br /></td></tr>
 <tr class="separator:a526e84dce66d8c59cdc9070321b8d0d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d1bf59e796791b4e701e11d5e364cbc"><td class="memItemLeft" align="right" valign="top"><a id="a0d1bf59e796791b4e701e11d5e364cbc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>string</b> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; char &gt;</td></tr>
-<tr class="separator:a0d1bf59e796791b4e701e11d5e364cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac64a29a801a006e76d058bf9700af95b"><td class="memItemLeft" align="right" valign="top"><a id="ac64a29a801a006e76d058bf9700af95b"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>wstring</b> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; wchar_t &gt;</td></tr>
-<tr class="separator:ac64a29a801a006e76d058bf9700af95b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bfd7d22ec6ca6d8c989a08800da30c9"><td class="memItemLeft" align="right" valign="top"><a id="a5bfd7d22ec6ca6d8c989a08800da30c9"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>u16string</b> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; char16_t &gt;</td></tr>
-<tr class="separator:a5bfd7d22ec6ca6d8c989a08800da30c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39fee64dd7c580144725686618f899ce"><td class="memItemLeft" align="right" valign="top"><a id="a39fee64dd7c580144725686618f899ce"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>u32string</b> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; char32_t &gt;</td></tr>
-<tr class="separator:a39fee64dd7c580144725686618f899ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d1bf59e796791b4e701e11d5e364cbc"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">string</a> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; char &gt;</td></tr>
+<tr class="memdesc:ga0d1bf59e796791b4e701e11d5e364cbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most typical string usage - the char specialization. <br /></td></tr>
+<tr class="separator:ga0d1bf59e796791b4e701e11d5e364cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac64a29a801a006e76d058bf9700af95b"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">wstring</a> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; wchar_t &gt;</td></tr>
+<tr class="memdesc:gac64a29a801a006e76d058bf9700af95b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wide char specialization. <br /></td></tr>
+<tr class="separator:gac64a29a801a006e76d058bf9700af95b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5bfd7d22ec6ca6d8c989a08800da30c9"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__containers.html#ga5bfd7d22ec6ca6d8c989a08800da30c9">u16string</a> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; char16_t &gt;</td></tr>
+<tr class="memdesc:ga5bfd7d22ec6ca6d8c989a08800da30c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The char16 specialization. <br /></td></tr>
+<tr class="separator:ga5bfd7d22ec6ca6d8c989a08800da30c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39fee64dd7c580144725686618f899ce"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__containers.html#ga39fee64dd7c580144725686618f899ce">u32string</a> = <a class="el" href="classpmem_1_1obj_1_1basic__string.html">basic_string</a>&lt; char32_t &gt;</td></tr>
+<tr class="memdesc:ga39fee64dd7c580144725686618f899ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The char32 specialization. <br /></td></tr>
+<tr class="separator:ga39fee64dd7c580144725686618f899ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab829ee02504fda8d2ad3b39dffea4f9b"><td class="memItemLeft" align="right" valign="top"><a id="ab829ee02504fda8d2ad3b39dffea4f9b"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>string_view</b> = <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html">basic_string_view</a>&lt; char &gt;</td></tr>
 <tr class="separator:ab829ee02504fda8d2ad3b39dffea4f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>

@@ -321,6 +321,14 @@ if(TEST_SELF_RELATIVE_POINTER)
 
 	build_test(atomic_persistent_aware_ptr_pmem ptr/atomic_persistent_aware_ptr_pmem.cpp)
 	add_test_generic(NAME atomic_persistent_aware_ptr_pmem TRACERS none memcheck pmemcheck drd helgrind)
+
+	if(PMREORDER_SUPPORTED)
+		build_test(atomic_persistent_aware_ptr_pmreorder ptr/atomic_persistent_aware_ptr_pmreorder.cpp)
+		add_test_generic(NAME atomic_persistent_aware_ptr_pmreorder CASE 0 TRACERS none
+				SCRIPT ptr/pmreorder.cmake)
+		add_test_generic(NAME atomic_persistent_aware_ptr_pmreorder CASE 2 TRACERS none
+				SCRIPT ptr/pmreorder2.cmake)
+	endif()
 endif()
 
 add_subdirectory(external)

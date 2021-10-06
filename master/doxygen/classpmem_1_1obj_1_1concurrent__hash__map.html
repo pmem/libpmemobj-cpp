@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1concurrent__hash__
 </div><!--header-->
 <div class="contents">
 
-<p>Persistent memory aware implementation of Intel TBB <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>.  
+<p>Persistent memory aware implementation of Intel TBB <a href="https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_hash_map_cls.html">concurrent_hash_map</a>  
  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="concurrent__hash__map_8hpp_source.html">libpmemobj++/container/concurrent_hash_map.hpp</a>&gt;</code></p>
@@ -211,10 +211,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>runtime_initialize</b
 <tr class="memdesc:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear hash map content Not thread safe.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a595cebdbdb8c398fc1819810c0c1fb6d">More...</a><br /></td></tr>
 <tr class="separator:a595cebdbdb8c398fc1819810c0c1fb6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bfa5210cdb1478e396abd30079e75db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">free_data</a> ()</td></tr>
-<tr class="memdesc:a5bfa5210cdb1478e396abd30079e75db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">More...</a><br /></td></tr>
+<tr class="memdesc:a5bfa5210cdb1478e396abd30079e75db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a>.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db">More...</a><br /></td></tr>
 <tr class="separator:a5bfa5210cdb1478e396abd30079e75db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52c9f358e07869c1db977f9ef53110e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">~concurrent_hash_map</a> ()</td></tr>
-<tr class="memdesc:a52c9f358e07869c1db977f9ef53110e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">More...</a><br /></td></tr>
+<tr class="memdesc:a52c9f358e07869c1db977f9ef53110e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a> destructor is called.  <a href="classpmem_1_1obj_1_1concurrent__hash__map.html#a52c9f358e07869c1db977f9ef53110e9">More...</a><br /></td></tr>
 <tr class="separator:a52c9f358e07869c1db977f9ef53110e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61f6e9c07c17e495e4f30795b489baae"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a61f6e9c07c17e495e4f30795b489baae">begin</a> ()</td></tr>
 <tr class="separator:a61f6e9c07c17e495e4f30795b489baae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -423,15 +423,16 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>const_accessor</b></
 <div class="textblock"><h3>template&lt;typename Key, typename T, typename Hash, typename KeyEqual, typename MutexType, typename ScopedLockType&gt;<br />
 class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</h3>
 
-<p>Persistent memory aware implementation of Intel TBB <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. </p>
+<p>Persistent memory aware implementation of Intel TBB <a href="https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_hash_map_cls.html">concurrent_hash_map</a> </p>
 <p>The implementation is based on a concurrent hash table algorithm (<a href="https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf">https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf</a>) where elements are assigned to buckets based on a hash code calculated from a key. In addition to concurrent find, insert, and erase operations, the algorithm employs resizing and on-demand per-bucket rehashing. The hash table consists of an array of buckets, and each bucket consists of a list of nodes and a read-write lock to control concurrent access by multiple threads.</p>
-<p>Each time, the pool with <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> is being opened, the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> requires <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#af1ca0393b5537618390728c764544a2e" title="Initialize persistent concurrent hash map after process restart.">runtime_initialize()</a> to be called (in order to recalculate mask and restore the size).</p>
+<p>There's no STL counterpart for this container (only the TBB's implementation).</p>
+<p>Each time, the pool with <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a> is being opened, the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a> requires <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#af1ca0393b5537618390728c764544a2e" title="Initialize persistent concurrent hash map after process restart.">runtime_initialize()</a> to be called (in order to recalculate mask and restore the size).</p>
 <p><a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a442339a16de9b2b28bfb319186a6bca8" title="Find item and acquire a read lock on the item.">find()</a>, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#aa6dbd0a198de4bdd2ee05fd7d78d7b83" title="Insert item (if not already present) and acquire a read lock on the item.">insert()</a>, <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a9ab79cba29a999871cfccf94fd6e203d" title="Remove element with corresponding key.">erase()</a> (and all overloads) are guaranteed to be thread-safe.</p>
 <p>When a thread holds accessor to an element with a certain key, it is not allowed to call find, insert nor erase with that key.</p>
-<p>MutexType defines type of read write lock used in <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. ScopedLockType defines a mutex wrapper that provides RAII-style mechanism for owning a mutex. It should implement following methods and constructors: ScopedLockType() ScopedLockType(rw_mutex_type &amp;m, bool write = true) void acquire(rw_mutex_type &amp;m, bool write) void release() bool try_acquire(rw_mutex_type &amp;m, bool write)</p>
+<p>MutexType defines type of read write lock used in <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a>. ScopedLockType defines a mutex wrapper that provides RAII-style mechanism for owning a mutex. It should implement following methods and constructors: ScopedLockType() ScopedLockType(rw_mutex_type &amp;m, bool write = true) void acquire(rw_mutex_type &amp;m, bool write) void release() bool try_acquire(rw_mutex_type &amp;m, bool write)</p>
 <p>and optionally: bool upgrade_to_writer() bool downgrade_to_reader() bool is_writer (variable)</p>
 <p>Implementing all optional methods and supplying is_writer variable can improve performance if MutexType supports efficient upgrading and downgrading operations.</p>
-<p>Testing note: In some case, helgrind and drd might report lock ordering errors for <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. This might happen when calling find, insert or erase while already holding an accessor to some element.</p>
+<dl class="section note"><dt>Note</dt><dd>In some cases, when testing with Valgrind, helgrind and drd might report lock ordering errors. This might happen when calling find, insert or erase while already holding an accessor to some element.</dd></dl>
 <p>The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="concurrent__hash__map_8hpp.html">libpmemobj++/container/concurrent_hash_map.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div>
@@ -470,7 +471,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">    <span class="keyword">auto</span> path = argv[1];</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">if</span> (argc == 3)</div>
-<div class="line">        remove_hashmap = std::string(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
+<div class="line">        remove_hashmap = <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">try</span> {</div>
 <div class="line">        pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;concurrent_hash_map&quot;</span>);</div>
@@ -633,6 +634,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:153</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__out__of__memory_html"><div class="ttname"><a href="classpmem_1_1transaction__out__of__memory.html">pmem::transaction_out_of_memory</a></div><div class="ttdoc">Custom out of memory error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:141</div></div>
 <div class="ttc" id="aconcurrent__hash__map_8hpp_html"><div class="ttname"><a href="concurrent__hash__map_8hpp.html">concurrent_hash_map.hpp</a></div><div class="ttdoc">A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509....</div></div>
+<div class="ttc" id="agroup__containers_html_ga0d1bf59e796791b4e701e11d5e364cbc"><div class="ttname"><a href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">pmem::obj::string</a></div><div class="ttdeci">basic_string&lt; char &gt; string</div><div class="ttdoc">The most typical string usage - the char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:24</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
 <div class="ttc" id="ap_8hpp_html"><div class="ttname"><a href="p_8hpp.html">p.hpp</a></div><div class="ttdoc">Resides on pmem property template.</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
@@ -684,7 +686,7 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">        <span class="keyword">auto</span> path = argv[1];</div>
 <div class="line"> </div>
 <div class="line">        <span class="keywordflow">if</span> (argc == 3)</div>
-<div class="line">            remove_hashmap = std::string(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
+<div class="line">            remove_hashmap = <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(argv[2]) == <span class="stringliteral">&quot;1&quot;</span>;</div>
 <div class="line"> </div>
 <div class="line">        <span class="keywordflow">try</span> {</div>
 <div class="line">            pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;cmap_string&quot;</span>);</div>
@@ -847,9 +849,9 @@ class pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, Scop
 <div class="line">    }</div>
 <div class="line">    <span class="keywordflow">return</span> retval;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a></div><div class="ttdoc">pmem::obj::string - persistent container with std::basic_string compatible interface.</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:47</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html_ad1038c13c40f765ffa5bc0c5c2e84022"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html#ad1038c13c40f765ffa5bc0c5c2e84022">pmem::obj::basic_string::c_str</a></div><div class="ttdeci">const CharT * c_str() const noexcept</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:3686</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1concurrent__hash__map_html"><div class="ttname"><a href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a></div><div class="ttdoc">Persistent memory aware implementation of Intel TBB concurrent_hash_map.</div><div class="ttdef"><b>Definition:</b> concurrent_hash_map.hpp:1629</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html">pmem::obj::basic_string</a></div><div class="ttdoc">Persistent string container with std::basic_string compatible interface.</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:48</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__string_html_ad1038c13c40f765ffa5bc0c5c2e84022"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string.html#ad1038c13c40f765ffa5bc0c5c2e84022">pmem::obj::basic_string::c_str</a></div><div class="ttdeci">const CharT * c_str() const noexcept</div><div class="ttdef"><b>Definition:</b> basic_string.hpp:3687</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1concurrent__hash__map_html"><div class="ttname"><a href="classpmem_1_1obj_1_1concurrent__hash__map.html">pmem::obj::concurrent_hash_map</a></div><div class="ttdoc">Persistent memory aware implementation of Intel TBB concurrent_hash_map</div><div class="ttdef"><b>Definition:</b> concurrent_hash_map.hpp:1633</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:153</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html_a54af0122ce7be0754305b7b27f4e2fc6"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6">pmem::obj::pool_base::close</a></div><div class="ttdeci">void close()</div><div class="ttdoc">Closes the pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:256</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
@@ -912,7 +914,7 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual , type
 </table>
 </div><div class="memdoc">
 
-<p>free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. </p>
+<p>free_data should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a> destructor is called. </p>
 <p>Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
 <p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Destroys the concurrent_hash_map.">free_data()</a> was called (unless it was called in a transaction and that transaction aborted). </p>
 
@@ -1580,9 +1582,9 @@ template&lt;typename Key , typename T , typename Hash , typename KeyEqual , type
 </table>
 </div><div class="memdoc">
 
-<p>Destroys the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a>. </p>
+<p>Destroys the <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a>. </p>
 <p>Unlike destructor it will throw an exception in case of any failure (e.g. not enough space for a transactional data). If that happens, it might be necessary to free some other data in the pool.</p>
-<p>Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map.">concurrent_hash_map</a> destructor is called. Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
+<p>Should be called before <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_hash_map">concurrent_hash_map</a> destructor is called. Otherwise, program can terminate if an exception occurs while freeing memory inside dtor.</p>
 <p>Hash map can NOT be used after <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#a5bfa5210cdb1478e396abd30079e75db" title="Destroys the concurrent_hash_map.">free_data()</a> was called (unless this was done in a transaction and transaction aborted).</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">

@@ -27,7 +27,7 @@ var dir_9ddd50b04a4100660803dc4388445df9 =
     [ "pair.hpp", "pair_8hpp.html", "pair_8hpp" ],
     [ "persistent_pool_ptr.hpp", "persistent__pool__ptr_8hpp.html", "persistent__pool__ptr_8hpp" ],
     [ "pool_data.hpp", "pool__data_8hpp.html", null ],
-    [ "ringbuf.hpp", "ringbuf_8hpp_source.html", null ],
+    [ "ringbuf.hpp", "ringbuf_8hpp.html", "ringbuf_8hpp" ],
     [ "self_relative_ptr_base_impl.hpp", "self__relative__ptr__base__impl_8hpp.html", [
       [ "self_relative_ptr_base_impl", "classpmem_1_1detail_1_1self__relative__ptr__base__impl.html", "classpmem_1_1detail_1_1self__relative__ptr__base__impl" ],
       [ "self_relative_accessor", "classpmem_1_1detail_1_1self__relative__accessor.html", "classpmem_1_1detail_1_1self__relative__accessor" ]

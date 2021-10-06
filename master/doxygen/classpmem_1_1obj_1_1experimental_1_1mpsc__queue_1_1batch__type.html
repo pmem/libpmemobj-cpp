@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -98,8 +98,8 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1experimental_1_1mp
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a87c0b7897ccb182807bcece9509a1274"><td class="memItemLeft" align="right" valign="top"><a id="a87c0b7897ccb182807bcece9509a1274"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>batch_type</b> (iterator <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#a8d6ed3bec6b7f6cb4d9db9b929f5f042">begin</a>, iterator <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#ad566ebc299b5dce1351e38e6052ecee8">end</a>)</td></tr>
+<tr class="memitem:a87c0b7897ccb182807bcece9509a1274"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#a87c0b7897ccb182807bcece9509a1274">batch_type</a> (iterator <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#a8d6ed3bec6b7f6cb4d9db9b929f5f042">begin</a>, iterator <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#ad566ebc299b5dce1351e38e6052ecee8">end</a>)</td></tr>
+<tr class="memdesc:a87c0b7897ccb182807bcece9509a1274"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html" title="Type representing the range of the mpsc_queue elements.">batch_type</a> object.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#a87c0b7897ccb182807bcece9509a1274">More...</a><br /></td></tr>
 <tr class="separator:a87c0b7897ccb182807bcece9509a1274"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d6ed3bec6b7f6cb4d9db9b929f5f042"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#a8d6ed3bec6b7f6cb4d9db9b929f5f042">begin</a> () const</td></tr>
 <tr class="memdesc:a8d6ed3bec6b7f6cb4d9db9b929f5f042"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator to the beginning of the accessed range of the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html#a8d6ed3bec6b7f6cb4d9db9b929f5f042">More...</a><br /></td></tr>
@@ -111,7 +111,53 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Type representing the range of the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> elements. </p>
 <p>May be used in the range-based loops over accessed elements. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a87c0b7897ccb182807bcece9509a1274"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87c0b7897ccb182807bcece9509a1274">&#9670;&nbsp;</a></span>batch_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">pmem::obj::experimental::mpsc_queue::batch_type::batch_type </td>
+          <td>(</td>
+          <td class="paramtype">iterator&#160;</td>
+          <td class="paramname"><em>begin_</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">iterator&#160;</td>
+          <td class="paramname"><em>end_</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructs <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html" title="Type representing the range of the mpsc_queue elements.">batch_type</a> object. </p>
+<p>Represents the range (from</p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">begin_</td><td>to</td></tr>
+    <tr><td class="paramname">end_)</td><td>of the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> elements. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a8d6ed3bec6b7f6cb4d9db9b929f5f042"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d6ed3bec6b7f6cb4d9db9b929f5f042">&#9670;&nbsp;</a></span>begin()</h2>
 

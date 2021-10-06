@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -124,9 +124,9 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Persistent memory aware implementation of multi producer single consumer queue. </p>
-<p>In case of crash or shutdown, reading and writing may be continued by new process, from the last position without loss of any, already produced data.</p>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> MUST be called after creation of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> object if <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html" title="Type representing persistent data, which may be managed by mpsc_queue.">pmem_log_type</a> objcect was already used by instance of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> - e.g. in previous run of application. If <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> is not called, produce may fail, even if the queue is empty.</dd></dl>
-<div class="fragment"><div class="line"> </div>
+<p>In case of crash or shutdown, reading and writing may be continued by a new process, from the last position, without losing any already produced data.</p>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> MUST be called after creation of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> object if <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html" title="Type representing persistent data, which may be managed by mpsc_queue.">pmem_log_type</a> object was already used by any instance of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> - e.g. in previous run of the application. If <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> is not called, produce may fail, even if the queue is empty.</dd></dl>
+<p>Example: </p><div class="fragment"><div class="line"> </div>
 <div class="line"><span class="keyword">struct </span>root {</div>
 <div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>&lt;</div>
 <div class="line">        <a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html">pmem::obj::experimental::mpsc_queue::pmem_log_type</a>&gt;</div>
@@ -150,14 +150,14 @@ Public Member Functions</h2></td></tr>
 <div class="line">    queue.try_consume_batch(</div>
 <div class="line">        [&amp;](<a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html">pmem::obj::experimental::mpsc_queue::batch_type</a> rd_acc) {</div>
 <div class="line">            <span class="keywordflow">for</span> (<a class="code" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a> str : rd_acc) {</div>
-<div class="line">                std::cout &lt;&lt; std::string(str.data(), str.size())</div>
+<div class="line">                std::cout &lt;&lt; <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(str.data(), str.size())</div>
 <div class="line">                      &lt;&lt; std::endl;</div>
 <div class="line">            }</div>
 <div class="line">        });</div>
 <div class="line">    <span class="comment">/* Produce and consume data. */</span></div>
 <div class="line">    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html">pmem::obj::experimental::mpsc_queue::worker</a> worker =</div>
 <div class="line">        queue.register_worker();</div>
-<div class="line">    <span class="keywordflow">for</span> (std::string &amp;value : values_to_produce) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;value : values_to_produce) {</div>
 <div class="line">        <span class="comment">/* Produce data. */</span></div>
 <div class="line">        worker.<a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">try_produce</a>(value);</div>
 <div class="line">        <span class="comment">/* Consume produced data. */</span></div>
@@ -165,7 +165,7 @@ Public Member Functions</h2></td></tr>
 <div class="line">            [&amp;](<a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html">pmem::obj::experimental::mpsc_queue::batch_type</a></div>
 <div class="line">                    rd_acc) {</div>
 <div class="line">                <span class="keywordflow">for</span> (<a class="code" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a> str : rd_acc) {</div>
-<div class="line">                    std::cout &lt;&lt; std::string(str.data(),</div>
+<div class="line">                    std::cout &lt;&lt; <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(str.data(),</div>
 <div class="line">                                 str.size())</div>
 <div class="line">                          &lt;&lt; std::endl;</div>
 <div class="line">                }</div>
@@ -176,14 +176,15 @@ Public Member Functions</h2></td></tr>
 <div class="line">}</div>
 <div class="line"> </div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__string__view_html"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::basic_string_view</a></div><div class="ttdoc">Our partial std::string_view implementation.</div><div class="ttdef"><b>Definition:</b> string_view.hpp:47</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html">pmem::obj::experimental::mpsc_queue::batch_type</a></div><div class="ttdoc">Type representing the range of the mpsc_queue elements.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:119</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html">pmem::obj::experimental::mpsc_queue::pmem_log_type</a></div><div class="ttdoc">Type representing persistent data, which may be managed by mpsc_queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:181</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html">pmem::obj::experimental::mpsc_queue::worker</a></div><div class="ttdoc">mpsc_queue producer worker class.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:142</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker_html_a2d76535ec5147d267c69a1c0c43dd5b3"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">pmem::obj::experimental::mpsc_queue::worker::try_produce</a></div><div class="ttdeci">bool try_produce(pmem::obj::string_view data, Function &amp;&amp;on_produce=[](pmem::obj::string_view target) {})</div><div class="ttdoc">Copies data from pmem::obj::string_view into the mpsc_queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:529</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html">pmem::obj::experimental::mpsc_queue</a></div><div class="ttdoc">Persistent memory aware implementation of multi producer single consumer queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:51</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html">pmem::obj::experimental::mpsc_queue::batch_type</a></div><div class="ttdoc">Type representing the range of the mpsc_queue elements.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:120</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html">pmem::obj::experimental::mpsc_queue::pmem_log_type</a></div><div class="ttdoc">Type representing persistent data, which may be managed by mpsc_queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:182</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html">pmem::obj::experimental::mpsc_queue::worker</a></div><div class="ttdoc">mpsc_queue producer worker class.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:143</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker_html_a2d76535ec5147d267c69a1c0c43dd5b3"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">pmem::obj::experimental::mpsc_queue::worker::try_produce</a></div><div class="ttdeci">bool try_produce(pmem::obj::string_view data, Function &amp;&amp;on_produce=[](pmem::obj::string_view target) {})</div><div class="ttdoc">Copies data from pmem::obj::string_view into the mpsc_queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:544</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html">pmem::obj::experimental::mpsc_queue</a></div><div class="ttdoc">Persistent memory aware implementation of multi producer single consumer queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:52</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:153</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>
+<div class="ttc" id="agroup__containers_html_ga0d1bf59e796791b4e701e11d5e364cbc"><div class="ttname"><a href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">pmem::obj::string</a></div><div class="ttdeci">basic_string&lt; char &gt; string</div><div class="ttdoc">The most typical string usage - the char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:24</div></div>
 </div><!-- fragment --></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a849a00ab94a7a52a2dc231aca9f88605"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a849a00ab94a7a52a2dc231aca9f88605">&#9670;&nbsp;</a></span>mpsc_queue()</h2>
@@ -281,7 +282,7 @@ template&lt;typename Function &gt; </div>
 </div><div class="memdoc">
 
 <p>Evaluates callback function f() for the data, which is ready to be consumed. </p>
-<p><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> accesses data, and evaluates callback inside a transaction. If an exception is thrown within callback, it gets propagated to the caller and causes a transaction abort. In such case, next <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> call would consume the same data.</p>
+<p><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> accesses data and evaluates callback inside a transaction. If an exception is thrown within callback, it gets propagated to the caller and causes a transaction abort. In such case, next <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> call would consume the same data.</p>
 <dl class="section return"><dt>Returns</dt><dd>true if consumed any data, false otherwise.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -289,12 +290,12 @@ template&lt;typename Function &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section note"><dt>Note</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> MUST be called after creation of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> object if <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html" title="Type representing persistent data, which may be managed by mpsc_queue.">pmem_log_type</a> objcect was already used by any instance of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>. Otherwise produce might fail even if the queue is empty)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html#a10a3c17b9c80978ffa30086306ca0ab2" title="Evaluates callback function f() for the data, which is ready to be consumed.">try_consume_batch()</a> MUST be called after creation of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> object if <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1pmem__log__type.html" title="Type representing persistent data, which may be managed by mpsc_queue.">pmem_log_type</a> object was already used by any instance of <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>. Otherwise produce might fail, even if the queue is empty.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3" title="Copies data from pmem::obj::string_view into the mpsc_queue.">mpsc_queue::worker::try_produce()</a></dd></dl>
 <div class="fragment"><div class="line">    queue.try_consume_batch(</div>
 <div class="line">        [&amp;](<a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1batch__type.html">pmem::obj::experimental::mpsc_queue::batch_type</a> rd_acc) {</div>
 <div class="line">            <span class="keywordflow">for</span> (<a class="code" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a> str : rd_acc) {</div>
-<div class="line">                std::cout &lt;&lt; std::string(str.data(), str.size())</div>
+<div class="line">                std::cout &lt;&lt; <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a>(str.data(), str.size())</div>
 <div class="line">                      &lt;&lt; std::endl;</div>
 <div class="line">            }</div>
 <div class="line">        });</div>

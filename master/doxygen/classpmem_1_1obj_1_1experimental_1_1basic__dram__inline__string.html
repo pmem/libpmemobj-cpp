@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1experimental_1_1ba
 </div><!--header-->
 <div class="contents">
 
-<p>This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation as inline_string itself.  
+<p>Pmem/DRAM variation of <a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc" title="The most typical string usage - the char specialization.">pmem::obj::string</a>, where data is kept right next to the inline_string structure.  
  <a href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="inline__string_8hpp_source.html">libpmemobj++/experimental/inline_string.hpp</a>&gt;</code></p>
@@ -200,9 +200,10 @@ Protected Attributes</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt;<br />
 class pmem::obj::experimental::basic_dram_inline_string&lt; CharT, Traits &gt;</h3>
 
-<p>This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation as inline_string itself. </p>
-<p>Unlike other containers, it can be used on pmem and dram. Modifiers (like assign()) can only be called if inline string is kept on pmem).</p>
-<p>The data is always kept right after the inline_string structure. It means that creating an object of inline_string must be done as follows:</p><ol type="1">
+<p>Pmem/DRAM variation of <a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc" title="The most typical string usage - the char specialization.">pmem::obj::string</a>, where data is kept right next to the inline_string structure. </p>
+<dl class="section note"><dt>Note</dt><dd>Unlike other containers, it can be used on pmem and dram. Modifiers (like assign()) can only be called if inline string is kept on pmem, though.</dd></dl>
+<p><a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html" title="Pmem/DRAM variation of pmem::obj::string, where data is kept right next to the inline_string structur...">pmem::obj::experimental::basic_dram_inline_string</a> serves similar purpose to <a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc" title="The most typical string usage - the char specialization.">pmem::obj::string</a>, but keeps the data within the same allocation as inline_string itself. It means, the data is always kept right after the inline_string structure.</p>
+<p>Creating an object of inline_string must be hence done as follows:</p><ol type="1">
 <li>Allocate memory of sizeof(inline_string) + size of the characters string + sizeof('\0')</li>
 <li>Use emplace new() to create inline_string</li>
 </ol>
@@ -278,7 +279,7 @@ class pmem::obj::experimental::basic_dram_inline_string&lt; CharT, Traits &gt;</
 <div class="line">}</div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1allocator_html"><div class="ttname"><a href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator</a></div><div class="ttdoc">(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK's...</div><div class="ttdef"><b>Definition:</b> allocator.hpp:452</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1basic__inline__string_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">pmem::obj::experimental::basic_inline_string</a></div><div class="ttdoc">This class serves similar purpose to pmem::obj::string, but keeps the data within the same allocation...</div><div class="ttdef"><b>Definition:</b> inline_string.hpp:156</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1basic__inline__string_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">pmem::obj::experimental::basic_inline_string</a></div><div class="ttdoc">Pmem-only variation of pmem::obj::string, where data is kept right next to the inline_string structur...</div><div class="ttdef"><b>Definition:</b> inline_string.hpp:162</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:153</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>

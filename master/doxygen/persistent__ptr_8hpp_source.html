@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -356,10 +356,7 @@ $(document).ready(function(){initNavTree('persistent__ptr_8hpp_source.html','');
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    }</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="comment">/*</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">     * Bool conversion operator.</span></div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">     */</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keyword">explicit</span> <span class="keyword">operator</span> bool() const noexcept</div>
+<div class="line"><a name="l00386"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1persistent__ptr.html#a3c83f8de97e8d3b48133c997ac487a43">  386</a></span>&#160;    <span class="keyword">explicit</span> <span class="keyword">operator</span> bool() const noexcept</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    {</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html#ad45c60e7966d086029c42d151ce969e0">get</a>() != <span class="keyword">nullptr</span>;</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    }</div>
@@ -727,7 +724,7 @@ $(document).ready(function(){initNavTree('persistent__ptr_8hpp_source.html','');
 <div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:84</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>
 <div class="ttc" id="anamespacepmem_1_1detail_html_a1406353d3388f1a1bc26863edff9a125"><div class="ttname"><a href="namespacepmem_1_1detail.html#a1406353d3388f1a1bc26863edff9a125">pmem::detail::conditional_add_to_tx</a></div><div class="ttdeci">void conditional_add_to_tx(const T *that, std::size_t count=1, uint64_t flags=0)</div><div class="ttdoc">Conditionally add 'count' objects to a transaction.</div><div class="ttdef"><b>Definition:</b> common.hpp:176</div></div>
-<div class="ttc" id="anamespacepmem_1_1obj_1_1experimental_html_a11752d9e029972df929edd9ef311a9be"><div class="ttname"><a href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">pmem::obj::experimental::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, const radix_tree&lt; K, V, BV, MtMode &gt; &amp;tree)</div><div class="ttdoc">Prints tree in DOT format.</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:2842</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_1_1experimental_html_a11752d9e029972df929edd9ef311a9be"><div class="ttname"><a href="namespacepmem_1_1obj_1_1experimental.html#a11752d9e029972df929edd9ef311a9be">pmem::obj::experimental::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;os, const radix_tree&lt; K, V, BV, MtMode &gt; &amp;tree)</div><div class="ttdoc">Prints tree in DOT format.</div><div class="ttdef"><b>Definition:</b> radix_tree.hpp:2844</div></div>
 <div class="ttc" id="anamespacepmem_html"><div class="ttname"><a href="namespacepmem.html">pmem</a></div><div class="ttdoc">Persistent memory namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:15</div></div>
 <div class="ttc" id="apersistent__ptr__base_8hpp_html"><div class="ttname"><a href="persistent__ptr__base_8hpp.html">persistent_ptr_base.hpp</a></div><div class="ttdoc">Base class for persistent_ptr.</div></div>
 <div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>

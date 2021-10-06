@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1basic__string.html
 </div><!--header-->
 <div class="contents">
 
-<p>pmem::obj::string - persistent container with std::basic_string compatible interface.  
+<p>Persistent string container with std::basic_string compatible interface.  
  <a href="classpmem_1_1obj_1_1basic__string.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="basic__string_8hpp_source.html">libpmemobj++/container/basic_string.hpp</a>&gt;</code></p>
@@ -800,9 +800,9 @@ template&lt;class CharT , class Traits &gt; </td></tr>
 <div class="textblock"><h3>template&lt;typename CharT, typename Traits = std::char_traits&lt;CharT&gt;&gt;<br />
 class pmem::obj::basic_string&lt; CharT, Traits &gt;</h3>
 
-<p>pmem::obj::string - persistent container with std::basic_string compatible interface. </p>
-<p>The implementation is still missing some methods.</p>
-<p>Simple example of pmem::obj::string usage </p><div class="fragment"><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem.html">pmem</a>;</div>
+<p>Persistent string container with std::basic_string compatible interface. </p>
+<p>The implementation is still missing some methods, but it doesn't impact regular use of this container.</p>
+<p>Simple example of <a class="el" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc" title="The most typical string usage - the char specialization.">pmem::obj::string</a> usage: </p><div class="fragment"><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem.html">pmem</a>;</div>
 <div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">/* example object containing string */</span></div>
@@ -3513,7 +3513,7 @@ template&lt;typename T , typename Enable &gt; </div>
 </div><div class="memdoc">
 
 <p>Participate in overload resolution only if T is convertible to size_type. </p>
-<p>Call <a class="el" href="classpmem_1_1obj_1_1basic__string.html" title="pmem::obj::string - persistent container with std::basic_string compatible interface.">basic_string</a> &amp;erase(size_type index, size_type count = npos) if enabled. </p>
+<p>Call <a class="el" href="classpmem_1_1obj_1_1basic__string.html" title="Persistent string container with std::basic_string compatible interface.">basic_string</a> &amp;erase(size_type index, size_type count = npos) if enabled. </p>
 
 </div>
 </div>
@@ -5144,7 +5144,7 @@ template&lt;typename T , typename Enable &gt; </div>
 </div><div class="memdoc">
 
 <p>Participate in overload resolution only if T is convertible to size_type. </p>
-<p>Call <a class="el" href="classpmem_1_1obj_1_1basic__string.html" title="pmem::obj::string - persistent container with std::basic_string compatible interface.">basic_string</a> &amp;<a class="el" href="classpmem_1_1obj_1_1basic__string.html#a5f4d7d4c90f569ec587f5ab3d39521bb" title="Insert count copies of ch character at index transactionally.">insert(size_type index, size_type count, CharT ch)</a> if enabled. </p>
+<p>Call <a class="el" href="classpmem_1_1obj_1_1basic__string.html" title="Persistent string container with std::basic_string compatible interface.">basic_string</a> &amp;<a class="el" href="classpmem_1_1obj_1_1basic__string.html#a5f4d7d4c90f569ec587f5ab3d39521bb" title="Insert count copies of ch character at index transactionally.">insert(size_type index, size_type count, CharT ch)</a> if enabled. </p>
 
 </div>
 </div>

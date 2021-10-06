@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git37.g6977a496</span>
+   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -156,7 +156,7 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">static</span> <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a></div>
-<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">  140</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">create</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;layout,</div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">  140</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">create</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;layout,</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;           std::size_t size = PMEMOBJ_MIN_POOL, mode_t mode = <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a78d046f5b91b553db94c01d9e3a09a4e">DEFAULT_MODE</a>)</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    {</div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
@@ -174,7 +174,7 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    }</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">  168</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">check</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;layout) noexcept</div>
+<div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">  168</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">check</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;layout) noexcept</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    {</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="keywordflow">return</span> pmemobj_checkU(path.c_str(), layout.c_str());</div>
@@ -185,7 +185,7 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keyword">static</span> <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a></div>
-<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#a96e603b73ad0421e6cb53147c582acf4">  192</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a96e603b73ad0421e6cb53147c582acf4">open</a>(<span class="keyword">const</span> std::wstring &amp;path, <span class="keyword">const</span> std::wstring &amp;layout)</div>
+<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#a96e603b73ad0421e6cb53147c582acf4">  192</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a96e603b73ad0421e6cb53147c582acf4">open</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;layout)</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    {</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        pmemobjpool *pop = pmemobj_openW(path.c_str(), layout.c_str());</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        check_pool(pop, <span class="stringliteral">&quot;opening&quot;</span>);</div>
@@ -196,7 +196,7 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    }</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="keyword">static</span> <a class="code" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a></div>
-<div class="line"><a name="l00220"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#ac374be421a551b71579b1143d4ffecbb">  220</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#ac374be421a551b71579b1143d4ffecbb">create</a>(<span class="keyword">const</span> std::wstring &amp;path, <span class="keyword">const</span> std::wstring &amp;layout,</div>
+<div class="line"><a name="l00220"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#ac374be421a551b71579b1143d4ffecbb">  220</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#ac374be421a551b71579b1143d4ffecbb">create</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;layout,</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;           std::size_t size = PMEMOBJ_MIN_POOL, mode_t mode = <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a78d046f5b91b553db94c01d9e3a09a4e">DEFAULT_MODE</a>)</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    {</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        pmemobjpool *pop = pmemobj_createW(path.c_str(), layout.c_str(),</div>
@@ -209,7 +209,7 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    }</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#a4018796eddf100bb4316fe0d2168646a">  244</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a4018796eddf100bb4316fe0d2168646a">check</a>(<span class="keyword">const</span> std::wstring &amp;path, <span class="keyword">const</span> std::wstring &amp;layout) noexcept</div>
+<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool__base.html#a4018796eddf100bb4316fe0d2168646a">  244</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a4018796eddf100bb4316fe0d2168646a">check</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;layout) noexcept</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    {</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="keywordflow">return</span> pmemobj_checkW(path.c_str(), layout.c_str());</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    }</div>
@@ -318,10 +318,10 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160; </div>
 <div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    check_pool(pmemobjpool *pop, std::string mode)</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;    check_pool(pmemobjpool *pop, <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> mode)</div>
 <div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;    {</div>
 <div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        <span class="keywordflow">if</span> (pop == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;            std::string msg = <span class="stringliteral">&quot;Failed &quot;</span> + mode + <span class="stringliteral">&quot; pool&quot;</span>;</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;            <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> msg = <span class="stringliteral">&quot;Failed &quot;</span> + mode + <span class="stringliteral">&quot; pool&quot;</span>;</div>
 <div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;            <span class="keywordflow">if</span> (errno == EINVAL || errno == EFBIG ||</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;                errno == ENOENT || errno == EEXIST) {</div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">detail::exception_with_errormsg</a>&lt;</div>
@@ -368,21 +368,21 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160; </div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> M&gt;</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    M</div>
-<div class="line"><a name="l00540"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a8253223d35089f9736fe37cc1f38ed53">  540</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a8253223d35089f9736fe37cc1f38ed53">ctl_get</a>(<span class="keyword">const</span> std::string &amp;name)</div>
+<div class="line"><a name="l00540"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a8253223d35089f9736fe37cc1f38ed53">  540</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a8253223d35089f9736fe37cc1f38ed53">ctl_get</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name)</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    {</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        <span class="keywordflow">return</span> ctl_get_detail&lt;M&gt;(pop, name);</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;    }</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160; </div>
 <div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> M&gt;</div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    M</div>
-<div class="line"><a name="l00558"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a3f19b41b5e921b5edd0cf46cab20369e">  558</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a3f19b41b5e921b5edd0cf46cab20369e">ctl_set</a>(<span class="keyword">const</span> std::string &amp;name, M arg)</div>
+<div class="line"><a name="l00558"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a3f19b41b5e921b5edd0cf46cab20369e">  558</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a3f19b41b5e921b5edd0cf46cab20369e">ctl_set</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name, M arg)</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;    {</div>
 <div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;        <span class="keywordflow">return</span> ctl_set_detail(pop, name, arg);</div>
 <div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    }</div>
 <div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160; </div>
 <div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> M&gt;</div>
 <div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;    M</div>
-<div class="line"><a name="l00576"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a7c170c19673a29ace63092d083781330">  576</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a7c170c19673a29ace63092d083781330">ctl_exec</a>(<span class="keyword">const</span> std::string &amp;name, M arg)</div>
+<div class="line"><a name="l00576"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a7c170c19673a29ace63092d083781330">  576</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a7c170c19673a29ace63092d083781330">ctl_exec</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name, M arg)</div>
 <div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;    {</div>
 <div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;        <span class="keywordflow">return</span> ctl_exec_detail(pop, name, arg);</div>
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;    }</div>
@@ -390,21 +390,21 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> M&gt;</div>
 <div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;    M</div>
-<div class="line"><a name="l00594"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#ad9909db1249389347b4d81b00a5e3df6">  594</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#ad9909db1249389347b4d81b00a5e3df6">ctl_get</a>(<span class="keyword">const</span> std::wstring &amp;name)</div>
+<div class="line"><a name="l00594"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#ad9909db1249389347b4d81b00a5e3df6">  594</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#ad9909db1249389347b4d81b00a5e3df6">ctl_get</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name)</div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;    {</div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        <span class="keywordflow">return</span> ctl_get_detail&lt;M&gt;(pop, name);</div>
 <div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    }</div>
 <div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160; </div>
 <div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> M&gt;</div>
 <div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    M</div>
-<div class="line"><a name="l00612"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a3ef9f3fd95a13e5a7361e756471e022b">  612</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a3ef9f3fd95a13e5a7361e756471e022b">ctl_set</a>(<span class="keyword">const</span> std::wstring &amp;name, M arg)</div>
+<div class="line"><a name="l00612"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a3ef9f3fd95a13e5a7361e756471e022b">  612</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a3ef9f3fd95a13e5a7361e756471e022b">ctl_set</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name, M arg)</div>
 <div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;    {</div>
 <div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;        <span class="keywordflow">return</span> ctl_set_detail(pop, name, arg);</div>
 <div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;    }</div>
 <div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160; </div>
 <div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> M&gt;</div>
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;    M</div>
-<div class="line"><a name="l00630"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#af453acceffd968ca68108e3475a7cfdc">  630</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#af453acceffd968ca68108e3475a7cfdc">ctl_exec</a>(<span class="keyword">const</span> std::wstring &amp;name, M arg)</div>
+<div class="line"><a name="l00630"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#af453acceffd968ca68108e3475a7cfdc">  630</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#af453acceffd968ca68108e3475a7cfdc">ctl_exec</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name, M arg)</div>
 <div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;    {</div>
 <div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;        <span class="keywordflow">return</span> ctl_exec_detail(pop, name, arg);</div>
 <div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    }</div>
@@ -427,40 +427,40 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;    }</div>
 <div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160; </div>
 <div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;    <span class="keyword">static</span> pool&lt;T&gt;</div>
-<div class="line"><a name="l00672"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">  672</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">open</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;layout)</div>
+<div class="line"><a name="l00672"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">  672</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">open</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;layout)</div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;    {</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1pool__base.html#a04efe7474a98116eea017c4d0933cf44">pool_base::open</a>(path, layout));</div>
 <div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    }</div>
 <div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160; </div>
 <div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="keyword">static</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a></div>
-<div class="line"><a name="l00694"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">  694</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">create</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;layout,</div>
+<div class="line"><a name="l00694"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">  694</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">create</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;layout,</div>
 <div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;           std::size_t size = PMEMOBJ_MIN_POOL, mode_t mode = <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a78d046f5b91b553db94c01d9e3a09a4e">DEFAULT_MODE</a>)</div>
 <div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    {</div>
 <div class="line"><a name="l00697"></a><span class="lineno">  697</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">pool_base::create</a>(path, layout, size, mode));</div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;    }</div>
 <div class="line"><a name="l00699"></a><span class="lineno">  699</span>&#160; </div>
 <div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00711"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">  711</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">check</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;layout)</div>
+<div class="line"><a name="l00711"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">  711</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">check</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;layout)</div>
 <div class="line"><a name="l00712"></a><span class="lineno">  712</span>&#160;    {</div>
 <div class="line"><a name="l00713"></a><span class="lineno">  713</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">pool_base::check</a>(path, layout);</div>
 <div class="line"><a name="l00714"></a><span class="lineno">  714</span>&#160;    }</div>
 <div class="line"><a name="l00715"></a><span class="lineno">  715</span>&#160; </div>
 <div class="line"><a name="l00716"></a><span class="lineno">  716</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;    <span class="keyword">static</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a></div>
-<div class="line"><a name="l00731"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a11cc3ae8b8de69613706b26418c2b8ee">  731</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a11cc3ae8b8de69613706b26418c2b8ee">open</a>(<span class="keyword">const</span> std::wstring &amp;path, <span class="keyword">const</span> std::wstring &amp;layout)</div>
+<div class="line"><a name="l00731"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a11cc3ae8b8de69613706b26418c2b8ee">  731</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a11cc3ae8b8de69613706b26418c2b8ee">open</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;layout)</div>
 <div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;    {</div>
 <div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1pool__base.html#a04efe7474a98116eea017c4d0933cf44">pool_base::open</a>(path, layout));</div>
 <div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    }</div>
 <div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160; </div>
 <div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;    <span class="keyword">static</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a></div>
-<div class="line"><a name="l00754"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a32bc51b425f8e25cc03fdc307187566f">  754</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a32bc51b425f8e25cc03fdc307187566f">create</a>(<span class="keyword">const</span> std::wstring &amp;path, <span class="keyword">const</span> std::wstring &amp;layout,</div>
+<div class="line"><a name="l00754"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a32bc51b425f8e25cc03fdc307187566f">  754</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a32bc51b425f8e25cc03fdc307187566f">create</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;layout,</div>
 <div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;           std::size_t size = PMEMOBJ_MIN_POOL, mode_t mode = <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a78d046f5b91b553db94c01d9e3a09a4e">DEFAULT_MODE</a>)</div>
 <div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    {</div>
 <div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1pool.html">pool&lt;T&gt;</a>(<a class="code" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">pool_base::create</a>(path, layout, size, mode));</div>
 <div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;    }</div>
 <div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160; </div>
 <div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span></div>
-<div class="line"><a name="l00772"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a8ddb6b9957bcb43a7d55b81a8054da9e">  772</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a8ddb6b9957bcb43a7d55b81a8054da9e">check</a>(<span class="keyword">const</span> std::wstring &amp;path, <span class="keyword">const</span> std::wstring &amp;layout)</div>
+<div class="line"><a name="l00772"></a><span class="lineno"><a class="line" href="classpmem_1_1obj_1_1pool.html#a8ddb6b9957bcb43a7d55b81a8054da9e">  772</a></span>&#160;    <a class="code" href="classpmem_1_1obj_1_1pool.html#a8ddb6b9957bcb43a7d55b81a8054da9e">check</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;path, <span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;layout)</div>
 <div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;    {</div>
 <div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">pool_base::check</a>(path, layout);</div>
 <div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    }</div>
@@ -469,21 +469,21 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160; </div>
 <div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00790"></a><span class="lineno">  790</span>&#160;T</div>
-<div class="line"><a name="l00791"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">  791</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">ctl_get</a>(<span class="keyword">const</span> std::string &amp;name)</div>
+<div class="line"><a name="l00791"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">  791</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">ctl_get</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name)</div>
 <div class="line"><a name="l00792"></a><span class="lineno">  792</span>&#160;{</div>
 <div class="line"><a name="l00793"></a><span class="lineno">  793</span>&#160;    <span class="keywordflow">return</span> ctl_get_detail&lt;T&gt;(<span class="keyword">nullptr</span>, name);</div>
 <div class="line"><a name="l00794"></a><span class="lineno">  794</span>&#160;}</div>
 <div class="line"><a name="l00795"></a><span class="lineno">  795</span>&#160; </div>
 <div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;T</div>
-<div class="line"><a name="l00809"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">  809</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">ctl_set</a>(<span class="keyword">const</span> std::string &amp;name, T arg)</div>
+<div class="line"><a name="l00809"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">  809</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">ctl_set</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;{</div>
 <div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;    <span class="keywordflow">return</span> ctl_set_detail(<span class="keyword">nullptr</span>, name, arg);</div>
 <div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;}</div>
 <div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160; </div>
 <div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;T</div>
-<div class="line"><a name="l00827"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#ae5828e2ef9f44c67de727e4498c89f1f">  827</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ae5828e2ef9f44c67de727e4498c89f1f">ctl_exec</a>(<span class="keyword">const</span> std::string &amp;name, T arg)</div>
+<div class="line"><a name="l00827"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#ae5828e2ef9f44c67de727e4498c89f1f">  827</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ae5828e2ef9f44c67de727e4498c89f1f">ctl_exec</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">std::string</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;{</div>
 <div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;    <span class="keywordflow">return</span> ctl_exec_detail(<span class="keyword">nullptr</span>, name, arg);</div>
 <div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;}</div>
@@ -491,21 +491,21 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="line"><a name="l00832"></a><span class="lineno">  832</span>&#160;<span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a name="l00843"></a><span class="lineno">  843</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00844"></a><span class="lineno">  844</span>&#160;T</div>
-<div class="line"><a name="l00845"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a64434e59ff1de9be9e73a9eb8d364b45">  845</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">ctl_get</a>(<span class="keyword">const</span> std::wstring &amp;name)</div>
+<div class="line"><a name="l00845"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a64434e59ff1de9be9e73a9eb8d364b45">  845</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">ctl_get</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name)</div>
 <div class="line"><a name="l00846"></a><span class="lineno">  846</span>&#160;{</div>
 <div class="line"><a name="l00847"></a><span class="lineno">  847</span>&#160;    <span class="keywordflow">return</span> ctl_get_detail&lt;T&gt;(<span class="keyword">nullptr</span>, name);</div>
 <div class="line"><a name="l00848"></a><span class="lineno">  848</span>&#160;}</div>
 <div class="line"><a name="l00849"></a><span class="lineno">  849</span>&#160; </div>
 <div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;T</div>
-<div class="line"><a name="l00863"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#adb3269602e36bbce39e864116f35aa7e">  863</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">ctl_set</a>(<span class="keyword">const</span> std::wstring &amp;name, T arg)</div>
+<div class="line"><a name="l00863"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#adb3269602e36bbce39e864116f35aa7e">  863</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">ctl_set</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00864"></a><span class="lineno">  864</span>&#160;{</div>
 <div class="line"><a name="l00865"></a><span class="lineno">  865</span>&#160;    <span class="keywordflow">return</span> ctl_set_detail(<span class="keyword">nullptr</span>, name, arg);</div>
 <div class="line"><a name="l00866"></a><span class="lineno">  866</span>&#160;}</div>
 <div class="line"><a name="l00867"></a><span class="lineno">  867</span>&#160; </div>
 <div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;T</div>
-<div class="line"><a name="l00881"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a6c488369b0b5864774ebe7ab4e33d78a">  881</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ae5828e2ef9f44c67de727e4498c89f1f">ctl_exec</a>(<span class="keyword">const</span> std::wstring &amp;name, T arg)</div>
+<div class="line"><a name="l00881"></a><span class="lineno"><a class="line" href="namespacepmem_1_1obj.html#a6c488369b0b5864774ebe7ab4e33d78a">  881</a></span>&#160;<a class="code" href="namespacepmem_1_1obj.html#ae5828e2ef9f44c67de727e4498c89f1f">ctl_exec</a>(<span class="keyword">const</span> <a class="code" href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">std::wstring</a> &amp;name, T arg)</div>
 <div class="line"><a name="l00882"></a><span class="lineno">  882</span>&#160;{</div>
 <div class="line"><a name="l00883"></a><span class="lineno">  883</span>&#160;    <span class="keywordflow">return</span> ctl_exec_detail(<span class="keyword">nullptr</span>, name, arg);</div>
 <div class="line"><a name="l00884"></a><span class="lineno">  884</span>&#160;}</div>
@@ -563,6 +563,8 @@ $(document).ready(function(){initNavTree('pool_8hpp_source.html',''); initResiza
 <div class="ttc" id="aclasspmem_1_1pool__invalid__argument_html"><div class="ttname"><a href="classpmem_1_1pool__invalid__argument.html">pmem::pool_invalid_argument</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:95</div></div>
 <div class="ttc" id="acommon_8hpp_html"><div class="ttname"><a href="common_8hpp.html">common.hpp</a></div><div class="ttdoc">Commonly used functionality.</div></div>
 <div class="ttc" id="actl_8hpp_html"><div class="ttname"><a href="ctl_8hpp.html">ctl.hpp</a></div><div class="ttdoc">C++ ctl API.</div></div>
+<div class="ttc" id="agroup__containers_html_ga0d1bf59e796791b4e701e11d5e364cbc"><div class="ttname"><a href="group__containers.html#ga0d1bf59e796791b4e701e11d5e364cbc">pmem::obj::string</a></div><div class="ttdeci">basic_string&lt; char &gt; string</div><div class="ttdoc">The most typical string usage - the char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:24</div></div>
+<div class="ttc" id="agroup__containers_html_gac64a29a801a006e76d058bf9700af95b"><div class="ttname"><a href="group__containers.html#gac64a29a801a006e76d058bf9700af95b">pmem::obj::wstring</a></div><div class="ttdeci">basic_string&lt; wchar_t &gt; wstring</div><div class="ttdoc">The wide char specialization.</div><div class="ttdef"><b>Definition:</b> string.hpp:30</div></div>
 <div class="ttc" id="anamespacepmem_1_1detail_html_a5888feacbab544664437549db7e5018a"><div class="ttname"><a href="namespacepmem_1_1detail.html#a5888feacbab544664437549db7e5018a">pmem::detail::exception_with_errormsg</a></div><div class="ttdeci">ExcT exception_with_errormsg(Args &amp;&amp;... args)</div><div class="ttdoc">Generic error message decorator for pmemobj-based exceptions.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:69</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_a35c4923f7973d6d9eeefdc6eeb16a4f1"><div class="ttname"><a href="namespacepmem_1_1obj.html#a35c4923f7973d6d9eeefdc6eeb16a4f1">pmem::obj::ctl_set</a></div><div class="ttdeci">T ctl_set(const std::string &amp;name, T arg)</div><div class="ttdoc">Modify libpmemobj state at global scope.</div><div class="ttdef"><b>Definition:</b> pool.hpp:809</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html_aa89f45b433f00601332cc8b026c8094b"><div class="ttname"><a href="namespacepmem_1_1obj.html#aa89f45b433f00601332cc8b026c8094b">pmem::obj::ctl_get</a></div><div class="ttdeci">T ctl_get(const std::string &amp;name)</div><div class="ttdoc">Query libpmemobj state at global scope.</div><div class="ttdef"><b>Definition:</b> pool.hpp:791</div></div>

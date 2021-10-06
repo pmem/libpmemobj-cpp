@@ -1,0 +1,4 @@
+<map id="libpmemobj++/detail/ringbuf.hpp" name="libpmemobj++/detail/ringbuf.hpp">
+<area shape="rect" id="node1" title="Lock&#45;free multi&#45;producer single&#45;consumer (MPSC) ring buffer." alt="" coords="27,5,166,47"/>
+<area shape="rect" id="node2" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="5,95,188,136"/>
+</map>

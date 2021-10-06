@@ -163,4 +163,10 @@
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/
 /** @defgroup primitives Primitives*/
-/** @defgroup exceptions Exceptions*/
+/** @defgroup exceptions Exceptions
+  * Possible exceptions that could be thrown by the libpmemobj++.
+  *
+  * In runtime some operations can fail, then all you need is to catch the exception.
+  * Most of them contain a short message with a description what happened.
+  * Look at the list on this page to explore all exceptions with their descriptions.
+  **/

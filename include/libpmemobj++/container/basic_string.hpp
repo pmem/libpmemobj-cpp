@@ -1397,7 +1397,7 @@ typename basic_string<CharT, Traits>::const_reference
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice containing elements from <start, start + n).
+ * @return pmem::obj::slice containing elements from <start, start + n).
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * string.
@@ -1424,7 +1424,7 @@ basic_string<CharT, Traits>::range(size_type start, size_type n)
  * entire range is added to a transaction. If value is equal to 0 no
  * snapshotting happens.
  *
- * @return slice containing elements from <start, start + n).
+ * @return pmem::obj::slice containing elements from <start, start + n).
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * string.
@@ -1451,7 +1451,7 @@ basic_string<CharT, Traits>::range(size_type start, size_type n,
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice containing elements from <start, start + n).
+ * @return pmem::obj::slice containing elements from <start, start + n).
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * string.
@@ -1469,7 +1469,7 @@ basic_string<CharT, Traits>::range(size_type start, size_type n) const
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice containing elements from <start, start + n).
+ * @return pmem::obj::slice containing elements from <start, start + n).
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * string.

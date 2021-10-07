@@ -487,7 +487,7 @@ struct array {
 	 * @param[in] start start index of requested range.
 	 * @param[in] n number of elements in range.
 	 *
-	 * @return slice from start to start + n.
+	 * @return pmem::obj::slice from start to start + n.
 	 *
 	 * @throw std::out_of_range if any element of the range would be
 	 *	outside of the array.
@@ -515,7 +515,7 @@ struct array {
 	 *	added to a transaction. If value is equal to 0 no snapshotting
 	 *	happens.
 	 *
-	 * @return slice from start to start + n.
+	 * @return pmem::obj::slice from start to start + n.
 	 *
 	 * @throw std::out_of_range if any element of the range would be
 	 *	outside of the array.
@@ -543,7 +543,7 @@ struct array {
 	 * @param[in] start start index of requested range.
 	 * @param[in] n number of elements in range.
 	 *
-	 * @return slice from start to start + n.
+	 * @return pmem::obj::slice from start to start + n.
 	 *
 	 * @throw std::out_of_range if any element of the range would be
 	 *	outside of the array.
@@ -564,7 +564,7 @@ struct array {
 	 * @param[in] start start index of requested range.
 	 * @param[in] n number of elements in range.
 	 *
-	 * @return slice from start to start + n.
+	 * @return pmem::obj::slice from start to start + n.
 	 *
 	 * @throw std::out_of_range if any element of the range would be
 	 *	outside of the array.

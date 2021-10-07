@@ -28,7 +28,7 @@ namespace obj
  * satisfies all requirements of the TimedMutex and StandardLayoutType
  * concepts. The typical usage example would be:
  * @snippet mutex/mutex.cpp timed_mutex_example
- * @ingroup primitives
+ * @ingroup synchronization
  */
 class timed_mutex {
 	typedef std::chrono::system_clock clock_type;

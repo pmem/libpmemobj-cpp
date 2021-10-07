@@ -40,7 +40,8 @@ using u32string_view = std::basic_string_view<char32_t>;
  * Our partial std::string_view implementation.
  *
  * If C++17's std::string_view implementation is not available, this one
- * is used to avoid unnecessary string copying.
+ * is used to avoid unnecessary string copying. It's compatible with
+ * the std API, but it does not cover all functionalities.
  * @ingroup data_view
  */
 template <typename CharT, typename Traits = std::char_traits<CharT>>
@@ -161,9 +162,28 @@ private:
 	size_type size_;
 };
 
+/**
+ * The most typical string_view usage - the char specialization.
+ * @ingroup data_view
+ */
 using string_view = basic_string_view<char>;
+
+/**
+ * The wide char specialization.
+ * @ingroup data_view
+ */
 using wstring_view = basic_string_view<wchar_t>;
+
+/**
+ * The char16 specialization.
+ * @ingroup data_view
+ */
 using u16string_view = basic_string_view<char16_t>;
+
+/**
+ * The char32 specialization.
+ * @ingroup data_view
+ */
 using u32string_view = basic_string_view<char32_t>;
 
 /**

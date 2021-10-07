@@ -43,8 +43,18 @@ namespace obj
 {
 
 /**
- * pmem::obj::slice - provides interface to access
- * sequence of objects.
+ * Provides interface to access sequence of objects.
+ *
+ * It provides the "view" of any sequence of objects and it simplifies the
+ * access to that sequence, with the help of iterators. It's used e.g. in
+ * several data structures to deliver `range` methods. As an example slice
+ * usage please see: pmem::obj::vector::range() .
+ *
+ * Slice can be used with any iterator type that supports:
+ * - indexing over elements - operator[],
+ * - subtraction of two iterators - operator-(),
+ * - pre-decrementing of iterator's value - operator--().
+ *
  * @ingroup data_view
  */
 template <typename Iterator>
@@ -56,8 +66,10 @@ public:
 	using reference = typename std::iterator_traits<iterator>::reference;
 
 	/**
-	 * Constructor taking two iterators (iterators should support:
-	 * operator[], operator-(), operator--()) which define a range.
+	 * Constructor taking two iterators, which define a range.
+	 *
+	 * @note These iterators have to support: operator[], operator-(), and
+	 * operator--()
 	 *
 	 * @throw std::out_of_range if it_end < it_begin.
 	 */
@@ -85,7 +97,7 @@ public:
 	slice &operator=(const slice &other) noexcept = default;
 
 	/**
-	 * Returns iterator to the beginning of the range.
+	 * @return iterator to the beginning of the slice's range.
 	 */
 	iterator
 	begin() const noexcept
@@ -94,7 +106,7 @@ public:
 	}
 
 	/**
-	 * Returns iterator to the end of the range.
+	 * @return iterator to the end of the slice's range.
 	 */
 	iterator
 	end() const noexcept
@@ -103,7 +115,7 @@ public:
 	}
 
 	/**
-	 * Returns reverse iterator to the end.
+	 * @return reverse_iterator to the end of the slice's range.
 	 */
 	reverse_iterator
 	rend() const noexcept
@@ -112,7 +124,7 @@ public:
 	}
 
 	/**
-	 * Returns reverse iterator to the beginning.
+	 * @return reverse_iterator to the beginning of the slice's range.
 	 */
 	reverse_iterator
 	rbegin() const noexcept
@@ -121,9 +133,12 @@ public:
 	}
 
 	/**
-	 * Element access operator.
+	 * Access operator for a single element of slice.
+	 *
+	 * @param idx index of selected element.
 	 *
 	 * @throw std::out_of_range if idx is greater or equal to size.
+	 * @return reference to a selected object.
 	 */
 	reference
 	at(size_type idx)
@@ -136,8 +151,12 @@ public:
 	}
 
 	/**
-	 * Element access operator.
-	 * No bounds checking is performed.
+	 * Access operator for a single element of slice. It internally
+	 * increments from begin iterator, @param idx positions forward.
+	 *
+	 * @note No bounds checking is performed, so the iterator may become
+	 * invalid.
+	 * @return reference to a selected object.
 	 */
 	reference operator[](size_type idx)
 	{
@@ -145,6 +164,11 @@ public:
 			Iterator>::difference_type>(idx)];
 	}
 
+	/**
+	 * Returns total number of elements within slice's range.
+	 *
+	 * @return size_type count of all elements.
+	 */
 	size_type
 	size() const
 	{

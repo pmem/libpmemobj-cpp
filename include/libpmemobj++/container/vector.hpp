@@ -1234,7 +1234,7 @@ vector<T>::crend() const noexcept
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.
@@ -1263,7 +1263,7 @@ vector<T>::range(size_type start, size_type n)
  * entire range is added to a transaction. If value is equal to 0 no
  * snapshotting happens.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.
@@ -1292,7 +1292,7 @@ vector<T>::range(size_type start, size_type n, size_type snapshot_size)
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.
@@ -1314,7 +1314,7 @@ vector<T>::range(size_type start, size_type n) const
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * vector.

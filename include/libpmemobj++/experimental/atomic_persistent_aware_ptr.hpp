@@ -109,14 +109,9 @@ public:
 	{
 		auto val = ptr.load(order);
 		if (is_dirty(val)) {
-			for (detail::atomic_backoff backoff(true);;) {
-				val = ptr.load(order);
-				if (!is_dirty(val))
-					break;
-				backoff.pause();
-			}
+			pool_by_vptr(this).persist(&ptr, sizeof(ptr));
 		}
-		return val;
+		return clear_dirty(val);
 	}
 
 	/**

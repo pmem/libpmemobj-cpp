@@ -24,9 +24,10 @@ namespace obj
  * Persistent memory resident timed_mutex implementation.
  *
  * This class is an implementation of a PMEM-resident timed_mutex
- * which mimics in behavior the C++11 std::timed_mutex. This class
- * satisfies all requirements of the TimedMutex and StandardLayoutType
- * concepts. The typical usage example would be:
+ * which mimics in behavior the C++11
+ * [std::timed_mutex](https://en.cppreference.com/w/cpp/thread/timed_mutex).
+ * This class satisfies all requirements of the TimedMutex and
+ * StandardLayoutType concepts. The typical usage example would be:
  * @snippet mutex/mutex.cpp timed_mutex_example
  * @ingroup synchronization
  */

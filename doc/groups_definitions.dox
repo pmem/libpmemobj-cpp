@@ -106,9 +106,6 @@
   * All operations between creating and destroying the transaction
   * object are treated as performed in a transaction block and
   * can be rolled back.
-  * The locks are held for the entire duration of the transaction. They
-  * are released at the end of the scope, so within the `catch` block,
-  * they are already unlocked.
   * The best way to use manual transactions is by
   * @ref pmem::obj::transaction::run, which is used in example above.
   *
@@ -117,8 +114,9 @@
   * performed in a transaction block and can be rolled back.
   * If you have a C++17 compliant compiler, the automatic transaction will
   * commit and abort automatically depending on the context of object's destruction.
-  * The locks are held for the entire duration of the transaction. They
-  * are released at the end of the scope, so within the `catch` block,
+  *
+  * In both approaches one of the parameters is the `locks`. They are held for the entire duration
+  * of the transaction and they are released at the end of the scope - so within the `catch` block,
   * they are already unlocked.
   *
   * If you want to read more and see example usages of both, you have to see
@@ -191,7 +189,24 @@
   * take a look at description of each class to get the details of their behavior.
   */
 
-/** @defgroup synchronization Synchronization Primitives*/
+/** @defgroup synchronization Synchronization Primitives
+  * Persistent memory resident implementation of synchronization primitives.
+  *
+  * In concurrent programming, we often require mechanisms for synchronizing access to shared resources.
+  * Typically to solve such issues we use synchronization primitives like mutexes and condition variables.
+  * As persistent memory offers bigger capacity than DRAM it may be useful to store synchronization primitives
+  * on it. Unfortunately such approach may cause performance degradation due to frequent writes to a memory
+  * with relatively higher latency (it's because taking a lock or signaling a conditional variable often
+  * requires additional writes). Few extra words how locks can be used in libpmemobj-cpp can be found in
+  * @ref transactions.
+  *
+  * It's worth noticing that pmem locks are automatically released on recovery or when crash happened.
+  *
+  * # Additional resources
+  * - [Libpmemobj-cpp - lessons learned](https://pmem.io/blog/2021/09/libpmemobj-cpp-lessons-learned)
+  *   In this blog post we explain, i.a., why keeping locks on pmem is not a good idea.
+  */
+
 /** @defgroup primitives Primitives
   * Basic classes that provides PMEM-aware pointers and pool handlers.
   *
@@ -256,4 +271,4 @@
   *
   * You should check every function you will use in context of possible
   * exceptions and then handle them to avoid crash.
-  **/
+  */

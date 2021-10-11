@@ -161,6 +161,16 @@
 
 /** @defgroup allocation Allocation*/
 /** @defgroup data_view Data View*/
-/** @defgroup synchronization Synchronization Primitives*/
+/** @defgroup synchronization Synchronization Primitives
+  * Persistent memory resident implementation of synchronization primitives.
+  *
+  * In concurrent programming we often encounter problem of data races between threads. Typically to solve such issues we
+  * use synchronization primitives like mutexes and condition variables. As persitent memory offers bigger capacity than
+  * DRAM it may be useful to store synchronization primitives on it. Unfortunately such approach may cause performance
+  * degradation due to frequent writes to relatively slower memory.
+  *
+  * # Additional resources
+  * [Libpmemobj-cpp - lessons learned](http://link.to.article.when.merged)
+  */
 /** @defgroup primitives Primitives*/
 /** @defgroup exceptions Exceptions*/

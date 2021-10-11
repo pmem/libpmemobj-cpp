@@ -109,7 +109,8 @@ public:
 	{
 		auto val = ptr.load(order);
 		if (is_dirty(val)) {
-			for (detail::atomic_backoff backoff(true);;) {
+			detail::atomic_backoff backoff(true);
+			while (true) {
 				val = ptr.load(order);
 				if (!is_dirty(val))
 					break;

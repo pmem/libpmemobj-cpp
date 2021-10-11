@@ -38,14 +38,12 @@ namespace
 
 template <typename ReadOptimized>
 void
-test_ptr_transactional(nvobj::pool<root<ReadOptimized>> &pop)
+test_ptr_allocation(nvobj::pool<root<ReadOptimized>> &pop)
 {
 	auto r = pop.root();
 	try {
 		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->ptr.load() == nullptr);
-			nvobj::transaction::snapshot<
-				atomic_ptr<int, ReadOptimized>>(&r->ptr);
 			r->ptr = nvobj::make_persistent<int>();
 		});
 	} catch (...) {
@@ -57,8 +55,34 @@ test_ptr_transactional(nvobj::pool<root<ReadOptimized>> &pop)
 	try {
 		nvobj::transaction::run(pop, [&] {
 			nvobj::delete_persistent<int>(r->ptr.load());
-			nvobj::transaction::snapshot<
-				atomic_ptr<int, ReadOptimized>>(&r->ptr);
+			r->ptr.store(nullptr);
+		});
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
+
+	UT_ASSERT(r->ptr.load() == nullptr);
+}
+
+template <typename ReadOptimized>
+void
+test_ptr_visibility(nvobj::pool<root<ReadOptimized>> &pop)
+{
+	auto r = pop.root();
+	try {
+		nvobj::transaction::run(pop, [&] {
+			UT_ASSERT(r->ptr.load() == nullptr);
+			r->ptr = nvobj::make_persistent<int>();
+		});
+	} catch (...) {
+		ASSERT_UNREACHABLE;
+	}
+
+	UT_ASSERT(r->ptr.load() != nullptr);
+
+	try {
+		nvobj::transaction::run(pop, [&] {
+			nvobj::delete_persistent<int>(r->ptr.load());
 			r->ptr.store(nullptr);
 		});
 	} catch (...) {
@@ -80,20 +104,20 @@ template <typename ReadOptimized>
 static void
 test(char *path)
 {
-	char path_opt[100];
-	strcpy(path_opt, path);
-	strncat(path_opt, BoolToString(ReadOptimized::value), 5);
+	std::string path_str(path);
+	path_str += BoolToString(ReadOptimized::value);
 
 	nvobj::pool<root<ReadOptimized>> pop;
 
 	try {
 		pop = nvobj::pool<root<ReadOptimized>>::create(
-			path_opt, LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
+			path_str, LAYOUT, PMEMOBJ_MIN_POOL, S_IWUSR | S_IRUSR);
 	} catch (pmem::pool_error &pe) {
-		UT_FATAL("!pool::create: %s %s", pe.what(), path_opt);
+		UT_FATAL("!pool::create: %s %s", pe.what(), path_str.c_str());
 	}
 
-	test_ptr_transactional(pop);
+	test_ptr_allocation(pop);
+	test_ptr_visibility(pop);
 
 	pop.close();
 }

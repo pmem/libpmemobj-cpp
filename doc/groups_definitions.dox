@@ -18,7 +18,7 @@
   * There is a separate Feature describing and listing all
   * experimental containers, see @ref experimental_containers.
   *
-  * # Rationale for implementing pmem-aware containers
+  * ## Rationale for implementing pmem-aware containers
   *
   * The C++ standard library containers collection is something that persistent
   * memory programmers may want to use. Containers manage the lifetime of held
@@ -43,7 +43,7 @@
   * internal implementation details, libpmemobj-cpp persistent memory containers
   * have the well-known STL-like interface and they work with STL algorithms.
   *
-  * # Additional resources
+  * ## Additional resources
   * - [Blog post on pmem.io about libpmemobj-cpp persistent containers](https://pmem.io/2018/11/20/cpp-persistent-containers.html)
   * - [A blog post about array container](https://pmem.io/2018/11/02/cpp-array.html)
   * - [Very first description of (then yet experimental) vector container](https://pmem.io/2019/02/20/cpp-vector.html)
@@ -73,7 +73,7 @@
 /** @defgroup transactions Transactions
   * Transactional approach to store data on pmem.
   *
-  * # General info about transactions
+  * ## General info about transactions
   *
   * The heart of the libpmemobj are transactions. A transaction is defined as series of operations on
   * **persistent memory objects** that either all occur, or nothing occurs. In particular, if the execution
@@ -122,7 +122,7 @@
   * If you want to read more and see example usages of both, you have to see
   * flat or basic transaction documentation, because each implementation may differ.
   *
-  * # Lifecycle and stages:
+  * ## Lifecycle and stages:
   *
   * When you are using transaction API a transaction can be in one of the following states:
   * - *TX_STAGE_NONE* - no open transaction in this thread
@@ -142,7 +142,7 @@
   *
   * If you need to read general information about transaction move to the *Additional resources* section.
   *
-  * # Example of flat_transaction
+  * ## Example of flat_transaction
   * For comparison with the previous snippet, here is a code snippet of
   * @ref pmem::obj::flat_transaction which is listed below with basic explanation inline.
   * @snippet transaction/transaction.cpp tx_nested_struct_example
@@ -151,7 +151,7 @@
   * For more examples please look at the
   * [examples directory](https://github.com/pmem/libpmemobj-cpp/tree/master/examples) in libpmemobj-cpp repository.
   *
-  * # Additional resources
+  * ## Additional resources
   * - [pmemobj_tx_begin(3) manpage with transaction description (C API)](https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3)
   * - [blog post about transactions](https://pmem.io/2016/05/25/cpp-07.html)
   * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
@@ -202,7 +202,7 @@
   *
   * It's worth noticing that pmem locks are automatically released on recovery or when crash happened.
   *
-  * # Additional resources
+  * ## Additional resources
   * - [Libpmemobj-cpp - lessons learned](https://pmem.io/blog/2021/09/libpmemobj-cpp-lessons-learned)
   *   In this blog post we explain, i.a., why keeping locks on pmem is not a good idea.
   */

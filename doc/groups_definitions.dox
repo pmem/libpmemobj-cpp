@@ -159,7 +159,25 @@
   * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
   */
 
-/** @defgroup allocation Allocation*/
+/** @defgroup allocation Allocation
+  * Functions and classes to support allocations on pmem
+  *
+  * Allocating data on persistent memory could be unpleasant and time-consuming.
+  * Libpmemobj-cpp introduced special functions for making objects and arrays of objects
+  * persistent, with ease. For all `make_persistent` specializations, there are also
+  * `delete_persistent` ones, for safe deletion of previously persisted objects or arrays.
+  *
+  * For more flexibly approach we introduced pmem::obj::allocator class.
+  * It comes with object traits, and allocation policies that are designed to be used
+  * with C++ allocators.
+  *
+  * The typical usage how to allocate data on pmem would be:
+  * @snippet make_persistent/make_persistent.cpp make_example
+  *
+  * For allocator usage see pmem::obj::experimental::inline_string example:
+  * @snippet inline_string/inline_string.cpp inline_string_example
+  */
+
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/
 /** @defgroup primitives Primitives*/

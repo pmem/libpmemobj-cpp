@@ -3,8 +3,9 @@
 
 /**
  * @file
- * Persistent_ptr transactional allocation functions for objects. The typical
- * usage examples would be:
+ * persistent_ptr transactional allocation functions for objects.
+ *
+ * The typical usage examples would be:
  * @snippet make_persistent/make_persistent.cpp make_example
  */
 

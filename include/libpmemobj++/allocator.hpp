@@ -136,8 +136,9 @@ public:
 };
 
 /**
- * Object traits specialization for the void type. Designed to be used
- * with C++ allocators. Can be specialized if necessary.
+ * Object traits specialization for the void type.
+ *
+ * Designed to be used with C++ allocators. Can be specialized if necessary.
  * @ingroup allocation
  */
 template <>
@@ -179,8 +180,8 @@ public:
 /**
  * The allocation policy template for a given type.
  *
- * Can be specialized for a given type. Designed to be used with C++ allocators.
- * Can be specialized if necessary.
+ * Can be specialized, if necessary, for a given type. Designed to be used
+ * with C++ allocators.
  * @ingroup allocation
  */
 template <typename T>
@@ -446,6 +447,7 @@ operator==(standard_alloc_policy<T> const &, OtherAllocator const &)
  * the knowledge of the pointer type, their difference type, the type of the
  * size of objects in this allocation model as well as memory allocation and
  * deallocation primitives.
+ * @ingroup allocation
  */
 template <typename T, typename Policy = standard_alloc_policy<T>,
 	  typename Traits = object_traits<T>>

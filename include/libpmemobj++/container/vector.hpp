@@ -2269,9 +2269,9 @@ vector<T>::construct_or_assign(size_type idx, InputIt first, InputIt last)
  * reallocation occurs with new recommended size. Range specified by first, last
  * is then inserted into the gap.
  *
- * param[in] idx index number where insert should be made
- * param[in] first iterator to beginning of the range to insert
- * param[in] last iterator to end of the range to insert
+ * @param[in] idx index number where insert should be made
+ * @param[in] first iterator to beginning of the range to insert
+ * @param[in] last iterator to end of the range to insert
  *
  * @pre must be called in transaction scope.
  *
@@ -2355,7 +2355,7 @@ vector<T>::internal_insert(size_type idx, InputIt first, InputIt last)
  * container is reduced to its first capacity_new elements. If was never
  * allocated behaves as an alloc call.
  *
- * param[in] capacity_new new capacity.
+ * @param[in] capacity_new new capacity.
  *
  * @pre must be called in transaction scope.
  *

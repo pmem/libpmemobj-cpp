@@ -2553,8 +2553,8 @@ segment_vector<T, Policy>::construct_range(size_type idx, InputIt first,
  * gap for count elements starting at index idx. If there is not enough
  * space available, reallocation occurs.
  *
- * param[in] idx index number where gap should be made.
- * param[in] count length (expressed in number of elements) of the gap.
+ * @param[in] idx index number where gap should be made.
+ * @param[in] count length (expressed in number of elements) of the gap.
  *
  * @pre must be called in transaction scope.
  *

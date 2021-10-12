@@ -162,5 +162,23 @@
 /** @defgroup allocation Allocation*/
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/
-/** @defgroup primitives Primitives*/
+/** @defgroup primitives Primitives
+  * This group contains a classes to ease persistent memory programming.
+  *
+  * ## Pointers
+  * There are few types possible to handle data on PMEM.
+  * - @ref pmem::obj::persistent_ptr - implements a smart pointer. It encapsulates the PMEMoid fat
+  * pointer and provides member access, dereference and array access operators.
+  * - @ref pmem::obj::experimental::self_relative_ptr - implements a smart ptr.
+  * It encapsulates the self offsetted pointer and provides member access, dereference and array access operators.
+  * - @ref pmem::obj::p - template class that can be used for all variables (except persistent pointers),
+  * which are used in @ref pmem::obj::transaction.
+  * The @ref pmem::obj::p class is not designed to be used with compound types. For that see the next one.
+  * - @ref pmem::obj::experimental::v - property-like template class that has to be used for
+  * all volatile variables that reside on persistent memory. This class ensures that the enclosed
+  * type is always properly initialized by always calling the class default constructor
+  * exactly once per instance of the application. This class has 8 bytes of storage overhead.
+  *
+  * ## Pool handles
+  */
 /** @defgroup exceptions Exceptions*/

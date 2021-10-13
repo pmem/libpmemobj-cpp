@@ -26,9 +26,12 @@ public:
 	using value_type = pmem::obj::experimental::self_relative_ptr<T>;
 
 	void
-	store(value_type val)
+	store(value_type val, std::function<void(void)> syncthreads)
 	{
 		ptr.store(val);
+		/* we want to simulate a pause for other thread to load the
+		 * wrong data!!! */
+		syncthreads();
 		pmem::obj::pool_by_vptr(this).persist(&ptr, sizeof(ptr));
 	}
 
@@ -100,14 +103,24 @@ insert_and_read_mock(nvobj::pool<root> &pop)
 
 			if (thread_id == 0) {
 				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.BEGIN");
+			}
+			syncthreads();
+
+			if (thread_id == 0) {
 				/* insert test data into mock atomic ptr */
 				r->ptr_neg.store(
-					reinterpret_cast<int *>(TEST_DATA_R));
-				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.END");
+					reinterpret_cast<int *>(TEST_DATA_R),
+					syncthreads);
 			} else {
 				/* read test data into self relative ptr */
 				r->read_neg = r->ptr_neg.load();
-				pop.persist(r->read_neg.to_persistent_ptr());
+				syncthreads();
+				pop.persist(&r->read_neg, sizeof(r->read_neg));
+			}
+
+			syncthreads();
+			if (thread_id == 0) {
+				VALGRIND_PMC_EMIT_LOG("PMREORDER_MARKER.END");
 			}
 		});
 }
@@ -130,7 +143,8 @@ void
 check_consistency_mock(nvobj::pool<root> &pop)
 {
 	auto r = pop.root();
-	UT_ASSERT(r->ptr_neg.load().get() == r->read_neg.get());
+	UT_ASSERT(r->read_neg == nullptr ||
+		  r->ptr_neg.load().get() == r->read_neg.get());
 }
 
 static void

@@ -80,6 +80,7 @@ single_threaded(pmem::obj::pool<root> pop)
 
 //! [mpsc_queue_single_threaded_example]
 
+//! [mpsc_main]
 int
 main(int argc, char *argv[])
 {
@@ -120,3 +121,4 @@ main(int argc, char *argv[])
 	}
 	return 0;
 }
+//! [mpsc_main]

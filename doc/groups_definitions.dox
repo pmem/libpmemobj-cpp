@@ -162,7 +162,33 @@
 /** @defgroup allocation Allocation*/
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/
-/** @defgroup primitives Primitives*/
+/** @defgroup primitives Primitives
+  * Basic classes that enables PMEM-aware pointers and pool handlers.
+  *
+  * ## Pointers
+  * There are few types to handle data on PMEM.
+  * - @ref pmem::obj::persistent_ptr - implements a smart pointer. It encapsulates the PMEMoid fat
+  * pointer and provides member access, dereference and array access operators.
+  * - @ref pmem::obj::experimental::self_relative_ptr - implements a smart ptr.
+  * It encapsulates the self offsetted pointer and provides member access, dereference and array access operators.
+  * - @ref pmem::obj::p - template class that can be used for all variables (except persistent pointers),
+  * which are used in @ref pmem::obj::transaction.
+  * This class is not designed to be used with compound types. For that see the @ref pmem::obj::persistent_ptr.
+  * - @ref pmem::obj::experimental::v - property-like template class that has to be used for
+  * all volatile variables that reside on persistent memory. This class ensures that the enclosed
+  * type is always properly initialized by always calling the class default constructor
+  * exactly once per instance of the application. This class has 8 bytes of storage overhead.
+  *
+  * ## Pool handles
+  * Pool class provides basic operations on pmemobj pools. API for pools should
+  * not be mixed with C API. For example explicitly calling pmemobj_set_user_data(pop)
+  * on pool which is handled by C++ pool object is undefined behaviour.
+  * There are few pool handlers:
+  * - @ref pmem::obj::pool - the template parameter defines the type of the root object within the pool.
+  * This pool class inherits also some methods from the base class: @ref pmem::obj::pool_base.
+  * - @ref pmem::obj::pool_base - non template, basic version of pool,
+  * useful when specifying root type is not desirable.
+  */
 /** @defgroup exceptions Exceptions
   * Possible exceptions that could be thrown by the libpmemobj++.
   *

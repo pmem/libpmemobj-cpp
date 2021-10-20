@@ -1644,7 +1644,7 @@ segment_vector<T, Policy>::crend() const noexcept
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside
  * of the segment_vector.
@@ -1668,7 +1668,7 @@ segment_vector<T, Policy>::range(size_type start, size_type n)
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside
  * of the segment_vector.
@@ -1689,7 +1689,7 @@ segment_vector<T, Policy>::range(size_type start, size_type n) const
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside
  * of the segment_vector.

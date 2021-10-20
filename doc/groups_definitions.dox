@@ -183,7 +183,14 @@
   * @snippet inline_string/inline_string.cpp inline_string_example
   */
 
-/** @defgroup data_view Data View*/
+/** @defgroup data_view Data View
+  * Various views of persistent objects
+  *
+  * Classes listed on this page provide (often simplified) views of persistent data.
+  * They are delivered to ease the usage or for better performance. Please,
+  * take a look at description of each class to get the details of their behavior.
+  */
+
 /** @defgroup synchronization Synchronization Primitives*/
 /** @defgroup primitives Primitives*/
 /** @defgroup exceptions Exceptions

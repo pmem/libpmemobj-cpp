@@ -136,8 +136,9 @@ public:
 };
 
 /**
- * Object traits specialization for the void type. Designed to be used
- * with C++ allocators. Can be specialized if necessary.
+ * Object traits specialization for the void type.
+ *
+ * Designed to be used with C++ allocators. Can be specialized if necessary.
  * @ingroup allocation
  */
 template <>
@@ -179,8 +180,8 @@ public:
 /**
  * The allocation policy template for a given type.
  *
- * Can be specialized for a given type. Designed to be used with C++ allocators.
- * Can be specialized if necessary.
+ * Can be specialized, if necessary, for a given type. Designed to be used
+ * with C++ allocators.
  * @ingroup allocation
  */
 template <typename T>
@@ -236,7 +237,8 @@ public:
 	 *
 	 * @param[in] cnt the number of objects to allocate memory for.
 	 *
-	 * @throw transaction_scope_error if called outside of a transaction.
+	 * @throw transaction_scope_error if called outside of an active
+	 * transaction.
 	 * @throw transaction_out_of_memory if there is no free memory of
 	 * requested size.
 	 * @throw transaction_alloc_error on transactional allocation failure.
@@ -273,6 +275,10 @@ public:
 	 * intervening call to deallocate.
 	 *
 	 * @param[in] p pointer to the memory to be deallocated.
+	 *
+	 * @throw transaction_scope_error if called outside of an active
+	 * transaction.
+	 * @throw transaction_free_error on transactional free failure.
 	 */
 	void
 	deallocate(pointer p, size_type = 0)
@@ -355,7 +361,11 @@ public:
 	 *
 	 * @param[in] cnt the number of bytes to be allocated.
 	 *
-	 * @throw transaction_scope_error if called outside of a transaction.
+	 * @throw transaction_scope_error if called outside of an active
+	 * transaction.
+	 * @throw transaction_out_of_memory if there is no free memory of
+	 * requested size.
+	 * @throw transaction_alloc_error on transactional allocation failure.
 	 */
 	pointer
 	allocate(size_type cnt, const_pointer = 0)
@@ -388,6 +398,10 @@ public:
 	 * intervening call to deallocate.
 	 *
 	 * @param[in] p pointer to the memory to be deallocated.
+	 *
+	 * @throw transaction_scope_error if called outside of an active
+	 * transaction.
+	 * @throw transaction_free_error on transactional free failure.
 	 */
 	void
 	deallocate(pointer p, size_type = 0)
@@ -446,6 +460,7 @@ operator==(standard_alloc_policy<T> const &, OtherAllocator const &)
  * the knowledge of the pointer type, their difference type, the type of the
  * size of objects in this allocation model as well as memory allocation and
  * deallocation primitives.
+ * @ingroup allocation
  */
 template <typename T, typename Policy = standard_alloc_policy<T>,
 	  typename Traits = object_traits<T>>

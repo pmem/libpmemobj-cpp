@@ -159,7 +159,30 @@
   * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
   */
 
-/** @defgroup allocation Allocation*/
+/** @defgroup allocation Allocation
+  * Functions and classes to support allocations on pmem
+  *
+  * Libpmemobj-cpp introduced special functions for allocating objects and arrays
+  * of objects on persistent memory, with ease. For all `make_persistent` specializations
+  * there are also `delete_persistent` counterparts. The latter are used to free memory
+  * of previously allocated objects or arrays, and calling their destructors. Each
+  * specialization comes in two versions - atomic and transactional. First one is
+  * distinguished with `_atomic` suffix (e.g. `make_persistent_atomic()`) and should not
+  * be called within an active transaction - it may lead to undefined behavior in case
+  * of transaction's rollback. On the other hand, transactional functions will throw
+  * an exception if called outside of an active transaction.
+  *
+  * For more flexibly approach we introduced pmem::obj::allocator class, which implements
+  * the concept of C++ Allocator. Allocation and deallocation using this class can only
+  * happen within an active transactions.
+  *
+  * The *typical use case* of data allocation on pmem would be:
+  * @snippet make_persistent/make_persistent.cpp make_example
+  *
+  * For allocator usage see pmem::obj::experimental::inline_string example:
+  * @snippet inline_string/inline_string.cpp inline_string_example
+  */
+
 /** @defgroup data_view Data View*/
 /** @defgroup synchronization Synchronization Primitives*/
 /** @defgroup primitives Primitives*/

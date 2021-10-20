@@ -3,8 +3,9 @@
 
 /**
  * @file
- * Persistent_ptr allocation functions for arrays. The typical usage examples
- * would be:
+ * persistent_ptr transactional allocation functions for arrays.
+ *
+ * The typical usage examples would be:
  * @snippet make_persistent/make_persistent.cpp make_array_example
  */
 
@@ -42,6 +43,8 @@ namespace obj
  *
  * @throw transaction_scope_error if called outside of an active
  * transaction
+ * @throw transaction_out_of_memory if there is no free memory of
+ * requested size.
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
  * @ingroup allocation
@@ -109,6 +112,8 @@ make_persistent(std::size_t N, allocation_flag flag = allocation_flag::none())
  *
  * @throw transaction_scope_error if called outside of an active
  * transaction
+ * @throw transaction_out_of_memory if there is no free memory of
+ * requested size.
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
  * @ingroup allocation
@@ -174,6 +179,7 @@ make_persistent(allocation_flag flag = allocation_flag::none())
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_free_error on transactional free failure.
+ * @ingroup allocation
  */
 template <typename T>
 void
@@ -220,6 +226,7 @@ delete_persistent(typename detail::pp_if_array<T>::type ptr, std::size_t N)
  * @throw transaction_scope_error if called outside of an active
  * transaction
  * @throw transaction_free_error on transactional free failure.
+ * @ingroup allocation
  */
 template <typename T>
 void

@@ -3,8 +3,9 @@
 
 /**
  * @file
- * Persistent_ptr transactional allocation functions for objects. The typical
- * usage examples would be:
+ * persistent_ptr transactional allocation functions for objects.
+ *
+ * The typical usage examples would be:
  * @snippet make_persistent/make_persistent.cpp make_example
  */
 
@@ -42,6 +43,8 @@ namespace obj
  *
  * @throw transaction_scope_error if called outside of an active
  * transaction
+ * @throw transaction_out_of_memory if there is no free memory of
+ * requested size.
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
  * @ingroup allocation
@@ -84,6 +87,8 @@ make_persistent(allocation_flag flag, Args &&... args)
  *
  * @throw transaction_scope_error if called outside of an active
  * transaction
+ * @throw transaction_out_of_memory if there is no free memory of
+ * requested size.
  * @throw transaction_alloc_error on transactional allocation failure.
  * @throw rethrow exception from T constructor
  * @ingroup allocation

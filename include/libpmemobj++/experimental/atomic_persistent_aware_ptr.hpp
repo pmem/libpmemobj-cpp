@@ -99,6 +99,8 @@ public:
 	/**
 	 * Read-optimized load retries upon dirty ptr, relies on the store
 	 * function to clear the dirty before continue.
+	 * But for correctness, just flush the dirty ptr and return the clear
+	 * ptr for now.
 	 *
 	 * @return the self_relative_ptr (no dirty flag)
 	 */
@@ -109,20 +111,16 @@ public:
 	{
 		auto val = ptr.load(order);
 		if (is_dirty(val)) {
-			detail::atomic_backoff backoff(true);
-			while (true) {
-				val = ptr.load(order);
-				if (!is_dirty(val))
-					break;
-				backoff.pause();
-			}
+			pool_by_vptr(this).persist(&ptr, sizeof(ptr));
 		}
-		return val;
+		return clear_dirty(val);
 	}
 
 	/**
 	 * Write-optimized load flushes the ptr with the dirty flag, clears the
 	 * flag using CAS after flush.
+	 * If CAS failed, simply return the old clear ptr, rely on later load to
+	 * clear the dirty flag.
 	 *
 	 * @return the self_relative_ptr (no dirty flag)
 	 */
@@ -132,13 +130,13 @@ public:
 	load(std::memory_order order = std::memory_order_seq_cst) noexcept
 	{
 		auto val = ptr.load(order);
-		while (is_dirty(val)) {
+		if (is_dirty(val)) {
 			pool_by_vptr(this).persist(&ptr, sizeof(ptr));
-			auto clean_val = clear_dirty(val);
-			if (ptr.compare_exchange_strong(val, clean_val, order))
-				return clean_val;
+			auto clear_val = clear_dirty(val);
+			ptr.compare_exchange_strong(val, clear_val, order);
+			return clear_val;
 		}
-		return val;
+		return clear_dirty(val);
 	}
 
 	bool
@@ -190,33 +188,5 @@ private:
 } // namespace experimental
 } // namespace obj
 } // namespace pmem
-
-namespace pmem
-{
-
-namespace detail
-{
-
-/**
- * pmem::detail::can_do_snapshot atomic specialization for persistent-aware
- * self_relative_ptr. Not thread safe.
- *
- * Use in a single-threaded environment only.
- */
-template <typename T, typename ReadOptimized>
-struct can_do_snapshot<
-	obj::experimental::atomic_persistent_aware_ptr<T, ReadOptimized>> {
-	using snapshot_type =
-		std::atomic<obj::experimental::self_relative_ptr<T>>;
-	static constexpr bool value =
-		sizeof(obj::experimental::atomic_persistent_aware_ptr<
-			T, ReadOptimized>) == sizeof(snapshot_type);
-	static_assert(value,
-		      "atomic_persistent_aware_ptr should be the same size");
-};
-
-} /* namespace detail */
-
-} /* namespace pmem */
 
 #endif // LIBPMEMOBJ_CPP_ATOMIC_PERSISTENT_AWARE_PTR_HPP

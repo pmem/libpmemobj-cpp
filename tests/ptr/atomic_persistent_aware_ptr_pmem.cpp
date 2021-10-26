@@ -25,8 +25,6 @@ template <typename T, typename ReadOptimized>
 using atomic_ptr =
 	pmem::obj::experimental::atomic_persistent_aware_ptr<T, ReadOptimized>;
 
-constexpr int ARR_SIZE = 10000;
-
 template <typename ReadOptimized>
 struct root {
 	atomic_ptr<int, ReadOptimized> ptr;

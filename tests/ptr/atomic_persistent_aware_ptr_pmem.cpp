@@ -29,8 +29,8 @@ constexpr int ARR_SIZE = 10000;
 
 template <typename ReadOptimized>
 struct root {
-	atomic_ptr<nvobj::p<int>[ARR_SIZE], ReadOptimized> parr;
 	atomic_ptr<int, ReadOptimized> ptr;
+	self_relative_ptr<int> non_atomic_ptr;
 };
 
 namespace
@@ -44,8 +44,9 @@ test_ptr_allocation(nvobj::pool<root<ReadOptimized>> &pop)
 	try {
 		nvobj::transaction::run(pop, [&] {
 			UT_ASSERT(r->ptr.load() == nullptr);
-			r->ptr = nvobj::make_persistent<int>();
+			r->non_atomic_ptr = nvobj::make_persistent<int>();
 		});
+		r->ptr.store(r->non_atomic_ptr);
 	} catch (...) {
 		ASSERT_UNREACHABLE;
 	}
@@ -53,38 +54,11 @@ test_ptr_allocation(nvobj::pool<root<ReadOptimized>> &pop)
 	UT_ASSERT(r->ptr.load() != nullptr);
 
 	try {
+		auto non_atomic_ptr = r->ptr.load();
 		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<int>(r->ptr.load());
-			r->ptr.store(nullptr);
+			nvobj::delete_persistent<int>(non_atomic_ptr);
 		});
-	} catch (...) {
-		ASSERT_UNREACHABLE;
-	}
-
-	UT_ASSERT(r->ptr.load() == nullptr);
-}
-
-template <typename ReadOptimized>
-void
-test_ptr_visibility(nvobj::pool<root<ReadOptimized>> &pop)
-{
-	auto r = pop.root();
-	try {
-		nvobj::transaction::run(pop, [&] {
-			UT_ASSERT(r->ptr.load() == nullptr);
-			r->ptr = nvobj::make_persistent<int>();
-		});
-	} catch (...) {
-		ASSERT_UNREACHABLE;
-	}
-
-	UT_ASSERT(r->ptr.load() != nullptr);
-
-	try {
-		nvobj::transaction::run(pop, [&] {
-			nvobj::delete_persistent<int>(r->ptr.load());
-			r->ptr.store(nullptr);
-		});
+		r->ptr.store(nullptr);
 	} catch (...) {
 		ASSERT_UNREACHABLE;
 	}
@@ -117,7 +91,6 @@ test(char *path)
 	}
 
 	test_ptr_allocation(pop);
-	test_ptr_visibility(pop);
 
 	pop.close();
 }

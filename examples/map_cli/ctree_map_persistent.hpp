@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2018, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 #ifndef LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
 #define LIBPMEMOBJ_CPP_EXAMPLES_CTREE_MAP_PERSISTENT_HPP
@@ -19,8 +19,6 @@
 
 #define BIT_IS_SET(n, i) (!!((n) & (1ULL << (i))))
 
-namespace nvobj = pmem::obj;
-
 namespace examples
 {
 
@@ -38,7 +36,7 @@ public:
 	typedef K key_type;
 
 	/** Convenience typedef for the value type. */
-	typedef nvobj::persistent_ptr<T> value_type;
+	typedef pmem::obj::persistent_ptr<T> value_type;
 
 	/** Convenience typedef for the callback function. */
 	typedef std::function<int(key_type, value_type, void *)> callback;
@@ -48,10 +46,10 @@ public:
 	 */
 	ctree_map_p()
 	{
-		auto pop = nvobj::pool_by_vptr(this);
+		auto pop = pmem::obj::pool_by_vptr(this);
 
-		nvobj::transaction::run(pop, [&] {
-			this->root = nvobj::make_persistent<entry>();
+		pmem::obj::transaction::run(pop, [&] {
+			this->root = pmem::obj::make_persistent<entry>();
 		});
 	}
 
@@ -79,10 +77,11 @@ public:
 		}
 
 		entry e(key, value);
-		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::run(pop, [&] {
+		auto pop = pmem::obj::pool_by_vptr(this);
+		pmem::obj::transaction::run(pop, [&] {
 			if (dest_entry->key == 0 || dest_entry->key == key) {
-				nvobj::delete_persistent<T>(dest_entry->value);
+				pmem::obj::delete_persistent<T>(
+					dest_entry->value);
 				*dest_entry = e;
 			} else {
 				insert_leaf(
@@ -109,9 +108,10 @@ public:
 	int
 	insert_new(key_type key, const Args &... args)
 	{
-		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::run(pop, [&] {
-			return insert(key, nvobj::make_persistent<T>(args...));
+		auto pop = pmem::obj::pool_by_vptr(this);
+		pmem::obj::transaction::run(pop, [&] {
+			return insert(key,
+				      pmem::obj::make_persistent<T>(args...));
 		});
 
 		return -1;
@@ -129,7 +129,7 @@ public:
 	value_type
 	remove(key_type key)
 	{
-		nvobj::persistent_ptr<entry> parent = nullptr;
+		pmem::obj::persistent_ptr<entry> parent = nullptr;
 		auto leaf = get_leaf(key, &parent);
 
 		if (leaf == nullptr)
@@ -137,8 +137,8 @@ public:
 
 		auto ret = leaf->value;
 
-		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::run(pop, [&] {
+		auto pop = pmem::obj::pool_by_vptr(this);
+		pmem::obj::transaction::run(pop, [&] {
 			if (parent == nullptr) {
 				leaf->key = 0;
 				leaf->value = nullptr;
@@ -149,9 +149,11 @@ public:
 							   ->key == leaf->key]);
 
 				/* cleanup entries and the unnecessary node */
-				nvobj::delete_persistent<entry>(n->entries[0]);
-				nvobj::delete_persistent<entry>(n->entries[1]);
-				nvobj::delete_persistent<node>(n);
+				pmem::obj::delete_persistent<entry>(
+					n->entries[0]);
+				pmem::obj::delete_persistent<entry>(
+					n->entries[1]);
+				pmem::obj::delete_persistent<node>(n);
 			}
 		});
 
@@ -168,9 +170,10 @@ public:
 	int
 	remove_free(key_type key)
 	{
-		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::run(
-			pop, [&] { nvobj::delete_persistent<T>(remove(key)); });
+		auto pop = pmem::obj::pool_by_vptr(this);
+		pmem::obj::transaction::run(pop, [&] {
+			pmem::obj::delete_persistent<T>(remove(key));
+		});
 		return 0;
 	}
 
@@ -180,16 +183,16 @@ public:
 	int
 	clear()
 	{
-		auto pop = nvobj::pool_by_vptr(this);
-		nvobj::transaction::run(pop, [&] {
+		auto pop = pmem::obj::pool_by_vptr(this);
+		pmem::obj::transaction::run(pop, [&] {
 			if (this->root->inode) {
 				this->root->inode->clear();
-				nvobj::delete_persistent<node>(
+				pmem::obj::delete_persistent<node>(
 					this->root->inode);
 				this->root->inode = nullptr;
 			}
 
-			nvobj::delete_persistent<T>(this->root->value);
+			pmem::obj::delete_persistent<T>(this->root->value);
 			this->root->value = nullptr;
 			this->root->key = 0;
 		});
@@ -286,8 +289,8 @@ private:
 		{
 		}
 
-		nvobj::p<key_type> key;
-		nvobj::persistent_ptr<node> inode;
+		pmem::obj::p<key_type> key;
+		pmem::obj::persistent_ptr<node> inode;
 		value_type value;
 
 		void
@@ -295,10 +298,10 @@ private:
 		{
 			if (inode) {
 				inode->clear();
-				nvobj::delete_persistent<node>(inode);
+				pmem::obj::delete_persistent<node>(inode);
 				inode = nullptr;
 			}
-			nvobj::delete_persistent<T>(value);
+			pmem::obj::delete_persistent<T>(value);
 			value = nullptr;
 		}
 	};
@@ -313,20 +316,20 @@ private:
 			entries[1] = nullptr;
 		}
 
-		nvobj::p<int> diff; /* most significant differing bit */
-		nvobj::persistent_ptr<entry> entries[2];
+		pmem::obj::p<int> diff; /* most significant differing bit */
+		pmem::obj::persistent_ptr<entry> entries[2];
 
 		void
 		clear()
 		{
 			if (entries[0]) {
 				entries[0]->clear();
-				nvobj::delete_persistent<entry>(entries[0]);
+				pmem::obj::delete_persistent<entry>(entries[0]);
 				entries[0] = nullptr;
 			}
 			if (entries[1]) {
 				entries[1]->clear();
-				nvobj::delete_persistent<entry>(entries[1]);
+				pmem::obj::delete_persistent<entry>(entries[1]);
 				entries[1] = nullptr;
 			}
 		}
@@ -347,11 +350,11 @@ private:
 	void
 	insert_leaf(const entry *e, int diff)
 	{
-		auto new_node = nvobj::make_persistent<node>();
+		auto new_node = pmem::obj::make_persistent<node>();
 		new_node->diff = diff;
 
 		int d = BIT_IS_SET(e->key, new_node->diff);
-		new_node->entries[d] = nvobj::make_persistent<entry>(*e);
+		new_node->entries[d] = pmem::obj::make_persistent<entry>(*e);
 
 		auto dest_entry = root;
 		while (dest_entry->inode != nullptr) {
@@ -363,7 +366,7 @@ private:
 		}
 
 		new_node->entries[!d] =
-			nvobj::make_persistent<entry>(*dest_entry);
+			pmem::obj::make_persistent<entry>(*dest_entry);
 		dest_entry->key = 0;
 		dest_entry->inode = new_node;
 		dest_entry->value = nullptr;
@@ -372,11 +375,11 @@ private:
 	/*
 	 * Fetch leaf from the tree.
 	 */
-	nvobj::persistent_ptr<entry>
-	get_leaf(key_type key, nvobj::persistent_ptr<entry> *parent)
+	pmem::obj::persistent_ptr<entry>
+	get_leaf(key_type key, pmem::obj::persistent_ptr<entry> *parent)
 	{
 		auto n = root;
-		nvobj::persistent_ptr<entry> p = nullptr;
+		pmem::obj::persistent_ptr<entry> p = nullptr;
 
 		while (n->inode != nullptr) {
 			p = n;
@@ -397,7 +400,7 @@ private:
 	 * Recursive foreach on nodes.
 	 */
 	int
-	foreach_node(const nvobj::persistent_ptr<entry> e, callback clb,
+	foreach_node(const pmem::obj::persistent_ptr<entry> e, callback clb,
 		     void *arg)
 	{
 		int ret = 0;
@@ -414,7 +417,7 @@ private:
 	}
 
 	/* Tree root */
-	nvobj::persistent_ptr<entry> root;
+	pmem::obj::persistent_ptr<entry> root;
 };
 
 } /* namespace examples */

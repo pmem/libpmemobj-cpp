@@ -214,14 +214,48 @@ private:
 	}
 };
 
+/**
+ * The most typical dram_inline_string usage - the char specialization.
+ * See basic_dram_inline_string for details.
+ * @ingroup experimental_containers
+ */
 using dram_inline_string = basic_dram_inline_string<char>;
+/**
+ * The wide char specialization.
+ * @ingroup experimental_containers
+ */
 using dram_inline_wstring = basic_dram_inline_string<wchar_t>;
+/**
+ * The char16 specialization.
+ * @ingroup experimental_containers
+ */
 using dram_inline_u16string = basic_dram_inline_string<char16_t>;
+/**
+ * The char32 specialization.
+ * @ingroup experimental_containers
+ */
 using dram_inline_u32string = basic_dram_inline_string<char32_t>;
 
+/**
+ * The most typical inline_string usage - the char specialization.
+ * See basic_inline_string for details.
+ * @ingroup experimental_containers
+ */
 using inline_string = basic_inline_string<char>;
+/**
+ * The wide char specialization.
+ * @ingroup experimental_containers
+ */
 using inline_wstring = basic_inline_string<wchar_t>;
+/**
+ * The char16 specialization.
+ * @ingroup experimental_containers
+ */
 using inline_u16string = basic_inline_string<char16_t>;
+/**
+ * The char32 specialization.
+ * @ingroup experimental_containers
+ */
 using inline_u32string = basic_inline_string<char32_t>;
 
 /**
@@ -444,7 +478,7 @@ basic_inline_string_base<CharT, Traits>::at(size_type p) const
  * @param[in] start start index of requested range.
  * @param[in] n number of elements in range.
  *
- * @return slice from start to start + n.
+ * @return pmem::obj::slice from start to start + n.
  *
  * @throw std::out_of_range if any element of the range would be outside of the
  * container.

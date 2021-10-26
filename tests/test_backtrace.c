@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2015-2019, Intel Corporation */
+/* Copyright 2015-2021, Intel Corporation */
 
 /*
  * backtrace.c -- backtrace reporting routines
@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef USE_LIBUNWIND
+#ifdef LIBUNWIND_ENABLED
 
 #define UNW_LOCAL_ONLY
 #include <dlfcn.h>
@@ -90,7 +90,7 @@ test_dump_backtrace(void)
 				unw_strerror(ret), ret);
 	}
 }
-#else /* USE_LIBUNWIND */
+#else /* LIBUNWIND_ENABLED */
 
 #define BSIZE 100
 
@@ -162,7 +162,7 @@ test_dump_backtrace(void)
 
 #endif /* _WIN32 */
 
-#endif /* USE_LIBUNWIND */
+#endif /* LIBUNWIND_ENABLED */
 
 /*
  * test_sighandler -- fatal signal handler

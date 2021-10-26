@@ -22,9 +22,10 @@ namespace obj
  * Persistent memory resident shared_mutex implementation.
  *
  * This class is an implementation of a PMEM-resident shared_mutex
- * which mimics in behavior the C++11 std::mutex. This class
- * satisfies all requirements of the SharedMutex and StandardLayoutType
- * concepts. The typical usage would be:
+ * which mimics in behavior the C++11
+ * [std::shared_mutex](https://en.cppreference.com/w/cpp/thread/shared_mutex).
+ * This class satisfies all requirements of the SharedMutex and
+ * StandardLayoutType concepts. The typical usage would be:
  * @snippet mutex/mutex.cpp shared_mutex_example
  * @ingroup synchronization
  */

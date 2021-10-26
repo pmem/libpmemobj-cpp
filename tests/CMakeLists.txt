@@ -81,7 +81,7 @@ include(tbb)
 
 add_library(test_backtrace STATIC test_backtrace.c)
 if(LIBUNWIND_FOUND)
-	target_compile_definitions(test_backtrace PUBLIC USE_LIBUNWIND=1)
+	target_compile_definitions(test_backtrace PUBLIC LIBUNWIND_ENABLED=1)
 endif()
 
 add_library(valgrind_internal STATIC valgrind_internal.cpp)

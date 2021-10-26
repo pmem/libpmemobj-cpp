@@ -78,7 +78,7 @@ exception_with_errormsg(Args &&... args)
  * Custom pool error class.
  *
  * Thrown when there is a runtime problem with some action on the
- * pool.
+ * pool, e.g., object wasn't in a pool, invalid pool handle, etc.
  * @ingroup exceptions
  */
 class pool_error : public std::runtime_error {
@@ -90,6 +90,8 @@ public:
  * Custom pool error class.
  *
  * Thrown when there is an invalid argument passed to create/open pool.
+ * Specialization of pool_error, which is thrown
+ * when creating/opening pool failed.
  * @ingroup exceptions
  */
 class pool_invalid_argument : public pool_error {
@@ -100,7 +102,8 @@ public:
 /**
  * Custom transaction error class.
  *
- * Thrown when there is a runtime problem with a transaction.
+ * Thrown when there is a runtime problem with a transaction, e.g.,
+ * when the transaction is in the wrong stage, or on transaction abort.
  * @ingroup exceptions
  */
 class transaction_error : public std::runtime_error {

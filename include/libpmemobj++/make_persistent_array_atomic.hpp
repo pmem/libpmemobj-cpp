@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /**
  * @file
- * Atomic persistent_ptr allocation functions for arrays. The typical usage
- * examples would be:
+ * persistent_ptr atomic allocation functions for arrays.
+ *
+ * The typical usage examples would be:
  * @snippet make_persistent/make_persistent.cpp make_array_atomic_example
  */
 
@@ -40,6 +41,7 @@ namespace obj
  * @param[in] flag affects behaviour of allocator
  *
  * @throw std::bad_alloc on allocation failure.
+ * @ingroup allocation
  */
 template <typename T>
 void
@@ -72,6 +74,7 @@ make_persistent_atomic(
  * @param[in] flag affects behaviour of allocator
  *
  * @throw std::bad_alloc on allocation failure.
+ * @ingroup allocation
  */
 template <typename T>
 void
@@ -98,8 +101,9 @@ make_persistent_atomic(
  * cleanup must be performed elsewhere. Do *NOT* use this inside transactions,
  * as it might lead to undefined behavior in the presence of transaction aborts.
  *
- * param[in,out] ptr the persistent_ptr whose pointee is to be
+ * @param[in,out] ptr the persistent_ptr whose pointee is to be
  * deallocated.
+ * @ingroup allocation
  */
 template <typename T>
 void
@@ -120,7 +124,8 @@ delete_persistent_atomic(typename detail::pp_if_array<T>::type &ptr,
  * cleanup must be performed elsewhere. Do *NOT* use this inside transactions,
  * as it might lead to undefined behavior in the presence of transaction aborts.
  *
- * param[in,out] ptr the persistent_ptr whose pointee is to be deallocated.
+ * @param[in,out] ptr the persistent_ptr whose pointee is to be deallocated.
+ * @ingroup allocation
  */
 template <typename T>
 void

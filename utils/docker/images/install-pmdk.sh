@@ -16,8 +16,8 @@ fi
 
 PACKAGE_MANAGER=${1}
 
-# master: 1.11.0, 02.07.2021
-PMDK_VERSION="8583fcfd68764ac6779e6f93db89b06971b26704"
+# master: 1.11.1, 24.09.2021
+PMDK_VERSION="5b21904a257eff47f2e87fcbf2de46111f03ddd8"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

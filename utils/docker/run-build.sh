@@ -23,8 +23,10 @@ TESTS_PACKAGES=${TESTS_PACKAGES:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-ON}
 TESTS_ASAN=${TESTS_ASAN:-OFF}
 TESTS_UBSAN=${TESTS_UBSAN:-OFF}
-TESTS_VALGRIND_UNWIND=${TESTS_VALGRIND_UNWIND:-OFF}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
+# libunwind is switched on by default (in CI scripts), but disabled for valgrind tests
+TESTS_VALGRIND_UNWIND=${TESTS_VALGRIND_UNWIND:-OFF}
+USE_LIBUNWIND=${USE_LIBUNWIND:-ON}
 
 export PMREORDER_STACKTRACE_DEPTH=20
 
@@ -54,7 +56,8 @@ function tests_clang_debug_cpp17_no_valgrind() {
 		-DTESTS_COMPATIBILITY=1 \
 		-DTESTS_CONCURRENT_GDB=1 \
 		-DUSE_ASAN=${TESTS_ASAN} \
-		-DUSE_UBSAN=${TESTS_UBSAN}
+		-DUSE_UBSAN=${TESTS_UBSAN} \
+		-DUSE_LIBUNWIND=${USE_LIBUNWIND}
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}
@@ -91,7 +94,8 @@ function tests_clang_release_cpp11_no_valgrind() {
 		-DTESTS_COMPATIBILITY=1 \
 		-DTESTS_CONCURRENT_GDB=1 \
 		-DUSE_ASAN=${TESTS_ASAN} \
-		-DUSE_UBSAN=${TESTS_UBSAN}
+		-DUSE_UBSAN=${TESTS_UBSAN} \
+		-DUSE_LIBUNWIND=${USE_LIBUNWIND}
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}
@@ -107,7 +111,7 @@ function tests_clang_release_cpp11_no_valgrind() {
 # BUILD build_gcc_debug_cpp14 (no tests)
 ###############################################################################
 function build_gcc_debug_cpp14() {
-	VALGRIND_UNWIND=${1:-ON}
+	VALGRIND_UNWIND=${1:-${USE_LIBUNWIND}}
 	mkdir build
 	cd build
 
@@ -198,7 +202,8 @@ function tests_gcc_release_cpp17_no_valgrind() {
 		-DTESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM} \
 		-DTESTS_CONCURRENT_GDB=1 \
 		-DUSE_ASAN=${TESTS_ASAN} \
-		-DUSE_UBSAN=${TESTS_UBSAN}
+		-DUSE_UBSAN=${TESTS_UBSAN} \
+		-DUSE_LIBUNWIND=${USE_LIBUNWIND}
 
 	make -j$(nproc)
 	ctest --output-on-failure --timeout ${TEST_TIMEOUT}
@@ -240,7 +245,8 @@ function tests_clang_release_cpp20_no_valgrind() {
 		-DTESTS_COMPATIBILITY=0 \
 		-DTESTS_CONCURRENT_GDB=1 \
 		-DUSE_ASAN=${TESTS_USAN} \
-		-DUSE_UBSAN=${TESTS_UBSAN}
+		-DUSE_UBSAN=${TESTS_UBSAN} \
+		-DUSE_LIBUNWIND=${USE_LIBUNWIND}
 
 	make -j$(nproc)
 	ctest --output-on-failure -E "_pmreorder" --timeout ${TEST_TIMEOUT}

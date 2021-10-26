@@ -142,6 +142,7 @@ docker run --privileged=true --name=${CONTAINER_NAME} -i \
 	--env TESTS_VALGRIND_UNWIND=${TESTS_VALGRIND_UNWIND:-OFF} \
 	--env TEST_TIMEOUT=${TEST_TIMEOUT} \
 	--env TZ='Europe/Warsaw' \
+	--env USE_LIBUNWIND=${USE_LIBUNWIND:-ON} \
 	--shm-size=4G \
 	-v ${HOST_WORKDIR}:${WORKDIR} \
 	-v /etc/localtime:/etc/localtime \

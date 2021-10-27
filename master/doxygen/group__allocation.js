@@ -64,12 +64,46 @@ var group__allocation =
       [ "deallocate", "classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#afae894f1c574ab1637c9d73e63eccc94", null ],
       [ "max_size", "classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#a2366b9739f8036dc222f8d90e4da8c53", null ]
     ] ],
+    [ "allocator", "classpmem_1_1obj_1_1allocator.html", [
+      [ "rebind", "structpmem_1_1obj_1_1allocator_1_1rebind.html", [
+        [ "other", "structpmem_1_1obj_1_1allocator_1_1rebind.html#a4dd323442664963d2d39d2d26ef56a56", null ]
+      ] ],
+      [ "bool_type", "classpmem_1_1obj_1_1allocator.html#afcb5e1a38a4b9181daa9c34f32b0847b", null ],
+      [ "const_pointer", "classpmem_1_1obj_1_1allocator.html#a96fc8d6360ca09a75bda6cdebbfea9f1", null ],
+      [ "const_reference", "classpmem_1_1obj_1_1allocator.html#ac67a87e234e3bd5a2e29a45f55746945", null ],
+      [ "const_void_pointer", "classpmem_1_1obj_1_1allocator.html#a9c27b58262ddccbd74535354f03b83b8", null ],
+      [ "pointer", "classpmem_1_1obj_1_1allocator.html#a3192d59d01709c3d06e2176cc7ace98b", null ],
+      [ "reference", "classpmem_1_1obj_1_1allocator.html#af75b24f1244811588d276632316fdc4f", null ],
+      [ "size_type", "classpmem_1_1obj_1_1allocator.html#ac13987e502feefee8e618209c320361e", null ],
+      [ "value_type", "classpmem_1_1obj_1_1allocator.html#ae464b232f68d88e914581d582ee70886", null ],
+      [ "allocator", "classpmem_1_1obj_1_1allocator.html#a0316f8bc0a2566fb8d092014530129a1", null ],
+      [ "~allocator", "classpmem_1_1obj_1_1allocator.html#a114931ebb6ca2b8ac01a6ab636be8cc8", null ],
+      [ "allocator", "classpmem_1_1obj_1_1allocator.html#abc57cb39e8d37cbcdbcb8d93022efe7c", null ],
+      [ "allocator", "classpmem_1_1obj_1_1allocator.html#ab172045532539eda6d818701fb73a30d", null ],
+      [ "allocator", "classpmem_1_1obj_1_1allocator.html#aa9a2d7c7f4be8da329de7142ff5adbf4", null ],
+      [ "allocate", "classpmem_1_1obj_1_1allocator.html#a97ba80d5a80a7f18d689816c334ae3dc", null ],
+      [ "construct", "classpmem_1_1obj_1_1allocator.html#ad3d7cc8a0b8ae83717143530b792b5dc", null ],
+      [ "construct", "classpmem_1_1obj_1_1allocator.html#a95742ee582bc789f4811766ae12052d3", null ],
+      [ "deallocate", "classpmem_1_1obj_1_1allocator.html#aaf9ce43199d07cbea95de2fc0e552df1", null ],
+      [ "destroy", "classpmem_1_1obj_1_1allocator.html#a7149caf1374071bfe6c6af99bf5d9f3b", null ],
+      [ "max_size", "classpmem_1_1obj_1_1allocator.html#a6f7716374e2114a8e72d0ab54c08ed5a", null ],
+      [ "operator!=", "classpmem_1_1obj_1_1allocator.html#a45bf077bd33f5423c638bf6d42a0e3ff", null ],
+      [ "operator==", "classpmem_1_1obj_1_1allocator.html#a9e0c28b3312273692904de7e6298519e", null ],
+      [ "operator==", "classpmem_1_1obj_1_1allocator.html#a98020734fae7141e5ea0d84934a6aca8", null ],
+      [ "operator==", "classpmem_1_1obj_1_1allocator.html#a743192610238562786b997b326b05bcf", null ]
+    ] ],
+    [ "delete_persistent", "group__allocation.html#ga4222feb628a4d6f8ac2b3a5dbe42c5e6", null ],
     [ "delete_persistent", "group__allocation.html#ga714693f9ebbc9db6cd47ee40e10ccbaf", null ],
+    [ "delete_persistent", "group__allocation.html#ga5582033bf768fea635b40b3ba766fbef", null ],
+    [ "delete_persistent_atomic", "group__allocation.html#ga2009e20a7365ba802a5f1acbff2f2336", null ],
     [ "delete_persistent_atomic", "group__allocation.html#ga2aa55bbcf44c93a0ca9a8965cded6e40", null ],
+    [ "delete_persistent_atomic", "group__allocation.html#ga774f709132747433efe83cf8060186a3", null ],
     [ "make_persistent", "group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e", null ],
     [ "make_persistent", "group__allocation.html#ga0799ef351bd641499230292365d427a7", null ],
     [ "make_persistent", "group__allocation.html#ga77252820ae5e37021b008009c2ec17ed", null ],
     [ "make_persistent", "group__allocation.html#ga8fe3504b5f576c05b190770ae0e4b528", null ],
+    [ "make_persistent_atomic", "group__allocation.html#ga7b14ac5b07d58902df4c24deb7096d12", null ],
     [ "make_persistent_atomic", "group__allocation.html#ga6b463d8cf7358dda467d0f63e130d410", null ],
-    [ "make_persistent_atomic", "group__allocation.html#gaa2b6596bf5b91ebcc5fbaeb899d59599", null ]
+    [ "make_persistent_atomic", "group__allocation.html#gaa2b6596bf5b91ebcc5fbaeb899d59599", null ],
+    [ "make_persistent_atomic", "group__allocation.html#ga1d456157a9ddd13772036944fab68b01", null ]
 ];

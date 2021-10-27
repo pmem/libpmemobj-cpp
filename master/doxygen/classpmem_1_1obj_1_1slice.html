@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -92,7 +92,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1slice.html',''); i
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classpmem_1_1obj_1_1slice.html" title="pmem::obj::slice - provides interface to access sequence of objects.">pmem::obj::slice</a> - provides interface to access sequence of objects.  
+<p>Provides interface to access sequence of objects.  
  <a href="classpmem_1_1obj_1_1slice.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="slice_8hpp_source.html">libpmemobj++/slice.hpp</a>&gt;</code></p>
@@ -115,7 +115,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>reference</b> = type
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aee17b6985ff9a9b368f551808abf726a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#aee17b6985ff9a9b368f551808abf726a">slice</a> (Iterator <a class="el" href="classpmem_1_1obj_1_1slice.html#a65433f2b1b2ac620d28d0f33b12c24b2">begin</a>, Iterator <a class="el" href="classpmem_1_1obj_1_1slice.html#a95fc897b38b62dd528e8ecb008e99638">end</a>)</td></tr>
-<tr class="memdesc:aee17b6985ff9a9b368f551808abf726a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor taking two iterators (iterators should support: operator[], <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a03773ce7fdfb47fd6fa6484a6507d480" title="Subtraction operator for self-relative pointers.">operator-()</a>, <a class="el" href="classpmem_1_1obj_1_1p.html#ad6a7412adb074e1c34d260673a030321" title="Prefix decrement operator overload.">operator--()</a>) which define a range.  <a href="classpmem_1_1obj_1_1slice.html#aee17b6985ff9a9b368f551808abf726a">More...</a><br /></td></tr>
+<tr class="memdesc:aee17b6985ff9a9b368f551808abf726a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor taking two iterators, which define a range.  <a href="classpmem_1_1obj_1_1slice.html#aee17b6985ff9a9b368f551808abf726a">More...</a><br /></td></tr>
 <tr class="separator:aee17b6985ff9a9b368f551808abf726a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e10961ee1606f88181df5168f9023fc"><td class="memItemLeft" align="right" valign="top"><a id="a9e10961ee1606f88181df5168f9023fc"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a9e10961ee1606f88181df5168f9023fc">slice</a> (const <a class="el" href="classpmem_1_1obj_1_1slice.html">slice</a> &amp;other) noexcept=default</td></tr>
@@ -125,37 +125,37 @@ Public Member Functions</h2></td></tr>
 <a class="el" href="classpmem_1_1obj_1_1slice.html">slice</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a003146b9d147f21511f4cb156ae402ee">operator=</a> (const <a class="el" href="classpmem_1_1obj_1_1slice.html">slice</a> &amp;other) noexcept=default</td></tr>
 <tr class="memdesc:a003146b9d147f21511f4cb156ae402ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defaulted assignment operator. <br /></td></tr>
 <tr class="separator:a003146b9d147f21511f4cb156ae402ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65433f2b1b2ac620d28d0f33b12c24b2"><td class="memItemLeft" align="right" valign="top"><a id="a65433f2b1b2ac620d28d0f33b12c24b2"></a>
-iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a65433f2b1b2ac620d28d0f33b12c24b2">begin</a> () const noexcept</td></tr>
-<tr class="memdesc:a65433f2b1b2ac620d28d0f33b12c24b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns iterator to the beginning of the range. <br /></td></tr>
+<tr class="memitem:a65433f2b1b2ac620d28d0f33b12c24b2"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a65433f2b1b2ac620d28d0f33b12c24b2">begin</a> () const noexcept</td></tr>
 <tr class="separator:a65433f2b1b2ac620d28d0f33b12c24b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95fc897b38b62dd528e8ecb008e99638"><td class="memItemLeft" align="right" valign="top"><a id="a95fc897b38b62dd528e8ecb008e99638"></a>
-iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a95fc897b38b62dd528e8ecb008e99638">end</a> () const noexcept</td></tr>
-<tr class="memdesc:a95fc897b38b62dd528e8ecb008e99638"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns iterator to the end of the range. <br /></td></tr>
+<tr class="memitem:a95fc897b38b62dd528e8ecb008e99638"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a95fc897b38b62dd528e8ecb008e99638">end</a> () const noexcept</td></tr>
 <tr class="separator:a95fc897b38b62dd528e8ecb008e99638"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0cfcf09792f1ee98c3eff5e2715e04c"><td class="memItemLeft" align="right" valign="top"><a id="aa0cfcf09792f1ee98c3eff5e2715e04c"></a>
-reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#aa0cfcf09792f1ee98c3eff5e2715e04c">rend</a> () const noexcept</td></tr>
-<tr class="memdesc:aa0cfcf09792f1ee98c3eff5e2715e04c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns reverse iterator to the end. <br /></td></tr>
-<tr class="separator:aa0cfcf09792f1ee98c3eff5e2715e04c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a732394fce65ba31f11f4da6c2f591609"><td class="memItemLeft" align="right" valign="top"><a id="a732394fce65ba31f11f4da6c2f591609"></a>
-reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a732394fce65ba31f11f4da6c2f591609">rbegin</a> () const noexcept</td></tr>
-<tr class="memdesc:a732394fce65ba31f11f4da6c2f591609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns reverse iterator to the beginning. <br /></td></tr>
+<tr class="memitem:a732394fce65ba31f11f4da6c2f591609"><td class="memItemLeft" align="right" valign="top">reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#a732394fce65ba31f11f4da6c2f591609">rbegin</a> () const noexcept</td></tr>
+<tr class="memdesc:a732394fce65ba31f11f4da6c2f591609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reverse_iterator to the last element in the range.  <a href="classpmem_1_1obj_1_1slice.html#a732394fce65ba31f11f4da6c2f591609">More...</a><br /></td></tr>
 <tr class="separator:a732394fce65ba31f11f4da6c2f591609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0cfcf09792f1ee98c3eff5e2715e04c"><td class="memItemLeft" align="right" valign="top">reverse_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#aa0cfcf09792f1ee98c3eff5e2715e04c">rend</a> () const noexcept</td></tr>
+<tr class="memdesc:aa0cfcf09792f1ee98c3eff5e2715e04c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a reverse_iterator to the first element in the range.  <a href="classpmem_1_1obj_1_1slice.html#aa0cfcf09792f1ee98c3eff5e2715e04c">More...</a><br /></td></tr>
+<tr class="separator:aa0cfcf09792f1ee98c3eff5e2715e04c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7eaef2275313c8d98249719d1ef6c1e"><td class="memItemLeft" align="right" valign="top">reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#ac7eaef2275313c8d98249719d1ef6c1e">at</a> (size_type idx)</td></tr>
-<tr class="memdesc:ac7eaef2275313c8d98249719d1ef6c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Element access operator.  <a href="classpmem_1_1obj_1_1slice.html#ac7eaef2275313c8d98249719d1ef6c1e">More...</a><br /></td></tr>
+<tr class="memdesc:ac7eaef2275313c8d98249719d1ef6c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access operator for a single element of slice.  <a href="classpmem_1_1obj_1_1slice.html#ac7eaef2275313c8d98249719d1ef6c1e">More...</a><br /></td></tr>
 <tr class="separator:ac7eaef2275313c8d98249719d1ef6c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae210dd66292f9a8309a999b0c2316c99"><td class="memItemLeft" align="right" valign="top">reference&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#ae210dd66292f9a8309a999b0c2316c99">operator[]</a> (size_type idx)</td></tr>
-<tr class="memdesc:ae210dd66292f9a8309a999b0c2316c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Element access operator.  <a href="classpmem_1_1obj_1_1slice.html#ae210dd66292f9a8309a999b0c2316c99">More...</a><br /></td></tr>
+<tr class="memdesc:ae210dd66292f9a8309a999b0c2316c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscript operator, providing access to a single element of the slice.  <a href="classpmem_1_1obj_1_1slice.html#ae210dd66292f9a8309a999b0c2316c99">More...</a><br /></td></tr>
 <tr class="separator:ae210dd66292f9a8309a999b0c2316c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8abd5af40148f5f3aa4c5c251c5bb7b"><td class="memItemLeft" align="right" valign="top"><a id="ab8abd5af40148f5f3aa4c5c251c5bb7b"></a>
-size_type&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</td></tr>
+<tr class="memitem:ab8abd5af40148f5f3aa4c5c251c5bb7b"><td class="memItemLeft" align="right" valign="top">size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1slice.html#ab8abd5af40148f5f3aa4c5c251c5bb7b">size</a> () const</td></tr>
+<tr class="memdesc:ab8abd5af40148f5f3aa4c5c251c5bb7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns total number of elements within slice's range.  <a href="classpmem_1_1obj_1_1slice.html#ab8abd5af40148f5f3aa4c5c251c5bb7b">More...</a><br /></td></tr>
 <tr class="separator:ab8abd5af40148f5f3aa4c5c251c5bb7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Iterator&gt;<br />
 class pmem::obj::slice&lt; Iterator &gt;</h3>
 
-<p><a class="el" href="classpmem_1_1obj_1_1slice.html" title="pmem::obj::slice - provides interface to access sequence of objects.">pmem::obj::slice</a> - provides interface to access sequence of objects. </p>
+<p>Provides interface to access sequence of objects. </p>
+<p>It provides the view of any sequence of objects and it simplifies the access to that sequence, with the help of iterators. It's used e.g. in several data structures to deliver <code>range</code> methods. As an example slice usage please see: <a class="el" href="classpmem_1_1obj_1_1vector.html#a301e3bedc083d1bd488fb9fd4ab17fb7" title="Returns slice and snapshots requested range.">pmem::obj::vector::range()</a> .</p>
+<p>Slice can be used with any iterator type that supports:</p><ul>
+<li>indexing of elements - operator[],</li>
+<li>subtraction of two iterators - <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a03773ce7fdfb47fd6fa6484a6507d480" title="Subtraction operator for self-relative pointers.">operator-()</a>,</li>
+<li>pre-decrementing the iterator - <a class="el" href="classpmem_1_1obj_1_1p.html#ad6a7412adb074e1c34d260673a030321" title="Prefix decrement operator overload.">operator--()</a>. </li>
+</ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aee17b6985ff9a9b368f551808abf726a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aee17b6985ff9a9b368f551808abf726a">&#9670;&nbsp;</a></span>slice()</h2>
@@ -193,7 +193,8 @@ template&lt;typename Iterator &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor taking two iterators (iterators should support: operator[], <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a03773ce7fdfb47fd6fa6484a6507d480" title="Subtraction operator for self-relative pointers.">operator-()</a>, <a class="el" href="classpmem_1_1obj_1_1p.html#ad6a7412adb074e1c34d260673a030321" title="Prefix decrement operator overload.">operator--()</a>) which define a range. </p>
+<p>Constructor taking two iterators, which define a range. </p>
+<dl class="section note"><dt>Note</dt><dd>These iterators have to support: operator[], <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a03773ce7fdfb47fd6fa6484a6507d480" title="Subtraction operator for self-relative pointers.">operator-()</a>, and <a class="el" href="classpmem_1_1obj_1_1p.html#ad6a7412adb074e1c34d260673a030321" title="Prefix decrement operator overload.">operator--()</a></dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::out_of_range</td><td>if it_end &lt; it_begin. </td></tr>
@@ -230,13 +231,76 @@ template&lt;typename Iterator &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Element access operator. </p>
+<p>Access operator for a single element of slice. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">idx</td><td>index of selected element.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::out_of_range</td><td>if idx is greater or equal to size. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>reference to a selected object. </dd></dl>
+
+</div>
+</div>
+<a id="a65433f2b1b2ac620d28d0f33b12c24b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65433f2b1b2ac620d28d0f33b12c24b2">&#9670;&nbsp;</a></span>begin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Iterator &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a>&lt; Iterator &gt;::begin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>iterator to the beginning of the slice's range. </dd></dl>
+
+</div>
+</div>
+<a id="a95fc897b38b62dd528e8ecb008e99638"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95fc897b38b62dd528e8ecb008e99638">&#9670;&nbsp;</a></span>end()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Iterator &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">iterator <a class="el" href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a>&lt; Iterator &gt;::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>iterator to the end of the slice's range. </dd></dl>
 
 </div>
 </div>
@@ -266,8 +330,107 @@ template&lt;typename Iterator &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Element access operator. </p>
-<p>No bounds checking is performed. </p>
+<p>Subscript operator, providing access to a single element of the slice. </p>
+<p>It internally increments from begin iterator,</p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">idx</td><td>positions forward.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>No bounds checking is performed, so the iterator may become invalid. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>reference to a selected object. </dd></dl>
+
+</div>
+</div>
+<a id="a732394fce65ba31f11f4da6c2f591609"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a732394fce65ba31f11f4da6c2f591609">&#9670;&nbsp;</a></span>rbegin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Iterator &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">reverse_iterator <a class="el" href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a>&lt; Iterator &gt;::rbegin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a reverse_iterator to the last element in the range. </p>
+<p>Reverse iterators iterate backwards: increasing them moves them towards the beginning of the range.</p>
+<dl class="section return"><dt>Returns</dt><dd>reverse_iterator to the reverse beginning of the slice's range. </dd></dl>
+
+</div>
+</div>
+<a id="aa0cfcf09792f1ee98c3eff5e2715e04c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0cfcf09792f1ee98c3eff5e2715e04c">&#9670;&nbsp;</a></span>rend()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Iterator &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">reverse_iterator <a class="el" href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a>&lt; Iterator &gt;::rend </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns a reverse_iterator to the first element in the range. </p>
+<p>Reverse iterators iterate backwards: increasing them moves them towards the beginning of the range.</p>
+<dl class="section return"><dt>Returns</dt><dd>reverse_iterator to the reverse end of the slice's range. </dd></dl>
+
+</div>
+</div>
+<a id="ab8abd5af40148f5f3aa4c5c251c5bb7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8abd5af40148f5f3aa4c5c251c5bb7b">&#9670;&nbsp;</a></span>size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Iterator &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_type <a class="el" href="classpmem_1_1obj_1_1slice.html">pmem::obj::slice</a>&lt; Iterator &gt;::size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns total number of elements within slice's range. </p>
+<dl class="section return"><dt>Returns</dt><dd>size_type count of all elements. </dd></dl>
 
 </div>
 </div>

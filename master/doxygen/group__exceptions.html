@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -89,6 +89,9 @@ $(document).ready(function(){initNavTree('group__exceptions.html',''); initResiz
 <div class="title">Exceptions</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Possible exceptions that could be thrown by the libpmemobj++.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -130,6 +133,59 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>Possible exceptions that could be thrown by the libpmemobj++. </p>
+<p>In runtime, some operations may fail, then all you need is to catch the exception. Every pmem exception has <b>std::runtime_error</b> in its inheritance tree and contains proper message with an error description. All exceptions can be caught using just <b>std::runtime_error</b>. Look at the list on this page to explore all exceptions with their descriptions.</p>
+<p>Transaction handles uncaught exceptions thrown inside its scope, then aborts and rethrow the previous exception. That way you never loose the original exception and at the same time, the transaction state is handled properly by the library.</p>
+<p>Let's consider following example: </p><div class="fragment"><div class="line"><span class="keywordtype">int</span></div>
+<div class="line">main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div>
+<div class="line">{</div>
+<div class="line">    <span class="keywordflow">if</span> (argc &lt; 2) {</div>
+<div class="line">        show_usage(argv);</div>
+<div class="line">        <span class="keywordflow">return</span> 1;</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">const</span> <span class="keywordtype">char</span> *path = argv[1];</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">static</span> constexpr <span class="keywordtype">size_t</span> QUEUE_SIZE = 1000;</div>
+<div class="line"> </div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool&lt;root&gt;</a> pop;</div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
+<div class="line">        pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool&lt;root&gt;::open</a>(path, <span class="stringliteral">&quot;mpsc_queue&quot;</span>);</div>
+<div class="line">        <span class="keywordflow">if</span> (pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>()-&gt;log == <span class="keyword">nullptr</span>) {</div>
+<div class="line">            <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">                pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>()-&gt;log = <a class="code" href="group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a>&lt;</div>
+<div class="line">                    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html">pmem::obj::experimental::mpsc_queue</a>::</div>
+<div class="line">                        pmem_log_type&gt;(QUEUE_SIZE);</div>
+<div class="line">            });</div>
+<div class="line">        }</div>
+<div class="line">        single_threaded(pop);</div>
+<div class="line"> </div>
+<div class="line">    } <span class="keywordflow">catch</span> (<a class="code" href="classpmem_1_1pool__error.html">pmem::pool_error</a> &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">        std::cerr</div>
+<div class="line">            &lt;&lt; <span class="stringliteral">&quot;To create pool run: pmempool create obj --layout=mpsc_queue -s 100M path_to_pool&quot;</span></div>
+<div class="line">            &lt;&lt; std::endl;</div>
+<div class="line">    } <span class="keywordflow">catch</span> (std::exception &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">try</span> {</div>
+<div class="line">        pop.<a class="code" href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6">close</a>();</div>
+<div class="line">    } <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::logic_error &amp;e) {</div>
+<div class="line">        std::cerr &lt;&lt; e.what() &lt;&lt; std::endl;</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1mpsc__queue_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html">pmem::obj::experimental::mpsc_queue</a></div><div class="ttdoc">Persistent memory aware implementation of multi producer single consumer queue.</div><div class="ttdef"><b>Definition:</b> mpsc_queue.hpp:52</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html_a54af0122ce7be0754305b7b27f4e2fc6"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6">pmem::obj::pool_base::close</a></div><div class="ttdeci">void close()</div><div class="ttdoc">Closes the pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:256</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a1dcc1ec8833d4a9215ce3b6d24f51a79"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool::open</a></div><div class="ttdeci">static pool&lt; T &gt; open(const std::string &amp;path, const std::string &amp;layout)</div><div class="ttdoc">Opens an existing object store memory pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:672</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>
+<div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:84</div></div>
+<div class="ttc" id="agroup__allocation_html_ga9e090bf5d2b950fba759c7560c16e08e"><div class="ttname"><a href="group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a></div><div class="ttdeci">detail::pp_if_not_array&lt; T &gt;::type make_persistent(allocation_flag flag, Args &amp;&amp;... args)</div><div class="ttdoc">Transactionally allocate and construct an object of type T.</div><div class="ttdef"><b>Definition:</b> make_persistent.hpp:54</div></div>
+</div><!-- fragment --><p> There are plenty of try-catch blocks placed to handle possible errors that can happen in some conditions. E.g. <a class="el" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool&lt;T&gt;::open</a> can lead to <a class="el" href="classpmem_1_1pool__error.html">pmem::pool_error</a>. Next exception, <b>std::exception</b>, is placed to handle possible errors during allocation, coming from <a class="el" href="group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a>. Worth being careful using every new function because some of exceptions are not obvious, e.g., <a class="el" href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6" title="Closes the pool.">pmem::obj::pool&lt;T&gt;::close</a> at the end of the code which may throw <b>std::logic_error</b>.</p>
+<p>You should check every function you will use in context of possible exceptions and then handle them to avoid crash. </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -1,45 +1,46 @@
 <map id="libpmemobj++/pexceptions.hpp" name="libpmemobj++/pexceptions.hpp">
-<area shape="rect" id="node1" title="Custom pmem exceptions." alt="" coords="2692,5,2895,32"/>
-<area shape="rect" id="node2" href="$allocator_8hpp.html" title="Persistent memory aware allocator." alt="" coords="145,831,327,858"/>
-<area shape="rect" id="node5" href="$common_8hpp.html" title="Commonly used functionality." alt="" coords="1447,80,1585,121"/>
-<area shape="rect" id="node25" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="2990,653,3218,679"/>
-<area shape="rect" id="node28" href="$make__persistent__array_8hpp.html" title="Persistent_ptr allocation functions for arrays." alt="" coords="2913,549,3117,590"/>
-<area shape="rect" id="node29" href="$make__persistent__array__atomic_8hpp.html" title="Atomic persistent_ptr allocation functions for arrays." alt="" coords="2531,549,2735,590"/>
-<area shape="rect" id="node30" href="$make__persistent__atomic_8hpp.html" title="Persistent_ptr atomic allocation functions for objects." alt="" coords="2531,645,2735,687"/>
-<area shape="rect" id="node33" href="$pool_8hpp.html" title="C++ pmemobj pool." alt="" coords="1049,266,1207,293"/>
-<area shape="rect" id="node38" href="$utils_8hpp.html" title="Libpmemobj C++ utils." alt="" coords="2595,742,2752,769"/>
-<area shape="rect" id="node39" href="$transaction_8hpp.html" title="C++ pmemobj transactions." alt="" coords="1285,742,1483,769"/>
-<area shape="rect" id="node41" href="$ctl_8hpp.html" title="C++ ctl API." alt="" coords="911,80,1049,121"/>
-<area shape="rect" id="node42" href="$mutex_8hpp.html" title="Pmem&#45;resident mutex." alt="" coords="3051,1025,3219,1051"/>
-<area shape="rect" id="node3" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="195,1300,378,1341"/>
-<area shape="rect" id="node4" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="1106,1107,1289,1148"/>
-<area shape="rect" id="node6" href="$array_8hpp.html" title="Array container with std::array compatible interface." alt="" coords="2355,824,2517,865"/>
-<area shape="rect" id="node7" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="2102,921,2263,962"/>
-<area shape="rect" id="node10" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="2554,1017,2715,1059"/>
-<area shape="rect" id="node11" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="2289,1107,2503,1148"/>
-<area shape="rect" id="node12" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="1924,1203,2103,1245"/>
-<area shape="rect" id="node13" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="437,1196,598,1252"/>
-<area shape="rect" id="node14" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="3215,1203,3398,1245"/>
-<area shape="rect" id="node15" href="$contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers." alt="" coords="2374,735,2570,776"/>
-<area shape="rect" id="node16" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="2694,824,2855,865"/>
-<area shape="rect" id="node17" href="$ebr_8hpp.html" title="C++ Epoch&#45;based reclamation API." alt="" coords="403,259,541,300"/>
-<area shape="rect" id="node18" href="$self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="667,541,819,597"/>
-<area shape="rect" id="node19" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="505,824,693,865"/>
-<area shape="rect" id="node20" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="711,921,849,962"/>
-<area shape="rect" id="node23" href="$volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="920,824,1059,865"/>
-<area shape="rect" id="node24" href="$v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="617,259,799,300"/>
-<area shape="rect" id="node31" href="$p_8hpp.html" title="Resides on pmem property template." alt="" coords="1217,177,1357,203"/>
-<area shape="rect" id="node35" href="$persistent__ptr_8hpp.html" title="Persistent smart pointer." alt="" coords="1629,348,1795,389"/>
-<area shape="rect" id="node40" href="$persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr." alt="" coords="1433,169,1599,211"/>
-<area shape="rect" id="node9" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="2554,913,2715,969"/>
-<area shape="rect" id="node8" href="$string_8hpp.html" title="String typedefs for common character types." alt="" coords="1713,1017,1874,1059"/>
-<area shape="rect" id="node21" href="$self__relative__ptr__base_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="635,645,818,687"/>
-<area shape="rect" id="node22" href="$self__relative__ptr_8hpp.html" title="Persistent self&#45;relative smart pointer." alt="" coords="769,735,951,776"/>
-<area shape="rect" id="node26" href="$temp__value_8hpp.html" title="template class for caching objects." alt="" coords="2928,735,3067,776"/>
-<area shape="rect" id="node27" href="$inline__string_8hpp.html" title="Inline string implementation." alt="" coords="1590,824,1773,865"/>
-<area shape="rect" id="node32" href="$pext_8hpp.html" title="Convenience extensions for the resides on pmem property template." alt="" coords="2040,742,2197,769"/>
-<area shape="rect" id="node34" href="$defrag_8hpp.html" title="Defragmentation class." alt="" coords="1382,355,1551,382"/>
-<area shape="rect" id="node36" href="$check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent." alt="" coords="2689,437,2837,493"/>
-<area shape="rect" id="node37" href="$persistent__pool__ptr_8hpp.html" title="Persistent pointer for pool handle." alt="" coords="1685,445,1848,486"/>
-<area shape="rect" id="node43" href="$condition__variable_8hpp.html" title="Pmem&#45;resident condition variable." alt="" coords="3059,1107,3219,1148"/>
+<area shape="rect" id="node1" title="Custom pmem exceptions." alt="" coords="1904,5,2107,32"/>
+<area shape="rect" id="node2" href="$allocator_8hpp.html" title="Persistent memory aware allocator." alt="" coords="173,824,355,851"/>
+<area shape="rect" id="node5" href="$common_8hpp.html" title="Commonly used functionality." alt="" coords="1773,80,1912,121"/>
+<area shape="rect" id="node26" href="$make__persistent_8hpp.html" title="persistent_ptr transactional allocation functions for objects." alt="" coords="3543,638,3771,665"/>
+<area shape="rect" id="node29" href="$make__persistent__array_8hpp.html" title="persistent_ptr transactional allocation functions for arrays." alt="" coords="3555,541,3759,583"/>
+<area shape="rect" id="node30" href="$make__persistent__array__atomic_8hpp.html" title="persistent_ptr atomic allocation functions for arrays." alt="" coords="438,541,642,583"/>
+<area shape="rect" id="node31" href="$make__persistent__atomic_8hpp.html" title="persistent_ptr atomic allocation functions for objects." alt="" coords="486,631,690,672"/>
+<area shape="rect" id="node34" href="$pool_8hpp.html" title="C++ pmemobj pool." alt="" coords="1693,266,1851,293"/>
+<area shape="rect" id="node39" href="$utils_8hpp.html" title="Libpmemobj C++ utils." alt="" coords="1941,727,2099,754"/>
+<area shape="rect" id="node40" href="$transaction_8hpp.html" title="C++ pmemobj transactions." alt="" coords="2443,638,2640,665"/>
+<area shape="rect" id="node42" href="$ctl_8hpp.html" title="C++ ctl API." alt="" coords="1936,80,2075,121"/>
+<area shape="rect" id="node43" href="$mutex_8hpp.html" title="Pmem&#45;resident mutex." alt="" coords="3855,1025,4023,1051"/>
+<area shape="rect" id="node3" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="1275,1300,1458,1341"/>
+<area shape="rect" id="node4" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="1407,1107,1590,1148"/>
+<area shape="rect" id="node6" href="$array_8hpp.html" title="Array container with std::array compatible interface." alt="" coords="2766,817,2927,858"/>
+<area shape="rect" id="node7" href="$basic__string_8hpp.html" title="String container with std::basic_string compatible interface." alt="" coords="1993,921,2154,962"/>
+<area shape="rect" id="node10" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="2935,1017,3097,1059"/>
+<area shape="rect" id="node11" href="$enumerable__thread__specific_8hpp.html" title="A persistent version of thread&#45;local storage." alt="" coords="3229,1107,3443,1148"/>
+<area shape="rect" id="node12" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="2001,1203,2180,1245"/>
+<area shape="rect" id="node13" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="2365,1196,2526,1252"/>
+<area shape="rect" id="node14" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="4019,1203,4202,1245"/>
+<area shape="rect" id="node15" href="$contiguous__iterator_8hpp.html" title="Iterators for contiguous persistent containers." alt="" coords="3131,720,3327,761"/>
+<area shape="rect" id="node16" href="$vector_8hpp.html" title="Vector container with std::vector compatible interface." alt="" coords="3149,817,3310,858"/>
+<area shape="rect" id="node17" href="$ebr_8hpp.html" title="C++ Epoch&#45;based reclamation API." alt="" coords="504,259,643,300"/>
+<area shape="rect" id="node18" href="$self__relative__ptr__base__impl_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="1215,437,1367,493"/>
+<area shape="rect" id="node19" href="$atomic__persistent__aware__ptr_8hpp.html" title="Atomic specialization for persistent&#45;aware self_relative_ptr." alt="" coords="1103,809,1286,865"/>
+<area shape="rect" id="node20" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="1070,720,1258,761"/>
+<area shape="rect" id="node21" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="917,817,1056,858"/>
+<area shape="rect" id="node24" href="$volatile__state_8hpp.html" title="A volatile state for persistent objects." alt="" coords="2917,720,3056,761"/>
+<area shape="rect" id="node25" href="$v_8hpp.html" title="Volatile residing on pmem property template." alt="" coords="246,259,429,300"/>
+<area shape="rect" id="node32" href="$p_8hpp.html" title="Resides on pmem property template." alt="" coords="1926,177,2066,203"/>
+<area shape="rect" id="node36" href="$persistent__ptr_8hpp.html" title="Persistent smart pointer." alt="" coords="1805,348,1971,389"/>
+<area shape="rect" id="node41" href="$persistent__ptr__base_8hpp.html" title="Base class for persistent_ptr." alt="" coords="1531,169,1698,211"/>
+<area shape="rect" id="node9" href="$segment__vector__policies_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="2817,913,2978,969"/>
+<area shape="rect" id="node8" href="$string_8hpp.html" title="String typedefs for common character types." alt="" coords="1891,1017,2053,1059"/>
+<area shape="rect" id="node22" href="$self__relative__ptr__base_8hpp.html" title="Base class for self_relative_ptr." alt="" coords="1275,541,1458,583"/>
+<area shape="rect" id="node23" href="$self__relative__ptr_8hpp.html" title="Persistent self&#45;relative smart pointer." alt="" coords="1275,631,1458,672"/>
+<area shape="rect" id="node27" href="$temp__value_8hpp.html" title="template class for caching objects." alt="" coords="3555,720,3693,761"/>
+<area shape="rect" id="node28" href="$inline__string_8hpp.html" title="Inline string implementation." alt="" coords="2174,720,2357,761"/>
+<area shape="rect" id="node33" href="$pext_8hpp.html" title="Convenience extensions for the resides on pmem property template." alt="" coords="2533,727,2691,754"/>
+<area shape="rect" id="node35" href="$defrag_8hpp.html" title="Defragmentation class." alt="" coords="1509,355,1678,382"/>
+<area shape="rect" id="node37" href="$check__persistent__ptr__array_8hpp.html" title="Compile time type check for make_persistent." alt="" coords="1610,437,1758,493"/>
+<area shape="rect" id="node38" href="$persistent__pool__ptr_8hpp.html" title="Persistent pointer for pool handle." alt="" coords="532,921,695,962"/>
+<area shape="rect" id="node44" href="$condition__variable_8hpp.html" title="Pmem&#45;resident condition variable." alt="" coords="3863,1107,4023,1148"/>
 </map>

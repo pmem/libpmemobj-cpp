@@ -81,7 +81,7 @@ include(tbb)
 
 add_library(test_backtrace STATIC test_backtrace.c)
 if(LIBUNWIND_FOUND)
-	target_compile_definitions(test_backtrace PUBLIC USE_LIBUNWIND=1)
+	target_compile_definitions(test_backtrace PUBLIC LIBUNWIND_ENABLED=1)
 endif()
 
 add_library(valgrind_internal STATIC valgrind_internal.cpp)
@@ -310,14 +310,8 @@ if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr ptr/self_relative_ptr.cpp)
 	add_test_generic(NAME self_relative_ptr TRACERS none memcheck pmemcheck)
 
-	build_test(pa_self_relative_ptr ptr/pa_self_relative_ptr.cpp)
-	add_test_generic(NAME pa_self_relative_ptr TRACERS none memcheck pmemcheck)
-
 	build_test(self_relative_ptr_arith ptr/self_relative_ptr_arith.cpp)
 	add_test_generic(NAME self_relative_ptr_arith TRACERS none memcheck pmemcheck)
-
-	build_test(pa_self_relative_ptr_arith ptr/pa_self_relative_ptr_arith.cpp)
-	add_test_generic(NAME pa_self_relative_ptr_arith TRACERS none memcheck pmemcheck)
 
 	build_test(self_relative_ptr_atomic ptr/self_relative_ptr_atomic.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic TRACERS none memcheck drd helgrind)
@@ -325,8 +319,18 @@ if(TEST_SELF_RELATIVE_POINTER)
 	build_test(self_relative_ptr_atomic_pmem ptr/self_relative_ptr_atomic_pmem.cpp)
 	add_test_generic(NAME self_relative_ptr_atomic_pmem TRACERS none memcheck pmemcheck drd helgrind)
 
-	build_test(pa_self_relative_ptr_atomic_pmem ptr/pa_self_relative_ptr_atomic_pmem.cpp)
-	add_test_generic(NAME pa_self_relative_ptr_atomic_pmem TRACERS none memcheck pmemcheck drd helgrind)
+	build_test(atomic_persistent_aware_ptr_pmem ptr/atomic_persistent_aware_ptr_pmem.cpp)
+	add_test_generic(NAME atomic_persistent_aware_ptr_pmem TRACERS none memcheck pmemcheck drd helgrind)
+
+	if(PMREORDER_SUPPORTED)
+		build_test(atomic_persistent_aware_ptr_pmreorder ptr/atomic_persistent_aware_ptr_pmreorder.cpp)
+		add_test_generic(NAME atomic_persistent_aware_ptr_pmreorder CASE 0 TRACERS none
+				SCRIPT ptr/atomic_pmreorder_0.cmake)
+		add_test_generic(NAME atomic_persistent_aware_ptr_pmreorder CASE 1 TRACERS none
+				SCRIPT ptr/atomic_pmreorder_1.cmake)
+		add_test_generic(NAME atomic_persistent_aware_ptr_pmreorder CASE 2 TRACERS none
+				SCRIPT ptr/atomic_pmreorder_2.cmake)
+	endif()
 endif()
 
 add_subdirectory(external)
@@ -979,26 +983,6 @@ if(TEST_CONCURRENT_MAP)
 		endif()
 	endif()
 endif()
-
-################################################################################
-################################## SWMR_MAP ##############################
-if(TEST_SWMR_MAP)
-	build_test(swmr_map swmr_map/swmr_map.cpp)
-	# XXX: Add helgrind tracer for this test when we will fix false-positive with lock order
-	add_test_generic(NAME swmr_map TRACERS none memcheck pmemcheck drd)
-
-	build_test(swmr_map_singlethread swmr_map/swmr_map_singlethread.cpp)
-	add_test_generic(NAME swmr_map_singlethread TRACERS none memcheck pmemcheck)
-
-	build_test(swmr_map_tx swmr_map/swmr_map_tx.cpp)
-	add_test_generic(NAME swmr_map_tx TRACERS none memcheck pmemcheck)
-
-	build_test(swmr_map_insert_reopen swmr_map/swmr_map_insert_reopen.cpp)
-	add_test_generic(NAME swmr_map_insert_reopen CASE 0 TRACERS none memcheck pmemcheck
-			SCRIPT concurrent_hash_map/check_is_pmem.cmake)
-
-endif()
-
 
 ################################################################################
 #################################### MPSC_QUEUE ################################

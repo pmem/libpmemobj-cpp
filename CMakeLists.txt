@@ -78,6 +78,7 @@ option(CHECK_CPP_STYLE "check code style of C++ sources" OFF)
 option(TRACE_TESTS "more verbose test outputs" OFF)
 option(USE_ASAN "enable AddressSanitizer (debugging)" OFF)
 option(USE_UBSAN "enable UndefinedBehaviorSanitizer (debugging)" OFF)
+option(USE_LIBUNWIND "use libunwind for more reliable stack traces from tests (if available)" ON)
 option(USE_CCACHE "use ccache if it is available in the system" ON)
 
 option(TESTS_USE_FORCED_PMEM "run tests with PMEM_IS_PMEM_FORCE=1 - it speeds up tests execution on emulated pmem" OFF)

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2016-2020, Intel Corporation */
+/* Copyright 2016-2021, Intel Corporation */
 
 /*
  * mutex.cpp -- C++ documentation snippets.
@@ -12,25 +12,23 @@
 #include <libpmemobj++/pool.hpp>
 #include <mutex>
 
-namespace nvobj = pmem::obj;
-
 void
 unique_guard_example()
 {
 	/* pool root structure */
 	struct root {
-		nvobj::mutex pmutex;
+		pmem::obj::mutex pmutex;
 	};
 
 	/* create a pmemobj pool */
-	auto pop = nvobj::pool<root>::create("poolfile", "layout",
-					     PMEMOBJ_MIN_POOL);
+	auto pop = pmem::obj::pool<root>::create("poolfile", "layout",
+						 PMEMOBJ_MIN_POOL);
 	auto proot = pop.root();
 
 	/* typical usage schemes */
-	std::lock_guard<nvobj::mutex> guard(proot->pmutex);
+	std::lock_guard<pmem::obj::mutex> guard(proot->pmutex);
 
-	std::unique_lock<nvobj::mutex> other_guard(proot->pmutex);
+	std::unique_lock<pmem::obj::mutex> other_guard(proot->pmutex);
 }
 //! [unique_guard_example]
 
@@ -40,25 +38,23 @@ unique_guard_example()
 #include <libpmemobj++/shared_mutex.hpp>
 #include <mutex>
 
-namespace nvobj = pmem::obj;
-
 void
 shared_mutex_example()
 {
 	/* pool root structure */
 	struct root {
-		nvobj::shared_mutex pmutex;
+		pmem::obj::shared_mutex pmutex;
 	};
 
 	/* create a pmemobj pool */
-	auto pop = nvobj::pool<root>::create("poolfile", "layout",
-					     PMEMOBJ_MIN_POOL);
+	auto pop = pmem::obj::pool<root>::create("poolfile", "layout",
+						 PMEMOBJ_MIN_POOL);
 	auto proot = pop.root();
 
 	/* typical usage schemes */
 	proot->pmutex.lock_shared();
 
-	std::unique_lock<nvobj::shared_mutex> guard(proot->pmutex);
+	std::unique_lock<pmem::obj::shared_mutex> guard(proot->pmutex);
 }
 //! [shared_mutex_example]
 
@@ -68,19 +64,17 @@ shared_mutex_example()
 #include <libpmemobj++/pool.hpp>
 #include <libpmemobj++/timed_mutex.hpp>
 
-namespace nvobj = pmem::obj;
-
 void
 timed_mutex_example()
 {
 	/* pool root structure */
 	struct root {
-		nvobj::timed_mutex pmutex;
+		pmem::obj::timed_mutex pmutex;
 	};
 
 	/* create a pmemobj pool */
-	auto pop = nvobj::pool<root>::create("poolfile", "layout",
-					     PMEMOBJ_MIN_POOL);
+	auto pop = pmem::obj::pool<root>::create("poolfile", "layout",
+						 PMEMOBJ_MIN_POOL);
 	auto proot = pop.root();
 
 	const auto timeout = std::chrono::milliseconds(100);
@@ -101,27 +95,25 @@ timed_mutex_example()
 #include <mutex>
 #include <thread>
 
-namespace nvobj = pmem::obj;
-
 void
 cond_var_example()
 {
 	/* pool root structure */
 	struct root {
-		nvobj::mutex pmutex;
-		nvobj::condition_variable cond;
+		pmem::obj::mutex pmutex;
+		pmem::obj::condition_variable cond;
 		int counter;
 	};
 
 	/* create a pmemobj pool */
-	auto pop = nvobj::pool<root>::create("poolfile", "layout",
-					     PMEMOBJ_MIN_POOL);
+	auto pop = pmem::obj::pool<root>::create("poolfile", "layout",
+						 PMEMOBJ_MIN_POOL);
 
 	auto proot = pop.root();
 
 	/* run worker to bump up the counter */
 	std::thread worker([&] {
-		std::unique_lock<nvobj::mutex> lock(proot->pmutex);
+		std::unique_lock<pmem::obj::mutex> lock(proot->pmutex);
 		while (proot->counter < 1000)
 			++proot->counter;
 		/* unlock before notifying to avoid blocking on waiting thread
@@ -131,7 +123,7 @@ cond_var_example()
 		proot->cond.notify_one();
 	});
 
-	std::unique_lock<nvobj::mutex> lock(proot->pmutex);
+	std::unique_lock<pmem::obj::mutex> lock(proot->pmutex);
 	/* wait on condition variable */
 	proot->cond.wait(lock, [&] { return proot->counter >= 1000; });
 

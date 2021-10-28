@@ -159,8 +159,64 @@
   * - [blog post about transactional allocations](https://pmem.io/2016/05/19/cpp-06.html)
   */
 
-/** @defgroup allocation Allocation*/
-/** @defgroup data_view Data View*/
+/** @defgroup allocation Allocation
+  * Functions and classes to support allocations on pmem
+  *
+  * Libpmemobj-cpp introduced special functions for allocating objects and arrays
+  * of objects on persistent memory, with ease. For all `make_persistent` specializations
+  * there are also `delete_persistent` counterparts. The latter are used to free memory
+  * of previously allocated objects or arrays, and calling their destructors. Each
+  * specialization comes in two versions - atomic and transactional. First one is
+  * distinguished with `_atomic` suffix (e.g. `make_persistent_atomic()`) and should not
+  * be called within an active transaction - it may lead to undefined behavior in case
+  * of transaction's rollback. On the other hand, transactional functions will throw
+  * an exception if called outside of an active transaction.
+  *
+  * For more flexibly approach we introduced pmem::obj::allocator class, which implements
+  * the concept of C++ Allocator. Allocation and deallocation using this class can only
+  * happen within an active transactions.
+  *
+  * The *typical use case* of data allocation on pmem would be:
+  * @snippet make_persistent/make_persistent.cpp make_example
+  *
+  * For allocator usage see pmem::obj::experimental::inline_string example:
+  * @snippet inline_string/inline_string.cpp inline_string_example
+  */
+
+/** @defgroup data_view Data View
+  * Various views of persistent objects
+  *
+  * Classes listed on this page provide (often simplified) views of persistent data.
+  * They are delivered to ease the usage or for better performance. Please,
+  * take a look at description of each class to get the details of their behavior.
+  */
+
 /** @defgroup synchronization Synchronization Primitives*/
 /** @defgroup primitives Primitives*/
-/** @defgroup exceptions Exceptions*/
+/** @defgroup exceptions Exceptions
+  * Possible exceptions that could be thrown by the libpmemobj++.
+  *
+  * In runtime, some operations may fail, then all you need is to catch the exception.
+  * Every pmem exception has **std::runtime_error** in its inheritance tree
+  * and contains proper message with an error description.
+  * All exceptions can be caught using just **std::runtime_error**.
+  * Look at the list on this page to explore all exceptions with their descriptions.
+  *
+  * Transaction handles uncaught exceptions thrown inside its scope, then aborts
+  * and rethrow the previous exception. That way you never loose the original
+  * exception and at the same time, the transaction state is handled
+  * properly by the library.
+  *
+  * Let's consider following example:
+  * @snippet examples/mpsc_queue/mpsc_queue.cpp mpsc_main
+  *
+  * There are plenty of try-catch blocks placed to handle possible errors that can happen in some conditions.
+  * E.g. @ref pmem::obj::pool<T>::open can lead to @ref pmem::pool_error.
+  * Next exception, **std::exception**, is placed to handle possible errors during allocation,
+  * coming from @ref pmem::obj::make_persistent. Worth being careful using every new function
+  * because some of exceptions are not obvious, e.g., pmem::obj::pool<T>::close
+  * at the end of the code which may throw **std::logic_error**.
+  *
+  * You should check every function you will use in context of possible
+  * exceptions and then handle them to avoid crash.
+  **/

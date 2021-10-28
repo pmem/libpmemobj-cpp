@@ -23,9 +23,10 @@ namespace obj
  * Persistent memory resident mutex implementation.
  *
  * This class is an implementation of a PMEM-resident mutex
- * which mimics in behavior the C++11 std::mutex. This class
- * satisfies all requirements of the Mutex and StandardLayoutType
- * concepts. The typical usage example would be:
+ * which mimics in behavior the C++11
+ * [std::mutex](https://en.cppreference.com/w/cpp/thread/mutex). This class
+ * satisfies all requirements of the Mutex and StandardLayoutType concepts. The
+ * typical usage example would be:
  * @snippet mutex/mutex.cpp unique_guard_example
  * @ingroup synchronization
  */

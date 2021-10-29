@@ -39,6 +39,8 @@ There are also another blog posts regarding **C++ bindings**:
 * [C++ persistent containers](https://pmem.io/2018/11/20/cpp-persistent-containers.html)
 * [C++ persistent containers - vector](https://pmem.io/2019/02/20/cpp-vector.html)
 * [C++ standard limitations and Persistent Memory](https://pmem.io/2019/10/04/cpp-limitations.html)
+* [Concurrency considerations in libpmemobj-cpp](https://pmem.io/2021/09/17/concurrency.html)
+* [Libpmemobj-cpp - lessons learned](https://pmem.io/2021/09/30/cpp-lessons-learned.html)
 
 ## Releases' support status
 

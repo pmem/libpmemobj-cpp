@@ -12,7 +12,6 @@ var dir_5ded00d85304e80433f58d5c7677c64a =
       [ "rebind", "structpmem_1_1obj_1_1object__traits_3_01void_01_4_1_1rebind.html", "structpmem_1_1obj_1_1object__traits_3_01void_01_4_1_1rebind" ],
       [ "rebind", "structpmem_1_1obj_1_1standard__alloc__policy_1_1rebind.html", "structpmem_1_1obj_1_1standard__alloc__policy_1_1rebind" ],
       [ "rebind", "structpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4_1_1rebind.html", "structpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4_1_1rebind" ],
-      [ "allocator", "classpmem_1_1obj_1_1allocator.html", "classpmem_1_1obj_1_1allocator" ],
       [ "rebind", "structpmem_1_1obj_1_1allocator_1_1rebind.html", "structpmem_1_1obj_1_1allocator_1_1rebind" ]
     ] ],
     [ "condition_variable.hpp", "condition__variable_8hpp.html", null ],

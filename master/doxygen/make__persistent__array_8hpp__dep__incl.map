@@ -1,6 +1,6 @@
 <map id="libpmemobj++/make_persistent_array.hpp" name="libpmemobj++/make_persistent_array.hpp">
-<area shape="rect" id="node1" title="Persistent_ptr allocation functions for arrays." alt="" coords="442,5,646,47"/>
-<area shape="rect" id="node2" href="$make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="430,95,658,121"/>
+<area shape="rect" id="node1" title="persistent_ptr transactional allocation functions for arrays." alt="" coords="442,5,646,47"/>
+<area shape="rect" id="node2" href="$make__persistent_8hpp.html" title="persistent_ptr transactional allocation functions for objects." alt="" coords="430,95,658,121"/>
 <area shape="rect" id="node3" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,638,184,679"/>
 <area shape="rect" id="node4" href="$segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="301,452,462,493"/>
 <area shape="rect" id="node8" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="498,638,681,679"/>

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('make__persistent__array_8hpp.html','')
 </div><!--header-->
 <div class="contents">
 
-<p>Persistent_ptr allocation functions for arrays.  
+<p>persistent_ptr transactional allocation functions for arrays.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="allocation__flag_8hpp_source.html">libpmemobj++/allocation_flag.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="array__traits_8hpp_source.html">libpmemobj++/detail/array_traits.hpp</a>&gt;</code><br />
@@ -108,8 +108,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="make__persistent__array_8hpp__dep__incl.png" border="0" usemap="#alibpmemobj_09_09_2make__persistent__array_8hppdep" alt=""/></div>
 <map name="alibpmemobj_09_09_2make__persistent__array_8hppdep" id="alibpmemobj_09_09_2make__persistent__array_8hppdep">
-<area shape="rect" title="Persistent_ptr allocation functions for arrays." alt="" coords="442,5,646,47"/>
-<area shape="rect" href="make__persistent_8hpp.html" title="Persistent_ptr transactional allocation functions for objects." alt="" coords="430,95,658,121"/>
+<area shape="rect" title="persistent_ptr transactional allocation functions for arrays." alt="" coords="442,5,646,47"/>
+<area shape="rect" href="make__persistent_8hpp.html" title="persistent_ptr transactional allocation functions for objects." alt="" coords="430,95,658,121"/>
 <area shape="rect" href="concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,638,184,679"/>
 <area shape="rect" href="segment__vector_8hpp.html" title="A persistent version of segment vector implementation." alt="" coords="301,452,462,493"/>
 <area shape="rect" href="mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="498,638,681,679"/>
@@ -147,17 +147,17 @@ Functions</h2></td></tr>
 <tr class="memitem:ga0799ef351bd641499230292365d427a7"><td class="memTemplItemLeft" align="right" valign="top">detail::pp_if_size_array&lt; T &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga0799ef351bd641499230292365d427a7">pmem::obj::make_persistent</a> (allocation_flag flag=allocation_flag::none())</td></tr>
 <tr class="memdesc:ga0799ef351bd641499230292365d427a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally allocate and construct an array of objects of type T.  <a href="group__allocation.html#ga0799ef351bd641499230292365d427a7">More...</a><br /></td></tr>
 <tr class="separator:ga0799ef351bd641499230292365d427a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html#a4222feb628a4d6f8ac2b3a5dbe42c5e6">pmem::obj::delete_persistent</a> (typename detail::pp_if_array&lt; T &gt;::type ptr, std::size_t N)</td></tr>
-<tr class="memdesc:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>.  <a href="namespacepmem_1_1obj.html#a4222feb628a4d6f8ac2b3a5dbe42c5e6">More...</a><br /></td></tr>
-<tr class="separator:a4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5582033bf768fea635b40b3ba766fbef"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a5582033bf768fea635b40b3ba766fbef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj.html#a5582033bf768fea635b40b3ba766fbef">pmem::obj::delete_persistent</a> (typename detail::pp_if_size_array&lt; T &gt;::type ptr)</td></tr>
-<tr class="memdesc:a5582033bf768fea635b40b3ba766fbef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>.  <a href="namespacepmem_1_1obj.html#a5582033bf768fea635b40b3ba766fbef">More...</a><br /></td></tr>
-<tr class="separator:a5582033bf768fea635b40b3ba766fbef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga4222feb628a4d6f8ac2b3a5dbe42c5e6">pmem::obj::delete_persistent</a> (typename detail::pp_if_array&lt; T &gt;::type ptr, std::size_t N)</td></tr>
+<tr class="memdesc:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>.  <a href="group__allocation.html#ga4222feb628a4d6f8ac2b3a5dbe42c5e6">More...</a><br /></td></tr>
+<tr class="separator:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5582033bf768fea635b40b3ba766fbef"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga5582033bf768fea635b40b3ba766fbef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga5582033bf768fea635b40b3ba766fbef">pmem::obj::delete_persistent</a> (typename detail::pp_if_size_array&lt; T &gt;::type ptr)</td></tr>
+<tr class="memdesc:ga5582033bf768fea635b40b3ba766fbef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>.  <a href="group__allocation.html#ga5582033bf768fea635b40b3ba766fbef">More...</a><br /></td></tr>
+<tr class="separator:ga5582033bf768fea635b40b3ba766fbef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Persistent_ptr allocation functions for arrays. </p>
+<div class="textblock"><p>persistent_ptr transactional allocation functions for arrays. </p>
 <p>The typical usage examples would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;fcntl.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent__array_8hpp.html">libpmemobj++/make_persistent_array.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div>
@@ -218,7 +218,7 @@ Functions</h2></td></tr>
 <div class="line">}</div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:694</div></div>
-<div class="ttc" id="amake__persistent__array_8hpp_html"><div class="ttname"><a href="make__persistent__array_8hpp.html">make_persistent_array.hpp</a></div><div class="ttdoc">Persistent_ptr allocation functions for arrays.</div></div>
+<div class="ttc" id="amake__persistent__array_8hpp_html"><div class="ttname"><a href="make__persistent__array_8hpp.html">make_persistent_array.hpp</a></div><div class="ttdoc">persistent_ptr transactional allocation functions for arrays.</div></div>
 <div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
 <div class="ttc" id="ap_8hpp_html"><div class="ttname"><a href="p_8hpp.html">p.hpp</a></div><div class="ttdoc">Resides on pmem property template.</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>

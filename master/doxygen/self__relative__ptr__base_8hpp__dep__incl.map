@@ -1,9 +1,10 @@
 <map id="libpmemobj++/experimental/self_relative_ptr_base.hpp" name="libpmemobj++/experimental/self_relative_ptr_base.hpp">
-<area shape="rect" id="node1" title="Base class for self_relative_ptr." alt="" coords="185,5,368,47"/>
-<area shape="rect" id="node2" href="$self__relative__ptr_8hpp.html" title="Persistent self&#45;relative smart pointer." alt="" coords="185,95,368,136"/>
-<area shape="rect" id="node3" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="16,273,177,329"/>
-<area shape="rect" id="node5" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="218,281,357,322"/>
-<area shape="rect" id="node6" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="249,377,432,419"/>
-<area shape="rect" id="node7" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="117,184,305,225"/>
-<area shape="rect" id="node4" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="5,377,188,419"/>
+<area shape="rect" id="node1" title="Base class for self_relative_ptr." alt="" coords="207,5,389,47"/>
+<area shape="rect" id="node2" href="$self__relative__ptr_8hpp.html" title="Persistent self&#45;relative smart pointer." alt="" coords="207,95,389,136"/>
+<area shape="rect" id="node3" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="260,273,421,329"/>
+<area shape="rect" id="node5" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="97,281,235,322"/>
+<area shape="rect" id="node6" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="5,377,188,419"/>
+<area shape="rect" id="node7" href="$atomic__persistent__aware__ptr_8hpp.html" title="Atomic specialization for persistent&#45;aware self_relative_ptr." alt="" coords="445,273,628,329"/>
+<area shape="rect" id="node8" href="$atomic__self__relative__ptr_8hpp.html" title="Atomic specialization for self_relative_ptr." alt="" coords="204,184,392,225"/>
+<area shape="rect" id="node4" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="249,377,432,419"/>
 </map>

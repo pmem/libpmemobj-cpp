@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('classpmem_1_1obj_1_1timed__mutex.html'
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classpmem_1_1obj_1_1timed__mutex-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">pmem::obj::timed_mutex Class Reference<div class="ingroups"><a class="el" href="group__primitives.html">Primitives</a></div></div>  </div>
+<div class="title">pmem::obj::timed_mutex Class Reference<div class="ingroups"><a class="el" href="group__synchronization.html">Synchronization Primitives</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -144,23 +144,21 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Persistent memory resident <a class="el" href="classpmem_1_1obj_1_1timed__mutex.html" title="Persistent memory resident timed_mutex implementation.">timed_mutex</a> implementation. </p>
-<p>This class is an implementation of a PMEM-resident <a class="el" href="classpmem_1_1obj_1_1timed__mutex.html" title="Persistent memory resident timed_mutex implementation.">timed_mutex</a> which mimics in behavior the C++11 std::timed_mutex. This class satisfies all requirements of the TimedMutex and StandardLayoutType concepts. The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;chrono&gt;</span></div>
+<p>This class is an implementation of a PMEM-resident <a class="el" href="classpmem_1_1obj_1_1timed__mutex.html" title="Persistent memory resident timed_mutex implementation.">timed_mutex</a> which mimics in behavior the C++11 <a href="https://en.cppreference.com/w/cpp/thread/timed_mutex">std::timed_mutex</a>. This class satisfies all requirements of the TimedMutex and StandardLayoutType concepts. The typical usage example would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;chrono&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="timed__mutex_8hpp.html">libpmemobj++/timed_mutex.hpp</a>&gt;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keyword">namespace </span>nvobj = <a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">void</span></div>
 <div class="line">timed_mutex_example()</div>
 <div class="line">{</div>
 <div class="line">    <span class="comment">/* pool root structure */</span></div>
 <div class="line">    <span class="keyword">struct </span>root {</div>
-<div class="line">        nvobj::timed_mutex pmutex;</div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1timed__mutex.html">pmem::obj::timed_mutex</a> pmutex;</div>
 <div class="line">    };</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">/* create a pmemobj pool */</span></div>
-<div class="line">    <span class="keyword">auto</span> pop = nvobj::pool&lt;root&gt;::create(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>,</div>
+<div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>,</div>
 <div class="line">                         PMEMOBJ_MIN_POOL);</div>
 <div class="line">    <span class="keyword">auto</span> proot = pop.root();</div>
 <div class="line"> </div>
@@ -172,7 +170,8 @@ Public Member Functions</h2></td></tr>
 <div class="line">    proot-&gt;pmutex.try_lock_until(std::chrono::steady_clock::now() +</div>
 <div class="line">                     timeout);</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:694</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1timed__mutex_html"><div class="ttname"><a href="classpmem_1_1obj_1_1timed__mutex.html">pmem::obj::timed_mutex</a></div><div class="ttdoc">Persistent memory resident timed_mutex implementation.</div><div class="ttdef"><b>Definition:</b> timed_mutex.hpp:34</div></div>
 <div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
 <div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>
 <div class="ttc" id="atimed__mutex_8hpp_html"><div class="ttname"><a href="timed__mutex_8hpp.html">timed_mutex.hpp</a></div><div class="ttdoc">Pmem-resident timed_mutex.</div></div>

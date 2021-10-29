@@ -246,5 +246,13 @@ var group__experimental__containers =
       [ "upper_bound", "classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a8215dc46b7ddc54d3465f99b1ce9dd93", null ],
       [ "operator<<", "classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a1dec1eec978f44f02fb196c61d5524b3", null ],
       [ "swap", "classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a6cd75c8b302afe365482e4adeb0c5c52", null ]
-    ] ]
+    ] ],
+    [ "dram_inline_string", "group__experimental__containers.html#ga37369f18a21467051da4c1ccbe868da9", null ],
+    [ "dram_inline_u16string", "group__experimental__containers.html#ga6a31e4b379cf244e19abf35525df1d7f", null ],
+    [ "dram_inline_u32string", "group__experimental__containers.html#ga9fb0814672603c5633af4f46f4098468", null ],
+    [ "dram_inline_wstring", "group__experimental__containers.html#gaa1fc1c77eb88e5e1a2d95ab87dd96d5d", null ],
+    [ "inline_string", "group__experimental__containers.html#ga9e8813521c66ca3cd7c27939230cab1f", null ],
+    [ "inline_u16string", "group__experimental__containers.html#gaecf1cfd6fa869747dbe4584ccc00759f", null ],
+    [ "inline_u32string", "group__experimental__containers.html#gafba7fc8729da653731cfd91a003a0590", null ],
+    [ "inline_wstring", "group__experimental__containers.html#gac795e96b08a78581a20eb95ef3e60394", null ]
 ];

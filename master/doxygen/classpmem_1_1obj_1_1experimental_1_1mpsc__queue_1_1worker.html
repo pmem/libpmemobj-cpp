@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -118,8 +118,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a728d2fe487fe4d6c075480639d8c8e3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator, from.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a728d2fe487fe4d6c075480639d8c8e3f">More...</a><br /></td></tr>
 <tr class="separator:a728d2fe487fe4d6c075480639d8c8e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d76535ec5147d267c69a1c0c43dd5b3"><td class="memTemplParams" colspan="2">template&lt;typename Function  = void (*)(pmem::obj::string_view)&gt; </td></tr>
-<tr class="memitem:a2d76535ec5147d267c69a1c0c43dd5b3"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">try_produce</a> (<a class="el" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a> data, Function &amp;&amp;on_produce=[](<a class="el" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a> target) {})</td></tr>
-<tr class="memdesc:a2d76535ec5147d267c69a1c0c43dd5b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies data from pmem::obj::string_view into the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">More...</a><br /></td></tr>
+<tr class="memitem:a2d76535ec5147d267c69a1c0c43dd5b3"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">try_produce</a> (<a class="el" href="group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b">pmem::obj::string_view</a> data, Function &amp;&amp;on_produce=[](<a class="el" href="group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b">pmem::obj::string_view</a> target) {})</td></tr>
+<tr class="memdesc:a2d76535ec5147d267c69a1c0c43dd5b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copies data from <a class="el" href="group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b" title="The most typical string_view usage - the char specialization.">pmem::obj::string_view</a> into the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>.  <a href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a2d76535ec5147d267c69a1c0c43dd5b3">More...</a><br /></td></tr>
 <tr class="separator:a2d76535ec5147d267c69a1c0c43dd5b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -276,14 +276,14 @@ template&lt;typename Function  = void (*)(pmem::obj::string_view)&gt; </div>
         <tr>
           <td class="memname">bool pmem::obj::experimental::mpsc_queue::worker::try_produce </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b">pmem::obj::string_view</a>&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Function &amp;&amp;&#160;</td>
-          <td class="paramname"><em>on_produce</em> = <code>[](<a class="el" href="classpmem_1_1obj_1_1basic__string__view.html">pmem::obj::string_view</a>&#160;target)&#160;{}</code>&#160;</td>
+          <td class="paramname"><em>on_produce</em> = <code>[](<a class="el" href="group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b">pmem::obj::string_view</a>&#160;target)&#160;{}</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -293,7 +293,7 @@ template&lt;typename Function  = void (*)(pmem::obj::string_view)&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Copies data from pmem::obj::string_view into the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>. </p>
+<p>Copies data from <a class="el" href="group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b" title="The most typical string_view usage - the char specialization.">pmem::obj::string_view</a> into the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Data to be copied into <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue.html" title="Persistent memory aware implementation of multi producer single consumer queue.">mpsc_queue</a> </td></tr>

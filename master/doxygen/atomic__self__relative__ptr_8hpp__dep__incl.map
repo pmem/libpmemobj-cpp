@@ -1,7 +1,8 @@
 <map id="libpmemobj++/experimental/atomic_self_relative_ptr.hpp" name="libpmemobj++/experimental/atomic_self_relative_ptr.hpp">
-<area shape="rect" id="node1" title="Atomic specialization for self_relative_ptr." alt="" coords="105,5,293,47"/>
+<area shape="rect" id="node1" title="Atomic specialization for self_relative_ptr." alt="" coords="201,5,389,47"/>
 <area shape="rect" id="node2" href="$concurrent__skip__list__impl_8hpp.html" title="Persistent memory aware implementation of the concurrent skip list." alt="" coords="32,95,193,151"/>
 <area shape="rect" id="node4" href="$tagged__ptr_8hpp.html" title="Persistent tagged pointer." alt="" coords="226,102,365,143"/>
+<area shape="rect" id="node6" href="$atomic__persistent__aware__ptr_8hpp.html" title="Atomic specialization for persistent&#45;aware self_relative_ptr." alt="" coords="389,95,572,151"/>
 <area shape="rect" id="node3" href="$concurrent__map_8hpp.html" title="Persistent memory aware implementation of Intel TBB concurrent_map." alt="" coords="5,199,188,240"/>
 <area shape="rect" id="node5" href="$radix__tree_8hpp.html" title="Implementation of persistent radix tree." alt="" coords="212,199,395,240"/>
 </map>

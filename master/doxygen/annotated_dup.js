@@ -25,6 +25,7 @@ var annotated_dup =
       ] ],
       [ "obj", "namespacepmem_1_1obj.html", [
         [ "experimental", "namespacepmem_1_1obj_1_1experimental.html", [
+          [ "atomic_persistent_aware_ptr", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr" ],
           [ "concurrent_map", "classpmem_1_1obj_1_1experimental_1_1concurrent__map.html", "classpmem_1_1obj_1_1experimental_1_1concurrent__map" ],
           [ "basic_dram_inline_string", "classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html", "classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string" ],
           [ "basic_inline_string", "classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html", "classpmem_1_1obj_1_1experimental_1_1basic__inline__string" ],

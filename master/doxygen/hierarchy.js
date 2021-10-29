@@ -5,6 +5,7 @@ var hierarchy =
     [ "pmem::obj::array< T, N >", "structpmem_1_1obj_1_1array.html", null ],
     [ "pmem::obj::array< value_type, sso_capacity+1 >", "structpmem_1_1obj_1_1array.html", null ],
     [ "std::atomic< pmem::obj::experimental::self_relative_ptr< T > >", "structstd_1_1atomic_3_01pmem_1_1obj_1_1experimental_1_1self__relative__ptr_3_01T_01_4_01_4.html", null ],
+    [ "pmem::obj::experimental::atomic_persistent_aware_ptr< T, ReadOptimized >", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html", null ],
     [ "pmem::obj::experimental::basic_dram_inline_string< CharT, Traits >", "classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html", null ],
     [ "pmem::obj::experimental::basic_inline_string< CharT, Traits >", "classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html", null ],
     [ "pmem::obj::basic_string< CharT, Traits >", "classpmem_1_1obj_1_1basic__string.html", null ],

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -90,6 +90,9 @@ $(document).ready(function(){initNavTree('group__allocation.html',''); initResiz
 <div class="title">Allocation</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Functions and classes to support allocations on pmem.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -104,6 +107,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html">pmem::obj::standard_alloc_policy&lt; void &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Void specialization of the standard allocation policy.  <a href="classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator&lt; T, Policy, Traits &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK's libpmemobj.  <a href="classpmem_1_1obj_1_1allocator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -128,6 +134,30 @@ Functions</h2></td></tr>
 <tr class="memitem:ga0799ef351bd641499230292365d427a7"><td class="memTemplItemLeft" align="right" valign="top">detail::pp_if_size_array&lt; T &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga0799ef351bd641499230292365d427a7">pmem::obj::make_persistent</a> (<a class="el" href="structpmem_1_1obj_1_1allocation__flag.html">allocation_flag</a> flag=<a class="el" href="structpmem_1_1obj_1_1allocation__flag.html#ae89f1ed6c125d3bd67fd33c0cff27c76">allocation_flag::none</a>())</td></tr>
 <tr class="memdesc:ga0799ef351bd641499230292365d427a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally allocate and construct an array of objects of type T.  <a href="group__allocation.html#ga0799ef351bd641499230292365d427a7">More...</a><br /></td></tr>
 <tr class="separator:ga0799ef351bd641499230292365d427a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga4222feb628a4d6f8ac2b3a5dbe42c5e6">pmem::obj::delete_persistent</a> (typename detail::pp_if_array&lt; T &gt;::type ptr, std::size_t N)</td></tr>
+<tr class="memdesc:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>.  <a href="group__allocation.html#ga4222feb628a4d6f8ac2b3a5dbe42c5e6">More...</a><br /></td></tr>
+<tr class="separator:ga4222feb628a4d6f8ac2b3a5dbe42c5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5582033bf768fea635b40b3ba766fbef"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga5582033bf768fea635b40b3ba766fbef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga5582033bf768fea635b40b3ba766fbef">pmem::obj::delete_persistent</a> (typename detail::pp_if_size_array&lt; T &gt;::type ptr)</td></tr>
+<tr class="memdesc:ga5582033bf768fea635b40b3ba766fbef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>.  <a href="group__allocation.html#ga5582033bf768fea635b40b3ba766fbef">More...</a><br /></td></tr>
+<tr class="separator:ga5582033bf768fea635b40b3ba766fbef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7b14ac5b07d58902df4c24deb7096d12"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga7b14ac5b07d58902df4c24deb7096d12"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga7b14ac5b07d58902df4c24deb7096d12">pmem::obj::make_persistent_atomic</a> (<a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;<a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a>, typename detail::pp_if_array&lt; T &gt;::type &amp;ptr, std::size_t N, <a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a> flag=<a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350">allocation_flag_atomic::none</a>())</td></tr>
+<tr class="memdesc:ga7b14ac5b07d58902df4c24deb7096d12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate an array of objects.  <a href="group__allocation.html#ga7b14ac5b07d58902df4c24deb7096d12">More...</a><br /></td></tr>
+<tr class="separator:ga7b14ac5b07d58902df4c24deb7096d12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1d456157a9ddd13772036944fab68b01"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga1d456157a9ddd13772036944fab68b01"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga1d456157a9ddd13772036944fab68b01">pmem::obj::make_persistent_atomic</a> (<a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;<a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a>, typename detail::pp_if_size_array&lt; T &gt;::type &amp;ptr, <a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a> flag=<a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350">allocation_flag_atomic::none</a>())</td></tr>
+<tr class="memdesc:ga1d456157a9ddd13772036944fab68b01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate an array of objects.  <a href="group__allocation.html#ga1d456157a9ddd13772036944fab68b01">More...</a><br /></td></tr>
+<tr class="separator:ga1d456157a9ddd13772036944fab68b01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2009e20a7365ba802a5f1acbff2f2336"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga2009e20a7365ba802a5f1acbff2f2336"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga2009e20a7365ba802a5f1acbff2f2336">pmem::obj::delete_persistent_atomic</a> (typename detail::pp_if_array&lt; T &gt;::type &amp;ptr, std::size_t)</td></tr>
+<tr class="memdesc:ga2009e20a7365ba802a5f1acbff2f2336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically deallocate an array of objects.  <a href="group__allocation.html#ga2009e20a7365ba802a5f1acbff2f2336">More...</a><br /></td></tr>
+<tr class="separator:ga2009e20a7365ba802a5f1acbff2f2336"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga774f709132747433efe83cf8060186a3"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga774f709132747433efe83cf8060186a3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga774f709132747433efe83cf8060186a3">pmem::obj::delete_persistent_atomic</a> (typename detail::pp_if_size_array&lt; T &gt;::type &amp;ptr)</td></tr>
+<tr class="memdesc:ga774f709132747433efe83cf8060186a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically deallocate an array of objects.  <a href="group__allocation.html#ga774f709132747433efe83cf8060186a3">More...</a><br /></td></tr>
+<tr class="separator:ga774f709132747433efe83cf8060186a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6b463d8cf7358dda467d0f63e130d410"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
 <tr class="memitem:ga6b463d8cf7358dda467d0f63e130d410"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__allocation.html#ga6b463d8cf7358dda467d0f63e130d410">pmem::obj::make_persistent_atomic</a> (<a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;<a class="el" href="classpmem_1_1obj_1_1pool.html">pool</a>, typename detail::pp_if_not_array&lt; T &gt;::type &amp;ptr, <a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a> flag, Args &amp;&amp;... args)</td></tr>
 <tr class="memdesc:ga6b463d8cf7358dda467d0f63e130d410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomically allocate and construct an object.  <a href="group__allocation.html#ga6b463d8cf7358dda467d0f63e130d410">More...</a><br /></td></tr>
@@ -142,9 +172,200 @@ Functions</h2></td></tr>
 <tr class="separator:ga2aa55bbcf44c93a0ca9a8965cded6e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<h2 class="groupheader">Function Documentation</h2>
+<p>Functions and classes to support allocations on pmem. </p>
+<p>Libpmemobj-cpp introduced special functions for allocating objects and arrays of objects on persistent memory, with ease. For all <code>make_persistent</code> specializations there are also <code>delete_persistent</code> counterparts. The latter are used to free memory of previously allocated objects or arrays, and calling their destructors. Each specialization comes in two versions - atomic and transactional. First one is distinguished with <code>_atomic</code> suffix (e.g. <code><a class="el" href="group__allocation.html#ga7b14ac5b07d58902df4c24deb7096d12" title="Atomically allocate an array of objects.">make_persistent_atomic()</a></code>) and should not be called within an active transaction - it may lead to undefined behavior in case of transaction's rollback. On the other hand, transactional functions will throw an exception if called outside of an active transaction.</p>
+<p>For more flexibly approach we introduced <a class="el" href="classpmem_1_1obj_1_1allocator.html" title="(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK&#39;s...">pmem::obj::allocator</a> class, which implements the concept of C++ Allocator. Allocation and deallocation using this class can only happen within an active transactions.</p>
+<p>The <em>typical use case</em> of data allocation on pmem would be: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;fcntl.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="transaction_8hpp.html">libpmemobj++/transaction.hpp</a>&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">make_persistent_example()</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">struct </span>compound_type {</div>
+<div class="line"> </div>
+<div class="line">        compound_type(<span class="keywordtype">int</span> val, <span class="keywordtype">double</span> dval)</div>
+<div class="line">            : some_variable(val), some_other_variable(dval)</div>
+<div class="line">        {</div>
+<div class="line">        }</div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordtype">void</span></div>
+<div class="line">        set_some_variable(<span class="keywordtype">int</span> val)</div>
+<div class="line">        {</div>
+<div class="line">            some_variable = val;</div>
+<div class="line">        }</div>
+<div class="line"> </div>
+<div class="line">        p&lt;int&gt; some_variable;</div>
+<div class="line">        p&lt;double&gt; some_other_variable;</div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* pool root structure */</span></div>
+<div class="line">    <span class="keyword">struct </span>root {</div>
+<div class="line">        persistent_ptr&lt;compound_type&gt; comp;</div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* create a pmemobj pool */</span></div>
+<div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>, PMEMOBJ_MIN_POOL);</div>
+<div class="line">    <span class="keyword">auto</span> proot = pop.root();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* typical usage schemes */</span></div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">        <span class="comment">/* allocation with constructor argument passing */</span></div>
+<div class="line">        proot-&gt;comp = make_persistent&lt;compound_type&gt;(1, 2.0);</div>
+<div class="line"> </div>
+<div class="line">        <span class="comment">/* transactionally delete the object, ~compound_type() is called</span></div>
+<div class="line"><span class="comment">         */</span></div>
+<div class="line">        delete_persistent&lt;compound_type&gt;(proot-&gt;comp);</div>
+<div class="line"> </div>
+<div class="line">        <span class="comment">/* set pointer to null so that after restart it&#39;s known whether</span></div>
+<div class="line"><span class="comment">         * compound_type is still allocated or not */</span></div>
+<div class="line">        proot-&gt;comp = <span class="keyword">nullptr</span>;</div>
+<div class="line">    });</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* throws an transaction_scope_error exception */</span></div>
+<div class="line">    <span class="keyword">auto</span> arr1 = make_persistent&lt;compound_type&gt;(2, 15.0);</div>
+<div class="line">    delete_persistent&lt;compound_type&gt;(arr1);</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:694</div></div>
+<div class="ttc" id="amake__persistent_8hpp_html"><div class="ttname"><a href="make__persistent_8hpp.html">make_persistent.hpp</a></div><div class="ttdoc">persistent_ptr transactional allocation functions for objects.</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
+<div class="ttc" id="ap_8hpp_html"><div class="ttname"><a href="p_8hpp.html">p.hpp</a></div><div class="ttdoc">Resides on pmem property template.</div></div>
+<div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
+<div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>
+<div class="ttc" id="atransaction_8hpp_html"><div class="ttname"><a href="transaction_8hpp.html">transaction.hpp</a></div><div class="ttdoc">C++ pmemobj transactions.</div></div>
+</div><!-- fragment --><p> For allocator usage see <a class="el" href="group__experimental__containers.html#ga9e8813521c66ca3cd7c27939230cab1f" title="The most typical inline_string usage - the char specialization.">pmem::obj::experimental::inline_string</a> example: </p><div class="fragment"><div class="line"><span class="keyword">struct </span>Object {</div>
+<div class="line">    Object(<span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">char</span> *s) : x(x), s(s)</div>
+<div class="line">    {</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordtype">int</span> x;</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* Using inline_string instead of pmem::obj::string reduces number of</span></div>
+<div class="line"><span class="comment">     * allocations and dereferences which cost much more than on DRAM.</span></div>
+<div class="line"><span class="comment">     */</span></div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">pmem::obj::experimental::inline_string</a> s;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>root {</div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr&lt;Object&gt;</a> o;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">create_and_print_object(<a class="code" href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool&lt;root&gt;</a> pop)</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>();</div>
+<div class="line"> </div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">        <span class="comment">/* String was already allocated in a previous app run. */</span></div>
+<div class="line">        <span class="keywordflow">if</span> (r-&gt;o)</div>
+<div class="line">            <span class="keywordflow">return</span>;</div>
+<div class="line"> </div>
+<div class="line">        <span class="keyword">auto</span> value = <span class="stringliteral">&quot;example&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line">        <span class="comment">/* There must be space for the Object itself and &quot;example&quot;</span></div>
+<div class="line"><span class="comment">         * string. */</span></div>
+<div class="line">        <span class="keyword">auto</span> req_capacity =</div>
+<div class="line">            <span class="keyword">sizeof</span>(Object) + strlen(value) + <span class="keyword">sizeof</span>(<span class="charliteral">&#39;\0&#39;</span>);</div>
+<div class="line"> </div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator&lt;void&gt;</a> a;</div>
+<div class="line">        r-&gt;o = <span class="keyword">static_cast&lt;</span><a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr&lt;Object&gt;</a><span class="keyword">&gt;</span>(</div>
+<div class="line">            a.<a class="code" href="classpmem_1_1obj_1_1standard__alloc__policy.html#a97ba80d5a80a7f18d689816c334ae3dc">allocate</a>(req_capacity));</div>
+<div class="line">        <span class="keyword">new</span> (r-&gt;o.get()) Object(1, value);</div>
+<div class="line">    });</div>
+<div class="line"> </div>
+<div class="line">    std::cout &lt;&lt; r-&gt;o-&gt;s.data() &lt;&lt; std::endl;</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">assign_and_print_object(<a class="code" href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool&lt;root&gt;</a> pop)</div>
+<div class="line">{</div>
+<div class="line">    <span class="keyword">auto</span> r = pop.<a class="code" href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">root</a>();</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">auto</span> new_value = <span class="stringliteral">&quot;some new, longer value&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> (r-&gt;o-&gt;s.capacity() &gt;= strlen(new_value)) {</div>
+<div class="line">        <span class="comment">/* If there is enough capacity, we can assign the new value. */</span></div>
+<div class="line">        r-&gt;o-&gt;s.assign(new_value);</div>
+<div class="line">    } <span class="keywordflow">else</span> {</div>
+<div class="line">        <span class="comment">/* Otherwise we have to reallocate the whole object. */</span></div>
+<div class="line">        <a class="code" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>(pop, [&amp;] {</div>
+<div class="line">            <a class="code" href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator&lt;void&gt;</a> a;</div>
+<div class="line">            <span class="keyword">auto</span> ptr =</div>
+<div class="line">                <span class="keyword">static_cast&lt;</span><a class="code" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr&lt;Object&gt;</a><span class="keyword">&gt;</span>(</div>
+<div class="line">                    a.<a class="code" href="classpmem_1_1obj_1_1standard__alloc__policy.html#a97ba80d5a80a7f18d689816c334ae3dc">allocate</a>(<span class="keyword">sizeof</span>(Object) +</div>
+<div class="line">                           strlen(new_value) + 1));</div>
+<div class="line">            <span class="keyword">new</span> (ptr.get()) Object(r-&gt;o-&gt;x, new_value);</div>
+<div class="line"> </div>
+<div class="line">            pmem::obj::delete_persistent&lt;Object&gt;(r-&gt;o);</div>
+<div class="line">            r-&gt;o = ptr;</div>
+<div class="line">        });</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    std::cout &lt;&lt; r-&gt;o-&gt;s.data() &lt;&lt; std::endl;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1allocator_html"><div class="ttname"><a href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator</a></div><div class="ttdoc">(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK's...</div><div class="ttdef"><b>Definition:</b> allocator.hpp:467</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1basic__inline__string_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">pmem::obj::experimental::basic_inline_string</a></div><div class="ttdoc">Pmem-only variation of pmem::obj::string, where data is kept right next to the inline_string structur...</div><div class="ttdef"><b>Definition:</b> inline_string.hpp:162</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:153</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1standard__alloc__policy_html_a97ba80d5a80a7f18d689816c334ae3dc"><div class="ttname"><a href="classpmem_1_1obj_1_1standard__alloc__policy.html#a97ba80d5a80a7f18d689816c334ae3dc">pmem::obj::standard_alloc_policy::allocate</a></div><div class="ttdeci">pointer allocate(size_type cnt, const_void_pointer=0)</div><div class="ttdoc">Allocate storage for cnt objects of type T.</div><div class="ttdef"><b>Definition:</b> allocator.hpp:247</div></div>
+</div><!-- fragment --><h2 class="groupheader">Function Documentation</h2>
+<a id="ga4222feb628a4d6f8ac2b3a5dbe42c5e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4222feb628a4d6f8ac2b3a5dbe42c5e6">&#9670;&nbsp;</a></span>delete_persistent() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void pmem::obj::delete_persistent </td>
+          <td>(</td>
+          <td class="paramtype">typename detail::pp_if_array&lt; T &gt;::type&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>N</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>. </p>
+<p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. This overload only participates in overload resolution if T is an array.</p>
+<p>To ensure that proper recovery is possible, ptr should be set to null after delete_persistent call and within the same transaction.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an array of objects. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">N</td><td>the size of the array.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">transaction_free_error</a></td><td>on transactional free failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga714693f9ebbc9db6cd47ee40e10ccbaf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga714693f9ebbc9db6cd47ee40e10ccbaf">&#9670;&nbsp;</a></span>delete_persistent()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga714693f9ebbc9db6cd47ee40e10ccbaf">&#9670;&nbsp;</a></span>delete_persistent() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,8 +401,84 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ga5582033bf768fea635b40b3ba766fbef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5582033bf768fea635b40b3ba766fbef">&#9670;&nbsp;</a></span>delete_persistent() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void pmem::obj::delete_persistent </td>
+          <td>(</td>
+          <td class="paramtype">typename detail::pp_if_size_array&lt; T &gt;::type&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transactionally free an array of objects of type T held in a <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a>. </p>
+<p>This function can be used to <em>transactionally</em> free an array of objects. Calls the objects' destructors before freeing memory. This overload only participates in overload resolution if T is an array.</p>
+<p>To ensure that proper recovery is possible, ptr should be set to null after delete_persistent call and within the same transaction.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>persistent pointer to an array of objects.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__free__error.html" title="Custom transaction error class.">transaction_free_error</a></td><td>on transactional free failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2009e20a7365ba802a5f1acbff2f2336"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2009e20a7365ba802a5f1acbff2f2336">&#9670;&nbsp;</a></span>delete_persistent_atomic() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void pmem::obj::delete_persistent_atomic </td>
+          <td>(</td>
+          <td class="paramtype">typename detail::pp_if_array&lt; T &gt;::type &amp;&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Atomically deallocate an array of objects. </p>
+<p>There is no way to atomically destroy an object. Any object specific cleanup must be performed elsewhere. Do <em>NOT</em> use this inside transactions, as it might lead to undefined behavior in the presence of transaction aborts.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> whose pointee is to be deallocated. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga2aa55bbcf44c93a0ca9a8965cded6e40"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2aa55bbcf44c93a0ca9a8965cded6e40">&#9670;&nbsp;</a></span>delete_persistent_atomic()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2aa55bbcf44c93a0ca9a8965cded6e40">&#9670;&nbsp;</a></span>delete_persistent_atomic() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -208,7 +505,41 @@ template&lt;typename T &gt; </div>
 
 <p>Atomically deallocate an object. </p>
 <p>There is no way to atomically destroy an object. Any object specific cleanup must be performed elsewhere. Do <em>NOT</em> use this inside transactions, as it might lead to undefined behavior in the presence of transaction aborts.</p>
-<p>param[in,out] ptr the <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> whose pointee is to be deallocated. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> whose pointee is to be deallocated. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga774f709132747433efe83cf8060186a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga774f709132747433efe83cf8060186a3">&#9670;&nbsp;</a></span>delete_persistent_atomic() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void pmem::obj::delete_persistent_atomic </td>
+          <td>(</td>
+          <td class="paramtype">typename detail::pp_if_size_array&lt; T &gt;::type &amp;&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Atomically deallocate an array of objects. </p>
+<p>There is no way to atomically destroy an object. Any object specific cleanup must be performed elsewhere. Do <em>NOT</em> use this inside transactions, as it might lead to undefined behavior in the presence of transaction aborts.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html" title="Persistent pointer class.">persistent_ptr</a> whose pointee is to be deallocated. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -253,6 +584,7 @@ template&lt;typename T , typename... Args&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__out__of__memory.html" title="Custom out of memory error class.">transaction_out_of_memory</a></td><td>if there is no free memory of requested size. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">transaction_alloc_error</a></td><td>on transactional allocation failure. </td></tr>
     <tr><td class="paramname">rethrow</td><td>exception from T constructor </td></tr>
   </table>
@@ -291,6 +623,7 @@ template&lt;typename T &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__out__of__memory.html" title="Custom out of memory error class.">transaction_out_of_memory</a></td><td>if there is no free memory of requested size. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">transaction_alloc_error</a></td><td>on transactional allocation failure. </td></tr>
     <tr><td class="paramname">rethrow</td><td>exception from T constructor </td></tr>
   </table>
@@ -329,6 +662,7 @@ template&lt;typename T , typename... Args&gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__out__of__memory.html" title="Custom out of memory error class.">transaction_out_of_memory</a></td><td>if there is no free memory of requested size. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">transaction_alloc_error</a></td><td>on transactional allocation failure. </td></tr>
     <tr><td class="paramname">rethrow</td><td>exception from T constructor </td></tr>
   </table>
@@ -378,6 +712,7 @@ template&lt;typename T &gt; </div>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__scope__error.html" title="Custom transaction error class.">transaction_scope_error</a></td><td>if called outside of an active transaction </td></tr>
+    <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__out__of__memory.html" title="Custom out of memory error class.">transaction_out_of_memory</a></td><td>if there is no free memory of requested size. </td></tr>
     <tr><td class="paramname"><a class="el" href="classpmem_1_1transaction__alloc__error.html" title="Custom transaction error class.">transaction_alloc_error</a></td><td>on transactional allocation failure. </td></tr>
     <tr><td class="paramname">rethrow</td><td>exception from T constructor </td></tr>
   </table>
@@ -386,8 +721,68 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ga7b14ac5b07d58902df4c24deb7096d12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b14ac5b07d58902df4c24deb7096d12">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void pmem::obj::make_persistent_atomic </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;&#160;</td>
+          <td class="paramname"><em>pool</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename detail::pp_if_array&lt; T &gt;::type &amp;&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a>&#160;</td>
+          <td class="paramname"><em>flag</em> = <code><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350">allocation_flag_atomic::none</a>()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Atomically allocate an array of objects. </p>
+<p>This function can be used to atomically allocate an array of objects. Cannot be used for simple objects. Do <em>NOT</em> use this inside transactions, as it might lead to undefined behavior in the presence of transaction aborts.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">pool</td><td>the pool from which the object will be allocated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">N</td><td>the number of array elements. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>affects behaviour of allocator</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_alloc</td><td>on allocation failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga6b463d8cf7358dda467d0f63e130d410"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6b463d8cf7358dda467d0f63e130d410">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6b463d8cf7358dda467d0f63e130d410">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -447,7 +842,7 @@ template&lt;typename T , typename... Args&gt; </div>
 </div>
 </div>
 <a id="gaa2b6596bf5b91ebcc5fbaeb899d59599"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa2b6596bf5b91ebcc5fbaeb899d59599">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa2b6596bf5b91ebcc5fbaeb899d59599">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -487,6 +882,59 @@ template&lt;typename T , typename... Args&gt; </div>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">pool</td><td>the pool from which the object will be allocated. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>variadic function parameter containing all parameters passed to the objects constructor.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_alloc</td><td>on allocation failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga1d456157a9ddd13772036944fab68b01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1d456157a9ddd13772036944fab68b01">&#9670;&nbsp;</a></span>make_persistent_atomic() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void pmem::obj::make_persistent_atomic </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pool_base</a> &amp;&#160;</td>
+          <td class="paramname"><em>pool</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename detail::pp_if_size_array&lt; T &gt;::type &amp;&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html">allocation_flag_atomic</a>&#160;</td>
+          <td class="paramname"><em>flag</em> = <code><a class="el" href="structpmem_1_1obj_1_1allocation__flag__atomic.html#a0f5b05f867e70150598eb890f0f8a350">allocation_flag_atomic::none</a>()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Atomically allocate an array of objects. </p>
+<p>This function can be used to atomically allocate an array of objects. Cannot be used for simple objects. Do <em>NOT</em> use this inside transactions, as it might lead to undefined behavior in the presence of transaction aborts.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">pool</td><td>the pool from which the object will be allocated. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ptr</td><td>the persistent pointer to which the allocation will take place. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flag</td><td>affects behaviour of allocator</td></tr>
   </table>
   </dd>
 </dl>

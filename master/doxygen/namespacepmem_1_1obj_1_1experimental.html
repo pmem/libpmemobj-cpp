@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -97,6 +97,9 @@ $(document).ready(function(){initNavTree('namespacepmem_1_1obj_1_1experimental.h
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">atomic_persistent_aware_ptr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomic specialization of a persistent ptr (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a>) that manages its persistence by itself.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html">concurrent_map</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent memory aware implementation of Intel TBB <a href="https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_map_cls.html">concurrent_map with</a> API partially compatible to std::map.  <a href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,30 +133,36 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a37369f18a21467051da4c1ccbe868da9"><td class="memItemLeft" align="right" valign="top"><a id="a37369f18a21467051da4c1ccbe868da9"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>dram_inline_string</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; char &gt;</td></tr>
-<tr class="separator:a37369f18a21467051da4c1ccbe868da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1fc1c77eb88e5e1a2d95ab87dd96d5d"><td class="memItemLeft" align="right" valign="top"><a id="aa1fc1c77eb88e5e1a2d95ab87dd96d5d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>dram_inline_wstring</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; wchar_t &gt;</td></tr>
-<tr class="separator:aa1fc1c77eb88e5e1a2d95ab87dd96d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a31e4b379cf244e19abf35525df1d7f"><td class="memItemLeft" align="right" valign="top"><a id="a6a31e4b379cf244e19abf35525df1d7f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>dram_inline_u16string</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; char16_t &gt;</td></tr>
-<tr class="separator:a6a31e4b379cf244e19abf35525df1d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fb0814672603c5633af4f46f4098468"><td class="memItemLeft" align="right" valign="top"><a id="a9fb0814672603c5633af4f46f4098468"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>dram_inline_u32string</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; char32_t &gt;</td></tr>
-<tr class="separator:a9fb0814672603c5633af4f46f4098468"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e8813521c66ca3cd7c27939230cab1f"><td class="memItemLeft" align="right" valign="top"><a id="a9e8813521c66ca3cd7c27939230cab1f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>inline_string</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; char &gt;</td></tr>
-<tr class="separator:a9e8813521c66ca3cd7c27939230cab1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac795e96b08a78581a20eb95ef3e60394"><td class="memItemLeft" align="right" valign="top"><a id="ac795e96b08a78581a20eb95ef3e60394"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>inline_wstring</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; wchar_t &gt;</td></tr>
-<tr class="separator:ac795e96b08a78581a20eb95ef3e60394"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecf1cfd6fa869747dbe4584ccc00759f"><td class="memItemLeft" align="right" valign="top"><a id="aecf1cfd6fa869747dbe4584ccc00759f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>inline_u16string</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; char16_t &gt;</td></tr>
-<tr class="separator:aecf1cfd6fa869747dbe4584ccc00759f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afba7fc8729da653731cfd91a003a0590"><td class="memItemLeft" align="right" valign="top"><a id="afba7fc8729da653731cfd91a003a0590"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>inline_u32string</b> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; char32_t &gt;</td></tr>
-<tr class="separator:afba7fc8729da653731cfd91a003a0590"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga37369f18a21467051da4c1ccbe868da9"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#ga37369f18a21467051da4c1ccbe868da9">dram_inline_string</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; char &gt;</td></tr>
+<tr class="memdesc:ga37369f18a21467051da4c1ccbe868da9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most typical dram_inline_string usage - the char specialization.  <a href="group__experimental__containers.html#ga37369f18a21467051da4c1ccbe868da9">More...</a><br /></td></tr>
+<tr class="separator:ga37369f18a21467051da4c1ccbe868da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa1fc1c77eb88e5e1a2d95ab87dd96d5d"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#gaa1fc1c77eb88e5e1a2d95ab87dd96d5d">dram_inline_wstring</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; wchar_t &gt;</td></tr>
+<tr class="memdesc:gaa1fc1c77eb88e5e1a2d95ab87dd96d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wide char specialization. <br /></td></tr>
+<tr class="separator:gaa1fc1c77eb88e5e1a2d95ab87dd96d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a31e4b379cf244e19abf35525df1d7f"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#ga6a31e4b379cf244e19abf35525df1d7f">dram_inline_u16string</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; char16_t &gt;</td></tr>
+<tr class="memdesc:ga6a31e4b379cf244e19abf35525df1d7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The char16 specialization. <br /></td></tr>
+<tr class="separator:ga6a31e4b379cf244e19abf35525df1d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9fb0814672603c5633af4f46f4098468"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#ga9fb0814672603c5633af4f46f4098468">dram_inline_u32string</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__dram__inline__string.html">basic_dram_inline_string</a>&lt; char32_t &gt;</td></tr>
+<tr class="memdesc:ga9fb0814672603c5633af4f46f4098468"><td class="mdescLeft">&#160;</td><td class="mdescRight">The char32 specialization. <br /></td></tr>
+<tr class="separator:ga9fb0814672603c5633af4f46f4098468"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9e8813521c66ca3cd7c27939230cab1f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#ga9e8813521c66ca3cd7c27939230cab1f">inline_string</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; char &gt;</td></tr>
+<tr class="memdesc:ga9e8813521c66ca3cd7c27939230cab1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most typical inline_string usage - the char specialization.  <a href="group__experimental__containers.html#ga9e8813521c66ca3cd7c27939230cab1f">More...</a><br /></td></tr>
+<tr class="separator:ga9e8813521c66ca3cd7c27939230cab1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac795e96b08a78581a20eb95ef3e60394"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#gac795e96b08a78581a20eb95ef3e60394">inline_wstring</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; wchar_t &gt;</td></tr>
+<tr class="memdesc:gac795e96b08a78581a20eb95ef3e60394"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wide char specialization. <br /></td></tr>
+<tr class="separator:gac795e96b08a78581a20eb95ef3e60394"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaecf1cfd6fa869747dbe4584ccc00759f"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#gaecf1cfd6fa869747dbe4584ccc00759f">inline_u16string</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; char16_t &gt;</td></tr>
+<tr class="memdesc:gaecf1cfd6fa869747dbe4584ccc00759f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The char16 specialization. <br /></td></tr>
+<tr class="separator:gaecf1cfd6fa869747dbe4584ccc00759f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafba7fc8729da653731cfd91a003a0590"><td class="memItemLeft" align="right" valign="top">
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__experimental__containers.html#gafba7fc8729da653731cfd91a003a0590">inline_u32string</a> = <a class="el" href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">basic_inline_string</a>&lt; char32_t &gt;</td></tr>
+<tr class="memdesc:gafba7fc8729da653731cfd91a003a0590"><td class="mdescLeft">&#160;</td><td class="mdescRight">The char32 specialization. <br /></td></tr>
+<tr class="separator:gafba7fc8729da653731cfd91a003a0590"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af58574af7907e31bc547b8b79afbb9cc"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacepmem_1_1obj_1_1experimental.html#af58574af7907e31bc547b8b79afbb9cc">self_relative_ptr_base</a> = <a class="el" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html">pmem::detail::self_relative_ptr_base_impl</a>&lt; std::ptrdiff_t &gt;</td></tr>
 <tr class="memdesc:af58574af7907e31bc547b8b79afbb9cc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> base (non-template) class  <a href="namespacepmem_1_1obj_1_1experimental.html#af58574af7907e31bc547b8b79afbb9cc">More...</a><br /></td></tr>
 <tr class="separator:af58574af7907e31bc547b8b79afbb9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>

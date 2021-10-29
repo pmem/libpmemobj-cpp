@@ -106,5 +106,9 @@ var group__data__view =
       [ "operator>=", "classpmem_1_1obj_1_1basic__string__view.html#ab5cecaf0a629e5967ddb0ca3a3b3f1b9", null ],
       [ "operator>=", "classpmem_1_1obj_1_1basic__string__view.html#af7fe536ffc405e67075d40e42b648276", null ],
       [ "npos", "classpmem_1_1obj_1_1basic__string__view.html#a4b269cfec294bfe5f9ddf97ff267ddba", null ]
-    ] ]
+    ] ],
+    [ "string_view", "group__data__view.html#gab829ee02504fda8d2ad3b39dffea4f9b", null ],
+    [ "u16string_view", "group__data__view.html#ga97dc381ab71a5c2f1d990245402e2aad", null ],
+    [ "u32string_view", "group__data__view.html#gaaad117212d298191fb86a65ecad69ab8", null ],
+    [ "wstring_view", "group__data__view.html#ga0ef8955a4780c37dcc9b0bac159585e4", null ]
 ];

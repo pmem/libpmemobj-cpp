@@ -1,6 +1,7 @@
 <map id="libpmemobj++/detail/atomic_backoff.hpp" name="libpmemobj++/detail/atomic_backoff.hpp">
-<area shape="rect" id="node1" title="Atomic backoff, for time delay." alt="" coords="116,5,255,47"/>
-<area shape="rect" id="node2" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,95,184,136"/>
-<area shape="rect" id="node3" href="$ringbuf_8hpp.html" title="Lock&#45;free multi&#45;producer single&#45;consumer (MPSC) ring buffer." alt="" coords="208,95,347,136"/>
-<area shape="rect" id="node4" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="186,184,369,225"/>
+<area shape="rect" id="node1" title="Atomic backoff, for time delay." alt="" coords="208,5,347,47"/>
+<area shape="rect" id="node2" href="$concurrent__hash__map_8hpp.html" title="A persistent version of concurrent hash map implementation Ref: https://arxiv.org/abs/1509...." alt="" coords="5,102,184,143"/>
+<area shape="rect" id="node3" href="$ringbuf_8hpp.html" title="Lock&#45;free multi&#45;producer single&#45;consumer (MPSC) ring buffer." alt="" coords="208,102,347,143"/>
+<area shape="rect" id="node5" href="$atomic__persistent__aware__ptr_8hpp.html" title="Atomic specialization for persistent&#45;aware self_relative_ptr." alt="" coords="371,95,554,151"/>
+<area shape="rect" id="node4" href="$mpsc__queue_8hpp.html" title="Implementation of persistent multi producer single consumer queue." alt="" coords="186,199,369,240"/>
 </map>

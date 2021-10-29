@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git65.g668e8cb6</span>
+   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -274,13 +274,13 @@ class pmem::obj::experimental::basic_inline_string&lt; CharT, Traits &gt;</h3>
 <div class="line"> </div>
 <div class="line">    std::cout &lt;&lt; r-&gt;o-&gt;s.data() &lt;&lt; std::endl;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1allocator_html"><div class="ttname"><a href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator</a></div><div class="ttdoc">(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK's...</div><div class="ttdef"><b>Definition:</b> allocator.hpp:452</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1allocator_html"><div class="ttname"><a href="classpmem_1_1obj_1_1allocator.html">pmem::obj::allocator</a></div><div class="ttdoc">(EXPERIMENTAL) Encapsulates the information about the persistent memory allocation model using PMDK's...</div><div class="ttdef"><b>Definition:</b> allocator.hpp:467</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1basic__transaction_html_a9564707de1779ca1bce7041fb7c9855c"><div class="ttname"><a href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::basic_transaction::run</a></div><div class="ttdeci">static void run(obj::pool_base &amp;pool, std::function&lt; void()&gt; tx, Locks &amp;... locks)</div><div class="ttdoc">Execute a closure-like transaction and lock locks.</div><div class="ttdef"><b>Definition:</b> transaction.hpp:676</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1experimental_1_1basic__inline__string_html"><div class="ttname"><a href="classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html">pmem::obj::experimental::basic_inline_string</a></div><div class="ttdoc">Pmem-only variation of pmem::obj::string, where data is kept right next to the inline_string structur...</div><div class="ttdef"><b>Definition:</b> inline_string.hpp:162</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1persistent__ptr_html"><div class="ttname"><a href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a></div><div class="ttdoc">Persistent pointer class.</div><div class="ttdef"><b>Definition:</b> persistent_ptr.hpp:153</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool</a></div><div class="ttdoc">PMEMobj pool class.</div><div class="ttdef"><b>Definition:</b> pool.hpp:482</div></div>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>
-<div class="ttc" id="aclasspmem_1_1obj_1_1standard__alloc__policy_html_a97ba80d5a80a7f18d689816c334ae3dc"><div class="ttname"><a href="classpmem_1_1obj_1_1standard__alloc__policy.html#a97ba80d5a80a7f18d689816c334ae3dc">pmem::obj::standard_alloc_policy::allocate</a></div><div class="ttdeci">pointer allocate(size_type cnt, const_void_pointer=0)</div><div class="ttdoc">Allocate storage for cnt objects of type T.</div><div class="ttdef"><b>Definition:</b> allocator.hpp:245</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1standard__alloc__policy_html_a97ba80d5a80a7f18d689816c334ae3dc"><div class="ttname"><a href="classpmem_1_1obj_1_1standard__alloc__policy.html#a97ba80d5a80a7f18d689816c334ae3dc">pmem::obj::standard_alloc_policy::allocate</a></div><div class="ttdeci">pointer allocate(size_type cnt, const_void_pointer=0)</div><div class="ttdoc">Allocate storage for cnt objects of type T.</div><div class="ttdef"><b>Definition:</b> allocator.hpp:247</div></div>
 </div><!-- fragment --></div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a066e04dcb4144cd2b335fd0af8625fa3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a066e04dcb4144cd2b335fd0af8625fa3">&#9670;&nbsp;</a></span>basic_inline_string() <span class="overload">[1/3]</span></h2>
@@ -778,7 +778,7 @@ template&lt;typename CharT , typename Traits &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>slice from start to start + n.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classpmem_1_1obj_1_1slice.html" title="Provides interface to access sequence of objects.">pmem::obj::slice</a> from start to start + n.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">std::out_of_range</td><td>if any element of the range would be outside of the container. </td></tr>

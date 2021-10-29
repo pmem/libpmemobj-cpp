@@ -21,13 +21,14 @@
 #define UNW_LOCAL_ONLY
 #include <dlfcn.h>
 #include <libunwind.h>
+#include <valgrind.h>
 
 #define PROCNAMELEN 256
 /*
- * test_dump_backtrace -- dump stacktrace to error log using libunwind
+ * test_dump_backtrace_unwind -- dump stacktrace to error log using libunwind
  */
-void
-test_dump_backtrace(void)
+static void
+test_dump_backtrace_unwind(void)
 {
 	unw_context_t context;
 	unw_proc_info_t pip;
@@ -90,7 +91,7 @@ test_dump_backtrace(void)
 				unw_strerror(ret), ret);
 	}
 }
-#else /* LIBUNWIND_ENABLED */
+#endif /* LIBUNWIND_ENABLED */
 
 #define BSIZE 100
 
@@ -99,11 +100,22 @@ test_dump_backtrace(void)
 #include <execinfo.h>
 
 /*
- * test_dump_backtrace -- dump stacktrace to error log using libc's backtrace
+ * test_dump_backtrace -- dump stacktrace to error log using:
+ *	- libunwind, if:
+ *		+ it is enabled in CMake,
+ *		+ it was found in the system,
+ *		+ we're not currently running on Valgrind
+ *			(libunwind produces some fail-positives in such case).
+ *	- libc's backtrace, otherwise.
  */
 void
 test_dump_backtrace(void)
 {
+#ifdef LIBUNWIND_ENABLED
+	if (!RUNNING_ON_VALGRIND)
+		return test_dump_backtrace_unwind();
+#endif
+
 	int j, nptrs;
 	void *buffer[BSIZE];
 	char **strings;
@@ -161,8 +173,6 @@ test_dump_backtrace(void)
 }
 
 #endif /* _WIN32 */
-
-#endif /* LIBUNWIND_ENABLED */
 
 /*
  * test_sighandler -- fatal signal handler

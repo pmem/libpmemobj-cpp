@@ -23,7 +23,6 @@ TESTS_PACKAGES=${TESTS_PACKAGES:-ON}
 TESTS_USE_FORCED_PMEM=${TESTS_USE_FORCED_PMEM:-ON}
 TESTS_ASAN=${TESTS_ASAN:-OFF}
 TESTS_UBSAN=${TESTS_UBSAN:-OFF}
-TESTS_VALGRIND_UNWIND=${TESTS_VALGRIND_UNWIND:-OFF}
 TEST_TIMEOUT=${TEST_TIMEOUT:-600}
 
 export PMREORDER_STACKTRACE_DEPTH=20
@@ -107,7 +106,6 @@ function tests_clang_release_cpp11_no_valgrind() {
 # BUILD build_gcc_debug_cpp14 (no tests)
 ###############################################################################
 function build_gcc_debug_cpp14() {
-	VALGRIND_UNWIND=${1:-ON}
 	mkdir build
 	cd build
 
@@ -130,8 +128,7 @@ function build_gcc_debug_cpp14() {
 		-DTESTS_COMPATIBILITY=1 \
 		-DTESTS_CONCURRENT_GDB=1 \
 		-DUSE_ASAN=${TESTS_ASAN} \
-		-DUSE_UBSAN=${TESTS_UBSAN} \
-		-DUSE_LIBUNWIND=${VALGRIND_UNWIND}
+		-DUSE_UBSAN=${TESTS_UBSAN}
 
 	make -j$(nproc)
 }
@@ -155,7 +152,7 @@ function tests_gcc_debug_cpp14_no_valgrind() {
 ###############################################################################
 function tests_gcc_debug_cpp14_valgrind_memcheck_drd() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
-	build_gcc_debug_cpp14 ${TESTS_VALGRIND_UNWIND}
+	build_gcc_debug_cpp14
 	ctest -R "_memcheck|_drd" --timeout ${TEST_TIMEOUT} --output-on-failure
 	workspace_cleanup
 	printf "$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} END$(tput sgr 0)\n\n"
@@ -166,7 +163,7 @@ function tests_gcc_debug_cpp14_valgrind_memcheck_drd() {
 ###############################################################################
 function tests_gcc_debug_cpp14_valgrind_other() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
-	build_gcc_debug_cpp14 ${TESTS_VALGRIND_UNWIND}
+	build_gcc_debug_cpp14
 	ctest -E "_none|_memcheck|_drd" --timeout ${TEST_TIMEOUT} --output-on-failure
 	ctest -R "_pmreorder" --timeout ${TEST_TIMEOUT} --output-on-failure
 	workspace_cleanup
@@ -213,6 +210,7 @@ function tests_gcc_release_cpp17_no_valgrind() {
 ###############################################################################
 # BUILD tests_clang_release_cpp20_no_valgrind llvm
 ###############################################################################
+
 function tests_clang_release_cpp20_no_valgrind() {
 	printf "\n$(tput setaf 1)$(tput setab 7)BUILD ${FUNCNAME[0]} START$(tput sgr 0)\n"
 

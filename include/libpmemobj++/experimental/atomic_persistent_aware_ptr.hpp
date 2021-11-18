@@ -55,10 +55,20 @@ public:
 	/**
 	 * Constructors
 	 */
+
+	/**
+	 * Store constructor.
+	 *
+	 * @param value to be stored in the atomic_persistent_aware_ptr.
+	 */
 	atomic_persistent_aware_ptr(value_type value) : ptr()
 	{
 		store(value);
 	}
+
+	/**
+	 * Deleted copy constructor.
+	 */
 	atomic_persistent_aware_ptr(const atomic_persistent_aware_ptr &) =
 		delete;
 
@@ -156,11 +166,21 @@ public:
 	/*
 	 * Operators
 	 */
+
+	/**
+	 * Returns the value of the atomic_persistent_aware_ptr.
+	 */
 	operator value_type() const noexcept
 	{
 		return load();
 	}
 
+	/**
+	 * Assignment operator.
+	 *
+	 * @param desired value to be stored in the atomic_persistent_aware_ptr.
+	 * @return assigned value.
+	 */
 	value_type
 	operator=(value_type desired) noexcept
 	{

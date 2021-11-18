@@ -32,8 +32,12 @@ namespace experimental
  *
  * In a multi-threaded scenario, the persistence of this ptr is guaranteed when
  * it is visible to (or read by) other threads. Performance-wise, two different
- * options are provided: Read-optimized and Write-optimized. See corresponding
- * store/load functions for details.
+ * versions of this struct are provided:
+ *  - Read-optimized - data is flushed along the write operation. If more reads
+ *		are expected it's probably better to use this scenario.
+ *  - Write-optimized - data is lazily flushed with a read operation. In this
+ *		approach data storing is expected to be faster, but data is
+ *guranteed to be flushed only after consequent read.
  */
 template <typename T, typename ReadOptimized>
 struct atomic_persistent_aware_ptr {
@@ -55,18 +59,27 @@ public:
 	/**
 	 * Constructors
 	 */
+
+	/**
+	 * Store constructor.
+	 *
+	 * @param value to be stored in the atomic_persistent_aware_ptr.
+	 */
 	atomic_persistent_aware_ptr(value_type value) : ptr()
 	{
 		store(value);
 	}
+
+	/**
+	 * Deleted copy constructor.
+	 */
 	atomic_persistent_aware_ptr(const atomic_persistent_aware_ptr &) =
 		delete;
 
 	/**
-	 * Read-optimized store does the flush in store function, and clear the
-	 * dirty marker after flush.
+	 * Read-optimized store does the flush already in the store function.
 	 *
-	 * @param[in] desired the self_relative_ptr (no dirty flag) to be stored
+	 * @param[in] desired the self_relative_ptr to be stored.
 	 *
 	 */
 	template <typename OPT = ReadOptimized>
@@ -87,10 +100,9 @@ public:
 	}
 
 	/**
-	 * Write-optimized store updates the ptr with the dirty flag, relies on
-	 * consequent load to do the flush.
+	 * Write-optimized store relies on a consequent load to do the flush.
 	 *
-	 * @param[in] desired the self_relative_ptr (no dirty flag) to be stored
+	 * @param[in] desired the self_relative_ptr to be stored.
 	 *
 	 */
 	template <typename OPT = ReadOptimized>
@@ -102,18 +114,18 @@ public:
 	}
 
 	/**
-	 * Read-optimized load retries upon dirty ptr, relies on the store
-	 * function to clear the dirty before continue.
-	 * But for correctness, just flush the dirty ptr and return the clear
-	 * ptr for now.
+	 * Read-optimized load. It relies on a store function to flush the data.
 	 *
-	 * @return the self_relative_ptr (no dirty flag)
+	 * @return the value_type.
 	 */
 	template <typename OPT = ReadOptimized>
 	typename std::enable_if<std::is_same<OPT, std::true_type>::value,
 				value_type>::type
 	load(std::memory_order order = std::memory_order_seq_cst) noexcept
 	{
+		/* This load relies on the store function to clear the dirty
+		 * flag. For correctness though, it flushes the dirty ptr and
+		 * returns the clear ptr for now. */
 		auto val = ptr.load(order);
 		if (is_dirty(val)) {
 			pool_by_vptr(this).persist(&ptr, sizeof(ptr));
@@ -122,18 +134,19 @@ public:
 	}
 
 	/**
-	 * Write-optimized load flushes the ptr with the dirty flag, clears the
-	 * flag using CAS after flush.
-	 * If CAS failed, simply return the old clear ptr, rely on later load to
-	 * clear the dirty flag.
+	 * Write-optimized load flushes the data.
 	 *
-	 * @return the self_relative_ptr (no dirty flag)
+	 * @return the value_type.
 	 */
 	template <typename OPT = ReadOptimized>
 	typename std::enable_if<!std::is_same<OPT, std::true_type>::value,
 				value_type>::type
 	load(std::memory_order order = std::memory_order_seq_cst) noexcept
 	{
+		/* It flushes the ptr with the dirty flag - clears the flag
+		 * using CAS after flush. If CAS failed it simply returns the
+		 * old clear ptr and relies on a later load to clear the dirty
+		 * flag. */
 		auto val = ptr.load(order);
 		if (is_dirty(val)) {
 			pool_by_vptr(this).persist(&ptr, sizeof(ptr));
@@ -156,11 +169,21 @@ public:
 	/*
 	 * Operators
 	 */
+
+	/**
+	 * Returns the value of the atomic_persistent_aware_ptr.
+	 */
 	operator value_type() const noexcept
 	{
 		return load();
 	}
 
+	/**
+	 * Assignment operator.
+	 *
+	 * @param desired value to be stored in the atomic_persistent_aware_ptr.
+	 * @return assigned value.
+	 */
 	value_type
 	operator=(value_type desired) noexcept
 	{

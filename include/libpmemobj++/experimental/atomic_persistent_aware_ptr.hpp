@@ -168,6 +168,12 @@ public:
 		return desired;
 	}
 
+	/**
+	 * Deleted assignment operator.
+	 */
+	atomic_persistent_aware_ptr &
+	operator=(const atomic_persistent_aware_ptr &) = delete;
+
 private:
 	value_type
 	mark_dirty(value_type ptr) const

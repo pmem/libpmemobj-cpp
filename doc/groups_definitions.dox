@@ -192,7 +192,44 @@
   */
 
 /** @defgroup synchronization Synchronization Primitives*/
-/** @defgroup primitives Primitives*/
+/** @defgroup primitives Primitives
+  * Basic classes that provides PMEM-aware pointers and pool handlers.
+  *
+  * ## Pointers
+  * There are few types to handle data on PMEM.
+  * - @ref pmem::obj::persistent_ptr<T> - implements a smart pointer.
+  * It encapsulates the [PMEMoid](https://pmem.io/2015/06/11/type-safety-macros.html) fat
+  * pointer and provides member access, dereference and array access operators.
+  * - @ref pmem::obj::experimental::self_relative_ptr<T> - implements a smart ptr.
+  * It encapsulates the self offsetted pointer and provides member access, dereference and array access operators.
+  * self_relative_ptr in comparison to persistent_ptr is:
+  *   - smaller size (8B vs 16B)
+  *   - can be used with atomic operations
+  *   - faster dereference (important in loop), also allows vectorization
+  *   - if stored in a persistent memory pool, it can only points to elements within the same pool
+  * - @ref pmem::obj::p<T> - template class that can be used for all variables (except persistent pointers),
+  * which are used in @ref transactions.
+  * This class is not designed to be used with compound types. For that see the @ref pmem::obj::persistent_ptr.
+  * - @ref pmem::obj::experimental::v<T> - property-like template class that has to be used for
+  * all volatile variables that reside on persistent memory. This class ensures that the enclosed
+  * type is always properly initialized by always calling the class default constructor
+  * exactly once per instance of the application. This class has 8 bytes of storage overhead.
+  *
+  * ## Pool handles
+  * Pool class provides basic operations on pmemobj [pools](https://pmem.io/2016/05/10/cpp-05.html). C++ API for pools should
+  * not be mixed with C API. For example explicitly calling pmemobj_set_user_data(pop)
+  * on pool which is handled by C++ pool object is undefined behaviour.
+  *
+  * There are few pool handlers:
+  * - @ref pmem::obj::pool<T> - the template parameter defines the type of the root object within the pool.
+  * This pool class inherits also some methods from the base class: @ref pmem::obj::pool_base.
+  * Example: @snippet pool/pool.cpp pool_example
+  * - @ref pmem::obj::pool_base<T> - non template, basic version of pool,
+  * useful when specifying root type is not desirable. The typical usage
+  * example would be:
+  * @snippet pool/pool.cpp pool_base_example
+  */
+
 /** @defgroup exceptions Exceptions
   * Possible exceptions that could be thrown by the libpmemobj++.
   *

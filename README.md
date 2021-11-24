@@ -97,6 +97,24 @@ $ make
 # make install
 ```
 
+**Note:**
+By default CMake's option `USE_LIBUNWIND` is switched ON. If libunwind package was found
+in the system, it is then linked to all tests' binaries. Sometimes this may lead to
+failing a test, if it is run under Valgrind. To avoid this false-positive fails, you can
+execute tests run under Valgrind separately, without libunwind:
+
+```sh
+cmake .. -DTESTS_USE_VALGRIND=ON -DUSE_LIBUNWIND=OFF && \
+ctest -R "_helgrind|_pmemcheck|_drd|_memcheck|_pmreorder"	# run only valgrind tests
+```
+
+or valgrind tests can be disabled in CMake build:
+
+```sh
+cmake .. -DTESTS_USE_VALGRIND=OFF && \
+ctest
+```
+
 ### Developer compilation
 ```sh
 $ mkdir build

@@ -34,8 +34,8 @@ jobs:
                  "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
                  "TYPE=release OS=fedora OS_VER=34",
                  "TYPE=release OS=ubuntu OS_VER=20.04",
-                 "TYPE=valgrind OS=ubuntu OS_VER=20.04 TESTS_VALGRIND_UNWIND=0",
-                 "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04 TESTS_VALGRIND_UNWIND=0",
+                 "TYPE=valgrind OS=ubuntu OS_VER=20.04",
+                 "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04",
                  "TYPE=package OS=fedora OS_VER=34",
                  "TYPE=package OS=ubuntu OS_VER=20.04"]
     steps:

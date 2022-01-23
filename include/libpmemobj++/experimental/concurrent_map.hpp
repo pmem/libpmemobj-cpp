@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2021, Intel Corporation */
+/* Copyright 2019-2022, Intel Corporation */
 
 /**
  * @file
@@ -45,8 +45,8 @@ namespace experimental
  * requires runtime_initialize() to be called in order to restore the map state
  * after process restart.
  *
- * Key, Value, Comp and Allcoator types should be persistent memory aware types.
- * Allocator type should satisfies the named requirements
+ * Key, Value, Comp and Allocoator types should be persistent memory aware
+ * types. Allocator type should satisfies the named requirements
  * (https://en.cppreference.com/w/cpp/named_req/Allocator). The allocate() and
  * deallocate() methods are called inside transactions.
  * @ingroup experimental_containers

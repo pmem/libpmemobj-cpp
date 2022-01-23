@@ -51,7 +51,7 @@ mt_test(pmem::obj::pool<root> pop, size_t concurrency)
 	std::vector<std::string> values_on_pmem;
 	parallel_exec(concurrency + 1, [&](size_t thread_id) {
 		if (thread_id == 0) {
-			/* Read data while writting */
+			/* Read data while writing */
 			while (threads_counter.load() > 0) {
 				queue.try_consume_batch(
 					[&](pmem::obj::experimental::

@@ -89,7 +89,7 @@ gen_keys(size_t count)
 	std::vector<size_t> ret;
 	ret.reserve(count);
 	for (size_t i = 0; i < count; ++i) {
-		/* only even keys will be insterted */
+		/* only even keys will be inserted */
 		key = static_cast<size_t>(rand());
 		key <<= 32;
 		key1 = static_cast<size_t>(rand());

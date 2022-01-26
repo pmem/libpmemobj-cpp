@@ -37,7 +37,7 @@ namespace experimental
  *		are expected it's probably better to use this scenario.
  *  - Write-optimized - data is lazily flushed with a read operation. In this
  *		approach data storing is expected to be faster, but data is
- *guranteed to be flushed only after consequent read.
+ *		guaranteed to be flushed only after consequent read.
  */
 template <typename T, typename ReadOptimized>
 struct atomic_persistent_aware_ptr {

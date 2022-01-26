@@ -37,7 +37,7 @@ jobs:
       - name: Clone the git repo
         uses: actions/checkout@v2
 
-      # It rebuilds images every time (push is not neccessary; they are pushed in other workflows)
+      # It rebuilds images every time (push is not necessary; they are pushed in other workflows)
       - name: Rebuild the image
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./pull-or-rebuild-image.sh rebuild
 

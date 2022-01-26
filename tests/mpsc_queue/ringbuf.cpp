@@ -27,7 +27,7 @@
 /* Copyright 2021, Intel Corporation */
 
 /*
- * ringbuf.cpp -- tests for internal implementaiton of ringbuffer used in
+ * ringbuf.cpp -- tests for internal implementation of ringbuffer used in
  * pmem::obj::experimental::mpsc_queue
  */
 

@@ -101,7 +101,7 @@ insert_elements_kv(pmem::obj::pool<root> pop)
 
 	/* Update "Gdańsk" latest_update_date field.
 	 *
-	 * This code will result in only one snaphot.
+	 * This code will result in only one snapshot.
 	 */
 	pmem::obj::transaction::run(pop, [&] {
 		it->value().latest_update_date.get_rw().year = 2021;

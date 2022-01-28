@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2021, Intel Corporation
+# Copyright 2021-2022, Intel Corporation
 
 /** @defgroup containers Containers
   * Custom (but STL-like) containers for persistent memory.
@@ -135,7 +135,7 @@
   * in libpmemobj-cpp it's transparent for user, so please focus on relationships between stages.
   * Look at the diagram below:
   *
-  * ![lifecycle](https://pmem.io/assets/lifecycle.png "Transaction lifecycle")
+  * ![lifecycle](https://pmem.io/images/posts/lifecycle.png "Transaction lifecycle")
   *
   * To be more familiar with functions used in diagram read e.g. **pmemobj_tx_begin**(3) manpage
   * (C API for [libpmemobj](https://pmem.io/pmdk/libpmemobj/), link below in *Additional resources*).
@@ -208,7 +208,7 @@
   */
 
 /** @defgroup primitives Primitives
-  * Basic classes that provides PMEM-aware pointers and pool handlers.
+  * Basic classes that provide PMEM-aware pointers and pool handlers.
   *
   * ## Pointers
   * There are few types to handle data on PMEM.
@@ -216,12 +216,13 @@
   * It encapsulates the [PMEMoid](https://pmem.io/2015/06/11/type-safety-macros.html) fat
   * pointer and provides member access, dereference and array access operators.
   * - @ref pmem::obj::experimental::self_relative_ptr<T> - implements a smart ptr.
-  * It encapsulates the self offsetted pointer and provides member access, dereference and array access operators.
+  * It encapsulates the self-offsetted pointer and provides member access, dereference and array access operators.
   * self_relative_ptr in comparison to persistent_ptr is:
-  *   - smaller size (8B vs 16B)
-  *   - can be used with atomic operations
-  *   - faster dereference (important in loop), also allows vectorization
-  *   - if stored in a persistent memory pool, it can only points to elements within the same pool
+  *   - smaller in size (8B vs 16B),
+  *   - can be used with atomic operations,
+  *   - dereferenced faster (it's important, e.g., in loops),
+  *   - allows vectorization,
+  *   - if stored in a persistent memory pool, it can only points to elements within the same pool.
   * - @ref pmem::obj::p<T> - template class that can be used for all variables (except persistent pointers),
   * which are used in @ref transactions.
   * This class is not designed to be used with compound types. For that see the @ref pmem::obj::persistent_ptr.
@@ -231,8 +232,8 @@
   * exactly once per instance of the application. This class has 8 bytes of storage overhead.
   *
   * ## Pool handles
-  * Pool class provides basic operations on pmemobj [pools](https://pmem.io/2016/05/10/cpp-05.html). C++ API for pools should
-  * not be mixed with C API. For example explicitly calling pmemobj_set_user_data(pop)
+  * Pool class provides basic operations on pmemobj [pools](https://pmem.io/2016/05/10/cpp-05.html).
+  * C++ API for pools should not be mixed with C API. For example explicitly calling `pmemobj_set_user_data(pop)`
   * on pool which is handled by C++ pool object is undefined behaviour.
   *
   * There are few pool handlers:
@@ -249,9 +250,10 @@
   * Possible exceptions that could be thrown by the libpmemobj++.
   *
   * In runtime, some operations may fail, then all you need is to catch the exception.
-  * Every pmem exception has **std::runtime_error** in its inheritance tree
-  * and contains proper message with an error description.
-  * All exceptions can be caught using just **std::runtime_error**.
+  * Every pmem exception has `std::runtime_error` in its inheritance tree, which means
+  * that all exceptions can be caught using just this type. Each exception contains
+  * proper message with an error description.
+  *
   * Look at the list on this page to explore all exceptions with their descriptions.
   *
   * Transaction handles uncaught exceptions thrown inside its scope, then aborts
@@ -262,13 +264,13 @@
   * Let's consider following example:
   * @snippet examples/mpsc_queue/mpsc_queue.cpp mpsc_main
   *
-  * There are plenty of try-catch blocks placed to handle possible errors that can happen in some conditions.
-  * E.g. @ref pmem::obj::pool<T>::open can lead to @ref pmem::pool_error.
-  * Next exception, **std::exception**, is placed to handle possible errors during allocation,
-  * coming from @ref pmem::obj::make_persistent. Worth being careful using every new function
-  * because some of exceptions are not obvious, e.g., pmem::obj::pool<T>::close
-  * at the end of the code which may throw **std::logic_error**.
+  * There are plenty of try-catch blocks placed to handle possible errors that can occur in some
+  * conditions. E.g. @ref pmem::obj::pool<T>::open can lead to @ref pmem::pool_error.
+  * The next exception, **std::exception**, is placed to handle possible errors during allocation,
+  * coming from @ref pmem::obj::make_persistent. Worth being careful using any new function
+  * because some exceptions are not obvious, e.g., pmem::obj::pool<T>::close
+  * at the end of the code, which may throw **std::logic_error**.
   *
-  * You should check every function you will use in context of possible
-  * exceptions and then handle them to avoid crash.
+  * You should check every function you will use in the context of possible
+  * exceptions and then handle them to avoid a crash.
   */

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020-2021, Intel Corporation */
+/* Copyright 2020-2022, Intel Corporation */
 
 /**
  * @file
@@ -583,13 +583,12 @@ struct radix_tree<Key, Value, BytesView, MtMode>::node {
 	end() const;
 
 	template <bool Direction = direction::Forward, typename Ptr>
-	auto find_child(const Ptr &n) const -> decltype(begin<Direction>());
+	iterator<Direction> find_child(const Ptr &n) const;
 
 	template <bool Direction = direction::Forward,
 		  typename Enable = typename std::enable_if<
 			  Direction == direction::Forward>::type>
-	auto make_iterator(const atomic_pointer_type *ptr) const
-		-> decltype(begin<Direction>());
+	iterator<Direction> make_iterator(const atomic_pointer_type *ptr) const;
 
 	uint8_t padding[256 - sizeof(parent) - sizeof(leaf) - sizeof(child) -
 			sizeof(byte) - sizeof(bit)];
@@ -3003,9 +3002,9 @@ radix_tree<Key, Value, BytesView, MtMode>::node::end() const
 
 template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction, typename Ptr>
-auto
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::node::template iterator<Direction>
 radix_tree<Key, Value, BytesView, MtMode>::node::find_child(const Ptr &n) const
-	-> decltype(begin<Direction>())
 {
 	auto it = begin<Direction>();
 	while (it != end<Direction>()) {
@@ -3018,9 +3017,10 @@ radix_tree<Key, Value, BytesView, MtMode>::node::find_child(const Ptr &n) const
 
 template <typename Key, typename Value, typename BytesView, bool MtMode>
 template <bool Direction, typename Enable>
-auto
+typename radix_tree<Key, Value, BytesView,
+		    MtMode>::node::template iterator<Direction>
 radix_tree<Key, Value, BytesView, MtMode>::node::make_iterator(
-	const atomic_pointer_type *ptr) const -> decltype(begin<Direction>())
+	const atomic_pointer_type *ptr) const
 {
 	return forward_iterator(ptr, this);
 }

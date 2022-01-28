@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -135,8 +135,8 @@ using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="gro
 <p>Custom (but STL-like) containers for persistent memory. </p>
 <p>Persistent containers are implemented-from-scratch with optimized on-media layouts and algorithms to fully exploit the potential and features of persistent memory. Besides specific internal implementation details, libpmemobj-cpp persistent memory containers have (where possible) the well-known STL-like interface and they work with STL algorithms. Containers' methods guarantee atomicity, consistency and durability. Note that every single modifier method (any one modifying the state of the container, like resize or push_back) opens transaction internally and guarantees full exception safety (modifications will be either committed or rolled-back if an exception was thrown, or crash happened - for more info see <a class="el" href="group__transactions.html">Transactions</a>). There is no need for using transaction when calling modifier methods whatsoever.</p>
 <p>There is a separate Feature describing and listing all experimental containers, see <a class="el" href="group__experimental__containers.html">Experimental Containers</a>.</p>
-<h1><a class="anchor" id="autotoc_md6"></a>
-Rationale for implementing pmem-aware containers</h1>
+<h2><a class="anchor" id="autotoc_md6"></a>
+Rationale for implementing pmem-aware containers</h2>
 <p>The C++ standard library containers collection is something that persistent memory programmers may want to use. Containers manage the lifetime of held objects through allocation/creation and deallocation/destruction with the use of allocators. Implementing custom persistent allocator for C++ STL (Standard Template Library) containers has two main downsides:</p>
 <p>Implementation details:</p><ul>
 <li>STL containers do not use algorithms optimal from persistent memory programming point of view.</li>
@@ -147,8 +147,8 @@ Rationale for implementing pmem-aware containers</h1>
 <li>The STL does not guarantee that the container layout will remain unchanged in new library versions.</li>
 </ul>
 <p>Due to these obstacles, the libpmemobj-cpp contains the set of custom, implemented-from-scratch containers with optimized on-media layouts and algorithms to fully exploit the potential and features of persistent memory. These methods guarantee atomicity, consistency and durability. Besides specific internal implementation details, libpmemobj-cpp persistent memory containers have the well-known STL-like interface and they work with STL algorithms.</p>
-<h1><a class="anchor" id="autotoc_md7"></a>
-Additional resources</h1>
+<h2><a class="anchor" id="autotoc_md7"></a>
+Additional resources</h2>
 <ul>
 <li><a href="https://pmem.io/2018/11/20/cpp-persistent-containers.html">Blog post on pmem.io about libpmemobj-cpp persistent containers</a></li>
 <li><a href="https://pmem.io/2018/11/02/cpp-array.html">A blog post about array container</a></li>

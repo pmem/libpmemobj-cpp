@@ -1,15 +1,15 @@
 var searchData=
 [
-  ['segment_5fiterator_534',['segment_iterator',['../classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html',1,'pmem::obj::segment_vector_internal']]],
-  ['segment_5fvector_535',['segment_vector',['../classpmem_1_1obj_1_1segment__vector.html',1,'pmem::obj']]],
-  ['self_5frelative_5faccessor_536',['self_relative_accessor',['../classpmem_1_1detail_1_1self__relative__accessor.html',1,'pmem::detail']]],
-  ['self_5frelative_5fptr_537',['self_relative_ptr',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
-  ['self_5frelative_5fptr_3c_20list_5fnode_5ftype_20_3e_538',['self_relative_ptr&lt; list_node_type &gt;',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
-  ['self_5frelative_5fptr_5fbase_5fimpl_539',['self_relative_ptr_base_impl',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
-  ['self_5frelative_5fptr_5fbase_5fimpl_3c_20std_3a_3aatomic_3c_20std_3a_3aptrdiff_5ft_20_3e_20_3e_540',['self_relative_ptr_base_impl&lt; std::atomic&lt; std::ptrdiff_t &gt; &gt;',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
-  ['serial_5fbucket_5faccessor_541',['serial_bucket_accessor',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html',1,'pmem::obj::concurrent_hash_map']]],
-  ['shared_5fmutex_542',['shared_mutex',['../classpmem_1_1obj_1_1shared__mutex.html',1,'pmem::obj']]],
-  ['slice_543',['slice',['../classpmem_1_1obj_1_1slice.html',1,'pmem::obj']]],
-  ['standard_5falloc_5fpolicy_544',['standard_alloc_policy',['../classpmem_1_1obj_1_1standard__alloc__policy.html',1,'pmem::obj']]],
-  ['standard_5falloc_5fpolicy_3c_20void_20_3e_545',['standard_alloc_policy&lt; void &gt;',['../classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html',1,'pmem::obj']]]
+  ['segment_5fiterator_535',['segment_iterator',['../classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html',1,'pmem::obj::segment_vector_internal']]],
+  ['segment_5fvector_536',['segment_vector',['../classpmem_1_1obj_1_1segment__vector.html',1,'pmem::obj']]],
+  ['self_5frelative_5faccessor_537',['self_relative_accessor',['../classpmem_1_1detail_1_1self__relative__accessor.html',1,'pmem::detail']]],
+  ['self_5frelative_5fptr_538',['self_relative_ptr',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
+  ['self_5frelative_5fptr_3c_20list_5fnode_5ftype_20_3e_539',['self_relative_ptr&lt; list_node_type &gt;',['../classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html',1,'pmem::obj::experimental']]],
+  ['self_5frelative_5fptr_5fbase_5fimpl_540',['self_relative_ptr_base_impl',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
+  ['self_5frelative_5fptr_5fbase_5fimpl_3c_20std_3a_3aatomic_3c_20std_3a_3aptrdiff_5ft_20_3e_20_3e_541',['self_relative_ptr_base_impl&lt; std::atomic&lt; std::ptrdiff_t &gt; &gt;',['../classpmem_1_1detail_1_1self__relative__ptr__base__impl.html',1,'pmem::detail']]],
+  ['serial_5fbucket_5faccessor_542',['serial_bucket_accessor',['../classpmem_1_1obj_1_1concurrent__hash__map_1_1serial__bucket__accessor.html',1,'pmem::obj::concurrent_hash_map']]],
+  ['shared_5fmutex_543',['shared_mutex',['../classpmem_1_1obj_1_1shared__mutex.html',1,'pmem::obj']]],
+  ['slice_544',['slice',['../classpmem_1_1obj_1_1slice.html',1,'pmem::obj']]],
+  ['standard_5falloc_5fpolicy_545',['standard_alloc_policy',['../classpmem_1_1obj_1_1standard__alloc__policy.html',1,'pmem::obj']]],
+  ['standard_5falloc_5fpolicy_3c_20void_20_3e_546',['standard_alloc_policy&lt; void &gt;',['../classpmem_1_1obj_1_1standard__alloc__policy_3_01void_01_4.html',1,'pmem::obj']]]
 ];

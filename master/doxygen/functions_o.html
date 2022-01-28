@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -122,6 +122,9 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 </li>
 <li>operator T&amp;()
 : <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a120dfff82d94acb45cf17f116bf5353b">pmem::obj::experimental::v&lt; T &gt;</a>
+</li>
+<li>operator value_type()
+: <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a31f0956e1af1ccd9d0c3eb80052f8701">pmem::obj::experimental::atomic_persistent_aware_ptr&lt; T, ReadOptimized &gt;</a>
 </li>
 <li>operator void *()
 : <a class="el" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#a47e05e732319e690352d80cb7a6b6447">pmem::detail::self_relative_ptr_base_impl&lt; OffsetType &gt;</a>
@@ -239,16 +242,17 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 , <a class="el" href="classpmem_1_1obj_1_1vector.html#ad25bdf1fda9ea675821a67b873583e6b">pmem::obj::vector&lt; T &gt;</a>
 </li>
 <li>operator=()
-: <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#ab5dc6802e7cbc6ec92e280019f7068dc">pmem::detail::concurrent_skip_list&lt; Traits &gt;</a>
+: <a class="el" href="classpmem_1_1detail_1_1concurrent__skip__list.html#a961aec86879c4a85eb82464da68eb05a">pmem::detail::concurrent_skip_list&lt; Traits &gt;</a>
 , <a class="el" href="classpmem_1_1detail_1_1self__relative__ptr__base__impl.html#afe8fcf2b408022d57de72e2bc05b488d">pmem::detail::self_relative_ptr_base_impl&lt; OffsetType &gt;</a>
-, <a class="el" href="structpmem_1_1obj_1_1array.html#a8fc9a5a1a84cf1fe2b03fa5faed70365">pmem::obj::array&lt; T, N &gt;</a>
+, <a class="el" href="structpmem_1_1obj_1_1array.html#a426b848717acf59ee40470444233e84a">pmem::obj::array&lt; T, N &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1basic__string.html#a8b77090055e1f70c22ee18fd5f3a1ac9">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#a38e1a0f61a8ea3ab306ed1e63431fd21">pmem::obj::basic_string_view&lt; CharT, Traits &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1concurrent__hash__map.html#ac6170c8fb3fc6ae98fd251c4b32fbf28">pmem::obj::concurrent_hash_map&lt; Key, T, Hash, KeyEqual, MutexType, ScopedLockType &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1condition__variable.html#a07acd157f367291badab5680f71a3893">pmem::obj::condition_variable</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html#ab3189ed512ff383be51ddc6e98f8b7bc">pmem::obj::experimental::concurrent_map&lt; Key, Value, Comp, Allocator &gt;</a>
+, <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aac861c25545de6a80e36a3a5b2b35f34">pmem::obj::experimental::atomic_persistent_aware_ptr&lt; T, ReadOptimized &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html#a42e116bf48a5b13e772f97c367964a61">pmem::obj::experimental::concurrent_map&lt; Key, Value, Comp, Allocator &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1experimental_1_1mpsc__queue_1_1worker.html#a728d2fe487fe4d6c075480639d8c8e3f">pmem::obj::experimental::mpsc_queue::worker</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#acc07a93cf85b8df75a15b1b20abefde3">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html#a0cdf7ae4492dfffc43983fe599adb911">pmem::obj::experimental::radix_tree&lt; Key, Value, BytesView, MtMode &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a2283fb5e5ba26aa3a7443a353d062f49">pmem::obj::experimental::self_relative_ptr&lt; T &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html#a0161523cc8f39d49f84c68834391469b">pmem::obj::experimental::v&lt; T &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1mutex.html#a93353da939094c1ee4e233f9436216a8">pmem::obj::mutex</a>
@@ -268,7 +272,7 @@ $(document).ready(function(){initNavTree('functions_o.html',''); initResizable()
 , <a class="el" href="structpmem_1_1obj_1_1array.html#a83b97b7ff55bd7b8da1aa1279c2168f7">pmem::obj::array&lt; T, N &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1basic__string.html#aeefa6e9d09253187dae757fa292bd1be">pmem::obj::basic_string&lt; CharT, Traits &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1basic__string__view.html#af2d11e2efb6c3a98caa9cc660eed3137">pmem::obj::basic_string_view&lt; CharT, Traits &gt;</a>
-, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#ad08081052f4859949c20d811801b4b08">pmem::obj::experimental::self_relative_ptr&lt; T &gt;</a>
+, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html#a94572e79dfe0b16c54ca9af030430530">pmem::obj::experimental::self_relative_ptr&lt; T &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html#a89c2d4bcbbd555510ada9394a8e2009d">pmem::obj::persistent_ptr&lt; T &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1segment__vector.html#a913482eba5d23d4d8822b968d08f1d93">pmem::obj::segment_vector&lt; T, Policy &gt;</a>
 , <a class="el" href="classpmem_1_1obj_1_1segment__vector__internal_1_1segment__iterator.html#a4c816a6e3e202f2862120c63a78b22c0">pmem::obj::segment_vector_internal::segment_iterator&lt; Container, is_const &gt;</a>

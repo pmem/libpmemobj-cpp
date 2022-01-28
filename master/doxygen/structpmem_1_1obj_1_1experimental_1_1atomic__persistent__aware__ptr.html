@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -111,46 +111,92 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>difference_type</b> 
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae7a74fca9c9835d0e4b415a728f7bc28"><td class="memItemLeft" align="right" valign="top"><a id="ae7a74fca9c9835d0e4b415a728f7bc28"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#ae7a74fca9c9835d0e4b415a728f7bc28">atomic_persistent_aware_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> value)</td></tr>
-<tr class="memdesc:ae7a74fca9c9835d0e4b415a728f7bc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructors. <br /></td></tr>
+<tr class="memitem:ae7a74fca9c9835d0e4b415a728f7bc28"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#ae7a74fca9c9835d0e4b415a728f7bc28">atomic_persistent_aware_ptr</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> value)</td></tr>
+<tr class="memdesc:ae7a74fca9c9835d0e4b415a728f7bc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructors.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#ae7a74fca9c9835d0e4b415a728f7bc28">More...</a><br /></td></tr>
 <tr class="separator:ae7a74fca9c9835d0e4b415a728f7bc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0cb7dbd573cf826fc7293ad3527ab52"><td class="memItemLeft" align="right" valign="top"><a id="ad0cb7dbd573cf826fc7293ad3527ab52"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>atomic_persistent_aware_ptr</b> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">atomic_persistent_aware_ptr</a> &amp;)=delete</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#ad0cb7dbd573cf826fc7293ad3527ab52">atomic_persistent_aware_ptr</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">atomic_persistent_aware_ptr</a> &amp;)=delete</td></tr>
+<tr class="memdesc:ad0cb7dbd573cf826fc7293ad3527ab52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy constructor. <br /></td></tr>
 <tr class="separator:ad0cb7dbd573cf826fc7293ad3527ab52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7a0bb53a3285f124152a1460af21794"><td class="memTemplParams" colspan="2">template&lt;typename OPT  = ReadOptimized&gt; </td></tr>
 <tr class="memitem:aa7a0bb53a3285f124152a1460af21794"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::is_same&lt; OPT, std::true_type &gt;::value &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aa7a0bb53a3285f124152a1460af21794">store</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> desired, std::memory_order order=std::memory_order_seq_cst) noexcept</td></tr>
-<tr class="memdesc:aa7a0bb53a3285f124152a1460af21794"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-optimized store does the flush in store function, and clear the dirty marker after flush.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aa7a0bb53a3285f124152a1460af21794">More...</a><br /></td></tr>
+<tr class="memdesc:aa7a0bb53a3285f124152a1460af21794"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-optimized store does the flush already in the store function.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aa7a0bb53a3285f124152a1460af21794">More...</a><br /></td></tr>
 <tr class="separator:aa7a0bb53a3285f124152a1460af21794"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a730a3385343d83138049627b2c1cb4fd"><td class="memTemplParams" colspan="2">template&lt;typename OPT  = ReadOptimized&gt; </td></tr>
 <tr class="memitem:a730a3385343d83138049627b2c1cb4fd"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;!std::is_same&lt; OPT, std::true_type &gt;::value &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a730a3385343d83138049627b2c1cb4fd">store</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> desired, std::memory_order order=std::memory_order_seq_cst) noexcept</td></tr>
-<tr class="memdesc:a730a3385343d83138049627b2c1cb4fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-optimized store updates the ptr with the dirty flag, relies on consequent load to do the flush.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a730a3385343d83138049627b2c1cb4fd">More...</a><br /></td></tr>
+<tr class="memdesc:a730a3385343d83138049627b2c1cb4fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-optimized store relies on a consequent load to do the flush.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a730a3385343d83138049627b2c1cb4fd">More...</a><br /></td></tr>
 <tr class="separator:a730a3385343d83138049627b2c1cb4fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24ae2fa1f4d984c7f733e981aa6323a0"><td class="memTemplParams" colspan="2">template&lt;typename OPT  = ReadOptimized&gt; </td></tr>
 <tr class="memitem:a24ae2fa1f4d984c7f733e981aa6323a0"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; std::is_same&lt; OPT, std::true_type &gt;::value, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a24ae2fa1f4d984c7f733e981aa6323a0">load</a> (std::memory_order order=std::memory_order_seq_cst) noexcept</td></tr>
-<tr class="memdesc:a24ae2fa1f4d984c7f733e981aa6323a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-optimized load retries upon dirty ptr, relies on the store function to clear the dirty before continue.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a24ae2fa1f4d984c7f733e981aa6323a0">More...</a><br /></td></tr>
+<tr class="memdesc:a24ae2fa1f4d984c7f733e981aa6323a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-optimized load.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a24ae2fa1f4d984c7f733e981aa6323a0">More...</a><br /></td></tr>
 <tr class="separator:a24ae2fa1f4d984c7f733e981aa6323a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f47de9474b4ddc29dc29bd0e29658ef"><td class="memTemplParams" colspan="2">template&lt;typename OPT  = ReadOptimized&gt; </td></tr>
 <tr class="memitem:a5f47de9474b4ddc29dc29bd0e29658ef"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt;!std::is_same&lt; OPT, std::true_type &gt;::value, <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a5f47de9474b4ddc29dc29bd0e29658ef">load</a> (std::memory_order order=std::memory_order_seq_cst) noexcept</td></tr>
-<tr class="memdesc:a5f47de9474b4ddc29dc29bd0e29658ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-optimized load flushes the ptr with the dirty flag, clears the flag using CAS after flush.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a5f47de9474b4ddc29dc29bd0e29658ef">More...</a><br /></td></tr>
+<tr class="memdesc:a5f47de9474b4ddc29dc29bd0e29658ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write-optimized load flushes the data.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a5f47de9474b4ddc29dc29bd0e29658ef">More...</a><br /></td></tr>
 <tr class="separator:a5f47de9474b4ddc29dc29bd0e29658ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18f367cd82bf35fef0b36031fadf85f7"><td class="memItemLeft" align="right" valign="top"><a id="a18f367cd82bf35fef0b36031fadf85f7"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>is_lock_free</b> () const noexcept</td></tr>
 <tr class="separator:a18f367cd82bf35fef0b36031fadf85f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31f0956e1af1ccd9d0c3eb80052f8701"><td class="memItemLeft" align="right" valign="top"><a id="a31f0956e1af1ccd9d0c3eb80052f8701"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>operator value_type</b> () const noexcept</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a31f0956e1af1ccd9d0c3eb80052f8701">operator value_type</a> () const noexcept</td></tr>
+<tr class="memdesc:a31f0956e1af1ccd9d0c3eb80052f8701"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the value of the <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html" title="Atomic specialization of a persistent ptr (self_relative_ptr) that manages its persistence by itself.">atomic_persistent_aware_ptr</a>. <br /></td></tr>
 <tr class="separator:a31f0956e1af1ccd9d0c3eb80052f8701"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac861c25545de6a80e36a3a5b2b35f34"><td class="memItemLeft" align="right" valign="top"><a id="aac861c25545de6a80e36a3a5b2b35f34"></a>
-<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> desired) noexcept</td></tr>
+<tr class="memitem:aac861c25545de6a80e36a3a5b2b35f34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aac861c25545de6a80e36a3a5b2b35f34">operator=</a> (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> desired) noexcept</td></tr>
+<tr class="memdesc:aac861c25545de6a80e36a3a5b2b35f34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator.  <a href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aac861c25545de6a80e36a3a5b2b35f34">More...</a><br /></td></tr>
 <tr class="separator:aac861c25545de6a80e36a3a5b2b35f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f1cb2bf6f6e9a885a32f77af7845809"><td class="memItemLeft" align="right" valign="top"><a id="a3f1cb2bf6f6e9a885a32f77af7845809"></a>
+<a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">atomic_persistent_aware_ptr</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a3f1cb2bf6f6e9a885a32f77af7845809">operator=</a> (const <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">atomic_persistent_aware_ptr</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a3f1cb2bf6f6e9a885a32f77af7845809"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted assignment operator. <br /></td></tr>
+<tr class="separator:a3f1cb2bf6f6e9a885a32f77af7845809"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T, typename ReadOptimized&gt;<br />
 struct pmem::obj::experimental::atomic_persistent_aware_ptr&lt; T, ReadOptimized &gt;</h3>
 
 <p>Atomic specialization of a persistent ptr (<a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a>) that manages its persistence by itself. </p>
-<p>In a multi-threaded scenario, the persistence of this ptr is guaranteed when it is visible to (or read by) other threads. Performance-wise, two different options are provided: Read-optimized and Write-optimized. See corresponding store/load functions for details. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<p>In a multi-threaded scenario, the persistence of this ptr is guaranteed when it is visible to (or read by) other threads. Performance-wise, two different versions of this struct are provided:</p><ul>
+<li>Read-optimized - data is flushed along the write operation. If more reads are expected it's probably better to use this scenario.</li>
+<li>Write-optimized - data is lazily flushed with a read operation. In this approach data storing is expected to be faster, but data is guaranteed to be flushed only after consequent read. </li>
+</ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ae7a74fca9c9835d0e4b415a728f7bc28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7a74fca9c9835d0e4b415a728f7bc28">&#9670;&nbsp;</a></span>atomic_persistent_aware_ptr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename ReadOptimized &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">pmem::obj::experimental::atomic_persistent_aware_ptr</a>&lt; T, ReadOptimized &gt;::<a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">atomic_persistent_aware_ptr</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a>&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructors. </p>
+<p>Store constructor.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>to be stored in the <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html" title="Atomic specialization of a persistent ptr (self_relative_ptr) that manages its persistence by itself.">atomic_persistent_aware_ptr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a24ae2fa1f4d984c7f733e981aa6323a0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a24ae2fa1f4d984c7f733e981aa6323a0">&#9670;&nbsp;</a></span>load() <span class="overload">[1/2]</span></h2>
 
@@ -179,9 +225,9 @@ template&lt;typename OPT  = ReadOptimized&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Read-optimized load retries upon dirty ptr, relies on the store function to clear the dirty before continue. </p>
-<p>But for correctness, just flush the dirty ptr and return the clear ptr for now.</p>
-<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> (no dirty flag) </dd></dl>
+<p>Read-optimized load. </p>
+<p>It relies on a store function to flush the data.</p>
+<dl class="section return"><dt>Returns</dt><dd>the value_type. </dd></dl>
 
 </div>
 </div>
@@ -213,9 +259,45 @@ template&lt;typename OPT  = ReadOptimized&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Write-optimized load flushes the ptr with the dirty flag, clears the flag using CAS after flush. </p>
-<p>If CAS failed, simply return the old clear ptr, rely on later load to clear the dirty flag.</p>
-<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> (no dirty flag) </dd></dl>
+<p>Write-optimized load flushes the data. </p>
+<dl class="section return"><dt>Returns</dt><dd>the value_type. </dd></dl>
+
+</div>
+</div>
+<a id="aac861c25545de6a80e36a3a5b2b35f34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac861c25545de6a80e36a3a5b2b35f34">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename ReadOptimized &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a> <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html">pmem::obj::experimental::atomic_persistent_aware_ptr</a>&lt; T, ReadOptimized &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">value_type</a>&#160;</td>
+          <td class="paramname"><em>desired</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Assignment operator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">desired</td><td>value to be stored in the <a class="el" href="structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html" title="Atomic specialization of a persistent ptr (self_relative_ptr) that manages its persistence by itself.">atomic_persistent_aware_ptr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>assigned value. </dd></dl>
 
 </div>
 </div>
@@ -257,10 +339,10 @@ template&lt;typename OPT  = ReadOptimized&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Read-optimized store does the flush in store function, and clear the dirty marker after flush. </p>
+<p>Read-optimized store does the flush already in the store function. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">desired</td><td>the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> (no dirty flag) to be stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">desired</td><td>the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> to be stored. </td></tr>
   </table>
   </dd>
 </dl>
@@ -305,10 +387,10 @@ template&lt;typename OPT  = ReadOptimized&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Write-optimized store updates the ptr with the dirty flag, relies on consequent load to do the flush. </p>
+<p>Write-optimized store relies on a consequent load to do the flush. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">desired</td><td>the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> (no dirty flag) to be stored </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">desired</td><td>the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html" title="Persistent self-relative pointer class.">self_relative_ptr</a> to be stored. </td></tr>
   </table>
   </dd>
 </dl>

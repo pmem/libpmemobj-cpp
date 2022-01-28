@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -89,6 +89,9 @@ $(document).ready(function(){initNavTree('group__primitives.html',''); initResiz
 <div class="title">Primitives</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Basic classes that provide PMEM-aware pointers and pool handlers.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -112,6 +115,129 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>Basic classes that provide PMEM-aware pointers and pool handlers. </p>
+<h2><a class="anchor" id="autotoc_md13"></a>
+Pointers</h2>
+<p>There are few types to handle data on PMEM.</p><ul>
+<li><a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr&lt;T&gt;</a> - implements a smart pointer. It encapsulates the <a href="https://pmem.io/2015/06/11/type-safety-macros.html">PMEMoid</a> fat pointer and provides member access, dereference and array access operators.</li>
+<li><a class="el" href="classpmem_1_1obj_1_1experimental_1_1self__relative__ptr.html">pmem::obj::experimental::self_relative_ptr&lt;T&gt;</a> - implements a smart ptr. It encapsulates the self-offsetted pointer and provides member access, dereference and array access operators. self_relative_ptr in comparison to persistent_ptr is:<ul>
+<li>smaller in size (8B vs 16B),</li>
+<li>can be used with atomic operations,</li>
+<li>dereferenced faster (it's important, e.g., in loops),</li>
+<li>allows vectorization,</li>
+<li>if stored in a persistent memory pool, it can only points to elements within the same pool.</li>
+</ul>
+</li>
+<li><a class="el" href="classpmem_1_1obj_1_1p.html">pmem::obj::p&lt;T&gt;</a> - template class that can be used for all variables (except persistent pointers), which are used in <a class="el" href="group__transactions.html">Transactions</a>. This class is not designed to be used with compound types. For that see the <a class="el" href="classpmem_1_1obj_1_1persistent__ptr.html">pmem::obj::persistent_ptr</a>.</li>
+<li><a class="el" href="classpmem_1_1obj_1_1experimental_1_1v.html">pmem::obj::experimental::v&lt;T&gt;</a> - property-like template class that has to be used for all volatile variables that reside on persistent memory. This class ensures that the enclosed type is always properly initialized by always calling the class default constructor exactly once per instance of the application. This class has 8 bytes of storage overhead.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md14"></a>
+Pool handles</h2>
+<p>Pool class provides basic operations on pmemobj <a href="https://pmem.io/2016/05/10/cpp-05.html">pools</a>. C++ API for pools should not be mixed with C API. For example explicitly calling <code>pmemobj_set_user_data(pop)</code> on pool which is handled by C++ pool object is undefined behaviour.</p>
+<p>There are few pool handlers:</p><ul>
+<li><a class="el" href="classpmem_1_1obj_1_1pool.html">pmem::obj::pool&lt;T&gt;</a> - the template parameter defines the type of the root object within the pool. This pool class inherits also some methods from the base class: <a class="el" href="classpmem_1_1obj_1_1pool__base.html">pmem::obj::pool_base</a>. Example: <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;fcntl.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">pool_example()</div>
+<div class="line">{</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* pool root structure */</span></div>
+<div class="line">    <span class="keyword">struct </span>root {</div>
+<div class="line">        p&lt;int&gt; some_array[42];</div>
+<div class="line">        p&lt;int&gt; some_other_array[42];</div>
+<div class="line">        p&lt;double&gt; some_variable;</div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* create a pmemobj pool */</span></div>
+<div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pool&lt;root&gt;::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>, PMEMOBJ_MIN_POOL);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* close a pmemobj pool */</span></div>
+<div class="line">    pop.close();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* or open a pmemobj pool */</span></div>
+<div class="line">    pop = <a class="code" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pool&lt;root&gt;::open</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* typical usage schemes */</span></div>
+<div class="line">    <span class="keyword">auto</span> root_obj = pop.root();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* low-level memory manipulation */</span></div>
+<div class="line">    root_obj-&gt;some_variable = 3.2;</div>
+<div class="line">    pop.persist(root_obj-&gt;some_variable);</div>
+<div class="line"> </div>
+<div class="line">    pop.memset_persist(root_obj-&gt;some_array, 2,</div>
+<div class="line">               <span class="keyword">sizeof</span>(root_obj-&gt;some_array));</div>
+<div class="line"> </div>
+<div class="line">    pop.memcpy_persist(root_obj-&gt;some_other_array, root_obj-&gt;some_array,</div>
+<div class="line">               <span class="keyword">sizeof</span>(root_obj-&gt;some_array));</div>
+<div class="line"> </div>
+<div class="line">    pop.close();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* check pool consistency */</span></div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">pool&lt;root&gt;::check</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;layout&quot;</span>);</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a1dcc1ec8833d4a9215ce3b6d24f51a79"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool::open</a></div><div class="ttdeci">static pool&lt; T &gt; open(const std::string &amp;path, const std::string &amp;layout)</div><div class="ttdoc">Opens an existing object store memory pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:672</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a2ff95b310c46cf87e957dfc8fafedabc"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a2ff95b310c46cf87e957dfc8fafedabc">pmem::obj::pool::check</a></div><div class="ttdeci">static int check(const std::string &amp;path, const std::string &amp;layout)</div><div class="ttdoc">Checks if a given pool is consistent.</div><div class="ttdef"><b>Definition:</b> pool.hpp:711</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a8c7a780cfb3bc6c708856783938a9e8c"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a8c7a780cfb3bc6c708856783938a9e8c">pmem::obj::pool::create</a></div><div class="ttdeci">static pool&lt; T &gt; create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:694</div></div>
+<div class="ttc" id="anamespacepmem_1_1obj_html"><div class="ttname"><a href="namespacepmem_1_1obj.html">pmem::obj</a></div><div class="ttdoc">Main libpmemobj namespace.</div><div class="ttdef"><b>Definition:</b> allocation_flag.hpp:18</div></div>
+<div class="ttc" id="ap_8hpp_html"><div class="ttname"><a href="p_8hpp.html">p.hpp</a></div><div class="ttdoc">Resides on pmem property template.</div></div>
+<div class="ttc" id="apersistent__ptr_8hpp_html"><div class="ttname"><a href="persistent__ptr_8hpp.html">persistent_ptr.hpp</a></div><div class="ttdoc">Persistent smart pointer.</div></div>
+<div class="ttc" id="apool_8hpp_html"><div class="ttname"><a href="pool_8hpp.html">pool.hpp</a></div><div class="ttdoc">C++ pmemobj pool.</div></div>
+</div><!-- fragment --></li>
+<li><a class="el" href="classpmem_1_1obj_1_1pool__base.html">pmem::obj::pool_base&lt;T&gt;</a> - non template, basic version of pool, useful when specifying root type is not desirable. The typical usage example would be: <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;fcntl.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent__atomic_8hpp.html">libpmemobj++/make_persistent_atomic.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="p_8hpp.html">libpmemobj++/p.hpp</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pool_8hpp.html">libpmemobj++/pool.hpp</a>&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">using namespace </span><a class="code" href="namespacepmem_1_1obj.html">pmem::obj</a>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span></div>
+<div class="line">pool_base_example()</div>
+<div class="line">{</div>
+<div class="line"> </div>
+<div class="line">    <span class="keyword">struct </span>some_struct {</div>
+<div class="line">        p&lt;int&gt; some_array[42];</div>
+<div class="line">        p&lt;int&gt; some_other_array[42];</div>
+<div class="line">        p&lt;int&gt; some_variable;</div>
+<div class="line">    };</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* create a pmemobj pool */</span></div>
+<div class="line">    <span class="keyword">auto</span> pop = <a class="code" href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">pool_base::create</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;&quot;</span>, PMEMOBJ_MIN_POOL);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* close a pmemobj pool */</span></div>
+<div class="line">    pop.close();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* or open a pmemobj pool */</span></div>
+<div class="line">    pop = <a class="code" href="classpmem_1_1obj_1_1pool__base.html#a04efe7474a98116eea017c4d0933cf44">pool_base::open</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* no &quot;root&quot; object available in pool_base */</span></div>
+<div class="line">    persistent_ptr&lt;some_struct&gt; pval;</div>
+<div class="line">    make_persistent_atomic&lt;some_struct&gt;(pop, pval);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* low-level memory manipulation */</span></div>
+<div class="line">    pval-&gt;some_variable = 3;</div>
+<div class="line">    pop.persist(pval-&gt;some_variable);</div>
+<div class="line"> </div>
+<div class="line">    pop.memset_persist(pval-&gt;some_array, 2, <span class="keyword">sizeof</span>(pval-&gt;some_array));</div>
+<div class="line"> </div>
+<div class="line">    pop.memcpy_persist(pval-&gt;some_other_array, pval-&gt;some_array,</div>
+<div class="line">               <span class="keyword">sizeof</span>(pval-&gt;some_array));</div>
+<div class="line"> </div>
+<div class="line">    pop.close();</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">/* check pool consistency */</span></div>
+<div class="line">    <a class="code" href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">pool_base::check</a>(<span class="stringliteral">&quot;poolfile&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line">}</div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html_a04efe7474a98116eea017c4d0933cf44"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html#a04efe7474a98116eea017c4d0933cf44">pmem::obj::pool_base::open</a></div><div class="ttdeci">static pool_base open(const std::string &amp;path, const std::string &amp;layout)</div><div class="ttdoc">Opens an existing object store memory pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:109</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html_ab1e8902f0203e5013eff27d6ed2f1dce"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html#ab1e8902f0203e5013eff27d6ed2f1dce">pmem::obj::pool_base::create</a></div><div class="ttdeci">static pool_base create(const std::string &amp;path, const std::string &amp;layout, std::size_t size=PMEMOBJ_MIN_POOL, mode_t mode=DEFAULT_MODE)</div><div class="ttdoc">Creates a new transactional object store pool.</div><div class="ttdef"><b>Definition:</b> pool.hpp:140</div></div>
+<div class="ttc" id="aclasspmem_1_1obj_1_1pool__base_html_af4255ac687dd081270fd92addfef96c0"><div class="ttname"><a href="classpmem_1_1obj_1_1pool__base.html#af4255ac687dd081270fd92addfef96c0">pmem::obj::pool_base::check</a></div><div class="ttdeci">static int check(const std::string &amp;path, const std::string &amp;layout) noexcept</div><div class="ttdoc">Checks if a given pool is consistent.</div><div class="ttdef"><b>Definition:</b> pool.hpp:168</div></div>
+<div class="ttc" id="amake__persistent__atomic_8hpp_html"><div class="ttname"><a href="make__persistent__atomic_8hpp.html">make_persistent_atomic.hpp</a></div><div class="ttdoc">persistent_ptr atomic allocation functions for objects.</div></div>
+</div><!-- fragment --></li>
+</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -129,14 +129,22 @@ template&lt;bool Direction = direction::Forward&gt; </td></tr>
 template&lt;bool Direction = direction::Forward&gt; </td></tr>
 <tr class="memitem:ac734bc47430a4aa4db441fd100665fc7"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if&lt; Direction==<a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView, MtMode &gt;::node::direction::Reverse, typename <a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView, MtMode &gt;::node::reverse_iterator &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>end</b> () const</td></tr>
 <tr class="separator:ac734bc47430a4aa4db441fd100665fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8981a00ff020f32f09a7bc58d79060ab"><td class="memTemplParams" colspan="2"><a id="a8981a00ff020f32f09a7bc58d79060ab"></a>
+<tr class="memitem:a6d78e74b190b6438a6a26392514b23a8"><td class="memTemplParams" colspan="2"><a id="a6d78e74b190b6438a6a26392514b23a8"></a>
 template&lt;bool Direction = direction::Forward, typename Ptr &gt; </td></tr>
-<tr class="memitem:a8981a00ff020f32f09a7bc58d79060ab"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>find_child</b> (const Ptr &amp;n) const -&gt; decltype(begin&lt; Direction &gt;())</td></tr>
-<tr class="separator:a8981a00ff020f32f09a7bc58d79060ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc825a20092b85a384a978ecf67e0ad6"><td class="memTemplParams" colspan="2"><a id="adc825a20092b85a384a978ecf67e0ad6"></a>
+<tr class="memitem:a6d78e74b190b6438a6a26392514b23a8"><td class="memTemplItemLeft" align="right" valign="top">iterator&lt; Direction &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>find_child</b> (const Ptr &amp;n) const</td></tr>
+<tr class="separator:a6d78e74b190b6438a6a26392514b23a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35fbfcb1a6be31fade628b1e528c097e"><td class="memTemplParams" colspan="2"><a id="a35fbfcb1a6be31fade628b1e528c097e"></a>
 template&lt;bool Direction = direction::Forward, typename Enable  = typename std::enable_if&lt;			  Direction == direction::Forward&gt;::type&gt; </td></tr>
-<tr class="memitem:adc825a20092b85a384a978ecf67e0ad6"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>make_iterator</b> (const atomic_pointer_type *ptr) const -&gt; decltype(begin&lt; Direction &gt;())</td></tr>
-<tr class="separator:adc825a20092b85a384a978ecf67e0ad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35fbfcb1a6be31fade628b1e528c097e"><td class="memTemplItemLeft" align="right" valign="top">iterator&lt; Direction &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>make_iterator</b> (const atomic_pointer_type *ptr) const</td></tr>
+<tr class="separator:a35fbfcb1a6be31fade628b1e528c097e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed5da340cbd1047d4c7318404900bac4"><td class="memTemplParams" colspan="2"><a id="aed5da340cbd1047d4c7318404900bac4"></a>
+template&lt;bool Direction, typename Ptr &gt; </td></tr>
+<tr class="memitem:aed5da340cbd1047d4c7318404900bac4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView, MtMode &gt;::node::template iterator&lt; Direction &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>find_child</b> (const Ptr &amp;n) const</td></tr>
+<tr class="separator:aed5da340cbd1047d4c7318404900bac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8efb5dc15323279d643835e64fa946ab"><td class="memTemplParams" colspan="2"><a id="a8efb5dc15323279d643835e64fa946ab"></a>
+template&lt;bool Direction, typename Enable &gt; </td></tr>
+<tr class="memitem:a8efb5dc15323279d643835e64fa946ab"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classpmem_1_1obj_1_1experimental_1_1radix__tree.html">radix_tree</a>&lt; Key, Value, BytesView, MtMode &gt;::node::template iterator&lt; Direction &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>make_iterator</b> (const atomic_pointer_type *ptr) const</td></tr>
+<tr class="separator:a8efb5dc15323279d643835e64fa946ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>

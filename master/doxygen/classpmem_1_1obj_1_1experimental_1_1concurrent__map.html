@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -199,7 +199,7 @@ class pmem::obj::experimental::concurrent_map&lt; Key, Value, Comp, Allocator &g
 <p>A sorted associative container that contains key-value pairs with unique keys. Keys are sorted by using the comparison function Compare. Search, removal, and insertion operations have average logarithmic complexity. Everywhere the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_map with API partially compatible to s...">concurrent_map</a> uses the Compare requirements, uniqueness is determined by using the equivalence relation. In imprecise terms, two objects a and b are considered equivalent (not unique) if neither compares less than the other: !comp(a, b) &amp;&amp; !comp(b, a).</p>
 <p>The implementation is based on the lock-based concurrent skip list algorithm described in <a href="https://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf">https://www.cs.tau.ac.il/~shanir/nir-pubs-web/Papers/OPODIS2006-BA.pdf</a>. Our concurrent skip list implementation supports concurrent insertion and traversal, but not concurrent erasure. The erase method is prefixed with unsafe_, to indicate that there is no concurrency safety.</p>
 <p>Each time, the pool with <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_map with API partially compatible to s...">concurrent_map</a> is being opened, the <a class="el" href="classpmem_1_1obj_1_1experimental_1_1concurrent__map.html" title="Persistent memory aware implementation of Intel TBB concurrent_map with API partially compatible to s...">concurrent_map</a> requires runtime_initialize() to be called in order to restore the map state after process restart.</p>
-<p>Key, Value, Comp and Allcoator types should be persistent memory aware types. Allocator type should satisfies the named requirements (<a href="https://en.cppreference.com/w/cpp/named_req/Allocator">https://en.cppreference.com/w/cpp/named_req/Allocator</a>). The allocate() and deallocate() methods are called inside transactions. </p>
+<p>Key, Value, Comp and Allocator types should be persistent memory aware types. Allocator type should satisfy the named requirements (<a href="https://en.cppreference.com/w/cpp/named_req/Allocator">https://en.cppreference.com/w/cpp/named_req/Allocator</a>). The allocate() and deallocate() methods are called inside transactions. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>libpmemobj++/experimental/<a class="el" href="concurrent__map_8hpp_source.html">concurrent_map.hpp</a></li>
 </ul>

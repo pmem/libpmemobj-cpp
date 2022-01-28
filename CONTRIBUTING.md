@@ -47,6 +47,13 @@ We take outside code contributions to `libpmemobj-cpp` through GitHub pull reque
 If you add a new feature or fix a critical bug please append appropriate entry
 to ChangeLog under newest release.
 
+## Choosing the correct branch
+
+Development of new features is done on `master` branch. High priority bug fixes are done on
+the oldest relevant `stable-*` branch and merged through newer stable branches up to the `master`.
+
+## Licence and Developer's Certificate of Origin
+
 **NOTE: If you do decide to implement code changes and contribute them,
 please make sure you agree your contribution can be made available under the
 [BSD-style License used for libpmemobj-cpp](LICENSE).**

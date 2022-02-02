@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -134,7 +134,8 @@ Classes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Possible exceptions that could be thrown by the libpmemobj++. </p>
-<p>In runtime, some operations may fail, then all you need is to catch the exception. Every pmem exception has <b>std::runtime_error</b> in its inheritance tree and contains proper message with an error description. All exceptions can be caught using just <b>std::runtime_error</b>. Look at the list on this page to explore all exceptions with their descriptions.</p>
+<p>In runtime, some operations may fail, then all you need is to catch the exception. Every pmem exception has <code>std::runtime_error</code> in its inheritance tree, which means that all exceptions can be caught using just this type. Each exception contains proper message with an error description.</p>
+<p>Look at the list on this page to explore all exceptions with their descriptions.</p>
 <p>Transaction handles uncaught exceptions thrown inside its scope, then aborts and rethrow the previous exception. That way you never loose the original exception and at the same time, the transaction state is handled properly by the library.</p>
 <p>Let's consider following example: </p><div class="fragment"><div class="line"><span class="keywordtype">int</span></div>
 <div class="line">main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[])</div>
@@ -184,8 +185,8 @@ Classes</h2></td></tr>
 <div class="ttc" id="aclasspmem_1_1obj_1_1pool_html_a85b71b78e8229b009639835a5ad159d2"><div class="ttname"><a href="classpmem_1_1obj_1_1pool.html#a85b71b78e8229b009639835a5ad159d2">pmem::obj::pool::root</a></div><div class="ttdeci">persistent_ptr&lt; T &gt; root()</div><div class="ttdoc">Retrieves pool's root object.</div><div class="ttdef"><b>Definition:</b> pool.hpp:644</div></div>
 <div class="ttc" id="aclasspmem_1_1pool__error_html"><div class="ttname"><a href="classpmem_1_1pool__error.html">pmem::pool_error</a></div><div class="ttdoc">Custom pool error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:84</div></div>
 <div class="ttc" id="agroup__allocation_html_ga9e090bf5d2b950fba759c7560c16e08e"><div class="ttname"><a href="group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a></div><div class="ttdeci">detail::pp_if_not_array&lt; T &gt;::type make_persistent(allocation_flag flag, Args &amp;&amp;... args)</div><div class="ttdoc">Transactionally allocate and construct an object of type T.</div><div class="ttdef"><b>Definition:</b> make_persistent.hpp:54</div></div>
-</div><!-- fragment --><p> There are plenty of try-catch blocks placed to handle possible errors that can happen in some conditions. E.g. <a class="el" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool&lt;T&gt;::open</a> can lead to <a class="el" href="classpmem_1_1pool__error.html">pmem::pool_error</a>. Next exception, <b>std::exception</b>, is placed to handle possible errors during allocation, coming from <a class="el" href="group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a>. Worth being careful using every new function because some of exceptions are not obvious, e.g., <a class="el" href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6" title="Closes the pool.">pmem::obj::pool&lt;T&gt;::close</a> at the end of the code which may throw <b>std::logic_error</b>.</p>
-<p>You should check every function you will use in context of possible exceptions and then handle them to avoid crash. </p>
+</div><!-- fragment --><p> There are plenty of try-catch blocks placed to handle possible errors that can occur in some conditions. E.g. <a class="el" href="classpmem_1_1obj_1_1pool.html#a1dcc1ec8833d4a9215ce3b6d24f51a79">pmem::obj::pool&lt;T&gt;::open</a> can lead to <a class="el" href="classpmem_1_1pool__error.html">pmem::pool_error</a>. The next exception, <b>std::exception</b>, is placed to handle possible errors during allocation, coming from <a class="el" href="group__allocation.html#ga9e090bf5d2b950fba759c7560c16e08e">pmem::obj::make_persistent</a>. Worth being careful using any new function because some exceptions are not obvious, e.g., <a class="el" href="classpmem_1_1obj_1_1pool__base.html#a54af0122ce7be0754305b7b27f4e2fc6" title="Closes the pool.">pmem::obj::pool&lt;T&gt;::close</a> at the end of the code, which may throw <b>std::logic_error</b>.</p>
+<p>You should check every function you will use in the context of possible exceptions and then handle them to avoid a crash. </p>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -89,6 +89,9 @@ $(document).ready(function(){initNavTree('group__synchronization.html',''); init
 <div class="title">Synchronization Primitives</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Persistent memory resident implementation of synchronization primitives.  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -106,6 +109,14 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>Persistent memory resident implementation of synchronization primitives. </p>
+<p>In concurrent programming, we often require mechanisms for synchronizing access to shared resources. Typically to solve such issues we use synchronization primitives like mutexes and condition variables. As persistent memory offers bigger capacity than DRAM it may be useful to store synchronization primitives on it. Unfortunately such approach may cause performance degradation due to frequent writes to a memory with relatively higher latency (it's because taking a lock or signaling a conditional variable often requires additional writes). Few extra words how locks can be used in libpmemobj-cpp can be found in <a class="el" href="group__transactions.html">Transactions</a>.</p>
+<p>It's worth noticing that pmem locks are automatically released on recovery or when crash happened.</p>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Additional resources</h2>
+<ul>
+<li><a href="https://pmem.io/blog/2021/09/libpmemobj-cpp-lessons-learned">Libpmemobj-cpp - lessons learned</a> In this blog post we explain, i.a., why keeping locks on pmem is not a good idea. </li>
+</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

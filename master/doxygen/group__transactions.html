@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">PMDK C++ bindings
-   &#160;<span id="projectnumber">1.13.0-git85.g2ab46040</span>
+   &#160;<span id="projectnumber">1.13.0-git107.g7e59f08f</span>
    </div>
    <div id="projectbrief">This is the C++ bindings documentation for PMDK&#39;s libpmemobj.</div>
   </td>
@@ -104,8 +104,8 @@ Classes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Transactional approach to store data on pmem. </p>
-<h1><a class="anchor" id="autotoc_md8"></a>
-General info about transactions</h1>
+<h2><a class="anchor" id="autotoc_md8"></a>
+General info about transactions</h2>
 <p>The heart of the libpmemobj are transactions. A transaction is defined as series of operations on <b>persistent memory objects</b> that either all occur, or nothing occurs. In particular, if the execution of a transaction is interrupted by a power failure or a system crash, it is guaranteed that after system restart, all the changes made as a part of the uncompleted transaction will be rolled back, restoring the consistent state of the memory pool from the moment when the transaction was started.</p>
 <dl class="section note"><dt>Note</dt><dd>Any operations not using libpmemobj-cpp API (like <code>int x = 5</code> or <code>malloc()</code>) used within transaction will not be a part ot the transaction and won't be rolled back on failure! To properly store variables on pmem use <a class="el" href="group__primitives.html">Primitives</a> , to allocate data on pmem see <a class="el" href="group__allocation.html">Allocation</a> functions.</dd></dl>
 <p>In C++ bindings (<em>this library</em>) transactions were designed (in comparison to C API) to be as developer-friendly as possible. Even though libpmemobj++ are the bindings you should not mix these two APIs - using libpmemobj (C API) in C++ application will not work!</p>
@@ -171,12 +171,13 @@ General info about transactions</h1>
 <p>It's worth noticing that <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> is recommended to use over <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html">pmem::obj::basic_transaction</a>. An extra explanation is provided inline an example in <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> description.</p>
 <p>Mentioned above transactions are handled through two internal classes:</p>
 <ul>
-<li><b>manual</b> transactions has to be committed explicitly, otherwise it will abort. All operations between creating and destroying the transaction object are treated as performed in a transaction block and can be rolled back. The locks are held for the entire duration of the transaction. They are released at the end of the scope, so within the <code>catch</code> block, they are already unlocked. The best way to use manual transactions is by <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>, which is used in example above.</li>
-<li><b>automatic</b> transactions are only available in C++17. All operations between creating and destroying the transaction object are treated as performed in a transaction block and can be rolled back. If you have a C++17 compliant compiler, the automatic transaction will commit and abort automatically depending on the context of object's destruction. The locks are held for the entire duration of the transaction. They are released at the end of the scope, so within the <code>catch</code> block, they are already unlocked.</li>
+<li><b>manual</b> transactions has to be committed explicitly, otherwise it will abort. All operations between creating and destroying the transaction object are treated as performed in a transaction block and can be rolled back. The best way to use manual transactions is by <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html#a9564707de1779ca1bce7041fb7c9855c">pmem::obj::transaction::run</a>, which is used in example above.</li>
+<li><b>automatic</b> transactions are only available in C++17. All operations between creating and destroying the transaction object are treated as performed in a transaction block and can be rolled back. If you have a C++17 compliant compiler, the automatic transaction will commit and abort automatically depending on the context of object's destruction.</li>
 </ul>
+<p>In both approaches one of the parameters is the <code>locks</code>. They are held for the entire duration of the transaction and they are released at the end of the scope - so within the <code>catch</code> block, they are already unlocked.</p>
 <p>If you want to read more and see example usages of both, you have to see flat or basic transaction documentation, because each implementation may differ.</p>
-<h1><a class="anchor" id="autotoc_md9"></a>
-Lifecycle and stages:</h1>
+<h2><a class="anchor" id="autotoc_md9"></a>
+Lifecycle and stages:</h2>
 <p>When you are using transaction API a transaction can be in one of the following states:</p><ul>
 <li><em>TX_STAGE_NONE</em> - no open transaction in this thread</li>
 <li><em>TX_STAGE_WORK</em> - the transaction in progress</li>
@@ -185,11 +186,11 @@ Lifecycle and stages:</h1>
 <li><em>TX_STAGE_ONABORT</em> - starting the transaction failed or transaction aborted</li>
 </ul>
 <p>Moving from one stage to another is possible under some conditions, but in libpmemobj-cpp it's transparent for user, so please focus on relationships between stages. Look at the diagram below:</p>
-<p><img src="https://pmem.io/assets/lifecycle.png" alt="lifecycle" title="Transaction lifecycle" class="inline"/></p>
+<p><img src="https://pmem.io/images/posts/lifecycle.png" alt="lifecycle" title="Transaction lifecycle" class="inline"/></p>
 <p>To be more familiar with functions used in diagram read e.g. <b>pmemobj_tx_begin</b>(3) manpage (C API for <a href="https://pmem.io/pmdk/libpmemobj/">libpmemobj</a>, link below in <em>Additional resources</em>).</p>
 <p>If you need to read general information about transaction move to the <em>Additional resources</em> section.</p>
-<h1><a class="anchor" id="autotoc_md10"></a>
-Example of flat_transaction</h1>
+<h2><a class="anchor" id="autotoc_md10"></a>
+Example of flat_transaction</h2>
 <p>For comparison with the previous snippet, here is a code snippet of <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> which is listed below with basic explanation inline. </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="make__persistent_8hpp.html">libpmemobj++/make_persistent.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="persistent__ptr_8hpp.html">libpmemobj++/persistent_ptr.hpp</a>&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;<a class="code" href="pext_8hpp.html">libpmemobj++/pext.hpp</a>&gt;</span></div>
@@ -330,8 +331,8 @@ Example of flat_transaction</h1>
 <div class="ttc" id="aclasspmem_1_1transaction__free__error_html"><div class="ttname"><a href="classpmem_1_1transaction__free__error.html">pmem::transaction_free_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:156</div></div>
 <div class="ttc" id="aclasspmem_1_1transaction__scope__error_html"><div class="ttname"><a href="classpmem_1_1transaction__scope__error.html">pmem::transaction_scope_error</a></div><div class="ttdoc">Custom transaction error class.</div><div class="ttdef"><b>Definition:</b> pexceptions.hpp:167</div></div>
 </div><!-- fragment --><p>If you read the inline comments you should be able to notice the difference between <a class="el" href="classpmem_1_1obj_1_1flat__transaction.html">pmem::obj::flat_transaction</a> and <a class="el" href="classpmem_1_1obj_1_1basic__transaction.html">pmem::obj::basic_transaction</a>. For more examples please look at the <a href="https://github.com/pmem/libpmemobj-cpp/tree/master/examples">examples directory</a> in libpmemobj-cpp repository.</p>
-<h1><a class="anchor" id="autotoc_md11"></a>
-Additional resources</h1>
+<h2><a class="anchor" id="autotoc_md11"></a>
+Additional resources</h2>
 <ul>
 <li><a href="https://pmem.io/pmdk/manpages/linux/master/libpmemobj/pmemobj_tx_begin.3">pmemobj_tx_begin(3) manpage with transaction description (C API)</a></li>
 <li><a href="https://pmem.io/2016/05/25/cpp-07.html">blog post about transactions</a></li>

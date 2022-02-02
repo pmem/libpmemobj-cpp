@@ -10,6 +10,7 @@ var structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr =
     [ "load", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a24ae2fa1f4d984c7f733e981aa6323a0", null ],
     [ "load", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a5f47de9474b4ddc29dc29bd0e29658ef", null ],
     [ "operator value_type", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a31f0956e1af1ccd9d0c3eb80052f8701", null ],
+    [ "operator=", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a3f1cb2bf6f6e9a885a32f77af7845809", null ],
     [ "operator=", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aac861c25545de6a80e36a3a5b2b35f34", null ],
     [ "store", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#aa7a0bb53a3285f124152a1460af21794", null ],
     [ "store", "structpmem_1_1obj_1_1experimental_1_1atomic__persistent__aware__ptr.html#a730a3385343d83138049627b2c1cb4fd", null ]

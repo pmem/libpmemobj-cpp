@@ -67,16 +67,16 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"",
-"classpmem_1_1obj_1_1basic__string.html#a0a208beabac28bdab75886b82fc035ae",
-"classpmem_1_1obj_1_1basic__string__view.html#a959981c95772b971091a03f720769ee3",
-"classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#a6875b6e6de263ddc46b5e01b4220bd73",
-"classpmem_1_1obj_1_1mutex.html#a0128dcaaf043e6a2ce86e503678c9447",
-"classpmem_1_1obj_1_1segment__vector.html#a043a0cd4aaee184668bc6a7a8d0d1297",
-"classpmem_1_1obj_1_1vector.html#a65e70790fcad53666d5bb1b47ba62e59",
-"group__experimental__containers.html#ga9fb0814672603c5633af4f46f4098468",
-"ringbuf_8hpp.html#a302682b00161a32d39d9161811044a53",
-"structpmem_1_1obj_1_1array.html#ad038fb9bf58aa8824da4135b89cf145e"
+"allocation__flag_8hpp.html",
+"classpmem_1_1obj_1_1basic__string.html#a0b9c90664b5dd8986bebec2e2f4782f2",
+"classpmem_1_1obj_1_1basic__string__view.html#aa373691a7bdea2a2d0676c5864cde574",
+"classpmem_1_1obj_1_1experimental_1_1basic__inline__string.html#a88095a701bed6090c94025d1cfd793e7",
+"classpmem_1_1obj_1_1mutex.html#a746ecab28758da55f241b0f7b76ced36",
+"classpmem_1_1obj_1_1segment__vector.html#a0950b938bf07c33e637a2de39cece6ad",
+"classpmem_1_1obj_1_1vector.html#a6dd860aaef51ed0bfe4bda9b453ad4ca",
+"group__experimental__containers.html#gaa1fc1c77eb88e5e1a2d95ab87dd96d5d",
+"ringbuf_8hpp.html#a3e57b7ea6126400170535098c74d8249",
+"structpmem_1_1obj_1_1array.html#ae3206caaa8d099d62b48017b20444ab0"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

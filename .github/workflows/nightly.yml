@@ -41,6 +41,7 @@ jobs:
                  "OS=opensuse-tumbleweed OS_VER=latest",
                  "OS=ubuntu OS_VER=18.04",
                  "OS=ubuntu OS_VER=21.04",
+                 "OS=ubuntu OS_VER=21.10",
                  "OS=ubuntu OS_VER=devel"]
     steps:
       - name: Clone the git repo

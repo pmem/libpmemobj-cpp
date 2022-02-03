@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2021, Intel Corporation
+# Copyright 2018-2022, Intel Corporation
 
 #
 # run-doc-update.sh - is called inside a Docker container,
 #		to build docs for 'valid branches' and to create
-#		a pull request with and update of doxygen files (on gh-pages).
+#		a pull request with and update of doxygen files (on 'docs' branch).
 #
 
 set -e
@@ -26,7 +26,7 @@ REPO_DIR=$(mktemp -d -t libpmemobjcpp-XXX)
 ARTIFACTS_DIR=$(mktemp -d -t ARTIFACTS-XXX)
 LOCAL_REPO=$(git rev-parse --show-toplevel)
 
-# Only 'master' or 'stable-*' branches are valid; determine docs location dir on gh-pages branch
+# Only 'master' or 'stable-*' branches are valid; determine docs location dir on 'docs' branch
 TARGET_BRANCH=${CI_BRANCH}
 if [[ "${TARGET_BRANCH}" == "master" ]]; then
 	TARGET_DOCS_DIR="master"
@@ -69,9 +69,9 @@ cp -r ${REPO_DIR}/build/doc/cpp_html ${ARTIFACTS_DIR}/
 
 cd ${REPO_DIR}
 
-# Checkout gh-pages and copy docs
-GH_PAGES_NAME="${TARGET_DOCS_DIR}-gh-pages-update"
-git checkout -B ${GH_PAGES_NAME} upstream/gh-pages
+# Checkout 'docs' and copy generated documentation
+DOCS_BRANCH_NAME="${TARGET_DOCS_DIR}-docs-update"
+git checkout -B ${DOCS_BRANCH_NAME} upstream/docs
 git clean -dfx
 
 # Clean old content, since some files might have been deleted
@@ -85,12 +85,12 @@ echo "Add and push changes:"
 # In that case we want to force push anyway (there might be open pull request with
 # changes which were reverted).
 git add -A
-git commit -m "doc: automatic gh-pages docs update" && true
-git push -f ${ORIGIN} ${GH_PAGES_NAME}
+git commit -m "doc: automatic docs update for ${TARGET_BRANCH}" && true
+git push -f ${ORIGIN} ${DOCS_BRANCH_NAME}
 
 echo "Make or update pull request:"
 # When there is already an open PR or there are no changes an error is thrown, which we ignore.
-hub pull-request -f -b ${DOC_REPO_OWNER}:gh-pages -h ${BOT_NAME}:${GH_PAGES_NAME} \
-	-m "doc: automatic gh-pages update for ${TARGET_BRANCH}" && true
+hub pull-request -f -b ${DOC_REPO_OWNER}:docs -h ${BOT_NAME}:${DOCS_BRANCH_NAME} \
+	-m "doc: automatic docs update for ${TARGET_BRANCH}" && true
 
 popd

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2021, Intel Corporation
+# Copyright 2018-2022, Intel Corporation
 
 cmake_minimum_required(VERSION 3.3)
 
@@ -150,10 +150,8 @@ if(VALGRIND_FOUND)
 	if(VALGRIND_PMEMCHECK_FOUND)
 		add_flag(-DLIBPMEMOBJ_CPP_VG_PMEMCHECK_ENABLED=1)
 	endif()
-elseif(NOT VALGRIND_FOUND AND TESTS_USE_VALGRIND)
-	message(FATAL_ERROR "Valgrind not found, but flag TESTS_USE_VALGRIND was set.")
-elseif(NOT VALGRIND_FOUND)
-	message(WARNING "Valgrind not found. Valgrind tests will not be performed.")
+else()
+	message(STATUS "Valgrind not found.")
 endif()
 
 if(BUILD_TESTS OR BUILD_EXAMPLES OR BUILD_BENCHMARKS)

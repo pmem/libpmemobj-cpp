@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2019-2020, Intel Corporation
+# Copyright 2019-2022, Intel Corporation
 
 # This helper cmake file includes various tests for known compilers issues.
 
@@ -43,19 +43,6 @@ if(NOT MSVC_VERSION)
 			return 0;
 		}"
 		NO_GCC_VARIADIC_TEMPLATE_BUG)
-
-	if(NOT NO_GCC_VARIADIC_TEMPLATE_BUG)
-		if(TEST_ARRAY OR TEST_VECTOR OR TEST_STRING OR TEST_CONCURRENT_HASHMAP OR TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE OR TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE OR TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE OR TEST_ENUMERABLE_THREAD_SPECIFIC)
-			message(FATAL_ERROR
-				"Compiler does not support expanding variadic template variables in lambda expressions. "
-				"For more information about compiler requirements, check README.md.")
-		elseif()
-			message(WARNING
-				"Compiler does not support expanding variadic template variables in lambda expressions. "
-				"Some tests will be skipped and some functionalities won't be installed. "
-				"For more information about compiler requirements, check README.md.")
-		endif()
-	endif()
 
 	# Check for issues with older gcc compilers if "inline" aggregate initialization
 	# works for array class members https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65815

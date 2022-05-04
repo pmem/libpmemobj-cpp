@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2021, Intel Corporation
+# Copyright 2018-2022, Intel Corporation
 
 include(ctest_helpers.cmake)
 
@@ -71,6 +71,16 @@ endif()
 
 if(COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -coverage")
+endif()
+
+if(NOT VALGRIND_FOUND AND TESTS_USE_VALGRIND)
+	message(FATAL_ERROR "Valgrind not found, but flag TESTS_USE_VALGRIND was set.")
+endif()
+
+if(NOT NO_GCC_VARIADIC_TEMPLATE_BUG AND (TEST_ARRAY OR TEST_VECTOR OR TEST_STRING OR TEST_CONCURRENT_HASHMAP OR TEST_SEGMENT_VECTOR_ARRAY_EXPSIZE OR TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE OR TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE OR TEST_ENUMERABLE_THREAD_SPECIFIC))
+	message(FATAL_ERROR
+		"Compiler does not support expanding variadic template variables in lambda expressions. "
+		"For more information about compiler requirements, check README.md.")
 endif()
 
 # Prepare additional libraries/executables and find packages required for tests

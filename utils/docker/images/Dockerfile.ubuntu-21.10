@@ -67,7 +67,6 @@ ARG TESTS_DEPS="\
 # Misc for our builds/CI (optional)
 ARG MISC_DEPS="\
 	clang \
-	clang-format-9 \
 	libtext-diff-perl \
 	pkg-config \
 	sudo \

@@ -29,14 +29,14 @@ jobs:
       WORKDIR:         utils/docker
     strategy:
       matrix:
-        CONFIG: ["TYPE=debug OS=fedora OS_VER=34 PUSH_IMAGE=1",
+        CONFIG: ["TYPE=debug OS=fedora OS_VER=35 PUSH_IMAGE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
-                 "TYPE=release OS=fedora OS_VER=34",
+                 "TYPE=release OS=fedora OS_VER=35",
                  "TYPE=release OS=ubuntu OS_VER=20.04",
                  "TYPE=valgrind OS=ubuntu OS_VER=20.04",
                  "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04",
-                 "TYPE=package OS=fedora OS_VER=34",
+                 "TYPE=package OS=fedora OS_VER=35",
                  "TYPE=package OS=ubuntu OS_VER=20.04"]
     steps:
       - name: Get release version
@@ -88,7 +88,7 @@ jobs:
       github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/stable-')
     strategy:
       matrix:
-        CONFIG: ["TYPE=doc OS=fedora OS_VER=34"]
+        CONFIG: ["TYPE=doc OS=fedora OS_VER=35"]
     steps:
       - name: Set image version for stable branch
         # doc update happens only on stable branch (not on PR), so we check only for heads ref
@@ -109,8 +109,7 @@ jobs:
 
   windows:
     name: Windows
-    runs-on: windows-latest
-
+    runs-on: windows-2019
     env:
       platform: x64
       VCPKG_DEFAULT_TRIPLET: x64-windows
@@ -119,7 +118,6 @@ jobs:
       PMDK_VERSION: "1.9"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
-      MSBUILD:  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin"
     strategy:
       matrix:
         BUILD_TYPE:   [Debug, Release]
@@ -129,8 +127,10 @@ jobs:
             CXX_STANDARD: 17
 
     steps:
-      - name: Update PATH
-        run: echo "${env:MSBUILD}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: ${env:ARCH}
 
       - name: Cache vcpkg packages
         uses: actions/cache@v1

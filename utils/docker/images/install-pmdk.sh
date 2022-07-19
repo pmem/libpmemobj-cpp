@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2021, Intel Corporation
+# Copyright 2018-2022, Intel Corporation
 
 #
 # install-pmdk.sh - installs libpmem & libpmemobj
@@ -16,8 +16,8 @@ fi
 
 PACKAGE_MANAGER=${1}
 
-# master: 1.11.1, 24.09.2021
-PMDK_VERSION="5b21904a257eff47f2e87fcbf2de46111f03ddd8"
+# common: 1.12.0 release, 24.05.2022
+PMDK_VERSION="73d8f958e855904dc0776a7d77d0f0d3698a65b1"
 
 git clone https://github.com/pmem/pmdk
 cd pmdk

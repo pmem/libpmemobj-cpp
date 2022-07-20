@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2019-2021, Intel Corporation */
+/* Copyright 2019-2022, Intel Corporation */
 
 /**
  * @file
@@ -1573,7 +1573,7 @@ operator!=(const hash_map_iterator<Container, M> &i,
 
 /**
  * Persistent memory aware implementation of Intel TBB
- * [concurrent_hash_map](https://spec.oneapi.io/versions/0.5.0/oneTBB/containers/concurrent_hash_map_cls.html)
+ * [concurrent_hash_map](https://spec.oneapi.io/versions/latest/elements/oneTBB/source/containers/concurrent_hash_map_cls.html)
  *
  * The implementation is based on a concurrent hash table algorithm
  * (https://arxiv.org/ftp/arxiv/papers/1509/1509.02235.pdf) where elements

@@ -1,4 +1,4 @@
-dist: trusty
+dist: focal
 
 sudo: required
 
@@ -26,7 +26,7 @@ before_install:
   - rm -f push_image_to_repo_flag skip_build_package_check
 
 script:
-  - ./build.sh
+  - git config --global --add safe.directory /libpmemobj-cpp && ./build.sh
 
 after_success:
   - if [[ $PUSH_THE_IMAGE -eq 1 ]]; then images/push-image.sh $OS-$OS_VER; fi

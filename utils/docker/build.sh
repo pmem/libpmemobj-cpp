@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017-2020, Intel Corporation
+# Copyright 2017-2022, Intel Corporation
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -153,7 +153,7 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env CI_REPO_SLUG=$CI_REPO_SLUG \
 	--env CI_BRANCH=$CI_BRANCH \
 	--env CI_EVENT_TYPE=$CI_EVENT_TYPE \
-	--env GITHUB_TOKEN=$GITHUB_TOKEN \
+	--env DOC_UPDATE_GITHUB_TOKEN=${DOC_UPDATE_GITHUB_TOKEN} \
 	--env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN \
 	--env COVERITY_SCAN_NOTIFICATION_EMAIL=$COVERITY_SCAN_NOTIFICATION_EMAIL \
 	--env CHECK_CPP_STYLE=${CHECK_CPP_STYLE:-OFF} \

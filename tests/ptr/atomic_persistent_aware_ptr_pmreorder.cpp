@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2021, Intel Corporation */
+/* Copyright 2021-2022, Intel Corporation */
 
 /*
  * atomic_persistent_aware_ptr_pmreorder.cpp.cpp -- self_relative_ptr test under
@@ -35,7 +35,7 @@ public:
 		ptr.store(val);
 		/* sync other thread to stat reading now */
 		sync_func();
-		/* wait for other thread to finish reading */
+		/* wait for other thread to finish reading and persisting */
 		sync_func();
 		pmem::obj::pool_by_vptr(this).persist(&ptr, sizeof(ptr));
 	}
@@ -92,7 +92,7 @@ insert_and_read(nvobj::pool<root> &pop, PtrA &ptr_atomic, PtrR &ptr_read)
 			syncthreads();
 
 			if (thread_id == 0) {
-				/* save globalally for mock class to use */
+				/* save globally for mock class to use */
 				sync_func = syncthreads;
 
 				/* insert test data into atomic ptr's */
@@ -107,11 +107,14 @@ insert_and_read(nvobj::pool<root> &pop, PtrA &ptr_atomic, PtrR &ptr_read)
 					 * comments in mock class) */
 					syncthreads();
 					ptr_read = ptr_atomic.load();
+					pop.persist(&ptr_read,
+						    sizeof(ptr_read));
 					syncthreads();
 				} else {
 					ptr_read = ptr_atomic.load();
+					pop.persist(&ptr_read,
+						    sizeof(ptr_read));
 				}
-				pop.persist(&ptr_read, sizeof(ptr_read));
 			}
 
 			syncthreads();

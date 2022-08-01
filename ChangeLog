@@ -1,3 +1,16 @@
+Mon Aug 01 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.8.2-rc1
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.7 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- vector: fix referencing empty array
+	- vector: Fix undefined behaviour on realloc
+
 Fri Jul 29 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
 	* Version 1.7.1

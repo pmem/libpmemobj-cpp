@@ -1,3 +1,14 @@
+Thu Aug 04 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.9.1-rc1
+
+	This release fixes minor bugs.
+
+	Notable changes:
+	- concurrent_hash_map: fix free_data()
+	- concurrent_hash_map: make double to size_t cast explicit in defragment()
+	- peristent_ptr: add missing offset calculation
+
 Mon Aug 01 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
 	* Version 1.8.2

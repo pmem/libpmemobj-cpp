@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020, Intel Corporation
+ * Copyright 2016-2022, Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,8 +68,10 @@ errormsg(void)
 /**
  * Custom pool error class.
  *
- * Thrown when there is a runtime problem with some action on the
- * pool.
+ * Thrown when there is a runtime problem with some action on the pool,
+ * e.g., when cannot open or create a pool, the wrong handle to pool
+ * was passed to some function, or a referenced object is not stored
+ * on persistent memory.
  */
 class pool_error : public std::runtime_error {
 public:
@@ -143,7 +145,10 @@ public:
 /**
  * Custom out of memory error class.
  *
- * Thrown when there is out of memory error inside of transaction.
+ * Thrown when there is out of memory error inside of a transaction.
+ * It may occur when you run out of space on persistent memory:
+ * too many objects or too big object was allocated (current limit for
+ * a single element is ~16GB). Bigger pool or smaller object is required.
  */
 class transaction_out_of_memory : public transaction_alloc_error,
 				  public std::bad_alloc {

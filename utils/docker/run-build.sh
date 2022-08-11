@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2022, Intel Corporation
 
 #
 # run-build.sh - is called inside a Docker container; prepares the environment
@@ -59,6 +59,10 @@ function compile_example_standalone() {
 function sudo_password() {
 	echo $USERPASS | sudo -Sk $*
 }
+
+if [ "$CI_RUN" == "YES" ]; then
+	sudo_password chown -R $(id -u).$(id -g) $WORKDIR
+fi || true
 
 sudo_password mkdir /mnt/pmem
 sudo_password chmod 0777 /mnt/pmem

@@ -25,7 +25,7 @@
  */
 
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2021, Intel Corporation */
+/* Copyright 2021-2022, Intel Corporation */
 
 /**
  * @file
@@ -75,22 +75,22 @@ class ebr {
 public:
 	class worker;
 
-	ebr();
+	inline ebr();
 
-	worker register_worker();
-	bool sync();
-	void full_sync();
-	size_t staging_epoch();
-	size_t gc_epoch();
+	inline worker register_worker();
+	inline bool sync();
+	inline void full_sync();
+	inline size_t staging_epoch();
+	inline size_t gc_epoch();
 
 	class worker {
 	public:
-		worker(const worker &w) = delete;
-		worker(worker &&w) = default;
-		~worker();
+		inline worker(const worker &w) = delete;
+		inline worker(worker &&w) = default;
+		inline ~worker();
 
-		worker &operator=(worker &w) = delete;
-		worker &operator=(worker &&w) = default;
+		inline worker &operator=(worker &w) = delete;
+		inline worker &operator=(worker &&w) = default;
 
 		template <typename F>
 		void critical(F &&f);
@@ -118,7 +118,7 @@ private:
 /**
  * Default and only ebr constructor.
  */
-ebr::ebr() : global_epoch(0)
+inline ebr::ebr() : global_epoch(0)
 {
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	VALGRIND_HG_DISABLE_CHECKING(&global_epoch, sizeof(global_epoch));
@@ -136,7 +136,7 @@ ebr::ebr() : global_epoch(0)
  *
  * @return new registered worker.
  */
-ebr::worker
+inline ebr::worker
 ebr::register_worker()
 {
 	std::lock_guard<std::mutex> lock(mtx);
@@ -161,7 +161,7 @@ ebr::register_worker()
  * @return true if a new epoch is announced and false if it wasn't possible in
  * the current state.
  */
-bool
+inline bool
 ebr::sync()
 {
 	auto current_epoch = global_epoch.load();
@@ -191,7 +191,7 @@ ebr::sync()
  * synchronisation routine completes and returns. Note: the synchronisation may
  * take across multiple epochs.
  */
-void
+inline void
 ebr::full_sync()
 {
 	size_t syncs_cnt = 0;
@@ -210,7 +210,7 @@ ebr::full_sync()
  *
  * @return the epoch where objects can be staged for reclamation.
  */
-size_t
+inline size_t
 ebr::staging_epoch()
 {
 	auto res = global_epoch.load();
@@ -227,7 +227,7 @@ ebr::staging_epoch()
  *
  * @return the epoch available for reclamation.
  */
-size_t
+inline size_t
 ebr::gc_epoch()
 {
 	auto res = (global_epoch.load() + 1) % EPOCHS_NUMBER;
@@ -236,7 +236,7 @@ ebr::gc_epoch()
 	return res;
 }
 
-ebr::worker::worker(ebr *e_, reference ref) : local_epoch(ref), e(e_)
+inline ebr::worker::worker(ebr *e_, reference ref) : local_epoch(ref), e(e_)
 {
 #if LIBPMEMOBJ_CPP_VG_HELGRIND_ENABLED
 	VALGRIND_HG_DISABLE_CHECKING(&ref.get(), sizeof(ref.get()));
@@ -247,7 +247,7 @@ ebr::worker::worker(ebr *e_, reference ref) : local_epoch(ref), e(e_)
  * Unregisters the worker from the list of the workers in the ebr. All workers
  * should be destroyed before the destruction of ebr object.
  */
-ebr::worker::~worker()
+inline ebr::worker::~worker()
 {
 	std::lock_guard<std::mutex> lock(e->mtx);
 	e->workers.erase(std::this_thread::get_id());

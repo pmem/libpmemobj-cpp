@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2017-2020, Intel Corporation
+# Copyright 2017-2022, Intel Corporation
 
 #
 # build-local.sh - runs a Docker container from a Docker image with environment
@@ -118,19 +118,13 @@ docker run --privileged=true --name=$containerName -i $TTY \
 	--env COVERAGE=$COVERAGE \
 	--env CI_RUN=$CI_RUN \
 	--env TRAVIS=$TRAVIS \
+	--env GITHUB_ACTIONS=$GITHUB_ACTIONS \
 	--env GITHUB_REPO=$GITHUB_REPO \
 	--env CI_COMMIT_RANGE=$CI_COMMIT_RANGE \
 	--env CI_COMMIT=$CI_COMMIT \
 	--env CI_REPO_SLUG=$CI_REPO_SLUG \
 	--env CI_BRANCH=$CI_BRANCH \
 	--env CI_EVENT_TYPE=$CI_EVENT_TYPE \
-	--env GITHUB_ACTIONS=$GITHUB_ACTIONS \
-	--env GITHUB_HEAD_REF=$GITHUB_HEAD_REF \
-	--env GITHUB_REPO=$GITHUB_REPO \
-	--env GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
-	--env GITHUB_REF=$GITHUB_REF \
-	--env GITHUB_RUN_ID=$GITHUB_RUN_ID \
-	--env GITHUB_SHA=$GITHUB_SHA \
 	--env DOC_UPDATE_GITHUB_TOKEN=$DOC_UPDATE_GITHUB_TOKEN \
 	--env DOC_UPDATE_BOT_NAME=$DOC_UPDATE_BOT_NAME \
 	--env DOC_REPO_OWNER=$DOC_REPO_OWNER \

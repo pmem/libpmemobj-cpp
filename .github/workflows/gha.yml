@@ -13,7 +13,6 @@ jobs:
     env:
       DOCKERHUB_USER:          ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_PASSWORD:      ${{ secrets.DOCKERHUB_PASSWORD }}
-      GITHUB_TOKEN:   ${{ secrets.DOC_UPDATE_GITHUB_TOKEN }}
       HOST_WORKDIR:   /home/runner/work/libpmemobj-cpp/libpmemobj-cpp
       WORKDIR:        utils/docker
     strategy:
@@ -21,7 +20,7 @@ jobs:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=32 PUSH_IMAGE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
                  "TYPE=debug OS=ubuntu OS_VER=20.04 COVERAGE=1",
-                 "TYPE=release OS=fedora OS_VER=32 AUTO_DOC_UPDATE=1",
+                 "TYPE=release OS=fedora OS_VER=32",
                  "TYPE=release OS=ubuntu OS_VER=20.04",
                  "TYPE=valgrind OS=ubuntu OS_VER=20.04",
                  "TYPE=memcheck_drd OS=ubuntu OS_VER=20.04",
@@ -73,7 +72,8 @@ jobs:
         run: cd $WORKDIR && ${{ matrix.CONFIG }} ./build.sh
   windows:
     name: Windows
-    runs-on: windows-latest
+    runs-on: windows-2019
+
     env:
       platform: x64
       VCPKG_DEFAULT_TRIPLET: x64-windows
@@ -82,14 +82,14 @@ jobs:
       PMDK_VERSION: "1.8"
       CMAKE_TOOLCHAIN_FILE: "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
       CMAKE_INSTALL_PREFIX: "C:\\install\\libpmemobj-cpp"
-      WORKDIR:  "D:\\a\\libpmemobj-cpp\\libpmemobj-cpp\\"
-      MSBUILD:  "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\MSBuild\\Current\\Bin"
     strategy:
       matrix:
         CONFIG: [Debug, Release]
     steps:
-      - name: Update PATH
-        run: echo "${env:MSBUILD}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: ${env:ARCH}
 
       - name: Cache vcpkg packages
         uses: actions/cache@v1

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2018-2021, Intel Corporation
+# Copyright 2018-2022, Intel Corporation
 
 cmake_minimum_required(VERSION 3.3)
 project(libpmemobj-cpp C CXX)
@@ -9,10 +9,7 @@ set(VERSION_MINOR 11)
 set(VERSION_PATCH 0)
 #set(VERSION_PRERELEASE rc3)
 
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
-if (VERSION_PATCH GREATER 0)
-	set(VERSION ${VERSION}.${VERSION_PATCH})
-endif()
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 if (VERSION_PRERELEASE)
 	set(VERSION ${VERSION}-${VERSION_PRERELEASE})
 endif()

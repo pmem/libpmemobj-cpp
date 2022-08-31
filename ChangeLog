@@ -1,3 +1,52 @@
+Mon Aug 29 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.10.1
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.10 version.
+	Maintenance of this version is no longer supported.
+
+	It contains all bugfixes and updates from previous patch releases
+	(1.9.1, 1.8.2, 1.7.1, 1.6.1, 1.5.2).
+
+Mon Aug 08 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.9.1
+
+	This release fixes minor bugs.
+
+	Notable changes:
+	- concurrent_hash_map: fix free_data()
+	- concurrent_hash_map: make double to size_t cast explicit in defragment()
+	- peristent_ptr: add missing offset calculation
+
+Mon Aug 01 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.8.2
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.8 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- vector: fix referencing empty array
+	- vector: Fix undefined behaviour on realloc
+
+Fri Jul 29 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.7.1
+
+	This release fixes minor bugs.
+
+	This is the last patch release for libpmemobj-cpp 1.7 version.
+	Maintenance of this version is no longer supported.
+
+	Notable changes:
+	- Properly install pkg-config file for all configurations
+	- Fix void_t declaration and API usage for concurrent hashmap test
+
 Tue Jul 06 2021 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
 	* Version 1.6.1

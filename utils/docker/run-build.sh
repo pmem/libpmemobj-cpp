@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright 2016-2020, Intel Corporation
+# Copyright 2016-2022, Intel Corporation
 
 #
 # run-build.sh - is called inside a Docker container; prepares the environment
@@ -60,10 +60,6 @@ function compile_example_standalone() {
 
 	make -j$(nproc)
 	cd -
-}
-
-function sudo_password() {
-	echo $USERPASS | sudo -Sk $*
 }
 
 ###############################################################################

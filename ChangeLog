@@ -1,3 +1,19 @@
+Fri Sep 02 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.11.1-rc1
+
+	This release fixes minor bugs.
+
+	Notable changes:
+	- radix_tree: fix assing_val
+	- radix_tree: fix internal find
+	- radix_tree: fix try_emplace implementation
+	- radix_tree: fix use after free
+	- string_view: add assert for operator[]
+	- self_relative_ptr: fix UB when adding non-zero offset to possibly null pointer
+	- tests: fix radix_tx_abort test
+	- tests: link atomic to all tests
+
 Mon Aug 29 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
 	* Version 1.10.1

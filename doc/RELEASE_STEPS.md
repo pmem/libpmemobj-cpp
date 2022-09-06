@@ -33,8 +33,8 @@ Publish package and make it official:
 - announce the release on pmem group and on pmem slack channel(s)
 
 Later, for major/minor release:
-- update library version in [vcpkg](https://github.com/microsoft/vcpkg/blob/master/ports/libpmemobj-cpp) - file an inssue for their maintainers
+- update library version in [vcpkg](https://github.com/microsoft/vcpkg/blob/master/ports/libpmemobj-cpp) - file an issue for their maintainers
 - add new compatibility tests (for new version) in tests/compatibility/CMakeLists.txt, on stable-$VER branch
-- once gh-pages contains new documentation:
+- once 'main' branch of pmem.io repository contains new documentation:
  - add there (in index.md) v.$VER section in Doxygen docs links
  - update "Releases' support status" table (older releases' statuses as well, if needed)

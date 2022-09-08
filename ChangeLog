@@ -1,3 +1,15 @@
+Thu Sep 08 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
+
+	* Version 1.12.1-rc1
+
+	This release fixes minor bugs.
+
+    It contains all bugfixes and updates from previous patch releases
+	(including 1.11.1 and 1.10.1).
+
+	Other notable changes:    
+    - tests: add assert's description in compatibility tests
+
 Tue Sep 06 2022 Łukasz Stolarczuk <lukasz.stolarczuk@intel.com>
 
 	* Version 1.11.1

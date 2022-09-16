@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG: ["TYPE=debug OS=fedora OS_VER=36 PUSH_IMAGE=1",
-                 "TYPE=debug OS=ubuntu OS_VER=22.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=1",
+                 "TYPE=debug OS=ubuntu OS_VER=22.04 PUSH_IMAGE=1 CHECK_CPP_STYLE=0",
                  "TYPE=debug OS=ubuntu OS_VER=22.04 COVERAGE=1",
                  "TYPE=release OS=fedora OS_VER=36",
                  "TYPE=release OS=ubuntu OS_VER=22.04",
@@ -42,7 +42,7 @@ jobs:
                  "OS=debian OS_VER=testing",
                  "OS=debian OS_VER=unstable",
                  "OS=fedora OS_VER=35",
-                 "OS=fedora OS_VER=rawhide PUSH_IMAGE=0",
+                 "OS=fedora OS_VER=rawhide PUSH_IMAGE=0 TESTS_PMREORDER=0",
                  "TYPE=package OS=fedora OS_VER=rawhide",
                  "OS=opensuse-leap OS_VER=latest",
                  "OS=opensuse-tumbleweed OS_VER=latest",

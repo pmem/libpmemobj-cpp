@@ -56,6 +56,7 @@ RUN zypper install -y \
 	python3 \
 	rpm-build \
 	rpmdevtools \
+	shadow \
 	sudo \
 	systemd \
 	tar \
@@ -89,7 +90,7 @@ RUN echo $USERPASS > $PFILE
 RUN echo $USERPASS >> $PFILE
 RUN passwd $USER < $PFILE
 RUN rm -f $PFILE
-RUN sed -i 's/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/g' /etc/sudoers
+RUN sed -i 's/# %wheel/%wheel/g' /etc/sudoers
 RUN groupadd wheel
 RUN gpasswd wheel -a $USER
 USER $USER

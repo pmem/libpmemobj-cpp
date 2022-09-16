@@ -15,7 +15,7 @@ source $(dirname ${0})/prepare-for-build.sh
 if [[ -z "${DOC_UPDATE_GITHUB_TOKEN}" ]]; then
 	echo "To build documentation and upload it as a Github pull request, variable " \
 		"'DOC_UPDATE_GITHUB_TOKEN' has to be provided."
-	exit 1
+	exit 0
 fi
 
 if [[ -z "${WORKDIR}" ]]; then

@@ -6,6 +6,17 @@
 [![Coverage Status](https://codecov.io/github/pmem/libpmemobj-cpp/coverage.svg?branch=master)](https://codecov.io/gh/pmem/libpmemobj-cpp/branch/master)
 [![Packaging status](https://repology.org/badge/tiny-repos/libpmemobj-cpp.svg)](https://repology.org/project/libpmemobj-cpp/versions)
 
+## ⚠️ Discontinuation of the project
+The **libpmemobj-cpp** project will no longer be maintained by Intel.
+- Intel has ceased development and contributions including, but not limited to, maintenance, bug fixes, new releases,
+or updates, to this project.
+- Intel no longer accepts patches to this project.
+- If you have an ongoing need to use this project, are interested in independently developing it, or would like to
+maintain patches for the open source software community, please create your own fork of this project.
+- You will find more information [here](https://pmem.io/blog/2022/11/update-on-pmdk-and-our-long-term-support-strategy/).
+
+## Introduction
+
 **libpmemobj-cpp** is a C++ binding for **libpmemobj** (a library which is a part of [PMDK collection](https://github.com/pmem/pmdk)).
 More implementation details can be found in [include/libpmemobj++/README.md](include/libpmemobj++/README.md).
 
@@ -186,7 +197,4 @@ $ cmake -LH
 or just use graphical CMake frontend like **cmake-qt-gui** or **cmake-curses-gui**.
 
 ## Contact us
-For more information on this library, contact Igor Chorążewicz (igor.chorazewicz@intel.com),
-Piotr Balcer (piotr.balcer@intel.com) or post on our **#pmem** Slack channel using
-[this invite link](https://join.slack.com/t/pmem-io/shared_invite/enQtNzU4MzQ2Mzk3MDQwLWQ1YThmODVmMGFkZWI0YTdhODg4ODVhODdhYjg3NmE4N2ViZGI5NTRmZTBiNDYyOGJjYTIyNmZjYzQxODcwNDg)
-or [Google group](https://groups.google.com/group/pmem).
+For more information on this library, contact us using dedicated email: pmdk_support@intel.com.

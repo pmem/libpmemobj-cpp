@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2021, 4Paradigm Inc. */
 
 #include "ptr_arith.hpp"
 
@@ -7,9 +7,8 @@
 #include <libpmemobj++/persistent_ptr.hpp>
 
 template <typename T>
-using self_relative_ptr =
-	nvobj::experimental::self_relative_ptr<T, std::false_type>;
-using self_relative_ptr_base = nvobj::experimental::self_relative_ptr_base;
+using pa_self_relative_ptr =
+	nvobj::experimental::self_relative_ptr<T, std::true_type>;
 
 #define LAYOUT "cpp"
 
@@ -30,8 +29,8 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_arith<self_relative_ptr>(pop);
-	test_relational<self_relative_ptr>(pop);
+	test_arith<pa_self_relative_ptr>(pop);
+	test_relational<pa_self_relative_ptr>(pop);
 
 	pop.close();
 }

@@ -98,6 +98,7 @@ option(TEST_SEGMENT_VECTOR_VECTOR_EXPSIZE "enable testing of pmem::obj::segment_
 option(TEST_SEGMENT_VECTOR_VECTOR_FIXEDSIZE "enable testing of pmem::obj::segment_vector with vector as segment_vector_type and fixed_size_policy" ON)
 option(TEST_ENUMERABLE_THREAD_SPECIFIC "enable testing of pmem::obj::enumerable_thread_specific" ON)
 option(TEST_CONCURRENT_MAP "enable testing of pmem::obj::experimental::concurrent_map (depends on TEST_STRING)" ON)
+option(TEST_SWMR_MAP "enable testing of pmem::obj::experimental::swmr_map (depends on TEST_STRING)" ON)
 option(TEST_SELF_RELATIVE_POINTER "enable testing of pmem::obj::experimental::self_relative_ptr" ON)
 option(TEST_RADIX_TREE "enable testing of pmem::obj::experimental::radix_tree" ON)
 option(TEST_MPSC_QUEUE "enable testing of pmem::obj::experimental::mpsc_queue" ON)

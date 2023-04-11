@@ -21,11 +21,11 @@ namespace obj
 namespace experimental
 {
 
-template <typename T>
+template <typename T, typename PersistentAware>
 class self_relative_ptr;
 
-template <>
-class self_relative_ptr<void> : public self_relative_ptr_base {
+template <typename PersistentAware>
+class self_relative_ptr<void, PersistentAware> : public self_relative_ptr_base {
 public:
 	using base_type = self_relative_ptr_base;
 	using this_type = self_relative_ptr;
@@ -37,9 +37,18 @@ public:
 	    : self_relative_ptr_base()
 	{
 	}
+	constexpr self_relative_ptr(std::nullptr_t, bool dirty) noexcept
+	    : self_relative_ptr_base()
+	{
+	}
 
 	self_relative_ptr(element_type *ptr) noexcept
 	    : self_relative_ptr_base(self_offset(ptr))
+	{
+	}
+
+	self_relative_ptr(element_type *ptr, bool dirty) noexcept
+	    : self_relative_ptr_base(self_offset(ptr, dirty))
 	{
 	}
 
@@ -55,6 +64,14 @@ private:
 	self_offset(element_type *ptr) const noexcept
 	{
 		return base_type::pointer_to_offset(static_cast<void *>(ptr));
+	}
+	difference_type
+	self_offset(element_type *ptr, bool dirty) const noexcept
+	{
+		intptr_t dirty_mask = dirty == true;
+		--dirty_mask;
+		return (base_type::pointer_to_offset(static_cast<void *>(ptr)) &
+			(dirty_mask | dirty_flag));
 	}
 };
 
@@ -78,7 +95,7 @@ private:
  * @includedoc shared/self_relative_pointer_implementation.txt
  * @ingroup primitives
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 class self_relative_ptr : public self_relative_ptr_base {
 public:
 	using base_type = self_relative_ptr_base;
@@ -126,6 +143,11 @@ public:
 	{
 	}
 
+	constexpr self_relative_ptr(std::nullptr_t, bool dirty) noexcept
+	    : self_relative_ptr_base()
+	{
+	}
+
 	/**
 	 * Volatile pointer constructor.
 	 *
@@ -136,11 +158,21 @@ public:
 	{
 	}
 
+	self_relative_ptr(element_type *ptr, bool dirty) noexcept
+	    : self_relative_ptr_base(self_offset(ptr, dirty))
+	{
+	}
+
 	/**
 	 * Constructor from persistent_ptr<T>
 	 */
 	self_relative_ptr(persistent_ptr<T> ptr) noexcept
 	    : self_relative_ptr_base(self_offset(ptr.get()))
+	{
+	}
+
+	self_relative_ptr(persistent_ptr<T> ptr, bool dirty) noexcept
+	    : self_relative_ptr_base(self_offset(ptr.get(), dirty))
 	{
 	}
 
@@ -154,6 +186,12 @@ public:
 	self_relative_ptr(PMEMoid oid) noexcept
 	    : self_relative_ptr_base(self_offset(
 		      static_cast<element_type *>(pmemobj_direct(oid))))
+	{
+	}
+
+	self_relative_ptr(PMEMoid oid, bool dirty) noexcept
+	    : self_relative_ptr_base(self_offset(
+		      static_cast<element_type *>(pmemobj_direct(oid)), dirty))
 	{
 	}
 
@@ -178,7 +216,8 @@ public:
 				typename std::remove_cv<U>::type>::value &&
 				!std::is_void<U>::value,
 			decltype(static_cast<T *>(std::declval<U *>()))>::type>
-	self_relative_ptr(self_relative_ptr<U> const &r) noexcept
+	self_relative_ptr(
+		self_relative_ptr<U, PersistentAware> const &r) noexcept
 	    : self_relative_ptr_base(self_offset(static_cast<T *>(r.get())))
 	{
 	}
@@ -295,8 +334,8 @@ public:
 	template <typename Y,
 		  typename = typename std::enable_if<
 			  std::is_convertible<Y *, T *>::value>::type>
-	self_relative_ptr<T> &
-	operator=(self_relative_ptr<Y> const &r)
+	self_relative_ptr<T, PersistentAware> &
+	operator=(self_relative_ptr<Y, PersistentAware> const &r)
 	{
 		this_type(r).swap(*this);
 		return *this;
@@ -318,7 +357,7 @@ public:
 	/**
 	 * Prefix increment operator.
 	 */
-	inline self_relative_ptr<T> &
+	inline self_relative_ptr<T, PersistentAware> &
 	operator++()
 	{
 		detail::conditional_add_to_tx(this);
@@ -330,7 +369,7 @@ public:
 	/**
 	 * Postfix increment operator.
 	 */
-	inline self_relative_ptr<T>
+	inline self_relative_ptr<T, PersistentAware>
 	operator++(int)
 	{
 		auto copy = *this;
@@ -342,7 +381,7 @@ public:
 	/**
 	 * Prefix decrement operator.
 	 */
-	inline self_relative_ptr<T> &
+	inline self_relative_ptr<T, PersistentAware> &
 	operator--()
 	{
 		detail::conditional_add_to_tx(this);
@@ -354,7 +393,7 @@ public:
 	/**
 	 * Postfix decrement operator.
 	 */
-	inline self_relative_ptr<T>
+	inline self_relative_ptr<T, PersistentAware>
 	operator--(int)
 	{
 		auto copy = *this;
@@ -366,7 +405,7 @@ public:
 	/**
 	 * Addition assignment operator.
 	 */
-	inline self_relative_ptr<T> &
+	inline self_relative_ptr<T, PersistentAware> &
 	operator+=(std::ptrdiff_t s)
 	{
 		detail::conditional_add_to_tx(this);
@@ -377,7 +416,7 @@ public:
 	/**
 	 * Subtraction assignment operator.
 	 */
-	inline self_relative_ptr<T> &
+	inline self_relative_ptr<T, PersistentAware> &
 	operator-=(std::ptrdiff_t s)
 	{
 		detail::conditional_add_to_tx(this);
@@ -402,6 +441,14 @@ private:
 	{
 		return base_type::pointer_to_offset(static_cast<void *>(ptr));
 	}
+	difference_type
+	self_offset(element_type *ptr, bool dirty) const noexcept
+	{
+		intptr_t dirty_mask = dirty == true;
+		--dirty_mask;
+		return (base_type::pointer_to_offset(static_cast<void *>(ptr)) &
+			(dirty_mask | dirty_flag));
+	}
 };
 
 /**
@@ -412,9 +459,10 @@ private:
  *
  * @relates self_relative_ptr
  */
-template <class T>
+template <class T, typename PersistentAware>
 inline void
-swap(self_relative_ptr<T> &a, self_relative_ptr<T> &b)
+swap(self_relative_ptr<T, PersistentAware> &a,
+     self_relative_ptr<T, PersistentAware> &b)
 {
 	a.swap(b);
 }
@@ -423,10 +471,10 @@ swap(self_relative_ptr<T> &a, self_relative_ptr<T> &b)
  * Equality operator.
  * @relates self_relative_ptr
  */
-template <typename T, typename Y>
+template <typename T, typename Y, typename PersistentAware>
 inline bool
-operator==(self_relative_ptr<T> const &lhs,
-	   self_relative_ptr<Y> const &rhs) noexcept
+operator==(self_relative_ptr<T, PersistentAware> const &lhs,
+	   self_relative_ptr<Y, PersistentAware> const &rhs) noexcept
 {
 	return lhs.to_byte_pointer() == rhs.to_byte_pointer();
 }
@@ -435,10 +483,10 @@ operator==(self_relative_ptr<T> const &lhs,
  * Inequality operator.
  * @relates self_relative_ptr
  */
-template <typename T, typename Y>
+template <typename T, typename Y, typename PersistentAware>
 inline bool
-operator!=(self_relative_ptr<T> const &lhs,
-	   self_relative_ptr<Y> const &rhs) noexcept
+operator!=(self_relative_ptr<T, PersistentAware> const &lhs,
+	   self_relative_ptr<Y, PersistentAware> const &rhs) noexcept
 {
 	return !(lhs == rhs);
 }
@@ -447,9 +495,10 @@ operator!=(self_relative_ptr<T> const &lhs,
  * Equality operator with nullptr.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator==(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
+operator==(self_relative_ptr<T, PersistentAware> const &lhs,
+	   std::nullptr_t) noexcept
 {
 	return !bool(lhs);
 }
@@ -458,9 +507,10 @@ operator==(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
  * Equality operator with nullptr.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator==(std::nullptr_t, self_relative_ptr<T> const &lhs) noexcept
+operator==(std::nullptr_t,
+	   self_relative_ptr<T, PersistentAware> const &lhs) noexcept
 {
 	return !bool(lhs);
 }
@@ -469,9 +519,10 @@ operator==(std::nullptr_t, self_relative_ptr<T> const &lhs) noexcept
  * Inequality operator with nullptr.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator!=(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
+operator!=(self_relative_ptr<T, PersistentAware> const &lhs,
+	   std::nullptr_t) noexcept
 {
 	return bool(lhs);
 }
@@ -480,9 +531,10 @@ operator!=(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
  * Inequality operator with nullptr.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator!=(std::nullptr_t, self_relative_ptr<T> const &lhs) noexcept
+operator!=(std::nullptr_t,
+	   self_relative_ptr<T, PersistentAware> const &lhs) noexcept
 {
 	return bool(lhs);
 }
@@ -494,10 +546,10 @@ operator!=(std::nullptr_t, self_relative_ptr<T> const &lhs) noexcept
  * offset) of rhs. Returns false otherwise.
  * @relates self_relative_ptr
  */
-template <typename T, typename Y>
+template <typename T, typename Y, typename PersistentAware>
 inline bool
-operator<(self_relative_ptr<T> const &lhs,
-	  self_relative_ptr<Y> const &rhs) noexcept
+operator<(self_relative_ptr<T, PersistentAware> const &lhs,
+	  self_relative_ptr<Y, PersistentAware> const &rhs) noexcept
 {
 	return lhs.to_byte_pointer() < rhs.to_byte_pointer();
 }
@@ -508,10 +560,10 @@ operator<(self_relative_ptr<T> const &lhs,
  * See less than operator for comparison rules.
  * @relates self_relative_ptr
  */
-template <typename T, typename Y>
+template <typename T, typename Y, typename PersistentAware>
 inline bool
-operator<=(self_relative_ptr<T> const &lhs,
-	   self_relative_ptr<Y> const &rhs) noexcept
+operator<=(self_relative_ptr<T, PersistentAware> const &lhs,
+	   self_relative_ptr<Y, PersistentAware> const &rhs) noexcept
 {
 	return !(rhs < lhs);
 }
@@ -522,10 +574,10 @@ operator<=(self_relative_ptr<T> const &lhs,
  * See less than operator for comparison rules.
  * @relates self_relative_ptr
  */
-template <typename T, typename Y>
+template <typename T, typename Y, typename PersistentAware>
 inline bool
-operator>(self_relative_ptr<T> const &lhs,
-	  self_relative_ptr<Y> const &rhs) noexcept
+operator>(self_relative_ptr<T, PersistentAware> const &lhs,
+	  self_relative_ptr<Y, PersistentAware> const &rhs) noexcept
 {
 	return (rhs < lhs);
 }
@@ -536,10 +588,10 @@ operator>(self_relative_ptr<T> const &lhs,
  * See less than operator for comparison rules.
  * @relates self_relative_ptr
  */
-template <typename T, typename Y>
+template <typename T, typename Y, typename PersistentAware>
 inline bool
-operator>=(self_relative_ptr<T> const &lhs,
-	   self_relative_ptr<Y> const &rhs) noexcept
+operator>=(self_relative_ptr<T, PersistentAware> const &lhs,
+	   self_relative_ptr<Y, PersistentAware> const &rhs) noexcept
 {
 	return !(lhs < rhs);
 }
@@ -550,33 +602,36 @@ operator>=(self_relative_ptr<T> const &lhs,
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator<(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
+operator<(self_relative_ptr<T, PersistentAware> const &lhs,
+	  std::nullptr_t) noexcept
 {
-	return std::less<typename self_relative_ptr<T>::element_type *>()(
-		lhs.get(), nullptr);
+	return std::less<typename self_relative_ptr<
+		T, PersistentAware>::element_type *>()(lhs.get(), nullptr);
 }
 
 /**
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator<(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
+operator<(std::nullptr_t,
+	  self_relative_ptr<T, PersistentAware> const &rhs) noexcept
 {
-	return std::less<typename self_relative_ptr<T>::element_type *>()(
-		nullptr, rhs.get());
+	return std::less<typename self_relative_ptr<
+		T, PersistentAware>::element_type *>()(nullptr, rhs.get());
 }
 
 /**
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator<=(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
+operator<=(self_relative_ptr<T, PersistentAware> const &lhs,
+	   std::nullptr_t) noexcept
 {
 	return !(nullptr < lhs);
 }
@@ -585,9 +640,10 @@ operator<=(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator<=(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
+operator<=(std::nullptr_t,
+	   self_relative_ptr<T, PersistentAware> const &rhs) noexcept
 {
 	return !(rhs < nullptr);
 }
@@ -596,9 +652,10 @@ operator<=(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator>(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
+operator>(self_relative_ptr<T, PersistentAware> const &lhs,
+	  std::nullptr_t) noexcept
 {
 	return nullptr < lhs;
 }
@@ -607,9 +664,10 @@ operator>(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator>(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
+operator>(std::nullptr_t,
+	  self_relative_ptr<T, PersistentAware> const &rhs) noexcept
 {
 	return rhs < nullptr;
 }
@@ -618,9 +676,10 @@ operator>(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator>=(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
+operator>=(self_relative_ptr<T, PersistentAware> const &lhs,
+	   std::nullptr_t) noexcept
 {
 	return !(lhs < nullptr);
 }
@@ -629,9 +688,10 @@ operator>=(self_relative_ptr<T> const &lhs, std::nullptr_t) noexcept
  * Compare a self_relative_ptr with a null pointer.
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 inline bool
-operator>=(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
+operator>=(std::nullptr_t,
+	   self_relative_ptr<T, PersistentAware> const &rhs) noexcept
 {
 	return !(nullptr < rhs);
 }
@@ -640,11 +700,11 @@ operator>=(std::nullptr_t, self_relative_ptr<T> const &rhs) noexcept
  * Addition operator for self-relative pointers.
  * @relates self_relative_ptr
  */
-template <typename T>
-inline self_relative_ptr<T>
-operator+(self_relative_ptr<T> const &lhs, std::ptrdiff_t s)
+template <typename T, typename PersistentAware>
+inline self_relative_ptr<T, PersistentAware>
+operator+(self_relative_ptr<T, PersistentAware> const &lhs, std::ptrdiff_t s)
 {
-	self_relative_ptr<T> ptr = lhs;
+	self_relative_ptr<T, PersistentAware> ptr = lhs;
 	ptr += s;
 	return ptr;
 }
@@ -653,11 +713,11 @@ operator+(self_relative_ptr<T> const &lhs, std::ptrdiff_t s)
  * Subtraction operator for self-relative pointers.
  * @relates self_relative_ptr
  */
-template <typename T>
-inline self_relative_ptr<T>
-operator-(self_relative_ptr<T> const &lhs, std::ptrdiff_t s)
+template <typename T, typename PersistentAware>
+inline self_relative_ptr<T, PersistentAware>
+operator-(self_relative_ptr<T, PersistentAware> const &lhs, std::ptrdiff_t s)
 {
-	self_relative_ptr<T> ptr = lhs;
+	self_relative_ptr<T, PersistentAware> ptr = lhs;
 	ptr -= s;
 	return ptr;
 }
@@ -673,9 +733,11 @@ operator-(self_relative_ptr<T> const &lhs, std::ptrdiff_t s)
 template <typename T, typename Y,
 	  typename = typename std::enable_if<
 		  std::is_same<typename std::remove_cv<T>::type,
-			       typename std::remove_cv<Y>::type>::value>>
+			       typename std::remove_cv<Y>::type>::value>,
+	  typename PersistentAware>
 inline ptrdiff_t
-operator-(self_relative_ptr<T> const &lhs, self_relative_ptr<Y> const &rhs)
+operator-(self_relative_ptr<T, PersistentAware> const &lhs,
+	  self_relative_ptr<Y, PersistentAware> const &rhs)
 {
 	return self_relative_ptr_base::distance_between(rhs, lhs) /
 		static_cast<ptrdiff_t>(sizeof(T));
@@ -685,9 +747,9 @@ operator-(self_relative_ptr<T> const &lhs, self_relative_ptr<Y> const &rhs)
  * Ostream operator
  * @relates self_relative_ptr
  */
-template <typename T>
+template <typename T, typename PersistentAware>
 std::ostream &
-operator<<(std::ostream &os, self_relative_ptr<T> const &ptr)
+operator<<(std::ostream &os, self_relative_ptr<T, PersistentAware> const &ptr)
 {
 	os << ptr.to_void_pointer();
 	return os;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2021, 4Paradigm Inc. */
 
 /*
  * obj_cpp_ptr.c -- cpp bindings test
@@ -22,14 +22,14 @@
 #define LAYOUT "cpp"
 
 template <typename T>
-using self_relative_ptr =
-	nvobj::experimental::self_relative_ptr<T, std::false_type>;
+using pa_self_relative_ptr =
+	nvobj::experimental::self_relative_ptr<T, std::true_type>;
 using self_relative_ptr_base = nvobj::experimental::self_relative_ptr_base;
 
 namespace
 {
 
-using root = templated_root<self_relative_ptr, self_relative_ptr_base>;
+using root = templated_root<pa_self_relative_ptr, self_relative_ptr_base>;
 
 /*
  * test_offset -- test offset calculation within a hierarchy
@@ -54,20 +54,21 @@ test_offset(nvobj::pool<root> &pop)
 			auto distance =
 				self_relative_ptr_base::distance_between;
 
-			self_relative_ptr<C> cptr = nvobj::make_persistent<C>();
-			self_relative_ptr<B> bptr = cptr;
+			pa_self_relative_ptr<C> cptr =
+				nvobj::make_persistent<C>();
+			pa_self_relative_ptr<B> bptr = cptr;
 			UT_ASSERT(distance(cptr, bptr) > 0);
 			UT_ASSERT(static_cast<std::size_t>(
 					  distance(cptr, bptr)) == sizeof(A));
 
-			self_relative_ptr<B> bptr2;
+			pa_self_relative_ptr<B> bptr2;
 			bptr2 = cptr;
 			UT_ASSERT(distance(cptr, bptr2) > 0);
 			UT_ASSERT(static_cast<std::size_t>(
 					  distance(cptr, bptr2)) == sizeof(A));
 
-			self_relative_ptr<B> bptr3 =
-				static_cast<self_relative_ptr<B>>(cptr);
+			pa_self_relative_ptr<B> bptr3 =
+				static_cast<pa_self_relative_ptr<B>>(cptr);
 			UT_ASSERT(distance(cptr, bptr3) > 0);
 			UT_ASSERT(static_cast<std::size_t>(
 					  distance(cptr, bptr3)) == sizeof(A));
@@ -86,9 +87,9 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 
 	try {
 		nvobj::transaction::run(pop, [&] {
-			r->arr[0] = self_relative_ptr<foo>{
+			r->arr[0] = pa_self_relative_ptr<foo>{
 				nvobj::make_persistent<foo>()};
-			r->arr[1] = self_relative_ptr<int>{
+			r->arr[1] = pa_self_relative_ptr<int>{
 				nvobj::make_persistent<int>(TEST_INT)};
 			r->arr[2] = nullptr;
 
@@ -98,11 +99,11 @@ test_base_ptr_casting(nvobj::pool<root> &pop)
 				    TEST_INT);
 			UT_ASSERTeq(r->arr[2].to_void_pointer(), nullptr);
 
-			self_relative_ptr<foo> tmp0 =
+			pa_self_relative_ptr<foo> tmp0 =
 				static_cast<foo *>(r->arr[0].to_void_pointer());
-			self_relative_ptr<int> tmp1 =
+			pa_self_relative_ptr<int> tmp1 =
 				static_cast<int *>(r->arr[1].to_void_pointer());
-			self_relative_ptr<foo> tmp2 =
+			pa_self_relative_ptr<foo> tmp2 =
 				static_cast<foo *>(r->arr[2].to_void_pointer());
 			nvobj::delete_persistent<foo>(tmp0);
 			nvobj::delete_persistent<int>(tmp1);
@@ -146,9 +147,9 @@ test(int argc, char *argv[])
 		UT_FATAL("!pool::create: %s %s", pe.what(), path);
 	}
 
-	test_root_pointers<self_relative_ptr, self_relative_ptr_base>(
+	test_root_pointers<pa_self_relative_ptr, self_relative_ptr_base>(
 		*pop.root());
-	test_ptr_operators_null<self_relative_ptr>();
+	test_ptr_operators_null<pa_self_relative_ptr>();
 	test_ptr_transactional(pop);
 	test_ptr_array(pop);
 	test_offset(pop);

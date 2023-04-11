@@ -120,7 +120,8 @@ allocator_swap(MyAlloc &, OtherAlloc &, std::false_type)
 { /* NO SWAP */
 }
 
-template <typename Value, typename Mutex = pmem::obj::mutex,
+template <typename Value, typename UsePersistentAwarePtr,
+	  typename Mutex = pmem::obj::mutex,
 	  typename LockType = std::unique_lock<Mutex>>
 class skip_list_node {
 public:
@@ -131,7 +132,8 @@ public:
 	using pointer = value_type *;
 	using const_pointer = const value_type *;
 	using node_pointer =
-		obj::experimental::self_relative_ptr<skip_list_node>;
+		obj::experimental::self_relative_ptr<skip_list_node,
+						     UsePersistentAwarePtr>;
 	using atomic_node_pointer = std::atomic<node_pointer>;
 	using mutex_type = Mutex;
 	using lock_type = LockType;
@@ -210,6 +212,18 @@ public:
 		return get_next(level).load(std::memory_order_acquire);
 	}
 
+	template <typename U = void,
+		  typename = typename std::enable_if<
+			  std::is_same<UsePersistentAwarePtr,
+				       std::true_type>::value,
+			  U>::type>
+	node_pointer
+	next(size_type level)
+	{
+		assert(level < height());
+		return get_next(level).persist_load(std::memory_order_acquire);
+	}
+
 	/**
 	 * Can`t be called concurrently
 	 * Should be called inside a transaction
@@ -234,13 +248,26 @@ public:
 	}
 
 	void
+	set_next(size_type level, node_pointer next)
+	{
+		assert(level < height());
+		auto &node = get_next(level);
+		node.store(node_pointer{next.get(), true},
+			   std::memory_order_release);
+		/* instead of persist it immediately, mark it dirty,
+		 * and rely on consequent get_next operation to flush.
+		 */
+	}
+
+	void
 	set_nexts(const node_pointer *new_nexts, size_type h)
 	{
 		assert(h == height());
 		auto *nexts = get_nexts();
 
 		for (size_type i = 0; i < h; i++) {
-			nexts[i].store(new_nexts[i], std::memory_order_relaxed);
+			nexts[i].store(node_pointer{new_nexts[i].get(), true},
+				       std::memory_order_relaxed);
 		}
 	}
 
@@ -497,8 +524,11 @@ protected:
 	using const_reference = const value_type &;
 	using pointer = typename allocator_traits_type::pointer;
 	using const_pointer = typename allocator_traits_type::const_pointer;
+	using use_persistent_aware_ptr =
+		typename traits_type::use_persistent_aware_ptr;
 
-	using list_node_type = skip_list_node<value_type>;
+	using list_node_type =
+		skip_list_node<value_type, use_persistent_aware_ptr>;
 
 	using iterator = skip_list_iterator<list_node_type, false>;
 	using const_iterator = skip_list_iterator<list_node_type, true>;
@@ -514,7 +544,8 @@ protected:
 	using node_ptr = list_node_type *;
 	using const_node_ptr = const list_node_type *;
 	using persistent_node_ptr =
-		obj::experimental::self_relative_ptr<list_node_type>;
+		obj::experimental::self_relative_ptr<list_node_type,
+						     use_persistent_aware_ptr>;
 
 	using prev_array_type = std::array<node_ptr, MAX_LEVEL>;
 	using next_array_type = std::array<persistent_node_ptr, MAX_LEVEL>;
@@ -2306,6 +2337,33 @@ private:
 			      sizeof(decltype(size_diff)) -
 			      sizeof(decltype(insert_stage))];
 	};
+
+	class swmr_tls_data : public obj::segment_vector<tls_entry_type> {
+	public:
+		using base_type = obj::segment_vector<tls_entry_type>;
+		swmr_tls_data()
+		{
+		}
+		~swmr_tls_data() = default;
+		tls_entry_type &
+		local()
+		{
+			if (this->size() == 0) {
+				this->resize(1);
+			}
+			return this->front();
+		}
+
+	private:
+		obj::pool_base
+		get_pool() const noexcept
+		{
+			auto pop = pmemobj_pool_by_ptr(this);
+			assert(pop != nullptr);
+			return obj::pool_base(pop);
+		}
+	};
+
 	static_assert(sizeof(tls_entry_type) == 64,
 		      "The size of tls_entry_type should be 64 bytes.");
 
@@ -2430,14 +2488,12 @@ private:
 		assert(level < prev->height());
 		persistent_node_ptr next = prev->next(level);
 		pointer_type curr = next.get();
-
 		while (curr && cmp(get_key(curr), key)) {
 			prev = curr;
 			assert(level < prev->height());
 			next = prev->next(level);
 			curr = next.get();
 		}
-
 		return next;
 	}
 
@@ -2645,7 +2701,6 @@ private:
 
 		do {
 			find_insert_pos(prev_nodes, next_nodes, key);
-
 			node_ptr next = next_nodes[0].get();
 			if (next && !allow_multimapping &&
 			    !_compare(key, get_key(next))) {
@@ -2753,9 +2808,11 @@ private:
 		return true;
 	}
 
-	bool
-	try_lock_nodes(size_type height, prev_array_type &prevs,
-		       const next_array_type &nexts, lock_array &locks)
+	template <typename Is_SWMR>
+	typename std::enable_if<std::is_same<Is_SWMR, std::false_type>::value,
+				bool>::type
+	try_lock_nodes_impl(size_type height, prev_array_type &prevs,
+			    const next_array_type &nexts, lock_array &locks)
 	{
 		assert(check_prev_array(prevs, height));
 
@@ -2773,6 +2830,23 @@ private:
 		}
 
 		return true;
+	}
+
+	template <typename Is_SWMR>
+	typename std::enable_if<std::is_same<Is_SWMR, std::true_type>::value,
+				bool>::type
+	try_lock_nodes_impl(size_type height, prev_array_type &prevs,
+			    const next_array_type &nexts, lock_array &locks)
+	{
+		return true;
+	}
+
+	bool
+	try_lock_nodes(size_type height, prev_array_type &prevs,
+		       const next_array_type &nexts, lock_array &locks)
+	{
+		return try_lock_nodes_impl<use_persistent_aware_ptr>(
+			height, prevs, nexts, locks);
 	}
 
 	/**
@@ -3075,11 +3149,9 @@ private:
 	{
 		assert(pmemobj_tx_stage() == TX_STAGE_WORK);
 		size_type sz = calc_node_size(height);
-
 		persistent_node_ptr n =
 			node_allocator_traits::allocate(_node_allocator, sz)
 				.raw();
-
 		assert(n != nullptr);
 
 		node_allocator_traits::construct(_node_allocator, n.get(),
@@ -3243,7 +3315,12 @@ private:
 	random_level_generator_type _rnd_generator;
 	persistent_node_ptr dummy_head;
 
-	enumerable_thread_specific<tls_entry_type> tls_data;
+	using tls_data_storage = typename std::conditional<
+		std::is_same<use_persistent_aware_ptr, std::true_type>::value,
+		swmr_tls_data,
+		enumerable_thread_specific<tls_entry_type>>::type;
+
+	tls_data_storage tls_data;
 
 	std::atomic<size_type> _size;
 
@@ -3257,7 +3334,7 @@ private:
 
 template <typename Key, typename Value, typename KeyCompare,
 	  typename RND_GENERATOR, typename Allocator, bool AllowMultimapping,
-	  size_t MAX_LEVEL>
+	  size_t MAX_LEVEL, typename UsePersistentAwarePtr = std::false_type>
 class map_traits {
 public:
 	static constexpr size_t max_level = MAX_LEVEL;
@@ -3269,6 +3346,7 @@ public:
 	using reference = value_type &;
 	using const_reference = const value_type &;
 	using allocator_type = Allocator;
+	using use_persistent_aware_ptr = UsePersistentAwarePtr;
 
 	/**
 	 * pmem::detail::concurrent_skip_list allows multimapping. If this flag

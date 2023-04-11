@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2021, 4Paradigm Inc. */
 
 #include "thread_helpers.hpp"
 #include "unittest.hpp"
@@ -20,10 +20,10 @@
 namespace nvobj = pmem::obj;
 
 template <typename T>
-using self_relative_ptr =
-	pmem::obj::experimental::self_relative_ptr<T, std::false_type>;
+using pa_self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<T, std::true_type>;
 template <typename T>
-using atomic_ptr = std::atomic<self_relative_ptr<T>>;
+using atomic_ptr = std::atomic<pa_self_relative_ptr<T>>;
 
 constexpr int ARR_SIZE = 10000;
 

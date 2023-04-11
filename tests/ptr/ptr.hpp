@@ -18,6 +18,20 @@
 namespace nvobj = pmem::obj;
 namespace nvobjexp = nvobj::experimental;
 
+template <template <typename U, typename PersistentAware> class pointer>
+void
+assert_if_oid_is_null(pointer<int, std::true_type> &f)
+{
+	UT_ASSERT(OID_IS_NULL(f.raw()));
+}
+
+template <template <typename U, typename PersistentAware> class pointer>
+void
+assert_if_oid_is_null(pointer<int, std::false_type> &f)
+{
+	UT_ASSERT(OID_IS_NULL(f.raw()));
+}
+
 template <template <typename U> class pointer>
 void
 assert_if_oid_is_null(pointer<int> &f)
@@ -25,9 +39,13 @@ assert_if_oid_is_null(pointer<int> &f)
 	UT_ASSERT(OID_IS_NULL(f.raw()));
 }
 
-template <>
 void
-assert_if_oid_is_null(nvobjexp::self_relative_ptr<int> &f)
+assert_if_oid_is_null(nvobjexp::self_relative_ptr<int, std::true_type> &f)
+{
+}
+
+void
+assert_if_oid_is_null(nvobjexp::self_relative_ptr<int, std::false_type> &f)
 {
 }
 
@@ -35,6 +53,28 @@ assert_if_oid_is_null(nvobjexp::self_relative_ptr<int> &f)
  * test_null_ptr -- verifies if the pointer correctly behaves like a
  * nullptr-value
  */
+template <template <typename U, typename PersistentAware> class pointer>
+void
+test_null_ptr(pointer<int, std::true_type> &f)
+{
+	assert_if_oid_is_null(f);
+	UT_ASSERT((bool)f == false);
+	UT_ASSERT(!f);
+	UT_ASSERTeq(f.get(), nullptr);
+	UT_ASSERT(f == nullptr);
+}
+
+template <template <typename U, typename PersistentAware> class pointer>
+void
+test_null_ptr(pointer<int, std::false_type> &f)
+{
+	assert_if_oid_is_null(f);
+	UT_ASSERT((bool)f == false);
+	UT_ASSERT(!f);
+	UT_ASSERTeq(f.get(), nullptr);
+	UT_ASSERT(f == nullptr);
+}
+
 template <template <typename U> class pointer>
 void
 test_null_ptr(pointer<int> &f)
@@ -102,7 +142,7 @@ struct nested {
 template <template <typename U> class pointer, class pointer_base>
 struct templated_root {
 	pointer<foo> pfoo;
-	pointer<nvobj::p<int>[(long unsigned) TEST_ARR_SIZE]> parr;
+	pointer<nvobj::p<int>[(long unsigned)TEST_ARR_SIZE]> parr;
 	pointer_base arr[3];
 
 	/* This variable is unused, but it's here to check if the persistent_ptr

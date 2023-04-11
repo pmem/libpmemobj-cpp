@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/* Copyright 2020, Intel Corporation */
+/* Copyright 2021, 4Paradigm Inc. */
 
 #include "thread_helpers.hpp"
 #include "unittest.hpp"
@@ -15,14 +15,16 @@ constexpr size_t CONCURRENCY = 20;
 constexpr size_t MEAN_CONCURRENCY = CONCURRENCY * 2;
 constexpr size_t HIGH_CONCURRENCY = CONCURRENCY * 5;
 
-using pmem::obj::experimental::self_relative_ptr;
+template <typename T>
+using pa_self_relative_ptr =
+	pmem::obj::experimental::self_relative_ptr<T, std::true_type>;
+using self_relative_ptr_base = pmem::obj::experimental::self_relative_ptr_base;
 
 template <typename T, bool need_volatile>
 using atomic_type = typename std::conditional<
 	need_volatile,
-	typename std::add_volatile<
-		std::atomic<self_relative_ptr<T, std::false_type>>>::type,
-	std::atomic<self_relative_ptr<T, std::false_type>>>::type;
+	typename std::add_volatile<std::atomic<pa_self_relative_ptr<T>>>::type,
+	std::atomic<pa_self_relative_ptr<T>>>::type;
 
 template <bool volatile_atomic>
 void
@@ -135,9 +137,8 @@ template <bool volatile_atomic>
 void
 test_exchange()
 {
-	self_relative_ptr<int, std::false_type> first =
-		reinterpret_cast<int *>(uintptr_t{0});
-	self_relative_ptr<int, std::false_type> second =
+	pa_self_relative_ptr<int> first = reinterpret_cast<int *>(uintptr_t{0});
+	pa_self_relative_ptr<int> second =
 		reinterpret_cast<int *>(~uintptr_t{0});
 
 	atomic_type<int, volatile_atomic> ptr;
@@ -177,8 +178,7 @@ test_compare_exchange()
 		// tst_val != atomic_ptr  ==>  tst_val is modified
 		// tst_val == atomic_ptr  ==>  atomic_ptr is modified
 
-		self_relative_ptr<int, std::false_type> tst_val{first},
-			new_val{second};
+		pa_self_relative_ptr<int> tst_val{first}, new_val{second};
 		if (atomic_ptr.compare_exchange_strong(tst_val, new_val)) {
 			++exchanged;
 		} else {
@@ -194,8 +194,7 @@ test_compare_exchange()
 		// tst_val != atomic_ptr  ==>  tst_val is modified
 		// tst_val == atomic_ptr  ==>  atomic_ptr is modified
 
-		self_relative_ptr<int, std::false_type> tst_val{first},
-			new_val{second};
+		pa_self_relative_ptr<int> tst_val{first}, new_val{second};
 		if (atomic_ptr.compare_exchange_strong(
 			    tst_val, new_val, std::memory_order_acquire,
 			    std::memory_order_relaxed)) {
@@ -218,7 +217,7 @@ public:
 	struct node;
 
 	using value_type = size_t;
-	using node_ptr_type = self_relative_ptr<node, std::false_type>;
+	using node_ptr_type = pa_self_relative_ptr<node>;
 
 	struct node {
 		size_t value;

@@ -169,12 +169,13 @@ private:
 	PointerType ptr;
 
 	friend struct std::atomic<tagged_ptr_impl<
-		P1, P2, obj::experimental::self_relative_ptr<void>>>;
+		P1, P2,
+		obj::experimental::self_relative_ptr<void, std::false_type>>>;
 };
 
 template <typename P1, typename P2>
-using tagged_ptr =
-	tagged_ptr_impl<P1, P2, obj::experimental::self_relative_ptr<void>>;
+using tagged_ptr = tagged_ptr_impl<
+	P1, P2, obj::experimental::self_relative_ptr<void, std::false_type>>;
 
 } /* namespace detail */
 } /* namespace pmem */
@@ -187,7 +188,8 @@ struct atomic<pmem::detail::tagged_ptr<P1, P2>> {
 private:
 	using ptr_type = pmem::detail::tagged_ptr_impl<
 		P1, P2,
-		atomic<pmem::obj::experimental::self_relative_ptr<void>>>;
+		atomic<pmem::obj::experimental::self_relative_ptr<
+			void, std::false_type>>>;
 	using value_type = pmem::detail::tagged_ptr<P1, P2>;
 
 public:

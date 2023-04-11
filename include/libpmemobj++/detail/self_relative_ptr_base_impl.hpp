@@ -44,7 +44,8 @@ public:
 	using byte_type = uint8_t;
 	using byte_ptr_type = byte_type *;
 	using const_byte_ptr_type = const byte_type *;
-
+	static constexpr difference_type dirty_flag = ~(1L << 1);
+	static constexpr difference_type dirty_mask = dirty_flag & (1 << 1 | 1);
 	/*
 	 * Constructors
 	 */
@@ -190,6 +191,30 @@ public:
 	{
 		return offset == nullptr_offset;
 	}
+	/**
+	 * check if offset is dirty
+	 */
+	static inline bool
+	is_dirty(difference_type other_offset)
+	{
+		return ((other_offset != nullptr_offset) &&
+			(other_offset & dirty_mask) ==
+				(dirty_flag & dirty_mask));
+	}
+	bool
+	is_dirty()
+	{
+		return (!is_null() &&
+			(difference_type(offset) & dirty_mask) ==
+				(dirty_flag & dirty_mask));
+	}
+	void
+	set_dirty_flag(bool dirty)
+	{
+		intptr_t dirty_mask = dirty == true;
+		--dirty_mask;
+		offset &= (dirty_mask | dirty_flag);
+	}
 
 protected:
 	/**
@@ -222,8 +247,12 @@ protected:
 		*/
 		uintptr_t mask = other_offset == nullptr_offset;
 		--mask;
+		intptr_t mask_dirty = is_dirty(other_offset) == true;
+		--mask_dirty;
+		/* clear the dirty_flag if it's set to get the correct ptr. */
 		uintptr_t ptr = static_cast<uintptr_t>(
-			reinterpret_cast<intptr_t>(this) + other_offset + 1);
+			reinterpret_cast<intptr_t>(this) +
+			(other_offset | ~(dirty_flag | mask_dirty)) + 1);
 		ptr &= mask;
 		return reinterpret_cast<void *>(ptr);
 	}
